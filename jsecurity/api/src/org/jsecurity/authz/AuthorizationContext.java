@@ -24,16 +24,17 @@
  */
 package org.jsecurity.authz;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
+import java.util.List;
 import java.util.Set;
-import java.io.Serializable;
 
 /**
- * Enables all access control behavior for an authenticated user.  An <tt>AuthenticationContext</tt>
- * can only be acquired upon a successful login, as access control behavior must be performed for
- * a known identity.
- * 
+ * Provides all access control behavior for an authenticated user.  An <tt>AuthorizationContext</tt>
+ * can only be acquired upon a successful login, as access control behavior must be associated
+ * with a known identity.
+ *
  * @author Les Hazlewood
  */
 public interface AuthorizationContext {
@@ -42,15 +43,23 @@ public interface AuthorizationContext {
 
     boolean hasRole( Serializable roleIdentifier );
 
-    boolean hasRoles( Set<Serializable> roleIdentifiers );
+    boolean[] hasRoles( List<Serializable> roleIdentifiers );
+
+    boolean hasAllRoles( Set<Serializable> roleIdentifiers );
 
     boolean hasPermission( Permission permission );
 
-    boolean hasPermissions( Set<Permission> permissions );
+    boolean[] hasPermissions( List<Permission> permissions );
+
+    boolean hasAllPermissions( Set<Permission> permissions );
 
     void checkPermission( Permission permission ) throws AuthorizationException;
 
     void checkPermissions( Set<Permission> permissions ) throws AuthorizationException;
 
-    Object getValue( Object key );
+    Object getAttribute( Object key );
+
+    void setAttribute( Object key, Object value );
+
+    Object removeAttribute( Object key );
 }
