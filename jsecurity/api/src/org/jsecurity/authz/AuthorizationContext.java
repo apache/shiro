@@ -30,7 +30,10 @@ import java.util.Set;
 import java.io.Serializable;
 
 /**
- *
+ * Enables all access control behavior for an authenticated user.  An <tt>AuthenticationContext</tt>
+ * can only be acquired upon a successful login, as access control behavior must be performed for
+ * a known identity.
+ * 
  * @author Les Hazlewood
  */
 public interface AuthorizationContext {
