@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+
+<project name="jsecurity" default="dist">
+
+    <!-- Static property definitions.  These will remain the same for any module or submodule. -->
+    <property name="project.name" value="jsecurity"/>
+
+    <property name="root.base.dir" value="${basedir}"/>
+
+    <property name="lib.dir" value="${root.base.dir}/lib"/>
+
+    <!-- application-wide config files: (all other config files should be in a respective
+         module or submodule) -->
+    <property name="root.etc.dir"   value="${root.base.dir}/etc"/>
+    <property name="root.build.dir" value="${root.base.dir}/build"/>
+    <property name="root.dist.dir" value="${root.build.dir}/dist"/>
+
+    <!-- *RELATIVE* definitions.  These properties will reflect a directory
+         structure relative to where the build is being executed -->
+    <property name="base.dir" value="."/>
+    <property name="etc.dir" value="${base.dir}/etc"/>
+    <property name="src.dir" value="${base.dir}/src"/>
+    <property name="test.dir" value="${base.dir}/test"/>
+    <property name="build.dir" value="${base.dir}/build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="test-classes.dir" value="${build.dir}/test-classes"/>
+    <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="docs.dir" value="${build.dir}/docs"/>
+    <property name="api.dir" value="${docs.dir}/api"/>
+    <property name="test.docs.dir" value="${docs.dir}/test-reports"/>
+
+    <!-- compile flags, can be overridden on the command line using the -D flag -->
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="true"/>
+
+    <!-- ===============================================================
+      -  3rd party filesets and paths required for compiling or during runtime.
+      -  (referenced later when creating classpaths)
+      -  =============================================================== -->
+    <!-- <fileset id="antlr.libs" dir="${lib.dir}/antlr">
+        <include name="antlr.jar"/>
+    </fileset>
+    <path id="antlr.path">
+        <fileset refid="antlr.libs"/>
+    </path> -->
+
+    <!-- All module, and submodule generated artifacts: -->
+    <fileset id="artifact.libs" dir="${root.dist.dir}">
+        <include name="*.jar"/>
+    </fileset>
+    <path id="artifact.path">
+        <fileset refid="artifact.libs"/>
+    </path>
+
+    <!-- Composite compile path referencing all jars available to all common submodules: -->
+    <path id="root.path">
+        <path refid="artifact.path"/>
+        <pathelement location="${classes.dir}"/> <!-- relative path! -->
+    </path>
+
+    <target name="prepare">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${test-classes.dir}"/>
+        <mkdir dir="${docs.dir}"/>
+        <mkdir dir="${api.dir}"/>
+        <mkdir dir="${test.docs.dir}"/>
+    </target>
+
+    <!-- ===================================================================
+      -  check-platform-build - Fails the build if the parent platform hasn't
+      -                         been built yet.  Targets should only depend
+      -                         on this target if they require the parent
+      -                         to be built in order to function properly.
+      -  =================================================================== -->
+    <!-- <target name="check-platform-build" depends="prepare">
+        <available file="${root.dist.dir}" type="dir"
+                   property="root.dist.dir.exists"/>
+        <fail unless="root.dist.dir.exists">
+
+            The ${project.name} project as a whole must be built at least once before running the
+            ${module.name} build.
+        </fail>
+    </target> -->
+
+    <!-- ===================================================================
+      -  Template target.  Never called explicitly, only used to pass target
+      -  calls to the underlying children builds.
+      -  =================================================================== -->
+    <target name="template" depends="prepare">
+        <!-- This section defines the modules and the order in which they are
+             executed for any given target.  This means ORDER MATTERS.
+             Any dependencies that are to be satisified by one module for another
+             must be declared in the order the dendencies occur. -->
+        <echo message="Executing &quot;${target}&quot; target for the api module..."/>
+        <ant dir="api" target="${target}"/>
+
+    </target>
+
+    <!-- ===================================================================
+      -  Clean all local and children build files
+      -  =================================================================== -->
+    <target name="clean" depends="prepare">
+
+        <!-- Clean all children builds: -->
+        <antcall target="template">
+            <param name="target" value="clean"/>
+        </antcall>
+
+        <!-- Clean local build: -->
+        <delete dir="${build.dir}"/>
+
+    </target>
+
+
+    <!-- ===================================================================
+      -  compile-sources - default Java compile behavior for a submodule
+      -  not used at the root level, but listed here so it can be shared
+      -  by all submodules (since they import this file).
+      -  =================================================================== -->
+    <target name="compile.src" depends="prepare">
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               classpathref="submodule.path">
+            <src path="${src.dir}"/>
+        </javac>
+    </target>
+
+    <!-- ===================================================================
+      -  compile-test - default Java compile behavior for a submodule
+      -  not used at the root level, but listed here so it can be shared
+      -  by all submodules (since they import this file).
+      -  =================================================================== -->
+    <target name="compile.test" depends="prepare">
+        <javac srcdir="${test.dir}"
+               destdir="${test-classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               classpathref="test.path"/>
+    </target>
+
+    <!-- Compile all children modules and/or submodules -->
+    <target name="compile" depends="prepare">
+        <antcall target="template">
+            <param name="target" value="compile"/>
+        </antcall>
+    </target>
+
+    <!-- ===================================================================
+       - dist - calls the "dist" target for all modules.  All modules are
+       -        required to have this defined as it creates a module's
+       -        artifacts (jars, wars, etc).
+       - =================================================================== -->
+    <target name="dist" depends="prepare">
+        <antcall target="template">
+            <param name="target" value="dist"/>
+        </antcall>
+    </target>
+
+
+    <!-- ===================================================================
+      -  all - everything
+      -  =================================================================== -->
+    <target name="all" depends="dist"/>
+
+</project>
+

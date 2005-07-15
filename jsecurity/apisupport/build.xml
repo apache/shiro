@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<project name="jsecurity-apisupport" default="dist">
+
+    <property name="root.base.dir" value=".."/>
+
+    <import file="../build.xml" />
+
+    <!-- Module properties -->
+    <property name="module.name" value="apisupport"/>
+    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
+    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
+
+    <path id="submodule.path">
+        <path refid="artifact.path"/>
+        <pathelement location="${classes.dir}"/> <!-- relative path! -->
+    </path>
+
+    <!-- ===================================================================
+      -  clean - clean all build remnants from this submodule
+      - ==================================================================== -->
+    <target name="clean" depends="prepare">
+        <echo message="cleaning ${module.name}"/>
+        <delete file="${dist.jar}"/>
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <!-- ===================================================================
+      -  compile - compile Java source files
+      -  =================================================================== -->
+    <target name="compile" depends="compile.src"/>
+
+    <!-- ===================================================================
+      -  dist - create distribution jars (which will be used for deployment)
+      -  =================================================================== -->
+    <target name="dist" depends="compile">
+
+        <jar jarfile="${dist.jar}">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </jar>
+
+    </target>
+
+</project>
