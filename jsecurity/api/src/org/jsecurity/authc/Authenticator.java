@@ -27,15 +27,26 @@ package org.jsecurity.authc;
 import org.jsecurity.authz.AuthorizationContext;
 
 /**
+ * An Authenticator is responsible for authenticating users by verifying
+ * {@link AuthenticationToken}s.  An AuthenticationToken is created during the authentication
+ * process (e.g. after submittal of user principals and credentials) and then submitted to one
+ * or more <tt>Authenticator</tt>s.
+ *
  * @author Les Hazlewood
  */
 public interface Authenticator {
 
     /**
+     * Authenticates a user based on the submitted <tt>AuthenticationToken</tt>.
      *
-     * @param token
-     * @return
-     * @throws AuthenticationException
+     * @param token the AuthenticationToken representing the principals and credentials that
+     * were submitted by the user.
+     *
+     * @return the AuthorizationContext maintaining the authenticated user's access controls.
+     *
+     * @throws AuthenticationException if there is any problem during the authentication process.
+     * See the specific exceptions listed below to accurately handle these problems and to
+     * notify the user in an appropriate manner why the authentication attempt failed.
      *
      * @see ExpiredCredentialException
      * @see IncorrectCredentialException
