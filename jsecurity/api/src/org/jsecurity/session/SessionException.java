@@ -24,13 +24,15 @@
  */
 package org.jsecurity.session;
 
+import org.jsecurity.JSecurityException;
+
 /**
- * General SecurityException attributed to problems during interaction with the system during
+ * General security exception attributed to problems during interaction with the system during
  * a session.
  *
  * @author Les Hazlewood
  */
-public class SessionException extends SecurityException {
+public class SessionException extends JSecurityException {
     public SessionException() {
         super();
     }

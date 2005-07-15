@@ -24,12 +24,14 @@
  */
 package org.jsecurity.authc;
 
+import org.jsecurity.JSecurityException;
+
 /**
  * General exception thrown due to an error during the Authentication process.
  *
  * @author Les Hazlewood
  */
-public class AuthenticationException extends SecurityException {
+public class AuthenticationException extends JSecurityException {
 
     public AuthenticationException() {
         super();
