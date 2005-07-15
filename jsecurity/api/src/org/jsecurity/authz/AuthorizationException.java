@@ -24,12 +24,14 @@
  */
 package org.jsecurity.authz;
 
+import org.jsecurity.JSecurityException;
+
 /**
  * Exception thrown if there is a problem during authorization.
  *
  * @author Les Hazlewood
  */
-public class AuthorizationException extends SecurityException {
+public class AuthorizationException extends JSecurityException {
 
     public AuthorizationException() {
         super();
