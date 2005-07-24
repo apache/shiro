@@ -22,33 +22,38 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc;
+package org.jsecurity.authz;
+
+import java.net.InetAddress;
 
 /**
- * Thrown when attempting to authenticate with a principal that doesn't exist in the system (e.g.
- * by specifying a username that doesn't relate to a user account).
+ * Thrown when the system restricts access based on client location (i.e. host address) and the IP
+ * address associated with a client request has not been configured for system access.
  *
- * <p>Whether or not an application wishes to alert a user logging in to the system of this fact is
- * at the discretion of those responsible for designing the view and what happens when this
- * exception occurs.
+ * @see org.jsecurity.session.SessionAccessor#start(java.net.InetAddress)
  *
  * @author Les Hazlewood
  */
-public class UnknownAccountException extends AccountException {
+public class HostUnauthorizedException extends UnauthorizedException {
 
-    public UnknownAccountException() {
+    public HostUnauthorizedException() {
         super();
     }
 
-    public UnknownAccountException( String message ) {
-        super( message );
+    public HostUnauthorizedException( InetAddress hostAddress ) {
+        this( "The system is not cofigured to allow access for host [" +
+              hostAddress.getHostAddress() + "]" );
     }
 
-    public UnknownAccountException( Throwable cause ) {
+    public HostUnauthorizedException( String s ) {
+        super( s );
+    }
+
+    public HostUnauthorizedException( Throwable cause ) {
         super( cause );
     }
 
-    public UnknownAccountException( String message, Throwable cause ) {
+    public HostUnauthorizedException( String message, Throwable cause ) {
         super( message, cause );
     }
 }

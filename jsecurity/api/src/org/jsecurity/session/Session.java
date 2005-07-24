@@ -38,8 +38,8 @@ public interface Session {
     /**
      * Returns the unique identifier assigned by the system upon session creation.
      *
-     * <p>All return values from this method are expected to have a proper toString() function
-     * such that the system identifier can be easily read by a human.  Good candiadates for such
+     * <p>All return values from this method are expected to have proper <code>toString()</code>,
+     * <code>equals()</code>, and <code>hashCode()</code> implementations. Good candiadates for such
      * an identifier are {@link java.util.UUID UUID}s, {@link java.lang.Integer Integer}s, and
      * {@link java.lang.String String}s.
      *
@@ -88,7 +88,7 @@ public interface Session {
 
     /**
      * Returns the last time the user interacted with the system.  With the exception of the
-     * {@link #touch()} method, merely calling the other methods on this interface will not
+     * {@link #touch()} method, merely calling this or other methods on the Session will not
      * update the last access time.
      *
      * @return The time the user last interacted with the system.
@@ -130,11 +130,13 @@ public interface Session {
      * be useful.
      *
      * @see SessionManager#touch
+     *
+     * @throws ExpiredSessionException if this session has expired prior to calling this method.
      */
-    void touch();
+    void touch() throws ExpiredSessionException;
 
     /**
-     * Explicitly stops this session.
+     * Explicitly stops this session and releases all associated resources.
      *
      * <p>If this session has already been authenticated (i.e. the user has logged-in),
      * this method should only be called during the logout process, when this method is
@@ -146,6 +148,8 @@ public interface Session {
      * explicitly logged out.
      *
      * <p>If this session has not yet been authenticated, this method may be called at any time.
+     *
+     * @throws ExpiredSessionException if this session has expired prior to calling this method.
      */
-    void stop();
+    void stop() throws ExpiredSessionException;
 }
