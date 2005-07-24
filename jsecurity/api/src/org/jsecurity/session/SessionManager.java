@@ -24,6 +24,8 @@
  */
 package org.jsecurity.session;
 
+import org.jsecurity.authz.HostUnauthorizedException;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.Principal;
@@ -45,29 +47,19 @@ public interface SessionManager {
      * Starts a new session within the system for the host with the specified originating IP
      * address.
      *
-     * <p>Because an InetAddress is specified, secure access can also be restricted based
-     * on system <em>location</em> as well as user principals if so desired (with some
-     * caveats, as described below).
-     *
-     * <p>In web-based systems, this InetAddress can be retrieved from the
-     * HttpSession.getRemoteAddr(), or in socket-based systems, it can be obtained via inspecting
-     * the socket initiator's host IP.
-     *
-     * <p><b>Note</b> however, if clients to your system are on a
-     * public network (as would be the case for a public web site), odds are high the clients can be
-     * behind a NAT (Network Address Translation) router.  If so, all clients accessing your system
-     * behind that router will have the same originating IP address.  If your system is configured
-     * to allow only one session per IP, then the next request from a different NAT client will
-     * fail and access will be denied for that client.  Just be aware that ip-based security
-     * policies are best utilized in LAN or private WAN environments when you can be sure clients
-     * will not share IPs or be behind such NAT routers.
+     * <p><b>Note</b>: see the
+     * {@link SessionAccessor#start(java.net.InetAddress) SessionAccessor.start(InetAddress)} method
+     * about the implications of using <tt>InetAddress</tt>es in access control policies.
      *
      * @param originatingHost the originating host InetAddress of the external party
      * (user, 3rd party product, etc) that is attempting to interact with the system.
      * 
      * @return the system identifier of the newly created session.
+     *
+     * @see SessionAccessor#start(InetAddress)
      */
-    Serializable start( InetAddress originatingHost );
+    Serializable start( InetAddress originatingHost )
+        throws HostUnauthorizedException, IllegalArgumentException;
 
     /**
      * Returns whether or not the session identified by <code>sessionId</code> has been

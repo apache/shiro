@@ -24,6 +24,8 @@
  */
 package org.jsecurity.session;
 
+import org.jsecurity.authz.HostUnauthorizedException;
+
 import java.net.InetAddress;
 import java.io.Serializable;
 
@@ -32,10 +34,72 @@ import java.io.Serializable;
  */
 public interface SessionAccessor {
 
-    Session start();
+    /**
+     * Starts a new session within the system for the host with the specified originating IP
+     * address.
+     *
+     * <p>An implementation of this interface may be configured to allow a <tt>null</tt> argument,
+     * thereby indicating the originating IP is either unknown or has been
+     * explicitly omitted by the caller.  However, if the implementation is configured to require
+     * a valid <tt>hostAddress</tt> and the argument is <tt>null</tt>, an
+     * {@link IllegalArgumentException IllegalArgumentException} will be thrown.
+     *
+     * <p>In web-based systems, this InetAddress can be retrieved from the
+     * HttpSession.getRemoteAddr(), or in socket-based systems, it can be obtained via inspecting
+     * the socket initiator's host IP.
+     *
+     * <p>Most secure environments <em>should</em> require that a valid, non-<tt>null</tt>
+     * <tt>hostAddress</tt> be specified, since knowing the <tt>hostAddress</tt> allows for more
+     * flexibility when securing a system: by requiring an InetAddress, access control policies
+     * can also ensure access is restricted to specific client <em>locations</em> in
+     * addition to user principals, if so desired.
+     *
+     * <p><b>Caveat</b> - if clients to your system are on a
+     * public network (as would be the case for a public web site), odds are high the clients can be
+     * behind a NAT (Network Address Translation) router.  If so, all clients accessing your system
+     * behind that router will have the same originating IP address.  If your system is configured
+     * to allow only one session per IP, then the next request from a different NAT client will
+     * fail and access will be denied for that client.  Just be aware that ip-based security
+     * policies are best utilized in LAN or private WAN environments when you can be sure clients
+     * will not share IPs or be behind such NAT routers.
+     *
+     * <p>Its probably beneficial to still require a valid, non-<tt>null</tt> argument even in
+     * such NAT environments, since the originating IP could be used in access logging.  This
+     * ip could be used when generating reports, even though it wouldn't be used as part of
+     * the system's access control policy.
+     *
+     * @param hostAddress the originating host InetAddress of the external party
+     * (user, 3rd party product, etc) that is attempting to interact with the system.
+     *
+     * @return a handle to the newly created session.
+     *
+     * @throws HostUnauthorizedException if the system access control policy restricts access based
+     * on client location/IP and the specified hostAddress hasn't been enabled.
+     * @throws IllegalArgumentException if the system is configured to require a valid,
+     * non-<tt>null</tt> argument and the specified <tt>hostAddress</tt> is null.
+     */
+    Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException;
 
-    Session start( InetAddress hostAddress );
-
-    Session getSession( Serializable sessionId );
+    /**
+     * Acquires a handle the session identified by the specified <tt>sessionId</tt> parameter.
+     *
+     * <p>Although simple, this method finally enables behavior absent in Java for years:
+     *
+     * <p>The ability to share a server-side session across clients of different mediums, such
+     * as web appliations, Java applets, standalone C# clients over XMLRPC and/or SOAP, and many
+     * others.  This is a <em>huge</em> benefit for heterogeneous enterprise applications.
+     *
+     * <p>To maintain session integrity across client mediums, the sessionId should be transmitted
+     * securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This is nothing new - all
+     * web applications are susceptible to the same problem when transmitting Cookies or when
+     * using URL rewriting.  As long as the <tt>sessionId</tt> is transmitted securely, as in web
+     * applications, session integrity can be maintained.
+     *
+     * @param sessionId the id of the session to acquire.
+     * @return a handle to the session identified by <tt>sessionId</tt>
+     * @throws ExpiredSessionException if the session identified by <tt>sessionId</tt> has expired,
+     * thereby proventing further use.
+     */
+    Session getSession( Serializable sessionId ) throws ExpiredSessionException;
 
 }

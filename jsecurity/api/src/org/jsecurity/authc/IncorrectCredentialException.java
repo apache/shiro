@@ -29,9 +29,11 @@ package org.jsecurity.authc;
  * credential associated with the account principal.
  *
  * <p>For example, this exception might be thrown if a user's password is &quot;secret&quot; and
- * &quot;secrets&quot; was entered by mistake.  Whether or not an application wishes to let
- * the user know if they entered in an incorrect password is at the discretion of those
- * responsible for defining the view and what happens when this case occurs.
+ * &quot;secrets&quot; was entered by mistake.
+ *
+ * <p>Whether or not an application wishes to let
+ * the user know if they entered in an incorrect credential is at the discretion of those
+ * responsible for defining the view and what happens when this exception occurs.
  *
  * @author Les Hazlewood
  */
