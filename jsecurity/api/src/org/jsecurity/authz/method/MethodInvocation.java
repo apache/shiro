@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,19 +22,33 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+
+package org.jsecurity.authz.method;
+
+import org.jsecurity.authz.AuthorizationAction;
+
+import java.lang.reflect.Method;
+
 
 /**
+ * Representation of a method invocation that provides information required
+ * for authorization.
  *
- * todo Should this be in the API or just impl?  Isn't this an implementation class? Would anyone ever reference this outside of a specific SessionManager implementation? -JCH
- *
- * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public interface SessionEventPublisher {
+public interface MethodInvocation extends AuthorizationAction {
 
-    void publish( SessionEvent event );
+    /**
+     * The method that is being invoked.
+     * @return a {@link Method} object representing the invoked method.
+     */
+    Method getMethod();
 
-    void addSessionEventListener( SessionEventListener listener );
+    /**
+     * The arguments given to the method invocation.
+     * @return the arguments passed to the method invocation.
+     */
+    Object[] getArguments();
 
-    void removeSessionEventListener( SessionEventListener listener );
 }
+

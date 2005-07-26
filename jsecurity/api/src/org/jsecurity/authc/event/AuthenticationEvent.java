@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,42 +22,45 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
 
-import java.io.Serializable;
+package org.jsecurity.authc.event;
+
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.EventObject;
 
 /**
- * General event concerning a {@link org.jsecurity.session.Session} instance.
+ * General event concerning the authentication of a particular user.
  *
- * todo We need to decide whether or not to extend EventObject. -JCH
+ * todo We need to decide whether or not to extend EventObject.  -JCH
  *
- * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public abstract class SessionEvent extends EventObject {
+public abstract class AuthenticationEvent extends EventObject {
 
     /**
-     * Timestamp when this even took place.
+     * The time at which this event took place.
      */
     protected Calendar timestamp = Calendar.getInstance();
 
     /**
-     * Session ID associated with this event.
+     * The principal of the user associated with this event.
      */
-    protected final Serializable sessionId;
+    protected final Principal principal;
 
 
     /**
-     * Constructs a new session event with the given source and session ID.
+     * Creates a new authentication event with a dummy source and the given
+     * principal.
      *
-     * @param source the source of this event, typically a
-     * {@link org.jsecurity.session.SessionManager}.
-     * @param sessionId the session ID this event is associated with.
+     * @param source the source of this event, typically the
+     * {@link org.jsecurity.authc.Authenticator} responsible for the authentication
+     * event.
+     * @param principal the principal of the authenticated user.
      */
-    public SessionEvent( Object source, Serializable sessionId ) {
+    public AuthenticationEvent( Object source, Principal principal ) {
         super( source );
-        this.sessionId = sessionId;
+        this.principal = principal;
     }
 
     /**

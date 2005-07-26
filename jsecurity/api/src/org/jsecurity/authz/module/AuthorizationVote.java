@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,19 +22,36 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+
+package org.jsecurity.authz.module;
+
 
 /**
+ * Enumeration representing the possible votes that can be returned from an
+ * {@link AuthorizationModule} instance to vote on whether or not a user
+ * should be authorized to perform a particular {@link org.jsecurity.authz.AuthorizationAction}.
  *
- * todo Should this be in the API or just impl?  Isn't this an implementation class? Would anyone ever reference this outside of a specific SessionManager implementation? -JCH
+ * @see AuthorizationModule
  *
- * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public interface SessionEventPublisher {
+public enum AuthorizationVote {
 
-    void publish( SessionEvent event );
+    /**
+     * Vote that indicates that this module is abstaining from voting on whether
+     * or not a user should be granted authorization.
+     */
+    abstain,
 
-    void addSessionEventListener( SessionEventListener listener );
+    /**
+     * Vote that indicates that this module grants authorization to the user.
+     */
+    granted,
 
-    void removeSessionEventListener( SessionEventListener listener );
+    /**
+     * Vote that indicates that this module denies authorization to the user.
+     */
+    denied;
+
+
 }
