@@ -35,6 +35,15 @@ package org.jsecurity.authz;
  */
 public interface AuthorizationGranter {
 
+    /**
+     * Checks whether the user with the given {@link AuthorizationContext}
+     * is authorized to perform the given {@link AuthorizationAction}.  If
+     * the user is not authorized to perform the action, an
+     * {@link AuthorizationException} is thrown.
+     *
+     * @param context the authorization context of the user being authorized.
+     * @param action the action that the user is requesting authorization for.
+     */
     void checkAuthorization( AuthorizationContext context, AuthorizationAction action );
 
 }
