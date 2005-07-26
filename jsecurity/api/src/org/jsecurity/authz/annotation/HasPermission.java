@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * </p>
  * For example,<br>
  * <blockquote><pre>
- * &#64;HasPermission(value="MyFilePermission",target="file",actions={"read","write"})
+ * &#64;HasPermission(value="MyFilePermission",name="file",actions={"read","write"})
  * void someMethod();
  * </pre>
  * </blockquote>
