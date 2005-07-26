@@ -27,8 +27,9 @@ package org.jsecurity.authz;
 import java.net.InetAddress;
 
 /**
- * Thrown when the system restricts access based on client location (i.e. host address) and the IP
- * address associated with a client request has not been configured for system access.
+ * Thrown when a particular client (i.e. host address) has not been enabled to access the system
+ * or if the client has been enabled access but is not permitted to perform a particluar operation
+ * or access a particular resource.
  *
  * @see org.jsecurity.session.SessionAccessor#start(java.net.InetAddress)
  *

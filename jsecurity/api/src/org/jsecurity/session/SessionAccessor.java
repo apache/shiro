@@ -25,11 +25,23 @@
 package org.jsecurity.session;
 
 import org.jsecurity.authz.HostUnauthorizedException;
+import org.jsecurity.authz.AuthorizationException;
 
 import java.net.InetAddress;
 import java.io.Serializable;
 
 /**
+ * A <tt>SessionAccessor</tt> is responsible for starting new sessions and accessing existing
+ * sessions.
+ *
+ * <p>A {@link Session Session} is a data context associated with a single entity (user,
+ * 3rd party process, etc) that communicates with a software system over a period of time.
+ *
+ * <p>All interaction with a secure system is done in the course of a Session, even if that
+ * Session only exists over the course of a single method invocation.  Sessions are extremely
+ * lightweight objects that have a managed lifecycle.
+ *
+ * @since 1.0
  * @author Les Hazlewood
  */
 public interface SessionAccessor {
@@ -81,7 +93,7 @@ public interface SessionAccessor {
     Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException;
 
     /**
-     * Acquires a handle the session identified by the specified <tt>sessionId</tt> parameter.
+     * Acquires a handle to the session identified by the specified <tt>sessionId</tt> parameter.
      *
      * <p>Although simple, this method finally enables behavior absent in Java for years:
      *
@@ -99,7 +111,15 @@ public interface SessionAccessor {
      * @return a handle to the session identified by <tt>sessionId</tt>
      * @throws ExpiredSessionException if the session identified by <tt>sessionId</tt> has expired,
      * thereby proventing further use.
+     * @throws AuthorizationException if the executor of this method is not allowed to acquire
+     * (i.e. join) the session identified by <tt>sessionId</tt>.  The reason for the exception
+     * is implementation specific and could be for any number of reasons.  A common reason in many
+     * systems would be if one host tried to acquire/join a session that originated on an entirely
+     * different host (although it is not a JSecurity requirement this scenario is not allowed -
+     * its just an example that <em>may</em> throw an Exception in many systems).
+     *
+     * @see HostUnauthorizedException
      */
-    Session getSession( Serializable sessionId ) throws ExpiredSessionException;
+    Session getSession( Serializable sessionId ) throws ExpiredSessionException, AuthorizationException;
 
 }
