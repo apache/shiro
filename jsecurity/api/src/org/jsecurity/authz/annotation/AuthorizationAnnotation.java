@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,19 +22,26 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+
+package org.jsecurity.authz.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 
 /**
+ * A superannotation for annotations that represent an authentication
+ * requirement.
  *
- * todo Should this be in the API or just impl?  Isn't this an implementation class? Would anyone ever reference this outside of a specific SessionManager implementation? -JCH
+ * @see Authorization
  *
- * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public interface SessionEventPublisher {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AuthorizationAnnotation {
 
-    void publish( SessionEvent event );
-
-    void addSessionEventListener( SessionEventListener listener );
-
-    void removeSessionEventListener( SessionEventListener listener );
 }
+

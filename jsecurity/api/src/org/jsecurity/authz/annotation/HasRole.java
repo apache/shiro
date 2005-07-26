@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,19 +22,37 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+
+package org.jsecurity.authz.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 
 /**
+ * <p>
+ * An annotation that indicates that a user must have a particular role in order
+ * to be granted authorization to execute a particular method.
+ * </p>
+ * For example,<br>
+ * <blockquote><pre>
+ * &#64;HasRole("myRoleName")
+ * void someMethod();
+ * </pre>
+ * </blockquote>
  *
- * todo Should this be in the API or just impl?  Isn't this an implementation class? Would anyone ever reference this outside of a specific SessionManager implementation? -JCH
- *
- * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public interface SessionEventPublisher {
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface HasRole extends AuthorizationAnnotation {
 
-    void publish( SessionEvent event );
+    /**
+     * The name of the role required to be granted this authorization.
+     */
+    String value();
 
-    void addSessionEventListener( SessionEventListener listener );
-
-    void removeSessionEventListener( SessionEventListener listener );
 }
+
