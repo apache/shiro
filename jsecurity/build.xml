@@ -53,12 +53,6 @@
         <fileset refid="artifact.libs"/>
     </path>
 
-    <!-- Composite compile path referencing all jars available to all common submodules: -->
-    <path id="root.path">
-        <path refid="artifact.path"/>
-        <pathelement location="${classes.dir}"/> <!-- relative path! -->
-    </path>
-
     <target name="prepare">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
@@ -89,20 +83,20 @@
       -  Template target.  Never called explicitly, only used to pass target
       -  calls to the underlying children builds.
       -  =================================================================== -->
-    <target name="template" depends="prepare">
+    <target name="template">
         <!-- This section defines the modules and the order in which they are
              executed for any given target.  This means ORDER MATTERS.
              Any dependencies that are to be satisified by one module for another
              must be declared in the order the dendencies occur. -->
-        <echo message="Executing &quot;${target}&quot; target for the api module..."/>
         <ant dir="api" target="${target}"/>
+        <ant dir="ri"  target="${target}"/>
 
     </target>
 
     <!-- ===================================================================
       -  Clean all local and children build files
       -  =================================================================== -->
-    <target name="clean" depends="prepare">
+    <target name="clean">
 
         <!-- Clean all children builds: -->
         <antcall target="template">

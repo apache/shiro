@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<project name="jsecurity-api" default="dist">
+<project name="ri" default="dist">
 
     <property name="root.base.dir" value=".."/>
 
     <import file="../build.xml" />
 
     <!-- Module properties -->
-    <property name="module.name" value="api"/>
+    <property name="module.name" value="ri"/>
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
