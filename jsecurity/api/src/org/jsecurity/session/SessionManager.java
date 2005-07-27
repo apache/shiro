@@ -77,23 +77,7 @@ public interface SessionManager {
      * Updates the last accessed time of the session identified by <code>sessionId</code>.  This
      * can be used to explicitly ensure that a session does not time out.
      *
-     * <p>This method is particularly useful when supporting rich-client applications such as
-     * Java Web Start apps or Java applets.  It is possible in a rich-client environment that
-     * a user continuously interacts with the client-side application without a server-side
-     * method call ever being invoked.  If this happens over a long enough period of time, and
-     * the server is configured to expire sessions, the user's session could time-out.
-     *
-     * <p>In the above example though, the user's session is still considered valid because the user
-     * is actively "using" the application the whole time.  But because no server-side method
-     * calls are invoked,
-     * there is no way for the server to know if the user is sitting idle or not (so it must
-     * assume so to maintain security).  This method could be invoked by the rich-client
-     * application code during those instances to ensure that the next time a server-side
-     * invocation is required, the user's session would not have accidentally expired.
-     *
-     * <p>How often this would occur is entirely dependent upon the application and is based on
-     * variables such as session timeout configuration, usage characteristics of the
-     * client application, network utilization and application server performance.
+     * @see Session#touch
      *
      * @param sessionId the id of the session to update.
      */

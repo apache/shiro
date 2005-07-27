@@ -124,12 +124,26 @@ public interface Session {
     InetAddress getHostAddress();
 
     /**
-     * Forces an update of the {@link #getLastAccessTime() last accessed time} of this session.
+     * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session.  This
+     * method can be used to ensure a session does not time out.
      *
-     * See the {@link SessionManager#touch} method for a good example of when this method might
-     * be useful.
+     * <p>This method is particularly useful when supporting rich-client applications such as
+     * Java Web Start apps or Java applets.  It is possible in a rich-client environment that
+     * a user continuously interacts with the client-side application without a server-side
+     * method call ever being invoked.  If this happens over a long enough period of time, and
+     * the server is configured to expire sessions, the user's session could time-out.
      *
-     * @see SessionManager#touch
+     * <p>In the above example though, the user's session is still considered valid because the user
+     * is actively "using" the application the whole time.  But because no server-side method
+     * calls are invoked,
+     * there is no way for the server to know if the user is sitting idle or not (so it must
+     * assume so to maintain security).  This method could be invoked by the rich-client
+     * application code during those instances to ensure that the next time a server-side
+     * invocation is required, the user's session would not have accidentally expired.
+     *
+     * <p>How often this would occur is entirely dependent upon the application and is based on
+     * variables such as session timeout configuration, usage characteristics of the
+     * client application, network utilization and application server performance.
      *
      * @throws ExpiredSessionException if this session has expired prior to calling this method.
      */
