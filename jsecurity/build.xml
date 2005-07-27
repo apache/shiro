@@ -89,7 +89,7 @@
              Any dependencies that are to be satisified by one module for another
              must be declared in the order the dendencies occur. -->
         <ant dir="api" target="${target}"/>
-        <ant dir="ri"  target="${target}"/>
+        <!-- <ant dir="ri"  target="${target}"/> -->
 
     </target>
 
@@ -139,7 +139,7 @@
     </target>
 
     <!-- Compile all children modules and/or submodules -->
-    <target name="compile" depends="prepare">
+    <target name="compile">
         <antcall target="template">
             <param name="target" value="compile"/>
         </antcall>

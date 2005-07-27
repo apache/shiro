@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HasRole extends AuthorizationAnnotation {
+public @interface HasRole {
 
     /**
      * The name of the role required to be granted this authorization.

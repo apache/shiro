@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HasPermission extends AuthorizationAnnotation {
+public @interface HasPermission {
 
     /**
      * The fully qualified class name of the permission that is required by
