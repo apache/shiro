@@ -164,6 +164,43 @@ public interface Session {
      * <p>If this session has not yet been authenticated, this method may be called at any time.
      *
      * @throws ExpiredSessionException if this session has expired prior to calling this method.
+     *
+     * @see #getStopTimestamp()
      */
     void stop() throws ExpiredSessionException;
+
+    /**
+     * Returns the object bound to this session identified by the specified key.  If there is no
+     * object bound under the key, <tt>null</tt> is returned.
+     * @param key the unique name of the object bound to this session
+     * @return the object bound under the specified <tt>key</tt> name or <tt>null</tt> if there is
+     * no object bound under that name.
+     * @throws ExpiredSessionException if this session has expired prior to calling this method.
+     */
+    Object getAttribute( Object key ) throws ExpiredSessionException;
+
+    /**
+     * Binds the specified <tt>value</tt> to this session, uniquely identified by the specifed
+     * <tt>key</tt> name.  If there is already an object bound under the <tt>key</tt> name, that
+     * existing object will be replaced by the new <tt>value</tt>.
+     *
+     * <p>The <tt>value</tt> parameter cannot be null.  If so, an {@link IllegalArgumentException}
+     * will be thrown.  If you want to remove (i.e. unbind) the object bound under the name
+     * <tt>key</tt>, call the {@link #removeAttribute(Object key)} method instead.
+     *
+     * @param key the name under which the <tt>value</tt> object will be bound in this session
+     * @param value the object to bind in this session.
+     * @throws ExpiredSessionException if this session has expired prior to calling this method.
+     * @throws IllegalArgumentException if the <tt>value</tt> argument is <tt>null</tt>.
+     */
+    void setAttribute( Object key, Object value ) throws ExpiredSessionException, IllegalArgumentException;
+
+    /**
+     * Removes (unbinds) the object bound to this session under the specified <tt>key</tt> name.
+     * @param key the name uniquely identifying the object to remove
+     * @return the object removed or <tt>null</tt> if there was no object bound under the name
+     * <tt>key</tt>.
+     * @throws ExpiredSessionException if this session has expired prior to calling this method.
+     */
+    Object removeAttribute( Object key ) throws ExpiredSessionException;
 }
