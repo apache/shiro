@@ -24,17 +24,23 @@
  */
 package org.jsecurity.session.event;
 
+import java.io.Serializable;
+
 /**
- *
- * todo Should this be in the API or just impl?  Isn't this an implementation class? Would anyone ever reference this outside of a specific SessionManager implementation? -JCH
- *
+ * Event sent to interested parties when a session has expired.  This is a special case of a
+ * {@link StoppedSessionEvent}, as an expired session is considered stopped.
+ * 
  * @author Les Hazlewood
+ * @version $Revision$ $Date$
  */
-public interface SessionEventPublisher {
+public class ExpiredSessionEvent extends StoppedSessionEvent {
 
-    void publish( SessionEvent event );
+    public ExpiredSessionEvent( Serializable sessionId ) {
+        super( sessionId );
+    }
 
-    void addSessionEventListener( SessionEventListener listener );
+    public ExpiredSessionEvent( Object source, Serializable sessionId ) {
+        super( source, sessionId );
+    }
 
-    void removeSessionEventListener( SessionEventListener listener );
 }

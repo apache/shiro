@@ -25,10 +25,9 @@
 package org.jsecurity.session;
 
 
-import java.security.Principal;
-import java.util.Calendar;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Calendar;
 
 /**
  * @author Les Hazlewood
@@ -87,9 +86,9 @@ public interface Session {
     Calendar getStopTimestamp();
 
     /**
-     * Returns the last time the user interacted with the system.  With the exception of the
-     * {@link #touch()} method, merely calling this or other methods on the Session will not
-     * update the last access time.
+     * Returns the last time the user associated with this session interacted with the system.
+     * With the exception of the {@link #touch()} method, merely calling this or other methods on
+     * the Session will <em>not</em> update the last access time.
      *
      * @return The time the user last interacted with the system.
      */
@@ -105,21 +104,13 @@ public interface Session {
 
 
     /**
-     * Returns the principal of the authenticated user or entity that initiated this session, if
-     * known.  A session is usually created before an authentication takes place, so this method
-     * may return <code>null</code> if the principal is unknown or the session hasn't yet been
-     * authenticated.
-     * @return the identifying principal of the user or entity that authenticated this session,
-     * or <code>null</code> if this session hasn't yet been authenticated.
-     */
-    Principal getPrincipal();
-
-    /**
      * Returns the <tt>InetAddress</tt> of the host that originated this session, if known.  Returns
      * <tt>null</tt> if the host is unknown.
      *
      * @return the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
      * if the host address is unknown.
+     *
+     * @see SessionFactory#start(java.net.InetAddress);
      */
     InetAddress getHostAddress();
 
@@ -127,23 +118,32 @@ public interface Session {
      * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session.  This
      * method can be used to ensure a session does not time out.
      *
+     * <p>Most application's won't use
+     * this method explicitly and will instead rely on a framework to update the last access time
+     * transparently, either upon a web request or a remote method invocation, or via some other
+     * mechanism.
+     *
      * <p>This method is particularly useful when supporting rich-client applications such as
-     * Java Web Start apps or Java applets.  It is possible in a rich-client environment that
-     * a user continuously interacts with the client-side application without a server-side
-     * method call ever being invoked.  If this happens over a long enough period of time, and
-     * the server is configured to expire sessions, the user's session could time-out.
+     * Java Web Start apps or Java applets.  Although rare, it is possible in a rich-client
+     * environment that a user continuously interacts with the client-side application without a
+     * server-side method call ever being invoked.  If this happens over a long enough period of
+     * time, and the server is configured to expire sessions, the user's session could time-out.
+     * Again, such cases are rare since most rich-clients frequently require server-side method
+     * invocations.
      *
-     * <p>In the above example though, the user's session is still considered valid because the user
-     * is actively "using" the application the whole time.  But because no server-side method
-     * calls are invoked,
-     * there is no way for the server to know if the user is sitting idle or not (so it must
-     * assume so to maintain security).  This method could be invoked by the rich-client
-     * application code during those instances to ensure that the next time a server-side
-     * invocation is required, the user's session would not have accidentally expired.
+     * <p>In this example though, the user's session might still be considered valid because
+     * the user is actively &quot;using&quot; the application, just not communicating with the server.
+     * But because no server-side method calls are invoked,
+     * there is no way for the server to know if the user is sitting idle or not, so it must assume
+     * so to maintain session integrity.  This method could be invoked by the rich-client
+     * application code during those times to ensure that the next time a server-side method
+     * is invoked,  the invocation will not throw an
+     * {@link ExpiredSessionException ExpiredSessionException}.
      *
-     * <p>How often this would occur is entirely dependent upon the application and is based on
-     * variables such as session timeout configuration, usage characteristics of the
-     * client application, network utilization and application server performance.
+     * <p>How often this rich-client &quot;maintenance&quot; might occur is entirely dependent upon
+     * the application and would be based on variables such as session timeout configuration,
+     * usage characteristics of the client application, network utilization and application server
+     * performance.
      *
      * @throws ExpiredSessionException if this session has expired prior to calling this method.
      */
@@ -152,8 +152,9 @@ public interface Session {
     /**
      * Explicitly stops this session and releases all associated resources.
      *
-     * <p>If this session has already been authenticated (i.e. the user has logged-in),
-     * this method should only be called during the logout process, when this method is
+     * <p>If this session has already been authenticated (i.e. the user associated with this
+     * session has logged-in),
+     * this method should only be called during the logout process, when it is
      * considered a graceful operation.
      *
      * <p>Calling this method on an authenticated
@@ -161,7 +162,7 @@ public interface Session {
      * as doing so prevents system from updating session data indicating that the user
      * explicitly logged out.
      *
-     * <p>If this session has not yet been authenticated, this method may be called at any time.
+     * <p>If the session has not yet been authenticated, this method may be called at any time.
      *
      * @throws ExpiredSessionException if this session has expired prior to calling this method.
      *

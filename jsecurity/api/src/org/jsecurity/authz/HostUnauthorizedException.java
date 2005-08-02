@@ -31,7 +31,7 @@ import java.net.InetAddress;
  * or if the client has been enabled access but is not permitted to perform a particluar operation
  * or access a particular resource.
  *
- * @see org.jsecurity.session.SessionAccessor#start(java.net.InetAddress)
+ * @see org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
  *
  * @author Les Hazlewood
  */

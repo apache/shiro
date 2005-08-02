@@ -49,7 +49,7 @@ public interface SessionManager {
      * address.
      *
      * <p><b>Note</b>: see the
-     * {@link SessionAccessor#start(java.net.InetAddress) SessionAccessor.start(InetAddress)} method
+     * {@link SessionFactory#start(java.net.InetAddress) SessionFactory.start(InetAddress)} method
      * about the implications of using <tt>InetAddress</tt>es in access control policies.
      *
      * @param originatingHost the originating host InetAddress of the external party
@@ -57,7 +57,7 @@ public interface SessionManager {
      * 
      * @return the system identifier of the newly created session.
      *
-     * @see org.jsecurity.session.SessionAccessor#start(InetAddress)
+     * @see org.jsecurity.session.SessionFactory#start(InetAddress)
      */
     Serializable start( InetAddress originatingHost )
         throws HostUnauthorizedException, IllegalArgumentException;
