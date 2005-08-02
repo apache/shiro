@@ -47,13 +47,21 @@ public abstract class SessionEvent extends EventObject {
      */
     protected final Serializable sessionId;
 
+    /**
+     * Constructs a new session event associated with the specified session.
+     *
+     * @param sessionId the session id of the session associated with this event.
+     */
+    public SessionEvent( Serializable sessionId ) {
+        this( sessionId, sessionId );
+    }
+
 
     /**
      * Constructs a new session event with the given source and session ID.
      *
-     * @param source the source of this event, typically a
-     * {@link org.jsecurity.session.SessionManager}.
-     * @param sessionId the session ID this event is associated with.
+     * @param source the source of this event.
+     * @param sessionId the session ID of the session associated with this event.
      */
     public SessionEvent( Object source, Serializable sessionId ) {
         super( source );

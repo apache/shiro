@@ -31,24 +31,23 @@ import java.net.InetAddress;
 import java.io.Serializable;
 
 /**
- * A <tt>SessionAccessor</tt> is responsible for starting new sessions and accessing existing
- * sessions.
+ * A <tt>SessionFactory</tt> is responsible for starting new sessions and
+ * acquiring existing sessions.
  *
  * <p>A {@link Session Session} is a data context associated with a single entity (user,
  * 3rd party process, etc) that communicates with a software system over a period of time.
  *
  * <p>All interaction with a secure system is done in the course of a Session, even if that
- * Session only exists over the course of a single method invocation.  Sessions are extremely
- * lightweight objects that have a managed lifecycle.
+ * Session only exists over the course of a single method invocation.
  *
  * @since 1.0
  * @author Les Hazlewood
  */
-public interface SessionAccessor {
+public interface SessionFactory {
 
     /**
-     * Starts a new session within the system for the host with the specified originating IP
-     * address.
+     * Starts a new session within the system for the host with the specified
+     * originating IP address.
      *
      * <p>An implementation of this interface may be configured to allow a <tt>null</tt> argument,
      * thereby indicating the originating IP is either unknown or has been
@@ -78,7 +77,7 @@ public interface SessionAccessor {
      * <p>Its probably beneficial to still require a valid, non-<tt>null</tt> argument even in
      * such NAT environments, since the originating IP could be used in access logging.  This
      * ip could be used when generating reports, even though it wouldn't be used as part of
-     * the system's access control policy.
+     * the application's access control policy.
      *
      * @param hostAddress the originating host InetAddress of the external party
      * (user, 3rd party product, etc) that is attempting to interact with the system.
@@ -93,19 +92,20 @@ public interface SessionAccessor {
     Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException;
 
     /**
-     * Acquires a handle to the session identified by the specified <tt>sessionId</tt> parameter.
+     * Acquires a handle to the session identified by the specified <tt>sessionId</tt>.
      *
      * <p>Although simple, this method finally enables behavior absent in Java for years:
      *
-     * <p>The ability to share a server-side session across clients of different mediums, such
-     * as web appliations, Java applets, standalone C# clients over XMLRPC and/or SOAP, and many
-     * others.  This is a <em>huge</em> benefit for heterogeneous enterprise applications.
+     * <p>the
+     * ability to participate in a server-side session across clients of different mediums,
+     * such as web appliations, Java applets, standalone C# clients over XMLRPC and/or SOAP, and
+     * many others.  This is a <em>huge</em> benefit in heterogeneous enterprise applications.
      *
-     * <p>To maintain session integrity across client mediums, the sessionId should be transmitted
-     * securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This is nothing new - all
-     * web applications are susceptible to the same problem when transmitting Cookies or when
-     * using URL rewriting.  As long as the <tt>sessionId</tt> is transmitted securely, as in web
-     * applications, session integrity can be maintained.
+     * <p>To maintain session integrity across client mediums, the sessionId must be transmitted
+     * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
+     * is nothing new - all web applications are susceptible to the same problem when transmitting
+     * Cookies or when using URL rewriting.  As long as the <tt>sessionId</tt> is transmitted
+     * securely, session integrity can be maintained.
      *
      * @param sessionId the id of the session to acquire.
      * @return a handle to the session identified by <tt>sessionId</tt>
