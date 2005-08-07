@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les A. Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -33,6 +33,7 @@ import org.jsecurity.authz.module.AuthorizationVote;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.annotation.IncompleteAnnotationException;
 import java.security.Permission;
 
 
@@ -46,6 +47,7 @@ import java.security.Permission;
  * todo I don't really like this implementation.  Should this be generalized to support further annotations?  I'm only worried it might make configuration more difficult -JCH
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class AnnotationAuthorizationModule implements AuthorizationModule {
 
@@ -100,21 +102,12 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
         boolean authorized = true;
         boolean foundAnnotation = false;
 
-        // If an {@link Authorization} annotation is provided, check all of the
-        // annotations it contains
-        Authorization authAnnotation = method.getAnnotation( Authorization.class );
-        if( authAnnotation != null ) {
-            foundAnnotation = true;
-            if( !checkAuthorization( context, authAnnotation ) ) {
-                authorized = false;
-            }
-        }
-
         // Check permission annotation
         HasPermission hpAnnotation = method.getAnnotation( HasPermission.class );
         if( hpAnnotation != null ) {
             foundAnnotation = true;
-            if( !checkPermission( context, hpAnnotation ) ) {
+            Permission p = createPermission( mi, hpAnnotation );
+            if( !context.hasPermission( p ) ) {
                 authorized = false;
             }
         }
@@ -123,80 +116,86 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
         HasRole hrAnnotation = method.getAnnotation( HasRole.class );
         if( hrAnnotation != null ) {
             foundAnnotation = true;
-            if( !checkRole( context, hrAnnotation ) ) {
+            if ( !context.hasRole( hrAnnotation.value() ) ) {
                 authorized = false;
             }
         }
 
         // If one of the checks failed, deny authorization
-        if( authorized == false ) {
+        if( !authorized ) {
             return AuthorizationVote.denied;
-
         // If no checks failed and an annotation was found, grant authorization
         } else if( foundAnnotation ) {
             return AuthorizationVote.granted;
-
         // If no annotations were found, abstain
         } else {
             return AuthorizationVote.abstain;
         }
     }
 
+    private Permission createPermission( MethodInvocation mi, HasPermission hp ) {
+        Class<Permission> clazz = hp.type();
+        String name = hp.target();
+        String[] actions = hp.actions();
 
-    private boolean checkAuthorization( AuthorizationContext context,
-                                        Authorization authAnnotation ) {
+        Method m = mi.getMethod();
 
-        final AuthorizationAnnotation[] annotations = authAnnotation.value();
+        String target;
 
-        // If no annotations are specified, do not grant authorization
-        if( annotations.length == 0 ) {
-            return false;
-        }
-
-        for( AuthorizationAnnotation annotation : annotations ) {
-            if( annotation instanceof HasPermission ) {
-
-                if( !checkPermission( context, (HasPermission)annotation ) ) {
-                    return false;
+        if ( name == null ) {
+            int targetIndex = hp.targetIndex();
+            if ( targetIndex >= 0 ) {
+                Object[] args = mi.getArguments();
+                if ( args == null || (args.length < 1 ) ) {
+                    String msg = HasPermission.class.getName() + " targetIndex specified but " +
+                                 "the method does not have any arguments!";
+                    throw new IndexOutOfBoundsException( msg );
+                }
+                if ( targetIndex >= args.length ) {
+                    String msg = HasPermission.class.getName() + " targetIndex [" +
+                        targetIndex + "] specified, but the method argument array is " +
+                        "only of length [" + args.length + "]";
+                    throw new ArrayIndexOutOfBoundsException( msg );
                 }
 
-            } else if( annotation instanceof HasRole ) {
+                Object targetObject = args[targetIndex];
 
-                if( !checkRole( context, (HasRole)annotation ) ) {
-                    return false;
+                String targetMethodName = hp.targetMethodName();
+
+                if ( targetMethodName != null ) {
+                    Object targetMethodRetVal = invokeMethod( targetObject, targetMethodName);
+                    target = targetMethodRetVal.toString();
+                } else {
+                    target = targetObject.toString();
                 }
-
             } else {
-                //todo add logging here
-                return false;
+                String msg = "target or targetIndex on delcaring method " +
+                    m.getDeclaringClass().getName() + "." + m.getName() + ".  At least " +
+                    "one of the two is required.";
+                throw new IncompleteAnnotationException( HasPermission.class, msg );
             }
-
-
+        } else {
+            target = name;
         }
 
-        return true;
+        return instantiatePermission( clazz, target, actions );
     }
 
-
-    private boolean checkRole( AuthorizationContext context,
-                               HasRole hrAnnotation ) {
-        String roleName = hrAnnotation.value();
-        return context.hasRole( roleName );
+    private Object invokeMethod( Object o, String methodName ) {
+        try {
+            Method m = o.getClass().getDeclaredMethod( methodName, null );
+            return m.invoke( o, null );
+        } catch ( Exception e ) {
+            String msg = "Unable to invoke " + HasPermission.class.getName() +
+                " targetMethodName '" + methodName + "'";
+            throw new IllegalArgumentException( msg, e );
+        }
     }
 
-
-    private boolean checkPermission( AuthorizationContext context,
-                                     HasPermission hpAnnotation ) {
-        String type = hpAnnotation.value();
-        String name = hpAnnotation.name();
-        String[] actions = hpAnnotation.actions();
-
+    private Permission instantiatePermission(Class<Permission> clazz, String name, String[] actions ) {
         // Instantiate the permission instance using reflection
         Permission permission = null;
         try {
-
-            Class clazz = Class.forName( type );
-
             // Get constructor for permission
             Class[] constructorArgs = new Class[] { String.class, String.class };
             Constructor permConstructor = clazz.getDeclaredConstructor( constructorArgs );
@@ -204,14 +203,12 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
             // Instantiate permission with name and actions specified as attributes
             Object[] constructorObjs = new Object[] { name, actions };
             permission = (Permission) permConstructor.newInstance( constructorObjs );
-
+            return permission;
         } catch ( Exception e ) {
-            //todo Add logging here
-            return false;
+            String msg = "Unable to instantiate Permission class [" + clazz.getName() + "].  " +
+                "Annotation check cannot continue.";
+            throw new IllegalStateException( msg, e );
         }
-
-        return context.hasPermission( permission );
     }
-
 }
 

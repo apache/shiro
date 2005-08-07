@@ -139,7 +139,7 @@
     </target>
 
     <!-- Compile all children modules and/or submodules -->
-    <target name="compile">
+    <target name="compile" depends="prepare">
         <antcall target="template">
             <param name="target" value="compile"/>
         </antcall>
