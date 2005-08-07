@@ -31,6 +31,7 @@ package org.jsecurity.authc.event;
  * events related to account authentication.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface AuthenticationEventListener {
 
