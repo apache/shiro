@@ -28,7 +28,7 @@ package org.jsecurity.authz.module;
 import org.jsecurity.authz.AuthorizationAction;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizationGranter;
+import org.jsecurity.authz.Authorizer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ import java.util.Set;
 
 
 /**
- * An implementation of {@link org.jsecurity.authz.AuthorizationGranter} that
+ * An implementation of {@link org.jsecurity.authz.Authorizer} that
  * grants authorization based on a set of authorization votes from a set of
  * {@link AuthorizationModule}s.
  *
@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author Jeremy Haile
  */
-public class ModuleAuthorizationGranter implements AuthorizationGranter {
+public class ModuleAuthorizer implements Authorizer {
 
     /*------------------------------------
      *         C O N S T A N T S         |
@@ -75,7 +75,7 @@ public class ModuleAuthorizationGranter implements AuthorizationGranter {
      * Initializes this instance with no authorization modules and the default
      * {@link NoDenialStrategy} authorization strategy.
      */
-    public ModuleAuthorizationGranter() {
+    public ModuleAuthorizer() {
         this.authorizationModules = new HashSet<AuthorizationModule>();
         this.strategy = new NoDenialStrategy();
     }
