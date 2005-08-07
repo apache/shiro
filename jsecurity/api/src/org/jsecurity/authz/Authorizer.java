@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -32,19 +32,21 @@ package org.jsecurity.authz;
  *
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
-public interface AuthorizationGranter {
+public interface Authorizer {
 
     /**
      * Checks whether the user with the given {@link AuthorizationContext}
      * is authorized to perform the given {@link AuthorizationAction}.  If
      * the user is not authorized to perform the action, an
-     * {@link AuthorizationException} is thrown.
+     * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
      *
      * @param context the authorization context of the user being authorized.
      * @param action the action that the user is requesting authorization for.
      */
-    void checkAuthorization( AuthorizationContext context, AuthorizationAction action );
+    void checkAuthorization( AuthorizationContext context, AuthorizationAction action )
+        throws AuthorizationException;
 
 }
 

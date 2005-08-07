@@ -31,9 +31,9 @@ import org.jsecurity.authz.AuthorizationContext;
 
 /**
  * An authorization module is asked to vote on whether or not a user is
- * authorized to perform a particular action by the {@link ModuleAuthorizationGranter}.
+ * authorized to perform a particular action by the {@link ModuleAuthorizer}.
  * Based on the votes from a set of {@link AuthorizationModule}s, the
- * {@link ModuleAuthorizationGranter} will decide whether or not to authorize
+ * {@link ModuleAuthorizer} will decide whether or not to authorize
  * the user to perform the action.
  *
  * @author Jeremy Haile
