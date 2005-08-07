@@ -26,7 +26,6 @@ package org.jsecurity.session;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.security.Principal;
 import java.net.InetAddress;
 
 /**
@@ -63,8 +62,8 @@ public class SessionHandle implements Session {
     public SessionHandle(){}
 
     public SessionHandle( SessionManager sessionManager, Serializable sessionId ) {
-        setSessionManager( sessionManager );
-        setSessionId( sessionId );
+        this.sessionManager = sessionManager;
+        this.sessionId = sessionId;
     }
 
     /**
@@ -148,13 +147,6 @@ public class SessionHandle implements Session {
     public boolean isExpired() {
         //can't cache - only business pojo knows the accurate time for expiration:
         return sessionManager.isExpired( sessionId );
-    }
-
-    /**
-     * @see org.jsecurity.session.Session#getPrincipal()
-     */
-    public Principal getPrincipal() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**
