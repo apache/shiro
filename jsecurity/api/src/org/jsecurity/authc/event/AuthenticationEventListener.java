@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les A. Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,15 +28,15 @@ package org.jsecurity.authc.event;
 
 /**
  * Listener interface to be implemented by objects to be notified of
- * events related to user authentication.
+ * events related to account authentication.
  *
  * @author Jeremy Haile
  */
 public interface AuthenticationEventListener {
 
-    void userAuthenticated( AuthenticationEvent event );
+    void accountAuthenticated( AuthenticationEvent event );
 
-    void userLoggedOut( AuthenticationEvent event );
+    void accountLoggedOut( AuthenticationEvent event );
 
     void authenticationFailed( AuthenticationEvent event );
 
