@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -30,8 +30,9 @@ package org.jsecurity.authz;
  * Represents an action that requires authorization in order to perform.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
-public interface AuthorizationAction {
+public interface AuthorizedAction {
 
 }
 

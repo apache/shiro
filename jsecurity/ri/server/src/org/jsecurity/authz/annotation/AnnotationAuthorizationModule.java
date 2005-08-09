@@ -25,7 +25,7 @@
 
 package org.jsecurity.authz.annotation;
 
-import org.jsecurity.authz.AuthorizationAction;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationModule;
@@ -71,14 +71,14 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
      *           M E T H O D S           |
      *================================== */
     /**
-     * @see AuthorizationModule#supports(org.jsecurity.authz.AuthorizationAction)
+     * @see AuthorizationModule#supports(org.jsecurity.authz.AuthorizedAction)
      *
      * @param action the action that this module is being asked whether or not
      * it supports.
      * @return true if the action is an instance of {@link MethodInvocation} or
      * false otherwise.
      */
-    public boolean supports( AuthorizationAction action ) {
+    public boolean supports( AuthorizedAction action ) {
         return ( action instanceof MethodInvocation );
     }
 
@@ -89,12 +89,12 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
      *
      * @param context the context of the user being authorized.
      * @param action the action the user is being authorized for.
-     * @return granted if the user meets the requirements of the method
-     * annotations or denied otherwise.  If there are no supported annotations
+     * @return grant if the user meets the requirements of the method
+     * annotations or deny otherwise.  If there are no supported annotations
      * on the method, this module will abstain.
      */
     public AuthorizationVote isAuthorized( AuthorizationContext context,
-                                           AuthorizationAction action ) {
+                                           AuthorizedAction action ) {
 
         MethodInvocation mi = (MethodInvocation) action;
         Method method = mi.getMethod();
@@ -123,10 +123,10 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
 
         // If one of the checks failed, deny authorization
         if( !authorized ) {
-            return AuthorizationVote.denied;
+            return AuthorizationVote.deny;
         // If no checks failed and an annotation was found, grant authorization
         } else if( foundAnnotation ) {
-            return AuthorizationVote.granted;
+            return AuthorizationVote.grant;
         // If no annotations were found, abstain
         } else {
             return AuthorizationVote.abstain;

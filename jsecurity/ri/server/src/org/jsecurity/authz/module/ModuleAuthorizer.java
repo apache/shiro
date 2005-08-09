@@ -25,7 +25,7 @@
 
 package org.jsecurity.authz.module;
 
-import org.jsecurity.authz.AuthorizationAction;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
@@ -56,7 +56,7 @@ public class ModuleAuthorizer implements Authorizer {
      *================================== */
     /**
      * The authorization module strategy used to determine whether a user should
-     * be granted authorization based on votes returned from the set of
+     * be grant authorization based on votes returned from the set of
      * authorization modules.
      */
     protected ModuleAuthorizationStrategy strategy;
@@ -100,7 +100,7 @@ public class ModuleAuthorizer implements Authorizer {
      * @param action the action the user is requesting authorization for.
      */
     public void checkAuthorization( AuthorizationContext context,
-                                    AuthorizationAction action ) {
+                                    AuthorizedAction action ) {
 
         Map<AuthorizationModule, AuthorizationVote> votes =
                 new HashMap<AuthorizationModule,AuthorizationVote>( authorizationModules.size() );

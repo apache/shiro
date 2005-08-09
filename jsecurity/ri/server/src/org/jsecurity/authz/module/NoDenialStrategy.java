@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,7 @@
 
 package org.jsecurity.authz.module;
 
-import org.jsecurity.authz.AuthorizationAction;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
 
 import java.util.Collection;
@@ -36,20 +36,21 @@ import java.util.Map;
  * Instance of {@link ModuleAuthorizationStrategy} that authorizes the user
  * if and only if:
  * <ol>
- * <li>At least one granted vote is given.</li>
- * <li>No denied votes are given.</li>
+ * <li>At least one {@link AuthorizationVote#grant grant} vote is given.</li>
+ * <li>No {@link AuthorizationVote#deny deny} votes are given.</li>
  * </ol>
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class NoDenialStrategy implements ModuleAuthorizationStrategy {
 
 
     /**
-     * @see ModuleAuthorizationStrategy#isAuthorized(org.jsecurity.authz.AuthorizationContext, org.jsecurity.authz.AuthorizationAction, java.util.Map<org.jsecurity.authz.module.AuthorizationModule,org.jsecurity.authz.module.AuthorizationVote>)
+     * @see ModuleAuthorizationStrategy#isAuthorized(org.jsecurity.authz.AuthorizationContext, org.jsecurity.authz.AuthorizedAction, java.util.Map<org.jsecurity.authz.module.AuthorizationModule,org.jsecurity.authz.module.AuthorizationVote>)
      */
     public boolean isAuthorized( AuthorizationContext context,
-                                 AuthorizationAction action,
+                                 AuthorizedAction action,
                                  Map<AuthorizationModule, AuthorizationVote> votes ) {
 
         // If there are no votes, the user cannot be authorized
@@ -58,10 +59,10 @@ public class NoDenialStrategy implements ModuleAuthorizationStrategy {
         }
 
         Collection<AuthorizationVote> voteValues = votes.values();
-        if( voteValues.contains( AuthorizationVote.denied ) ) {
+        if( voteValues.contains( AuthorizationVote.deny ) ) {
             return false;
 
-        } else if( voteValues.contains( AuthorizationVote.granted ) ) {
+        } else if( voteValues.contains( AuthorizationVote.grant ) ) {
             return true;
 
         } else {

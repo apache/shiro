@@ -25,7 +25,7 @@
 
 package org.jsecurity.authz.method;
 
-import org.jsecurity.authz.AuthorizationAction;
+import org.jsecurity.authz.AuthorizedAction;
 
 import java.lang.reflect.Method;
 
@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
  *
  * @author Jeremy Haile
  */
-public interface MethodInvocation extends AuthorizationAction {
+public interface MethodInvocation extends AuthorizedAction {
 
     /**
      * The method that is being invoked.

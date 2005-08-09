@@ -70,7 +70,7 @@ public interface SessionFactory {
      * behind a NAT (Network Address Translation) router.  If so, all clients accessing your system
      * behind that router will have the same originating IP address.  If your system is configured
      * to allow only one session per IP, then the next request from a different NAT client will
-     * fail and access will be denied for that client.  Just be aware that ip-based security
+     * fail and access will be deny for that client.  Just be aware that ip-based security
      * policies are best utilized in LAN or private WAN environments when you can be sure clients
      * will not share IPs or be behind such NAT routers.
      *
