@@ -25,7 +25,7 @@
 
 package org.jsecurity.authz.module;
 
-import org.jsecurity.authz.AuthorizationAction;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
 
 
@@ -48,21 +48,21 @@ public interface AuthorizationModule {
      * @param action the action which this module must decide if it supports.
      * @return true if this module supports the given action, false otherwise.
      */
-    boolean supports( AuthorizationAction action );
+    boolean supports( AuthorizedAction action );
 
     /**
      * Called when the authorization module needs to vote on whether or not
      * a particular {@link AuthorizationContext} is authorized to perform an
-     * {@link AuthorizationAction}.
+     * {@link AuthorizedAction}.
      *
-     * @param context the context that is being granted or denied authorization
+     * @param context the context that is being grant or denied authorization
      * for the given action.
      * @param action the action that the user is requesting to perform.
      * @return a vote indicating whether or not this module grants authorization
      * to the user, or abstains from voting.
      */
     AuthorizationVote isAuthorized( AuthorizationContext context,
-                                    AuthorizationAction action );
+                                    AuthorizedAction action );
 
 }
 

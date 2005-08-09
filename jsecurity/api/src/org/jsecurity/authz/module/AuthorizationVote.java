@@ -29,7 +29,7 @@ package org.jsecurity.authz.module;
 /**
  * Enumeration representing the possible votes that can be returned from an
  * {@link AuthorizationModule} instance to vote on whether or not a user
- * should be authorized to perform a particular {@link org.jsecurity.authz.AuthorizationAction}.
+ * should be authorized to perform a particular {@link org.jsecurity.authz.AuthorizedAction}.
  *
  * @see AuthorizationModule
  *
@@ -39,19 +39,19 @@ public enum AuthorizationVote {
 
     /**
      * Vote that indicates that this module is abstaining from voting on whether
-     * or not a user should be granted authorization.
+     * or not a user should be grant authorization.
      */
     abstain,
 
     /**
      * Vote that indicates that this module grants authorization to the user.
      */
-    granted,
+    grant,
 
     /**
      * Vote that indicates that this module denies authorization to the user.
      */
-    denied;
+    deny;
 
 
 }

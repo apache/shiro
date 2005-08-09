@@ -25,7 +25,7 @@
 
 package org.jsecurity.authz.module;
 
-import org.jsecurity.authz.AuthorizationAction;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
 
 import java.util.Map;
@@ -53,7 +53,7 @@ public interface ModuleAuthorizationStrategy {
      * false otherwise.
      */
     boolean isAuthorized( AuthorizationContext context,
-                          AuthorizationAction action,
+                          AuthorizedAction action,
                           Map<AuthorizationModule, AuthorizationVote> votes );
     
 }

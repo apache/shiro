@@ -38,14 +38,14 @@ public interface Authorizer {
 
     /**
      * Checks whether the user with the given {@link AuthorizationContext}
-     * is authorized to perform the given {@link AuthorizationAction}.  If
+     * is authorized to perform the given {@link AuthorizedAction}.  If
      * the user is not authorized to perform the action, an
      * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
      *
      * @param context the authorization context of the user being authorized.
      * @param action the action that the user is requesting authorization for.
      */
-    void checkAuthorization( AuthorizationContext context, AuthorizationAction action )
+    void checkAuthorization( AuthorizationContext context, AuthorizedAction action )
         throws AuthorizationException;
 
 }
