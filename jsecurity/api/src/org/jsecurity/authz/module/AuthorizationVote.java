@@ -51,7 +51,6 @@ public enum AuthorizationVote {
     /**
      * Vote that indicates that this module denies authorization to the user.
      */
-    deny;
-
+    deny
 
 }
