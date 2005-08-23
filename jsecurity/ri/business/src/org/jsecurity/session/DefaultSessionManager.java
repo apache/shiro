@@ -76,6 +76,7 @@ public class DefaultSessionManager implements SessionManager {
         if ( this.sessionEventSender != null ) {
             if ( log.isDebugEnabled() ) {
                 String msg = "Using sessionEventSender to send event [" + event + "]";
+                log.debug( msg );
             }
             this.sessionEventSender.send( event );
         } else {

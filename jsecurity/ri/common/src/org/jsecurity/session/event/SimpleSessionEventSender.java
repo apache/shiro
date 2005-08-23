@@ -41,6 +41,10 @@ public class SimpleSessionEventSender implements SessionEventSender {
 
     protected List<SessionEventListener> listeners = new ArrayList<SessionEventListener>();
 
+    public void setListeners( List<SessionEventListener> listeners ) {
+        this.listeners = listeners;
+    }
+
     /**
      * Sends the specified <tt>event</tt> to all registered {@link SessionEventListener}s.
      * 

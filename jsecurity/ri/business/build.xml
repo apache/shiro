@@ -1,23 +1,27 @@
 <?xml version="1.0"?>
 
-<project name="jsecurity-api" default="dist">
+<project name="jsecurity-ri-business" default="dist">
 
-    <property name="root.base.dir" value=".."/>
+    <property name="root.base.dir" value="../.."/>
 
     <import file="../build.xml" />
 
     <!-- Module properties -->
-    <property name="module.name" value="api"/>
-    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
+    <property name="submodule.name" value="business"/>
+    <property name="dist.jar.name" value="${project.name}-${module.name}-${submodule.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
-    <path id="submodule.path"/>
+    <path id="submodule.path">
+        <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
+        <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>
+        <pathelement location="${root.dist.dir}/${project.name}-${module.name}-common.jar"/>
+    </path>
 
     <!-- ===================================================================
       -  clean - clean all build remnants from this submodule
       - ==================================================================== -->
     <target name="clean">
-        <echo message="cleaning ${module.name} module"/>
+        <echo message="cleaning ${project.name}-${module.name}-${submodule.name} submodule"/>
         <delete file="${dist.jar}"/>
         <delete dir="${build.dir}"/>
     </target>

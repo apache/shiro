@@ -118,7 +118,7 @@ public interface Session {
      * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session.  This
      * method can be used to ensure a session does not time out.
      *
-     * <p>Most application's won't use
+     * <p>Most applications won't use
      * this method explicitly and will instead rely on a framework to update the last access time
      * transparently, either upon a web request or a remote method invocation, or via some other
      * mechanism.
