@@ -183,8 +183,8 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
 
     private Object invokeMethod( Object o, String methodName ) {
         try {
-            Method m = o.getClass().getDeclaredMethod( methodName, null );
-            return m.invoke( o, null );
+            Method m = o.getClass().getDeclaredMethod( methodName, (Class[])null );
+            return m.invoke( o, (Object[])null );
         } catch ( Exception e ) {
             String msg = "Unable to invoke " + HasPermission.class.getName() +
                 " targetMethodName '" + methodName + "'";
@@ -194,7 +194,7 @@ public class AnnotationAuthorizationModule implements AuthorizationModule {
 
     private Permission instantiatePermission(Class<Permission> clazz, String name, String[] actions ) {
         // Instantiate the permission instance using reflection
-        Permission permission = null;
+        Permission permission;
         try {
             // Get constructor for permission
             Class[] constructorArgs = new Class[] { String.class, String.class };

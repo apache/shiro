@@ -56,7 +56,6 @@ public abstract class SessionEvent extends EventObject {
         this( sessionId, sessionId );
     }
 
-
     /**
      * Constructs a new session event with the given source and session ID.
      *
@@ -68,6 +67,10 @@ public abstract class SessionEvent extends EventObject {
         this.sessionId = sessionId;
     }
 
+    public void setTimestamp( Calendar timestamp ) {
+        this.timestamp = timestamp;
+    }
+                               
     /**
      * Returns the timestamp associated with this event.
      *
@@ -75,6 +78,10 @@ public abstract class SessionEvent extends EventObject {
      */
     public Calendar getTimestamp() {
         return timestamp;
+    }
+
+    public Serializable getSessionId() {
+        return this.sessionId;
     }
 
 }

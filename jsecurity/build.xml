@@ -7,23 +7,28 @@
 
     <property name="root.base.dir" value="${basedir}"/>
 
-    <property name="lib.dir" value="${root.base.dir}/lib"/>
-
     <!-- application-wide config files: (all other config files should be in a respective
          module or submodule) -->
-    <property name="root.etc.dir"   value="${root.base.dir}/etc"/>
+    <property name="root.etc.dir" value="${root.base.dir}/etc"/>
     <property name="root.build.dir" value="${root.base.dir}/build"/>
     <property name="root.dist.dir" value="${root.build.dir}/dist"/>
 
-    <!-- *RELATIVE* definitions.  These properties will reflect a directory
-         structure relative to where the build is being executed -->
+    <!-- version of the product, see http://apr.apache.org/versioning.html
+         for details on this convention -->
+    <property name="major.version" value="1"/>
+    <property name="minor.version" value="0"/>
+    <property name="patch.version" value="0"/>
+    <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
+
+    <!-- *RELATIVE* definitions.  These properties will reflect a directory structure relative
+         to where the build is being executed -->
     <property name="base.dir" value="."/>
     <property name="etc.dir" value="${base.dir}/etc"/>
     <property name="src.dir" value="${base.dir}/src"/>
     <property name="test.dir" value="${base.dir}/test"/>
     <property name="build.dir" value="${base.dir}/build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="test-classes.dir" value="${build.dir}/test-classes"/>
+    <property name="test.classes.dir" value="${build.dir}/test-classes"/>
     <property name="dist.dir" value="${build.dir}/dist"/>
     <property name="docs.dir" value="${build.dir}/docs"/>
     <property name="api.dir" value="${docs.dir}/api"/>
@@ -34,50 +39,15 @@
     <property name="compile.deprecation" value="false"/>
     <property name="compile.optimize" value="true"/>
 
-    <!-- ===============================================================
-      -  3rd party filesets and paths required for compiling or during runtime.
-      -  (referenced later when creating classpaths)
-      -  =============================================================== -->
-    <!-- <fileset id="antlr.libs" dir="${lib.dir}/antlr">
-        <include name="antlr.jar"/>
-    </fileset>
-    <path id="antlr.path">
-        <fileset refid="antlr.libs"/>
-    </path> -->
-
-    <!-- All module, and submodule generated artifacts: -->
-    <fileset id="artifact.libs" dir="${root.dist.dir}">
-        <include name="*.jar"/>
-    </fileset>
-    <path id="artifact.path">
-        <fileset refid="artifact.libs"/>
-    </path>
-
     <target name="prepare">
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${classes.dir}"/>
-        <mkdir dir="${test-classes.dir}"/>
+        <mkdir dir="${test.classes.dir}"/>
         <mkdir dir="${docs.dir}"/>
         <mkdir dir="${api.dir}"/>
         <mkdir dir="${test.docs.dir}"/>
     </target>
-
-    <!-- ===================================================================
-      -  check-platform-build - Fails the build if the parent platform hasn't
-      -                         been built yet.  Targets should only depend
-      -                         on this target if they require the parent
-      -                         to be built in order to function properly.
-      -  =================================================================== -->
-    <!-- <target name="check-platform-build" depends="prepare">
-        <available file="${root.dist.dir}" type="dir"
-                   property="root.dist.dir.exists"/>
-        <fail unless="root.dist.dir.exists">
-
-            The ${project.name} project as a whole must be built at least once before running the
-            ${module.name} build.
-        </fail>
-    </target> -->
 
     <!-- ===================================================================
       -  Template target.  Never called explicitly, only used to pass target
@@ -89,7 +59,7 @@
              Any dependencies that are to be satisified by one module for another
              must be declared in the order the dendencies occur. -->
         <ant dir="api" target="${target}"/>
-        <!-- <ant dir="ri"  target="${target}"/> -->
+        <ant dir="ri" target="${target}"/>
 
     </target>
 
@@ -131,7 +101,7 @@
       -  =================================================================== -->
     <target name="compile.test" depends="prepare">
         <javac srcdir="${test.dir}"
-               destdir="${test-classes.dir}"
+               destdir="${test.classes.dir}"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
@@ -145,11 +115,110 @@
         </antcall>
     </target>
 
+    <target name="junit.check.warning" if="tests.failed">
+        <echo>
+        ***********************************************************
+        * One or more unit tests failed!
+        * Check the reports located in ${test.docs.dir}
+        * for details...
+        ***********************************************************
+        </echo>
+    </target>
+
     <!-- ===================================================================
-       - dist - calls the "dist" target for all modules.  All modules are
-       -        required to have this defined as it creates a module's
-       -        artifacts (jars, wars, etc).
-       - =================================================================== -->
+      -  quick-test-report - quickly generates test report documentation based
+      -  on the xml test reports previously created during a junit task
+      -  execution. (this does not run the task).
+      -  =================================================================== -->
+    <target name="test.report" depends="prepare">
+        <echo message="Generating test reports..."/>
+
+        <junitreport todir="${test.docs.dir}">
+            <fileset dir=".">
+                <include name="**/TEST-*"/>
+            </fileset>
+            <report todir="${test.docs.dir}"/>
+        </junitreport>
+    </target>
+
+    <target name="unit.tests" depends="compile">
+        <echo message="Executing unit tests..."/>
+
+        <!-- Any properties files needed by test cases and/or Spring test case
+             configuration must be under the JDYN_ROOT hierarchy so relative
+             file references may work properly.  -->
+        <copy toDir="${classes.dir}" file="${root.base.dir}/etc/log4j.properties"/>
+        <copy toDir="${classes.dir}" file="${root.base.dir}/db/build/gen/jdbc.properties"/>
+
+        <junit printsummary="withOutAndErr"
+               showoutput="true"
+               haltonfailure="no"
+               failureproperty="tests.failed"
+               errorproperty="tests.failed"
+               timeout="60000"
+               fork="yes">
+            <classpath refid="test.path"/>
+
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/> <!-- allows us to generate web reports -->
+
+            <batchtest fork="true" todir="${gen.dir}">
+                <fileset dir="${test.classes.dir}">
+
+                    <include name="**/*Test.class"/>
+
+                    <exclude name="**/*IntegrationTest.class"/>
+                    <exclude name="**/*SystemTest.class"/>
+                    <exclude name="**/*StressTest.class"/>
+
+                </fileset>
+            </batchtest>
+
+        </junit>
+
+    </target>
+
+    <target name="test" depends="dist">
+        <antcall target="template">
+            <param name="target" value="test"/>
+        </antcall>
+    </target>
+
+    <!-- ===================================================================
+         jar - not called from the master or module builds, but provided
+         as a default convenience target for submodules to jar up
+         their resources.  If a submodule has more complex requirements
+         when creating their jar, it can override this task by
+         defining a 'jar' target in its local build file.
+         =================================================================== -->
+    <target name="jar" depends="compile">
+        <jar jarfile="${dist.jar}">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.gif"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.png"/>
+            </fileset>
+            <manifest>
+				<attribute name="Implementation-Title"
+                           value="${project.name}-${module.name}-${submodule.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+			</manifest>
+        </jar>
+    </target>
+
+    <!-- ===================================================================
+         dist - calls the "dist" target for all modules.  All modules are
+                required to have this defined as it creates a module's
+                artifacts (jars, wars, etc).
+         =================================================================== -->
     <target name="dist" depends="prepare">
         <antcall target="template">
             <param name="target" value="dist"/>
