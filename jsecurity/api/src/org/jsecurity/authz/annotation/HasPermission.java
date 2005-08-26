@@ -141,6 +141,5 @@ public @interface HasPermission {
      * @see java.security.Permission#getActions()
      */
     String[] actions() default {"*"};
-
 }
 
