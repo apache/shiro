@@ -37,6 +37,16 @@ package org.jsecurity.authz;
 public interface Authorizer {
 
     /**
+     * Returns whether or not the specified <tt>AuthorizationContext</tt> is authorized to
+     * execute the given <tt>AuthorizedAction</tt>.
+     * @param context the <tt>AuthorizationContext</tt> used to check for action authorization
+     * @param action the action to check for authorization
+     * @return true if the <tt>context</tt> can execute the specified <tt>action</tt>, false
+     *         otherwise.
+     */
+    boolean isAuthorized( AuthorizationContext context, AuthorizedAction action );
+
+    /**
      * Checks whether the user with the given {@link AuthorizationContext}
      * is authorized to perform the given {@link AuthorizedAction}.  If
      * the user is not authorized to perform the action, an
