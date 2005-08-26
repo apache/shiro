@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,10 +25,10 @@
 
 package org.jsecurity.authz.module;
 
-import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.authz.UnauthorizedException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,13 +37,11 @@ import java.util.Set;
 
 
 /**
- * An implementation of {@link org.jsecurity.authz.Authorizer} that
- * grants authorization based on a set of authorization votes from a set of
- * {@link AuthorizationModule}s.
- *
- * todo Currently uses delegation, should we instead make this abstract and make specific subclasses that implement isAuthorized()?
+ * An implementation of {@link org.jsecurity.authz.Authorizer} that grants authorization based on
+ * votes from a set of {@link AuthorizationModule}s.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class ModuleAuthorizer implements Authorizer {
 
@@ -55,15 +53,14 @@ public class ModuleAuthorizer implements Authorizer {
      *          I N S T A N C E          |
      *================================== */
     /**
-     * The authorization module strategy used to determine whether a user should
-     * be grant authorization based on votes returned from the set of
-     * authorization modules.
+     * The authorization module strategy used to determine whether a user should be grant
+     * authorization based on votes returned from the set of authorization modules.
      */
     protected ModuleAuthorizationStrategy strategy;
 
     /**
-     * The set of authorization modules that are consulted for authorization
-     * requests made to this module.
+     * The set of authorization modules that are consulted for authorization requests made to this
+     * module.
      */
     protected Set<AuthorizationModule> authorizationModules;
 
@@ -71,9 +68,10 @@ public class ModuleAuthorizer implements Authorizer {
     /*------------------------------------
      *       C O N S T R U C T O R S     |
      *================================== */
+
     /**
-     * Initializes this instance with no authorization modules and the default
-     * {@link NoDenialStrategy} authorization strategy.
+     * Initializes this instance with no authorization modules and the default {@link
+     * NoDenialStrategy} authorization strategy.
      */
     public ModuleAuthorizer() {
         this.authorizationModules = new HashSet<AuthorizationModule>();
@@ -92,35 +90,37 @@ public class ModuleAuthorizer implements Authorizer {
     /*------------------------------------
      *           M E T H O D S           |
      *================================== */
+
     /**
-     * Checks whether the given context is authorized to perform the given action
-     * by asking each of the authorization modules to vote on whether or not
-     * to grant authorization.
-     * @param context the context of the user being authorized.
-     * @param action the action the user is requesting authorization for.
+     * @see Authorizer#isAuthorized(AuthorizationContext,AuthorizedAction)
      */
-    public void checkAuthorization( AuthorizationContext context,
-                                    AuthorizedAction action ) {
+    public boolean isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
 
         Map<AuthorizationModule, AuthorizationVote> votes =
-                new HashMap<AuthorizationModule,AuthorizationVote>( authorizationModules.size() );
+            new HashMap<AuthorizationModule, AuthorizationVote>( authorizationModules.size() );
 
         // Gather the authorization votes from each module
-        for( AuthorizationModule module : authorizationModules ) {
+        for ( AuthorizationModule module : authorizationModules ) {
 
             // Only collect a vote if the module supports voting on the particular
             // action
-            if( module.supports( action ) ) {
+            if ( module.supports( action ) ) {
                 AuthorizationVote vote = module.isAuthorized( context, action );
                 votes.put( module, vote );
             }
 
         }
 
-        // Use the strategy to determine whether or not
-        if( strategy.isAuthorized( context, action, votes ) == false ) {
-            throw new AuthorizationException( "Authorization to perform action [" + action + "] " +
-                                              "failed.");
+        return strategy.isAuthorized( context, action, votes );
+    }
+
+    /**
+     * @see Authorizer#checkAuthorization(AuthorizationContext,AuthorizedAction)
+     */
+    public void checkAuthorization( AuthorizationContext context, AuthorizedAction action ) {
+        if ( !isAuthorized( context, action ) ) {
+            String msg = "Unauthorized to perform action [" + action + "]";
+            throw new UnauthorizedException( msg );
         }
     }
 }
