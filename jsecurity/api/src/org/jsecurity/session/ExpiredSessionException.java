@@ -25,12 +25,13 @@
 package org.jsecurity.session;
 
 /**
- * Exception thrown when attempting to interact with the system under an established session
- * when that session has expired.
+ * A special case of an invalid session.  This exception is thrown when attempting to interact
+ * with the system under under an established session when that session has expired due to
+ * inactivity (i.e. time-out).
  *
  * @author Les Hazlewood
  */
-public class ExpiredSessionException extends SessionException {
+public class ExpiredSessionException extends InvalidSessionException {
 
     public ExpiredSessionException() {
         super();

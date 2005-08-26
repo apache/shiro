@@ -11,7 +11,7 @@
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
-    <path id="submodule.path"/>
+    <path id="compile.path"/>
 
     <!-- ===================================================================
       -  clean - clean all build remnants from this submodule

@@ -28,3 +28,7 @@ Some notes:
 - Commons Logging 1.0.4 (http://jakarta.apache.org/commons/logging)
 - required for building JSecurity
 - required at runtime as JSecurity uses it for all logging
+
+* jarjar/jarjar.jar
+- Tonic Systems JarJar 0.6 (http://tonicsystems.com/products/jarjar/)
+- Required at build time to create a single jar from multiple jars
