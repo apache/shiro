@@ -13,9 +13,9 @@
     <property name="lib.dir" value="${module.base.dir}/lib"/>
 
     <!-- ===================================================================
- -  Template target.  Never called explicitly, only used to pass target
- -  calls to the underlying children builds.
- -  =================================================================== -->
+      -  Template target.  Never called explicitly, only used to pass target
+      -  calls to the underlying children builds.
+      -  =================================================================== -->
     <target name="template">
         <!-- This section defines the modules and the order in which they are
              executed for any given target.  This means ORDER MATTERS.
