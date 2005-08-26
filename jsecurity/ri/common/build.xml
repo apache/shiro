@@ -11,7 +11,7 @@
     <property name="dist.jar.name" value="${project.name}-${module.name}-${submodule.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
-    <path id="submodule.path">
+    <path id="compile.path">
         <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
         <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>
     </path>

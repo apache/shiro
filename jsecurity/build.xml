@@ -89,7 +89,7 @@
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
-               classpathref="submodule.path">
+               classpathref="compile.path">
             <src path="${src.dir}"/>
         </javac>
     </target>
@@ -214,15 +214,66 @@
         </jar>
     </target>
 
+    <target name="composite-jars" depends="prepare">
+        <path id="jarjar.path">
+            <pathelement location="${root.base.dir}/ri/lib/jarjar/jarjar.jar"/>
+        </path>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="jarjar.path"/>
+
+        <jarjar jarfile="${root.dist.dir}/${project.name}-business.jar">
+            <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
+            <manifest>
+				<attribute name="Implementation-Title"
+                           value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+			</manifest>
+        </jarjar>
+
+        <jarjar jarfile="${root.dist.dir}/${project.name}-client.jar">
+            <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/>
+            <manifest>
+				<attribute name="Implementation-Title"
+                           value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+			</manifest>
+        </jarjar>
+
+        <jarjar jarfile="${root.dist.dir}/${project.name}.jar">
+            <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/>
+            <manifest>
+				<attribute name="Implementation-Title"
+                           value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+			</manifest>
+        </jarjar>
+
+    </target>
+
+
+
     <!-- ===================================================================
-         dist - calls the "dist" target for all modules.  All modules are
-                required to have this defined as it creates a module's
-                artifacts (jars, wars, etc).
-         =================================================================== -->
+   dist - calls the "dist" target for all modules.  All modules are
+          required to have this defined as it creates a module's
+          artifacts (jars, wars, etc).
+   =================================================================== -->
     <target name="dist" depends="prepare">
         <antcall target="template">
             <param name="target" value="dist"/>
         </antcall>
+        <antcall target="composite-jars"/>
+        <!-- copy over the readme file in the dist directory so people understand
+             what the files do: -->
+        <copy toDir="${root.dist.dir}" file="${root.etc.dir}/README.txt"/>
     </target>
 
 
