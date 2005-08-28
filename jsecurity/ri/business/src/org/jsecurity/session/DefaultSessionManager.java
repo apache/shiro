@@ -24,128 +24,85 @@
  */
 package org.jsecurity.session;
 
-import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.session.eis.SessionDAO;
-import org.jsecurity.session.event.SessionEventSender;
-import org.jsecurity.session.event.SessionEvent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Calendar;
-import java.security.Principal;
+import java.util.Collection;
+import java.io.Serializable;
 
 /**
+ * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
+ *
  * @author Les Hazlewood
- * @version $Revision$ $Date$
  */
-public class DefaultSessionManager implements SessionManager {
+public class DefaultSessionManager extends AbstractSessionManager
+    implements ValidatingSessionManager {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
-    protected SessionDAO sessionDAO = null;
-    protected SessionEventSender sessionEventSender = null;
-
-    public DefaultSessionManager(){}
-
-    public void setSessionDAO( SessionDAO sessionDAO ) {
-        this.sessionDAO = sessionDAO;
+    public DefaultSessionManager(){
+        super.setSessionClass( SimpleSession.class );
     }
 
-    public void setSessionEventSender( SessionEventSender sessionEventSender ) {
-        this.sessionEventSender = sessionEventSender;
+    protected void onStop( Session session ) {
+        ((SimpleSession)session).setStopTimestamp( Calendar.getInstance() );
     }
 
-    public void init() {
-        if ( sessionDAO == null ) {
-            String msg = "sessionDAO property has not been set.  The sessionDAO is required to " +
-                         "access session objects during runtime.";
-            throw new IllegalStateException( msg );
-        }
-        if ( sessionEventSender == null ) {
-            if ( log.isInfoEnabled() ) {
-                String msg = "sessionEventSender property has not been set.  SessionEvents will " +
-                             "not be propagated.";
-                log.info( msg );
-            }
+    protected void onExpire( Session session ) {
+        SimpleSession ss = (SimpleSession)session;
+        ss.setStopTimestamp( Calendar.getInstance() );
+        ss.setExpired( true );
+    }
+
+    protected void onTouch( Session session ) {
+        ((SimpleSession)session).setLastAccessTime( Calendar.getInstance() );
+    }
+
+    protected void init( Session newInstance, InetAddress hostAddr ) {
+
+        if ( newInstance instanceof SimpleSession ) {
+            SimpleSession ss = (SimpleSession)newInstance;
+            ss.setHostAddress( hostAddr );
         }
     }
 
-    protected void send( SessionEvent event ) {
-        if ( this.sessionEventSender != null ) {
-            if ( log.isDebugEnabled() ) {
-                String msg = "Using sessionEventSender to send event [" + event + "]";
-                log.debug( msg );
+    /**
+     * @see org.jsecurity.session.ValidatingSessionManager#validateSessions()
+     */
+    public void validateSessions() {
+        if ( log.isInfoEnabled() ) {
+            log.info( "Validating all active sessions..." );
+        }
+
+        int invalidCount = 0;
+
+        Collection<Session> activeSessions = getSessionDAO().getActiveSessions();
+
+        if ( activeSessions != null && !activeSessions.isEmpty() ) {
+            for( Session s : activeSessions ) {
+                try {
+                    validate( s );
+                } catch ( InvalidSessionException e ) {
+                    if ( log.isDebugEnabled() ) {
+                        boolean expired = (e instanceof ExpiredSessionException );
+                        String msg = "Invalidated session with id [" + s.getSessionId() + "]" +
+                            ( expired ? " (expired)" : " (stopped)" );
+                        log.debug( msg );
+                    }
+                    invalidCount++;
+                }
             }
-            this.sessionEventSender.send( event );
-        } else {
-            if ( log.isDebugEnabled() ) {
-                String msg = "No sessionEventSender set.  Event of type [" +
-                    event.getClass().getName() + "] will not be propagated.";
-                log.debug( msg );
+        }
+
+        if ( log.isInfoEnabled() ) {
+            String msg = "Finished session validation.";
+            if ( invalidCount > 0 ) {
+                msg += "  [" + invalidCount + "] sessions were stopped.";
+            } else {
+                msg += "  No sessions were stopped";
             }
+            log.info( msg );
         }
     }
 
-
-    public Serializable start( InetAddress originatingHost )
-        throws HostUnauthorizedException, IllegalArgumentException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Calendar getStartTimestamp( Serializable sessionId ) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Calendar getStopTimestamp( Serializable sessionId ) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Calendar getLastAccessTime( Serializable sessionId ) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isAuthenticated( Serializable sessionId ) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isStopped( Serializable sessionId ) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public boolean isExpired( Serializable sessionId ) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void touch( Serializable sessionId ) throws ExpiredSessionException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Principal getPrincipal( Serializable sessionId ) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public InetAddress getHostAddress( Serializable sessionId ) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void stop( Serializable sessionId ) throws ExpiredSessionException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Object getAttribute( Serializable sessionId, Object key )
-        throws ExpiredSessionException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void setAttribute( Serializable sessionId, Object key, Object value )
-        throws ExpiredSessionException, IllegalArgumentException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public Object removeAttribute( Serializable sessionId, Object key )
-        throws ExpiredSessionException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public void validateSession( Serializable sessionId ) {
+        retrieveAndValidateSession( sessionId );
     }
 }

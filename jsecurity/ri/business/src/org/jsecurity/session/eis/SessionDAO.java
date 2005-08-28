@@ -25,16 +25,79 @@
 package org.jsecurity.session.eis;
 
 import org.jsecurity.session.Session;
+import org.jsecurity.session.UnknownSessionException;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 public interface SessionDAO {
 
+    /**
+     * Inserts a new Session record into the underling EIS (e.g. Relational database, mainframe,
+     * etc, depending on the DAO implementation).
+     *
+     * <p>After this method is invoked, the {@link org.jsecurity.session.Session#getSessionId()}
+     * method executed on the argument must return a valid session identifier.
+     *
+     * <p>Implementations are free to throw any exceptions that might occur due to
+     * integrity violation constraints or other EIS related errors.
+     *
+     * @param session the {@link Session} object to create in the EIS.
+     */
     void create( Session session );
 
-    Session readSession( Serializable sessionId );
+    /**
+     * Retrieves the session from the EIS uniquely identified by the specified
+     * <tt>sessionId</tt>.
+     *
+     * @param sessionId the system-wide unique identifier of the Session object to retrieve from
+     * the EIS.
+     * @return the persisted session in the EIS identified by <tt>sessionId</tt>.
+     * @throws UnknownSessionException if there is no EIS record for any session with the
+     * specified <tt>sessionId</tt>
+     */
+    Session readSession( Serializable sessionId ) throws UnknownSessionException;
 
-    void update( Session session );
+    /**
+     * Updates (persists) data from a previously created Session instance in the EIS identified by
+     * <tt>{@link Session#getSessionId() session.getSessionId()}</tt>.  This effectively propagates
+     * the data in the argument to the EIS record previously saved.
+     *
+     * <p>Aside from the UnknownSessionException, implementations are free to throw any other
+     * exceptions that might occur due to integrity violation constraints or other EIS related
+     * errors.
+     *
+     * @param session the Session to update
+     * @throws UnknownSessionException if no existing EIS session record exists with the
+     * identifier of {@link Session#getSessionId() session.getSessionId()}
+     */
+    void update( Session session ) throws UnknownSessionException;
 
+    /**
+     * Deletes the associated EIS record of the specified <tt>session</tt>.  If there never
+     * existed a session EIS record with the identifier of
+     * {@link Session#getSessionId() session.getSessionId()}, then this method does nothing.
+     *
+     * @param session the session to delete.
+     */
     void delete( Session session );
+
+    /**
+     * Returns all sessions in the EIS that are considered active, meaning all sessions that
+     * haven't been stopped/expired.  This is primarily used in to validate potential orphans.
+     *
+     * If there are no active sessions in the EIS, this method may return an empty collection
+     * or <tt>null</tt>.
+     *
+     * @return a Collection of <tt>Session</tt>s that are considered active, or an
+     * empty collection or <tt>null</tt> if there are no active sessions.
+     */
+    Collection<Session> getActiveSessions();
+
+    /**
+     * Convenience method to determine the number of active sessions; primarily used for
+     * reporting.
+     * @return the total number of active sessions (those that haven't been stopped or expired).
+     */
+    int getActiveSessionCount();
 }

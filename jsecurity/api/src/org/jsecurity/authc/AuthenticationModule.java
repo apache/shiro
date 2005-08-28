@@ -26,21 +26,24 @@ package org.jsecurity.authc;
 
 /**
  * An AuthenticationModule is an {@link Authenticator} that can support specific types of
- * {@link AuthenticationToken AuthenticationToken}s.  An implementation of this class can be used
- * in any JSecurity compatible PAM (Pluggable Authentication Module) implementation.
+ * <em>authentication tokens</em>.  Please see the {@link Authenticator} class API to understand
+ * how <tt>authentication token</tt>s function.
+ *
+ * <p>An implementation of this class can be used
+ *    in any JSecurity compatible PAM (Pluggable Authentication Module) implementation.
  *
  * @author Les Hazlewood
  */
 public interface AuthenticationModule extends Authenticator {
 
     /**
-     * Returns whether or not this module can authenticate {@link AuthenticationToken}s of the
-     * specified type.
+     * Returns true if this module can authenticate subjects with <tt>authentication token</tt>
+     * instances of the specified Class, false otherwise.
      *
-     * If the module does not support the specified type, it will not be used to authenticate any
+     * <p>If the module does not support the specified type, it will not be used to authenticate any
      * tokens of that type.
      *
-     * @param tokenClass the {@link AuthenticationToken} Class to check for support.
+     * @param tokenClass the <tt>authentication token</tt> Class to check for support.
      *
      * @return true if this module can authenticate subjects with tokens of the
      * specified class, false otherwise.

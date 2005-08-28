@@ -109,8 +109,8 @@ public interface SessionFactory {
      *
      * @param sessionId the id of the session to acquire.
      * @return a handle to the session identified by <tt>sessionId</tt>
-     * @throws ExpiredSessionException if the session identified by <tt>sessionId</tt> has expired,
-     * thereby proventing further use.
+     * @throws InvalidSessionException if the session identified by <tt>sessionId</tt> has
+     * been stopped, expired, or doesn't exist.
      * @throws AuthorizationException if the executor of this method is not allowed to acquire
      * (i.e. join) the session identified by <tt>sessionId</tt>.  The reason for the exception
      * is implementation specific and could be for any number of reasons.  A common reason in many
@@ -120,6 +120,6 @@ public interface SessionFactory {
      *
      * @see HostUnauthorizedException
      */
-    Session getSession( Serializable sessionId ) throws ExpiredSessionException, AuthorizationException;
+    Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException;
 
 }

@@ -24,6 +24,8 @@
  */
 package org.jsecurity;
 
+import java.io.Serializable;
+
 /**
  * Root exception for all JSecurity runtime exceptions.  This class is used as the root instead
  * of {@link java.lang.SecurityException} to remove the potential for conflicts;  many other
@@ -32,7 +34,7 @@ package org.jsecurity;
  *
  * @author Les Hazlewood
  */
-public class JSecurityException extends RuntimeException {
+public class JSecurityException extends RuntimeException implements Serializable {
 
     public JSecurityException() {
         super();

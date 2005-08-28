@@ -27,41 +27,41 @@ package org.jsecurity.session;
 import java.io.Serializable;
 
 /**
- * A special case of a StoppedSessionException.  An expired session is a session that has
- * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
- * other reason).
+ * Exception thrown when attempting to interact with the system under a session that has been
+ * stopped.  A session may be stopped in any number of ways, most commonly due to explicit
+ * stopping (e.g. from logging out), or due to expiration.
  *
  * @author Les Hazlewood
+ * @version $Revision$ $Date$
  */
-public class ExpiredSessionException extends StoppedSessionException {
+public class StoppedSessionException extends InvalidSessionException {
 
-    public ExpiredSessionException() {
+    public StoppedSessionException() {
         super();
     }
 
-    public ExpiredSessionException( String s ) {
-        super( s );
+    public StoppedSessionException( String s ) {
+        super( s );    //To change body of overridden methods use File | Settings | File Templates.
     }
 
-    public ExpiredSessionException( String message, Throwable cause ) {
+    public StoppedSessionException( String message, Throwable cause ) {
         super( message, cause );
     }
 
-    public ExpiredSessionException( Throwable cause ) {
+    public StoppedSessionException( Throwable cause ) {
         super( cause );
     }
 
-    public ExpiredSessionException( Serializable sessionId ) {
-        this( sessionId, "Session with id [" + sessionId + "] has expired" );
+    public StoppedSessionException( Serializable sessionId ) {
+        super( sessionId );
     }
 
-    public ExpiredSessionException( Serializable sessionId, String message ) {
+    public StoppedSessionException( Serializable sessionId, String message ) {
         super( sessionId, message );
     }
 
-    public ExpiredSessionException( Serializable sessionId, String message, Throwable cause ) {
+    public StoppedSessionException( Serializable sessionId, String message, Throwable cause ) {
         super( sessionId, message, cause );
     }
-
 
 }
