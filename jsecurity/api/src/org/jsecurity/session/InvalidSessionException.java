@@ -24,6 +24,8 @@
  */
 package org.jsecurity.session;
 
+import java.io.Serializable;
+
 /**
  * Exception thrown when attempting to interact with the system under an established session
  * when that session is considered invalid.  The meaning of the term 'invalid' is based on
@@ -31,8 +33,10 @@ package org.jsecurity.session;
  * stopped (e.g. in the event of a user log-out or when explicitly
  * {@link org.jsecurity.session.Session#stop() stopped} programmatically.  A Session can also be
  * considered invalid if it has expired.
- * 
+ *
+ * @see StoppedSessionException
  * @see ExpiredSessionException
+ * @see UnknownSessionException
  *
  * @author Les Hazlewood
  */
@@ -52,6 +56,18 @@ public class InvalidSessionException extends SessionException {
 
     public InvalidSessionException( Throwable cause ) {
         super( cause );
+    }
+
+    public InvalidSessionException( Serializable sessionId ) {
+        super( sessionId );
+    }
+
+    public InvalidSessionException( Serializable sessionId, String message ) {
+        super( sessionId, message );
+    }
+
+    public InvalidSessionException( Serializable sessionId, String message, Throwable cause ) {
+        super( sessionId, message, cause );
     }
 
 }

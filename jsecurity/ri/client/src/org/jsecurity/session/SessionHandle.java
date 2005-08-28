@@ -183,9 +183,12 @@ public class SessionHandle implements Session {
     /**
      * @see Session#setAttribute(Object key, Object value)
      */
-    public void setAttribute( Object key, Object value )
-    throws ExpiredSessionException, IllegalArgumentException {
-        sessionManager.setAttribute( sessionId, key, value );
+    public void setAttribute( Object key, Object value ) throws ExpiredSessionException {
+        if ( value == null ) {
+            removeAttribute( key );
+        } else {
+            sessionManager.setAttribute( sessionId, key, value );
+        }
     }
 
     /**

@@ -73,11 +73,13 @@ public interface SessionManager {
 
     /**
      * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> was
-     * stopped in the system.  A session could be stopped for a number of reasons.  See the
+     * stopped or expired in the system, or <tt>null</tt> if the session is still active. A
+     * session could be stopped for a number of reasons.  See the
      * {@link Session#stop() Session.stop()} method for more details.
      *
      * @param sessionId
-     * @return the system time the session stopped.
+     * @return the system time the session stopped or expired, or <tt>null</tt> if the session
+     * is still active.
      * @see org.jsecurity.session.Session#getStopTimestamp()
      */
     Calendar getStopTimestamp( Serializable sessionId );
@@ -95,20 +97,24 @@ public interface SessionManager {
     Calendar getLastAccessTime( Serializable sessionId );
 
     /**
-     * Returns whether or not the session identified by <code>sessionId</code> has been
-     * authenticated (e.g. a user has logged in to the system during the session).
-     *
-     * @param sessionId the session Id of the session to verify.
-     *
-     * @return true if the session has been authenticated (i.e. 'logged in'), false otherwise.
+     * Returns <tt>true</tt> if the session with the specified <tt>sessionId</tt> has been
+     * stopped, <tt>false</tt> otherwise.
+     * @param sessionId the id of the session to check
+     * @return <tt>true</tt> if the session has been stopped, <tt>false</tt> otherwise.
      */
-    boolean isAuthenticated( Serializable sessionId );
-
     boolean isStopped( Serializable sessionId );
 
     /**
      * Returns whether or not the session identified by the given <tt>sessionId</tt> has expired
      * in the system.
+     *
+     * <p>This method can be used in conjunction with {@link #isStopped} to determine if the
+     * user has logged out, depending upon an application's inference of business rules.
+     * Assuming the only way for a session to be stopped (other than from
+     * expiration) is due to an explicit user log-out you can infer that if the session
+     * {@link #isStopped} but not {@link #isExpired}, then the user has logged-out.  Of course,
+     * this is dependent upon the above assumption and may not be true for every application.
+     *
      * @param sessionId the system identifier of the session of interest
      * @return true if the session has expired, false otherwise.
      */
@@ -121,8 +127,9 @@ public interface SessionManager {
      * @see Session#touch
      *
      * @param sessionId the id of the session to update.
+     * @throws InvalidSessionException if the session has expired prior to calling this method.
      */
-    void touch( Serializable sessionId ) throws ExpiredSessionException;
+    void touch( Serializable sessionId ) throws InvalidSessionException;
 
     /**
      * Returns the principal of the authenticated user or entity that initiated the session
@@ -139,8 +146,8 @@ public interface SessionManager {
      * then be called to get the principal (username) of that person.
      *
      * <p>The principal itself can be any valid Java security principal.  In the above example, it
-     * was a username.  In other systems (especially RDBMS-based ones) it is usually an
-     * entity/user id such as a UUID or Integer.
+     * was a username.  In other systems (especially RDBMS-based ones) it is often an
+     * entity/user id such as a UUID or Integer or even a Public Key.
      *
      * @return the identifying principal of the user or entity that authenticated this session,
      * or <code>null</code> if this session hasn't yet been authenticated.
@@ -160,8 +167,15 @@ public interface SessionManager {
      */
     InetAddress getHostAddress( Serializable sessionId );
 
-    void stop( Serializable sessionId ) throws ExpiredSessionException;
-
+    /**
+     * Explicitly stops the session identified by <tt>sessionId</tt>, thereby releasing all
+     * associated resources.
+     * @param sessionId the system identfier of the system to stop.
+     * @throws InvalidSessionException if the session has stopped or expired prior to calling
+     * this method.
+     * @see Session#stop
+     */
+    void stop( Serializable sessionId ) throws InvalidSessionException;
 
     /**
      * Returns the object bound to the specified session identified by the specified key.  If there
@@ -170,28 +184,26 @@ public interface SessionManager {
      * @param key the unique name of the object bound to the specified session
      * @return the object bound under the specified <tt>key</tt> name or <tt>null</tt> if there is
      * no object bound under that name.
-     * @throws ExpiredSessionException if the specified session has expired prior to calling this method.
+     * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see Session#getAttribute(Object key)
      */
-    Object getAttribute( Serializable sessionId, Object key ) throws ExpiredSessionException;
+    Object getAttribute( Serializable sessionId, Object key ) throws InvalidSessionException;
 
     /**
      * Binds the specified <tt>value</tt> to the specified session uniquely identified by the
      * specifed <tt>key</tt> name.  If there is already an object bound under the <tt>key</tt>
      * name, that existing object will be replaced by the new <tt>value</tt>.
      *
-     * <p>The <tt>value</tt> parameter cannot be null.  If so, an {@link IllegalArgumentException}
-     * will be thrown.  If you want to remove (i.e. unbind) the object bound under the name
-     * <tt>key</tt>, call the {@link #removeAttribute(Serializable sessionId, Object key)} method instead.
+     * <p>If the <tt>value</tt> parameter is null, it has the same effect as if the
+     * {@link #removeAttribute(Serializable sessionId, Object key)} method was called.
      *
      * @param sessionId the system identifier of the session of interest
      * @param key the name under which the <tt>value</tt> object will be bound in this session
      * @param value the object to bind in this session.
-     * @throws ExpiredSessionException if this session has expired prior to calling this method.
-     * @throws IllegalArgumentException if the <tt>value</tt> argument is <tt>null</tt>.
+     * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see Session#setAttribute(Object key, Object value)
      */
-    void setAttribute( Serializable sessionId, Object key, Object value ) throws ExpiredSessionException, IllegalArgumentException;
+    void setAttribute( Serializable sessionId, Object key, Object value ) throws InvalidSessionException;
 
     /**
      * Removes (unbinds) the object bound to this session under the specified <tt>key</tt> name.
@@ -199,10 +211,10 @@ public interface SessionManager {
      * @param key the name uniquely identifying the object to remove
      * @return the object removed or <tt>null</tt> if there was no object bound under the specified 
      * <tt>key</tt> name.
-     * @throws ExpiredSessionException if this session has expired prior to calling this method.
+     * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see Session#removeAttribute(Object key)
      */
-    Object removeAttribute( Serializable sessionId, Object key ) throws ExpiredSessionException;
+    Object removeAttribute( Serializable sessionId, Object key ) throws InvalidSessionException;
 
 
 }

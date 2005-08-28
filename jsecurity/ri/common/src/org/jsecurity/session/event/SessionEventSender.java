@@ -26,7 +26,8 @@ package org.jsecurity.session.event;
 
 /**
  * Sends a {@link SessionEvent} to interested parties.  How interested parties receive the events
- * (e.g. via sychronous calls to listeners, JMS, etc) is determined by the implementation.
+ * (e.g. via sychronous calls to listeners, publishing JMS messages, etc) is determined by the
+ * implementation.
  *
  * @author Les Hazlewood
  */

@@ -31,6 +31,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
+ * Simple implementation of the {@link SessionEventSender} interface that synchronously calls any
+ * registered {@link SessionEventListener}s.
+ *
+ * @see #setListeners
+ *
  * @author Les Hazlewood
  * @version $Revision$ $Date$
  */

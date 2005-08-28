@@ -26,6 +26,8 @@ package org.jsecurity.session;
 
 import org.jsecurity.JSecurityException;
 
+import java.io.Serializable;
+
 /**
  * General security exception attributed to problems during interaction with the system during
  * a session.
@@ -34,12 +36,24 @@ import org.jsecurity.JSecurityException;
  */
 public class SessionException extends JSecurityException {
 
+    private Serializable sessionId;
+
     public SessionException() {
         super();
     }
 
+    public SessionException( Serializable sessionId ) {
+        this();
+        this.sessionId = sessionId;
+    }
+
     public SessionException( String s ) {
         super( s );
+    }
+
+    public SessionException( Serializable sessionId, String message ) {
+        this( message );
+        this.sessionId = sessionId;
     }
 
     public SessionException( String message, Throwable cause ) {
@@ -48,6 +62,19 @@ public class SessionException extends JSecurityException {
 
     public SessionException( Throwable cause ) {
         super( cause );
+    }
+
+    public SessionException( Serializable sessionId, String message, Throwable cause ) {
+        this( message, cause );
+        this.sessionId = sessionId;
+    }
+
+    public Serializable getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId( Serializable sessionId ) {
+        this.sessionId = sessionId;
     }
 
 }

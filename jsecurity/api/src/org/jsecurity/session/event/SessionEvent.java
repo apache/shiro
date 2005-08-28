@@ -27,11 +27,10 @@ package org.jsecurity.session.event;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.EventObject;
+import java.text.DateFormat;
 
 /**
  * General event concerning a {@link org.jsecurity.session.Session} instance.
- *
- * todo We need to decide whether or not to extend EventObject. -JCH
  *
  * @author Les Hazlewood
  */
@@ -70,7 +69,7 @@ public abstract class SessionEvent extends EventObject {
     public void setTimestamp( Calendar timestamp ) {
         this.timestamp = timestamp;
     }
-                               
+
     /**
      * Returns the timestamp associated with this event.
      *
@@ -84,4 +83,16 @@ public abstract class SessionEvent extends EventObject {
         return this.sessionId;
     }
 
+    public StringBuffer toStringBuffer() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("eventClass=").append(getClass().getName());
+        sb.append(",source=").append(getSource());
+        sb.append(",sessionId=").append(getSessionId());
+        sb.append(",timestamp=").append( DateFormat.getInstance().format( getTimestamp().getTime() ) );
+        return sb;
+    }
+
+    public String toString() {
+        return toStringBuffer().toString();
+    }
 }

@@ -27,41 +27,39 @@ package org.jsecurity.session;
 import java.io.Serializable;
 
 /**
- * A special case of a StoppedSessionException.  An expired session is a session that has
- * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
- * other reason).
+ * Exception thrown when attempting to interact with the system under the pretense of a
+ * particular session (e.g. under a specific session id), and that session does not exist in
+ * the system.
  *
  * @author Les Hazlewood
  */
-public class ExpiredSessionException extends StoppedSessionException {
+public class UnknownSessionException extends InvalidSessionException {
 
-    public ExpiredSessionException() {
+    public UnknownSessionException() {
         super();
     }
 
-    public ExpiredSessionException( String s ) {
+    public UnknownSessionException( String s ) {
         super( s );
     }
 
-    public ExpiredSessionException( String message, Throwable cause ) {
+    public UnknownSessionException( String message, Throwable cause ) {
         super( message, cause );
     }
 
-    public ExpiredSessionException( Throwable cause ) {
+    public UnknownSessionException( Throwable cause ) {
         super( cause );
     }
 
-    public ExpiredSessionException( Serializable sessionId ) {
-        this( sessionId, "Session with id [" + sessionId + "] has expired" );
+    public UnknownSessionException( Serializable sessionId ) {
+        super( sessionId );
     }
 
-    public ExpiredSessionException( Serializable sessionId, String message ) {
+    public UnknownSessionException( Serializable sessionId, String message ) {
         super( sessionId, message );
     }
 
-    public ExpiredSessionException( Serializable sessionId, String message, Throwable cause ) {
+    public UnknownSessionException( Serializable sessionId, String message, Throwable cause ) {
         super( sessionId, message, cause );
     }
-
-
 }

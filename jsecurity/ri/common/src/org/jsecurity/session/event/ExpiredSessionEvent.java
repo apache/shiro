@@ -42,5 +42,4 @@ public class ExpiredSessionEvent extends StoppedSessionEvent {
     public ExpiredSessionEvent( Object source, Serializable sessionId ) {
         super( source, sessionId );
     }
-
 }
