@@ -29,8 +29,8 @@ import java.io.Serializable;
 /**
  * Event sent to interested parties when a {@link org.jsecurity.session.Session} has started.
  *
+ * @since 0.1
  * @author Les Hazlewood
- * @version $Revision$ $Date$
  */
 public class StartedSessionEvent extends SessionEvent {
 

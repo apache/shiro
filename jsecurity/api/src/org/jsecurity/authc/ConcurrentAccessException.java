@@ -37,6 +37,7 @@ package org.jsecurity.authc;
  * <p>By disallowing concurrent access, such systems can ensure that each authenticated session
  * corresponds to one and only one user.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class ConcurrentAccessException extends AccountException {

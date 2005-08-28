@@ -41,7 +41,7 @@ import java.net.InetAddress;
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
  *
- * @since 1.0.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class SessionHandle implements Session {

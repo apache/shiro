@@ -26,6 +26,7 @@ package org.jsecurity.session.event;
 
 /**
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SessionEventListener {

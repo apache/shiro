@@ -32,6 +32,7 @@ import java.io.Serializable;
  * frameworks and products (such as J2EE containers) perform special operations when
  * encountering {@link java.lang.SecurityException}.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class JSecurityException extends RuntimeException implements Serializable {

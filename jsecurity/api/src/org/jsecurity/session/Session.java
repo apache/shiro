@@ -30,6 +30,14 @@ import java.net.InetAddress;
 import java.util.Calendar;
 
 /**
+ * A <tt>Session</tt> is a data context associated with a single entity (user, 3rd party process,
+ * etc) that communicates with a software system over a period of time.
+ *
+ * <p>All interaction with a secure system is done in the course of a <tt>Session</tt>, even if that
+ * <tt>Session</tt> only exists over the course of a single method invocation.  Sessions are
+ * extremely lightweight objects that have a managed lifecycle.
+ *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface Session {
@@ -55,13 +63,12 @@ public interface Session {
      *     return getId(); //system specific identifier
      * }</pre>
      *
-     *
      * @return The unique identifier assigned to the session upon creation.
      */
     Serializable getSessionId();
 
     /**
-     * Returns the time this session was started, i.e. the time the system created the instance.
+     * Returns the time this session was started; that is, the time the system created the instance.
      * @return The time the system created this session.
      */
     Calendar getStartTimestamp();
@@ -77,6 +84,7 @@ public interface Session {
      *   <li>If there is an internal system error and the session state can no longer accurately
      *       reflect the user's behavior, such in the case of a system crash</li>
      * </ul>
+     * </p>
      *
      * <p>Once stopped, a session may no longer be used.  It is locked from all further activity.
      *
@@ -86,7 +94,7 @@ public interface Session {
     Calendar getStopTimestamp();
 
     /**
-     * Returns the last time the user associated with this session interacted with the system.
+     * Returns the last time the account associated with this session interacted with the system.
      * With the exception of the {@link #touch()} method, merely calling this or other methods on
      * the Session will <em>not</em> update the last access time.
      *
@@ -95,8 +103,8 @@ public interface Session {
     Calendar getLastAccessTime();
 
     /**
-     * Returns whether or not this session has expired.  If so, no further user interaction may be
-     * done with the system under this session.
+     * Returns true if this session has expired, false otherwise.  If the session has
+     * expired, no further user interaction with the system may be done under this session.
      *
      * @return true if this session has expired, false otherwise.
      */
@@ -104,13 +112,13 @@ public interface Session {
 
 
     /**
-     * Returns the <tt>InetAddress</tt> of the host that originated this session, if known.  Returns
-     * <tt>null</tt> if the host is unknown.
+     * Returns the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
+     * if the host address is unknown.
      *
      * @return the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
      * if the host address is unknown.
      *
-     * @see SessionFactory#start(java.net.InetAddress);
+     * @see SessionFactory#start(java.net.InetAddress)
      */
     InetAddress getHostAddress();
 
@@ -168,7 +176,7 @@ public interface Session {
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      * this method.
      *
-     * @see #getStopTimestamp()
+     * @see #getStopTimestamp
      */
     void stop() throws InvalidSessionException;
 

@@ -29,6 +29,7 @@ package org.jsecurity.authz;
 /**
  * Represents an action that requires authorization in order to perform.
  *
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

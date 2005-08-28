@@ -32,8 +32,7 @@ import java.util.EventObject;
 /**
  * General event concerning the authentication of a particular user.
  *
- * todo We need to decide whether or not to extend EventObject.  -JCH
- *
+ * @since 0.1
  * @author Jeremy Haile
  */
 public abstract class AuthenticationEvent extends EventObject {

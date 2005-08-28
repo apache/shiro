@@ -35,6 +35,7 @@ import java.util.Set;
  * can only be acquired upon a successful login, as access control behavior must be associated
  * with a known identity.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface AuthorizationContext {

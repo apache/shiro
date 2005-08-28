@@ -40,7 +40,7 @@ import java.io.Serializable;
  * <p>All interaction with a secure system is done in the course of a Session, even if that
  * Session only exists over the course of a single method invocation.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SessionFactory {
@@ -55,9 +55,10 @@ public interface SessionFactory {
      * a valid <tt>hostAddress</tt> and the argument is <tt>null</tt>, an
      * {@link IllegalArgumentException IllegalArgumentException} will be thrown.
      *
-     * <p>In web-based systems, this InetAddress can be retrieved from the
-     * HttpSession.getRemoteAddr(), or in socket-based systems, it can be obtained via inspecting
-     * the socket initiator's host IP.
+     * <p>In web-based systems, this InetAddress can be inferred from the
+     * {@link javax.servlet.ServletRequest#getRemoteAddr() javax.servlet.ServletRequest.getRemoteAddr()}
+     * method, or in socket-based systems, it can be obtained via inspecting the socket
+     * initiator's host IP.
      *
      * <p>Most secure environments <em>should</em> require that a valid, non-<tt>null</tt>
      * <tt>hostAddress</tt> be specified, since knowing the <tt>hostAddress</tt> allows for more
@@ -67,12 +68,13 @@ public interface SessionFactory {
      *
      * <p><b>Caveat</b> - if clients to your system are on a
      * public network (as would be the case for a public web site), odds are high the clients can be
-     * behind a NAT (Network Address Translation) router.  If so, all clients accessing your system
-     * behind that router will have the same originating IP address.  If your system is configured
-     * to allow only one session per IP, then the next request from a different NAT client will
-     * fail and access will be deny for that client.  Just be aware that ip-based security
-     * policies are best utilized in LAN or private WAN environments when you can be sure clients
-     * will not share IPs or be behind such NAT routers.
+     * behind a NAT (Network Address Translation) router or HTTP proxy server.  If so, all clients
+     * accessing your system behind that router or proxy will have the same originating IP address.
+     * If your system is configured to allow only one session per IP, then the next request from a
+     * different NAT or proxy client will fail and access will be deny for that client.  Just be
+     * aware that ip-based security policies are best utilized in LAN or private WAN environments
+     * when you can be ensure clients will not share IPs or be behind such NAT routers or
+     * proxy servers.
      *
      * <p>Its probably beneficial to still require a valid, non-<tt>null</tt> argument even in
      * such NAT environments, since the originating IP could be used in access logging.  This
@@ -94,7 +96,7 @@ public interface SessionFactory {
     /**
      * Acquires a handle to the session identified by the specified <tt>sessionId</tt>.
      *
-     * <p>Although simple, this method finally enables behavior absent in Java for years:
+     * <p><b>Although simple, this method finally enables behavior absent in Java for years:</b>
      *
      * <p>the
      * ability to participate in a server-side session across clients of different mediums,
@@ -104,8 +106,8 @@ public interface SessionFactory {
      * <p>To maintain session integrity across client mediums, the sessionId must be transmitted
      * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
      * is nothing new - all web applications are susceptible to the same problem when transmitting
-     * Cookies or when using URL rewriting.  As long as the <tt>sessionId</tt> is transmitted
-     * securely, session integrity can be maintained.
+     * {@link javax.servlet.http.Cookie Cookie}s or when using URL rewriting.  As long as the
+     * <tt>sessionId</tt> is transmitted securely, session integrity can be maintained.
      *
      * @param sessionId the id of the session to acquire.
      * @return a handle to the session identified by <tt>sessionId</tt>
@@ -115,7 +117,7 @@ public interface SessionFactory {
      * (i.e. join) the session identified by <tt>sessionId</tt>.  The reason for the exception
      * is implementation specific and could be for any number of reasons.  A common reason in many
      * systems would be if one host tried to acquire/join a session that originated on an entirely
-     * different host (although it is not a JSecurity requirement this scenario is not allowed -
+     * different host (although it is not a JSecurity requirement this scenario is disallowed -
      * its just an example that <em>may</em> throw an Exception in many systems).
      *
      * @see HostUnauthorizedException

@@ -31,6 +31,7 @@ import java.io.Serializable;
  * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
  * other reason).
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class ExpiredSessionException extends StoppedSessionException {

@@ -33,23 +33,24 @@ package org.jsecurity.authz.module;
  *
  * @see AuthorizationModule
  *
+ * @since 0.1
  * @author Jeremy Haile
  */
 public enum AuthorizationVote {
 
     /**
-     * Vote that indicates that this module is abstaining from voting on whether
-     * or not a user should be grant authorization.
+     * Vote that indicates that a module abstains from voting on whether
+     * or not a user should be granted authorization.
      */
     abstain,
 
     /**
-     * Vote that indicates that this module grants authorization to the user.
+     * Vote that indicates that a module grants authorization to the user.
      */
     grant,
 
     /**
-     * Vote that indicates that this module denies authorization to the user.
+     * Vote that indicates that a module denies authorization to the user.
      */
     deny
 

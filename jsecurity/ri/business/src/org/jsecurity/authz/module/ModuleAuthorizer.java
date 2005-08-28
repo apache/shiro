@@ -40,6 +40,7 @@ import java.util.Set;
  * An implementation of {@link org.jsecurity.authz.Authorizer} that grants authorization based on
  * votes from a set of {@link AuthorizationModule}s.
  *
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

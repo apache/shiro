@@ -31,6 +31,7 @@ import java.io.Serializable;
  * particular session (e.g. under a specific session id), and that session does not exist in
  * the system.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class UnknownSessionException extends InvalidSessionException {

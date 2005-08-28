@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
  * {@link org.jsecurity.authz.annotation.HasRole HasRole} annotation found on the method
  * being executed.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationModule {

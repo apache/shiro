@@ -39,14 +39,14 @@ import java.security.Permission;
  * {@link org.jsecurity.authz.annotation.HasPermission HasPermission} annotation found on the
  * method being executed.
  *
- * @since 1.0.0
- *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class PermissionAnnotationAuthorizationModule extends AnnotationAuthorizationModule {
 
+    //todo - implementation in progress:
     private Permission createPermission( MethodInvocation mi, HasPermission hp ) {
-        Class<Permission> clazz = hp.type();
+        Class<? extends Permission> clazz = hp.type();
         String name = hp.target();
         String[] actions = hp.actions();
 
@@ -55,7 +55,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         String target;
 
         if ( name == null ) {
-            int targetIndex = hp.targetIndex();
+            /*int targetIndex = hp.targetIndex();
             if ( targetIndex >= 0 ) {
                 Object[] args = mi.getArguments();
                 if ( args == null || (args.length < 1 ) ) {
@@ -72,7 +72,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
                 Object targetObject = args[targetIndex];
 
-                String targetMethodName = hp.targetMethodName();
+                String targetMethodName = hp.targetPath();
 
                 if ( targetMethodName != null ) {
                     Object targetMethodRetVal = invokeMethod( targetObject, targetMethodName);
@@ -85,12 +85,15 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
                              m.getDeclaringClass().getName() + "." + m.getName() + ".  At least " +
                              "one of the two is required.";
                 throw new IncompleteAnnotationException( HasPermission.class, msg );
-            }
+            }*/
         } else {
             target = name;
         }
 
-        return instantiatePermission( clazz, target, actions );
+        //return instantiatePermission( clazz, target, actions );
+
+        //dummy statement to allow compilation - still working on method:
+        return new java.io.FilePermission( "dummyFile.txt", "read" );
     }
 
     private Object invokeMethod( Object o, String methodName ) {
@@ -176,8 +179,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         StringBuffer sb = new StringBuffer();
         sb.append("type=").append(annotation.type() );
         sb.append(",target=").append(annotation.target());
-        sb.append(",targetIndex=").append(annotation.targetIndex());
-        sb.append(",targetMethodName=").append(annotation.targetMethodName() );
+        sb.append(",targetPath=").append(annotation.targetPath());
         sb.append(",actions=[").append(annotation.actions()).append("]");
         return sb.toString();
     }

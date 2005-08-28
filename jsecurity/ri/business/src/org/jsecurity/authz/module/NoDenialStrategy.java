@@ -40,6 +40,7 @@ import java.util.Map;
  * <li>No {@link AuthorizationVote#deny deny} votes are given.</li>
  * </ol>
  *
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
@@ -47,7 +48,7 @@ public class NoDenialStrategy implements ModuleAuthorizationStrategy {
 
 
     /**
-     * @see ModuleAuthorizationStrategy#isAuthorized(org.jsecurity.authz.AuthorizationContext, org.jsecurity.authz.AuthorizedAction, java.util.Map<org.jsecurity.authz.module.AuthorizationModule,org.jsecurity.authz.module.AuthorizationVote>)
+     * @see ModuleAuthorizationStrategy#isAuthorized
      */
     public boolean isAuthorized( AuthorizationContext context,
                                  AuthorizedAction action,

@@ -32,6 +32,7 @@ package org.jsecurity.authc;
  * at the discretion of those responsible for designing the view and what happens when this
  * exception occurs.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class UnknownAccountException extends AccountException {

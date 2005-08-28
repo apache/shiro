@@ -29,6 +29,9 @@ import java.io.Serializable;
 /**
  * A ValidatingSessionManager is a SessionManager that can proactively validate any or all sessions
  * that may be expired.
+ *
+ * @since 0.1
+ * @author Les Hazlewood
  */
 public interface ValidatingSessionManager extends SessionManager {
 

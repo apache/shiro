@@ -32,6 +32,7 @@ import java.io.Serializable;
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class DefaultSessionManager extends AbstractSessionManager

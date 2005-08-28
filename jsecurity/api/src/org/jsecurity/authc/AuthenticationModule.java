@@ -32,6 +32,7 @@ package org.jsecurity.authc;
  * <p>An implementation of this class can be used
  *    in any JSecurity compatible PAM (Pluggable Authentication Module) implementation.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface AuthenticationModule extends Authenticator {
