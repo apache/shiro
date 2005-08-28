@@ -32,14 +32,9 @@ import java.security.Principal;
 import java.util.Calendar;
 
 /**
- * A SessionManager manages the creation, maintenance, and clean-up of Session objects.  A
- * Session is a data context associated with a single entity (user, 3rd party process, etc) that
- * communicates with the software system over a period of time.
+ * A SessionManager manages the creation, maintenance, and clean-up of {@link Session sessions}.
  *
- * <p>All interaction with a secure system is done in the course of a Session, even if that
- * Session only exists over the course of a single method invocation.  Sessions are extremely
- * lightweight objects that have a managed lifecycle.
- *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SessionManager {

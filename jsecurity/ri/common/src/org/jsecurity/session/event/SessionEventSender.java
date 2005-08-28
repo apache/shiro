@@ -29,6 +29,7 @@ package org.jsecurity.session.event;
  * (e.g. via sychronous calls to listeners, publishing JMS messages, etc) is determined by the
  * implementation.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SessionEventSender {

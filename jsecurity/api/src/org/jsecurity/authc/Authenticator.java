@@ -59,6 +59,7 @@ import org.jsecurity.authz.AuthorizationContext;
  * is the case in your system, ensure your <tt>authentication token</tt> class implements the
  * {@link java.io.Serializable} interface.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface Authenticator {

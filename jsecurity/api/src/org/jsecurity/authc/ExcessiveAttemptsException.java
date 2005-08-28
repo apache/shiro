@@ -31,6 +31,7 @@ package org.jsecurity.authc;
  * most systems either temporarily or permanently lock that account to prevent further
  * attempts.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class ExcessiveAttemptsException extends AccountException {

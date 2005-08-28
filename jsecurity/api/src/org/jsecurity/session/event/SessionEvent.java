@@ -32,6 +32,7 @@ import java.text.DateFormat;
 /**
  * General event concerning a {@link org.jsecurity.session.Session} instance.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class SessionEvent extends EventObject {

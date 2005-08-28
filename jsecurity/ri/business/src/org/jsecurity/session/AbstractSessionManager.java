@@ -41,6 +41,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 /**
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class AbstractSessionManager implements SessionManager {

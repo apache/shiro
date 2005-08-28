@@ -36,8 +36,8 @@ import java.util.ArrayList;
  *
  * @see #setListeners
  *
+ * @since 0.1
  * @author Les Hazlewood
- * @version $Revision$ $Date$
  */
 public class SimpleSessionEventSender implements SessionEventSender {
 

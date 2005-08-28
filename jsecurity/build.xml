@@ -10,13 +10,12 @@
     <!-- application-wide config files: (all other config files should be in a respective
          module or submodule) -->
     <property name="root.etc.dir" value="${root.base.dir}/etc"/>
-    <property name="root.build.dir" value="${root.base.dir}/build"/>
-    <property name="root.dist.dir" value="${root.build.dir}/dist"/>
+    <property name="root.dist.dir" value="${root.base.dir}/dist"/>
 
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
-    <property name="major.version" value="1"/>
-    <property name="minor.version" value="0"/>
+    <property name="major.version" value="0"/>
+    <property name="minor.version" value="1"/>
     <property name="patch.version" value="0"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
 
@@ -38,6 +37,10 @@
     <property name="compile.debug" value="true"/>
     <property name="compile.deprecation" value="false"/>
     <property name="compile.optimize" value="true"/>
+
+    <target name="root-prepare">
+        <mkdir dir="${root.dist.dir}"/>
+    </target>
 
     <target name="prepare">
         <mkdir dir="${build.dir}"/>
@@ -74,7 +77,7 @@
         </antcall>
 
         <!-- Clean local build: -->
-        <delete dir="${build.dir}"/>
+        <delete dir="${root.dist.dir}"/>
 
     </target>
 
@@ -109,10 +112,81 @@
     </target>
 
     <!-- Compile all children modules and/or submodules -->
-    <target name="compile" depends="prepare">
+    <target name="compile" depends="root-prepare">
         <antcall target="template">
             <param name="target" value="compile"/>
         </antcall>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Javadoc all main sources                                            -->
+    <!-- =================================================================== -->
+    <target name="javadoc.api" depends="root-prepare">
+        <echo message="Generating JavaDoc API for specification sources..."/>
+        <mkdir dir="${root.dist.dir}/docs/spec-api"/>
+
+        <javadoc packagenames="org.jsecurity.*"
+                 destdir="${root.dist.dir}/docs/spec-api"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowTitle="JSecurity Specification API">
+            <fileset dir="${root.base.dir}">
+                <include name="api/src/**/*.java"/>
+                <include name="ri/common/src/**/*.java"/>
+                <include name="ri/business/src/**/*.java"/>
+                <include name="ri/client/src/**/*.java"/>
+            </fileset>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+        </javadoc>
+    </target>
+
+    <target name="javadoc.ri" depends="javadoc.api">
+        <echo message="Generating JavaDoc API for reference implementation sources..."/>
+        <mkdir dir="${root.dist.dir}/docs/ri-api"/>
+
+        <javadoc packagenames="org.jsecurity.*"
+                 destdir="${root.dist.dir}/docs/ri-api"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowTitle="JSecurity Reference Implementation API">
+            <fileset dir="${root.base.dir}">
+                <include name="ri/common/src/**/*.java"/>
+                <include name="ri/business/src/**/*.java"/>
+                <include name="ri/client/src/**/*.java"/>
+            </fileset>
+            <link href="file://${root.dist.dir}/docs/spec-api/"/>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+        </javadoc>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Javadoc all source code                                             -->
+    <!-- =================================================================== -->
+    <target name="javadoc">
+        <echo message="Generating JSecurity JavaDoc API..."/>
+        <mkdir dir="${root.dist.dir}/docs/api"/>
+
+        <javadoc packagenames="org.jsecurity.*"
+                 destdir="${root.dist.dir}/docs/api"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowTitle="JSecurity Java API">
+            <fileset dir="${root.base.dir}">
+                <include name="api/src/**/*.java"/>
+                <include name="ri/common/src/**/*.java"/>
+                <include name="ri/business/src/**/*.java"/>
+                <include name="ri/client/src/**/*.java"/>
+            </fileset>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
+            <link href="http://jakarta.apache.org/commons/logging/api/"/>
+            <classpath>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+            </classpath>
+        </javadoc>
     </target>
 
     <target name="junit.check.warning" if="tests.failed">
@@ -214,7 +288,7 @@
         </jar>
     </target>
 
-    <target name="composite-jars" depends="prepare">
+    <target name="composite-jars" depends="root-prepare">
         <path id="jarjar.path">
             <pathelement location="${root.base.dir}/ri/lib/jarjar/jarjar.jar"/>
         </path>
@@ -266,7 +340,7 @@
           required to have this defined as it creates a module's
           artifacts (jars, wars, etc).
    =================================================================== -->
-    <target name="dist" depends="prepare">
+    <target name="dist" depends="root-prepare">
         <antcall target="template">
             <param name="target" value="dist"/>
         </antcall>
@@ -276,6 +350,12 @@
         <copy toDir="${root.dist.dir}" file="${root.etc.dir}/README.txt"/>
     </target>
 
+    <target name="release" depends="dist,javadoc">
+        <property name="release.zip.name" value="${project.name}-${version}-with-dependencies.zip"/>
+        <zip destfile="${root.dist.dir}/${release.zip.name}"
+             basedir="${basedir}"
+             excludes="**/CVS/*,**/build/**,**/${release.zip.name}"/>
+    </target>
 
     <!-- ===================================================================
       -  all - everything

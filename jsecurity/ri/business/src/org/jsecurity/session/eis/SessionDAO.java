@@ -30,6 +30,13 @@ import org.jsecurity.session.UnknownSessionException;
 import java.io.Serializable;
 import java.util.Collection;
 
+/**
+ * Data Access Object design pattern specification to enable {@link Session} access to an
+ * EIS (Enterprise Information System).
+ *
+ * @since 0.1
+ * @author Les Hazlewood
+ */
 public interface SessionDAO {
 
     /**

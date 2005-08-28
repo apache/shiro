@@ -39,10 +39,11 @@ import java.lang.reflect.Method;
  * {@link AuthorizationModule#supports supports} method.  This allows support for any
  * arbitrary number of annotations - simply create a subclass of this one and add an instance of
  * that subclass to the {@link org.jsecurity.authz.module.ModuleAuthorizer ModuleAuthorizer}'s
- * set of {@link org.jsecurity.authz.module.ModuleAuthorizer#setAuthorizationModules(java.util.Set<org.jsecurity.authz.module.AuthorizationModule>) authorizationModule}s.
+ * set of {@link org.jsecurity.authz.module.ModuleAuthorizer#setAuthorizationModules authorizationModule}s.
  *
- * @see org.jsecurity.authz.module.ModuleAuthorizer#setAuthorizationModules(java.util.Set<org.jsecurity.authz.module.AuthorizationModule>)
+ * @see org.jsecurity.authz.module.ModuleAuthorizer#setAuthorizationModules
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class AnnotationAuthorizationModule implements AuthorizationModule {

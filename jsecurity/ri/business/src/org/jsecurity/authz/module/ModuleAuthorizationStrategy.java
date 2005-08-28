@@ -36,7 +36,7 @@ import java.util.Map;
  * votes of all {@link AuthorizationModule}s provided by
  * the {@link ModuleAuthorizer}.
  *
- *
+ * @since 0.1
  * @author Jeremy Haile
  */
 public interface ModuleAuthorizationStrategy {

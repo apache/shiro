@@ -29,8 +29,7 @@ package org.jsecurity.authz;
 
 
 /**
- *
- *
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

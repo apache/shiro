@@ -29,6 +29,7 @@ import org.jsecurity.JSecurityException;
 /**
  * General exception thrown due to an error during the Authentication process.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AuthenticationException extends JSecurityException {

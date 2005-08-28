@@ -34,8 +34,10 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
+ * Simple {@link Session} implementation, intended to be used on the business/server tier.
+ * 
+ * @since 0.1
  * @author Les Hazlewood
- * @version $Revision$ $Date$
  */
 public class SimpleSession implements Session, Serializable {
 

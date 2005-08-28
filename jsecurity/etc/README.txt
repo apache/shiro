@@ -57,6 +57,12 @@ Build Jars
   runtime.
 
 
+Release zip file
+----------------
+jsecurity-with-dependencies.zip - JSecurity api and reference implementation distribution.  
+Use this to build JSecurity from scratch.
+
+
 Packaging Explanation
 ----------------------
 Depending on your architecture, you may wish to include certain jars inside certain classpaths

@@ -13,9 +13,24 @@
     <property name="lib.dir" value="${module.base.dir}/lib"/>
 
     <!-- ===================================================================
-      -  Template target.  Never called explicitly, only used to pass target
-      -  calls to the underlying children builds.
+      -  Clean all local and children build files
       -  =================================================================== -->
+    <target name="clean">
+
+        <!-- Clean all children builds: -->
+        <antcall target="template">
+            <param name="target" value="clean"/>
+        </antcall>
+
+        <!-- Clean local build: -->
+        <delete dir="${build.dir}"/>
+
+    </target>
+
+    <!-- ===================================================================
+ -  Template target.  Never called explicitly, only used to pass target
+ -  calls to the underlying children builds.
+ -  =================================================================== -->
     <target name="template">
         <!-- This section defines the modules and the order in which they are
              executed for any given target.  This means ORDER MATTERS.

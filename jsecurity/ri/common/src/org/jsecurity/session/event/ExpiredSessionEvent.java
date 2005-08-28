@@ -29,9 +29,9 @@ import java.io.Serializable;
 /**
  * Event sent to interested parties when a session has expired.  This is a special case of a
  * {@link StoppedSessionEvent}, as an expired session is considered stopped.
- * 
+ *
+ * @since 0.1
  * @author Les Hazlewood
- * @version $Revision$ $Date$
  */
 public class ExpiredSessionEvent extends StoppedSessionEvent {
 

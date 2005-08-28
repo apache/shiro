@@ -32,8 +32,8 @@ import java.io.Serializable;
  * See {@link org.jsecurity.session.Session#getStopTimestamp()} for an explanation of when a session
  * may become stopped. 
  *
+ * @since 0.1
  * @author Les Hazlewood
- * @version $Revision$ $Date$
  */
 public class StoppedSessionEvent extends SessionEvent {
 

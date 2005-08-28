@@ -27,6 +27,7 @@ package org.jsecurity.authz;
 /**
  * Thrown to indicate a requested operation or access to a requested resource is not allowed.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class UnauthorizedException extends AuthorizationException {
