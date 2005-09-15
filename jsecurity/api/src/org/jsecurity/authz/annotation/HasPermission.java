@@ -34,8 +34,10 @@ import java.security.Permission;
 
 /**
  * <p>
- * An annotation that indicates that a user must have a permission in order
- * to be granted authorization to execute a particular method.
+ * Requires the current executor to have a particular permission in order to execute the
+ * annotated method.  If the executor's associated
+ * {@link org.jsecurity.authz.AuthorizationContext AuthorizationContext} determines that the
+ * executor does not have the specified permission, the method will not be executed.
  * </p>
  * For example, this annotation<br>
  * <blockquote><pre>
@@ -52,6 +54,8 @@ import java.security.Permission;
  * to the file <tt>aFile.txt</tt> in order for the <tt>someMethod()</tt> to execute, otherwise
  * an {@link org.jsecurity.authz.AuthorizationException AuthorizationException} will be thrown.
  *
+ * @see org.jsecurity.authz.AuthorizationContext#checkPermission
+ *
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -62,7 +66,7 @@ public @interface HasPermission {
 
     /**
      * The permission class used to construct a <tt>Permission</tt> object which will be used
-     * during the Authorization check.
+     * during an {@link org.jsecurity.authz.AuthorizationContext#checkPermission(java.security.Permission) AuthorizationContext.checkPermission}  check.
      */
     Class<? extends Permission> type();
 
@@ -71,7 +75,7 @@ public @interface HasPermission {
      * not specified, the default target value of &quot;*&quot; means <em>all</em> instances
      * of the permission type.
      *
-     * For example, the annotation:<br/>
+     * <p>For example, the annotation:</br>
      * <blockquote><pre>
      * &#64;HasPermission(type=java.io.FilePermission.class,target="aFile.txt",actions={"read","write"})
      * void doSomething() { ... }
@@ -87,16 +91,49 @@ public @interface HasPermission {
      * for the <tt>doSomething()</tt> method to execute&quot;
      *
      * <p>This property is ignored if the {@link #targetPath} property is specified.
+     *
+     * @see java.security.Permission#getName()
      */
     String target() default "*";
 
     /**
-     * Specifies a JavaBeans&reg;-style path indicating the object from which to obtain the
-     * String name that will be used during {@link Permission} construction.  The
-     * {@link Object#toString() toString()} value of the object returned by this path will
-     * be used as the name when constructing the <tt>Permission</tt> for the security check.
+     * Uses the {@link Object#toString() toString()} value of the object at the specified
+     * path as the <tt>Permission {@link Permission#getName() name}</tt> to use during
+     * <tt>Permission</tt> construction.
      *
-     * <p>The usefulness of this property is best explained via an example:
+     * <p>The objects in this path must conform to property getter and setter naming conventions
+     * as defined in the <a href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBeans&reg; 1.01 specification</a>
+     *
+     * <p>Six formats are supported for resolving the object specified in the path:
+     *
+     * <ul>
+     *   <li><b>Method Argument Index</b> (i.e. <tt>[0]</tt>, <tt>[1]</tt>, ... <tt>[n]</tt>) -
+     *       This index must correspond
+     *       to the method argument in the annotated method call that will be used to resolve
+     *       the remainder of the path.  It is always required and must be specified at the
+     *       beginning of the path.</li>
+     *   <li><b>Simple</b> (i.e. <tt>name</tt>) - The specified <tt>name</tt> identifies an individual
+     *       JavaBeans property of a parent object.  So a bean with a property named
+     *       &quot;xyz&quot; will have a getter method named <tt>getXyz()</tt> or
+     *       <tt>isXyz()</tt> if &quot;xyz&quot; is a boolean property.</li>
+     *   <li><b>Nested</b> (i.e. <tt>name1.name2.name3</tt>) - The first name element is used to select a
+     *       property getter, as for simple references above. The object returned for this
+     *       property is then consulted, using the same approach, for a property getter for a
+     *       property named name2, and so on. The property value that is ultimately retrieved
+     *       is the one identified by the last name element.</li>
+     *   <li><b>Indexed</b> (i.e. <tt>name[index]</tt>) - The underlying property value is assumed to be an
+     *       array or {@link java.util.List List}, or the parent bean is assumed to have indexed
+     *       property getter and setter methods. The appropriate (zero-indexed) entry in the
+     *       array or <tt>List</tt> is selected. If the property is a list, a getter needs to be
+     *       defined that returns the list.</li>
+     *   <li><b>Mapped</b> (i.e. <tt>name(key)</tt>) - The parent JavaBean is assumed to have a
+     *       property getter method that returns a {@link java.util.Map Map} indexed by
+     *       java.lang.String keys.
+     *   <li><b>Combined</b> i.e. <tt>name1.name2[index].name3(key)</tt> - Combining mapped,
+     *       nested, and indexed references are supported.</li>
+     * </ul>
+     *
+     * <p>The usefulness of a <tt>targetPath</tt> is best explained via an example:
      *
      * <p>If there was a method:
      *
@@ -111,31 +148,32 @@ public @interface HasPermission {
      * )
      * public void saveUser( User aUser ) { ... }</pre>
      *
-     * <p>Here, the <tt>targetPath</tt> property conforms to a beans-style path convention where
-     * the character sequence prior to the first period ('.') represents the method argument
-     * at a certain index for the current method, and all subsequent
-     * period-separated names represent nested objects.  The last object in the path will be used
-     * to call toString() for a name to use during permission construction.
+     * <p>This annotation declares that a <tt>my.pkg.security.UserPermission</tt> instance with
+     * {@link Permission#getName() name} <tt>aUser.getId().toString()</tt> and
+     * {@link Permission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
+     * verified by {@link org.jsecurity.authz.AuthorizationContext#checkPermission(Permission)}.
      *
-     * <p>So the targetPath of <tt>[0].id</tt> in the above example is interpreted as
-     * <p>&quot;acquire the <tt>saveUser</tt> method argument at index 0 and use the
-     * getId().toString() value as the name during <tt>Permission</tt> construction&quot;
+     * <p>Therefore the above annotation could be read as:</p>
+     * <p>&quot;The current executor must have permission to create <em>and</em> update the
+     * user with id <tt>aUser.getId()</tt> in order to execute the <tt>saveUser(User u)</tt>
+     * method&quot;.
      *
-     * <p>Likewise, for another method with 4 arguments and the following annotation:
+     * <p>Likewise, another <tt>targetPath</tt> example that could be specified:</p>
      * <pre>&#64;HasPermission(
      *     type=my.pkg.security.PostalAddressPermission.class,
      *     targetPath=[2].parent.postalAddress.id
      *     actions={"update","delete"}
      * )
-     * void foo( String aString, int anInt, User aUser, boolean aBoolean) { ... }</pre>
-     * <p>the following name will be used to construct the PostalAddressPermission object used
-     * for authorization:
-     * <tt>aUser.getParent().getPostalAddress().getId().toString()</tt>, because
-     * 'aUser' is the 3rd method argument (index number 2 in the zero-based argument array).
+     * void foo( String aString, int anInt, Child aChild, Address aBoolean) { ... }</pre>
+     *
+     * <p>This example <tt>targetPath</tt> will use the
+     * <tt>aChild.getParent().getPostalAddress().getId().toString()</tt> as the
+     * <tt>my.pkg.security.PostalAddressPermission</tt> instance <tt>name</tt> because
+     * 'aChild' is the 3rd method argument (index 2 in the zero-based method argument list).</p>
      *
      * This second example annotation therefore is interpreted as
      * <p>&quot;the current executor must have permission to update <em>and</em> delete the
-     * PostalAddress object with id <tt>aUser.getParent().getPostalAddress().getId().toString()</tt>
+     * PostalAddress object with id <tt>aChild.getParent().getPostalAddress().getId()</tt>
      * in order to execute the foo(...) method&quot;
      *
      * <p>Granted, this second example is a little far reaching, but it shows the power behind
@@ -149,7 +187,8 @@ public @interface HasPermission {
 
     /**
      * The actions that the user must able to perform on the related target in order for the
-     * authorization to succeed.
+     * authorization to succeed.  The default value of &quot;*&quot; means the executor must
+     * be able to perform <b>all</b> actions defined for the permission {@link #type type}.
      * @see java.security.Permission#getActions()
      */
     String[] actions() default {"*"};
