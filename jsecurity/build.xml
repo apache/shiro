@@ -158,6 +158,10 @@
             </fileset>
             <link href="file://${root.dist.dir}/docs/spec-api/"/>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <classpath>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
+            </classpath>
         </javadoc>
     </target>
 
@@ -185,6 +189,7 @@
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <classpath>
                 <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
             </classpath>
         </javadoc>
     </target>

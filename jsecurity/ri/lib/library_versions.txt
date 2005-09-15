@@ -29,6 +29,11 @@ Some notes:
 - required for building JSecurity
 - required at runtime as JSecurity uses it for all logging
 
+* jakarta-commons/commons-beanutils-core.jar
+- Commons BeanUtils 1.7.0 (http://jakarta.apache.org/commons/beanutils/index.html)
+- required for building and running JSecurity
+- used for constructing Permissions in the ri PermissionAnnotationAuthorizationModule
+
 * jarjar/jarjar.jar
 - Tonic Systems JarJar 0.6 (http://tonicsystems.com/products/jarjar/)
 - Required at build time to create a single jar from multiple jars

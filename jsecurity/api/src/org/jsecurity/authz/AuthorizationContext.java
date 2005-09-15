@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Provides all access control behavior for an authenticated user.  An <tt>AuthorizationContext</tt>
- * can only be acquired upon a successful login, as access control behavior must be associated
- * with a known identity.
+ * Provides all access control behavior for an authenticated subject.
+ * An <tt>AuthorizationContext</tt> can only be acquired upon a successful login, as access
+ * control behavior must be associated with a known identity.
  *
  * @since 0.1
  * @author Les Hazlewood

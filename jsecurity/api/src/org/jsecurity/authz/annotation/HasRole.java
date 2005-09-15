@@ -33,8 +33,10 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * An annotation that indicates that a user must have a particular role in order
- * to be granted authorization to execute a particular method.
+ * Requires the current executor to have a particular role in order to execute the
+ * annotated method.  If the executor's associated
+ * {@link org.jsecurity.authz.AuthorizationContext AuthorizationContext} determines that the
+ * executor does not have the specified role, the method will not be executed.
  * </p>
  * For example,<br>
  * <blockquote><pre>
@@ -42,6 +44,8 @@ import java.lang.annotation.Target;
  * void someMethod();
  * </pre>
  * </blockquote>
+ *
+ * @see org.jsecurity.authz.AuthorizationContext#hasRole(java.io.Serializable roleIdentifier)
  *
  * @since 0.1
  * @author Jeremy Haile
