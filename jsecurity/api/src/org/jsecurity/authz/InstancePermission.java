@@ -227,15 +227,23 @@ public abstract class InstancePermission extends Permission implements Serializa
         return false;
     }
 
-    public final String toString() {
+    /**
+     * Returns a string describing this Permission.  The convention is to
+     * specify the class name, the permission name, and the actions in
+     * the following format: '("ClassName" "name" "actions")'.
+     *
+     * <b>N.B.</b> Subclasses should not override this method.  Instead, they should override the
+     * {@link #toStringBuffer()} implementation which is more efficient.
+     */
+    public String toString() {
         return toStringBuffer().toString();
     }
 
     protected StringBuffer toStringBuffer() {
         StringBuffer sb = new StringBuffer();
-        sb.append( "Class name: [" ).append( getClass().getName() ).append("]");
-        sb.append( ",name/target=" ).append( getName() );
-        sb.append( ",actions={" ).append( getActions() ).append( "}" );
+        sb.append( "(\"" ).append( getClass().getName() ).append("\" ");
+        sb.append( "\"" ).append( getName() ).append("\" ");
+        sb.append( "\"" ).append( getActions() ).append( "\")" );
         return sb;
     }
 
