@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<project name="spring-sample" default="dist">
+
+	<property name="root.base.dir" value="../.."/>
+
+    <!-- "extend" parent build definition -->
+    <import file="../../build.xml" />
+
+    <property name="module.name" value="spring"/>
+    <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
+
+    <property name="lib.dir" value="${module.base.dir}/lib"/>
+
+    <!-- Module properties -->
+    <property name="module.name" value="api"/>
+    <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
+    <property name="dist.war" value="${root.dist.dir}/${dist.war.name}"/>
+
+    <path id="compile.path">
+        <fileset dir="${lib.dir}" includes="**"/>
+    </path>
+
+    <!-- ===================================================================
+  -  clean - clean all build remnants from this submodule
+  - ==================================================================== -->
+    <target name="clean">
+        <echo message="cleaning ${module.name} module"/>
+        <delete file="${dist.war}"/>
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <!-- ===================================================================
+      -  compile - compile Java source files
+      -  =================================================================== -->
+    <target name="compile" depends="compile.src"/>
+
+    <!-- ===================================================================
+ -  dist - create distribution war (which will be used for deployment)
+ -  =================================================================== -->
+    <target name="dist" depends="root-prepare,compile">
+        <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
+            <classes dir="${classes.dir}" includes="**"/>
+            <lib dir="lib" includes="**"/>
+            <webinf dir="${basedir}" includes="resources/**"/>
+            <fileset dir="webroot" includes="**"/>
+        </war>
+    </target>
+
+
+</project>
