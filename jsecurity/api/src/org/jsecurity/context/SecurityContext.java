@@ -146,15 +146,19 @@ public abstract class SecurityContext {
 
     private static SecurityContext getContext( ClassLoader cl ) {
 
-        SecurityContext context = null;
+        SecurityContext context;
 
         if ( isFactoryCached() ) {
-            if ( factory != null ) {
-                context = factory.getContext( cl );
+            synchronized (SecurityContext.class ) {
+                if ( factory == null ) {
+                    String factoryClassName = getFactoryClassName( cl );
+                    factory = instantiateFactory( factoryClassName, cl );
+                }
             }
+            context = factory.getContext( cl );
         } else {
             String factoryClassName = getFactoryClassName( cl );
-            SecurityContextFactory factory = getFactory( factoryClassName, cl );
+            SecurityContextFactory factory = instantiateFactory( factoryClassName, cl );
             context = factory.getContext( cl );
         }
 
@@ -199,28 +203,6 @@ public abstract class SecurityContext {
 
         return factoryClassName;
 
-    }
-
-
-    /**
-     * Obtains a {@link SecurityContextFactory} instance of the specified factory class name,
-     * loading any necessary classes using the given class loader.
-     *
-     * @param factoryClassName the class name of the factory implementation that should be
-     *                         obtained.
-     * @param cl               the class loader to use if any classes must be loaded.
-     *
-     * @return a {@link SecurityContextFactory} implementation of the specified type.
-     */
-    private static SecurityContextFactory getFactory( String factoryClassName, ClassLoader cl ) {
-        if ( isFactoryCached() ) {
-            if ( factory == null ) {
-                factory = instantiateFactory( factoryClassName, cl );
-            }
-            return factory;
-        } else {
-            return instantiateFactory( factoryClassName, cl );
-        }
     }
 
     private static SecurityContextFactory instantiateFactory( String factoryClassName,
