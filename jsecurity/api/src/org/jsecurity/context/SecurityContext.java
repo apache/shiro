@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -36,25 +36,27 @@ import java.net.Authenticator;
 import java.util.Properties;
 
 /**
- * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API.
- * This class provides access to the core services of JSecurity, such as the
- * {@link org.jsecurity.session.SessionFactory}, {@link org.jsecurity.authc.Authenticator},
- * {@link org.jsecurity.authz.Authorizer}, etc. as well as current context of the calling code,
- * such as its {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}
- * </p>
- *
- * <p>To gain access to a <code>SecurityContext</code> instance, the following code should be executed:
+ * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API. This
+ * class provides access to the core services of JSecurity, such as the {@link
+ * org.jsecurity.session.SessionFactory}, {@link org.jsecurity.authc.Authenticator}, {@link
+ * org.jsecurity.authz.Authorizer}, etc. as well as current context of the calling code, such as its
+ * {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}</p>
+ * <p/>
+ * <p>To gain access to a <code>SecurityContext</code> instance, the following code should be
+ * executed:
+ * <p/>
  * <blockquote><pre>SecurityContext context = SecurityContext.getInstance();</pre></blockquote>
- * The returned <code>SecurityContext</code> instance will be an implementation from the
- * JSecurity implementation.  The <code>SecurityContext</code> is obtained using a
- * {@link SecurityContextFactory} that is implemented by the JSecurity implementation provider.</p>
- *
- * <p>The algorithm used in retrieving a <code>SecurityContext</code> using a {@link SecurityContextFactory}
- * is described in detail in the {@link #getContext(ClassLoader)} JavaDoc.</p>
- *
- * @see SecurityContextFactory
+ * The returned <code>SecurityContext</code> instance will be an implementation from the JSecurity
+ * implementation.  The <code>SecurityContext</code> is obtained using a {@link
+ * SecurityContextFactory} that is implemented by the JSecurity implementation provider.</p>
+ * <p/>
+ * <p>The algorithm used in retrieving a <code>SecurityContext</code> using a {@link
+ * SecurityContextFactory} is described in detail in the {@link #getContext(ClassLoader)}
+ * JavaDoc.</p>
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @see SecurityContextFactory
  * @since 0.1
  */
 public abstract class SecurityContext {
@@ -63,8 +65,8 @@ public abstract class SecurityContext {
      |             C O N S T A N T S             |
      ============================================*/
     /**
-     * Name of the system property or file property that determines the class name of the
-     * {@link SecurityContextFactory} implementation class to use.
+     * Name of the system property or file property that determines the class name of the {@link
+     * SecurityContextFactory} implementation class to use.
      */
     private static final String SECURITY_CONTEXT_FACTORY_PROP = "security.context.factory.class";
 
@@ -74,6 +76,10 @@ public abstract class SecurityContext {
      */
     private static final String JSECURITY_PROPS_FILE = "jsecurity.properties";
 
+    private static boolean factoryCached = true;
+
+    /** Will always be <tt>null</tt> if caching is turned off (i.e. factoryCached == false); */
+    private static SecurityContextFactory factory = null;
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -91,53 +97,107 @@ public abstract class SecurityContext {
      |        S T A T I C   M E T H O D S        |
      ============================================*/
 
+    /**
+     * Returns whether or not the same <tt>SecurityContextFactory</tt> will be used each time {@link
+     * #getContext()} is called.
+     * <p/>
+     * <p>The system default is <tt>true</tt>.
+     * <p/>
+     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getContext()}
+     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the Factory
+     * implementation.
+     *
+     * @return whether or not the same <tt>SecurityContextFactory</tt> will be used each time {@link
+     *         #getContext()} is called.
+     */
+    public static boolean isFactoryCached() {
+        return factoryCached;
+    }
 
     /**
-     * Retrieves a {@link SecurityContext} instance by invoking {@link #getContext(ClassLoader)}
-     * with the thread context class loader.
-     * @return the current SecurityContext.
+     * Sets whether or not the same <tt>SecurityContextFactory</tt> will be used each time {@link
+     * #getContext()} is called. <p>The system default is <tt>true</tt>.
+     * <p/>
+     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getContext()}
+     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the Factory
+     * implementation.
+     *
+     * @param cached whether or not to cache the factory instance.
      */
-    public static SecurityContext getContext() {
-        return getContext( Thread.currentThread().getContextClassLoader() );
+    public static void setFactoryCached( boolean cached ) {
+        factoryCached = cached;
     }
 
 
-    private static SecurityContext getContext(ClassLoader cl) {
+    /**
+     * Retrieves a {@link SecurityContext} instance based on a JSecurity implementation's
+     * <tt>SecurityContextFactory</tt>.
+     *
+     * @return the current SecurityContext.
+     */
+    public static SecurityContext getContext() {
+
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if ( cl == null ) {
+            cl = SecurityContext.class.getClassLoader();
+        }
+        return getContext( cl );
+    }
+
+    private static SecurityContext getContext( ClassLoader cl ) {
+
+        SecurityContext context = null;
+
+        if ( isFactoryCached() ) {
+            if ( factory != null ) {
+                context = factory.getContext( cl );
+            }
+        } else {
+            String factoryClassName = getFactoryClassName( cl );
+            SecurityContextFactory factory = getFactory( factoryClassName, cl );
+            context = factory.getContext( cl );
+        }
+
+        if ( context == null ) {
+            throw new SecurityContextException( "SecurityContext returned by factory was null." );
+        }
+
+        return context;
+    }
+
+    private static String getFactoryClassName( ClassLoader cl ) {
         String factoryClassName = System.getProperty( SECURITY_CONTEXT_FACTORY_PROP );
 
-        if( factoryClassName == null ) {
+        if ( factoryClassName == null ) {
 
             InputStream propsFileIs = cl.getResourceAsStream( JSECURITY_PROPS_FILE );
             Properties props = new Properties();
             try {
                 props.load( propsFileIs );
-            } catch (IOException e) {
-                throw new SecurityContextException( "No [" + SECURITY_CONTEXT_FACTORY_PROP + "] system property " +
-                                                    "is defined and [" + JSECURITY_PROPS_FILE + "] cannot be " +
-                                                    "loaded from the classloader, so the SecurityContextFactory cannot " +
-                                                    "be created." );
+            } catch ( IOException e ) {
+                String msg = "No [" + SECURITY_CONTEXT_FACTORY_PROP + "] system property " +
+                             "is defined and [" + JSECURITY_PROPS_FILE + "] cannot be " +
+                             "loaded from the classloader.  A SecurityContextFactory cannot " +
+                             "be created.";
+                throw new SecurityContextException( msg );
             }
 
             factoryClassName = props.getProperty( SECURITY_CONTEXT_FACTORY_PROP );
 
         }
 
-        if( factoryClassName == null || factoryClassName.length() == 0 ) {
-            throw new SecurityContextException( "No [" + SecurityContextFactory.class.getName() + "] implementation " +
-                "class was found configured in the system.  The factory implementation should normally be specified " +
-                "by including the JSecurity implementation JAR in the classpath.  The factory can also be specified " +
-                "by setting the [" + SECURITY_CONTEXT_FACTORY_PROP + "] system property.");
+        if ( factoryClassName == null || factoryClassName.length() == 0 ) {
+            String msg = "No [" + SecurityContextFactory.class.getName() + "] implementation " +
+                         "class was found configured in the system.  The factory " +
+                         "implementation should normally be specified by including the " +
+                         "JSecurity implementation JAR in the classpath.  The factory can " +
+                         "also be specified by setting the [" + SECURITY_CONTEXT_FACTORY_PROP +
+                         "] system property or manually including a jsecurity.properties file " +
+                         "at the root of the classpath.";
+            throw new SecurityContextException( msg );
         }
 
-        SecurityContextFactory factory = getSecurityContextFactory( factoryClassName, cl );
-
-        SecurityContext context = factory.getContext( cl );
-
-        if( context == null ) {
-            throw new SecurityContextException( "SecurityContext returned by factory was null." );
-        }
-
-        return context;
+        return factoryClassName;
 
     }
 
@@ -146,38 +206,51 @@ public abstract class SecurityContext {
      * Obtains a {@link SecurityContextFactory} instance of the specified factory class name,
      * loading any necessary classes using the given class loader.
      *
-     * todo Should we cache the factory?
+     * @param factoryClassName the class name of the factory implementation that should be
+     *                         obtained.
+     * @param cl               the class loader to use if any classes must be loaded.
      *
-     * @param factoryClassName the class name of the factory implementation that should be obtained.
-     * @param cl the class loader to use if any classes must be loaded.
      * @return a {@link SecurityContextFactory} implementation of the specified type.
      */
-    private static SecurityContextFactory getSecurityContextFactory( String factoryClassName, ClassLoader cl ) {
+    private static SecurityContextFactory getFactory( String factoryClassName, ClassLoader cl ) {
+        if ( isFactoryCached() ) {
+            if ( factory == null ) {
+                factory = instantiateFactory( factoryClassName, cl );
+            }
+            return factory;
+        } else {
+            return instantiateFactory( factoryClassName, cl );
+        }
+    }
 
-        SecurityContextFactory factory = null;
+    private static SecurityContextFactory instantiateFactory( String factoryClassName,
+                                                              ClassLoader cl ) {
+        SecurityContextFactory factory;
         try {
 
             Class factoryClass = cl.loadClass( factoryClassName );
-            factory = (SecurityContextFactory) factoryClass.newInstance();
+            factory = (SecurityContextFactory)factoryClass.newInstance();
 
-        } catch (ClassNotFoundException e) {
-            throw new SecurityContextException( "Factory class [" + factoryClassName + "] could not be " +
-                                                "found so SecurityContext could not be loaded.", e);
-        } catch (IllegalAccessException e) {
-            throw new SecurityContextException( "Factory class [" + factoryClassName + "] constructor could " +
-                                                "not be accessed.", e);
-
-        } catch (InstantiationException e) {
-            throw new SecurityContextException( "New instance of factory class [" + factoryClassName + "] " +
-                                                "could not be instantiated.", e);
+        } catch ( ClassNotFoundException e ) {
+            String msg = "Factory class [" + factoryClassName + "] could not be found.  No " +
+                         "SecurityContext can be loaded.";
+            throw new SecurityContextException( msg, e );
+        } catch ( IllegalAccessException e ) {
+            String msg = "Factory class [" + factoryClassName + "] constructor could not be " +
+                         "accessed.  SecurityContext cannot be loaded.";
+            throw new SecurityContextException( msg, e );
+        } catch ( InstantiationException e ) {
+            String msg = "Factory class [" + factoryClassName + "] could not be instantiated.  " +
+                         "SecurityContext cannot be loaded.";
+            throw new SecurityContextException( msg, e );
         }
 
         return factory;
     }
 
     /*--------------------------------------------
-     |     A B S T R A C T   M E T H O D S       |
-     ============================================*/
+    |     A B S T R A C T   M E T H O D S       |
+    ============================================*/
     public abstract SessionFactory getSessionFactory();
 
     public abstract Authenticator getAuthenticator();
