@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Les A. Hazlewood, Jeremy C. Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -61,6 +61,7 @@ import org.jsecurity.authz.AuthorizationContext;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public interface Authenticator {
 
@@ -83,6 +84,6 @@ public interface Authenticator {
      * @see ConcurrentAccessException
      * @see UnknownAccountException
      */
-    public AuthorizationContext authenticate( Object authenticationToken )
+    public AuthorizationContext authenticate( AuthenticationToken authenticationToken )
         throws AuthenticationException;
 }

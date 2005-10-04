@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy C. Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,48 +23,68 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.context;
-
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authz.AuthorizationContext;
+package org.jsecurity.authc;
 
 /**
- * Description of class.
+ * <p>A simple username password authentication token.  This class is included in the API
+ * since it is a very widely used authentication mechanism.</p>
  *
- * @author Jeremy Haile
+ *
  * @since 0.1
+ * @author Jeremy Haile
  */
-public class DefaultSecurityContextFactory implements SecurityContextFactory {
+public class UsernamePasswordToken implements AuthenticationToken {
 
     /*--------------------------------------------
-     |             C O N S T A N T S             |
-     ============================================*/
+    |             C O N S T A N T S             |
+    ============================================*/
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private String username;
+
+    private char[] password;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    public UsernamePasswordToken(final String username, final String password ) {
+        this.username = username;
+        this.password = password.toCharArray();
+    }
+
+    public UsernamePasswordToken(final String username, final char[] password) {
+        this.username = username;
+        this.password = password;
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public String getUsername() {
+        return username;
+    }
+
+
+    public char[] getPassword() {
+        return password;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public SecurityContext getContext(ClassLoader cl) {
-        DefaultSecurityContext ctx = new DefaultSecurityContext();
-        ctx.setAuthenticator( new Authenticator() {
-            public AuthorizationContext authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
+    public void clear() {
+        this.username = null;
 
-        return ctx;
+        if( this.password != null ) {
+            for( int i = 0; i < password.length; i++ ) {
+                this.password[i] = 0x00;
+            }
+            this.password = null;
+        }
+
     }
 }

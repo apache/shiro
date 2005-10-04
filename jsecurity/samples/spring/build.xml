@@ -2,7 +2,9 @@
 
 <project name="spring-sample" default="dist">
 
-	<property name="root.base.dir" value="../.."/>
+    <property environment="env"/>
+
+    <property name="root.base.dir" value="../.."/>
 
     <!-- "extend" parent build definition -->
     <import file="../../build.xml" />
@@ -17,7 +19,11 @@
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
     <property name="dist.war" value="${root.dist.dir}/${dist.war.name}"/>
 
+    <!-- Deployment properties for development -->
+    <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
+
     <path id="compile.path">
+        <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>        
         <fileset dir="${lib.dir}" includes="**"/>
     </path>
 
@@ -41,11 +47,15 @@
     <target name="dist" depends="root-prepare,compile">
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
             <classes dir="${classes.dir}" includes="**"/>
-            <lib dir="lib" includes="**"/>
+            <lib dir="lib" includes="**" excludes="servlet.jar"/>
+            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**"/>
         </war>
     </target>
 
+    <target name="deploy" depends="dist">
+        <copy file="${dist.war}" todir="${deploy.dir}"/>
+    </target>
 
 </project>

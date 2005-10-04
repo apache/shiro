@@ -25,12 +25,12 @@
 
 package org.jsecurity.context;
 
+import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 
-import java.net.Authenticator;
 
 /**
  * Default implementation of the {@link SecurityContext} interface used
@@ -48,6 +48,15 @@ public class DefaultSecurityContext extends SecurityContext {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private SessionFactory sessionFactory;
+
+    private Authenticator authenticator;
+
+    private Authorizer authorizer;
+
+    private Session currentSession;
+
+    private AuthorizationContext currentAuthContext;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -56,36 +65,67 @@ public class DefaultSecurityContext extends SecurityContext {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+
+    public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
+
+    public Authorizer getAuthorizer() {
+        return authorizer;
+    }
+
+
+    public void setAuthorizer(Authorizer authorizer) {
+        this.authorizer = authorizer;
+    }
+
+
+    public Session getCurrentSession() {
+        return currentSession;
+    }
+
+
+    public void setCurrentSession(Session currentSession) {
+        this.currentSession = currentSession;
+    }
+
+
+    public AuthorizationContext getCurrentAuthContext() {
+        return currentAuthContext;
+    }
+
+
+    public void setCurrentAuthContext(AuthorizationContext currentAuthContext) {
+        this.currentAuthContext = currentAuthContext;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
+    public void invalidate() {
+        
+    }
+
 
     /*--------------------------------------------
     |     A B S T R A C T   M E T H O D S       |
     ============================================*/
-    public SessionFactory getSessionFactory() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
-
-    public Authenticator getAuthenticator() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-
-    public Authorizer getAuthorizer() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-
-    public Session getCurrentSession() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-
-    public AuthorizationContext getCurrentAuthContext() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

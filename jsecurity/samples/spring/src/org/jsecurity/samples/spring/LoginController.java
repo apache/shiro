@@ -25,6 +25,10 @@
 
 package org.jsecurity.samples.spring;
 
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.context.SecurityContext;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -61,7 +65,24 @@ public class LoginController extends SimpleFormController {
     ============================================*/
 
 
-    protected ModelAndView onSubmit(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object, BindException bindException) throws Exception {
-        return new ModelAndView( "index" );
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object cmd, BindException errors) throws Exception {
+
+        LoginCommand command = (LoginCommand) cmd;
+
+        SecurityContext context = SecurityContext.getContext();
+        Authenticator authenticator = context.getAuthenticator();
+
+        UsernamePasswordToken token = new UsernamePasswordToken( command.getUsername(), command.getPassword() );
+        try {
+            authenticator.authenticate( token );
+        } catch (AuthenticationException e) {
+            errors.reject( "The username or password was not correct." );
+        }
+
+        if( errors.hasErrors() ) {
+            return showForm( request, response, errors );
+        } else {
+            return new ModelAndView( getSuccessView() );
+        }
     }
 }
