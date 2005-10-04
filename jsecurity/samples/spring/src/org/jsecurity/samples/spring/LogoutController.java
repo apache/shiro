@@ -25,6 +25,7 @@
 
 package org.jsecurity.samples.spring;
 
+import org.jsecurity.context.SecurityContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -61,6 +62,10 @@ public class LogoutController extends AbstractController {
 
 
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+
+        SecurityContext ctx = SecurityContext.getContext();
+        ctx.invalidate();
+
         return new ModelAndView( "login" );
     }
 }

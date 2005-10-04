@@ -25,6 +25,7 @@
 
 package org.jsecurity.context;
 
+import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.session.Session;
@@ -32,7 +33,6 @@ import org.jsecurity.session.SessionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Authenticator;
 import java.util.Properties;
 
 /**
@@ -242,4 +242,6 @@ public abstract class SecurityContext {
     public abstract Session getCurrentSession();
 
     public abstract AuthorizationContext getCurrentAuthContext();
+
+    public abstract void invalidate();
 }

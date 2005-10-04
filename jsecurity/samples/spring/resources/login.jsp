@@ -2,7 +2,9 @@
 
 <body>
     <h3>Login</h3>
-    <form action="/jsecurity-spring/jsecurity/login" method="POST">
+    <form action="login" method="POST">
+        Username: <input name="username" type="text"/><br/>
+        Password: <input name="password" type="password"/><br/>
         <input type="submit"/>
     </form>
 </body>

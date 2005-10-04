@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for "jsecurity" DispatcherServlet.
+  -->
+
+<beans>
+
+	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="index">urlController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean name="urlController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
+		<property name="prefix" value="/WEB-INF/resources/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+
+</beans>
