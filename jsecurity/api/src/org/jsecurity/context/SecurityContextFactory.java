@@ -32,8 +32,6 @@ package org.jsecurity.context;
  * <p>The actual implementation of this interface used to retrieve the current
  * {@link SecurityContext} is based on the <code>security.context.factory.class</code> property.</p>
  *
- * @see SecurityContext#getSecurityContextFactory(String, ClassLoader)
- *
  * @author Jeremy Haile
  * @since 0.1
  */
