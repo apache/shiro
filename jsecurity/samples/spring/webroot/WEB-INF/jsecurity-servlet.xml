@@ -7,7 +7,8 @@
 
 <beans>
 
-	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	  <bean id="authenticatedUrlMapping"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="interceptors">
             <list>
                 <!--<ref bean="authenticationInterceptor"/>-->
@@ -22,7 +23,8 @@
         </property>
     </bean>
 
-    <bean name="urlController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+    <bean name="urlController"
+          class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
     <bean name="loginController" class="org.jsecurity.samples.spring.LoginController">
         <property name="commandClass" value="org.jsecurity.samples.spring.LoginCommand"/>
@@ -32,11 +34,11 @@
 
     <bean name="logoutController" class="org.jsecurity.samples.spring.LogoutController"/>
 
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
-		<property name="prefix" value="/WEB-INF/resources/"/>
-		<property name="suffix" value=".jsp"/>
-	</bean>
-
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		    <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
+		    <property name="prefix" value="/WEB-INF/resources/"/>
+		    <property name="suffix" value=".jsp"/>
+	  </bean>
 
 </beans>
