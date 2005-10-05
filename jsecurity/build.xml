@@ -19,8 +19,11 @@
     <property name="patch.version" value="0"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
 
+    <!-- All 3rd party libraries are in here: -->
+    <property name="lib.dir" value="${root.base.dir}/lib"/>
+
     <!-- *RELATIVE* definitions.  These properties will reflect a directory structure relative
-         to where the build is being executed -->
+to where the build is being executed -->
     <property name="base.dir" value="."/>
     <property name="etc.dir" value="${base.dir}/etc"/>
     <property name="src.dir" value="${base.dir}/src"/>
@@ -295,7 +298,7 @@
 
     <target name="composite-jars" depends="root-prepare">
         <path id="jarjar.path">
-            <pathelement location="${root.base.dir}/ri/lib/jarjar/jarjar.jar"/>
+            <pathelement location="${lib.dir}/jarjar/jarjar.jar"/>
         </path>
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="jarjar.path"/>
 

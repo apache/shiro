@@ -10,8 +10,6 @@
     <property name="module.name" value="ri"/>
     <property name="module.base.dir" value="${root.base.dir}/${module.name}"/>
 
-    <property name="lib.dir" value="${module.base.dir}/lib"/>
-
     <!-- ===================================================================
       -  Clean all local and children build files
       -  =================================================================== -->

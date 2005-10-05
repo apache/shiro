@@ -24,7 +24,7 @@
 
     <path id="compile.path">
         <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>        
-        <fileset dir="${lib.dir}" includes="**"/>
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
 
     <!-- ===================================================================
