@@ -1,6 +1,9 @@
 This file lists all 3rd party libraries (and their versions!!!) that
 are required to build or run the project.
 
+If you're a developer editing this file, please keep all listings in alphabetical order for
+convenient lookup.
+
 Some notes:
 
 - Each 3rd party library is stored in a directory named after the
@@ -23,17 +26,27 @@ Some notes:
 - Thanks to the gents working on the Spring Framework (http://www.springframework.org)
   that provided the template and the idea for this file.
 
+* j2ee/servlet-api.jar
+- Servlet API 2.4 (http://java.sun.com/products/servlet)
+- required for building web support classes (Servlet Filters, etc)
 
 * jakarta-commons/commons-logging.jar
 - Commons Logging 1.0.4 (http://jakarta.apache.org/commons/logging)
-- required for building JSecurity
-- required at runtime as JSecurity uses it for all logging
+- required by the RI during build and runtime for logging support
 
 * jakarta-commons/commons-beanutils-core.jar
 - Commons BeanUtils 1.7.0 (http://jakarta.apache.org/commons/beanutils/index.html)
 - required for building and running JSecurity
-- used for constructing Permissions in the ri PermissionAnnotationAuthorizationModule
+- used for constructing Permissions in the Reference Implementation's PermissionAnnotationAuthorizationModule
 
 * jarjar/jarjar.jar
 - Tonic Systems JarJar 0.6 (http://tonicsystems.com/products/jarjar/)
-- Required at build time to create a single jar from multiple jars
+- Required at build time to create a single jar from multiple jars for product distribution
+
+* log4j/log4j.jar
+- Log4J 1.2.9 (http://logging.apache.org/log4j)
+- required by the RI during build and runtime for logging support
+
+* spring/spring.jar
+- Spring Application Framework 1.2.5 (http://springframework.org)
+- required to build Spring integration support and sample apps
