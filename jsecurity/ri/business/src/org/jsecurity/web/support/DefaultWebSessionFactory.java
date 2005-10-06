@@ -1,3 +1,27 @@
+/*
+ * Copyright (C) 2005 Les A. Hazlewood
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the
+ *
+ * Free Software Foundation, Inc.
+ * 59 Temple Place, Suite 330
+ * Boston, MA 02111-1307
+ * USA
+ *
+ * Or, you may view it online at
+ * http://www.opensource.org/licenses/lgpl-license.php
+ */
 package org.jsecurity.web.support;
 
 import org.jsecurity.web.WebSessionFactory;
@@ -22,6 +46,7 @@ import java.beans.PropertyEditor;
 /**
  * Default JSecurity Reference Implementation of the {@link WebSessionFactory} interface.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class DefaultWebSessionFactory implements WebSessionFactory {
@@ -40,7 +65,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
      * the session but not making web requests.  With an expiration time of one year, this
      * should never realistically happen.
      */
-    protected static final int SESSION_ID_COOKIE_MAX_AGE = 60*60*24*365;
+    protected static final int SESSION_ID_COOKIE_MAX_AGE = 60*60*24*365; // 1 year by default
 
     SessionFactory sessionFactory;
 
@@ -51,7 +76,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
     private Class<? extends PropertyEditor> sessionIdEditorClass = null;
 
-    private boolean validateSessionOrigin = false; //default
+    private boolean validateRequestOrigin = false; //default
 
     public DefaultWebSessionFactory(){}
 
@@ -96,12 +121,13 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
     }
 
     /**
-     * If set to <tt>true</tt>, this WebSessionFactory will ensure that any HttpRequest attempting
+     * If set to <tt>true</tt>, this <tt>WebSessionFactory</tt> will ensure that any
+     * <tt>HttpRequest</tt> attempting
      * to join a session (i.e. via {@link #getSession getSession} must have the same
-     * IP Address of the HttpRequest that started the session.
+     * IP Address of the <tt>HttpRequest</tt> that started the session.
      *
-     * <p> If set to <tt>false</tt>, any request with a reference to a valid session id may
-     * acquire that <tt>Session</tt>.
+     * <p> If set to <tt>false</tt>, any <tt>HttpRequest</tt> with a reference to a valid
+     * session id may acquire that <tt>Session</tt>.
      *
      * <p>Although convenient, this should only be enabled in environments where the
      * system can <em>guarantee</em> that each IP address represents one and only one
@@ -119,17 +145,21 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
      *
      * @return true if this factory will verify each HttpRequest joining a session
      */
-    public boolean isValidateSessionOrigin() {
-        return validateSessionOrigin;
+    public boolean isValidateRequestOrigin() {
+        return validateRequestOrigin;
     }
 
     /**
+     * Sets whether or not a request's origin will be validated when accessing a session.  See
+     * the {@link #isValidateRequestOrigin} JavaDoc for an in-depth explanation of this property.
      *
+     * @param validateRequestOrigin whether or not to validate the request's origin when accessing
+     * a session.
      *
-     * @param validateSessionOrigin whether or not to
+     * @see #isValidateRequestOrigin
      */
-    public void setValidateSessionOrigin( boolean validateSessionOrigin ) {
-        this.validateSessionOrigin = validateSessionOrigin;
+    public void setValidateRequestOrigin( boolean validateRequestOrigin ) {
+        this.validateRequestOrigin = validateRequestOrigin;
     }
 
     /**
@@ -178,8 +208,16 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
         Serializable sessionId = getSessionId( request );
         if ( sessionId != null ) {
             session = sessionFactory.getSession( sessionId );
-            if ( isValidateSessionOrigin() ) {
+            if ( isValidateRequestOrigin() ) {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Validating request origin against session origin" );
+                }
                 validateSessionOrigin( request, session );
+            }
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No JSecurity session id associated with the given " +
+                           "HttpServletRequest.  A Session will not be returned." );
             }
         }
         return session;
@@ -203,7 +241,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
                 if ( !requestIp.equals( originIp ) ) {
                     String msg = "Session with id [" + sessionId + "] originated from [" +
                                  originIp + "], but the current HttpServletRequest originated " +
-                                 "from [" + requestIp + "].  Disallowing session access - " +
+                                 "from [" + requestIp + "].  Disallowing session access: " +
                                  "session origin and request origin must match to allow access.";
                     throw new HostUnauthorizedException( msg );
                 }
@@ -212,7 +250,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
                 String msg = "No IP Address associated with the current HttpServletRequest.  " +
                              "Session with id [" + sessionId + "] originated from " +
                              "[" + originIp + "].  Request IP must match the session's origin " +
-                             "IP in order to gain access to the session.";
+                             "IP in order to gain access to that session.";
                 throw new HostUnauthorizedException( msg );
             }
         }
