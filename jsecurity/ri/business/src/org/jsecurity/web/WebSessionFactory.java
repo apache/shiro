@@ -25,6 +25,8 @@
 package org.jsecurity.web;
 
 import org.jsecurity.session.Session;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.authz.AuthorizationException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,20 +61,20 @@ public interface WebSessionFactory {
     Session start( HttpServletRequest request );
 
     /**
-     * Returns the <tt>Session</tt> associated with the specified <tt>HttpServletRequest</tt>, or
-     * <tt>null</tt> if no <tt>Session</tt> can be acquired.
+     * Returns the <tt>Session</tt> associated with the given <tt>HttpServletRequest</tt>, or
+     * <tt>null</tt> if no <tt>Session</tt> could be associated with the request.
      *
      * <p>Because HTTP is a stateless protocol, this method must rely on web-based means of
      * maintaining state to acquire a handle to a Session.  This most likely means acquiring the
      * JSecurity {@link org.jsecurity.session.Session#getSessionId() session id} from the
      * request itself (e.g. as a request parameter), from a {@link javax.servlet.http.Cookie
      * Cookie} or from the {@link javax.servlet.http.HttpSession HttpSession} itself.  Once an
-     * id is obtained, it can be acquired by delegating the call to an underlying
+     * id is obtained, the <tt>Session</tt> can be acquired by delegating the call to an underlying
      * {@link org.jsecurity.session.SessionFactory#getSession(java.io.Serializable)
      * SessionFactory.getSession(Serializable sessionId)} method call.  (This is not a strict
      * requirement, but merely suggests how it might commonly be done).
      *
-     * <p>It is important to note that if used, the <tt>HttpSession</tt> should only ever be
+     * <p>It is important to note that the <tt>HttpSession</tt> should only ever be
      * used to store a handle to the JSecurity <tt>Session</tt> to eliminate dependencies on
      * the web tier.  A JSecurity Session should be viewed as a client-agnostic replacement
      * for the <tt>HttpSession</tt>.
@@ -81,5 +83,5 @@ public interface WebSessionFactory {
      * @return the <tt>Session</tt> associated with the request, or <tt>null</tt> if no
      * <tt>Session</tt> can be acquired.
      */
-    Session getSession( HttpServletRequest request );
+    Session getSession( HttpServletRequest request ) throws InvalidSessionException, AuthorizationException;
 }
