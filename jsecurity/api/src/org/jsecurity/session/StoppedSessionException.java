@@ -41,7 +41,7 @@ public class StoppedSessionException extends InvalidSessionException {
     }
 
     public StoppedSessionException( String s ) {
-        super( s );    //To change body of overridden methods use File | Settings | File Templates.
+        super( s );   
     }
 
     public StoppedSessionException( String message, Throwable cause ) {

@@ -29,7 +29,7 @@ import java.io.Serializable;
 /**
  * A special case of a StoppedSessionException.  An expired session is a session that has
  * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
- * other reason).
+ * other reason.
  *
  * @since 0.1
  * @author Les Hazlewood
