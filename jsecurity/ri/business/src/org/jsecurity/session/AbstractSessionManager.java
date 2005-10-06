@@ -161,8 +161,6 @@ public abstract class AbstractSessionManager implements SessionManager {
      * value is just a global default for all sessions.  Subclasses may override the
      * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
      *
-     *
-     *
      * @param globalSessionTimeout the time in seconds any session may remain idle before
      * expiring.
      */
