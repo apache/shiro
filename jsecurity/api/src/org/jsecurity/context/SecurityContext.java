@@ -37,8 +37,8 @@ import java.util.Properties;
  * class provides access to the current context of the calling code, such as its
  * {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}</p>
  * <p/>
- * <p>The algorithm used in retrieving a <code>SecurityContext</code> using a {@link
- * SecurityContextFactory} is described in detail in the {@link #getAccessor()}
+ * <p>The algorithm used in retrieving a <code>SecurityContext</code> using a
+ * {@link SecurityContextAccessor} is described in detail in the {@link #getAccessor()}
  * JavaDoc.</p>
  *
  * @author Jeremy Haile
@@ -58,15 +58,15 @@ public abstract class SecurityContext {
     private static final String SECURITY_CONTEXT_ACCESSOR_PROP = "security.context.accessor.class";
 
     /**
-     * <p>This property determines whether or not the security context factory should be cached.
+     * <p>This property determines whether or not the security context accessor should be cached.
      * The JSecurity implementation is responsible for configuring whether or not caching of
-     * the factory is allowed.  The default value of this property is true for performance
+     * the accessor is allowed.  The default value of this property is true for performance
      * reasons, although implementations are allowed to override the value either through
      * the properties file or a system property.</p>
-     * <p>This property should be set to "false" to disable caching of the factory.  Any other value
+     * <p>This property should be set to "false" to disable caching of the accessor.  Any other value
      * will leave caching enabled.</p>
      */
-    private static final String SECURITY_CONTEXT_FACTORY_CACHED_PROP = "security.context.factory.cached";
+    private static final String SECURITY_CONTEXT_ACCESSOR_CACHED_PROP = "security.context.accessor.cached";
 
     /**
      * Name of the JSecurity properties file to be loaded.  This file should contain properties
@@ -74,9 +74,9 @@ public abstract class SecurityContext {
      */
     private static final String JSECURITY_PROPS_FILE = "jsecurity.properties";
 
-    private static boolean factoryCached = true;
+    private static boolean accessorCached = true;
 
-    /** Will always be <tt>null</tt> if caching is turned off (i.e. factoryCached == false); */
+    /** Will always be <tt>null</tt> if caching is turned off (i.e. accessorCached == false); */
     private static SecurityContextAccessor cachedAccessor = null;
 
 
@@ -109,8 +109,8 @@ public abstract class SecurityContext {
      * @return whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
      *         #getAccessor()} is called.
      */
-    protected static boolean isFactoryCached() {
-        return factoryCached;
+    protected static boolean isAccessorCached() {
+        return accessorCached;
     }
 
     /**
@@ -118,13 +118,13 @@ public abstract class SecurityContext {
      * #getAccessor()} is called. <p>The system default is <tt>true</tt>.
      * <p/>
      * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getAccessor()}
-     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the Factory
+     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the accessor
      * implementation.
      *
-     * @param cached whether or not to cache the factory instance.
+     * @param cached whether or not to cache the accessor instance.
      */
-    protected static void setFactoryCached( boolean cached ) {
-        factoryCached = cached;
+    protected static void setAccessorCached( boolean cached ) {
+        accessorCached = cached;
     }
 
 
@@ -137,14 +137,17 @@ public abstract class SecurityContext {
     private static SecurityContextAccessor getAccessor() {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if ( cl == null ) {
+            cl = SecurityContext.class.getClassLoader();
+        }
 
-        SecurityContextAccessor accessor = null;
+        SecurityContextAccessor accessor;
 
-        if ( isFactoryCached() ) {
+        if ( isAccessorCached() ) {
             synchronized (SecurityContext.class ) {
                 if ( cachedAccessor == null ) {
-                    String factoryClassName = getAccessorClassName( cl );
-                    cachedAccessor = instantiateAccessor( factoryClassName, cl );
+                    String accessorClassName = getAccessorClassName( cl );
+                    cachedAccessor = instantiateAccessor( accessorClassName, cl );
                 }
             }
 
@@ -159,9 +162,9 @@ public abstract class SecurityContext {
     }
 
     private static String getAccessorClassName( ClassLoader cl ) {
-        String factoryClassName = System.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
+        String accessorClassName = System.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
 
-        if ( factoryClassName == null ) {
+        if ( accessorClassName == null ) {
 
             InputStream propsFileIs = cl.getResourceAsStream( JSECURITY_PROPS_FILE );
             Properties props = new Properties();
@@ -175,48 +178,48 @@ public abstract class SecurityContext {
                 throw new SecurityContextException( msg );
             }
 
-            factoryClassName = props.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
+            accessorClassName = props.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
 
-            String strFactoryCached = props.getProperty( SECURITY_CONTEXT_FACTORY_CACHED_PROP );
-            if( "false".equals( strFactoryCached ) ) {
-                setFactoryCached( false );
+            String strAccessorCached = props.getProperty( SECURITY_CONTEXT_ACCESSOR_CACHED_PROP );
+            if( "false".equals( strAccessorCached ) ) {
+                setAccessorCached( false );
             }
 
         }
 
-        if ( factoryClassName == null || factoryClassName.length() == 0 ) {
+        if ( accessorClassName == null || accessorClassName.length() == 0 ) {
             String msg = "No [" + SecurityContextAccessor.class.getName() + "] implementation " +
-                         "class was found configured in the system.  The factory " +
+                         "class was found configured in the system.  The accessor " +
                          "implementation should normally be specified by including the " +
-                         "JSecurity implementation JAR in the classpath.  The factory can " +
+                         "JSecurity implementation JAR in the classpath.  The accessor can " +
                          "also be specified by setting the [" + SECURITY_CONTEXT_ACCESSOR_PROP +
                          "] system property or manually including a jsecurity.properties file " +
                          "at the root of the classpath.";
             throw new SecurityContextException( msg );
         }
 
-        return factoryClassName;
+        return accessorClassName;
 
     }
 
-    private static SecurityContextAccessor instantiateAccessor( String factoryClassName,
+    private static SecurityContextAccessor instantiateAccessor( String accessorClassName,
                                                                 ClassLoader cl ) {
         SecurityContextAccessor accessor;
         try {
 
-            Class factoryClass = cl.loadClass( factoryClassName );
-            accessor = (SecurityContextAccessor)factoryClass.newInstance();
+            Class accessorClass = cl.loadClass( accessorClassName );
+            accessor = (SecurityContextAccessor)accessorClass.newInstance();
 
         } catch ( ClassNotFoundException e ) {
-            String msg = "Factory class [" + factoryClassName + "] could not be found.  No " +
+            String msg = "Accessor class [" + accessorClassName + "] could not be found.  No " +
                          "SecurityContext can be loaded.";
             throw new SecurityContextException( msg, e );
         } catch ( IllegalAccessException e ) {
-            String msg = "Factory class [" + factoryClassName + "] constructor could not be " +
+            String msg = "Accessor class [" + accessorClassName + "] constructor could not be " +
                          "accessed.  SecurityContext cannot be loaded.";
             throw new SecurityContextException( msg, e );
         } catch ( InstantiationException e ) {
-            String msg = "Factory class [" + factoryClassName + "] could not be instantiated.  " +
+            String msg = "Accessor class [" + accessorClassName + "] could not be instantiated.  " +
                          "SecurityContext cannot be loaded.";
             throw new SecurityContextException( msg, e );
         }
@@ -231,8 +234,8 @@ public abstract class SecurityContext {
         return getAccessor().getSession();
     }
 
-    public static AuthorizationContext getAuthContext() {
-        return getAccessor().getAuthContext();
+    public static AuthorizationContext getAuthorizationContext() {
+        return getAccessor().getAuthorizationContext();
     }
 
     public static void invalidate() {
