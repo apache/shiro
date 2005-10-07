@@ -48,7 +48,7 @@ import org.jsecurity.authz.AuthorizationContext;
  * <p>You are free to acquire a user's principals and credentials however you wish and
  * then submit them to the JSecurity framework in the form of any implementation.  Whether or
  * not a token will be used during authentication is determined by the
- * {@link AuthenticationModule#supports(Class)} method.  We
+ * {@link org.jsecurity.authc.module.AuthenticationModule#supports(Class)} method.  We
  * also think the name <em>authentication token</em> more accurately reflects its true purpose
  * in a login framework, whereas <em>Callback</em> is less obvious (<tt>Callback</tt> doesn't even
  * have any methods!).

@@ -23,22 +23,16 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.samples.spring;
-
-import org.jsecurity.context.SecurityContext;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+package org.jsecurity.config;
 
 /**
- * Description of class.
+ * The security configurator is responsible for configuring the JSecurity instance
+ * running on
  *
  * @author Jeremy Haile
  * @since 0.1
  */
-public class LogoutController extends AbstractController {
+public abstract class SecurityConfigurator {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -59,12 +53,4 @@ public class LogoutController extends AbstractController {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
-
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
-        SecurityContext.invalidate();
-
-        return new ModelAndView( "login" );
-    }
 }

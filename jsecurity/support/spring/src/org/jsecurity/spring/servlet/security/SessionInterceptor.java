@@ -1,12 +1,12 @@
 package org.jsecurity.spring.servlet.security;
 
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.jsecurity.web.WebSessionFactory;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.util.ThreadContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.WebSessionFactory;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,9 +20,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Les Hazlewood
  */
 public class SessionInterceptor extends HandlerInterceptorAdapter {
-
-    private static final String SESSION_THREAD_CONTEXT_KEY =
-        Session.class.getName() + "_THREAD_CONTEXT_KEY";
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -67,12 +64,12 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 
     protected void bind( Session session ) {
         if ( session != null ) {
-            ThreadContext.put( SESSION_THREAD_CONTEXT_KEY, session );
+            ThreadContext.put( ThreadContext.SESSION_THREAD_CONTEXT_KEY, session );
         }
     }
 
     protected void unbindSession() {
-        ThreadContext.remove( SESSION_THREAD_CONTEXT_KEY );
+        ThreadContext.remove( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
     }
 
     protected boolean handleInvalidSession( HttpServletRequest request,

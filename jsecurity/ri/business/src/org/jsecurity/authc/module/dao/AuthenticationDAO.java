@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy C. Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,26 +23,16 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.context;
+package org.jsecurity.authc.module.dao;
 
 /**
- * <p>Factory interface that should be implemented by implementations of the JSecurity API
- * to retrieve a {@link SecurityContext} object for the current context.</p>
+ * Description of class.
  *
- * <p>The actual implementation of this interface used to retrieve the current
- * {@link SecurityContext} is based on the <code>security.context.factory.class</code> property.</p>
- *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
-public interface SecurityContextFactory {
+public interface AuthenticationDAO {
 
-    /**
-     * Returns a {@link SecurityContext} object that represents the current context
-     * and allows users of JSecurity access to the primary service interfaces.
-     * @param cl the class loader that should be used when loading resources from
-     * the classpath.
-     * @return the current security context.
-     */
-    public SecurityContext getContext( ClassLoader cl );
+    public UserAuthenticationInfo getUserAuthenticationInfo( String username ); 
+
 }
