@@ -66,22 +66,19 @@ to where the build is being executed -->
              must be declared in the order the dendencies occur. -->
         <ant dir="api" target="${target}"/>
         <ant dir="ri" target="${target}"/>
-
+        <ant dir="support" target="${target}"/>
     </target>
 
     <!-- ===================================================================
       -  Clean all local and children build files
       -  =================================================================== -->
     <target name="clean">
-
         <!-- Clean all children builds: -->
         <antcall target="template">
             <param name="target" value="clean"/>
         </antcall>
-
         <!-- Clean local build: -->
         <delete dir="${root.dist.dir}"/>
-
     </target>
 
 
@@ -134,6 +131,8 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Specification API">
+            <doctitle><![CDATA[<h1>JSecurity</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
                 <include name="ri/common/src/**/*.java"/>
@@ -154,6 +153,8 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Reference Implementation API">
+            <doctitle><![CDATA[<h1>JSecurity</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="ri/common/src/**/*.java"/>
                 <include name="ri/business/src/**/*.java"/>
@@ -161,6 +162,8 @@ to where the build is being executed -->
             </fileset>
             <link href="file://${root.dist.dir}/docs/spec-api/"/>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
+            <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <classpath>
                 <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
                 <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
@@ -181,6 +184,8 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Java API">
+            <doctitle><![CDATA[<h1>JSecurity</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
                 <include name="ri/common/src/**/*.java"/>
@@ -307,11 +312,10 @@ to where the build is being executed -->
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
             <manifest>
-				<attribute name="Implementation-Title"
-                           value="${project.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="${project.name}-Version" value="${version}"/>
-			</manifest>
+				        <attribute name="Implementation-Title" value="${project.name}"/>
+				        <attribute name="Implementation-Version" value="${version}"/>
+				        <attribute name="${project.name}-Version" value="${version}"/>
+			      </manifest>
         </jarjar>
 
         <jarjar jarfile="${root.dist.dir}/${project.name}-client.jar">
@@ -319,11 +323,10 @@ to where the build is being executed -->
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/>
             <manifest>
-				<attribute name="Implementation-Title"
-                           value="${project.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="${project.name}-Version" value="${version}"/>
-			</manifest>
+				        <attribute name="Implementation-Title" value="${project.name}"/>
+				        <attribute name="Implementation-Version" value="${version}"/>
+				        <attribute name="${project.name}-Version" value="${version}"/>
+			      </manifest>
         </jarjar>
 
         <jarjar jarfile="${root.dist.dir}/${project.name}.jar">
@@ -331,12 +334,13 @@ to where the build is being executed -->
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-spring.jar"/>
+
             <manifest>
-				<attribute name="Implementation-Title"
-                           value="${project.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="${project.name}-Version" value="${version}"/>
-			</manifest>
+				        <attribute name="Implementation-Title" value="${project.name}"/>
+				        <attribute name="Implementation-Version" value="${version}"/>
+				        <attribute name="${project.name}-Version" value="${version}"/>
+			      </manifest>
         </jarjar>
 
     </target>
@@ -352,13 +356,16 @@ to where the build is being executed -->
         <antcall target="template">
             <param name="target" value="dist"/>
         </antcall>
+    </target>
+
+    <target name="release" depends="dist,javadoc">
+
+        <!-- Create composite jars for ease of use: -->
         <antcall target="composite-jars"/>
         <!-- copy over the readme file in the dist directory so people understand
              what the files do: -->
         <copy toDir="${root.dist.dir}" file="${root.etc.dir}/README.txt"/>
-    </target>
 
-    <target name="release" depends="dist,javadoc">
         <property name="release.zip.name" value="${project.name}-${version}-with-dependencies.zip"/>
         <zip destfile="${root.dist.dir}/${release.zip.name}"
              basedir="${basedir}"
