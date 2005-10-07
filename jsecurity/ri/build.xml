@@ -33,7 +33,7 @@
              must be declared in the order the dendencies occur. -->
         <ant dir="common" target="${target}"/>
         <ant dir="business" target="${target}"/>
-        <ant dir="client" target="${target}"/>
+        <!-- <ant dir="client" target="${target}"/> -->
 
     </target>
 

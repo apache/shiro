@@ -184,12 +184,16 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         return clientAddress;
     }
 
-    public Session start( HttpServletRequest request ) {
+    public Session start( HttpServletRequest request, HttpServletResponse response ) {
         InetAddress clientAddress = getInetAddress( request );
-        return start( clientAddress );
+        Session session = start( clientAddress );
+        Serializable sessionId = session.getSessionId();
+        storeSessionIdInHttpSession( request, sessionId );
+        storeSessionIdInCookie( response, sessionId );
+        return session;
     }
 
-    public Session getSession( HttpServletRequest request )
+    public Session getSession( HttpServletRequest request, HttpServletResponse response )
         throws InvalidSessionException, AuthorizationException {
         Session session = null;
         Serializable sessionId = getSessionId( request );
