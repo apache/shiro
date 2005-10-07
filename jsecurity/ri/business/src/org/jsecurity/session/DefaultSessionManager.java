@@ -43,16 +43,27 @@ public class DefaultSessionManager extends AbstractSessionManager
     }
 
     protected void onStop( Session session ) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Updating stop time of session with id [" + session.getSessionId() + "]" );
+        }
         ((SimpleSession)session).setStopTimestamp( Calendar.getInstance() );
     }
 
     protected void onExpire( Session session ) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Updating stop time and expiration status of session with id " +
+                       session.getSessionId() + "]");
+        }
         SimpleSession ss = (SimpleSession)session;
         ss.setStopTimestamp( Calendar.getInstance() );
         ss.setExpired( true );
     }
 
     protected void onTouch( Session session ) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Updating last access time of session with id [" +
+                       session.getSessionId() + "]");
+        }
         ((SimpleSession)session).setLastAccessTime( Calendar.getInstance() );
     }
 

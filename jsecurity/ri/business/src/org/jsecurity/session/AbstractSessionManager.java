@@ -364,8 +364,8 @@ public abstract class AbstractSessionManager implements SessionManager {
     }
 
     protected Session retrieveSession( Serializable sessionId ) {
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Retrieving session with id [" + sessionId + "] from the EIS" );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Retrieving session with id [" + sessionId + "] from the EIS" );
         }
         Session s = sessionDAO.readSession( sessionId );
         if ( s == null ) {
