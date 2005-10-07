@@ -24,24 +24,24 @@
  */
 package org.jsecurity.web.support;
 
-import org.jsecurity.web.WebSessionFactory;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.session.InvalidSessionException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jsecurity.session.DefaultSessionFactory;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.web.WebSessionFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.beans.PropertyEditor;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.io.Serializable;
-import java.beans.PropertyEditor;
 
 /**
  * Default JSecurity Reference Implementation of the {@link WebSessionFactory} interface.
@@ -49,7 +49,7 @@ import java.beans.PropertyEditor;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class DefaultWebSessionFactory implements WebSessionFactory {
+public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -67,8 +67,6 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
      */
     protected static final int SESSION_ID_COOKIE_MAX_AGE = 60*60*24*365; // 1 year by default
 
-    SessionFactory sessionFactory;
-
     private String sessionIdRequestParamName = SESSION_ID_REQUEST_PARAM_NAME; //default;
     private String sessionIdCookieName = SESSION_ID_REQUEST_PARAM_NAME; //default;
     private String sessionIdHttpSessionKeyName = Session.class.getName() + "_HTTP_SESSION_KEY";
@@ -79,10 +77,6 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
     private boolean validateRequestOrigin = false; //default
 
     public DefaultWebSessionFactory(){}
-
-    public void setSessionFactory( SessionFactory sessionFactory ) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public String getSessionIdRequestParamName() {
         return sessionIdRequestParamName;
@@ -175,13 +169,6 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
         this.sessionIdEditorClass = clazz;
     }
 
-    public void init() {
-        if ( this.sessionFactory == null ) {
-            String msg = "sessionFactory property must be set";
-            throw new IllegalStateException( msg );
-        }
-    }
-
     protected InetAddress getInetAddress( HttpServletRequest request ) {
         InetAddress clientAddress = null;
         //get the Host/IP they're coming from:
@@ -199,7 +186,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
     public Session start( HttpServletRequest request ) {
         InetAddress clientAddress = getInetAddress( request );
-        return sessionFactory.start( clientAddress );
+        return start( clientAddress );
     }
 
     public Session getSession( HttpServletRequest request )
@@ -207,7 +194,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
         Session session = null;
         Serializable sessionId = getSessionId( request );
         if ( sessionId != null ) {
-            session = sessionFactory.getSession( sessionId );
+            session = getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Validating request origin against session origin" );
