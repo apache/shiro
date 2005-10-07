@@ -35,13 +35,13 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
         boolean continueProcessing = true;
 
         try {
-            Session session = webSessionFactory.getSession( request );
+            Session session = webSessionFactory.getSession( request, response );
             if ( session == null ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "No JSecurity Session associated with the HttpServletRequest.  " +
                                "Attempting to create a new one." );
                 }
-                session = webSessionFactory.start( request );
+                session = webSessionFactory.start( request, response );
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Created new JSecurity Session with id [" +
                                session.getSessionId() + "]");
@@ -75,7 +75,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
     protected boolean handleInvalidSession( HttpServletRequest request,
                                             HttpServletResponse response,
                                             Object handler ) {
-        Session s = webSessionFactory.start( request );
+        Session s = webSessionFactory.start( request, response );
         bind( s );
         return true;
     }

@@ -29,6 +29,7 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.authz.AuthorizationException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * A <tt>WebSessionFactory</tt> can start or acquire
@@ -56,9 +57,10 @@ public interface WebSessionFactory {
      * SessionFactory.start(java.net.InetAddress)} (although this is not a strict
      * requirement - the session may be created in any number of ways).
      * @param request the current request being processed.
+     * @param response the current response being generated.
      * @return a new <tt>Session</tt> based on the specified <tt>request</tt>
      */
-    Session start( HttpServletRequest request );
+    Session start( HttpServletRequest request, HttpServletResponse response );
 
     /**
      * Returns the <tt>Session</tt> associated with the given <tt>HttpServletRequest</tt>, or
@@ -80,8 +82,10 @@ public interface WebSessionFactory {
      * for the <tt>HttpSession</tt>.
      *
      * @param request the current request being processed
+     * @param response the current response being generated.
      * @return the <tt>Session</tt> associated with the request, or <tt>null</tt> if no
      * <tt>Session</tt> can be acquired.
      */
-    Session getSession( HttpServletRequest request ) throws InvalidSessionException, AuthorizationException;
+    Session getSession( HttpServletRequest request, HttpServletResponse response )
+        throws InvalidSessionException, AuthorizationException;
 }

@@ -165,8 +165,10 @@ to where the build is being executed -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <classpath>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
+                <pathelement
+                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+                <pathelement
+                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
             </classpath>
         </javadoc>
     </target>
@@ -196,8 +198,10 @@ to where the build is being executed -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <classpath>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
+                <pathelement
+                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+                <pathelement
+                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
             </classpath>
         </javadoc>
     </target>
@@ -247,7 +251,8 @@ to where the build is being executed -->
             <classpath refid="test.path"/>
 
             <formatter type="brief" usefile="false"/>
-            <formatter type="xml"/> <!-- allows us to generate web reports -->
+            <formatter type="xml"/>
+            <!-- allows us to generate web reports -->
 
             <batchtest fork="true" todir="${gen.dir}">
                 <fileset dir="${test.classes.dir}">
@@ -305,46 +310,46 @@ to where the build is being executed -->
         <path id="jarjar.path">
             <pathelement location="${lib.dir}/jarjar/jarjar.jar"/>
         </path>
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="jarjar.path"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
+                 classpathref="jarjar.path"/>
 
         <jarjar jarfile="${root.dist.dir}/${project.name}-business.jar">
             <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
             <manifest>
-				        <attribute name="Implementation-Title" value="${project.name}"/>
-				        <attribute name="Implementation-Version" value="${version}"/>
-				        <attribute name="${project.name}-Version" value="${version}"/>
-			      </manifest>
+                <attribute name="Implementation-Title" value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+			</manifest>
         </jarjar>
 
         <jarjar jarfile="${root.dist.dir}/${project.name}-client.jar">
             <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/>
+            <!-- <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> -->
             <manifest>
-				        <attribute name="Implementation-Title" value="${project.name}"/>
-				        <attribute name="Implementation-Version" value="${version}"/>
-				        <attribute name="${project.name}-Version" value="${version}"/>
-			      </manifest>
+                <attribute name="Implementation-Title" value="${project.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="${project.name}-Version" value="${version}"/>
+            </manifest>
         </jarjar>
 
         <jarjar jarfile="${root.dist.dir}/${project.name}.jar">
             <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/>
+            <!-- <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> -->
             <zipfileset src="${root.dist.dir}/${project.name}-spring.jar"/>
 
             <manifest>
-				        <attribute name="Implementation-Title" value="${project.name}"/>
-				        <attribute name="Implementation-Version" value="${version}"/>
-				        <attribute name="${project.name}-Version" value="${version}"/>
-			      </manifest>
+			    <attribute name="Implementation-Title" value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+			</manifest>
         </jarjar>
 
     </target>
-
 
 
     <!-- ===================================================================
