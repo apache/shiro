@@ -42,7 +42,7 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
     }
 
 
-    public AuthorizationContext getAuthContext() {
+    public AuthorizationContext getAuthorizationContext() {
         return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
     }
 

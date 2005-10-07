@@ -51,12 +51,12 @@ public interface SecurityContextAccessor {
      * Returns a {@link AuthorizationContext} for the current user's context.
      * @return the current authorization context.
      */
-    public AuthorizationContext getAuthContext();
+    public AuthorizationContext getAuthorizationContext();
 
     /**
      * Invalidates the current session and authorization context.  This would normally
      * be called when the user logs out.  Any call to {@link #getSession()}
-     * or {@link #getAuthContext()} after <code>invalidate</code> is called should
+     * or {@link #getAuthorizationContext()} after <code>invalidate</code> is called should
      * return null.
      */
     public void invalidate();
