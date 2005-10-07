@@ -130,7 +130,7 @@ public class AuthenticationFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
-        AuthorizationContext authContext = SecurityContext.getAuthContext();
+        AuthorizationContext authContext = SecurityContext.getAuthorizationContext();
 
         if( authContext == null ) {
             handleUnauthenticatedRequest(request, response);
