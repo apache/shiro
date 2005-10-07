@@ -97,7 +97,7 @@ public class DefaultSessionManager extends AbstractSessionManager
             if ( invalidCount > 0 ) {
                 msg += "  [" + invalidCount + "] sessions were stopped.";
             } else {
-                msg += "  No sessions were stopped";
+                msg += "  No sessions were stopped.";
             }
             log.info( msg );
         }

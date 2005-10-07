@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<project name="jsecurity-ri" default="dist">
+<project name="jsecurity-support" default="dist">
 
 	<property name="root.base.dir" value=".."/>
 
     <!-- "extend" parent build definition -->
     <import file="../build.xml" />
 
-    <property name="module.name" value="ri"/>
+    <property name="module.name" value="support"/>
     <property name="module.base.dir" value="${root.base.dir}/${module.name}"/>
 
     <!-- ===================================================================
@@ -20,6 +20,9 @@
             <param name="target" value="clean"/>
         </antcall>
 
+        <!-- Clean local build: -->
+        <delete dir="${build.dir}"/>
+
     </target>
 
     <!-- ===================================================================
@@ -27,14 +30,7 @@
  -  calls to the underlying children builds.
  -  =================================================================== -->
     <target name="template">
-        <!-- This section defines the modules and the order in which they are
-             executed for any given target.  This means ORDER MATTERS.
-             Any dependencies that are to be satisified by one module for another
-             must be declared in the order the dendencies occur. -->
-        <ant dir="common" target="${target}"/>
-        <ant dir="business" target="${target}"/>
-        <ant dir="client" target="${target}"/>
-
+        <ant dir="spring" target="${target}"/>
     </target>
 
 </project>
