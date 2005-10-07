@@ -211,8 +211,8 @@ public abstract class SecurityContext {
             accessor = (SecurityContextAccessor)accessorClass.newInstance();
 
         } catch ( ClassNotFoundException e ) {
-            String msg = "Accessor class [" + accessorClassName + "] could not be found.  No " +
-                         "SecurityContext can be loaded.";
+            String msg = "Accessor class [" + accessorClassName + "] could not be found.  " +
+                         "SecurityContext cannot be loaded.";
             throw new SecurityContextException( msg, e );
         } catch ( IllegalAccessException e ) {
             String msg = "Accessor class [" + accessorClassName + "] constructor could not be " +
