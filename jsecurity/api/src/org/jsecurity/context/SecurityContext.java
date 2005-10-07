@@ -25,11 +25,8 @@
 
 package org.jsecurity.context;
 
-import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.authz.Authorizer;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,26 +34,16 @@ import java.util.Properties;
 
 /**
  * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API. This
- * class provides access to the core services of JSecurity, such as the {@link
- * org.jsecurity.session.SessionFactory}, {@link org.jsecurity.authc.Authenticator}, {@link
- * org.jsecurity.authz.Authorizer}, etc. as well as current context of the calling code, such as its
+ * class provides access to the current context of the calling code, such as its
  * {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}</p>
  * <p/>
- * <p>To gain access to a <code>SecurityContext</code> instance, the following code should be
- * executed:
- * <p/>
- * <blockquote><pre>SecurityContext context = SecurityContext.getInstance();</pre></blockquote>
- * The returned <code>SecurityContext</code> instance will be an implementation from the JSecurity
- * implementation.  The <code>SecurityContext</code> is obtained using a {@link
- * SecurityContextFactory} that is implemented by the JSecurity implementation provider.</p>
- * <p/>
  * <p>The algorithm used in retrieving a <code>SecurityContext</code> using a {@link
- * SecurityContextFactory} is described in detail in the {@link #getContext(ClassLoader)}
+ * SecurityContextFactory} is described in detail in the {@link #getAccessor()}
  * JavaDoc.</p>
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see SecurityContextFactory
+ * @see SecurityContextAccessor
  * @since 0.1
  */
 public abstract class SecurityContext {
@@ -66,9 +53,20 @@ public abstract class SecurityContext {
      ============================================*/
     /**
      * Name of the system property or file property that determines the class name of the {@link
-     * SecurityContextFactory} implementation class to use.
+     * SecurityContextAccessor} implementation class to use.
      */
-    private static final String SECURITY_CONTEXT_FACTORY_PROP = "security.context.factory.class";
+    private static final String SECURITY_CONTEXT_ACCESSOR_PROP = "security.context.accessor.class";
+
+    /**
+     * <p>This property determines whether or not the security context factory should be cached.
+     * The JSecurity implementation is responsible for configuring whether or not caching of
+     * the factory is allowed.  The default value of this property is true for performance
+     * reasons, although implementations are allowed to override the value either through
+     * the properties file or a system property.</p>
+     * <p>This property should be set to "false" to disable caching of the factory.  Any other value
+     * will leave caching enabled.</p>
+     */
+    private static final String SECURITY_CONTEXT_FACTORY_CACHED_PROP = "security.context.factory.cached";
 
     /**
      * Name of the JSecurity properties file to be loaded.  This file should contain properties
@@ -79,7 +77,8 @@ public abstract class SecurityContext {
     private static boolean factoryCached = true;
 
     /** Will always be <tt>null</tt> if caching is turned off (i.e. factoryCached == false); */
-    private static SecurityContextFactory factory = null;
+    private static SecurityContextAccessor cachedAccessor = null;
+
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -98,79 +97,69 @@ public abstract class SecurityContext {
      ============================================*/
 
     /**
-     * Returns whether or not the same <tt>SecurityContextFactory</tt> will be used each time {@link
-     * #getContext()} is called.
+     * Returns whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
+     * #getAccessor()} is called.
      * <p/>
      * <p>The system default is <tt>true</tt>.
      * <p/>
-     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getContext()}
-     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the Factory
+     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getAccessor()}
+     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the accessor
      * implementation.
      *
-     * @return whether or not the same <tt>SecurityContextFactory</tt> will be used each time {@link
-     *         #getContext()} is called.
+     * @return whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
+     *         #getAccessor()} is called.
      */
-    public static boolean isFactoryCached() {
+    protected static boolean isFactoryCached() {
         return factoryCached;
     }
 
     /**
-     * Sets whether or not the same <tt>SecurityContextFactory</tt> will be used each time {@link
-     * #getContext()} is called. <p>The system default is <tt>true</tt>.
+     * Sets whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
+     * #getAccessor()} is called. <p>The system default is <tt>true</tt>.
      * <p/>
-     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getContext()}
+     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getAccessor()}
      * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the Factory
      * implementation.
      *
      * @param cached whether or not to cache the factory instance.
      */
-    public static void setFactoryCached( boolean cached ) {
+    protected static void setFactoryCached( boolean cached ) {
         factoryCached = cached;
     }
 
 
     /**
-     * Retrieves a {@link SecurityContext} instance based on a JSecurity implementation's
-     * <tt>SecurityContextFactory</tt>.
+     * Retrieves a {@link SecurityContextAccessor} instance based on a JSecurity implementation's
+     * <tt>SecurityContextAccessor</tt>.
      *
-     * @return the current SecurityContext.
+     * @return the current SecurityContextAccessor
      */
-    public static SecurityContext getContext() {
+    private static SecurityContextAccessor getAccessor() {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if ( cl == null ) {
-            cl = SecurityContext.class.getClassLoader();
-        }
-        return getContext( cl );
-    }
 
-    private static SecurityContext getContext( ClassLoader cl ) {
-
-        SecurityContext context;
+        SecurityContextAccessor accessor = null;
 
         if ( isFactoryCached() ) {
             synchronized (SecurityContext.class ) {
-                if ( factory == null ) {
-                    String factoryClassName = getFactoryClassName( cl );
-                    factory = instantiateFactory( factoryClassName, cl );
+                if ( cachedAccessor == null ) {
+                    String factoryClassName = getAccessorClassName( cl );
+                    cachedAccessor = instantiateAccessor( factoryClassName, cl );
                 }
             }
-            context = factory.getContext( cl );
+
+            accessor = cachedAccessor;
+
         } else {
-            String factoryClassName = getFactoryClassName( cl );
-            SecurityContextFactory factory = instantiateFactory( factoryClassName, cl );
-            context = factory.getContext( cl );
+            String accessorClassName = getAccessorClassName( cl );
+            accessor = instantiateAccessor( accessorClassName, cl );
         }
 
-        if ( context == null ) {
-            throw new SecurityContextException( "SecurityContext returned by factory was null." );
-        }
-
-        return context;
+        return accessor;
     }
 
-    private static String getFactoryClassName( ClassLoader cl ) {
-        String factoryClassName = System.getProperty( SECURITY_CONTEXT_FACTORY_PROP );
+    private static String getAccessorClassName( ClassLoader cl ) {
+        String factoryClassName = System.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
 
         if ( factoryClassName == null ) {
 
@@ -179,23 +168,28 @@ public abstract class SecurityContext {
             try {
                 props.load( propsFileIs );
             } catch ( IOException e ) {
-                String msg = "No [" + SECURITY_CONTEXT_FACTORY_PROP + "] system property " +
+                String msg = "No [" + SECURITY_CONTEXT_ACCESSOR_PROP + "] system property " +
                              "is defined and [" + JSECURITY_PROPS_FILE + "] cannot be " +
-                             "loaded from the classloader.  A SecurityContextFactory cannot " +
-                             "be created.";
+                             "loaded from the classloader.  A " + SecurityContextAccessor.class.getName() + " " +
+                             "cannot be created.";
                 throw new SecurityContextException( msg );
             }
 
-            factoryClassName = props.getProperty( SECURITY_CONTEXT_FACTORY_PROP );
+            factoryClassName = props.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
+
+            String strFactoryCached = props.getProperty( SECURITY_CONTEXT_FACTORY_CACHED_PROP );
+            if( "false".equals( strFactoryCached ) ) {
+                setFactoryCached( false );
+            }
 
         }
 
         if ( factoryClassName == null || factoryClassName.length() == 0 ) {
-            String msg = "No [" + SecurityContextFactory.class.getName() + "] implementation " +
+            String msg = "No [" + SecurityContextAccessor.class.getName() + "] implementation " +
                          "class was found configured in the system.  The factory " +
                          "implementation should normally be specified by including the " +
                          "JSecurity implementation JAR in the classpath.  The factory can " +
-                         "also be specified by setting the [" + SECURITY_CONTEXT_FACTORY_PROP +
+                         "also be specified by setting the [" + SECURITY_CONTEXT_ACCESSOR_PROP +
                          "] system property or manually including a jsecurity.properties file " +
                          "at the root of the classpath.";
             throw new SecurityContextException( msg );
@@ -205,13 +199,13 @@ public abstract class SecurityContext {
 
     }
 
-    private static SecurityContextFactory instantiateFactory( String factoryClassName,
-                                                              ClassLoader cl ) {
-        SecurityContextFactory factory;
+    private static SecurityContextAccessor instantiateAccessor( String factoryClassName,
+                                                                ClassLoader cl ) {
+        SecurityContextAccessor accessor;
         try {
 
             Class factoryClass = cl.loadClass( factoryClassName );
-            factory = (SecurityContextFactory)factoryClass.newInstance();
+            accessor = (SecurityContextAccessor)factoryClass.newInstance();
 
         } catch ( ClassNotFoundException e ) {
             String msg = "Factory class [" + factoryClassName + "] could not be found.  No " +
@@ -227,21 +221,21 @@ public abstract class SecurityContext {
             throw new SecurityContextException( msg, e );
         }
 
-        return factory;
+        return accessor;
     }
 
     /*--------------------------------------------
     |     A B S T R A C T   M E T H O D S       |
     ============================================*/
-    public abstract SessionFactory getSessionFactory();
+    public static Session getSession() {
+        return getAccessor().getSession();
+    }
 
-    public abstract Authenticator getAuthenticator();
+    public static AuthorizationContext getAuthContext() {
+        return getAccessor().getAuthContext();
+    }
 
-    public abstract Authorizer getAuthorizer();
-
-    public abstract Session getCurrentSession();
-
-    public abstract AuthorizationContext getCurrentAuthContext();
-
-    public abstract void invalidate();
+    public static void invalidate() {
+        getAccessor().invalidate();
+    }
 }

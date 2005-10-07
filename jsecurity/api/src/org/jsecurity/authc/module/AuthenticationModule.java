@@ -22,11 +22,13 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc;
+package org.jsecurity.authc.module;
+
+import org.jsecurity.authc.Authenticator;
 
 /**
- * An AuthenticationModule is an {@link Authenticator} that can support specific types of
- * <em>authentication tokens</em>.  Please see the {@link Authenticator} class API to understand
+ * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support specific types of
+ * <em>authentication tokens</em>.  Please see the {@link org.jsecurity.authc.Authenticator} class API to understand
  * how <tt>authentication token</tt>s function.
  *
  * <p>An implementation of this class can be used

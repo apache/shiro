@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy C. Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,28 +23,26 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.context;
+package org.jsecurity.authc.module;
 
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authz.AuthorizationContext;
+import java.util.Set;
 
 /**
- * Description of class.
+ * An authenticator that delegates to a set of {@link org.jsecurity.authc.module.AuthenticationModule}s
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
-public class DefaultSecurityContextFactory implements SecurityContextFactory {
+public class ModuleAuthenticator {
 
     /*--------------------------------------------
-     |             C O N S T A N T S             |
-     ============================================*/
+    |             C O N S T A N T S             |
+    ============================================*/
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private Set<AuthenticationModule> modules;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -57,14 +55,4 @@ public class DefaultSecurityContextFactory implements SecurityContextFactory {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public SecurityContext getContext(ClassLoader cl) {
-        DefaultSecurityContext ctx = new DefaultSecurityContext();
-        ctx.setAuthenticator( new Authenticator() {
-            public AuthorizationContext authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
-
-        return ctx;
-    }
 }

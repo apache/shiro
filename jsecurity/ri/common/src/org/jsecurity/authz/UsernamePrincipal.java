@@ -23,22 +23,18 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.samples.spring;
+package org.jsecurity.authz;
 
-import org.jsecurity.context.SecurityContext;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 
 /**
- * Description of class.
+ * Simple implementation of the principal interface that represents the
+ * user's principal with a username.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
-public class LogoutController extends AbstractController {
+public class UsernamePrincipal implements Principal {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -47,24 +43,35 @@ public class LogoutController extends AbstractController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * The username of the user this principal represents.
+     */
+    private String username;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    /**
+     * Constructor that initializes the username.
+     * @param username username for this principal.
+     */
+    public UsernamePrincipal(String username) {
+        this.username = username;
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public String getName() {
+        return username;
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
-
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
-        SecurityContext.invalidate();
-
-        return new ModelAndView( "login" );
+    public String toString() {
+        return getName();
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood
+ * Copyright (C) 2005 Les A. Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -27,8 +27,8 @@ package org.jsecurity.authz;
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Provides all access control behavior for an authenticated subject.
@@ -37,30 +37,83 @@ import java.util.Set;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public interface AuthorizationContext {
 
+    /**
+     * Provides access to the principal represented by this authorization context.
+     * @return the principal associated with this authorization context.
+     */
     Principal getPrincipal();
 
+    /**
+     * Checks if the given role identifier is associated with this context.
+     * @param roleIdentifier the role identifier that is being checked.
+     * @return true if the user associated with this context has the role, false otherwise.
+     */
     boolean hasRole( Serializable roleIdentifier );
 
+    /**
+     * Checks a set of role identifiers to see if they are associated with this
+     * context and returns a boolean array indicating which roles are associated
+     * with this context.
+     * @param roleIdentifiers the role identifiers to check for.
+     * @return an array of booleans whose indices correspond to the index of the
+     * roles in the given identifiers.  A true value indicates the user has the
+     * role at that index.  False indicates the user does not have the role.
+     */
     boolean[] hasRoles( List<Serializable> roleIdentifiers );
 
-    boolean hasAllRoles( Set<Serializable> roleIdentifiers );
+    /**
+     * Checks if the user has all of the given roles.
+     * @param roleIdentifiers the roles to be checked.
+     * @return true if the user has all roles, false otherwise.
+     */
+    boolean hasAllRoles( Collection<Serializable> roleIdentifiers );
 
+    /**
+     * Checks if the given permission is associated with this context.
+     * @param permission the permission that is being checked.
+     * @return true if the user associated with this context has the permission, false otherwise.
+     */
     boolean hasPermission( Permission permission );
 
+    /**
+     * Checks a set of permission to see if they are associated with this
+     * context and returns a boolean array indicating which permissions are associated
+     * with this context.
+     * @param permissions the permissions to check for.
+     * @return an array of booleans whose indices correspond to the index of the
+     * permissions in the given list.  A true value indicates the user has the
+     * permission at that index.  False indicates the user does not have the role.
+     */
     boolean[] hasPermissions( List<Permission> permissions );
 
-    boolean hasAllPermissions( Set<Permission> permissions );
+    /**
+     * Checks if the user has all of the given permissions.
+     * @param permissions the permissions to be checked.
+     * @return true if the user has all permissions, false otherwise.
+     */
+    boolean hasAllPermissions( Collection<Permission> permissions );
 
+
+    /**
+     * A convenience method to check a permission that a user is assumed to have.
+     * If the user does not have the given permission, an {@link AuthorizationException}
+     * will be thrown.
+     * @param permission the permission to check.
+     * @throws AuthorizationException if the user does not have the permission.
+     */
     void checkPermission( Permission permission ) throws AuthorizationException;
 
-    void checkPermissions( Set<Permission> permissions ) throws AuthorizationException;
 
-    Object getAttribute( Object key );
+    /**
+     * A convenience method for checking if a user has all of the given permissions.
+     * @param permissions the permissions to check.
+     * @throws AuthorizationException if the user does not have all of the given
+     * permissions.
+     */
+    void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException;
 
-    void setAttribute( Object key, Object value );
-
-    Object removeAttribute( Object key );
 }

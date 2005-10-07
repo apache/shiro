@@ -28,7 +28,6 @@ package org.jsecurity.samples.spring;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.context.SecurityContext;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -51,6 +50,7 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private Authenticator authenticator;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -59,6 +59,10 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -68,9 +72,6 @@ public class LoginController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object cmd, BindException errors) throws Exception {
 
         LoginCommand command = (LoginCommand) cmd;
-
-        SecurityContext context = SecurityContext.getContext();
-        Authenticator authenticator = context.getAuthenticator();
 
         UsernamePasswordToken token = new UsernamePasswordToken( command.getUsername(), command.getPassword() );
         try {
