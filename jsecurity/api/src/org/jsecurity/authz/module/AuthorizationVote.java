@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -33,8 +33,9 @@ package org.jsecurity.authz.module;
  *
  * @see AuthorizationModule
  *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public enum AuthorizationVote {
 

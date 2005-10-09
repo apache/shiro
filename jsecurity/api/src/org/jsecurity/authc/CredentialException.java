@@ -28,23 +28,39 @@ package org.jsecurity.authc;
  * Exception thrown due to a problem with the credential(s) submitted for an
  * account during the authentication process.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class CredentialException extends AuthenticationException {
 
+    /**
+     * Creates a new CredentialException.
+     */
     public CredentialException() {
         super();
     }
 
+    /**
+     * Constructs a new CredentialException.
+     * @param message the reason for the exception
+     */
     public CredentialException( String message ) {
         super( message );
     }
 
+    /**
+     * Constructs a new CredentialException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public CredentialException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new CredentialException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public CredentialException( String message, Throwable cause ) {
         super( message, cause );
     }

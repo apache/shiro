@@ -39,16 +39,13 @@ import org.jsecurity.authz.AuthorizationContext;
  * anything needed by an {@link Authenticator} to authenticate properly.
  *
  * <p>If you are familiar with JAAS, an <tt>authentication token</tt> behaves in the same way as a
- * {@link javax.security.auth.callback.Callback} does, but without the imposition of requiring
- * you to implement that (non-functional) marker interface or forcing JAAS login
+ * {@link javax.security.auth.callback.Callback} does, but without the imposition of forcing JAAS login
  * symantics, such as requiring you to implement a
  * {@link javax.security.auth.callback.CallbackHandler CallbackHandler} and all the framework that
  * implies.
  *
  * <p>You are free to acquire a user's principals and credentials however you wish and
- * then submit them to the JSecurity framework in the form of any implementation.  Whether or
- * not a token will be used during authentication is determined by the
- * {@link org.jsecurity.authc.module.AuthenticationModule#supports(Class)} method.  We
+ * then submit them to the JSecurity framework in the form of any implementation.  We
  * also think the name <em>authentication token</em> more accurately reflects its true purpose
  * in a login framework, whereas <em>Callback</em> is less obvious (<tt>Callback</tt> doesn't even
  * have any methods!).
@@ -59,7 +56,7 @@ import org.jsecurity.authz.AuthorizationContext;
  * is the case in your system, ensure your <tt>authentication token</tt> class implements the
  * {@link java.io.Serializable} interface.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
@@ -71,11 +68,14 @@ public interface Authenticator {
      * @param authenticationToken any representation of a user's principals and credentials
      * submitted during an authentication attempt.
      *
-     * @return the AuthorizationContext maintaining the authenticated user's access controls.
+     * @return the AuthorizationContext maintaining the authenticated user's access rights.
      *
      * @throws AuthenticationException if there is any problem during the authentication process.
-     * See the specific exceptions listed below to accurately handle these problems and to
-     * notify the user in an appropriate manner why the authentication attempt failed.
+     * See the specific exceptions listed below to as examples of what could happen in order
+     * to accurately handle these problems and to notify the user in an appropriate manner why
+     * the authentication attempt failed.  Realize an implementation of this interface may or may
+     * not throw those listed or may throw other AuthenticationExceptions, but the list shows
+     * the most common ones.
      *
      * @see ExpiredCredentialException
      * @see IncorrectCredentialException
@@ -83,6 +83,8 @@ public interface Authenticator {
      * @see LockedAccountException
      * @see ConcurrentAccessException
      * @see UnknownAccountException
+     *
+     * @see org.jsecurity.authc.module.AuthenticationModule
      */
     public AuthorizationContext authenticate( AuthenticationToken authenticationToken )
         throws AuthenticationException;

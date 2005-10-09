@@ -131,15 +131,13 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Specification API">
-            <doctitle><![CDATA[<h1>JSecurity</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Specification API</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
-                <include name="ri/common/src/**/*.java"/>
-                <include name="ri/business/src/**/*.java"/>
-                <include name="ri/client/src/**/*.java"/>
             </fileset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
         </javadoc>
     </target>
 
@@ -153,7 +151,7 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Reference Implementation API">
-            <doctitle><![CDATA[<h1>JSecurity</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="ri/common/src/**/*.java"/>
@@ -165,10 +163,8 @@ to where the build is being executed -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <classpath>
-                <pathelement
-                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
-                <pathelement
-                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
             </classpath>
         </javadoc>
     </target>
@@ -186,7 +182,7 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Java API">
-            <doctitle><![CDATA[<h1>JSecurity</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Combined Specification and Reference Implemenatation API</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
@@ -198,10 +194,8 @@ to where the build is being executed -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <classpath>
-                <pathelement
-                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
-                <pathelement
-                    location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
+                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
             </classpath>
         </javadoc>
     </target>

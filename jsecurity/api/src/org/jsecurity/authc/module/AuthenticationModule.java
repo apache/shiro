@@ -27,14 +27,15 @@ package org.jsecurity.authc.module;
 import org.jsecurity.authc.Authenticator;
 
 /**
- * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support specific types of
- * <em>authentication tokens</em>.  Please see the {@link org.jsecurity.authc.Authenticator} class API to understand
- * how <tt>authentication token</tt>s function.
+ * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support
+ * specific types of <em>authentication tokens</em>.  Please see the
+ * {@link org.jsecurity.authc.Authenticator} class API to understand how
+ * <tt>authentication token</tt>s function.
  *
  * <p>An implementation of this class can be used
  *    in any JSecurity compatible PAM (Pluggable Authentication Module) implementation.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public interface AuthenticationModule extends Authenticator {

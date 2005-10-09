@@ -41,10 +41,11 @@ import java.util.Properties;
  * {@link SecurityContextAccessor} is described in detail in the {@link #getAccessor()}
  * JavaDoc.</p>
  *
+ * @since 1.0
+ * @see SecurityContextAccessor
+
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see SecurityContextAccessor
- * @since 0.1
  */
 public abstract class SecurityContext {
 
@@ -230,14 +231,62 @@ public abstract class SecurityContext {
     /*--------------------------------------------
     |     A B S T R A C T   M E T H O D S       |
     ============================================*/
+
+    /**
+     * Returns the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
+     * if there is no session associated with the current execution.
+     *
+     * <p>The term &quot;currently accessible&quot; means the Session returned by a
+     * {@link SecurityContextAccessor SecurityContextAccessor} during runtime and is
+     * implementation specific.
+     *
+     * <p>For example, in a multithreaded server application (such as in a J2EE application
+     * server or Servlet container), a <tt>Session</tt> might be bound to the currently-executing
+     * server thread via a {@link ThreadLocal ThreadLocal}.  A web application may access the
+     * JSecurity Session via a handle in the {@link javax.servlet.http.HttpSession HttpSession}}.  A
+     * standalone Swing application may access the <tt>Session</tt> via static memory.
+     *
+     * <p>These scenarios are just examples based on how a JSecurity implementation might accomplish
+     * these things depending on an application's deployment environment.
+     *
+     * @return the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
+     * if there is no session associated with the current execution.
+     *
+     * @see SecurityContextAccessor
+     */
     public static Session getSession() {
         return getAccessor().getSession();
     }
 
+    /**
+     * Returns the AuthorizationContext associated with the current authenticated user, or
+     * <tt>null</tt> if the current user has not yet been authenticated (i.e. logged in).
+     *
+     * The &quot;current user&quot; is associated with this method call in an
+     * implementation-specific manner.  Please see the {@link #getSession() getSession() JavaDoc}
+     * for an explanation of how this information is obtained.
+     *
+     * @return the AuthorizationContext associated with the current authenticated user, or
+     * <tt>null</tt> if the current user has not yet been authenticated (i.e. logged in).
+     *
+     * @see #getSession
+     * @see SecurityContextAccessor
+     */
     public static AuthorizationContext getAuthorizationContext() {
         return getAccessor().getAuthorizationContext();
     }
 
+    /**
+     * Invalidates any JSecurity entities (such as a {@link Session Session} and a
+     * {@link AuthorizationContext AuthorizationContext}) associated with the current execution.
+     *
+     * The entities for &quot;current execution&quot; are obtained in an implementation-specific
+     * manner.  Please see the {@link #getSession() getSession() JavaDoc} for an explanation of
+     * how this information is obtained.
+     *
+     * @see #getSession
+     * @see SecurityContextAccessor
+     */
     public static void invalidate() {
         getAccessor().invalidate();
     }

@@ -35,23 +35,39 @@ package org.jsecurity.authc;
  * the user know if they entered in an incorrect credential is at the discretion of those
  * responsible for defining the view and what happens when this exception occurs.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class IncorrectCredentialException extends CredentialException {
 
+    /**
+     * Creates a new IncorrectCredentialException.
+     */
     public IncorrectCredentialException() {
         super();
     }
 
+    /**
+     * Constructs a new IncorrectCredentialException.
+     * @param message the reason for the exception
+     */
     public IncorrectCredentialException( String message ) {
         super( message );
     }
 
+    /**
+     * Constructs a new IncorrectCredentialException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public IncorrectCredentialException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new IncorrectCredentialException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public IncorrectCredentialException( String message, Throwable cause ) {
         super( message, cause );
     }

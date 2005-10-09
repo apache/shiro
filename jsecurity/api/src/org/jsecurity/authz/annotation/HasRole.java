@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  *
  * @see org.jsecurity.authz.AuthorizationContext#hasRole(java.io.Serializable roleIdentifier)
  *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
  */
 @Target(ElementType.METHOD)

@@ -38,37 +38,68 @@ import java.io.Serializable;
  * @see ExpiredSessionException
  * @see UnknownSessionException
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class InvalidSessionException extends SessionException {
 
+    /**
+     * Creates a new InvalidSessionException.
+     */
     public InvalidSessionException() {
         super();
     }
 
-    public InvalidSessionException( String s ) {
-        super( s );
+    /**
+     * Constructs a new InvalidSessionException.
+     * @param message the reason for the exception
+     */
+    public InvalidSessionException( String message ) {
+        super( message );
     }
 
-    public InvalidSessionException( String message, Throwable cause ) {
-        super( message, cause );
-    }
-
+    /**
+     * Constructs a new InvalidSessionException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public InvalidSessionException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new InvalidSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public InvalidSessionException( String message, Throwable cause ) {
+        super( message, cause );
+    }
+
+    /**
+     * Constructs a new InvalidSessionException.
+     * @param sessionId the session id of the session that has been invalidated.
+     */
     public InvalidSessionException( Serializable sessionId ) {
-        super( sessionId );
+        this( "Session with id [" + sessionId + "] has invalidated (stopped)", sessionId );
     }
 
-    public InvalidSessionException( Serializable sessionId, String message ) {
-        super( sessionId, message );
+    /**
+     * Constructs a new InvalidSessionException.
+     * @param message the reason for the exception
+     * @param sessionId the session id of the session that has been invalidated.
+     */
+    public InvalidSessionException( String message, Serializable sessionId ) {
+        super( message, sessionId );
     }
 
-    public InvalidSessionException( Serializable sessionId, String message, Throwable cause ) {
-        super( sessionId, message, cause );
+    /**
+     * Constructs a new InvalidSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     * @param sessionId the session id of the session that has been invalidated.
+     */
+    public InvalidSessionException( String message, Throwable cause, Serializable sessionId ) {
+        super( message, cause, sessionId );
     }
 
 }

@@ -35,8 +35,8 @@ import org.jsecurity.session.Session;
  * <p>The actual implementation of this interface used to retrieve the current
  * {@link SecurityContext} is based on the <code>security.context.accessor.class</code> property.</p>
  *
+ * @since 1.0
  * @author Jeremy Haile
- * @since 0.1
  */
 public interface SecurityContextAccessor {
 

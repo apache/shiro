@@ -33,23 +33,39 @@ package org.jsecurity.authc;
  * invoking the authentication might catch this exception and redirect the user to an appropriate
  * view to allow them to update their password.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class ExpiredCredentialException extends CredentialException {
 
+    /**
+     * Creates a new ExpiredCredentialException.
+     */
     public ExpiredCredentialException() {
         super();
     }
 
+    /**
+     * Constructs a new ExpiredCredentialException.
+     * @param message the reason for the exception
+     */
     public ExpiredCredentialException( String message ) {
         super( message );
     }
 
+    /**
+     * Constructs a new ExpiredCredentialException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ExpiredCredentialException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new ExpiredCredentialException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ExpiredCredentialException( String message, Throwable cause ) {
         super( message, cause );
     }

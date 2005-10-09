@@ -31,7 +31,7 @@ import java.io.Serializable;
  * particular session (e.g. under a specific session id), and that session does not exist in
  * the system.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class UnknownSessionException extends InvalidSessionException {
@@ -44,23 +44,23 @@ public class UnknownSessionException extends InvalidSessionException {
         super( s );
     }
 
-    public UnknownSessionException( String message, Throwable cause ) {
-        super( message, cause );
-    }
-
     public UnknownSessionException( Throwable cause ) {
         super( cause );
+    }
+
+    public UnknownSessionException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
     public UnknownSessionException( Serializable sessionId ) {
         super( sessionId );
     }
 
-    public UnknownSessionException( Serializable sessionId, String message ) {
-        super( sessionId, message );
+    public UnknownSessionException( String message, Serializable sessionId ) {
+        super( message, sessionId );
     }
 
-    public UnknownSessionException( Serializable sessionId, String message, Throwable cause ) {
-        super( sessionId, message, cause );
+    public UnknownSessionException( String message, Throwable cause, Serializable sessionId ) {
+        super( message, cause, sessionId );
     }
 }

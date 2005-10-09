@@ -31,38 +31,67 @@ import java.io.Serializable;
  * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
  * other reason.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class ExpiredSessionException extends StoppedSessionException {
 
+    /**
+     * Creates a new ExpiredSessionException.
+     */
     public ExpiredSessionException() {
         super();
     }
 
-    public ExpiredSessionException( String s ) {
-        super( s );
+    /**
+     * Constructs a new ExpiredSessionException.
+     * @param message the reason for the exception
+     */
+    public ExpiredSessionException( String message ) {
+        super( message );
     }
 
-    public ExpiredSessionException( String message, Throwable cause ) {
-        super( message, cause );
-    }
-
+    /**
+     * Constructs a new ExpiredSessionException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ExpiredSessionException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new ExpiredSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public ExpiredSessionException( String message, Throwable cause ) {
+        super( message, cause );
+    }
+
+    /**
+     * Constructs a new ExpiredSessionException.
+     * @param sessionId the session id of the session that expired.
+     */
     public ExpiredSessionException( Serializable sessionId ) {
-        this( sessionId, "Session with id [" + sessionId + "] has expired" );
+        this( "Session with id [" + sessionId + "] has expired", sessionId );
     }
 
-    public ExpiredSessionException( Serializable sessionId, String message ) {
-        super( sessionId, message );
+    /**
+     * Constructs a new ExpiredSessionException.
+     * @param message the reason for the exception
+     * @param sessionId the session id of the session that expired.
+     */
+    public ExpiredSessionException( String message, Serializable sessionId ) {
+        super( message, sessionId );
     }
 
-    public ExpiredSessionException( Serializable sessionId, String message, Throwable cause ) {
-        super( sessionId, message, cause );
+    /**
+     * Constructs a new ExpiredSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     * @param sessionId the session id of the session that expired.
+     */
+    public ExpiredSessionException( String message, Throwable cause, Serializable sessionId ) {
+        super( message, cause, sessionId );
     }
-
-
 }
