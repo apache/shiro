@@ -30,20 +30,43 @@ package org.jsecurity.authc.event;
  * Listener interface to be implemented by objects to be notified of
  * events related to account authentication.
  *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
 public interface AuthenticationEventListener {
 
+    /**
+     * Notification callback that an account has authenticated successfully.
+     * @param event the event associated with the successful authentication attempt.
+     */
     void accountAuthenticated( AuthenticationEvent event );
 
+    /**
+     * Notification callback that an account has logged-out.
+     * @param event the event associated with the log-out.
+     */
     void accountLoggedOut( AuthenticationEvent event );
 
+    /**
+     * Notification callback that an account authentication attempt had failed.
+     * @param event the event associated with the failed authentication attempt.
+     */
     void authenticationFailed( AuthenticationEvent event );
 
+    /**
+     * Notification callback that an account has been locked from further authentication
+     * attempts (usually due to
+     * too many failed authentication attempts).
+     * @param event the event generated due to an account being locked.
+     */
     void accountLocked( AuthenticationEvent event );
 
+    /**
+     * Notification callback that an account has been unlocked and is available for future
+     * authentication attempts (usually by an administrator or after a certain time has passed).
+     * @param event the event generated due to an account being unlocked.
+     */
     void accountUnlocked( AuthenticationEvent event );
 
 }

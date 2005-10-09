@@ -37,7 +37,7 @@ import org.jsecurity.authz.AuthorizationContext;
  * {@link org.jsecurity.authz.Authorizer Authorizer} will decide
  * whether or not to authorize the user to perform the action.
  *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

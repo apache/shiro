@@ -35,7 +35,9 @@ import java.util.List;
  * An <tt>AuthorizationContext</tt> can only be acquired upon a successful login, as access
  * control behavior must be associated with a known identity.
  *
- * @since 0.1
+ * @see org.jsecurity.authc.Authenticator
+ *
+ * @since 1.0
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
@@ -58,6 +60,10 @@ public interface AuthorizationContext {
      * Checks a set of role identifiers to see if they are associated with this
      * context and returns a boolean array indicating which roles are associated
      * with this context.
+     *
+     * <p>This is primarily a performance-enhancing method to help reduce the number of
+     * {@link #hasRole} invocations over the wire in client/server systems.
+     * 
      * @param roleIdentifiers the role identifiers to check for.
      * @return an array of booleans whose indices correspond to the index of the
      * roles in the given identifiers.  A true value indicates the user has the
@@ -80,9 +86,13 @@ public interface AuthorizationContext {
     boolean hasPermission( Permission permission );
 
     /**
-     * Checks a set of permission to see if they are associated with this
+     * Checks a set of permissions to see if they are associated with this
      * context and returns a boolean array indicating which permissions are associated
      * with this context.
+     *
+     * <p>This is primarily a performance-enhancing method to help reduce the number of
+     * {@link #hasPermission} invocations over the wire in client/server systems.
+     *
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
      * permissions in the given list.  A true value indicates the user has the

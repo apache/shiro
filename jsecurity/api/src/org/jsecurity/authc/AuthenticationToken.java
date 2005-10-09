@@ -31,7 +31,9 @@ package org.jsecurity.authc;
  * this interface does not define any behavior for implementing classes, it does
  * provide type-safety when calling the authentication methods.
  *
- * @since 0.1
+ * @see UsernamePasswordToken
+ *
+ * @since 1.0
  * @author Jeremy Haile
  */
 public interface AuthenticationToken {

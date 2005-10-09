@@ -33,29 +33,68 @@ import java.net.InetAddress;
  *
  * @see org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class HostUnauthorizedException extends UnauthorizedException {
 
+    private InetAddress hostAddress;
+
+    /**
+     * Creates a new HostUnauthorizedException.
+     */
     public HostUnauthorizedException() {
         super();
     }
 
+    /**
+     * Constructs a new HostUnauthorizedException.
+     * @param message the reason for the exception
+     */
+    public HostUnauthorizedException( String message ) {
+        super( message );
+    }
+
+    /**
+     * Constructs a new HostUnauthorizedException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public HostUnauthorizedException( Throwable cause ) {
+        super( cause );
+    }
+
+    /**
+     * Constructs a new HostUnauthorizedException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public HostUnauthorizedException( String message, Throwable cause ) {
+        super( message, cause );
+    }
+
+    /**
+     * Constructs a new HostUnauthorizedException associated with the given host address.
+     * @param hostAddress the address of the host unauthorized to perform a particular action or
+     * access a particular resource.
+     */
     public HostUnauthorizedException( InetAddress hostAddress ) {
         this( "The system is not cofigured to allow access for host [" +
               hostAddress.getHostAddress() + "]" );
     }
 
-    public HostUnauthorizedException( String s ) {
-        super( s );
+    /**
+     * Returns the host address associated with this exception.
+     * @return the host address associated with this exception.
+     */
+    public InetAddress getHostAddress() {
+        return this.hostAddress;
     }
 
-    public HostUnauthorizedException( Throwable cause ) {
-        super( cause );
-    }
-
-    public HostUnauthorizedException( String message, Throwable cause ) {
-        super( message, cause );
+    /**
+     * Sets the host address associated with this exception.
+     * @param hostAddress the host address associated with this exception.
+     */
+    public void setHostAddress( InetAddress hostAddress ) {
+        this.hostAddress = hostAddress;
     }
 }

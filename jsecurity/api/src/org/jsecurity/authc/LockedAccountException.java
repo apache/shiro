@@ -27,23 +27,39 @@ package org.jsecurity.authc;
 /**
  * Thrown when attempting to authenticate and the corresponding account has been locked.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class LockedAccountException extends AccountException {
 
+    /**
+     * Creates a new LockedAccountException.
+     */
     public LockedAccountException() {
-        super();    
+        super();
     }
 
+    /**
+     * Constructs a new LockedAccountException.
+     * @param message the reason for the exception
+     */
     public LockedAccountException( String message ) {
         super( message );
     }
 
+    /**
+     * Constructs a new LockedAccountException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public LockedAccountException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new LockedAccountException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public LockedAccountException( String message, Throwable cause ) {
         super( message, cause );
     }

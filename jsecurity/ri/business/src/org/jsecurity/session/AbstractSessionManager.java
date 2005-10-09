@@ -286,7 +286,7 @@ public abstract class AbstractSessionManager implements SessionManager {
                          ".  Current time: " + df.format(Calendar.getInstance().getTime() ) +
                          ".  Session timeout is set to " + timeout + " seconds (" +
                          timeout / 60 + " minutes)";
-            throw new ExpiredSessionException( sessionId, msg );
+            throw new ExpiredSessionException( msg, sessionId );
         }
 
         //check for stopped (but not expired):
@@ -295,7 +295,7 @@ public abstract class AbstractSessionManager implements SessionManager {
             String msg = "Session with id [" + session.getSessionId() + "] has been " +
                          "explicitly stopped.  No further interaction under this session is " +
                          "allowed.";
-            throw new InvalidSessionException( session.getSessionId(), msg );
+            throw new InvalidSessionException( msg, session.getSessionId() );
         }
     }
 

@@ -31,23 +31,39 @@ package org.jsecurity.authc;
  * most systems either temporarily or permanently lock that account to prevent further
  * attempts.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class ExcessiveAttemptsException extends AccountException {
 
+    /**
+     * Creates a new ExcessiveAttemptsException.
+     */
     public ExcessiveAttemptsException() {
         super();
     }
 
+    /**
+     * Constructs a new ExcessiveAttemptsException.
+     * @param message the reason for the exception
+     */
     public ExcessiveAttemptsException( String message ) {
         super( message );
     }
 
+    /**
+     * Constructs a new ExcessiveAttemptsException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ExcessiveAttemptsException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new ExcessiveAttemptsException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ExcessiveAttemptsException( String message, Throwable cause ) {
         super( message, cause );
     }

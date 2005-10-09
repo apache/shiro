@@ -29,31 +29,49 @@ package org.jsecurity.authc;
  * authenticated (i.e. logged-in), and the system is configured to prevent such concurrent access.
  *
  * <p>This is useful when an application must ensure that only one person is logged-in to a single
- * account at any given time.  Sometimes account names and passwords are lazily given away
+ * account at any given time.
+ *
+ * <p>Sometimes account names and passwords are lazily given away
  * to many people for easy access to a system.  Such behavior is undesirable in systems where
  * users are accountable for their actions, such as in government applications, or when licensing
  * agreements must be maintained, such as those which only allow 1 user per paid license.
  *
  * <p>By disallowing concurrent access, such systems can ensure that each authenticated session
- * corresponds to one and only one user.
+ * corresponds to one and only one user at any given time.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class ConcurrentAccessException extends AccountException {
 
+    /**
+     * Creates a new ConcurrentAccessException.
+     */
     public ConcurrentAccessException() {
         super();
     }
 
+    /**
+     * Constructs a new ConcurrentAccessException.
+     * @param message the reason for the exception
+     */
     public ConcurrentAccessException( String message ) {
         super( message );
     }
 
+    /**
+     * Constructs a new ConcurrentAccessException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ConcurrentAccessException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new ConcurrentAccessException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ConcurrentAccessException( String message, Throwable cause ) {
         super( message, cause );
     }

@@ -28,23 +28,41 @@ package org.jsecurity.authz;
  * An exception thrown when an {@link InstancePermission} is constructed with an element in the
  * actions string that is unknown to the <tt>InstancePermission</tt> implementation.
  *
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class UnknownPermissionActionException extends RuntimeException {
 
+    /**
+     * Creates a new UnknownPermissionActionException.
+     */
     public UnknownPermissionActionException() {
+        super();
     }
 
+    /**
+     * Constructs a new UnknownPermissionActionException.
+     * @param message the reason for the exception
+     */
     public UnknownPermissionActionException( String message ) {
         super( message );
     }
 
-    public UnknownPermissionActionException( String message, Throwable cause ) {
-        super( message, cause );
-    }
-
+    /**
+     * Constructs a new UnknownPermissionActionException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public UnknownPermissionActionException( Throwable cause ) {
         super( cause );
+    }
+
+    /**
+     * Constructs a new UnknownPermissionActionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public UnknownPermissionActionException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
 }

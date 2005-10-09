@@ -25,16 +25,35 @@
 package org.jsecurity.session.event;
 
 /**
+ * Listener interface to be implemented by objects to be notified of
+ * events related to session events.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public interface SessionEventListener {
 
+    /**
+     * Notification callback that a {@link org.jsecurity.session.Session Session} has started.
+     * @param event the event associated with the <tt>Session</tt> being started.
+     */
     void sessionStarted( SessionEvent event );
 
+    /**
+     * Notification callback that a {@link org.jsecurity.session.Session Session} has been
+     * invalidated (stopped).  A <tt>Session</tt> may be invalidated for a number of reasons,
+     * including user log-outs or explicitly invalidation.
+     *
+     * @param event the event generated when a <tt>Session</tt> has been invalidated (stopped).
+     *
+     * @see org.jsecurity.session.Session#stop() Session.stop()
+     */
     void sessionStopped( SessionEvent event );
-    
+
+    /**
+     * Notification callback that a {@link org.jsecurity.session.Session Session} has expired.
+     * @param event the event generated when a <tt>Session</tt> expires.
+     */
     void sessionExpired( SessionEvent event );
 
 }

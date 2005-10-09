@@ -29,7 +29,10 @@ package org.jsecurity.authz;
 /**
  * Represents an action that requires authorization in order to perform.
  *
- * @since 0.1
+ * <p>Although this interface does not define any behavior for implementing classes, it does
+ * provide type-safety for JSecurity components expecting them.
+ *
+ * @since 1.0
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

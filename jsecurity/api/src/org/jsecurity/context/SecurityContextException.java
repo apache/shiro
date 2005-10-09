@@ -28,37 +28,47 @@ package org.jsecurity.context;
 import org.jsecurity.JSecurityException;
 
 /**
- * <p>Throw when there is an error loading the {@link SecurityContext}.  This is
- * typically thrown by the {@link SecurityContext#getContext()} or
- * {@link SecurityContext#getContext(ClassLoader)} methods when the security context
- * cannot be loaded.</p>
+ * <p>Throw when there is an error loading the {@link SecurityContext}.
  *
  * <p>The most common cause for this exception to be thrown is if the JSecurity
  * implementation is not in the classpath and the <code>jsecurity.properties</code>
  * file cannot be loaded, although it could be thrown when the security context
  * cannot be loaded for any reason.</p>
  *
+ * @since 1.0
  * @author Jeremy Haile
- * @since 0.1
  */
 public class SecurityContextException extends JSecurityException {
 
+    /**
+     * Creates a new SecurityContextException.
+     */
     public SecurityContextException() {
         super();
     }
 
-
-    public SecurityContextException(String message) {
-        super(message);
+    /**
+     * Constructs a new SecurityContextException.
+     * @param message the reason for the exception
+     */
+    public SecurityContextException( String message ) {
+        super( message );
     }
 
-
-    public SecurityContextException(Throwable cause) {
-        super(cause);
+    /**
+     * Constructs a new SecurityContextException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public SecurityContextException( Throwable cause ) {
+        super( cause );
     }
 
-
-    public SecurityContextException(String message, Throwable cause) {
-        super(message, cause);
+    /**
+     * Constructs a new SecurityContextException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
+    public SecurityContextException( String message, Throwable cause ) {
+        super( message, cause );
     }
 }

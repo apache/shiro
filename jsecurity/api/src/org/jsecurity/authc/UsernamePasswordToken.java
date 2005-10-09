@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy C. Haile
+ * Copyright (C) 2005 Jeremy C. Haile, Les A. Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -26,12 +26,12 @@
 package org.jsecurity.authc;
 
 /**
- * <p>A simple username password authentication token.  This class is included in the API
+ * <p>A simple username/password authentication token.  This class is included in the API
  * since it is a very widely used authentication mechanism.</p>
  *
- *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class UsernamePasswordToken implements AuthenticationToken {
 
@@ -49,11 +49,24 @@ public class UsernamePasswordToken implements AuthenticationToken {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
+    /**
+     * Constructs a new UsernamePasswordToken encapsulating the username and password submitted
+     * during an authentication attempt.
+     * @param username the username submitted for authentication
+     * @param password the password string submitted for authentication
+     */
     public UsernamePasswordToken(final String username, final String password ) {
         this.username = username;
         this.password = password.toCharArray();
     }
 
+    /**
+     * Constructs a new UsernamePasswordToken encapsulating the username and password submitted
+     * during an authentication attempt.
+     * @param username the username submitted for authentication
+     * @param password the password character array submitted for authentication
+     */
     public UsernamePasswordToken(final String username, final char[] password) {
         this.username = username;
         this.password = password;
@@ -63,19 +76,47 @@ public class UsernamePasswordToken implements AuthenticationToken {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
+    /**
+     * Returns the username submitted during an authentication attempt.
+     * @return the username submitted during an authentication attempt.
+     */
     public String getUsername() {
         return username;
     }
 
 
+    /**
+     * Returns the password submitted during an authentication attempt as a character array.
+     * @return the password submitted during an authentication attempt as a character array.
+     */
     public char[] getPassword() {
         return password;
+    }
+
+    /**
+     * Returns the password submitted during an authentication attempt as a String.
+     * @return the password submitted during an authentication attempt as a String.
+     */
+    public String getPasswordString() {
+        char[] password = getPassword();
+        if ( password == null ) {
+            return null;
+        } else {
+            return new String( password );
+        }
     }
 
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+
+    /**
+     * Clears out (nulls) the username and password.  The password bytes are explicitly set to
+     * <tt>0x00</tt> before nulling to eliminate the possibility of
+     * memory access at a later time.
+     */
     public void clear() {
         this.username = null;
 

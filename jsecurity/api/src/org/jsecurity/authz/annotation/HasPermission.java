@@ -56,7 +56,7 @@ import java.security.Permission;
  *
  * @see org.jsecurity.authz.AuthorizationContext#checkPermission
  *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

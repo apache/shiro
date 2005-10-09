@@ -37,7 +37,7 @@ import java.util.Calendar;
  * <tt>Session</tt> only exists over the course of a single method invocation.  Sessions are
  * extremely lightweight objects that have a managed lifecycle.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public interface Session {

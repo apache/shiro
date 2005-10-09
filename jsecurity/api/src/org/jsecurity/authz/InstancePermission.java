@@ -68,6 +68,7 @@ import java.util.Set;
  * ability to do anything (create, read, update, delete) <em>any</em> user account.  Such a
  * permission would generally be assigned to an administrative account.
  *
+ * @since 1.0
  * @author Les Hazlewood
  */
 public abstract class InstancePermission extends Permission implements Serializable, Cloneable {
@@ -101,10 +102,14 @@ public abstract class InstancePermission extends Permission implements Serializa
         super( name );
     }
 
+    /**
+     * Constructs a new InstancePermission associated with an entity instance with the given
+     * identifier.
+     * @param identifier the instance identifier
+     */
     protected InstancePermission( Serializable identifier ) {
         this( identifier.toString() );
     }
-
 
     /**
      * Creates a new InstancePermission bject with the specified target and
@@ -131,7 +136,12 @@ public abstract class InstancePermission extends Permission implements Serializa
         setActions( actions );
     }
 
-
+    /**
+     * Sets the {@link #getActions() actions} for this instance.  Once set on this instance,
+     * either via this method or via a constructory, they cannot be set again or
+     * changed (Permissions are intended to be immutable).
+     * @param actions the actions to set for this instance
+     */
     public void setActions( String actions ) {
 
         if ( actions == null ) {

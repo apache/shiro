@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -30,10 +30,11 @@ import java.util.Calendar;
 import java.util.EventObject;
 
 /**
- * General event concerning the authentication of a particular user.
+ * General event concerning the authentication of a particular account.
  *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public abstract class AuthenticationEvent extends EventObject {
 
@@ -47,15 +48,39 @@ public abstract class AuthenticationEvent extends EventObject {
      */
     protected final Principal principal;
 
+    /**
+     * Creates a new authentication event.
+     *
+     * <p>As a clarification, when constructing an instance of this class, the given Principal is
+     * usually the identity associated with the authentication attempt, such as a username or id.
+     *
+     * <p>As events are often logged, it is recommended that the argument should not represent a
+     * password (which is technically considered a credential, not a principal) to avoid the
+     * possibility of logging the password in clear text, which may be viewed by 3rd parties.
+     * Of course, this is not a requirement, just a recommendation.
+     *
+     * @param principal the <tt>Principal</tt> identity associated with the authentication attempt.
+     */
+    public AuthenticationEvent( Principal principal ) {
+        super( principal );
+        this.principal = principal;
+    }
+
 
     /**
-     * Creates a new authentication event with a dummy source and the given
-     * principal.
+     * Creates a new authentication with the given source and the given principal.
+     *
+     * <p>As a clarification, when constructing an instance of this class, the given Principal is
+     * usually the identity associated with the authentication attempt, such as a username or id.
+     *
+     * <p>As events are often logged, it is recommended that the argument should not represent a
+     * password (which is technically considered a credential, not a principal) to avoid the
+     * possibility of logging the password in clear text, which may be viewed by 3rd parties.
+     * Of course, this is not a requirement, just a recommendation.
      *
      * @param source the source of this event, typically the
-     * {@link org.jsecurity.authc.Authenticator} responsible for the authentication
-     * event.
-     * @param principal the principal of the authenticated user.
+     * {@link org.jsecurity.authc.Authenticator} responsible for the authentication attempt.
+     * @param principal the principal of the account identity associated with the authentication.
      */
     public AuthenticationEvent( Object source, Principal principal ) {
         super( source );

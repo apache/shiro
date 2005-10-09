@@ -31,7 +31,7 @@ import java.io.Serializable;
  * stopped.  A session may be stopped in any number of ways, most commonly due to explicit
  * stopping (e.g. from logging out), or due to expiration.
  *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
 public class StoppedSessionException extends InvalidSessionException {
@@ -44,24 +44,24 @@ public class StoppedSessionException extends InvalidSessionException {
         super( s );   
     }
 
-    public StoppedSessionException( String message, Throwable cause ) {
-        super( message, cause );
-    }
-
     public StoppedSessionException( Throwable cause ) {
         super( cause );
+    }
+
+    public StoppedSessionException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
     public StoppedSessionException( Serializable sessionId ) {
         super( sessionId );
     }
 
-    public StoppedSessionException( Serializable sessionId, String message ) {
-        super( sessionId, message );
+    public StoppedSessionException( String message, Serializable sessionId ) {
+        super( message, sessionId );
     }
 
-    public StoppedSessionException( Serializable sessionId, String message, Throwable cause ) {
-        super( sessionId, message, cause );
+    public StoppedSessionException( String message, Throwable cause, Serializable sessionId ) {
+        super( message, cause, sessionId );
     }
 
 }

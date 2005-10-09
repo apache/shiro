@@ -25,11 +25,12 @@
 
 package org.jsecurity.authz;
 
-
-
-
 /**
- * @since 0.1
+ * An <tt>Authorizer</tt> performs the actual authorization check to determine if a particular
+ * {@link AuthorizationContext AuthorizationContext} is permitted to execute a specific
+ * {@link AuthorizedAction AuthorizedAction}.
+ *
+ * @since 1.0
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
