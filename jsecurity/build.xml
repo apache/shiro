@@ -131,7 +131,7 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Specification API">
-            <doctitle><![CDATA[<h1>JSecurity Specification API</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Specification API v. 1.0</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
@@ -151,7 +151,7 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Reference Implementation API">
-            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.1 RC1</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="ri/common/src/**/*.java"/>

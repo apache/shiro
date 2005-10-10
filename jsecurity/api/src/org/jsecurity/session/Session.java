@@ -33,9 +33,14 @@ import java.util.Calendar;
  * A <tt>Session</tt> is a data context associated with a single entity (user, 3rd party process,
  * etc) that communicates with a software system over a period of time.
  *
- * <p>All interaction with a secure system is done in the course of a <tt>Session</tt>, even if that
- * <tt>Session</tt> only exists over the course of a single method invocation.  Sessions are
- * extremely lightweight objects that have a managed lifecycle.
+ * <p>A <tt>Session</tt> is intended to be managed by the business tier and accessible via other
+ * tiers without being tied to any given client technology.  This is a <em>great</em> benefit to Java
+ * systems, since until now, the only viable session mechanisms were the
+ * {@link javax.servlet.http.HttpSession HttpSession} or Stateful Session EJB's, which many times
+ * unnecessarily coupled applications to web or ejb technologies.
+ *
+ * <p>See the {@link SessionFactory#getSession(java.io.Serializable) SessionFactory.getSession(Serializable)}
+ * JavaDoc for more on the benefits of a POJO-based <tt>Session</tt> framework.
  *
  * @since 1.0
  * @author Les Hazlewood
@@ -68,13 +73,13 @@ public interface Session {
     Serializable getSessionId();
 
     /**
-     * Returns the time this session was started; that is, the time the system created the instance.
-     * @return The time the system created this session.
+     * Returns the time the session was started; that is, the time the system created the instance.
+     * @return The time the system created the session.
      */
     Calendar getStartTimestamp();
 
     /**
-     * Returns the time this session was stopped.
+     * Returns the time the session was stopped, or <tt>null</tt> if the session is still active.
      *
      * <p>A session may become stopped under a number of conditions:
      * <ul>
@@ -88,15 +93,24 @@ public interface Session {
      *
      * <p>Once stopped, a session may no longer be used.  It is locked from all further activity.
      *
-     * @return The time this session was stopped, or <tt>null</tt> if this session is still
+     * @return The time the session was stopped, or <tt>null</tt> if the session is still
      * active.
      */
     Calendar getStopTimestamp();
 
     /**
-     * Returns the last time the account associated with this session interacted with the system.
-     * With the exception of the {@link #touch()} method, merely calling this or other methods on
-     * the Session will <em>not</em> update the last access time.
+     * Returns the last time the account associated with the session interacted with the system.
+     * <p>A <tt>Session</tt>'s last access time is updated when calling the following methods:
+     * <ul>
+     *   <li>{@link #touch() touch()}</li>
+     *   <li>{@link #stop() stop()}</li>
+     *   <li></li>
+     *   <li></li>
+     *   <li></li>
+     * </ul>.
+     * With the exception of the following five methods, {@link #stop()},  method, calling this or other
+     * Calling other methods on this interface will <em>not</em> update the last access time.
+     * methods on the Session will <em>not</em> update the last access time.
      *
      * @return The time the user last interacted with the system.
      */

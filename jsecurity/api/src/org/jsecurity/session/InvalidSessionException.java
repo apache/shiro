@@ -80,7 +80,7 @@ public class InvalidSessionException extends SessionException {
      * @param sessionId the session id of the session that has been invalidated.
      */
     public InvalidSessionException( Serializable sessionId ) {
-        this( "Session with id [" + sessionId + "] has invalidated (stopped)", sessionId );
+        this( "Session with id [" + sessionId + "] has been invalidated (stopped)", sessionId );
     }
 
     /**

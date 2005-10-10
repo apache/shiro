@@ -114,8 +114,7 @@ public class UsernamePasswordToken implements AuthenticationToken {
 
     /**
      * Clears out (nulls) the username and password.  The password bytes are explicitly set to
-     * <tt>0x00</tt> before nulling to eliminate the possibility of
-     * memory access at a later time.
+     * <tt>0x00</tt> before nulling to eliminate the possibility of memory access at a later time.
      */
     public void clear() {
         this.username = null;

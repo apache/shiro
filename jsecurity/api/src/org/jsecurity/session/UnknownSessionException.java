@@ -36,30 +36,61 @@ import java.io.Serializable;
  */
 public class UnknownSessionException extends InvalidSessionException {
 
+    /**
+     * Creates a new UnknownSessionException.
+     */
     public UnknownSessionException() {
         super();
     }
 
-    public UnknownSessionException( String s ) {
-        super( s );
+    /**
+     * Constructs a new UnknownSessionException.
+     * @param message the reason for the exception
+     */
+    public UnknownSessionException( String message ) {
+        super( message );
     }
 
+    /**
+     * Constructs a new UnknownSessionException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public UnknownSessionException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new UnknownSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public UnknownSessionException( String message, Throwable cause ) {
         super( message, cause );
     }
 
+    /**
+     * Constructs a new UnknownSessionException.
+     * @param sessionId the session id given that is unknown to the system.
+     */
     public UnknownSessionException( Serializable sessionId ) {
         super( sessionId );
     }
 
+    /**
+     * Constructs a new UnknownSessionException.
+     * @param message the reason for the exception
+     * @param sessionId the session id given that is unknown to the system.
+     */
     public UnknownSessionException( String message, Serializable sessionId ) {
         super( message, sessionId );
     }
 
+    /**
+     * Constructs a new UnknownSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     * @param sessionId the session id given that is unknown to the system.
+     */
     public UnknownSessionException( String message, Throwable cause, Serializable sessionId ) {
         super( message, cause, sessionId );
     }
