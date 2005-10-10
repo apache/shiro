@@ -25,7 +25,7 @@
 
     <filter>
         <filter-name>AuthFilter</filter-name>
-        <filter-class>org.jsecurity.web.AuthenticationFilter</filter-class>
+        <filter-class>org.jsecurity.ri.web.AuthenticationFilter</filter-class>
         <init-param>
             <param-name>unauthenticatedPath</param-name>
             <param-value>/gateway/login</param-value>

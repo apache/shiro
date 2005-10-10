@@ -47,10 +47,9 @@ import org.jsecurity.authz.AuthorizationContext;
  * <p>You are free to acquire a user's principals and credentials however you wish and
  * then submit them to the JSecurity framework in the form of any implementation.  We
  * also think the name <em>authentication token</em> more accurately reflects its true purpose
- * in a login framework, whereas <em>Callback</em> is less obvious (<tt>Callback</tt> doesn't even
- * have any methods!).
+ * in a login framework, whereas <em>Callback</em> is less obvious.
  *
- * <p><b>Implementation Note:</b> It is quite often the case that authentication submissions
+ * <p><b>Implementation Note:</b> It is often the case that authentication submissions
  * are done in client/server systems, where the token would be created on the client tier and
  * sent over the wire to a remote server where the actual authentication process occurs.  If this
  * is the case in your system, ensure your <tt>authentication token</tt> class implements the

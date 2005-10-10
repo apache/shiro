@@ -4,8 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.WebSessionFactory;
+import org.jsecurity.ri.util.ThreadContext;
+import org.jsecurity.ri.web.WebSessionFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
