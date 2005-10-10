@@ -36,30 +36,61 @@ import java.io.Serializable;
  */
 public class StoppedSessionException extends InvalidSessionException {
 
+    /**
+     * Creates a new StoppedSessionException.
+     */
     public StoppedSessionException() {
         super();
     }
 
-    public StoppedSessionException( String s ) {
-        super( s );   
+    /**
+     * Constructs a new StoppedSessionException.
+     * @param message the reason for the exception
+     */
+    public StoppedSessionException( String message ) {
+        super( message );
     }
 
+    /**
+     * Constructs a new StoppedSessionException.
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public StoppedSessionException( Throwable cause ) {
         super( cause );
     }
 
+    /**
+     * Constructs a new StoppedSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public StoppedSessionException( String message, Throwable cause ) {
         super( message, cause );
     }
 
+    /**
+     * Constructs a new StoppedSessionException.
+     * @param sessionId the session id of the session that has been stopped.
+     */
     public StoppedSessionException( Serializable sessionId ) {
         super( sessionId );
     }
 
+    /**
+     * Constructs a new StoppedSessionException.
+     * @param message the reason for the exception
+     * @param sessionId the session id of the session that has been stopped.
+     */
     public StoppedSessionException( String message, Serializable sessionId ) {
         super( message, sessionId );
     }
 
+    /**
+     * Constructs a new StoppedSessionException.
+     * @param message the reason for the exception
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     * @param sessionId the session id of the session that has been stopped.
+     */
     public StoppedSessionException( String message, Throwable cause, Serializable sessionId ) {
         super( message, cause, sessionId );
     }
