@@ -46,10 +46,10 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
                     log.debug( "Created new JSecurity Session with id [" +
                                session.getSessionId() + "]");
                 }
+            } else {
+                //update last accessed time:
+                session.touch();
             }
-
-            //update the last accessed time:
-            session.touch();
 
             bind( session );
 
