@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy C. Haile
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,16 +23,15 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.module.dao;
+package org.jsecurity.ri.authc.module.dao.password;
 
 /**
- * <p>An {@link org.jsecurity.authc.module.dao.AuthenticationDAO} that uses JDBC to
- * retrieve user authentication information from a database.</p>
+ * Description of class.
  *
- * @since 0.1
  * @author Jeremy Haile
+ * @since 0.1
  */
-public class JDBCAuthenticationDAO implements AuthenticationDAO {
+public class PlainTextPasswordMatcher implements PasswordMatcher {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -54,7 +53,17 @@ public class JDBCAuthenticationDAO implements AuthenticationDAO {
     |               M E T H O D S               |
     ============================================*/
 
-    public UserAuthenticationInfo getUserAuthenticationInfo(String username) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+    public boolean doPasswordsMatch(char[] providedPassword, char[] storedPassword) {
+        if( providedPassword.length != storedPassword.length ) {
+            return false;
+        }
+
+        for( int i = 0; i < providedPassword.length; i++ ) {
+            if( providedPassword[i] != storedPassword[i] ) {
+                return false;
+            }
+        }
+        return true;
     }
 }

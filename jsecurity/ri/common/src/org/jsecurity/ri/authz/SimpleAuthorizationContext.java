@@ -23,20 +23,16 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authz;
-
-import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.authz.AuthorizationException;
+package org.jsecurity.authz;
 
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
- * A simple implementation of the {@link org.jsecurity.authz.AuthorizationContext} interface that
+ * A simple implementation of the {@link AuthorizationContext} interface that
  * maintains all authorization context information in instance variables.  This
  * context implementation has no synchronization, so any required synchronization
  * should be handled outside of this class.  This implementation is not dynamic
@@ -63,12 +59,12 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /**
      * The roles that apply to this authorization context.
      */
-    private Set<Serializable> roles;
+    private Collection<Serializable> roles;
 
     /**
      * The permissions that apply to this authorization context.
      */
-    private Set<Permission> permissions;
+    private Collection<Permission> permissions;
 
 
     /*--------------------------------------------
@@ -80,7 +76,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
      * @param roles the roles associated with this auth context.
      * @param permissions the permissions associated with this auth context.
      */
-    public SimpleAuthorizationContext(Principal principal, Set<Serializable> roles, Set<Permission> permissions) {
+    public SimpleAuthorizationContext(Principal principal, Collection<Serializable> roles, Collection<Permission> permissions) {
         this.principal = principal;
         this.roles = roles;
         this.permissions = permissions;

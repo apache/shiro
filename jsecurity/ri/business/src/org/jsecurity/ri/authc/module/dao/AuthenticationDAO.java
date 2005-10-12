@@ -26,13 +26,37 @@
 package org.jsecurity.ri.authc.module.dao;
 
 /**
- * Description of class.
+ * <p>Interface used by the {@link DAOAuthenticationModule} to retrieve information
+ * required to authenticate and determine authorization information for a particular
+ * username.  Several existing implementations of this interface are provided with
+ * the JSecurity RI.</p>
+ *
+ * <p>Applications adopting JSecurity that already store user
+ * principals (usernames), credentials (passwords), and authorization information
+ * in the data store may wish to implement this interface on their own to
+ * retrieve the user's authentication info.  Alternatively, if the existing data
+ * is stored in a database, the {@link org.jsecurity.ri.authc.module.dao.JDBCAuthenticationDAO} may be able to
+ * retrieve the information.</p>
+ *
+ * @see JDBCAuthenticationDAO
+ * @see FileAuthenticationDAO
+ * @see InMemoryAuthenticationDAO
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public interface AuthenticationDAO {
 
+    /**
+     * Retrieves user authentication information from a data store for the
+     * given username.
+     *
+     * @param username the username of the user whose authentication information
+     * should be retrieved from the data store.
+     * @return a {@link UserAuthenticationInfo} object containing the information
+     * necessary to authenticate the user and build an
+     * {@link org.jsecurity.authz.AuthorizationContext}
+     */
     public UserAuthenticationInfo getUserAuthenticationInfo( String username ); 
 
 }
