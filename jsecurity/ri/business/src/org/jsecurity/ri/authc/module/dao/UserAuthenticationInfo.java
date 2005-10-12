@@ -29,26 +29,68 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * An interface containing the information required by the {@link org.jsecurity.ri.authc.module.dao.DAOAuthenticationModule}
+ * An interface containing the information required by the {@link DAOAuthenticationModule}
  * to authenticate a user and construct a {@link org.jsecurity.authz.AuthorizationContext} for the user.
  *
- * @see org.jsecurity.ri.authc.module.dao.DAOAuthenticationModule
+ * @see DAOAuthenticationModule
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public interface UserAuthenticationInfo {
 
+    /**
+     * The user's username principal used to uniquely identify the user.
+     * @return the user's username who is being authenticated.
+     */
     public String getUsername();
 
-    public String getPassword();
+    /**
+     * The user's password as stored in the system.  This password may be
+     * encrypted, in which case the {@link DAOAuthenticationModule} must be
+     * informed of the encryption algorithm used to encrypt the password.
+     * @return the user's password as stored in the system.
+     */
+    public char[] getPassword();
 
+    /**
+     * A collection of role identifiers that represent the roles that this
+     * user is a member of.  These roles will be used to determine the
+     * authorization privileges of the user being authenticated.
+     * @return a collection of role identifiers (typically <tt>String</tt>
+     * names of roles)
+     */
     public Collection<Serializable> getRoles();
 
+
+    /**
+     * Determines if the user's account is locked, meaning that the user is
+     * not allowed to log in due to a manual or automatic lockout.
+     * @return true if the user's account is locked and the user should be
+     * denied authorization, false otherwise.
+     */
     public boolean isAccountLocked();
 
+
+    /**
+     * Determines if the user's credentials (password) has expired and must be
+     * changed before login is allowed.
+     * @return true if the user's credentials are expired and the user should
+     * be denied authentication, false otherwise.
+     */
     public boolean isCredentialsExpired();
 
-    public boolean isUserLoggedIn();
+
+    /**
+     * Determines if the user is allowed to concurrently login from two
+     * unique sessions.  For example, if Joe needs the ability to leave
+     * an account logged in at home and still log in from work, then
+     * concurrent logins should be enabled.  This feature is mainly intended
+     * to prevent account sharing where a user distributes his password to
+     * others who log in concurrently.
+     * @return true if the user should be allowed to login concurrently,
+     * false otherwise.
+     */
+    public boolean isConcurrentLoginsAllowed();
 
 }
