@@ -29,6 +29,7 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.context.SecurityContextAccessor;
+import org.jsecurity.authc.Authenticator;
 
 /**
  * Implementation of {@link SecurityContextAccessor} that retrieves security context information
@@ -40,25 +41,22 @@ import org.jsecurity.context.SecurityContextAccessor;
 public class ThreadLocalSecurityContextAccessor implements SecurityContextAccessor {
 
     /**
-     * Retrieves the current user's session from the thread local context.
-     * @return the current user's session.
+     * @see org.jsecurity.context.SecurityContextAccessor#getSession() SecurityContextAccessor.getSession()
      */
     public Session getSession() {
         return (Session) ThreadContext.get( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
     }
 
     /**
-     * Retrieves the current user's authorization context from the thread local context.
-     * @return the current user's authorization context.
+     * @see org.jsecurity.context.SecurityContextAccessor#getAuthorizationContext() SecurityContextAccessor.getAuthorizationContext()
      */
     public AuthorizationContext getAuthorizationContext() {
-        return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
+        return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY );
     }
 
 
     /**
-     * Invalidates the user's current security context by stopping the session and removing the authorization
-     * context from the thread local context.
+     * @see org.jsecurity.context.SecurityContextAccessor#invalidate() SecurityContextAccessor.invalidate()
      */
     public void invalidate() {
 
@@ -68,10 +66,6 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
             getSession().stop();
         }
 
-        // Remove the authorization context from the thread context
-        if( ThreadContext.containsKey( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY ) ) {
-            ThreadContext.remove( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
-        }
-
+        ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY );
     }
 }

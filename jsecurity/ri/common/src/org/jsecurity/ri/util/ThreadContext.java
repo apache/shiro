@@ -59,9 +59,8 @@ public abstract class ThreadContext {
     public static final String SESSION_THREAD_CONTEXT_KEY =
         Session.class.getName() + "_THREAD_CONTEXT_KEY";
 
-    public static final String AUTHCONTEXT_THREAD_CONTEXT_KEY =
+    public static final String AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY =
         AuthorizationContext.class.getName() + "_THREAD_CONTEXT_KEY";
-
 
     protected static ThreadLocal<Map<Object, Object>> resources =
         new ThreadLocal<Map<Object, Object>>() {
