@@ -45,7 +45,7 @@ import java.lang.annotation.Target;
  * </pre>
  * </blockquote>
  *
- * @see org.jsecurity.authz.AuthorizationContext#hasRole(java.io.Serializable roleIdentifier)
+ * @see org.jsecurity.authz.AuthorizationContext#hasRole(String)
  *
  * @since 1.0
  * @author Jeremy Haile
