@@ -65,6 +65,6 @@ public class LogoutController extends AbstractController {
 
         SecurityContext.invalidate();
 
-        return new ModelAndView( "login" );
+        return new ModelAndView( "redirect:login" );
     }
 }

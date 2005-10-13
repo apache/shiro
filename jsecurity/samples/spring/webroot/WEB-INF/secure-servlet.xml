@@ -10,7 +10,7 @@
 	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="index">urlController</prop>
+                <prop key="index">indexController</prop>
             </props>
         </property>
     </bean>
@@ -23,5 +23,6 @@
 		<property name="suffix" value=".jsp"/>
 	</bean>
 
+    <bean id="indexController" class="org.jsecurity.samples.spring.IndexController"/>
 
 </beans>

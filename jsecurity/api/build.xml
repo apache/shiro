@@ -30,6 +30,6 @@
     <!-- ===================================================================
       -  dist - create distribution jars (which will be used for deployment)
       -  =================================================================== -->
-    <target name="dist" depends="jar"/>
+    <target name="dist" depends="compile,jar"/>
 
 </project>

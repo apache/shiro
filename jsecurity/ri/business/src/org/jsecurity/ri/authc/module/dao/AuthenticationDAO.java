@@ -53,10 +53,10 @@ public interface AuthenticationDAO {
      *
      * @param username the username of the user whose authentication information
      * should be retrieved from the data store.
-     * @return a {@link UserAuthenticationInfo} object containing the information
+     * @return a {@link AuthenticationInfo} object containing the information
      * necessary to authenticate the user and build an
      * {@link org.jsecurity.authz.AuthorizationContext}
      */
-    public UserAuthenticationInfo getUserAuthenticationInfo( String username ); 
+    public AuthenticationInfo getUserAuthenticationInfo( String username );
 
 }

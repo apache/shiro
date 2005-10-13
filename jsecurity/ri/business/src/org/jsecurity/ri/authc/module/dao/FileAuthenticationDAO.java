@@ -55,7 +55,7 @@ public class FileAuthenticationDAO implements AuthenticationDAO {
     ============================================*/
 
 
-    public UserAuthenticationInfo getUserAuthenticationInfo(String username) {
+    public AuthenticationInfo getUserAuthenticationInfo(String username) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

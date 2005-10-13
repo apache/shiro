@@ -25,14 +25,28 @@
 
 package org.jsecurity.ri.authz;
 
+import org.jsecurity.authz.AuthorizationContext;
+
+
 /**
- * <p>Factory used to create new instances of an authorization context.
- * This factory is used to decouple authorization modules that produce
- * authorization contexts from  
+ * <p>Factory used to create the authorization context that is returned from the
+ * {@link org.jsecurity.authc.Authenticator}.  The factory allows the
+ * {@link org.jsecurity.authz.AuthorizationContext} returned from the authenticator to be wrapped in a different
+ * context (for example a dynamic proxy).</p>
+ *
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public interface AuthorizationContextFactory {
+
+    /**
+     * Returns an implementation of the AuthorizationContext instance for the
+     * given authorization context.  The returned context may or may not be the same instance or
+     * concrete class as the given context.
+     * @param context the context that is to be used as the source for the final context.
+     * @return an authorization context that will be used by the application.
+     */
+    AuthorizationContext createAuthContext( AuthorizationContext context );
 
 }
