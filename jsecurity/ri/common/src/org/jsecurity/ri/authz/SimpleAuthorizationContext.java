@@ -23,9 +23,11 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authz;
+package org.jsecurity.ri.authz;
 
-import java.io.Serializable;
+import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.authz.AuthorizationException;
+
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
@@ -36,7 +38,7 @@ import java.util.List;
  * maintains all authorization context information in instance variables.  This
  * context implementation has no synchronization, so any required synchronization
  * should be handled outside of this class.  This implementation is not dynamic
- * and does not update automatically, so it will only change when a user is
+ * and does not upd`ate automatically, so it will only change when a user is
  * authenticated.
  *
  * @since 0.1
@@ -59,7 +61,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /**
      * The roles that apply to this authorization context.
      */
-    private Collection<Serializable> roles;
+    private Collection<String> roles;
 
     /**
      * The permissions that apply to this authorization context.
@@ -76,7 +78,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
      * @param roles the roles associated with this auth context.
      * @param permissions the permissions associated with this auth context.
      */
-    public SimpleAuthorizationContext(Principal principal, Collection<Serializable> roles, Collection<Permission> permissions) {
+    public SimpleAuthorizationContext(Principal principal, Collection<String> roles, Collection<Permission> permissions) {
         this.principal = principal;
         this.roles = roles;
         this.permissions = permissions;
@@ -96,16 +98,16 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     }
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#hasRole(java.io.Serializable)
+     * @see org.jsecurity.authz.AuthorizationContext#hasRole(String)
      */
-    public boolean hasRole(Serializable roleIdentifier) {
+    public boolean hasRole(String roleIdentifier) {
         return roles.contains( roleIdentifier );
     }
 
     /**
      * @see org.jsecurity.authz.AuthorizationContext#hasRoles(java.util.List<java.io.Serializable>)
      */
-    public boolean[] hasRoles(List<Serializable> roleIdentifiers) {
+    public boolean[] hasRoles(List<String> roleIdentifiers) {
         boolean[] hasRoles = new boolean[roleIdentifiers.size()];
 
         for( int i = 0; i < roleIdentifiers.size(); i++ ) {
@@ -119,8 +121,8 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /**
      * @see org.jsecurity.authz.AuthorizationContext#hasAllRoles(java.util.Collection<java.io.Serializable>)
      */
-    public boolean hasAllRoles(Collection<Serializable> roleIdentifiers) {
-        for( Serializable roleIdentifier : roleIdentifiers ) {
+    public boolean hasAllRoles(Collection<String> roleIdentifiers) {
+        for( String roleIdentifier : roleIdentifiers ) {
             if( !hasRole( roleIdentifier ) ) {
                 return false;
             }
@@ -181,13 +183,33 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /**
      * @see AuthorizationContext#checkPermissions(java.util.Collection<java.security.Permission>)
      */
-    public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
+    public void checkPermissions(Collection<Permission>
+        permissions) throws AuthorizationException {
         for( Permission permission : permissions ) {
             if( !hasPermission( permission ) ) {
                throw new AuthorizationException( "User [" + getPrincipal().getName() + "] does " +
                                                  "not have permission [" + permission.toString() + "]" );
             }
         }
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append( "Principal [" + principal + "] " );
+
+        sb.append( "Roles [" );
+        for( String role : roles ) {
+            sb.append( role + " " );
+        }
+        sb.append( "] " );
+
+        sb.append( "Permissions [" );
+        for( Permission permission : permissions ) {
+            sb.append( permission + " " );
+        }
+        sb.append( "] " );
+
+        return sb.toString();
     }
 
 }

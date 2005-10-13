@@ -6,7 +6,9 @@
   -->
 
 <beans>
-
+    <!-- =========================================================
+      -  Spring MVC configuration
+      ============================================================ -->
 	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
@@ -17,10 +19,48 @@
     </bean>
 
 
+    <!-- =========================================================
+      -  JSecurity configuration
+      ============================================================ -->
+    <bean name="authenticator" class="org.jsecurity.ri.authc.module.PluggableAuthenticator">
+        <property name="modules">
+            <list>
+                <ref bean="daoAuthenticationModule"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="daoAuthenticationModule" class="org.jsecurity.ri.authc.module.dao.DAOAuthenticationModule">
+        <property name="authenticationDao" ref="inMemoryAuthenticationDao"/>
+    </bean>
+
+    <bean id="inMemoryAuthenticationDao" class="org.jsecurity.ri.authc.module.dao.InMemoryAuthenticationDAO">
+        <property name="accounts">
+            <set>
+                <bean class="org.jsecurity.ri.authc.module.dao.AccountEntry">
+                    <property name="username" value="user1"/>
+                    <property name="password" value="user1"/>
+                    <property name="roles" value="role1, role2"/>
+                </bean>
+                <bean class="org.jsecurity.ri.authc.module.dao.AccountEntry">
+                    <property name="username" value="user2"/>
+                    <property name="password" value="user2"/>
+                    <property name="roles" value="role2"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+
+    <!-- =========================================================
+      -  Spring controllers
+      ============================================================ -->
     <bean name="loginController" class="org.jsecurity.samples.spring.LoginController">
         <property name="commandClass" value="org.jsecurity.samples.spring.LoginCommand"/>
         <property name="formView" value="login"/>
-        <property name="successView" value="index"/>
+        <property name="successView" value="redirect:/secure/index"/>
+
+        <property name="authenticator" ref="authenticator"/>
     </bean>
 
     <bean name="logoutController" class="org.jsecurity.samples.spring.LogoutController"/>

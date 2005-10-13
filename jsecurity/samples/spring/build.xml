@@ -12,8 +12,6 @@
     <property name="module.name" value="spring"/>
     <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
 
-    <property name="lib.dir" value="${module.base.dir}/lib"/>
-
     <!-- Module properties -->
     <property name="module.name" value="api"/>
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
@@ -47,7 +45,11 @@
     <target name="dist" depends="root-prepare,compile">
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
             <classes dir="${classes.dir}" includes="**"/>
-            <lib dir="lib" includes="**" excludes="servlet.jar"/>
+            <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
+            <lib dir="${lib.dir}/spring" includes="*.jar"/>
+            <lib dir="${lib.dir}/log4j" includes="*.jar"/>
+            <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
+            <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**"/>

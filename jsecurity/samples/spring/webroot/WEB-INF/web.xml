@@ -24,7 +24,7 @@
 	</context-param>
 
     <filter>
-        <filter-name>AuthFilter</filter-name>
+        <filter-name>AuthenticationFilter</filter-name>
         <filter-class>org.jsecurity.ri.web.AuthenticationFilter</filter-class>
         <init-param>
             <param-name>unauthenticatedPath</param-name>
@@ -32,10 +32,20 @@
         </init-param>
     </filter>
 
+    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>org.jsecurity.ri.web.AuthorizationContextFilter</filter-class>
+    </filter>
+
     <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/secure/*</url-pattern>
+        <filter-name>AuthorizationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/secure/*</url-pattern>
+    </filter-mapping>    
 
     <listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
@@ -66,5 +76,10 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
+    <taglib>
+      <taglib-uri>/spring</taglib-uri>
+      <taglib-location>/WEB-INF/spring.tld</taglib-location>
+    </taglib>    
 
 </web-app>

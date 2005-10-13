@@ -22,17 +22,25 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
+package org.jsecurity.samples.spring;
 
-package org.jsecurity.ri.authc.module.dao;
+import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * <p>An {@link org.jsecurity.ri.authc.module.dao.AuthenticationDAO} that uses JDBC to
- * retrieve user authentication information from a database.</p>
+ * Description of class.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class JDBCAuthenticationDAO implements AuthenticationDAO {
+public class IndexController extends AbstractController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -54,7 +62,18 @@ public class JDBCAuthenticationDAO implements AuthenticationDAO {
     |               M E T H O D S               |
     ============================================*/
 
-    public AuthenticationInfo getUserAuthenticationInfo(String username) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+
+        AuthorizationContext context = SecurityContext.getAuthorizationContext();
+
+        boolean hasRole1 = context.hasRole( "role1" );
+        boolean hasRole2 = context.hasRole( "role2" );
+
+        Map<String,Object> model = new HashMap<String,Object>();
+        model.put( "hasRole1", hasRole1 );
+        model.put( "hasRole2", hasRole2 );
+
+        return new ModelAndView( "index", model );
     }
 }

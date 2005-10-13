@@ -25,7 +25,6 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -37,7 +36,7 @@ import java.util.Collection;
  * @since 0.1
  * @author Jeremy Haile
  */
-public interface UserAuthenticationInfo {
+public interface AuthenticationInfo {
 
     /**
      * The user's username principal used to uniquely identify the user.
@@ -60,7 +59,7 @@ public interface UserAuthenticationInfo {
      * @return a collection of role identifiers (typically <tt>String</tt>
      * names of roles)
      */
-    public Collection<Serializable> getRoles();
+    public Collection<String> getRoles();
 
 
     /**

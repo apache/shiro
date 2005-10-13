@@ -23,19 +23,15 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.module;
-
-import org.jsecurity.authc.module.AuthenticationModule;
-
-import java.util.Set;
+package org.jsecurity.ri.authc.module.dao;
 
 /**
- * An authenticator that delegates to a set of {@link org.jsecurity.authc.module.AuthenticationModule}s
+ * A simple POJO containing account information.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class ModuleAuthenticator {
+public class AccountEntry {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -44,7 +40,21 @@ public class ModuleAuthenticator {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private Set<AuthenticationModule> modules;
+    /**
+     * The username for this account.
+     */
+    private String username;
+
+    /**
+     * The password for this account.
+     */
+    private String password;
+
+    /**
+     * A list of comma-separated role names that are authorized for this account.
+     */
+    private String roles;
+
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -53,6 +63,35 @@ public class ModuleAuthenticator {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public String getUsername() {
+        return username;
+    }
+
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    public String getRoles() {
+        return roles;
+    }
+
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |

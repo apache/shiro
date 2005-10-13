@@ -94,19 +94,6 @@ public class UsernamePasswordToken implements AuthenticationToken {
         return password;
     }
 
-    /**
-     * Returns the password submitted during an authentication attempt as a String.
-     * @return the password submitted during an authentication attempt as a String.
-     */
-    public String getPasswordString() {
-        char[] password = getPassword();
-        if ( password == null ) {
-            return null;
-        } else {
-            return new String( password );
-        }
-    }
-
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -127,4 +114,13 @@ public class UsernamePasswordToken implements AuthenticationToken {
         }
 
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append( getClass() );
+        sb.append( " - " );
+        sb.append( username );
+        return sb.toString();            
+    }
+
 }

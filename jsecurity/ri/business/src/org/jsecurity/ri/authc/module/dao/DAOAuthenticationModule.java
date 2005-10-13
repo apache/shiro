@@ -28,9 +28,9 @@ package org.jsecurity.ri.authc.module.dao;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.authz.SimpleAuthorizationContext;
 import org.jsecurity.ri.authc.module.dao.password.PasswordMatcher;
 import org.jsecurity.ri.authc.module.dao.password.PlainTextPasswordMatcher;
+import org.jsecurity.ri.authz.SimpleAuthorizationContext;
 import org.jsecurity.ri.authz.UsernamePrincipal;
 
 import java.io.Serializable;
@@ -48,7 +48,7 @@ import java.util.Set;
  *
  * <p>This module is intended to encapsulate the generic behavior of
  * authenticating a user from a username and password based on the
- * {@link UserAuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
+ * {@link AuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -104,7 +104,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
         String username = getUsername( token );
         char[] password = getPassword( token );
 
-        UserAuthenticationInfo info = authenticationDao.getUserAuthenticationInfo( username );
+        AuthenticationInfo info = authenticationDao.getUserAuthenticationInfo( username );
 
         if( info == null ) {
             throw new UnknownAccountException( "No account information found for username [" + username + "]" );
@@ -126,7 +126,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
     }
 
 
-    private AuthorizationContext buildAuthorizationContext(UserAuthenticationInfo info) {
+    private AuthorizationContext buildAuthorizationContext(AuthenticationInfo info) {
 
         Principal principal = new UsernamePrincipal( info.getUsername() );
 
@@ -140,7 +140,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
     }
 
 
-    private Set<Permission> getPermissionsForRoles(Collection<Serializable> roles) {
+    private Set<Permission> getPermissionsForRoles(Collection<? extends Serializable> roles) {
         return new HashSet<Permission>();
     }
 

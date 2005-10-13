@@ -25,21 +25,20 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Simple implementation of the {@link UserAuthenticationInfo} interface that
+ * Simple implementation of the {@link AuthenticationInfo} interface that
  * contains all necessary information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * @see UserAuthenticationInfo
+ * @see AuthenticationInfo
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SimpleUserAuthenticationInfo implements UserAuthenticationInfo {
+public class SimpleAuthenticationInfo implements AuthenticationInfo {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -62,7 +61,7 @@ public class SimpleUserAuthenticationInfo implements UserAuthenticationInfo {
     /**
      * The collection of roles that apply to this user.
      */
-    private Collection<Serializable> roles;
+    private Collection<String> roles;
 
     /**
      * True if the user's account is locked, false otherwise.
@@ -83,19 +82,19 @@ public class SimpleUserAuthenticationInfo implements UserAuthenticationInfo {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
-    public SimpleUserAuthenticationInfo() {
-        this.roles = new HashSet<Serializable>();
+    public SimpleAuthenticationInfo() {
+        this.roles = new HashSet<String>();
     }
 
 
-    public SimpleUserAuthenticationInfo(String username, char[] password, Collection<Serializable> roles) {
+    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles) {
         this.username = username;
         this.password = password;
         this.roles = roles;
     }
 
 
-    public SimpleUserAuthenticationInfo(String username, char[] password, Collection<Serializable> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -129,12 +128,12 @@ public class SimpleUserAuthenticationInfo implements UserAuthenticationInfo {
     }
 
 
-    public Collection<Serializable> getRoles() {
+    public Collection<String> getRoles() {
         return roles;
     }
 
 
-    public void setRoles(Collection<Serializable> roles) {
+    public void setRoles(Collection<String> roles) {
         this.roles = roles;
     }
 

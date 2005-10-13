@@ -26,8 +26,13 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Description of class.
+ * A simple implementation of the {@link AuthenticationDAO} interface that
+ * uses a set of configured user properties to authenticate a user.
+ * The property name corresponds to the username of the user.  The
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -41,6 +46,10 @@ public class InMemoryAuthenticationDAO implements AuthenticationDAO {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * The set of accounts that can be authenticated using this DAO.
+     */
+    private Set<AccountEntry> accounts;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -49,13 +58,36 @@ public class InMemoryAuthenticationDAO implements AuthenticationDAO {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public void setAccounts(Set<AccountEntry> accounts) {
+        this.accounts = accounts;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
 
-    public UserAuthenticationInfo getUserAuthenticationInfo(String username) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public AuthenticationInfo getUserAuthenticationInfo(String username) {
+
+        for( AccountEntry entry : accounts ) {
+            if( entry.getUsername().equals( username ) ) {
+
+                String[] roleArray = entry.getRoles().split( "," );
+                Set<String> roles = new HashSet<String>( roleArray.length );
+                for( String role : roleArray ) {
+                    roles.add( role.trim() );
+                }
+
+                SimpleAuthenticationInfo info = new SimpleAuthenticationInfo( entry.getUsername(),
+                                                                              entry.getPassword().toCharArray(),
+                                                                              roles );
+                return info;
+
+            }
+        }
+
+        // User could not be found, so return null
+        return null;
     }
 }

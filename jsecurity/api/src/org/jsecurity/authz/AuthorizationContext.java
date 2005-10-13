@@ -24,7 +24,6 @@
  */
 package org.jsecurity.authz;
 
-import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
@@ -54,7 +53,7 @@ public interface AuthorizationContext {
      * @param roleIdentifier the role identifier that is being checked.
      * @return true if the user associated with this context has the role, false otherwise.
      */
-    boolean hasRole( Serializable roleIdentifier );
+    boolean hasRole( String roleIdentifier );
 
     /**
      * Checks a set of role identifiers to see if they are associated with this
@@ -69,14 +68,14 @@ public interface AuthorizationContext {
      * roles in the given identifiers.  A true value indicates the user has the
      * role at that index.  False indicates the user does not have the role.
      */
-    boolean[] hasRoles( List<Serializable> roleIdentifiers );
+    boolean[] hasRoles( List<String> roleIdentifiers );
 
     /**
      * Checks if the user has all of the given roles.
      * @param roleIdentifiers the roles to be checked.
      * @return true if the user has all roles, false otherwise.
      */
-    boolean hasAllRoles( Collection<Serializable> roleIdentifiers );
+    boolean hasAllRoles( Collection<String> roleIdentifiers );
 
     /**
      * Checks if the given permission is associated with this context.
