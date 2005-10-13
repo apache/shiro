@@ -25,17 +25,16 @@
 
 package org.jsecurity.ri.session.eis.support;
 
+import org.jsecurity.ri.session.SimpleSession;
 import org.jsecurity.ri.session.eis.SessionDAO;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
-import org.jsecurity.ri.session.SimpleSession;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-import java.util.ArrayList;
 
 /**
  * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
@@ -49,7 +48,8 @@ import java.util.ArrayList;
  */
 public class MemorySessionDAO implements SessionDAO {
 
-    private final Map<Serializable, Session> sessions = new HashMap<Serializable, Session>();
+    private final Map<Serializable, Session> activeSessions = new HashMap<Serializable, Session>();
+    private final Map<Serializable, Session> stoppedSessions = new HashMap<Serializable, Session>();
 
     protected void assignId( Session session ) {
         if ( session instanceof SimpleSession ) {
@@ -66,21 +66,22 @@ public class MemorySessionDAO implements SessionDAO {
             throw new IllegalStateException( msg );
         }
 
-        Session existingSession = sessions.get( id );
-
-        if ( existingSession != null ) {
+        if ( activeSessions.containsKey( id ) || stoppedSessions.containsKey( id ) ) {
             String msg = "There is an existing session already created with session id [" +
                          id + "].  Session Id's must be unique.";
             throw new IllegalArgumentException( msg );
         }
 
-        synchronized ( sessions ) {
-            sessions.put( id, session );
+        synchronized ( activeSessions ) {
+            activeSessions.put( id, session );
         }
     }
 
     public Session readSession( Serializable sessionId ) throws UnknownSessionException {
-        Session s = sessions.get( sessionId );
+        Session s = activeSessions.get( sessionId );
+        if ( s == null ) {
+            s = stoppedSessions.get( sessionId );
+        }
         if ( s == null ) {
             String msg = "There is no session with id [" + sessionId + "].";
             throw new UnknownSessionException( msg );
@@ -91,34 +92,31 @@ public class MemorySessionDAO implements SessionDAO {
     public void update( Session session ) throws UnknownSessionException {
         Serializable id = session.getSessionId();
         //verify the session exists:
-        readSession( id );
-        //no exception thrown, just return (session is already in memory, no need to add again)
+        Session s = readSession( id );
+        if ( (s.getStopTimestamp() != null) || s.isExpired() ) {
+            synchronized ( activeSessions ) {
+                activeSessions.remove( id );
+            }
+            synchronized ( stoppedSessions ) {
+                stoppedSessions.put( id, session );
+            }
+        }
     }
 
     public void delete( Session session ) {
         Serializable id = session.getSessionId();
         readSession( id ); //verify it exists
         //delete it:
-        synchronized ( sessions ) {
-            sessions.remove( id );
+        synchronized ( activeSessions ) {
+            activeSessions.remove( id );
+        }
+        synchronized ( stoppedSessions ) {
+            stoppedSessions.remove( id );
         }
     }
 
     public Collection<Session> getActiveSessions() {
-        Collection<Session> activeSessions = new ArrayList<Session>();
-
-        synchronized ( sessions ) {
-            Collection<Session> sessionValues = sessions.values();
-            if ( sessionValues != null ) {
-                for ( Session s : sessionValues ) {
-                    if ( s.getStopTimestamp() == null ) {
-                        activeSessions.add( s );
-                    }
-                }
-            }
-        }
-
-        return activeSessions;
+        return activeSessions.values();
     }
 
     public int getActiveSessionCount() {

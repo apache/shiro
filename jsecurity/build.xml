@@ -141,7 +141,7 @@ to where the build is being executed -->
         </javadoc>
     </target>
 
-    <target name="javadoc.ri" depends="javadoc.api">
+    <target name="javadoc.ri">
         <echo message="Generating JavaDoc API for reference implementation sources..."/>
         <mkdir dir="${root.dist.dir}/docs/ri-api"/>
 
@@ -153,27 +153,31 @@ to where the build is being executed -->
                  windowTitle="JSecurity Reference Implementation API">
             <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.1 RC1</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
-            <fileset dir="${root.base.dir}">
-                <include name="ri/common/src/**/*.java"/>
-                <include name="ri/business/src/**/*.java"/>
-                <include name="ri/client/src/**/*.java"/>
-            </fileset>
-            <link href="file://${root.dist.dir}/docs/spec-api/"/>
+            <classpath>
+                <pathelement location="${root.base.dir}/dist/jsecurity-api.jar"/>
+                <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>
+                <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
+                <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
+            </classpath>
+            <packageset dir="${root.base.dir}/ri/common/src">
+                <include name="org/jsecurity/ri/**"/>
+            </packageset>
+            <packageset dir="${root.base.dir}/ri/business/src">
+                <include name="org/jsecurity/ri/**"/>
+            </packageset>
+            <link href="http://www.jsecurity.org/static/jsecurity/spec/1.0/api/"/>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
-            <classpath>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
-            </classpath>
+
         </javadoc>
     </target>
 
     <!-- =================================================================== -->
     <!-- Javadoc all source code                                             -->
     <!-- =================================================================== -->
-    <target name="javadoc">
-        <echo message="Generating JSecurity JavaDoc API..."/>
+    <target name="javadoc" depends="javadoc.api,javadoc.ri"/>
+        <!-- <echo message="Generating JSecurity JavaDoc API..."/>
         <mkdir dir="${root.dist.dir}/docs/api"/>
 
         <javadoc packagenames="org.jsecurity.*"
@@ -198,7 +202,7 @@ to where the build is being executed -->
                 <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
             </classpath>
         </javadoc>
-    </target>
+    </target> -->
 
     <target name="junit.check.warning" if="tests.failed">
         <echo>
