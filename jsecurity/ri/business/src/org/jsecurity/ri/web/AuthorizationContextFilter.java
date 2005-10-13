@@ -26,46 +26,39 @@
 package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.ri.util.ThreadContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * Description of class.
+ * Filter that is used to ensure an {@link AuthorizationContext} is bound to the
+ * thread local on every request, if it exists in the HTTP session.  Also ensures that
+ * any {@link AuthorizationContext} bound to the thread local during a request is stored
+ * in the HTTP session when the request is complete.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public class AuthorizationContextFilter implements Filter {
 
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-    private static final String AUTH_CONTEXT_SESSION_KEY = AuthorizationContext.class.getName();
-    
-    /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
-
-    /*--------------------------------------------
-    |         C O N S T R U C T O R S           |
-    ============================================*/
-
-    /*--------------------------------------------
-    |  A C C E S S O R S / M O D I F I E R S    |
-    ============================================*/
-
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
+    /**
+     * Implemented for interface - does nothing.
+     */
+    public void init(FilterConfig filterConfig) throws ServletException { }
 
 
+    /**
+     * Before the filter continues, any {@link AuthorizationContext} is bound to the thread local for the
+     * duration of the request.  After the filter returns from the request, any thread local
+     * {@link AuthorizationContext} is set back as an attribute on the session.  After every request,
+     * the thread local is cleared to ensure that the context is not leaked if this thread is reused for another
+     * request.
+     *
+     * @param servletRequest the servlet request.
+     * @param servletResponse the servlet response.
+     * @param filterChain the filter chain.
+     */
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -73,50 +66,22 @@ public class AuthorizationContextFilter implements Filter {
         try {
 
             // Bind a auth context from the session to the thread local
-            bindSessionContextToThreadLocal(request);
+            AuthorizationContextWebUtils.bindSessionContextToThreadLocal(request);
 
             filterChain.doFilter( servletRequest, servletResponse );
 
             // Bind the auth context from the thread local to the session
-            bindThreadLocalContextToSession(request);
+            AuthorizationContextWebUtils.bindThreadLocalContextToSession(request);
 
         } finally {
-            // Make sure we always clear the thread local before returning
-            if( ThreadContext.containsKey( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY ) ) {
-                ThreadContext.remove( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
-            }
+            AuthorizationContextWebUtils.clearThreadLocalContext();
         }
 
 
     }
 
-    private void bindSessionContextToThreadLocal( HttpServletRequest request ) {
-
-        HttpSession session = request.getSession( false );
-        if( session != null ) {
-
-            AuthorizationContext beforeContext =
-                (AuthorizationContext) session.getAttribute( AUTH_CONTEXT_SESSION_KEY );
-
-            if( beforeContext != null ) {
-                ThreadContext.put( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY, beforeContext );
-            }
-        }
-    }
-
-    private void bindThreadLocalContextToSession( HttpServletRequest request ) {
-
-        HttpSession session = request.getSession();
-
-        AuthorizationContext afterContext =
-            (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
-        if( afterContext != null ) {
-            session.setAttribute( AUTH_CONTEXT_SESSION_KEY, afterContext );
-        }
-    }
-
-
-    public void destroy() {
-
-    }
+    /**
+     * Implemented for interface - does nothing.
+     */
+    public void destroy() {}
 }
