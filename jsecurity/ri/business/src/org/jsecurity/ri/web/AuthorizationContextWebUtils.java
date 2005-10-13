@@ -63,7 +63,7 @@ public class AuthorizationContextWebUtils {
                 (AuthorizationContext) session.getAttribute( AUTH_CONTEXT_SESSION_KEY );
 
             if( beforeContext != null ) {
-                ThreadContext.put( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY, beforeContext );
+                ThreadContext.put( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY, beforeContext );
             }
         }
     }
@@ -78,7 +78,7 @@ public class AuthorizationContextWebUtils {
         HttpSession session = request.getSession();
 
         AuthorizationContext afterContext =
-            (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
+            (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY );
         if( afterContext != null ) {
             session.setAttribute( AUTH_CONTEXT_SESSION_KEY, afterContext );
         }
@@ -88,10 +88,7 @@ public class AuthorizationContextWebUtils {
      * Clears the thread local context of the {@link AuthorizationContext} if one is bound.
      */
     public static void clearThreadLocalContext() {
-        // Make sure we always clear the thread local before returning
-        if( ThreadContext.containsKey( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY ) ) {
-            ThreadContext.remove( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
-        }
+        ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY );
     }
 
 }

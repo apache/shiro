@@ -378,7 +378,7 @@ to where the build is being executed -->
     <!-- ===================================================================
       -  all - everything
       -  =================================================================== -->
-    <target name="all" depends="dist"/>
+    <target name="all" depends="release"/>
 
 </project>
 

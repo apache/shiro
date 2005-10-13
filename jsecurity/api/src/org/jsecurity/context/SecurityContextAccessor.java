@@ -27,6 +27,7 @@ package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.session.Session;
+import org.jsecurity.authc.Authenticator;
 
 /**
  * <p>Interface to be implemented by implementations of the JSecurity API
@@ -48,7 +49,7 @@ public interface SecurityContextAccessor {
     public Session getSession();
 
     /**
-     * Returns a {@link AuthorizationContext} for the current user's context.
+     * Returns an {@link AuthorizationContext} for the current user's context.
      * @return the current authorization context.
      */
     public AuthorizationContext getAuthorizationContext();

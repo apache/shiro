@@ -53,6 +53,6 @@ public class ThreadLocalAuthorizationContextBinder implements AuthorizationConte
             logger.debug("Binding authorization context [" + context + "] to the thread local context...");
         }
 
-        ThreadContext.put( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY, context );
+        ThreadContext.put( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY, context );
     }
 }
