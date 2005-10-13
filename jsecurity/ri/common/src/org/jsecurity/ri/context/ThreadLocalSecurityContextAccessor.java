@@ -27,9 +27,9 @@ package org.jsecurity.ri.context;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.SecureSession;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.context.SecurityContextAccessor;
-import org.jsecurity.authc.Authenticator;
 
 /**
  * Implementation of {@link SecurityContextAccessor} that retrieves security context information
@@ -43,8 +43,8 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
     /**
      * @see org.jsecurity.context.SecurityContextAccessor#getSession() SecurityContextAccessor.getSession()
      */
-    public Session getSession() {
-        return (Session) ThreadContext.get( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
+    public SecureSession getSession() {
+        return (SecureSession) ThreadContext.get( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
     }
 
     /**
