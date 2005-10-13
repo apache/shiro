@@ -41,7 +41,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A SessionHandle is a client-tier representation of a server side {@link org.jsecurity.session.Session Session}.
+ * A SessionHandle is a client-tier representation of a server side
+ * {@link org.jsecurity.session.SecureSession SecureSession}.
  * This implementation is basically a proxy to a server-side {@link SessionManager SessionManager},
  * which will return the proper results for each method call.
  *

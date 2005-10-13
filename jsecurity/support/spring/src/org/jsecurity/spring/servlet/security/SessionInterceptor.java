@@ -2,10 +2,10 @@ package org.jsecurity.spring.servlet.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.ri.web.WebSessionFactory;
+import org.jsecurity.ri.web.WebUtils;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.ri.util.ThreadContext;
-import org.jsecurity.ri.web.WebSessionFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +51,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
                 session.touch();
             }
 
-            bind( session );
+            WebUtils.bindToThread( session );
 
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
@@ -66,17 +66,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        unbindSession();
-    }
-
-    protected void bind( Session session ) {
-        if ( session != null ) {
-            ThreadContext.put( ThreadContext.SESSION_THREAD_CONTEXT_KEY, session );
-        }
-    }
-
-    protected void unbindSession() {
-        ThreadContext.remove( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
+        WebUtils.unbindSessionFromThread();
     }
 
     protected boolean handleInvalidSession( HttpServletRequest request,
@@ -87,7 +77,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
                        "create a new Session to allow processing to continue" );
         }
         Session s = webSessionFactory.start( request, response );
-        bind( s );
+        WebUtils.bindToThread( s );
         return true;
     }
 
