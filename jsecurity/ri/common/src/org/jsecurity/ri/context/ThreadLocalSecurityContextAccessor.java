@@ -31,23 +31,35 @@ import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.context.SecurityContextAccessor;
 
 /**
- * Description of class.
+ * Implementation of {@link SecurityContextAccessor} that retrieves security context information
+ * from a thread local variable using the {@link ThreadContext} class.
  *
  * @author Jeremy Haile
  * @since 0.1
  */
 public class ThreadLocalSecurityContextAccessor implements SecurityContextAccessor {
 
+    /**
+     * Retrieves the current user's session from the thread local context.
+     * @return the current user's session.
+     */
     public Session getSession() {
         return (Session) ThreadContext.get( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
     }
 
-
+    /**
+     * Retrieves the current user's authorization context from the thread local context.
+     * @return the current user's authorization context.
+     */
     public AuthorizationContext getAuthorizationContext() {
         return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHCONTEXT_THREAD_CONTEXT_KEY );
     }
 
 
+    /**
+     * Invalidates the user's current security context by stopping the session and removing the authorization
+     * context from the thread local context.
+     */
     public void invalidate() {
 
         // Stop the current session if one exists
