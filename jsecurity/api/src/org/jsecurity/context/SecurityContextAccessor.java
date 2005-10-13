@@ -27,6 +27,7 @@ package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.SecureSession;
 import org.jsecurity.authc.Authenticator;
 
 /**
@@ -42,11 +43,11 @@ import org.jsecurity.authc.Authenticator;
 public interface SecurityContextAccessor {
 
     /**
-     * Returns a {@link org.jsecurity.session.Session} for the current user's
+     * Returns a {@link org.jsecurity.session.SecureSession} for the current user's
      * context.
      * @return the current session.
      */
-    public Session getSession();
+    public SecureSession getSession();
 
     /**
      * Returns an {@link AuthorizationContext} for the current user's context.

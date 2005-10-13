@@ -24,12 +24,21 @@
  */
 package org.jsecurity.ri.session;
 
-import org.jsecurity.session.Session;
+import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.UnauthenticatedException;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.ExpiredSessionException;
+import org.jsecurity.session.SecureSession;
+import org.jsecurity.session.Session;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.net.InetAddress;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A SessionHandle is a client-tier representation of a server side {@link org.jsecurity.session.Session Session}.
@@ -47,7 +56,7 @@ import java.net.InetAddress;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SessionHandle implements Session {
+public class SessionHandle implements SecureSession {
 
     private Serializable sessionId = null;
 
@@ -199,5 +208,53 @@ public class SessionHandle implements Session {
      */
     public Object removeAttribute( Object key ) throws ExpiredSessionException {
         return sessionManager.removeAttribute( sessionId, key );
+    }
+
+    protected AuthorizationContext getAuthorizationContext() {
+        AuthorizationContext ctx = SecurityContext.getAuthorizationContext();
+        if ( ctx == null ) {
+            String msg = "No AuthorizationContext associated with the current invocation.  " +
+                         "A successful authentication must execute first in order to obtain " +
+                         "an AuthorizationContext.";
+            throw new UnauthenticatedException( msg );
+        }
+        return ctx;
+    }
+
+    public Principal getPrincipal() {
+        return getAuthorizationContext().getPrincipal();
+    }
+
+    public boolean hasRole( String roleIdentifier ) {
+        return getAuthorizationContext().hasRole( roleIdentifier );
+    }
+
+    public boolean[] hasRoles( List<String> roleIdentifiers ) {
+        return getAuthorizationContext().hasRoles( roleIdentifiers );
+    }
+
+    public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
+        return getAuthorizationContext().hasAllRoles( roleIdentifiers );
+    }
+
+    public boolean hasPermission( Permission permission ) {
+        return getAuthorizationContext().hasPermission( permission );
+    }
+
+    public boolean[] hasPermissions( List<Permission> permissions ) {
+        return getAuthorizationContext().hasPermissions( permissions );
+    }
+
+    public boolean hasAllPermissions( Collection<Permission> permissions ) {
+        return getAuthorizationContext().hasAllPermissions( permissions );
+    }
+
+    public void checkPermission( Permission permission ) throws AuthorizationException {
+        getAuthorizationContext().checkPermission( permission );
+    }
+
+    public void checkPermissions( Collection<Permission> permissions )
+        throws AuthorizationException {
+        getAuthorizationContext().checkPermissions( permissions );
     }
 }

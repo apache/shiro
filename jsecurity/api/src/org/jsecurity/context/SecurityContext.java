@@ -27,6 +27,7 @@ package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.SecureSession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -254,7 +255,7 @@ public abstract class SecurityContext {
      *
      * @see SecurityContextAccessor
      */
-    public static Session getSession() {
+    public static SecureSession getSession() {
         return getAccessor().getSession();
     }
 
