@@ -92,8 +92,8 @@ public abstract class WebUtils {
     }
 
     public static void bindToHttpSession( AuthorizationContext ctx, HttpServletRequest request ) {
-        HttpSession httpSession = request.getSession( false );
-        if ( httpSession != null && ctx != null) {
+        if ( ctx != null ) {
+            HttpSession httpSession = request.getSession();
             httpSession.setAttribute( AUTHORIZATION_CONTEXT_KEY, ctx );
         }
     }
