@@ -56,10 +56,10 @@ public abstract class ThreadContext {
 
     protected static final Log logger = LogFactory.getLog(ThreadContext.class);
 
-    public static final String SESSION_THREAD_CONTEXT_KEY =
+    public static final String SESSION_KEY =
         Session.class.getName() + "_THREAD_CONTEXT_KEY";
 
-    public static final String AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY =
+    public static final String AUTHORIZATION_CONTEXT_KEY =
         AuthorizationContext.class.getName() + "_THREAD_CONTEXT_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =

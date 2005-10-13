@@ -27,7 +27,12 @@ package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -65,16 +70,16 @@ public class AuthorizationContextFilter implements Filter {
 
         try {
 
-            // Bind a auth context from the session to the thread local
-            AuthorizationContextWebUtils.bindSessionContextToThreadLocal(request);
+            // Bind a auth context from the http session to the thread local
+            WebUtils.bindAuthorizationContextToThread( request );
 
             filterChain.doFilter( servletRequest, servletResponse );
 
             // Bind the auth context from the thread local to the session
-            AuthorizationContextWebUtils.bindThreadLocalContextToSession(request);
+            WebUtils.bindAuthorizationContextToSession( request );
 
         } finally {
-            AuthorizationContextWebUtils.clearThreadLocalContext();
+            WebUtils.unbindAuthorizationContextFromThread();
         }
 
 

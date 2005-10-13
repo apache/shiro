@@ -44,14 +44,14 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
      * @see org.jsecurity.context.SecurityContextAccessor#getSession() SecurityContextAccessor.getSession()
      */
     public SecureSession getSession() {
-        return (SecureSession) ThreadContext.get( ThreadContext.SESSION_THREAD_CONTEXT_KEY );
+        return (SecureSession) ThreadContext.get( ThreadContext.SESSION_KEY );
     }
 
     /**
      * @see org.jsecurity.context.SecurityContextAccessor#getAuthorizationContext() SecurityContextAccessor.getAuthorizationContext()
      */
     public AuthorizationContext getAuthorizationContext() {
-        return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY );
+        return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
     }
 
 
@@ -66,6 +66,6 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
             getSession().stop();
         }
 
-        ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_THREAD_CONTEXT_KEY );
+        ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
     }
 }
