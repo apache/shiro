@@ -29,7 +29,8 @@ package org.jsecurity.ri.authc.password;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
- * Description of class.
+ * Digest password matcher that uses the SHA-1 hashing algorithm
+ * to hash the provided password.
  *
  * @since 0.1
  * @author Jeremy Haile

@@ -25,8 +25,11 @@
 
 package org.jsecurity.ri.authc.password;
 
+import java.util.Arrays;
+
 /**
- * Description of class.
+ * Simple implementation of the {@link PasswordMatcher} interface that
+ * compares two plain text passwords.
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -34,16 +37,13 @@ package org.jsecurity.ri.authc.password;
 public class PlainTextPasswordMatcher implements PasswordMatcher {
 
 
+    /**
+     * Compares two plain text passwords.
+     * @param providedPassword the provided plain-text password.
+     * @param storedPassword the plain-text password stored in the system.
+     * @return true if the passwords match, false otherwise.
+     */
     public boolean doPasswordsMatch(char[] providedPassword, char[] storedPassword) {
-        if( providedPassword.length != storedPassword.length ) {
-            return false;
-        }
-
-        for( int i = 0; i < providedPassword.length; i++ ) {
-            if( providedPassword[i] != storedPassword[i] ) {
-                return false;
-            }
-        }
-        return true;
+        return Arrays.equals( providedPassword, storedPassword );
     }
 }

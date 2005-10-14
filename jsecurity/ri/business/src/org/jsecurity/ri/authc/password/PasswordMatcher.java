@@ -27,13 +27,21 @@
 package org.jsecurity.ri.authc.password;
 
 /**
- * Description of class.
+ * Interface that can be implemented by classes that can determine if a provided
+ * password matches a password stored in the system.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public interface PasswordMatcher {
 
+    /**
+     * Determines if the provided password matches the stored password.
+     * @param providedPassword the unencrypted password provided by the user.
+     * @param storedPassword the possibly encrypted password stored in the
+     * system.
+     * @return true if the passwords match, false if they do not match.
+     */
     boolean doPasswordsMatch( char[] providedPassword, char[] storedPassword );
 
 }

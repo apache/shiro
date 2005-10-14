@@ -31,7 +31,8 @@ import org.apache.commons.codec.binary.Hex;
 import java.util.Arrays;
 
 /**
- * Description of class.
+ * A superclass for any digest-based password matcher that provides support
+ * for encoding passwords in Base64 or Hex.
  *
  * @author Jeremy Haile
  * @since 0.1
@@ -45,6 +46,10 @@ public abstract class DigestPasswordMatcher implements PasswordMatcher {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * Set to true if the passwords are encoded using Base64 encoding.  If
+     * this is false, the passwords are assumed to be encoded in hex format.
+     */
     private boolean base64Encoded;
 
     /*--------------------------------------------
@@ -55,7 +60,7 @@ public abstract class DigestPasswordMatcher implements PasswordMatcher {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public boolean isBase64Encoded() {
+    protected boolean isBase64Encoded() {
         return base64Encoded;
     }
 
@@ -69,6 +74,15 @@ public abstract class DigestPasswordMatcher implements PasswordMatcher {
     |               M E T H O D S               |
     ============================================*/
 
+
+    /**
+     * Calls the abstract {@link #doDigest(byte[])} method to digest the provided password
+     * and compares it with the stored password after encoding the passwords using hex
+     * or base64 encodings.
+     * @param providedPassword the unhashed password provided by the user.
+     * @param storedPassword the hashed password stored in the system.
+     * @return true if the hashes match, false otherwise.
+     */
     public boolean doPasswordsMatch(char[] providedPassword, char[] storedPassword) {
 
         byte[] digestedBytes = doDigest( charsToBytes( providedPassword ) );
@@ -83,6 +97,12 @@ public abstract class DigestPasswordMatcher implements PasswordMatcher {
         }
     }
 
+
+    /**
+     * Converts an array of characters to bytes.
+     * @param passwd the password being converted.
+     * @return an array of bytes that match the characters given.
+     */
     private byte[] charsToBytes( char[] passwd ) {
         byte[] buf = new byte[passwd.length];
         for (int i = 0; i < passwd.length; i++) {
@@ -91,6 +111,13 @@ public abstract class DigestPasswordMatcher implements PasswordMatcher {
         return buf;
     }
 
+
+    /**
+     * Performs the actual digest of the provided password - to be implemented
+     * by subclasses.
+     * @param providedPassword the bytes of the provided password.
+     * @return a hash of the given password bytes.
+     */
     protected abstract byte[] doDigest( byte[] providedPassword );
 
 
