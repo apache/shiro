@@ -23,13 +23,13 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.module.dao.password;
+package org.jsecurity.ri.authc.password;
 
 /**
  * Description of class.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
 public class PlainTextPasswordMatcher implements PasswordMatcher {
 
