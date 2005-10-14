@@ -32,6 +32,11 @@
 
     <bean id="daoAuthenticationModule" class="org.jsecurity.ri.authc.module.dao.DAOAuthenticationModule">
         <property name="authenticationDao" ref="inMemoryAuthenticationDao"/>
+        <property name="passwordMatcher">
+            <bean class="org.jsecurity.ri.authc.password.ShaPasswordMatcher">
+                <property name="base64Encoded" value="true"/>
+            </bean>
+        </property>
     </bean>
 
     <bean id="inMemoryAuthenticationDao" class="org.jsecurity.ri.authc.module.dao.InMemoryAuthenticationDAO">
@@ -39,12 +44,12 @@
             <set>
                 <bean class="org.jsecurity.ri.authc.module.dao.AccountEntry">
                     <property name="username" value="user1"/>
-                    <property name="password" value="user1"/>
+                    <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> <!-- 'user1' SHA-1 Base64 -->
                     <property name="roles" value="role1, role2"/>
                 </bean>
                 <bean class="org.jsecurity.ri.authc.module.dao.AccountEntry">
                     <property name="username" value="user2"/>
-                    <property name="password" value="user2"/>
+                    <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> <!-- 'user2' SHA-1 Base64 -->
                     <property name="roles" value="role2"/>
                 </bean>
             </set>

@@ -28,8 +28,8 @@ package org.jsecurity.ri.authc.module.dao;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.ri.authc.module.dao.password.PasswordMatcher;
-import org.jsecurity.ri.authc.module.dao.password.PlainTextPasswordMatcher;
+import org.jsecurity.ri.authc.password.PasswordMatcher;
+import org.jsecurity.ri.authc.password.PlainTextPasswordMatcher;
 import org.jsecurity.ri.authz.SimpleAuthorizationContext;
 import org.jsecurity.ri.authz.UsernamePrincipal;
 

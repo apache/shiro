@@ -39,6 +39,10 @@ Some notes:
 - required for building and running JSecurity
 - used for constructing Permissions in the Reference Implementation's PermissionAnnotationAuthorizationModule
 
+* jakarta-commons/commons-codec.jar
+- Commons Codec 1.3 (http://jakarta.apache.org/commons/codec)
+- required by the RI during build and runtime for password message digests and base64 encoding
+
 * jarjar/jarjar.jar
 - Tonic Systems JarJar 0.6 (http://tonicsystems.com/products/jarjar/)
 - Required at build time to create a single jar from multiple jars for product distribution

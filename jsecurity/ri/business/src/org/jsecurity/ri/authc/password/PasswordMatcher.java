@@ -24,7 +24,7 @@
 */
 
 
-package org.jsecurity.ri.authc.module.dao.password;
+package org.jsecurity.ri.authc.password;
 
 /**
  * Description of class.
