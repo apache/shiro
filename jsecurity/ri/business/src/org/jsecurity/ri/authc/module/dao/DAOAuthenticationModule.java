@@ -104,7 +104,14 @@ public class DAOAuthenticationModule implements AuthenticationModule {
         String username = getUsername( token );
         char[] password = getPassword( token );
 
-        AuthenticationInfo info = authenticationDao.getUserAuthenticationInfo( username );
+        AuthenticationInfo info = null;
+        try {
+            info = authenticationDao.getUserAuthenticationInfo( username );
+        } catch (Exception e) {
+            throw new AuthenticationException(
+                "User [" + username + "] could not be authenticated because an error occurred " +
+                "during authentication.", e );
+        }
 
         if( info == null ) {
             throw new UnknownAccountException( "No account information found for username [" + username + "]" );
@@ -130,11 +137,9 @@ public class DAOAuthenticationModule implements AuthenticationModule {
 
         Principal principal = new UsernamePrincipal( info.getUsername() );
 
-        Set<Permission> permissions = getPermissionsForRoles( info.getRoles() );
-
         SimpleAuthorizationContext authContext = new SimpleAuthorizationContext( principal,
                                                                                  info.getRoles(),
-                                                                                 permissions );
+                                                                                 info.getPermissions());
 
         return authContext;
     }

@@ -25,6 +25,7 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import java.security.Permission;
 import java.util.Collection;
 
 /**
@@ -61,6 +62,16 @@ public interface AuthenticationInfo {
      */
     public Collection<String> getRoles();
 
+    /**
+     * A collection of permissions that represent the permission that this
+     * user is authorized for.  These permissions will be used to determine the
+     * authorization privileges of the user being authenticated.  It is legal
+     * for this collection to be empty if the underlying DAO does not support
+     * looking up permission (for example, in applications that simply use
+     * role-based authorization.
+     * @return a collection of {@link Permission} objects.
+     */
+    Collection<Permission> getPermissions();
 
     /**
      * Determines if the user's account is locked, meaning that the user is

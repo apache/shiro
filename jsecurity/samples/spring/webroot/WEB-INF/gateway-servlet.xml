@@ -39,7 +39,7 @@
         </property>
     </bean>
 
-    <bean id="inMemoryAuthenticationDao" class="org.jsecurity.ri.authc.module.dao.InMemoryAuthenticationDAO">
+    <bean id="inMemoryAuthenticationDao" class="org.jsecurity.ri.authc.module.dao.MemoryAuthenticationDAO">
         <property name="accounts">
             <set>
                 <bean class="org.jsecurity.ri.authc.module.dao.AccountEntry">
