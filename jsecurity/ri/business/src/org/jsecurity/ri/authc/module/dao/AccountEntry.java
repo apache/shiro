@@ -52,6 +52,7 @@ public class AccountEntry {
 
     /**
      * A list of comma-separated role names that are authorized for this account.
+     * For example, <tt>"roleName1, roleName2, roleName3"</tt>
      */
     private String roles;
 

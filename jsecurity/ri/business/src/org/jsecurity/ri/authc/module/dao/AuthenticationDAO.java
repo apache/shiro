@@ -40,7 +40,7 @@ package org.jsecurity.ri.authc.module.dao;
  *
  * @see JDBCAuthenticationDAO
  * @see FileAuthenticationDAO
- * @see InMemoryAuthenticationDAO
+ * @see MemoryAuthenticationDAO
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -57,6 +57,6 @@ public interface AuthenticationDAO {
      * necessary to authenticate the user and build an
      * {@link org.jsecurity.authz.AuthorizationContext}
      */
-    public AuthenticationInfo getUserAuthenticationInfo( String username );
+    public AuthenticationInfo getUserAuthenticationInfo( String username ) throws Exception;
 
 }

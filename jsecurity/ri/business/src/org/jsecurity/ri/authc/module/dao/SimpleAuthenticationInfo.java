@@ -25,6 +25,7 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import java.security.Permission;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -64,6 +65,11 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     private Collection<String> roles;
 
     /**
+     * The collection of permissions that apply to this user.
+     */
+    private Collection<Permission> permissions;
+
+    /**
      * True if the user's account is locked, false otherwise.
      */
     private boolean accountLocked = false;
@@ -84,6 +90,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     ============================================*/
     public SimpleAuthenticationInfo() {
         this.roles = new HashSet<String>();
+        this.permissions = new HashSet<Permission>();
     }
 
 
@@ -94,10 +101,29 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     }
 
 
+    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, Collection<Permission> permissions) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.permissions = permissions;
+    }
+
+
     public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.accountLocked = accountLocked;
+        this.credentialsExpired = credentialsExpired;
+        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
+    }
+
+
+    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.permissions = permissions;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
         this.concurrentLoginsAllowed = concurrentLoginsAllowed;
@@ -137,6 +163,23 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
         this.roles = roles;
     }
 
+    public void addRole( String roleName ) {
+        this.roles.add( roleName );
+    }
+
+
+    public Collection<Permission> getPermissions() {
+        return permissions;
+    }
+
+
+    public void setPermissions(Collection<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public void addPermission( Permission permission ) {
+        this.permissions.add( permission );
+    }
 
     public boolean isAccountLocked() {
         return accountLocked;
