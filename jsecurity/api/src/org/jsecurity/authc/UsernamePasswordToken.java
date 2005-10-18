@@ -85,6 +85,14 @@ public class UsernamePasswordToken implements AuthenticationToken {
         return username;
     }
 
+    /**
+     * Sets the username for submission during an authentication attempt.
+     * @param username the username to be used for submission during an authentication attempt.
+     */
+    public void setUsername( String username ) {
+        this.username = username;
+    }
+
 
     /**
      * Returns the password submitted during an authentication attempt as a character array.
@@ -92,6 +100,14 @@ public class UsernamePasswordToken implements AuthenticationToken {
      */
     public char[] getPassword() {
         return password;
+    }
+
+    /**
+     * Sets the password for submission during an authentication attempt.
+     * @param password  the password to be used for submission during an authentication attemp.
+     */
+    public void setPassword( char[] password ) {
+        this.password = password;
     }
 
 
