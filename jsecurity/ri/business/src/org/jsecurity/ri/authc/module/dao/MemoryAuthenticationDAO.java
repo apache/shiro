@@ -32,6 +32,7 @@ import java.security.Permission;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 
 /**
  * A simple implementation of the {@link AuthenticationDAO} interface that
@@ -75,7 +76,7 @@ public class MemoryAuthenticationDAO implements AuthenticationDAO {
      *     java.io.FilePermission,/myDir/myFile,read,write"</tt>
      * </p>
      */
-    private Map<String,String> rolesPermissionsMap;
+    private Map<String,String> rolesPermissionsMap = new HashMap<String,String>();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
