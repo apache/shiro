@@ -158,6 +158,7 @@ to where the build is being executed -->
                 <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
+                <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>
             </classpath>
             <packageset dir="${root.base.dir}/ri/common/src">
                 <include name="org/jsecurity/ri/**"/>
@@ -169,6 +170,7 @@ to where the build is being executed -->
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
+            <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
 
         </javadoc>
     </target>
