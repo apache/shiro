@@ -29,6 +29,7 @@ import java.security.Permission;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  * A InstancePermission represents an action or actions that might be performed on a single
@@ -98,13 +99,19 @@ public abstract class InstancePermission extends Permission implements Serializa
      */
     private Set<String> actionsSet;
 
-    protected InstancePermission( String name ) {
-        super( name );
+    /**
+     * Constructs an instance with <em>all</em> permissions (via the {@link #WILDCARD WILDCARD}
+     * constant).
+     * @param targetName
+     */
+    protected InstancePermission( String targetName ) {
+        this( targetName, WILDCARD );
     }
 
     /**
      * Constructs a new InstancePermission associated with an entity instance with the given
-     * identifier.
+     * identifier with <em>all</em> permissions (via the {@link #WILDCARD WILDCARD}
+     * constant).
      * @param identifier the instance identifier
      */
     protected InstancePermission( Serializable identifier ) {
@@ -120,20 +127,19 @@ public abstract class InstancePermission extends Permission implements Serializa
      * all actions specified must be a perfect subset of those in the
      * {@link #getPossibleActions() possibleActions} Set.
      *
-     * @param name - the logical
+     * @param targetName - the logical name (unique identifier) of the permission's target instance
      * @param actions - a comma-delimited string of actions understood
      *        by this class.
      * @throws UnknownPermissionActionException if an action in the
      *         <code>actions</code> string is unknown to the class.
      */
-    protected InstancePermission( String name, String actions ) {
-        super( name );
+    protected InstancePermission( String targetName, String actions ) {
+        super( targetName );
         setActions(actions);
     }
 
     protected InstancePermission( Serializable identifier, String actions ) {
-        super( identifier.toString() );
-        setActions( actions );
+        this( identifier.toString(), actions );
     }
 
     /**
@@ -149,10 +155,11 @@ public abstract class InstancePermission extends Permission implements Serializa
             throw new NullPointerException( msg );
         }
 
-        if ( this.actions != null ) {
-            String msg = "Actions have already been set for this permission instance.  " +
-                         "Permissions are immutable once constructed.";
-            throw new IllegalArgumentException( msg );
+        if ( actions.contains( WILDCARD ) ) {
+            this.actions = WILDCARD;
+            this.actionsSet = new HashSet<String>(1);
+            this.actionsSet.add( WILDCARD );
+            return;
         }
 
         Set<String> possibleActions = getPossibleActions();
@@ -252,13 +259,26 @@ public abstract class InstancePermission extends Permission implements Serializa
 
     public boolean implies( Permission p ) {
 
+        boolean implies = false;
+
         if ( p != null && (p instanceof InstancePermission ) ) {
             InstancePermission ep = (InstancePermission)p;
-            return (getName() != null ? getName().equals( ep.getName() ) : ep.getName() == null) &&
-                   getActionsSet().containsAll( ep.getActionsSet() );
+
+            String name = getName();
+            if ( name != null ) {
+                implies = name.equals( WILDCARD ) || name.equals( ep.getName() );
+            } else {
+                implies = (ep.getName() == null);
+            }
+
+            if ( implies ) {
+                if ( !getActions().equals( WILDCARD ) ) {
+                    implies = getActionsSet().containsAll( ep.getActionsSet() );
+                }
+            }
         }
 
-        return false;
+        return implies;
     }
 
     /**
@@ -303,9 +323,20 @@ public abstract class InstancePermission extends Permission implements Serializa
         return result;
     }
 
-    protected Object clone() throws CloneNotSupportedException {
-        InstancePermission ep = (InstancePermission)super.clone();
-        ep.setActions( getActions() );
-        return ep;
+    @Override
+    @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})
+    public Object clone() {
+        InstancePermission ip;
+        try {
+            ip = (InstancePermission)super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            String msg = "Unable to clone InstancePermission of type [" +
+                         getClass().getName() + "].  Check implementation (this should never " +
+                         "happen).";
+            throw new InternalError( msg );
+        }
+        ip.setActions( getActions() );
+        return ip;
+
     }
 }
