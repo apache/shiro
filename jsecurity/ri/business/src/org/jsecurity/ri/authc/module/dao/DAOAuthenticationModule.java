@@ -133,7 +133,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
     }
 
 
-    private AuthorizationContext buildAuthorizationContext(AuthenticationInfo info) {
+    protected AuthorizationContext buildAuthorizationContext(AuthenticationInfo info) {
 
         Principal principal = new UsernamePrincipal( info.getUsername() );
 
