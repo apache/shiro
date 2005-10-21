@@ -25,6 +25,8 @@
 
 package org.jsecurity.authc;
 
+import java.security.Principal;
+
 /**
  * <p>A simple username/password authentication token.  This class is included in the API
  * since it is a very widely used authentication mechanism.</p>
@@ -33,7 +35,7 @@ package org.jsecurity.authc;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class UsernamePasswordToken implements AuthenticationToken {
+public class UsernamePasswordToken implements AuthenticationToken, java.io.Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -110,6 +112,40 @@ public class UsernamePasswordToken implements AuthenticationToken {
         this.password = password;
     }
 
+    /**
+     * Returns the {@link #getUsername() username} as a Principal.
+     * @see org.jsecurity.authc.AuthenticationToken#getPrincipal()
+     * @return the {@link #getUsername() username} as a Principal.
+     */
+    public Principal getPrincipal() {
+        final String username = getUsername();
+        return new Principal() {
+            public int hashCode() {
+                return username.hashCode();
+            }
+
+            public boolean equals( Object obj ) {
+                return getName().equals( username );
+            }
+
+            public String toString() {
+                return username;
+            }
+
+            public String getName() {
+                return username;
+            }
+        };
+    }
+
+    /**
+     * Returns the {@link #getPassword() password} char array.
+     * @see org.jsecurity.authc.AuthenticationToken#getCredentials()
+     * @return the {@link #getPassword() password} char array.
+     */
+    public Object getCredentials() {
+        return getPassword();
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -136,7 +172,7 @@ public class UsernamePasswordToken implements AuthenticationToken {
         sb.append( getClass() );
         sb.append( " - " );
         sb.append( username );
-        return sb.toString();            
+        return sb.toString();
     }
 
 }

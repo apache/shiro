@@ -37,14 +37,8 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authc.credential.CredentialMatcher;
 import org.jsecurity.ri.authc.credential.PlainTextCredentialMatcher;
 import org.jsecurity.ri.authz.SimpleAuthorizationContext;
-import org.jsecurity.ri.util.StringPrincipal;
 
-import java.io.Serializable;
-import java.security.Permission;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * <p>Module that authenticates a user by delegating the lookup of
@@ -107,8 +101,8 @@ public class DAOAuthenticationModule implements AuthenticationModule {
 
     public AuthorizationContext authenticate(AuthenticationToken token) throws AuthenticationException {
 
-        Principal accountIdentifier = getPrincipal( token );
-        Object credentials = getCredentials( token );
+        Principal accountIdentifier = token.getPrincipal();
+        Object submittedCredentials = token.getCredentials();
 
         AuthenticationInfo info;
         try {
@@ -133,7 +127,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
             throw new ExpiredCredentialException( msg );
         }
 
-        if( !credentialMatcher.doCredentialsMatch( credentials, info.getCredentials() ) ) {
+        if( !credentialMatcher.doCredentialsMatch( submittedCredentials, info.getCredentials() ) ) {
             String msg = "The credentials provided for account [" +
                          accountIdentifier + "] did not match the expected credentials.";
             throw new IncorrectCredentialException( msg );
@@ -149,21 +143,5 @@ public class DAOAuthenticationModule implements AuthenticationModule {
                                                info.getRoles(),
                                                info.getPermissions());
     }
-
-
-    private Set<Permission> getPermissionsForRoles(Collection<? extends Serializable> roles) {
-        return new HashSet<Permission>();
-    }
-
-
-    protected Principal getPrincipal(AuthenticationToken token) {
-        return new StringPrincipal( ((UsernamePasswordToken)token).getUsername() );
-    }
-
-    private Object getCredentials(AuthenticationToken token) {
-        return ((UsernamePasswordToken)token).getPassword();
-    }
-
-
 
 }
