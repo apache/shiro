@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Jeremy C. Haile
+* Copyright (C) 2005 Jeremy C. Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -24,24 +24,32 @@
 */
 
 
-package org.jsecurity.ri.authc.password;
+package org.jsecurity.ri.authc.credential;
 
 /**
  * Interface that can be implemented by classes that can determine if a provided
- * password matches a password stored in the system.
+ * credential matches a corresponding account credential stored in the system.
+ *
+ * <p>As a commone example, an implementation of this interface might verify a user-submitted
+ * text password with a corresponding account password stored in the system.
+ *
+ * @see PlainTextCredentialMatcher
+ * @see Md5CredentialMatcher
+ * @see ShaCredentialMatcher
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
-public interface PasswordMatcher {
+public interface CredentialMatcher {
 
     /**
-     * Determines if the provided password matches the stored password.
-     * @param providedPassword the unencrypted password provided by the user.
-     * @param storedPassword the possibly encrypted password stored in the
-     * system.
-     * @return true if the passwords match, false if they do not match.
+     * Determines if the provided credential matches the stored credential.
+     * @param providedCredential the credential provided by the user.
+     * @param storedCredential the credential stored in the system (possibly encrypted) used to
+     * verify the <tt>providedCredential</tt>.
+     * @return true if the credentials match, false if they do not match.
      */
-    boolean doPasswordsMatch( char[] providedPassword, char[] storedPassword );
+    boolean doCredentialsMatch( Object providedCredential, Object storedCredential );
 
 }

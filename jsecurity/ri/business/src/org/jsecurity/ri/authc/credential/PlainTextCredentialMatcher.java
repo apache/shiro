@@ -23,27 +23,33 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.password;
+package org.jsecurity.ri.authc.credential;
 
 import java.util.Arrays;
 
 /**
- * Simple implementation of the {@link PasswordMatcher} interface that
+ * Simple implementation of the {@link CredentialMatcher} interface that
  * compares two plain text passwords.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class PlainTextPasswordMatcher implements PasswordMatcher {
+public class PlainTextCredentialMatcher implements CredentialMatcher {
 
 
     /**
      * Compares two plain text passwords.
-     * @param providedPassword the provided plain-text password.
-     * @param storedPassword the plain-text password stored in the system.
+     * @param providedPasswordCharArray the unhashed password char array (char[]) provided by the user.
+     * @param storedPasswordCharArray the hashed password char array (char[]) stored in the system.
+     * @return true if the hashes match, false otherwise.
+     * @param providedPasswordCharArray the provided plain-text password as a char array (char[])
+     * @param storedPasswordCharArray the plain-text password stored in the system as a char array (char[]).
      * @return true if the passwords match, false otherwise.
      */
-    public boolean doPasswordsMatch(char[] providedPassword, char[] storedPassword) {
+    public boolean doCredentialsMatch( Object providedPasswordCharArray,
+                                       Object storedPasswordCharArray ) {
+        char[] providedPassword = (char[])providedPasswordCharArray;
+        char[] storedPassword = (char[])storedPasswordCharArray;
         return Arrays.equals( providedPassword, storedPassword );
     }
 }

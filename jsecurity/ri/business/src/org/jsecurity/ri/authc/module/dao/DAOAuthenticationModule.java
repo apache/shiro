@@ -34,8 +34,8 @@ import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.ri.authc.password.PasswordMatcher;
-import org.jsecurity.ri.authc.password.PlainTextPasswordMatcher;
+import org.jsecurity.ri.authc.credential.CredentialMatcher;
+import org.jsecurity.ri.authc.credential.PlainTextCredentialMatcher;
 import org.jsecurity.ri.authz.SimpleAuthorizationContext;
 import org.jsecurity.ri.util.StringPrincipal;
 
@@ -78,7 +78,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
      * Password matcher used to determine if the provided password matches
      * the password stored in the data store.
      */
-    private PasswordMatcher passwordMatcher = new PlainTextPasswordMatcher();
+    private CredentialMatcher credentialMatcher = new PlainTextCredentialMatcher();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -91,8 +91,8 @@ public class DAOAuthenticationModule implements AuthenticationModule {
         this.authenticationDao = authenticationDao;
     }
 
-    public void setPasswordMatcher(PasswordMatcher passwordMatcher) {
-        this.passwordMatcher = passwordMatcher;
+    public void setPasswordMatcher(CredentialMatcher credentialMatcher ) {
+        this.credentialMatcher = credentialMatcher;
     }
 
 
@@ -133,7 +133,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
             throw new ExpiredCredentialException( msg );
         }
 
-        if( !passwordMatcher.doPasswordsMatch( (char[])credentials, (char[])info.getCredentials() ) ) {
+        if( !credentialMatcher.doCredentialsMatch( credentials, info.getCredentials() ) ) {
             String msg = "The credentials provided for account [" +
                          accountIdentifier + "] did not match the expected credentials.";
             throw new IncorrectCredentialException( msg );

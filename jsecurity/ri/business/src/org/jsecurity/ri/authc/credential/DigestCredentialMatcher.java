@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.password;
+package org.jsecurity.ri.authc.credential;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -34,10 +34,10 @@ import java.util.Arrays;
  * A superclass for any digest-based password matcher that provides support
  * for encoding passwords in Base64 or Hex.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
-public abstract class DigestPasswordMatcher implements PasswordMatcher {
+public abstract class DigestCredentialMatcher implements CredentialMatcher {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -79,11 +79,15 @@ public abstract class DigestPasswordMatcher implements PasswordMatcher {
      * Calls the abstract {@link #doDigest(byte[])} method to digest the provided password
      * and compares it with the stored password after encoding the passwords using hex
      * or base64 encodings.
-     * @param providedPassword the unhashed password provided by the user.
-     * @param storedPassword the hashed password stored in the system.
+     * @param providedPasswordCharArray the unhashed password char array (char[]) provided by the user.
+     * @param storedPasswordCharArray the hashed password char array (char[]) stored in the system.
      * @return true if the hashes match, false otherwise.
      */
-    public boolean doPasswordsMatch(char[] providedPassword, char[] storedPassword) {
+    public boolean doCredentialsMatch( Object providedPasswordCharArray,
+                                       Object storedPasswordCharArray ) {
+
+        char[] providedPassword = (char[])providedPasswordCharArray;
+        char[] storedPassword = (char[])storedPasswordCharArray;
 
         byte[] digestedBytes = doDigest( charsToBytes( providedPassword ) );
 
