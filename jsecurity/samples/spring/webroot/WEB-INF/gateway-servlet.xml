@@ -32,8 +32,8 @@
 
     <bean id="daoAuthenticationModule" class="org.jsecurity.ri.authc.module.dao.DAOAuthenticationModule">
         <property name="authenticationDao" ref="inMemoryAuthenticationDao"/>
-        <property name="passwordMatcher">
-            <bean class="org.jsecurity.ri.authc.password.ShaPasswordMatcher">
+        <property name="credentialMatcher">
+            <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>
             </bean>
         </property>
