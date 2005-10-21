@@ -1,13 +1,36 @@
+/*
+ * Copyright (C) 2005 Les Hazlewood
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the
+ *
+ * Free Software Foundation, Inc.
+ * 59 Temple Place, Suite 330
+ * Boston, MA 02111-1307
+ * USA
+ *
+ * Or, you may view it online at
+ * http://www.opensource.org/licenses/lgpl-license.php
+ */
 package org.jsecurity.ri.authz;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
 
-import java.io.Serializable;
-import java.security.Principal;
 import java.security.Permission;
-import java.util.List;
+import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Simple implementation of the <tt>AuthorizationContext</tt> interface that delegates all
@@ -35,22 +58,22 @@ import java.util.Collection;
  */
 public class DelegatingAuthorizationContext implements AuthorizationContext {
 
-    private Serializable subjectIdentifier;
+    private Principal subjectIdentifier;
 
     private Realm realm;
 
     public DelegatingAuthorizationContext() {}
 
-    public DelegatingAuthorizationContext( Serializable subjectIdentifier, Realm realm ) {
+    public DelegatingAuthorizationContext( Principal subjectIdentifier, Realm realm ) {
         setSubjectIdentifier( subjectIdentifier );
         setRealm( realm );
     }
 
-    public Serializable getSubjectIdentifier() {
+    public Principal getSubjectIdentifier() {
         return subjectIdentifier;
     }
 
-    public void setSubjectIdentifier( Serializable subjectIdentifier ) {
+    public void setSubjectIdentifier( Principal subjectIdentifier ) {
         this.subjectIdentifier = subjectIdentifier;
     }
 
@@ -63,7 +86,7 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     }
 
     public Principal getPrincipal() {
-        throw new IllegalStateException( "Not yet implemented" );
+        return getSubjectIdentifier();
     }
 
     public boolean hasRole( String roleIdentifier ) {

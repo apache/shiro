@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les A. Hazlewood, Jeremy Haile
+ * Copyright (C) 2005 Les Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -43,8 +43,9 @@ import java.util.List;
 public interface AuthorizationContext {
 
     /**
-     * Provides access to the principal represented by this authorization context.
-     * @return the principal associated with this authorization context.
+     * Returns the primary identifier of the subject associated with this
+     * <tt>AuthorizationContext</tt> (usually a user id or username).
+     * @return the primary identifier of the subject associated with this authorization context.
      */
     Principal getPrincipal();
 

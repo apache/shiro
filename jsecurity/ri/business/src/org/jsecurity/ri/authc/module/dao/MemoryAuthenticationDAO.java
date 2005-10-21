@@ -29,10 +29,11 @@ package org.jsecurity.ri.authc.module.dao;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Permission;
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 
 /**
  * A simple implementation of the {@link AuthenticationDAO} interface that
@@ -104,16 +105,17 @@ public class MemoryAuthenticationDAO implements AuthenticationDAO {
      * Builds a <tt>UserAuthenticationInfo</tt> object for the given username
      * by examining the set of configured accounts and roles held in the
      * memory DAO.
-     * @param username the username to build authentication information.
+     * @param subjectIdentity primary identifying attribute of the account being authenticated (e.g.
+     * usually a user id or username).
      * @return an <tt>AuthenticationInfo</tt> object that represents the
      * authentication information for the given username, or null if an
      * account cannot be found with the given username.
      *
      */
-    public AuthenticationInfo getUserAuthenticationInfo(String username) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
+    public AuthenticationInfo getAuthenticationInfo(Principal subjectIdentity ) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
 
         for( AccountEntry entry : accounts ) {
-            if( entry.getUsername().equals( username ) ) {
+            if( entry.getUsername().equals( subjectIdentity.getName() ) ) {
 
                 String[] roleArray = entry.getRoles().split( "," );
                 Set<String> roles = new HashSet<String>( roleArray.length );
@@ -124,7 +126,7 @@ public class MemoryAuthenticationDAO implements AuthenticationDAO {
                 Set<Permission> permissions = getPermissionsForRoles( roles );
 
                 SimpleAuthenticationInfo info =
-                    new SimpleAuthenticationInfo( entry.getUsername(),
+                    new SimpleAuthenticationInfo( subjectIdentity,
                                                   entry.getPassword().toCharArray(),
                                                   roles,
                                                   permissions );

@@ -25,10 +25,12 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import java.security.Principal;
+
 /**
  * <p>Interface used by the {@link DAOAuthenticationModule} to retrieve information
  * required to authenticate and determine authorization information for a particular
- * username.  Several existing implementations of this interface are provided with
+ * user identity.  Several existing implementations of this interface are provided with
  * the JSecurity RI.</p>
  *
  * <p>Applications adopting JSecurity that already store user
@@ -48,15 +50,15 @@ package org.jsecurity.ri.authc.module.dao;
 public interface AuthenticationDAO {
 
     /**
-     * Retrieves user authentication information from a data store for the
-     * given username.
+     * Retrieves authentication information from a data store for the
+     * given account identity.
      *
-     * @param username the username of the user whose authentication information
-     * should be retrieved from the data store.
+     * @param subjectIdentity the primary identifying attribute of the account being authenticated.
+     * This is usually a Principal representing a user id or user name.
      * @return a {@link AuthenticationInfo} object containing the information
-     * necessary to authenticate the user and build an
+     * necessary to authenticate the identity and build an
      * {@link org.jsecurity.authz.AuthorizationContext}
      */
-    public AuthenticationInfo getUserAuthenticationInfo( String username ) throws Exception;
+    public AuthenticationInfo getAuthenticationInfo( Principal subjectIdentity ) throws Exception;
 
 }
