@@ -26,6 +26,7 @@
 package org.jsecurity.ri.authc.module.dao;
 
 import java.security.Permission;
+import java.security.Principal;
 import java.util.Collection;
 
 /**
@@ -40,18 +41,26 @@ import java.util.Collection;
 public interface AuthenticationInfo {
 
     /**
-     * The user's username principal used to uniquely identify the user.
-     * @return the user's username who is being authenticated.
+     * The primary identifying principal of the authenticated subject.  This principal is often
+     * a representation of a user's primary key id or username.
+     *
+     * @return the identifying principal of the authenticated subject.
      */
-    public String getUsername();
+    public Principal getPrincipal();
 
     /**
-     * The user's password as stored in the system.  This password may be
-     * encrypted, in which case the {@link DAOAuthenticationModule} must be
-     * informed of the encryption algorithm used to encrypt the password.
-     * @return the user's password as stored in the system.
+     * The subject's credential as stored in the system associated with the
+     * {@link #getPrincipal() subject identifier}, such as a password char array or
+     * public key.
+     *
+     * <p>It could be encrypted in which case an
+     * {@link org.jsecurity.authc.module.AuthenticationModule AuthenticationModule}
+     * must be aware of the fact (e.g. via configuration) in order to interpret and compare
+     * the credentials value.
+     *
+     * @return the subject's credential verifying the {@link #getPrincipal() identifier}
      */
-    public char[] getPassword();
+    public Object getCredentials();
 
     /**
      * A collection of role identifiers that represent the roles that this

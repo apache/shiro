@@ -119,7 +119,7 @@ public class PluggableAuthenticator extends AbstractAuthenticator {
                 if( context != null ) {
 
                     if (logger.isDebugEnabled()) {
-                        logger.debug("User authenticated using module of type [" + module.getClass().getName() + "]");
+                        logger.debug("Account authenticated using module of type [" + module.getClass().getName() + "]");
                     }
 
                     break;

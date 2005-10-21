@@ -25,6 +25,8 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import java.security.Principal;
+
 /**
  * <p>An {@link org.jsecurity.ri.authc.module.dao.AuthenticationDAO} that uses JDBC to
  * retrieve user authentication information from a database.</p>
@@ -54,7 +56,7 @@ public class JDBCAuthenticationDAO implements AuthenticationDAO {
     |               M E T H O D S               |
     ============================================*/
 
-    public AuthenticationInfo getUserAuthenticationInfo(String username) {
+    public AuthenticationInfo getAuthenticationInfo( Principal subjectIdentity ) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

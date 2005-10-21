@@ -25,13 +25,19 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
-import org.jsecurity.authc.*;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.ExpiredCredentialException;
+import org.jsecurity.authc.IncorrectCredentialException;
+import org.jsecurity.authc.LockedAccountException;
+import org.jsecurity.authc.UnknownAccountException;
+import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authc.password.PasswordMatcher;
 import org.jsecurity.ri.authc.password.PlainTextPasswordMatcher;
 import org.jsecurity.ri.authz.SimpleAuthorizationContext;
-import org.jsecurity.ri.authz.UsernamePrincipal;
+import org.jsecurity.ri.util.StringPrincipal;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -101,32 +107,36 @@ public class DAOAuthenticationModule implements AuthenticationModule {
 
     public AuthorizationContext authenticate(AuthenticationToken token) throws AuthenticationException {
 
-        String username = getUsername( token );
-        char[] password = getPassword( token );
+        Principal accountIdentifier = getPrincipal( token );
+        Object credentials = getCredentials( token );
 
-        AuthenticationInfo info = null;
+        AuthenticationInfo info;
         try {
-            info = authenticationDao.getUserAuthenticationInfo( username );
+            info = authenticationDao.getAuthenticationInfo( accountIdentifier );
         } catch (Exception e) {
             throw new AuthenticationException(
-                "User [" + username + "] could not be authenticated because an error occurred " +
-                "during authentication.", e );
+                "Account [" + accountIdentifier + "] could not be authenticated because an error " +
+                "occurred during authentication.", e );
         }
 
         if( info == null ) {
-            throw new UnknownAccountException( "No account information found for username [" + username + "]" );
+            String msg = "No account information found for account [" + accountIdentifier + "]";
+            throw new UnknownAccountException( msg );
         }
 
         if( info.isAccountLocked() ) {
-            throw new LockedAccountException( "The account for user [" + username + "] is locked." );
+            throw new LockedAccountException( "Account [" + accountIdentifier + "] is locked." );
         }
 
         if( info.isCredentialsExpired() ) {
-            throw new ExpiredCredentialException( "The credentials for user [" + username + "] are expired." );
+            String msg = "The credentials for account [" + accountIdentifier + "] are expired";
+            throw new ExpiredCredentialException( msg );
         }
 
-        if( !passwordMatcher.doPasswordsMatch( password, info.getPassword() ) ) {
-            throw new IncorrectCredentialException( "The password provided for user [" + username + "] was incorrect." );
+        if( !passwordMatcher.doPasswordsMatch( (char[])credentials, (char[])info.getCredentials() ) ) {
+            String msg = "The credentials provided for account [" +
+                         accountIdentifier + "] did not match the expected credentials.";
+            throw new IncorrectCredentialException( msg );
         }
 
         return buildAuthorizationContext( info );
@@ -135,13 +145,9 @@ public class DAOAuthenticationModule implements AuthenticationModule {
 
     protected AuthorizationContext buildAuthorizationContext(AuthenticationInfo info) {
 
-        Principal principal = new UsernamePrincipal( info.getUsername() );
-
-        SimpleAuthorizationContext authContext = new SimpleAuthorizationContext( principal,
-                                                                                 info.getRoles(),
-                                                                                 info.getPermissions());
-
-        return authContext;
+        return new SimpleAuthorizationContext( info.getPrincipal(),
+                                               info.getRoles(),
+                                               info.getPermissions());
     }
 
 
@@ -150,11 +156,11 @@ public class DAOAuthenticationModule implements AuthenticationModule {
     }
 
 
-    protected String getUsername(AuthenticationToken token) {
-        return ((UsernamePasswordToken)token).getUsername();
+    protected Principal getPrincipal(AuthenticationToken token) {
+        return new StringPrincipal( ((UsernamePasswordToken)token).getUsername() );
     }
 
-    private char[] getPassword(AuthenticationToken token) {
+    private Object getCredentials(AuthenticationToken token) {
         return ((UsernamePasswordToken)token).getPassword();
     }
 

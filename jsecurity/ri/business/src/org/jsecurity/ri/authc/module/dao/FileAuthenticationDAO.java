@@ -26,6 +26,8 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import java.security.Principal;
+
 /**
  * Description of class.
  *
@@ -55,7 +57,7 @@ public class FileAuthenticationDAO implements AuthenticationDAO {
     ============================================*/
 
 
-    public AuthenticationInfo getUserAuthenticationInfo(String username) {
+    public AuthenticationInfo getAuthenticationInfo( Principal subjectIdentity ) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

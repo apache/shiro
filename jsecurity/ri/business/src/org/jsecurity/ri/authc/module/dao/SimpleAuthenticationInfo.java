@@ -26,6 +26,7 @@
 package org.jsecurity.ri.authc.module.dao;
 
 import java.security.Permission;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -48,16 +49,9 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * User's username.
-     */
-    private String username;
+    private Principal principal = null;
 
-    /**
-     * User's password - this should be encrypted if the password is stored
-     * in an encrypted form (which is of course recommended)
-     */
-    private char[] password;
+    private Object credentials;
 
     /**
      * The collection of roles that apply to this user.
@@ -94,24 +88,24 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     }
 
 
-    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles) {
-        this.username = username;
-        this.password = password;
+    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles) {
+        this.principal = principal;
+        this.credentials = credentials;
         this.roles = roles;
     }
 
 
-    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, Collection<Permission> permissions) {
-        this.username = username;
-        this.password = password;
+    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, Collection<Permission> permissions) {
+        this.principal = principal;
+        this.credentials = credentials;
         this.roles = roles;
         this.permissions = permissions;
     }
 
 
-    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.username = username;
-        this.password = password;
+    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.principal = principal;
+        this.credentials = credentials;
         this.roles = roles;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
@@ -119,9 +113,9 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     }
 
 
-    public SimpleAuthenticationInfo(String username, char[] password, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.username = username;
-        this.password = password;
+    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.principal = principal;
+        this.credentials = credentials;
         this.roles = roles;
         this.permissions = permissions;
         this.accountLocked = accountLocked;
@@ -134,23 +128,20 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public String getUsername() {
-        return username;
+    public Principal getPrincipal() {
+        return principal;
     }
 
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setPrincipal( Principal principal ) {
+        this.principal = principal;
     }
 
-
-    public char[] getPassword() {
-        return password;
+    public Object getCredentials() {
+        return credentials;
     }
 
-
-    public void setPassword(char[] password) {
-        this.password = password;
+    public void setCredentials( Object credentials ) {
+        this.credentials = credentials;
     }
 
 
