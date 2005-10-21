@@ -25,6 +25,8 @@
 
 package org.jsecurity.authc;
 
+import java.security.Principal;
+
 /**
  * A marker interface that provides type-safety for code passing arguments to
  * the {@link Authenticator#authenticate(AuthenticationToken)} method.  Although
@@ -37,5 +39,38 @@ package org.jsecurity.authc;
  * @author Jeremy Haile
  */
 public interface AuthenticationToken {
+
+    /**
+     * Returns the account identity submitted during the authentication process.
+     *
+     * <p>Most application authentications are username/password based and have this
+     * <tt>Principal</tt> represent a username.  If this is the case for your application,
+     * take a look at the {@link UsernamePasswordToken UsernamePasswordToken}, as it is probably
+     * sufficient for your use.
+     *
+     * <p>Ultimately, the <tt>Principal</tt> returned is application specific and can represent
+     * any account identity (user id, X.509 certificate, etc).
+     *
+     * @return the account identity submitted during the authentication process.
+     *
+     * @see UsernamePasswordToken
+     */
+    Principal getPrincipal();
+
+    /**
+     * Returns the credentials submitted by the user during the authentication process that verifies
+     * the submitted {@link #getPrincipal() account identity}.
+     *
+     * <p>Most application authentications are username/password based and have this object
+     * represent a submitted password.  If this is the case for your application,
+     * take a look at the {@link UsernamePasswordToken UsernamePasswordToken}, as it is probably
+     * sufficient for your use.
+     *
+     * <p>Ultimately, the credentials Object returned is application specific and can represent
+     * any credential mechanism.
+     *
+     * @return the credential submitted by the user during the authenticatin process.
+     */
+    Object getCredentials();
 
 }
