@@ -53,6 +53,11 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
     ============================================*/
 
     /**
+     * JavaBeans compatible no-arg constructor.
+     */
+    public UsernamePasswordToken(){}
+
+    /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted
      * during an authentication attempt.
      * @param username the username submitted for authentication

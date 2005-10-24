@@ -47,6 +47,10 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
     private static final char ARRAY_CLOSE_CHAR = ']';
 
+    protected boolean supports( Method m ) {
+        return ( m != null && ( m.getAnnotation( HasPermission.class ) != null ) );
+    }
+
     private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
         int propertyStartIndex = -1;
 
@@ -67,7 +71,8 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         }
 
         Integer methodArgIndex = Integer.parseInt( buf.toString() );
-        String beanUtilsPath = new String( chars, propertyStartIndex, chars.length - propertyStartIndex );
+        String beanUtilsPath = new String( chars, propertyStartIndex,
+            chars.length - propertyStartIndex );
         Object targetValue = BeanUtils.getProperty( methodArgs[methodArgIndex], beanUtilsPath );
         return targetValue.toString();
     }
@@ -78,11 +83,11 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         Permission permission;
         try {
             // Get constructor for permission
-            Class[] constructorArgs = new Class[]{String.class, String.class};
+            Class[] constructorArgs = new Class[]{ String.class, String.class };
             Constructor permConstructor = clazz.getDeclaredConstructor( constructorArgs );
 
             // Instantiate permission with name and actions specified as attributes
-            Object[] constructorObjs = new Object[]{name, actions};
+            Object[] constructorObjs = new Object[]{ name, actions };
             permission = (Permission)permConstructor.newInstance( constructorObjs );
             return permission;
         } catch ( Exception e ) {
@@ -119,58 +124,39 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
         MethodInvocation mi = (MethodInvocation)action;
 
-        if ( mi != null ) {
-
-            Method m = mi.getMethod();
-            if ( m == null ) {
-                String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
-                             "constructed.  getMethod() returned null";
-                throw new NullPointerException( msg );
-            }
-
-            HasPermission hpAnnotation = m.getAnnotation( HasPermission.class );
-            if ( hpAnnotation != null ) {
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "Found permission annotation [" + hpToString( hpAnnotation ) + "]" );
-                }
-                Permission p = createPermission( mi, hpAnnotation );
-                if ( context.hasPermission( p ) ) {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Authorization context has permission [" + p +
-                                   "]. Returning grant vote." );
-                    }
-                    return AuthorizationVote.grant;
-                } else {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "AuthorizationContext does not have permission [" + p +
-                                   "].  Returning deny vote." );
-                    }
-                    return AuthorizationVote.deny;
-                }
-
-            } else {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "No " + HasPermission.class.getName() + " annotation declared for " +
-                              "method " + m + ".  Returning abstain vote." );
-                }
-                return AuthorizationVote.abstain;
-            }
-        } else {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "AuthorizedAction parameter is null.  Returning abstain vote." );
-            }
-            return AuthorizationVote.abstain;
+        Method m = mi.getMethod();
+        if ( m == null ) {
+            String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
+                         "constructed.  getMethod() returned null";
+            throw new NullPointerException( msg );
         }
 
+        HasPermission hpAnnotation = m.getAnnotation( HasPermission.class );
+
+        Permission p = createPermission( mi, hpAnnotation );
+        if ( context.hasPermission( p ) ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Authorization context has permission [" + p +
+                           "]. Returning grant vote." );
+            }
+            return AuthorizationVote.grant;
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "AuthorizationContext does not have permission [" + p +
+                           "].  Returning deny vote." );
+            }
+            return AuthorizationVote.deny;
+        }
     }
 
-    private String hpToString( HasPermission annotation ) {
+
+    /*private String hpToString( HasPermission annotation ) {
         StringBuffer sb = new StringBuffer();
         sb.append( "type=" ).append( annotation.type() );
         sb.append( ",target=" ).append( annotation.target() );
         sb.append( ",targetPath=" ).append( annotation.targetPath() );
         sb.append( ",actions=[" ).append( annotation.actions() ).append( "]" );
         return sb.toString();
-    }
+    }*/
 
 }
