@@ -47,8 +47,8 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
     private static final char ARRAY_CLOSE_CHAR = ']';
 
-    protected boolean supports( Method m ) {
-        return ( m != null && ( m.getAnnotation( HasPermission.class ) != null ) );
+    public PermissionAnnotationAuthorizationModule() {
+        setAnnotationClass( HasPermission.class );
     }
 
     private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {

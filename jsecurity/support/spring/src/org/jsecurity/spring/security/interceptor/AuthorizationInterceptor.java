@@ -40,7 +40,7 @@ import java.lang.reflect.Method;
  *
  * @author Les Hazlewood
  */
-public class SimpleSecurityInterceptor implements InitializingBean, MethodInterceptor {
+public class AuthorizationInterceptor implements InitializingBean, MethodInterceptor {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 

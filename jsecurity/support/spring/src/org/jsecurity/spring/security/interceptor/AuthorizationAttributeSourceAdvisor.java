@@ -35,26 +35,26 @@ import java.lang.reflect.Method;
  *
  * @author Les Hazlewood
  */
-public class SecurityAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
+public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
 
     /**
-     * Create a new SecurityAttributeSourceAdvisor.
+     * Create a new AuthorizationAttributeSourceAdvisor.
      */
-    public SecurityAttributeSourceAdvisor() {
+    public AuthorizationAttributeSourceAdvisor() {
     }
 
     /**
-     * Create a new SecurityAttributeSourceAdvisor.
+     * Create a new AuthorizationAttributeSourceAdvisor.
      * @param interceptor the security interceptor to use for this advisor
      */
-    public SecurityAttributeSourceAdvisor( SimpleSecurityInterceptor interceptor) {
+    public AuthorizationAttributeSourceAdvisor( AuthorizationInterceptor interceptor) {
         setSecurityInterceptor(interceptor);
     }
 
     /**
      * Set the security interceptor to use for this advisor.
      */
-    public void setSecurityInterceptor(SimpleSecurityInterceptor interceptor) {
+    public void setSecurityInterceptor(AuthorizationInterceptor interceptor) {
         setAdvice(interceptor);
     }
 

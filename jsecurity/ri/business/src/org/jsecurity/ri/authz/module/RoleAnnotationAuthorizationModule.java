@@ -45,10 +45,6 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
         setAnnotationClass( HasRole.class );
     }
 
-    protected boolean supports( Method m ) {
-        return ( m != null && ( m.getAnnotation( HasRole.class ) != null ) );
-    }
-
     public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
 
         MethodInvocation mi = (MethodInvocation)action;

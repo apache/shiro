@@ -78,5 +78,7 @@ public abstract class AnnotationAuthorizationModule implements AuthorizationModu
         return false;
     }
 
-    protected abstract boolean supports( Method m );
+    protected boolean supports( Method m ) {
+        return ( m != null && ( m.getAnnotation( getAnnotationClass() ) != null ) );
+    }
 }
