@@ -70,31 +70,13 @@ public abstract class AnnotationAuthorizationModule implements AuthorizationModu
         return this.annotationClass;
     }
 
-    public boolean supports( Object o ) {
-        if ( o instanceof AuthorizedAction ) {
-            return supports( (AuthorizedAction)o );
-        } else if ( o instanceof Method ) {
-            return supports( (Method)o );
-        }
-
-        return false;
-    }
-
     public boolean supports( AuthorizedAction action ) {
-        if ( action instanceof MethodInvocation ) {
+        if ( action != null && (action instanceof MethodInvocation) ) {
             return supports( ((MethodInvocation)action).getMethod() );
         }
 
         return false;
     }
 
-    protected boolean supports( Method m ) {
-        if ( m != null ) {
-            Annotation a = m.getAnnotation( getAnnotationClass() );
-            if ( a != null ) {
-                return true;
-            }
-        }
-        return false; //default
-    }
+    protected abstract boolean supports( Method m );
 }

@@ -33,12 +33,11 @@ import org.jsecurity.authz.method.MethodInvocation;
 import java.lang.reflect.Method;
 
 /**
- * AuthorizationModule that votes on authorization based on any
- * {@link org.jsecurity.authz.annotation.HasRole HasRole} annotation found on the method
- * being executed.
+ * AuthorizationModule that votes on authorization based on any {@link
+ * org.jsecurity.authz.annotation.HasRole HasRole} annotation found on the method being executed.
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationModule {
 
@@ -46,52 +45,36 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
         setAnnotationClass( HasRole.class );
     }
 
+    protected boolean supports( Method m ) {
+        return ( m != null && ( m.getAnnotation( HasRole.class ) != null ) );
+    }
+
     public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
 
         MethodInvocation mi = (MethodInvocation)action;
 
-        if ( mi != null ) {
-
-            Method m = mi.getMethod();
-            if ( m == null ) {
-                String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
-                             "constructed.  getMethod() returned null";
-                throw new NullPointerException( msg );
-            }
-
-            HasRole hrAnnotation = m.getAnnotation( HasRole.class );
-            if ( hrAnnotation != null ) {
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "Found role annotation for role [" + hrAnnotation.value() + "]" );
-                }
-                if ( context.hasRole( hrAnnotation.value() ) ) {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Authorization context has role [" +
-                                   hrAnnotation.value() + "]. Returning grant vote.");
-                    }
-                    return AuthorizationVote.grant;
-                } else {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "AuthorizationContext does not have role [" +
-                                   hrAnnotation.value() + "].  Returning deny vote.");
-                    }
-                    return AuthorizationVote.deny;
-                }
-
-            } else {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "No " + HasRole.class.getName() + " annotation declared for " +
-                              "method " + m + ".  Returning abstain vote." );
-                }
-                return AuthorizationVote.abstain;
-            }
-        } else {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "AuthorizedAction parameter is null.  Returning abstain vote." );
-            }
-            return AuthorizationVote.abstain;
+        Method m = mi.getMethod();
+        if ( m == null ) {
+            String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
+                         "constructed.  getMethod() returned null";
+            throw new NullPointerException( msg );
         }
 
+        HasRole hrAnnotation = m.getAnnotation( HasRole.class );
+
+        if ( context.hasRole( hrAnnotation.value() ) ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Authorization context has role [" +
+                           hrAnnotation.value() + "]. Returning grant vote." );
+            }
+            return AuthorizationVote.grant;
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "AuthorizationContext does not have role [" +
+                           hrAnnotation.value() + "].  Returning deny vote." );
+            }
+            return AuthorizationVote.deny;
+        }
     }
 
 }
