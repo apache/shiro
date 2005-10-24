@@ -25,6 +25,8 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import org.jsecurity.authc.AuthenticationInfo;
+
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
@@ -35,7 +37,7 @@ import java.util.HashSet;
  * contains all necessary information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * @see AuthenticationInfo
+ * @see org.jsecurity.authc.AuthenticationInfo
  *
  * @since 0.1
  * @author Jeremy Haile

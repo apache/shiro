@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Jeremy Haile
+* Copyright (C) 2005 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -26,27 +26,25 @@
 package org.jsecurity.ri.authz;
 
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.authc.AuthenticationInfo;
 
 
 /**
  * <p>Factory used to create the authorization context that is returned from the
- * {@link org.jsecurity.authc.Authenticator}.  The factory allows the
- * {@link org.jsecurity.authz.AuthorizationContext} returned from the authenticator to be wrapped in a different
- * context (for example a dynamic proxy).</p>
- *
+ * {@link org.jsecurity.authc.Authenticator}.
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface AuthorizationContextFactory {
 
     /**
      * Returns an implementation of the AuthorizationContext instance for the
-     * given authorization context.  The returned context may or may not be the same instance or
-     * concrete class as the given context.
-     * @param context the context that is to be used as the source for the final context.
+     * given authentication info after a successful authentication.
+     * @param info authentication info after a successful authentication.
      * @return an authorization context that will be used by the application.
      */
-    AuthorizationContext createAuthContext( AuthorizationContext context );
+    AuthorizationContext createAuthorizationContext( AuthenticationInfo info );
 
 }

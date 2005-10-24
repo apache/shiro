@@ -32,11 +32,10 @@ import org.jsecurity.authc.IncorrectCredentialException;
 import org.jsecurity.authc.LockedAccountException;
 import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authc.credential.CredentialMatcher;
 import org.jsecurity.ri.authc.credential.PlainTextCredentialMatcher;
-import org.jsecurity.ri.authz.SimpleAuthorizationContext;
 
 import java.security.Principal;
 
@@ -48,7 +47,7 @@ import java.security.Principal;
  *
  * <p>This module is intended to encapsulate the generic behavior of
  * authenticating a user from a username and password based on the
- * {@link AuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
+ * {@link org.jsecurity.authc.AuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -99,8 +98,8 @@ public class DAOAuthenticationModule implements AuthenticationModule {
     }
 
 
-    public AuthorizationContext authenticate(AuthenticationToken token) throws AuthenticationException {
-
+    public AuthenticationInfo getAuthenticationInfo( AuthenticationToken token )
+        throws AuthenticationException {
         Principal accountIdentifier = token.getPrincipal();
         Object submittedCredentials = token.getCredentials();
 
@@ -133,15 +132,6 @@ public class DAOAuthenticationModule implements AuthenticationModule {
             throw new IncorrectCredentialException( msg );
         }
 
-        return buildAuthorizationContext( info );
+        return info;
     }
-
-
-    protected AuthorizationContext buildAuthorizationContext(AuthenticationInfo info) {
-
-        return new SimpleAuthorizationContext( info.getPrincipal(),
-                                               info.getRoles(),
-                                               info.getPermissions());
-    }
-
 }

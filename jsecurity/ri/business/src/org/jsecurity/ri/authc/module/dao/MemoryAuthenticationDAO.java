@@ -26,6 +26,8 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import org.jsecurity.authc.AuthenticationInfo;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Permission;

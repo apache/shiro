@@ -27,8 +27,8 @@ package org.jsecurity.ri.authc.module;
 
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authc.AbstractAuthenticator;
 
 import java.util.List;
@@ -83,7 +83,7 @@ public class PluggableAuthenticator extends AbstractAuthenticator {
      * Attempts to authenticate the given token by iterating over the list of
      * {@link AuthenticationModule}s.  For each module, first the {@link AuthenticationModule#supports(Class)}
      * method will be called to determine if the module supports the type of token.  If a module does support
-     * the token, its {@link AuthenticationModule#authenticate(org.jsecurity.authc.AuthenticationToken)}
+     * the token, its {@link AuthenticationModule#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
      * method will be called.  If the module returns a non-null authorization context, the token will be
      * considered authenticated and will be returned.  If the module returns a null context, the next
      * module will be consulted.  If no modules support the token or all supported modules return null,
@@ -95,9 +95,9 @@ public class PluggableAuthenticator extends AbstractAuthenticator {
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
      * for the given principal and credentials.
      */
-    public AuthorizationContext doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+    public AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-        AuthorizationContext context = null;
+        AuthenticationInfo info = null;
 
         if (logger.isDebugEnabled()) {
             logger.debug("Iterating through [" + modules.size() + "] authentication modules ");
@@ -112,11 +112,11 @@ public class PluggableAuthenticator extends AbstractAuthenticator {
                         "using module of type [" + module.getClass() + "]");
                 }
 
-                context = module.authenticate( authenticationToken );
+                info = module.getAuthenticationInfo( authenticationToken );
 
-                // If non-null context is returned, then the module was able to authenticate the
+                // If non-null info is returned, then the module was able to authenticate the
                 // user - so return the context.
-                if( context != null ) {
+                if( info != null ) {
 
                     if (logger.isDebugEnabled()) {
                         logger.debug("Account authenticated using module of type [" + module.getClass().getName() + "]");
@@ -131,14 +131,14 @@ public class PluggableAuthenticator extends AbstractAuthenticator {
             }
         }
 
-        // If context is still null, throw an exception - the user was not able to be authenticated
+        // If info is still null, throw an exception - the user was not able to be authenticated
         // by any configured modules.
-        if( context == null ) {
+        if( info == null ) {
             throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
                 "could not be authenticated by any configured modules.  Check that the authenticator is configured " +
                 "with appropriate modules." );
         } else {
-            return context;
+            return info;
         }
     }
 }
