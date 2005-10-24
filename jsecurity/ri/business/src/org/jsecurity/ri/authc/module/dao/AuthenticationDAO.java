@@ -25,6 +25,8 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
+import org.jsecurity.authc.AuthenticationInfo;
+
 import java.security.Principal;
 
 /**
@@ -55,7 +57,7 @@ public interface AuthenticationDAO {
      *
      * @param subjectIdentity the primary identifying attribute of the account being authenticated.
      * This is usually a Principal representing a user id or user name.
-     * @return a {@link AuthenticationInfo} object containing the information
+     * @return a {@link org.jsecurity.authc.AuthenticationInfo} object containing the information
      * necessary to authenticate the identity and build an
      * {@link org.jsecurity.authz.AuthorizationContext}
      */

@@ -30,8 +30,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
+import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work
@@ -59,7 +61,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /**
      * The factory used to wrap authorization context after authentication.
      */
-    private AuthorizationContextFactory authContextFactory;
+    private AuthorizationContextFactory authContextFactory = new SimpleAuthorizationContextFactory();
 
     /**
      * The binder used to bind the authorization context so that it is accessible on subsequent
@@ -80,7 +82,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
 
-    public void setAuthContextFactory(AuthorizationContextFactory authContextFactory) {
+    public void setAuthorizationContextFactory(AuthorizationContextFactory authContextFactory) {
         this.authContextFactory = authContextFactory;
     }
 
@@ -108,12 +110,9 @@ public abstract class AbstractAuthenticator implements Authenticator {
             logger.info("Authentication request received for token [" + authenticationToken + "]");
         }
 
-        // Call subclass to perform actual authorization
-        AuthorizationContext context = null;
+        AuthenticationInfo authInfo;
         try {
-
-            context = doAuthenticate( authenticationToken );
-
+            authInfo = doAuthenticate( authenticationToken );
         } catch (AuthenticationException e) {
             // Catch exception for debugging
             if (logger.isDebugEnabled()) {
@@ -123,29 +122,16 @@ public abstract class AbstractAuthenticator implements Authenticator {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Authentication successful.  Returned authorization context: [" + context + "]");
+            logger.debug("Authentication successful.  Returned authentication info: [" + authInfo + "]");
         }
 
-        // Allow factory to modify the authorization context
-        AuthorizationContextFactory factory = getAuthContextFactory();
-        if( factory != null ) {
-            context = getAuthContextFactory().createAuthContext( context );
-        }
+        AuthorizationContext authzCtx = getAuthContextFactory().createAuthorizationContext( authInfo );
 
         // Bind the context to the application
-        getAuthContextBinder().bindAuthorizationContext( context );
+        getAuthContextBinder().bindAuthorizationContext( authzCtx );
 
-        return context;
+        return authzCtx;
     }
 
-
-    /**
-     * Method to be implemented by subclasses to perform the actual authentication using the given
-     * token.
-     * @param authenticationToken the token to use during authentication.
-     * @return an authorization context for the authenticated user.
-     * @throws AuthenticationException if the given token cannot be authenticated or is denied authentication.
-     */
-    protected abstract AuthorizationContext doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException;
-
+    protected abstract AuthenticationInfo doAuthenticate( AuthenticationToken token ) throws AuthenticationException;
 }

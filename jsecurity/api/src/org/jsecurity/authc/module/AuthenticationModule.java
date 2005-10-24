@@ -24,7 +24,9 @@
  */
 package org.jsecurity.authc.module;
 
-import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.AuthenticationInfo;
 
 /**
  * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support
@@ -38,7 +40,7 @@ import org.jsecurity.authc.Authenticator;
  * @since 1.0
  * @author Les Hazlewood
  */
-public interface AuthenticationModule extends Authenticator {
+public interface AuthenticationModule {
 
     /**
      * Returns true if this module can authenticate subjects with <tt>authentication token</tt>
@@ -53,5 +55,7 @@ public interface AuthenticationModule extends Authenticator {
      * specified class, false otherwise.
      */
     boolean supports( Class tokenClass );
+
+    AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
 
 }

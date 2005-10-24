@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy C. Haile
+ * Copyright (C) 2005 Jeremy C. Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,20 +23,23 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.module.dao;
+package org.jsecurity.authc;
 
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
 
 /**
- * An interface containing the information required by the {@link DAOAuthenticationModule}
- * to authenticate a user and construct a {@link org.jsecurity.authz.AuthorizationContext} for the user.
+ * An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
+ * in a framework-independent manner.  Instead of forcing a JSecurity user to
+ * implement <tt>User</tt> or <tt>Role</tt> interfaces and being invasive on an application's
+ * data model, the application must instead only implement this interface to represent such
+ * data.  This enables a cleaner pluggable implementation and abstracts JSecurity classes away
+ * from an application's core classes.
  *
- * @see DAOAuthenticationModule
- *
- * @since 0.1
+ * @since 1.0
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface AuthenticationInfo {
 
