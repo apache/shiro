@@ -77,7 +77,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    protected AuthorizationContextFactory getAuthContextFactory() {
+    protected AuthorizationContextFactory getAuthorizationContextFactory() {
         return authContextFactory;
     }
 
@@ -125,7 +125,9 @@ public abstract class AbstractAuthenticator implements Authenticator {
             logger.debug("Authentication successful.  Returned authentication info: [" + authInfo + "]");
         }
 
-        AuthorizationContext authzCtx = getAuthContextFactory().createAuthorizationContext( authInfo );
+        AuthorizationContextFactory factory = getAuthorizationContextFactory();
+
+        AuthorizationContext authzCtx = factory.createAuthorizationContext( authInfo );
 
         // Bind the context to the application
         getAuthContextBinder().bindAuthorizationContext( authzCtx );
