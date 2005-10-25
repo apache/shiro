@@ -306,6 +306,20 @@ to where the build is being executed -->
         </jar>
     </target>
 
+    <target name="src.zip" depends="root-prepare">
+        <zip destfile="${root.dist.dir}/${project.name}.src.zip"
+             basedir="${basedir}">
+            <fileset dir="${root.base.dir}/api/src"
+                     includes="**/*.java, **/*.properties"/>
+            <fileset dir="${root.base.dir}/ri/common/src"
+                     includes="**/*.java, **/*.properties"/>
+            <fileset dir="${root.base.dir}/ri/business/src"
+                     includes="**/*.java, **/*.properties"/>
+            <fileset dir="${root.base.dir}/support/spring/src"
+                     includes="**/*.java, **/*.properties"/>
+        </zip>
+    </target>
+
     <target name="composite-jars" depends="root-prepare">
         <path id="jarjar.path">
             <pathelement location="${lib.dir}/jarjar/jarjar.jar"/>
@@ -363,10 +377,8 @@ to where the build is being executed -->
         </antcall>
     </target>
 
-    <target name="release" depends="dist,javadoc">
+    <target name="release" depends="dist,composite-jars,src.zip,javadoc">
 
-        <!-- Create composite jars for ease of use: -->
-        <antcall target="composite-jars"/>
         <!-- copy over the readme file in the dist directory so people understand
              what the files do: -->
         <copy toDir="${root.dist.dir}" file="${root.etc.dir}/README.txt"/>
