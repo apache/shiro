@@ -1,12 +1,9 @@
 package org.jsecurity.ri.authz.support;
 
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authc.AuthenticationInfo;
-import org.jsecurity.ri.authz.support.AbstractAuthorizationContextFactory;
-import org.jsecurity.ri.authz.Realm;
+import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
-
-import java.security.Principal;
+import org.jsecurity.ri.authz.Realm;
 
 /**
  * Created on: Oct 24, 2005 4:31:18 PM
@@ -31,15 +28,6 @@ public class DelegatingAuthorizationContextFactory extends AbstractAuthorization
     }
 
     protected AuthorizationContext onCreateAuthorizationContext( AuthenticationInfo info ) {
-        Principal subjectIdentifier = info.getPrincipal();
-        if ( subjectIdentifier == null ) {
-            String msg = "context parameter must return a valid principal. A " +
-                         DelegatingAuthorizationContext.class.getName() + " must maintain " +
-                         "a subject identifyier (principal) to invoke a " +
-                         Realm.class.getName() + " implementation.";
-            throw new IllegalArgumentException( msg );
-        }
-
-        return new DelegatingAuthorizationContext( subjectIdentifier, this.realm );
+        return new DelegatingAuthorizationContext( info.getPrincipal(), this.realm );
     }
 }

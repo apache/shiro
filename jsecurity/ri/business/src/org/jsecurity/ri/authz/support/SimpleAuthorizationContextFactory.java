@@ -1,8 +1,7 @@
 package org.jsecurity.ri.authz.support;
 
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authc.AuthenticationInfo;
-import org.jsecurity.ri.authz.support.AbstractAuthorizationContextFactory;
+import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authz.SimpleAuthorizationContext;
 
 import java.security.Permission;
