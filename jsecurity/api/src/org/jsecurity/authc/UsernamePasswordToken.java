@@ -174,7 +174,7 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append( getClass() );
+        sb.append( getClass().getName() );
         sb.append( " - " );
         sb.append( username );
         return sb.toString();
