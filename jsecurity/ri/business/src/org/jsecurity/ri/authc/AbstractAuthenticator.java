@@ -67,7 +67,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
      * The binder used to bind the authorization context so that it is accessible on subsequent
      * requests.
      */
-    private AuthorizationContextBinder authContextBinder;
+    private AuthorizationContextBinder authzCtxBinder = new ThreadLocalAuthorizationContextBinder();
 
 
     /*--------------------------------------------
@@ -87,16 +87,13 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
 
-    public AuthorizationContextBinder getAuthContextBinder() {
-        if( authContextBinder == null ) {
-            authContextBinder = new ThreadLocalAuthorizationContextBinder();
-        }
-        return authContextBinder;
+    public AuthorizationContextBinder getAuthorizationContextBinder() {
+        return authzCtxBinder;
     }
 
 
-    public void setAuthContextBinder(AuthorizationContextBinder authContextBinder) {
-        this.authContextBinder = authContextBinder;
+    public void setAuthorizationContextBinder(AuthorizationContextBinder authContextBinder) {
+        this.authzCtxBinder = authContextBinder;
     }
 
 
@@ -130,7 +127,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
         AuthorizationContext authzCtx = factory.createAuthorizationContext( authInfo );
 
         // Bind the context to the application
-        getAuthContextBinder().bindAuthorizationContext( authzCtx );
+        getAuthorizationContextBinder().bindAuthorizationContext( authzCtx );
 
         return authzCtx;
     }
