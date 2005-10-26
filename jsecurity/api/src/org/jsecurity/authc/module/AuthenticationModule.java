@@ -25,8 +25,8 @@
 package org.jsecurity.authc.module;
 
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
 
 /**
  * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support

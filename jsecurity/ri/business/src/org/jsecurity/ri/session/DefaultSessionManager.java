@@ -24,15 +24,14 @@
  */
 package org.jsecurity.ri.session;
 
-import org.jsecurity.ri.session.AbstractSessionManager;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.ExpiredSessionException;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
 
-import java.net.InetAddress;
-import java.util.Calendar;
-import java.util.Collection;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
@@ -51,7 +50,7 @@ public class DefaultSessionManager extends AbstractSessionManager
         if ( log.isTraceEnabled() ) {
             log.trace( "Updating stop time of session with id [" + session.getSessionId() + "]" );
         }
-        ((SimpleSession)session).setStopTimestamp( Calendar.getInstance() );
+        ((SimpleSession)session).setStopTimestamp( new Date() );
     }
 
     protected void onExpire( Session session ) {
@@ -60,7 +59,7 @@ public class DefaultSessionManager extends AbstractSessionManager
                        session.getSessionId() + "]");
         }
         SimpleSession ss = (SimpleSession)session;
-        ss.setStopTimestamp( Calendar.getInstance() );
+        ss.setStopTimestamp( new Date() );
         ss.setExpired( true );
     }
 
@@ -69,7 +68,7 @@ public class DefaultSessionManager extends AbstractSessionManager
             log.trace( "Updating last access time of session with id [" +
                        session.getSessionId() + "]");
         }
-        ((SimpleSession)session).setLastAccessTime( Calendar.getInstance() );
+        ((SimpleSession)session).setLastAccessTime( new Date() );
     }
 
     protected void init( Session newInstance, InetAddress hostAddr ) {

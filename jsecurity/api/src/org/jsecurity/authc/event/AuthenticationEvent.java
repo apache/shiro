@@ -26,7 +26,7 @@
 package org.jsecurity.authc.event;
 
 import java.security.Principal;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.EventObject;
 
 /**
@@ -41,7 +41,7 @@ public abstract class AuthenticationEvent extends EventObject {
     /**
      * The time at which this event took place.
      */
-    protected Calendar timestamp = Calendar.getInstance();
+    protected Date timestamp = new Date();
 
     /**
      * The principal of the user associated with this event.
@@ -96,7 +96,7 @@ public abstract class AuthenticationEvent extends EventObject {
      *
      * @return the timestamp associated with this event.
      */
-    public Calendar getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 

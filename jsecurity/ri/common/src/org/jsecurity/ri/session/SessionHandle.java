@@ -36,8 +36,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,8 +62,8 @@ public class SessionHandle implements SecureSession {
     private Serializable sessionId = null;
 
     //cached fields to avoid a server-side method call if out-of-process:
-    private Calendar startTimestamp = null;
-    private Calendar stopTimestamp = null;
+    private Date startTimestamp = null;
+    private Date stopTimestamp = null;
     private InetAddress hostAddress = null;
 
     /**
@@ -129,7 +129,7 @@ public class SessionHandle implements SecureSession {
     /**
      * @see Session#getStartTimestamp()
      */
-    public Calendar getStartTimestamp() {
+    public Date getStartTimestamp() {
         if ( startTimestamp == null ) {
             startTimestamp = sessionManager.getStartTimestamp( sessionId );
         }
@@ -139,7 +139,7 @@ public class SessionHandle implements SecureSession {
     /**
      * @see Session#getStopTimestamp()
      */
-    public Calendar getStopTimestamp() {
+    public Date getStopTimestamp() {
         if ( stopTimestamp == null ) {
             stopTimestamp = sessionManager.getStopTimestamp( sessionId );
         }
@@ -149,7 +149,7 @@ public class SessionHandle implements SecureSession {
     /**
      * @see org.jsecurity.session.Session#getLastAccessTime()
      */
-    public Calendar getLastAccessTime() {
+    public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
         return sessionManager.getLastAccessTime( sessionId );
     }

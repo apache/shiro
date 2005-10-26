@@ -25,8 +25,8 @@
 
 package org.jsecurity.ri.authz;
 
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authz.AuthorizationContext;
 
 
 /**

@@ -28,8 +28,8 @@ package org.jsecurity.ri.authz.module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.module.AuthorizationModule;
 import org.jsecurity.authz.method.MethodInvocation;
+import org.jsecurity.authz.module.AuthorizationModule;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

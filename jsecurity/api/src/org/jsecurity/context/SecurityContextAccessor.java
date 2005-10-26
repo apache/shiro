@@ -26,9 +26,7 @@
 package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.session.Session;
 import org.jsecurity.session.SecureSession;
-import org.jsecurity.authc.Authenticator;
 
 /**
  * <p>Interface to be implemented by implementations of the JSecurity API

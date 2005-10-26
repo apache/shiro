@@ -24,9 +24,9 @@
  */
 package org.jsecurity.spring.security.interceptor;
 
-import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.jsecurity.authz.annotation.HasPermission;
 import org.jsecurity.authz.annotation.HasRole;
+import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 
 import java.lang.reflect.Method;
 

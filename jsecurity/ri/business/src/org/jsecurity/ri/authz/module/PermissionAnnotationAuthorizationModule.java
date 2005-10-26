@@ -27,9 +27,9 @@ package org.jsecurity.ri.authz.module;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.authz.annotation.HasPermission;
 import org.jsecurity.authz.method.MethodInvocation;
+import org.jsecurity.authz.module.AuthorizationVote;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

@@ -26,11 +26,11 @@ package org.jsecurity.ri.session.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.session.event.SessionEventListener;
 import org.jsecurity.session.event.SessionEvent;
+import org.jsecurity.session.event.SessionEventListener;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Simple implementation of the {@link SessionEventSender} interface that synchronously calls any

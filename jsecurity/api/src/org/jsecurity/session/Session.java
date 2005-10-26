@@ -27,7 +27,7 @@ package org.jsecurity.session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A <tt>Session</tt> is a data context associated with a single entity (user, 3rd party process,
@@ -76,7 +76,7 @@ public interface Session {
      * Returns the time the session was started; that is, the time the system created the instance.
      * @return The time the system created the session.
      */
-    Calendar getStartTimestamp();
+    Date getStartTimestamp();
 
     /**
      * Returns the time the session was stopped, or <tt>null</tt> if the session is still active.
@@ -96,7 +96,7 @@ public interface Session {
      * @return The time the session was stopped, or <tt>null</tt> if the session is still
      * active.
      */
-    Calendar getStopTimestamp();
+    Date getStopTimestamp();
 
     /**
      * Returns the last time the account associated with the session interacted with the system.
@@ -114,7 +114,7 @@ public interface Session {
      *
      * @return The time the user last interacted with the system.
      */
-    Calendar getLastAccessTime();
+    Date getLastAccessTime();
 
     /**
      * Returns true if this session has expired, false otherwise.  If the session has

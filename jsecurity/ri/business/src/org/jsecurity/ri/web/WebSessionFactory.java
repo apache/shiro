@@ -24,9 +24,9 @@
  */
 package org.jsecurity.ri.web;
 
-import org.jsecurity.session.Session;
-import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

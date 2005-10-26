@@ -24,8 +24,8 @@
  */
 package org.jsecurity.ri.authc.event;
 
-import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.event.AuthenticationEvent;
 
 import java.security.Principal;
 

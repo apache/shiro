@@ -43,7 +43,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.text.DateFormat;
-import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @since 0.1
@@ -279,16 +279,15 @@ public abstract class AbstractSessionManager implements SessionManager {
             }
 
             //throw an exception explaining details of why it expired:
-            Calendar lastAccessTime = session.getLastAccessTime();
-            Calendar expired = Calendar.getInstance();
+            Date lastAccessTime = session.getLastAccessTime();
             int timeout = getTimeout( session );
-            expired.add( Calendar.SECOND, -timeout);
+
             Serializable sessionId = session.getSessionId();
 
             DateFormat df = DateFormat.getInstance();
             String msg = "Session with id [" + sessionId + "] has expired. " +
-                         "Last access time: " + df.format( lastAccessTime.getTime() ) +
-                         ".  Current time: " + df.format(Calendar.getInstance().getTime() ) +
+                         "Last access time: " + df.format( lastAccessTime ) +
+                         ".  Current time: " + df.format( new Date() ) +
                          ".  Session timeout is set to " + timeout + " seconds (" +
                          timeout / 60 + " minutes)";
             throw new ExpiredSessionException( msg, sessionId );
@@ -455,7 +454,7 @@ public abstract class AbstractSessionManager implements SessionManager {
 
             if ( timeout >= 0 ) {
 
-                Calendar lastAccessTime = session.getLastAccessTime();
+                Date lastAccessTime = session.getLastAccessTime();
 
                 if ( lastAccessTime == null ) {
                     String msg = "session.lastAccessTime for session with id [" +
@@ -471,8 +470,8 @@ public abstract class AbstractSessionManager implements SessionManager {
                 // from the current time the amount of time that a session can
                 // be inactive before expiring.  If the session was last accessed
                 // before this time it is expired.
-                Calendar expireTime = Calendar.getInstance();
-                expireTime.add( Calendar.SECOND, -timeout );
+                long expireTimeMillis = System.currentTimeMillis() - ( 1000 * timeout );
+                Date expireTime = new Date( expireTimeMillis );
                 return lastAccessTime.before( expireTime );
             } else {
                 if ( log.isInfoEnabled() ) {
@@ -483,7 +482,7 @@ public abstract class AbstractSessionManager implements SessionManager {
         } else {
             if ( log.isInfoEnabled() ) {
                 log.info( "Time-out is disabled for Session with id [" + session.getSessionId() +
-                           "].  Session is not expired." );
+                          "].  Session is not expired." );
             }
         }
 
@@ -496,15 +495,15 @@ public abstract class AbstractSessionManager implements SessionManager {
         return s.getSessionId();
     }
 
-    public Calendar getStartTimestamp( Serializable sessionId ) {
+    public Date getStartTimestamp( Serializable sessionId ) {
         return retrieveSession( sessionId ).getStartTimestamp();
     }
 
-    public Calendar getStopTimestamp( Serializable sessionId ) {
+    public Date getStopTimestamp( Serializable sessionId ) {
         return retrieveSession( sessionId ).getStopTimestamp();
     }
 
-    public Calendar getLastAccessTime( Serializable sessionId ) {
+    public Date getLastAccessTime( Serializable sessionId ) {
         return retrieveSession( sessionId ).getLastAccessTime();
     }
 
