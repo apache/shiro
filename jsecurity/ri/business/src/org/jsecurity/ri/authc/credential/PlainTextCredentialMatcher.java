@@ -39,11 +39,9 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
 
     /**
      * Compares two plain text passwords.
-     * @param providedPasswordCharArray the unhashed password char array (char[]) provided by the user.
-     * @param storedPasswordCharArray the hashed password char array (char[]) stored in the system.
-     * @return true if the hashes match, false otherwise.
-     * @param providedPasswordCharArray the provided plain-text password as a char array (char[])
-     * @param storedPasswordCharArray the plain-text password stored in the system as a char array (char[]).
+     * 
+     * @param providedPasswordCharArray the user-provided password as a char array (char[])
+     * @param storedPasswordCharArray the password stored in the system as a char array (char[]).
      * @return true if the passwords match, false otherwise.
      */
     public boolean doCredentialsMatch( Object providedPasswordCharArray,

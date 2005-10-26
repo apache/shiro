@@ -31,9 +31,13 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
 import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
+import org.jsecurity.ri.authc.event.AuthenticationEventSender;
+import org.jsecurity.ri.authc.event.SuccessfulAuthenticationEvent;
+import org.jsecurity.ri.authc.event.FailedAuthenticationEvent;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work
@@ -69,6 +73,8 @@ public abstract class AbstractAuthenticator implements Authenticator {
      */
     private AuthorizationContextBinder authzCtxBinder = new ThreadLocalAuthorizationContextBinder();
 
+    private AuthenticationEventSender authcEventSender = null;
+
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -96,6 +102,31 @@ public abstract class AbstractAuthenticator implements Authenticator {
         this.authzCtxBinder = authContextBinder;
     }
 
+    public AuthenticationEventSender getAuthenticationEventSender() {
+        return authcEventSender;
+    }
+
+    public void setAuthenticationEventSender( AuthenticationEventSender authcEventSender ) {
+        this.authcEventSender = authcEventSender;
+    }
+
+    private void sendFailedEvent( AuthenticationToken token, AuthenticationException cause ) {
+        AuthenticationEventSender sender = getAuthenticationEventSender();
+        if ( sender != null ) {
+            AuthenticationEvent event =
+                new FailedAuthenticationEvent( this, token.getPrincipal(), cause );
+            sender.send( event );
+        }
+    }
+
+    private void sendSuccessEvent( AuthenticationInfo info ) {
+        AuthenticationEventSender sender = getAuthenticationEventSender();
+        if ( sender != null ) {
+            AuthenticationEvent event =
+                new SuccessfulAuthenticationEvent( this, info.getPrincipal() );
+            sender.send( event );
+        }
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -115,12 +146,17 @@ public abstract class AbstractAuthenticator implements Authenticator {
             if (logger.isDebugEnabled()) {
                 logger.debug("Authentication failed for token [" + authenticationToken + "]", e);
             }
+
+            sendFailedEvent( authenticationToken, e );
+
             throw e;
         }
 
         if (logger.isDebugEnabled()) {
             logger.debug("Authentication successful.  Returned authentication info: [" + authInfo + "]");
         }
+
+        sendSuccessEvent( authInfo );
 
         AuthorizationContextFactory factory = getAuthorizationContextFactory();
 
