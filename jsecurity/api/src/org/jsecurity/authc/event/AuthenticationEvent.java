@@ -84,6 +84,10 @@ public abstract class AuthenticationEvent extends EventObject {
      */
     public AuthenticationEvent( Object source, Principal principal ) {
         super( source );
+        if ( principal == null ) {
+            String msg = "Principal argument cannot be null";
+            throw new IllegalArgumentException( msg );
+        }
         this.principal = principal;
     }
 
@@ -95,5 +99,15 @@ public abstract class AuthenticationEvent extends EventObject {
     public Calendar getTimestamp() {
         return timestamp;
     }
+
+    /**
+     * Returns the principal (aka subject identity) associated with the authentication event.
+     *
+     * @return the the principal (aka subject identity) associated with the authentication event.
+     */
+    public Principal getPrincipal() {
+        return this.principal;
+    }
+
 
 }
