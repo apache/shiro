@@ -26,9 +26,9 @@ package org.jsecurity.ri.authz.module;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.authz.annotation.HasRole;
 import org.jsecurity.authz.method.MethodInvocation;
+import org.jsecurity.authz.module.AuthorizationVote;
 
 import java.lang.reflect.Method;
 

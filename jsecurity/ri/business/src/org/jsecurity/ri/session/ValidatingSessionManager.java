@@ -24,7 +24,6 @@
  */
 package org.jsecurity.ri.session;
 
-import org.jsecurity.ri.session.SessionManager;
 import org.jsecurity.session.InvalidSessionException;
 
 import java.io.Serializable;

@@ -28,16 +28,16 @@ package org.jsecurity.ri.authc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.ri.authc.event.AuthenticationEventSender;
+import org.jsecurity.ri.authc.event.FailedAuthenticationEvent;
+import org.jsecurity.ri.authc.event.SuccessfulAuthenticationEvent;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
 import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
-import org.jsecurity.ri.authc.event.AuthenticationEventSender;
-import org.jsecurity.ri.authc.event.SuccessfulAuthenticationEvent;
-import org.jsecurity.ri.authc.event.FailedAuthenticationEvent;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work

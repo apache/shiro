@@ -26,12 +26,12 @@ package org.jsecurity.spring.security.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.context.SecurityContext;
 import org.springframework.beans.factory.InitializingBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 

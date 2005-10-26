@@ -26,11 +26,11 @@ package org.jsecurity.ri.authz;
 
 import org.jsecurity.authz.AuthorizationException;
 
-import java.util.List;
-import java.util.Collection;
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities

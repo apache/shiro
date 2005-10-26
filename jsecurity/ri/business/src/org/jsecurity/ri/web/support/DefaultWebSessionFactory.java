@@ -30,9 +30,9 @@ import org.jsecurity.JSecurityException;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.ri.session.DefaultSessionFactory;
+import org.jsecurity.ri.web.WebSessionFactory;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.ri.web.WebSessionFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

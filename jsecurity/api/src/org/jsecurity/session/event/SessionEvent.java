@@ -25,9 +25,9 @@
 package org.jsecurity.session.event;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.EventObject;
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.EventObject;
 
 /**
  * General event concerning a {@link org.jsecurity.session.Session} instance.
@@ -40,7 +40,7 @@ public abstract class SessionEvent extends EventObject {
     /**
      * Timestamp when this even took place.
      */
-    protected Calendar timestamp = Calendar.getInstance();
+    protected Date timestamp = new Date();
 
     /**
      * Session ID associated with this event.
@@ -67,7 +67,7 @@ public abstract class SessionEvent extends EventObject {
         this.sessionId = sessionId;
     }
 
-    public void setTimestamp( Calendar timestamp ) {
+    public void setTimestamp( Date timestamp ) {
         this.timestamp = timestamp;
     }
 
@@ -76,7 +76,7 @@ public abstract class SessionEvent extends EventObject {
      *
      * @return the timestamp associated with this event.
      */
-    public Calendar getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 

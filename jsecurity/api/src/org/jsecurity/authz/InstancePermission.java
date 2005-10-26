@@ -26,10 +26,10 @@ package org.jsecurity.authz;
 
 import java.io.Serializable;
 import java.security.Permission;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * A InstancePermission represents an action or actions that might be performed on a single

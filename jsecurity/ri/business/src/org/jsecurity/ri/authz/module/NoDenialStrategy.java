@@ -25,8 +25,8 @@
 
 package org.jsecurity.ri.authz.module;
 
-import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.module.AuthorizationModule;
 import org.jsecurity.authz.module.AuthorizationVote;
 

@@ -1,17 +1,15 @@
 package org.jsecurity.ri.session;
 
-import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.ri.session.SessionManager;
-import org.jsecurity.session.Session;
-import org.jsecurity.ri.session.SessionHandle;
-import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.ExpiredSessionException;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.StoppedSessionException;
 
-import java.net.InetAddress;
 import java.io.Serializable;
+import java.net.InetAddress;
 
 /**
  * Default JSecurity reference implementation of a {@link org.jsecurity.session.SessionFactory}.  This implementation

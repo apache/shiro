@@ -30,9 +30,9 @@ import org.jsecurity.session.Session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.Calendar;
-import java.util.Map;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Simple {@link org.jsecurity.session.Session} implementation, intended to be used on the business/server tier.
@@ -45,9 +45,9 @@ public class SimpleSession implements Session, Serializable {
     private final transient Log log = LogFactory.getLog( getClass() );
 
     private Serializable sessionId = null;
-    private Calendar startTimestamp = null;
-    private Calendar stopTimestamp = null;
-    private Calendar lastAccessTime = null;
+    private Date startTimestamp = null;
+    private Date stopTimestamp = null;
+    private Date lastAccessTime = null;
     private boolean expired = false;
     private InetAddress hostAddress = null;
 
@@ -57,7 +57,7 @@ public class SimpleSession implements Session, Serializable {
 
         //JSecurity uses UUID's by default.  This can be overridden via the setSessionId method:
         sessionId = java.util.UUID.randomUUID();
-        startTimestamp = Calendar.getInstance();
+        startTimestamp = new Date();
         lastAccessTime = startTimestamp; //default when first instantiated
         try {
             hostAddress = InetAddress.getLocalHost();
@@ -80,27 +80,27 @@ public class SimpleSession implements Session, Serializable {
         this.sessionId = sessionId;
     }
 
-    public Calendar getStartTimestamp() {
+    public Date getStartTimestamp() {
         return startTimestamp;
     }
 
-    public void setStartTimestamp( Calendar startTimestamp ) {
+    public void setStartTimestamp( Date startTimestamp ) {
         this.startTimestamp = startTimestamp;
     }
 
-    public Calendar getStopTimestamp() {
+    public Date getStopTimestamp() {
         return stopTimestamp;
     }
 
-    public void setStopTimestamp( Calendar stopTimestamp ) {
+    public void setStopTimestamp( Date stopTimestamp ) {
         this.stopTimestamp = stopTimestamp;
     }
 
-    public Calendar getLastAccessTime() {
+    public Date getLastAccessTime() {
         return lastAccessTime;
     }
 
-    public void setLastAccessTime( Calendar lastAccessTime ) {
+    public void setLastAccessTime( Date lastAccessTime ) {
         this.lastAccessTime = lastAccessTime;
     }
 
@@ -129,11 +129,11 @@ public class SimpleSession implements Session, Serializable {
     }
 
     public void touch() {
-        this.lastAccessTime = Calendar.getInstance();
+        this.lastAccessTime = new Date();
     }
 
     public void stop() {
-        this.stopTimestamp = Calendar.getInstance();
+        this.stopTimestamp = new Date();
     }
 
     public Object getAttribute( Object key ) {

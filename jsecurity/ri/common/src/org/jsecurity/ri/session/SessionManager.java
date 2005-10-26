@@ -30,7 +30,7 @@ import org.jsecurity.session.InvalidSessionException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.Principal;
-import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A SessionManager manages the creation, maintenance, and clean-up of {@link org.jsecurity.session.Session sessions}.
@@ -65,7 +65,7 @@ public interface SessionManager {
      * @return the system time the specified session was started (i.e. created).
      * @see org.jsecurity.session.Session#getStartTimestamp()
      */
-    Calendar getStartTimestamp( Serializable sessionId );
+    Date getStartTimestamp( Serializable sessionId );
 
     /**
      * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> was
@@ -78,7 +78,7 @@ public interface SessionManager {
      * is still active.
      * @see org.jsecurity.session.Session#getStopTimestamp()
      */
-    Calendar getStopTimestamp( Serializable sessionId );
+    Date getStopTimestamp( Serializable sessionId );
 
     /**
      * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> last
@@ -90,7 +90,7 @@ public interface SessionManager {
      * @see org.jsecurity.session.Session#getLastAccessTime()
      * @see org.jsecurity.session.Session#touch()
      */
-    Calendar getLastAccessTime( Serializable sessionId );
+    Date getLastAccessTime( Serializable sessionId );
 
     /**
      * Returns <tt>true</tt> if the session with the specified <tt>sessionId</tt> has been

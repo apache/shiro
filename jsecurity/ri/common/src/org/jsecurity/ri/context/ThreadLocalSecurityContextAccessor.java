@@ -26,10 +26,10 @@
 package org.jsecurity.ri.context;
 
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.SecureSession;
-import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.context.SecurityContextAccessor;
+import org.jsecurity.ri.util.ThreadContext;
+import org.jsecurity.session.SecureSession;
+import org.jsecurity.session.Session;
 
 /**
  * Implementation of {@link SecurityContextAccessor} that retrieves security context information

@@ -24,11 +24,11 @@
  */
 package org.jsecurity.session;
 
-import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.HostUnauthorizedException;
 
-import java.net.InetAddress;
 import java.io.Serializable;
+import java.net.InetAddress;
 
 /**
  * A <tt>SessionFactory</tt> is responsible for starting new sessions and

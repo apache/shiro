@@ -26,8 +26,8 @@
 package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.session.Session;
 import org.jsecurity.session.SecureSession;
+import org.jsecurity.session.Session;
 
 import java.io.IOException;
 import java.io.InputStream;
