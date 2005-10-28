@@ -25,14 +25,7 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.ExpiredCredentialException;
-import org.jsecurity.authc.IncorrectCredentialException;
-import org.jsecurity.authc.LockedAccountException;
-import org.jsecurity.authc.UnknownAccountException;
-import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.authc.*;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.ri.authc.credential.CredentialMatcher;
 import org.jsecurity.ri.authc.credential.PlainTextCredentialMatcher;
@@ -84,7 +77,7 @@ public class DAOAuthenticationModule implements AuthenticationModule {
         this.authenticationDao = authenticationDao;
     }
 
-    public void setPasswordMatcher(CredentialMatcher credentialMatcher ) {
+    public void setCredentialMatcher(CredentialMatcher credentialMatcher ) {
         this.credentialMatcher = credentialMatcher;
     }
 
