@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -72,15 +73,18 @@ public class AuthorizationInterceptor implements InitializingBean, MethodInterce
                     public Object[] getArguments() {
                         return mi.getArguments();
                     }
+
+                    public String toString() {
+                        return "Method invocation [" + mi.getMethod() + "]";
+                    }
                 };
 
             this.authorizer.checkAuthorization( authzCtx, jsecurityMI );
         } else {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "No AuthorizationContext available via " +
-                SecurityContext.class.getName() + ".getAuthorizationContext().  Authorization" +
-                "check will not be executed.");
-            }
+            String msg = "No AuthorizationContext available via " +
+                SecurityContext.class.getName() + ".getAuthorizationContext().  " +
+                "Authorization will be denied.  User may not be authenticated.";
+            throw new UnauthorizedException( msg );
         }
 
         return mi.proceed();

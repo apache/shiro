@@ -198,14 +198,18 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
         sb.append( "Principal [" + principal + "] " );
 
         sb.append( "Roles [" );
-        for( String role : roles ) {
-            sb.append( role + " " );
+        if( roles != null ) {
+            for( String role : roles ) {
+                sb.append( role + " " );
+            }
         }
         sb.append( "] " );
 
         sb.append( "Permissions [" );
-        for( Permission permission : permissions ) {
-            sb.append( permission + " " );
+        if( permissions != null ) {
+            for( Permission permission : permissions ) {
+                sb.append( permission + " " );
+            }
         }
         sb.append( "] " );
 

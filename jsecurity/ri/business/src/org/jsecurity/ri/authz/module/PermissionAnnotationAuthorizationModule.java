@@ -50,7 +50,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     public PermissionAnnotationAuthorizationModule() {
         setAnnotationClass( HasPermission.class );
     }
-
+                                                                
     private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
         int propertyStartIndex = -1;
 
