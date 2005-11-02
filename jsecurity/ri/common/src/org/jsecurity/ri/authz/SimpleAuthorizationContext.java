@@ -38,7 +38,7 @@ import java.util.List;
  * maintains all authorization context information in instance variables.  This
  * context implementation has no synchronization, so any required synchronization
  * should be handled outside of this class.  This implementation is not dynamic
- * and does not upd`ate automatically, so it will only change when a user is
+ * and does not update automatically, so it will only change when a user is
  * authenticated.
  *
  * @since 0.1
@@ -195,12 +195,12 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append( "Principal [" + principal + "] " );
+        sb.append( "Principal [" ).append( principal ).append( "] " );
 
         sb.append( "Roles [" );
         if( roles != null ) {
             for( String role : roles ) {
-                sb.append( role + " " );
+                sb.append( role ).append( " " );
             }
         }
         sb.append( "] " );
@@ -208,7 +208,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
         sb.append( "Permissions [" );
         if( permissions != null ) {
             for( Permission permission : permissions ) {
-                sb.append( permission + " " );
+                sb.append( permission ).append( " " );
             }
         }
         sb.append( "] " );
