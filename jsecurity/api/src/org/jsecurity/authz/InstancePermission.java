@@ -69,7 +69,7 @@ import java.util.Set;
  * ability to do anything (create, read, update, delete) <em>any</em> user account.  Such a
  * permission would generally be assigned to an administrative account.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class InstancePermission extends Permission implements Serializable, Cloneable {

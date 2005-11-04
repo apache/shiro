@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
  * Representation of a method invocation that provides information required
  * for authorization.
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  */
 public interface MethodInvocation extends AuthorizedAction {

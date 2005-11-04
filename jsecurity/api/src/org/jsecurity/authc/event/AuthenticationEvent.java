@@ -32,8 +32,7 @@ import java.util.EventObject;
 /**
  * General event concerning the authentication of a particular account.
  *
- * @since 1.0
- * @author Jeremy Haile
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class AuthenticationEvent extends EventObject {

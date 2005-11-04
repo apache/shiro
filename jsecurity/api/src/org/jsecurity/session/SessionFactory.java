@@ -40,7 +40,7 @@ import java.net.InetAddress;
  * <p>All interaction with a secure system is done in the course of a Session, even if that
  * Session only exists over the course of a single method invocation.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SessionFactory {

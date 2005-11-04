@@ -34,10 +34,10 @@ import java.util.Collection;
  * in a framework-independent manner.  Instead of forcing a JSecurity user to
  * implement <tt>User</tt> or <tt>Role</tt> interfaces and being invasive on an application's
  * data model, the application must instead only implement this interface to represent such
- * data.  This enables a cleaner pluggable implementation and abstracts JSecurity classes away
- * from an application's core classes.
+ * data.  This enables a cleaner pluggable implementation and abstracts an application's
+ * core classes away from JSecurity.
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

@@ -32,7 +32,7 @@ package org.jsecurity.authz;
  * authentication because authorization data (roles, permissions, etc) must always be associated
  * with a known identity.  Such a known identity can only be obtained upon a successful log-in.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class UnauthenticatedException extends AuthorizationException {

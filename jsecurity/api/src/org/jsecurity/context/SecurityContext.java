@@ -42,7 +42,7 @@ import java.util.Properties;
  * {@link SecurityContextAccessor} is described in detail in the {@link #getAccessor()}
  * JavaDoc.</p>
  *
- * @since 1.0
+ * @since 0.1
  * @see SecurityContextAccessor
 
  * @author Jeremy Haile

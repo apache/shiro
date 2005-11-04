@@ -29,32 +29,43 @@ import org.jsecurity.authc.AuthenticationToken;
 
 /**
  * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support
- * specific types of <em>authentication tokens</em>.  Please see the
- * {@link org.jsecurity.authc.Authenticator} class API to understand how
- * <tt>authentication token</tt>s function.
+ * specific types of {@link AuthenticationToken AuthenticationToken}s.
  *
  * <p>An implementation of this class can be used
  *    in any JSecurity compatible PAM (Pluggable Authentication Module) implementation.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface AuthenticationModule {
 
     /**
-     * Returns true if this module can authenticate subjects with <tt>authentication token</tt>
-     * instances of the specified Class, false otherwise.
+     * Returns true if this module can authenticate subjects with
+     * {@link AuthenticationToken AuthenticationToken} instances of the specified Class,
+     * false otherwise.
      *
      * <p>If the module does not support the specified type, it will not be used to authenticate any
      * tokens of that type.
      *
-     * @param tokenClass the <tt>authentication token</tt> Class to check for support.
+     * @param tokenClass the <tt>AuthenticationToken</tt> Class to check for support.
      *
-     * @return true if this module can authenticate subjects with tokens of the
+     * @return true if this module can authenticate subjects represented by tokens of the
      * specified class, false otherwise.
      */
     boolean supports( Class tokenClass );
 
+    /**
+     * Returns account information for the account associated with the specified <tt>token</tt>,
+     * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
+     *
+     * @param token the application-specific representation of an account principal and credentials.
+     *
+     * @return the account information for the account associated with the specified <tt>token</tt>,
+     * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
+     *
+     * @throws AuthenticationException if there is an error obtaining obtaining or
+     * constructing an AuthenticationInfo based on the specified <tt>token</tt>.
+     */
     AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
 
 }

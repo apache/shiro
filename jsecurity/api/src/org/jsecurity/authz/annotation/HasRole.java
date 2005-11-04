@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  *
  * @see org.jsecurity.authz.AuthorizationContext#hasRole(String)
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  */
 @Target(ElementType.METHOD)

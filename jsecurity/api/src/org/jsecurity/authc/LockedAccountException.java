@@ -27,7 +27,7 @@ package org.jsecurity.authc;
 /**
  * Thrown when attempting to authenticate and the corresponding account has been locked.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class LockedAccountException extends AccountException {

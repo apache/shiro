@@ -28,7 +28,7 @@ package org.jsecurity.session.event;
  * Listener interface to be implemented by objects to be notified of
  * events related to session events.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SessionEventListener {

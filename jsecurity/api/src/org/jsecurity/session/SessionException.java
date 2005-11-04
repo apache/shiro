@@ -32,7 +32,7 @@ import java.io.Serializable;
  * General security exception attributed to problems during interaction with the system during
  * a session.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class SessionException extends JSecurityException {

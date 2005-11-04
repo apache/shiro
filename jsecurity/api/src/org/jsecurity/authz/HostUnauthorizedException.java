@@ -33,7 +33,7 @@ import java.net.InetAddress;
  *
  * @see org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class HostUnauthorizedException extends UnauthorizedException {

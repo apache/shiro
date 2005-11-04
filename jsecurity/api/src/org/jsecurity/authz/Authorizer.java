@@ -30,7 +30,7 @@ package org.jsecurity.authz;
  * {@link AuthorizationContext AuthorizationContext} is permitted to execute a specific
  * {@link AuthorizedAction AuthorizedAction}.
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

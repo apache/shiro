@@ -31,7 +31,7 @@ import java.io.Serializable;
  * stopped.  A session may be stopped in any number of ways, most commonly due to explicit
  * stopping (e.g. from logging out), or due to expiration.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class StoppedSessionException extends InvalidSessionException {

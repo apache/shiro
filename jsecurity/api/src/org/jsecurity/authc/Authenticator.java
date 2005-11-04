@@ -27,35 +27,16 @@ package org.jsecurity.authc;
 import org.jsecurity.authz.AuthorizationContext;
 
 /**
- * An Authenticator is responsible for authenticating users by verifying submitted
- * <em>authentication tokens</em>
+ * An Authenticator is responsible for authenticating accounts in an application.  It
+ * is one of the primary entry points into the JSecurity API.
  *
- * <p>An <tt>authentication token</tt> is any Object representation of a user's principals and their
- * supporting credentials that an <tt>Authenticator</tt> would need to perform an authentication.
- * It is a consolidation of the user principals and credentials submitted to the system by the user.
+ * <p>Although not a requirement, there is usually only a single Authenticator configured for
+ * an application.  Enabling Pluggable Authentication Module (PAM) behavior
+ * (Two Phase Commit, etc.) is usually achieved by the single <tt>Authenticator</tt> coordinating
+ * and interacting with an application-configured set of
+ * {@link org.jsecurity.authc.module.AuthenticationModule AuthenticationModule}s.
  *
- * <p>Common implementations of an <tt>authentication token</tt> would have username/password
- * pairs, userid/public key combinations, or anything else you can think of.  The token can be
- * anything needed by an {@link Authenticator} to authenticate properly.
- *
- * <p>If you are familiar with JAAS, an <tt>authentication token</tt> behaves in the same way as a
- * {@link javax.security.auth.callback.Callback} does, but without the imposition of forcing JAAS login
- * symantics, such as requiring you to implement a
- * {@link javax.security.auth.callback.CallbackHandler CallbackHandler} and all the framework that
- * implies.
- *
- * <p>You are free to acquire a user's principals and credentials however you wish and
- * then submit them to the JSecurity framework in the form of any implementation.  We
- * also think the name <em>authentication token</em> more accurately reflects its true purpose
- * in a login framework, whereas <em>Callback</em> is less obvious.
- *
- * <p><b>Implementation Note:</b> It is often the case that authentication submissions
- * are done in client/server systems, where the token would be created on the client tier and
- * sent over the wire to a remote server where the actual authentication process occurs.  If this
- * is the case in your system, ensure your <tt>authentication token</tt> class implements the
- * {@link java.io.Serializable} interface.
- *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
@@ -63,6 +44,13 @@ public interface Authenticator {
 
     /**
      * Authenticates a user based on the submitted <tt>authenticationToken</tt>.
+     *
+     * <p>If the authentication is successful, an {@link AuthorizationContext AuthorizationContext}
+     * is returned that represents the authenticated user's access rights.
+     *
+     * Because authorization operations can only occur under the context of a known and valid
+     * identity, an account's <tt>AuthorizationContext</tt> is only available after a successful
+     * log-in, when the identity has been verified.
      *
      * @param authenticationToken any representation of a user's principals and credentials
      * submitted during an authentication attempt.

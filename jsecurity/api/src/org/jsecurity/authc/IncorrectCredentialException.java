@@ -35,7 +35,7 @@ package org.jsecurity.authc;
  * the user know if they entered in an incorrect credential is at the discretion of those
  * responsible for defining the view and what happens when this exception occurs.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class IncorrectCredentialException extends CredentialException {

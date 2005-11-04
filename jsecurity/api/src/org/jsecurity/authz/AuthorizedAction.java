@@ -32,7 +32,7 @@ package org.jsecurity.authz;
  * <p>Although this interface does not define any behavior for implementing classes, it does
  * provide type-safety for JSecurity components expecting them.
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

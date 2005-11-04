@@ -28,7 +28,7 @@ package org.jsecurity.authc;
  * Exception thrown due to a problem with the account
  * under which an authentication attempt is being executed.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AccountException extends AuthenticationException {
