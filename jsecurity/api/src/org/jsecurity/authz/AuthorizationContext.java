@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @see org.jsecurity.authc.Authenticator
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */

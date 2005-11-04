@@ -33,7 +33,7 @@ package org.jsecurity.authz.module;
  *
  * @see AuthorizationModule
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

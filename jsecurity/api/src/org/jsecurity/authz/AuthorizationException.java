@@ -29,7 +29,7 @@ import org.jsecurity.JSecurityException;
 /**
  * Exception thrown if there is a problem during authorization.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AuthorizationException extends JSecurityException {

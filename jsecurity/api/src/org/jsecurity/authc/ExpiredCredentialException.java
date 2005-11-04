@@ -33,7 +33,7 @@ package org.jsecurity.authc;
  * invoking the authentication might catch this exception and redirect the user to an appropriate
  * view to allow them to update their password.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class ExpiredCredentialException extends CredentialException {

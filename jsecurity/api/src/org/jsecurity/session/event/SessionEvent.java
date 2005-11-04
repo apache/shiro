@@ -32,7 +32,7 @@ import java.util.EventObject;
 /**
  * General event concerning a {@link org.jsecurity.session.Session} instance.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class SessionEvent extends EventObject {

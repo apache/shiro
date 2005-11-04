@@ -100,10 +100,15 @@ public class DAOAuthenticationModule implements AuthenticationModule {
         AuthenticationInfo info;
         try {
             info = authenticationDao.getAuthenticationInfo( accountIdentifier );
-        } catch (Exception e) {
+        } catch( AuthenticationException ae ) {
+            //the dao already formulated a meaningful AuthenticationException, just let it
+            //propagate:
+            throw ae;
+        } catch (Throwable t) {
+            //probably unexpected exception.  Wrap and propagate:
             throw new AuthenticationException(
                 "Account [" + accountIdentifier + "] could not be authenticated because an error " +
-                "occurred during authentication.", e );
+                "occurred during authentication.", t );
         }
 
         if( info == null ) {

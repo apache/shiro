@@ -31,7 +31,7 @@ import java.security.Principal;
  * <p>A simple username/password authentication token.  This class is included in the API
  * since it is a very widely used authentication mechanism.</p>
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
@@ -60,6 +60,10 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted
      * during an authentication attempt.
+     *
+     * <p>This is a convience constructor and maintains the password internally via a character
+     * array, i.e. <tt>password.toCharArray();</tt>
+     *
      * @param username the username submitted for authentication
      * @param password the password string submitted for authentication
      */
@@ -172,6 +176,14 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
 
     }
 
+    /**
+     * Returns the String representation.  It does not include the password in the resulting
+     * string for security reasons to prevent accidentially printing out a password
+     * that might be widely viewable).
+     *
+     * @return the String representation of the <tt>UsernamePasswordToken</tt>, omitting
+     * the password.
+     */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append( getClass().getName() );

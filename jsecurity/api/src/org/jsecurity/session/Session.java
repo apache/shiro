@@ -42,7 +42,7 @@ import java.util.Date;
  * <p>See the {@link SessionFactory#getSession(java.io.Serializable) SessionFactory.getSession(Serializable)}
  * JavaDoc for more on the benefits of a POJO-based <tt>Session</tt> framework.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface Session {

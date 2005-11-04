@@ -35,7 +35,7 @@ import org.jsecurity.JSecurityException;
  * file cannot be loaded, although it could be thrown when the security context
  * cannot be loaded for any reason.</p>
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  */
 public class SecurityContextException extends JSecurityException {

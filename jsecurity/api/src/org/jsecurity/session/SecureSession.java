@@ -44,7 +44,7 @@ import org.jsecurity.authz.AuthorizationContext;
  * a {@link Session Session} to enforce compile-time safety against calling those methods until
  * after you can guarantee a successful authentication.
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public interface SecureSession extends Session, AuthorizationContext {

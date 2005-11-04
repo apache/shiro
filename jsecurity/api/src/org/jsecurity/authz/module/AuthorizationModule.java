@@ -37,7 +37,7 @@ import org.jsecurity.authz.AuthorizedAction;
  * {@link org.jsecurity.authz.Authorizer Authorizer} will decide
  * whether or not to authorize the user to perform the action.
  *
- * @since 1.0
+ * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */

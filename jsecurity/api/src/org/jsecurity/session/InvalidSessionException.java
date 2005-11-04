@@ -38,7 +38,7 @@ import java.io.Serializable;
  * @see ExpiredSessionException
  * @see UnknownSessionException
  *
- * @since 1.0
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class InvalidSessionException extends SessionException {
