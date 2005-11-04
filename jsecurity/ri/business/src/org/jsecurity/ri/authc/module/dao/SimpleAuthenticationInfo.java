@@ -25,7 +25,7 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
-import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.module.AuthenticationInfo;
 
 import java.security.Permission;
 import java.security.Principal;
@@ -33,11 +33,11 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Simple implementation of the {@link AuthenticationInfo} interface that
+ * Simple implementation of the {@link org.jsecurity.authc.module.AuthenticationInfo} interface that
  * contains all necessary information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * @see org.jsecurity.authc.AuthenticationInfo
+ * @see org.jsecurity.authc.module.AuthenticationInfo
  *
  * @since 0.1
  * @author Jeremy Haile

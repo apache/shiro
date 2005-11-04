@@ -26,7 +26,7 @@
 
 package org.jsecurity.ri.authc.module.dao;
 
-import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.module.AuthenticationInfo;
 
 import java.security.Principal;
 

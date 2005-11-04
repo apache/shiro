@@ -25,7 +25,6 @@
 package org.jsecurity.authc.module;
 
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
