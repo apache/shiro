@@ -44,7 +44,7 @@ import java.security.Permission;
  * &#64;HasPermission(
  *     type=java.io.FilePermssion.class,
  *     target="aFile.txt",
- *     actions={"read","write"}
+ *     actions="read,write"
  * )
  * void someMethod();
  * </pre>
@@ -77,14 +77,14 @@ public @interface HasPermission {
      *
      * <p>For example, the annotation:</br>
      * <blockquote><pre>
-     * &#64;HasPermission(type=java.io.FilePermission.class,target="aFile.txt",actions={"read","write"})
+     * &#64;HasPermission(type=java.io.FilePermission.class,target="aFile.txt",actions="read,write")
      * void doSomething() { ... }
      * </pre></blockquote>
      * means &quot;the current executor must have permission to read from <em>and</em> write to
      * the file 'aFile.txt' in order for the <tt>doSomething()</tt> method to execute&quot;
      * <p>and the annotation:<br/>
      * <blockquote><pre>
-     * &#64;HasPermission(type=java.io.FilePermission.class,actions={"read"})
+     * &#64;HasPermission(type=java.io.FilePermission.class,actions="read")
      * void doSomething() { ... }
      * </pre></blockquote>
      * means &quot;the current executor must have permission to read <em>all</em> files in order
@@ -144,7 +144,7 @@ public @interface HasPermission {
      * <pre>&#64;HasPermission(
      *     type=my.pkg.security.UserPermission.class,
      *     targetPath=[0].id
-     *     actions={"create","update"}
+     *     actions="create,update"
      * )
      * public void saveUser( User aUser ) { ... }</pre>
      *
@@ -162,7 +162,7 @@ public @interface HasPermission {
      * <pre>&#64;HasPermission(
      *     type=my.pkg.security.PostalAddressPermission.class,
      *     targetPath=[2].parent.postalAddress.id
-     *     actions={"update","delete"}
+     *     actions="update,delete"
      * )
      * void foo( String aString, int anInt, Child aChild, Address aBoolean) { ... }</pre>
      *
@@ -191,6 +191,6 @@ public @interface HasPermission {
      * be able to perform <b>all</b> actions defined for the permission {@link #type type}.
      * @see java.security.Permission#getActions()
      */
-    String[] actions() default {"*"};
+    String actions() default "*";
 }
 

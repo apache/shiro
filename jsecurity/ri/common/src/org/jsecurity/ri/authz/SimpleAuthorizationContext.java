@@ -25,6 +25,8 @@
 
 package org.jsecurity.ri.authz;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
 
@@ -53,6 +55,11 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * Commons-logger.
+     */
+    protected transient final Log logger = LogFactory.getLog( getClass() );
+
     /**
      * The principal for this auth context.
      */
@@ -135,11 +142,28 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
      * @see AuthorizationContext#hasPermission(java.security.Permission)
      */
     public boolean hasPermission(Permission permission) {
-        for( Permission perm : permissions ) {
-            if( perm.implies( permission ) ) {
-                return true;
+
+        if( permissions != null ) {
+            for( Permission perm : permissions ) {
+                if( perm.implies( permission ) ) {
+                    return true;
+                }
             }
         }
+
+        if( logger.isDebugEnabled() ) {
+            logger.debug( "Context does not have permission [" + permission + "]" );
+
+            if( permissions == null ) {
+                logger.debug( "No permissions are associated with this context.  Permissions are null." );
+            } else {
+                logger.debug( "Has permissions:" );
+                for( Permission perm : permissions ) {
+                    logger.debug( "\t" + perm );
+                }
+            }
+        }
+
         return false;
     }
 
@@ -160,9 +184,12 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
      * @see AuthorizationContext#hasAllPermissions(java.util.Collection<java.security.Permission>)
      */
     public boolean hasAllPermissions(Collection<Permission> permissions) {
-        for( Permission perm : permissions ) {
-            if( !hasPermission(perm) ) {
-                return false;
+
+        if( permissions != null ) {
+            for( Permission perm : permissions ) {
+                if( !hasPermission(perm) ) {
+                    return false;
+                }
             }
         }
         return true;
@@ -183,12 +210,14 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /**
      * @see AuthorizationContext#checkPermissions(java.util.Collection<java.security.Permission>)
      */
-    public void checkPermissions(Collection<Permission>
-        permissions) throws AuthorizationException {
-        for( Permission permission : permissions ) {
-            if( !hasPermission( permission ) ) {
-               throw new AuthorizationException( "User [" + getPrincipal().getName() + "] does " +
-                                                 "not have permission [" + permission.toString() + "]" );
+    public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
+
+        if( permissions != null ) {
+            for( Permission permission : permissions ) {
+                if( !hasPermission( permission ) ) {
+                   throw new AuthorizationException( "User [" + getPrincipal().getName() + "] does " +
+                                                     "not have permission [" + permission.toString() + "]" );
+                }
             }
         }
     }
