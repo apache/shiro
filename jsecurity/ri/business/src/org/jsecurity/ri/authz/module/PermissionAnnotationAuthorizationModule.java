@@ -50,7 +50,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     public PermissionAnnotationAuthorizationModule() {
         setAnnotationClass( HasPermission.class );
     }
-                                                                
+
     private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
         int propertyStartIndex = -1;
 
@@ -78,7 +78,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     }
 
     private Permission instantiatePermission( Class<? extends Permission> clazz,
-                                              String name, String[] actions ) {
+                                              String name, String actions ) {
         // Instantiate the permission instance using reflection
         Permission permission;
         try {
@@ -104,7 +104,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         if ( targetPath.equals( "" ) ) {
             targetPath = null;
         }
-        String[] actions = hp.actions();
+        String actions = hp.actions();
 
         if ( targetPath != null ) {
             try {

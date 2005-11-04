@@ -81,9 +81,9 @@ public class AuthorizationInterceptor implements InitializingBean, MethodInterce
 
             this.authorizer.checkAuthorization( authzCtx, jsecurityMI );
         } else {
-            String msg = "No AuthorizationContext available via " +
+            String msg = "User is not authenticated.  No AuthorizationContext available via " +
                 SecurityContext.class.getName() + ".getAuthorizationContext().  " +
-                "Authorization will be denied.  User may not be authenticated.";
+                "Authorization will be denied.";
             throw new UnauthorizedException( msg );
         }
 
