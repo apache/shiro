@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authc;
+package org.jsecurity.authc.module;
 
 import java.security.Permission;
 import java.security.Principal;

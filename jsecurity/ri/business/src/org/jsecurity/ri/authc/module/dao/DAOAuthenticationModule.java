@@ -27,6 +27,7 @@ package org.jsecurity.ri.authc.module.dao;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.module.AuthenticationModule;
+import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.ri.authc.credential.CredentialMatcher;
 import org.jsecurity.ri.authc.credential.PlainTextCredentialMatcher;
 
@@ -40,7 +41,7 @@ import java.security.Principal;
  *
  * <p>This module is intended to encapsulate the generic behavior of
  * authenticating a user from a username and password based on the
- * {@link org.jsecurity.authc.AuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
+ * {@link org.jsecurity.authc.module.AuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
  *
  * @since 0.1
  * @author Jeremy Haile
