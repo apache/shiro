@@ -37,10 +37,6 @@ import java.util.Properties;
  * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API. This
  * class provides access to the current context of the calling code, such as its
  * {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}</p>
- * <p/>
- * <p>The algorithm used in retrieving a <code>SecurityContext</code> using a
- * {@link SecurityContextAccessor} is described in detail in the {@link #getAccessor()}
- * JavaDoc.</p>
  *
  * @since 0.1
  * @see SecurityContextAccessor
