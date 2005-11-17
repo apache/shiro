@@ -136,20 +136,38 @@ public class SimpleSession implements Session, Serializable {
         this.stopTimestamp = new Date();
     }
 
+    private Map<Object,Object> getAttributesLazy() {
+        Map<Object,Object> attributes = getAttributes();
+        if ( attributes == null ) {
+            attributes = new HashMap<Object,Object>();
+            setAttributes( attributes );
+        }
+        return attributes;
+    }
+
     public Object getAttribute( Object key ) {
-        return getAttributes().get( key );
+        Map<Object,Object> attributes = getAttributes();
+        if ( attributes == null ) {
+            return null;
+        }
+        return attributes.get( key );
     }
 
     public void setAttribute( Object key, Object value ) {
         if ( value == null ) {
             removeAttribute( key );
         } else {
-            getAttributes().put( key, value );
+            getAttributesLazy().put( key, value );
         }
     }
 
     public Object removeAttribute( Object key ) {
-        return getAttributes().remove( key );
+        Map<Object,Object> attributes = getAttributes();
+        if ( attributes == null ) {
+            return null;
+        } else {
+            return attributes.remove( key );
+        }
     }
 
 }
