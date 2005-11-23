@@ -61,7 +61,7 @@ import java.util.Set;
  *
  * @see ActiveDirectoryInfo
  * @see #getActiveDirectoryInfo(String, javax.naming.ldap.LdapContext)
- * @see #buildAuthenticationInfo(String, char[], ActiveDirectoryInfo) 
+ * @see #buildAuthenticationInfo(String, char[], ActiveDirectoryInfo)
  *
  * @author Tim Veil
  * @author Jeremy Haile
@@ -261,7 +261,6 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
     private ActiveDirectoryInfo getActiveDirectoryInfo(String username, LdapContext ctx) throws NamingException {
 
         Set<String> groupNames = new HashSet<String>();
-        Set<String> emailAddresses = new HashSet<String>();
 
         String[] returnedAtts = {"memberOf"};
 
@@ -296,7 +295,7 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
         }
 
         if( log.isDebugEnabled() ) {
-            log.debug( "Returning active directory info with roles [" + groupNames + "] and e-mails [" + emailAddresses + "]" );
+            log.debug( "Returning active directory info with roles [" + groupNames + "]" );
         }
 
         ActiveDirectoryInfo info = new ActiveDirectoryInfo();
