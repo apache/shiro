@@ -24,9 +24,12 @@
  */
 package org.jsecurity.spring.security.interceptor;
 
+import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.annotation.HasPermission;
 import org.jsecurity.authz.annotation.HasRole;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
 
@@ -35,7 +38,10 @@ import java.lang.reflect.Method;
  *
  * @author Les Hazlewood
  */
-public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
+public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor implements InitializingBean {
+
+
+    private Authorizer authorizer;
 
     /**
      * Create a new AuthorizationAttributeSourceAdvisor.
@@ -59,6 +65,14 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     /**
+     * Sets the authorizer used to configure the default security interceptor with.
+     * This is ignored if a security interceptor is configured.
+     */
+    public void setAuthorizer(Authorizer authorizer) {
+        this.authorizer = authorizer;
+    }
+
+    /**
      * Returns <tt>true</tt> if the method has a JSecurity <tt>HasRole</tt> or
      * <tt>HasPermission</tt> annotation, false otherwise.
      * @param method the method to check for a JSecurity annotation
@@ -74,4 +88,12 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
                  (method.getAnnotation( HasRole.class ) != null ) );
     }
 
+    public void afterPropertiesSet() throws Exception {
+        if( getAdvice() == null ) {
+            AuthorizationInterceptor interceptor = new AuthorizationInterceptor();
+            Assert.notNull( authorizer, "An authorizer must be configured if no security interceptor is explicitly configured." );
+            interceptor.setAuthorizer( authorizer );
+            setAdvice( interceptor);
+        }
+    }
 }
