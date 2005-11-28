@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.IncorrectCredentialException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
@@ -225,6 +226,9 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
             return getActiveDirectoryInfo(username, ctx);
 
 
+        } catch (javax.naming.AuthenticationException e) {
+            throw new IncorrectCredentialException( "User could not be authenticated with LDAP server.", e );
+
         } catch (NamingException e) {
             throw new AuthenticationException( "LDAP naming error while attempting to authenticate user.", e );
 
@@ -317,4 +321,17 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
         return values;
     }
 
+    public static void main(String[] args) {
+        ActiveDirectoryAuthenticationModule m = new ActiveDirectoryAuthenticationModule();
+        m.setUrl( "ldap://10.0.0.2:389" );
+        m.setSearchBase( "OU=SolTech,DC=Solad,DC=local" );
+        m.setPrincipalSuffix( "@Solad.local" );
+
+        UsernamePasswordToken t = new UsernamePasswordToken( "jhaile", "differen" );
+        AuthenticationInfo ai = m.getAuthenticationInfo( t );
+        System.out.println( ai );
+        for( String roleName : ai.getRoles() ) {
+            System.out.println( roleName );
+        }
+    }
 }

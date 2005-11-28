@@ -208,4 +208,8 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     |               M E T H O D S               |
     ============================================*/
 
+    public String toString() {
+        return "Authentication information for user [" + principal + "]";
+    }
+
 }
