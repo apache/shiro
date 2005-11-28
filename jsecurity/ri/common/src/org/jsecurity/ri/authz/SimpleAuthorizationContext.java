@@ -63,17 +63,17 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     /**
      * The principal for this auth context.
      */
-    private Principal principal;
+    protected Principal principal;
 
     /**
      * The roles that apply to this authorization context.
      */
-    private Collection<String> roles;
+    protected Collection<String> roles;
 
     /**
      * The permissions that apply to this authorization context.
      */
-    private Collection<Permission> permissions;
+    protected Collection<Permission> permissions;
 
 
     /*--------------------------------------------
