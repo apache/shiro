@@ -52,6 +52,6 @@ public class DelegatingAuthorizationContextFactory extends AbstractAuthorization
     }
 
     protected AuthorizationContext onCreateAuthorizationContext( AuthenticationInfo info ) {
-        return new DelegatingAuthorizationContext( info.getPrincipal(), this.realm );
+        return new DelegatingAuthorizationContext( info.getPrincipals(), this.realm );
     }
 }

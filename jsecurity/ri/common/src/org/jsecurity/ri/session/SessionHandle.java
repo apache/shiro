@@ -26,6 +26,7 @@ package org.jsecurity.ri.session;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.ExpiredSessionException;
@@ -56,6 +57,7 @@ import java.util.List;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class SessionHandle implements SecureSession {
 
@@ -224,6 +226,18 @@ public class SessionHandle implements SecureSession {
 
     public Principal getPrincipal() {
         return getAuthorizationContext().getPrincipal();
+    }
+
+    public Collection<Principal> getAllPrincipals() {
+        return getAuthorizationContext().getAllPrincipals();
+    }
+
+    public Principal getPrincipalByType(Class principalType) throws NoSuchPrincipalException {
+        return getAuthorizationContext().getPrincipalByType( principalType );
+    }
+
+    public Collection<Principal> getAllPrincipalsByType(Class principalType) {
+        return getAuthorizationContext().getAllPrincipalsByType( principalType );
     }
 
     public boolean hasRole( String roleIdentifier ) {

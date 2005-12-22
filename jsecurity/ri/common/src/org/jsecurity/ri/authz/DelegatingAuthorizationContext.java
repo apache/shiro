@@ -26,11 +26,11 @@ package org.jsecurity.ri.authz;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.NoSuchPrincipalException;
 
 import java.security.Permission;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Simple implementation of the <tt>AuthorizationContext</tt> interface that delegates all
@@ -55,71 +55,107 @@ import java.util.List;
  * paradigm and should be used whenever possible.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class DelegatingAuthorizationContext implements AuthorizationContext {
 
-    private Principal subjectIdentifier;
+    protected List<Principal> principals;
 
-    private Realm realm;
+    protected Realm realm;
 
     public DelegatingAuthorizationContext() {}
 
     public DelegatingAuthorizationContext( Principal subjectIdentifier, Realm realm ) {
-        setSubjectIdentifier( subjectIdentifier );
-        setRealm( realm );
+        this.principals = new ArrayList<Principal>(1);
+        this.principals.add( subjectIdentifier );
+        this.realm = realm;
     }
 
-    public Principal getSubjectIdentifier() {
-        return subjectIdentifier;
-    }
-
-    public void setSubjectIdentifier( Principal subjectIdentifier ) {
-        this.subjectIdentifier = subjectIdentifier;
+    public DelegatingAuthorizationContext(List<Principal> principals, Realm realm) {
+        this.principals = principals;
+        this.realm = realm;
     }
 
     public Realm getRealm() {
         return realm;
     }
 
-    public void setRealm( Realm realm ) {
-        this.realm = realm;
+    /**
+     * If multiple principals are defined, this method will return the first
+     * principal in the list of principals.
+     * @see org.jsecurity.authz.AuthorizationContext#getPrincipal()
+     */
+    public Principal getPrincipal() {
+        if( principals.size() < 1 ) {
+            throw new IllegalStateException( "No principals are associated with this authorization context." );
+        }
+        return this.principals.get(0);
     }
 
-    public Principal getPrincipal() {
-        return getSubjectIdentifier();
+    /**
+     * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipals()
+     */
+    public Collection<Principal> getAllPrincipals() {
+        return principals;
+    }
+
+    /**
+     * @see org.jsecurity.authz.AuthorizationContext#getPrincipalByType(Class) ()
+     */
+    public Principal getPrincipalByType(Class principalType) throws NoSuchPrincipalException {
+        for( Principal principal : principals ) {
+            if( principalType.isAssignableFrom( principal.getClass() ) ) {
+                return principal;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipalsByType(Class)()
+     */
+    public Collection<Principal> getAllPrincipalsByType(Class principalType) {
+        Set<Principal> principalsOfType = new HashSet<Principal>();
+
+        for( Principal principal : principals ) {
+            if( principalType.isAssignableFrom( principal.getClass() ) ) {
+                principalsOfType.add( principal );
+            }
+        }
+        return principalsOfType;
     }
 
     public boolean hasRole( String roleIdentifier ) {
-        return realm.hasRole( subjectIdentifier, roleIdentifier );
+        return realm.hasRole( getPrincipal(), roleIdentifier );
     }
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
-        return realm.hasRoles( subjectIdentifier, roleIdentifiers );
+        return realm.hasRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
-        return realm.hasAllRoles( subjectIdentifier, roleIdentifiers );
+        return realm.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean hasPermission( Permission permission ) {
-        return realm.isPermitted( subjectIdentifier, permission );
+        return realm.isPermitted( getPrincipal(), permission );
     }
 
     public boolean[] hasPermissions( List<Permission> permissions ) {
-        return realm.isPermitted( subjectIdentifier, permissions );
+        return realm.isPermitted( getPrincipal(), permissions );
     }
 
     public boolean hasAllPermissions( Collection<Permission> permissions ) {
-        return realm.isPermittedAll( subjectIdentifier, permissions );
+        return realm.isPermittedAll( getPrincipal(), permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {
-        realm.checkPermission( subjectIdentifier, permission );
+        realm.checkPermission( getPrincipal(), permission );
     }
 
     public void checkPermissions( Collection<Permission> permissions )
         throws AuthorizationException {
-        realm.checkPermissions( subjectIdentifier, permissions );
+        realm.checkPermissions( getPrincipal(), permissions );
     }
 
 }

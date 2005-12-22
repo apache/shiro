@@ -29,8 +29,10 @@ import org.jsecurity.authc.module.AuthenticationInfo;
 
 import java.security.Permission;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Simple implementation of the {@link org.jsecurity.authc.module.AuthenticationInfo} interface that
@@ -51,7 +53,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private Principal principal = null;
+    private List<Principal> principals;
 
     private Object credentials;
 
@@ -85,20 +87,23 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     |         C O N S T R U C T O R S           |
     ============================================*/
     public SimpleAuthenticationInfo() {
+        this.principals = new ArrayList<Principal>();
         this.roles = new HashSet<String>();
         this.permissions = new HashSet<Permission>();
     }
 
 
     public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles) {
-        this.principal = principal;
+        this.principals = new ArrayList<Principal>();
+        this.principals.add( principal );
         this.credentials = credentials;
         this.roles = roles;
     }
 
 
     public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, Collection<Permission> permissions) {
-        this.principal = principal;
+        this.principals = new ArrayList<Principal>();
+        this.principals.add( principal );
         this.credentials = credentials;
         this.roles = roles;
         this.permissions = permissions;
@@ -106,7 +111,8 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
 
 
     public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principal = principal;
+        this.principals = new ArrayList<Principal>();
+        this.principals.add( principal );
         this.credentials = credentials;
         this.roles = roles;
         this.accountLocked = accountLocked;
@@ -116,7 +122,8 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
 
 
     public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principal = principal;
+        this.principals = new ArrayList<Principal>();
+        this.principals.add( principal );
         this.credentials = credentials;
         this.roles = roles;
         this.permissions = permissions;
@@ -125,17 +132,56 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
         this.concurrentLoginsAllowed = concurrentLoginsAllowed;
     }
 
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles) {
+        this.principals = principals;
+        this.credentials = credentials;
+        this.roles = roles;
+    }
+
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles, Collection<Permission> permissions) {
+        this.principals = principals;
+        this.credentials = credentials;
+        this.roles = roles;
+        this.permissions = permissions;
+    }
+
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.principals = principals;
+        this.credentials = credentials;
+        this.roles = roles;
+        this.accountLocked = accountLocked;
+        this.credentialsExpired = credentialsExpired;
+        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
+    }
+
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.principals = principals;
+        this.credentials = credentials;
+        this.roles = roles;
+        this.permissions = permissions;
+        this.accountLocked = accountLocked;
+        this.credentialsExpired = credentialsExpired;
+        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
+    }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
     public Principal getPrincipal() {
-        return principal;
+        return this.principals.get(0);
     }
 
-    public void setPrincipal( Principal principal ) {
-        this.principal = principal;
+    public List<Principal> getPrincipals() {
+        return principals;
+    }
+
+    public void setPrincipals(List<Principal> principals) {
+        this.principals = principals;
+    }
+
+    public void addPrincipal( Principal principal ) {
+        this.principals.add( principal );
     }
 
     public Object getCredentials() {
@@ -209,7 +255,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     ============================================*/
 
     public String toString() {
-        return "Authentication information for user [" + principal + "]";
+        return "Authentication information for user [" + getPrincipals() + "]";
     }
 
 }

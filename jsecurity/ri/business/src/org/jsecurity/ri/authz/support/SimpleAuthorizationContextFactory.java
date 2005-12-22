@@ -31,22 +31,25 @@ import org.jsecurity.ri.authz.SimpleAuthorizationContext;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 
 /**
- * Created on: Oct 24, 2005 4:35:13 PM
+ * Implementation of the {@link org.jsecurity.ri.authz.AuthorizationContextFactory}
+ * interface that creates a simple authorization context.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class SimpleAuthorizationContextFactory extends AbstractAuthorizationContextFactory {
 
     public SimpleAuthorizationContextFactory(){}
 
     public AuthorizationContext onCreateAuthorizationContext( AuthenticationInfo info ) {
-        Principal subjectIdentity = info.getPrincipal();
+        List<Principal> principals = info.getPrincipals();
         Collection<String> roles = info.getRoles();
         Collection<Permission> perms = info.getPermissions();
 
-        return new SimpleAuthorizationContext( subjectIdentity, roles, perms );
+        return new SimpleAuthorizationContext( principals, roles, perms );
     }
 
 }

@@ -29,11 +29,14 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
 
 import java.security.Principal;
+import java.util.Collection;
 
 /**
- * Created on: Oct 24, 2005 4:35:59 PM
+ * Abstract implementation of the <tt>AuthorizationContextFactory</tt> interface that
+ * ensures the given <tt>AuthenticationInfo</tt> is valid.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public abstract class AbstractAuthorizationContextFactory
     implements AuthorizationContextFactory {
@@ -41,9 +44,9 @@ public abstract class AbstractAuthorizationContextFactory
     public AbstractAuthorizationContextFactory(){}
 
     public AuthorizationContext createAuthorizationContext( AuthenticationInfo info ) {
-        Principal subjectIdentifier = info.getPrincipal();
-        if ( subjectIdentifier == null ) {
-            String msg = "AuthenticationInfo parameter must return a non-null principal.";
+        Collection<Principal> principals = info.getPrincipals();
+        if ( principals == null || principals.size() < 1 ) {
+            String msg = "AuthenticationInfo parameter must return at least one, non-null principal.";
             throw new IllegalArgumentException( msg );
         }
         return onCreateAuthorizationContext( info );
