@@ -230,7 +230,7 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
         env.put(Context.REFERRAL, refferal);
 
         if (log.isDebugEnabled()) {
-            log.debug( "Initializing LDAP context using environment properties [" + env + "]" );
+            log.debug( "Initializing LDAP context using URL [" + url + "] for user [" + username + "]." );
         }
 
         LdapContext ctx = null;
