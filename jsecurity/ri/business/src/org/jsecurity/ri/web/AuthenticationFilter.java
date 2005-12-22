@@ -25,18 +25,17 @@
 
 package org.jsecurity.ri.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Description of class.
@@ -53,13 +52,16 @@ public class AuthenticationFilter implements Filter {
     private static final String UNAUTHENTICATED_PATH_PARAM = "unauthenticatedPath";
     private static final String UNAUTHENTICATED_SCHEME_PARAM = "unauthenticatedScheme";
     private static final String UNAUTHENTICATED_SERVERPORT_PARAM = "unauthenticatedServerPort";
+    private static final String EXCLUDED_PATHS_PARAM = "excludedPaths";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    protected final transient Log logger = LogFactory.getLog(getClass());
     private String unauthenticatedPath = DEFAULT_UNAUTHENTICATED_PATH;
     private String unauthenticatedScheme = null;
     private int unauthenticatedServerPort = -1;
+    private Set<String> excludedPaths;
 
 
     /*--------------------------------------------
@@ -98,6 +100,20 @@ public class AuthenticationFilter implements Filter {
         this.unauthenticatedServerPort = unauthenticatedServerPort;
     }
 
+    protected Set<String> getExcludedPaths() {
+        return this.excludedPaths;
+    }
+
+    protected void addExcludedPath(String excludedPath) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Adding path [" + excludedPath + "] to set of excluded paths.");
+        }
+
+        this.excludedPaths.add(excludedPath);
+    }
+
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -130,14 +146,31 @@ public class AuthenticationFilter implements Filter {
         if( unauthenticatedUrlParam != null ) {
             setUnauthenticatedPath( unauthenticatedUrlParam );
         }
+
+        this.excludedPaths = new HashSet<String>();
+
+        // Add the unauthenticated path to the set of excluded paths
+        addExcludedPath(getUnauthenticatedPath());
+
+        String commaSeparatedExcludedPaths = filterConfig.getInitParameter(EXCLUDED_PATHS_PARAM);
+        if (commaSeparatedExcludedPaths != null) {
+            String[] excludedPathArray = commaSeparatedExcludedPaths.split(",");
+            for (String path : excludedPathArray) {
+                addExcludedPath(path);
+            }
+        }
     }
 
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+
         AuthorizationContext authContext = SecurityContext.getAuthorizationContext();
 
-        if( authContext == null ) {
+        String requestedPath = httpRequest.getRequestURI();
+
+        if( authContext == null && !isPathExcluded(requestedPath)) {
             handleUnauthenticatedRequest(request, response);
         } else {
             filterChain.doFilter( request, response );
@@ -145,6 +178,9 @@ public class AuthenticationFilter implements Filter {
 
     }
 
+    private boolean isPathExcluded(String requestedPath) {
+        return excludedPaths.contains(requestedPath);
+    }
 
     private void handleUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws IOException {
         HttpServletRequest httpReq = (HttpServletRequest) request;

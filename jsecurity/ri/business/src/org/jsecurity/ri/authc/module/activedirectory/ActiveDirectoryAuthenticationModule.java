@@ -44,10 +44,8 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Set;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * <p>An {@link AuthenticationModule} that authenticates with an active directory LDAP
@@ -57,12 +55,14 @@ import java.util.Set;
  * list as well.</p>
  *
  * <p>More advanced implementations would likely want to override the
- * {@link #getActiveDirectoryInfo(String, javax.naming.ldap.LdapContext)} and
- * {@link #buildAuthenticationInfo(String, char[], ActiveDirectoryInfo)} methods.</p>
+ * {@link #getLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)} and
+ * {@link #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)} methods.</p>
  *
- * @see ActiveDirectoryInfo
- * @see #getActiveDirectoryInfo(String, javax.naming.ldap.LdapContext)
- * @see #buildAuthenticationInfo(String, char[], ActiveDirectoryInfo)
+ * todo This class needs to be refactored to have an LdapAuthenticationModule superclass
+ *
+ * @see LdapDirectoryInfo
+ * @see #getLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)
+ * @see #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)
  *
  * @author Tim Veil
  * @author Jeremy Haile
@@ -114,6 +114,12 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
      */
     private String refferal = "follow";
 
+    /**
+     * Mapping from fully qualified group names (e.g. CN=Group,OU=Company,DC=MyDomain,DC=local)
+     * as returned by active directory to role names.
+     */
+    private Map<String, String> groupRoleMap;
+
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -145,6 +151,10 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
         this.refferal = refferal;
     }
 
+    public void setGroupRoleMap(Map<String, String> groupRoleMap) {
+        this.groupRoleMap = groupRoleMap;
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -156,43 +166,47 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
     public AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
-        ActiveDirectoryInfo activeDirectoryInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
+        LdapDirectoryInfo ldapDirectoryInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
 
-        return buildAuthenticationInfo( upToken.getUsername(), upToken.getPassword(), activeDirectoryInfo );
+        return buildAuthenticationInfo( upToken.getUsername(), upToken.getPassword(), ldapDirectoryInfo );
     }
 
     /**
-     * Builds an {@link AuthenticationInfo} object to return based on an {@link ActiveDirectoryInfo} object
+     * Builds an {@link AuthenticationInfo} object to return based on an {@link LdapDirectoryInfo} object
      * returned from {@link #performAuthentication(String, char[])}
      *
      * @param username the username of the user being authenticated.
      * @param password the password of the user being authenticated.
-     * @param activeDirectoryInfo the active directory information queried from the active directory
-     * LDAP server.
+     * @param ldapDirectoryInfo the LDAP directory information queried from the LDAP server.
      * @return an instance of {@link AuthenticationInfo} that represents the principal, credentials, and
      * roles that this user has.
      */
-    protected AuthenticationInfo buildAuthenticationInfo(String username, char[] password, ActiveDirectoryInfo activeDirectoryInfo) {
+    protected AuthenticationInfo buildAuthenticationInfo(String username, char[] password, LdapDirectoryInfo ldapDirectoryInfo) {
+        List<Principal> principals = new ArrayList<Principal>( ldapDirectoryInfo.getPrincipals().size() + 1 );
+
         UsernamePrincipal principal = new UsernamePrincipal( username );
 
-        return new SimpleAuthenticationInfo( principal, password, activeDirectoryInfo.getRoleNames() );
+        principals.add( principal );
+        principals.addAll( ldapDirectoryInfo.getPrincipals() );
+
+        return new SimpleAuthenticationInfo( principals, password, ldapDirectoryInfo.getRoleNames() );
     }
 
 
     /**
      * Performs the actual authentication of the user by connecting to the LDAP server, querying it
-     * for user information, and returning an {@link ActiveDirectoryInfo} instance containing the
+     * for user information, and returning an {@link LdapDirectoryInfo} instance containing the
      * results.
      *
      * <p>Typically, users that need special behavior will not override this method, but will instead
-     * override {@link #getActiveDirectoryInfo(String, javax.naming.ldap.LdapContext)}</p>
+     * override {@link #getLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)}</p>
      *
      * @param username the username of the user being authenticated.
      * @param password the password of the user being authenticated.
      *
-     * @return the results of the active directory search.
+     * @return the results of the LDAP directory search.
      */
-    protected ActiveDirectoryInfo performAuthentication(String username, char[] password) {
+    protected LdapDirectoryInfo performAuthentication(String username, char[] password) {
 
         if( searchBase == null ) {
             throw new IllegalStateException( "A search base must be specified." );
@@ -223,7 +237,7 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
         try {
             ctx = new InitialLdapContext(env, null);
 
-            return getActiveDirectoryInfo(username, ctx);
+            return getLdapDirectoryInfo(username, ctx);
 
 
         } catch (javax.naming.AuthenticationException e) {
@@ -247,30 +261,27 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
     }
 
     /**
-     * Builds an active directory info object by querying the given LDAP context for the
+     * Builds an {@link LdapDirectoryInfo} object by querying the given LDAP context for the
      * specified username.  The default implementation queries for all groups that
      * the user is a member of and returns them as roles for that user.
      *
      * <p>This method can be overridden by subclasses to query the LDAP server
      *
-     * @param username the username whose information should be queried from the Active Directory
-     * LDAP server.
-     * @param ctx the LDAP context that is connected to the active directory server.
+     * @param username the username whose information should be queried from the LDAP server.
+     * @param ctx the LDAP context that is connected to the LDAP server.
      *
-     * @return an {@link ActiveDirectoryInfo} instance containing information retrieved from LDAP
+     * @return an {@link LdapDirectoryInfo} instance containing information retrieved from LDAP
      * that can be used to build an {@link AuthenticationInfo} instance to return.
      *
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    private ActiveDirectoryInfo getActiveDirectoryInfo(String username, LdapContext ctx) throws NamingException {
+    protected LdapDirectoryInfo getLdapDirectoryInfo(String username, LdapContext ctx) throws NamingException {
 
-        Set<String> groupNames = new HashSet<String>();
+        LdapDirectoryInfo info = new LdapDirectoryInfo();
 
-        String[] returnedAtts = {"memberOf"};
 
         SearchControls searchCtls = new SearchControls();
         searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        searchCtls.setReturningAttributes(returnedAtts);
 
         String searchFilter = "(&(objectClass=*)(userPrincipalName=" + username + "))";
 
@@ -288,31 +299,46 @@ public class ActiveDirectoryAuthenticationModule implements AuthenticationModule
                 NamingEnumeration ae = attrs.getAll();
                 while( ae.hasMore() ) {
                     Attribute attr = (Attribute) ae.next();
-
-                    if( attr.getID().equals( "memberOf" ) ) {
-                        groupNames.addAll( getAllAttributeValues(attr) );
-                    } else {
-                        throw new RuntimeException( "Unexpected attribute type [" + attr.getID() + "] found in search results." );
-                    }
+                    processAttribute(info, attr);
                 }
             }
         }
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Returning active directory info with roles [" + groupNames + "]" );
+        return info;
+    }
+
+    protected void processAttribute(LdapDirectoryInfo info, Attribute attr) throws NamingException {
+
+        if( attr.getID().equals( "memberOf" ) ) {
+
+            Collection<String> groupNames = getAllAttributeValues(attr);
+            Collection<String> roleNames = translateRoleNames(groupNames);
+
+            if( log.isDebugEnabled() ) {
+                log.debug( "Adding roles [" + groupNames + "] to LDAP directory info." );
+            }
+
+            info.addAllRoleNames( roleNames );
+
         }
 
-        ActiveDirectoryInfo info = new ActiveDirectoryInfo();
-        info.setRoleNames( groupNames );
+    }
 
-        return info;
+    protected Collection<String> translateRoleNames(Collection<String> groupNames) {
+        Set<String> roleNames = new HashSet<String>( groupNames.size() );
+
+        for( String groupName : groupNames ) {
+            String roleName = groupRoleMap.get( groupName );
+            roleNames.add( roleName );
+        }
+        return roleNames;
     }
 
 
     /**
      * Helper method used to retrieve all attribute values from a particular context attribute.
      */
-    private Collection<String> getAllAttributeValues(Attribute attr) throws NamingException {
+    protected Collection<String> getAllAttributeValues(Attribute attr) throws NamingException {
         Set<String> values = new HashSet<String>();
         for (NamingEnumeration e = attr.getAll(); e.hasMore();) {
             String value = (String) e.next();

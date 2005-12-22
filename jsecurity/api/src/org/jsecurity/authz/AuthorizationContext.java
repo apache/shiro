@@ -44,10 +44,44 @@ public interface AuthorizationContext {
 
     /**
      * Returns the primary identifier of the subject associated with this
-     * <tt>AuthorizationContext</tt> (usually a user id or username).
+     * <tt>AuthorizationContext</tt> (usually a user id or username).  This is a
+     * convenience method for context's that only use a single principal.  If multiple
+     * principals are associated with the context, the primary principal will be returned.
+     * Which principal is the primary principal is dependent upon the specific implementation
+     * of <tt>AuthorizationContext</tt>
      * @return the primary identifier of the subject associated with this authorization context.
+     * @throws NoSuchPrincipalException is thrown if no principals are associated with this
+     * authorization context.
      */
-    Principal getPrincipal();
+    Principal getPrincipal() throws NoSuchPrincipalException;
+
+    /**
+     * Returns all principals associated with this <tt>AuthorizationContext</tt>.
+     * @return a collection of principals associated with this context, or an empty collection
+     * if no principals are associated with this authorization context
+     */
+    Collection<Principal> getAllPrincipals();
+
+    /**
+     * Returns a single principal assignable from the specified type
+     * that is associated with this <tt>AuthorizationContext</tt>.  If multiple principals of
+     * this type are associated with this context, it is up to the specific implementation as
+     * to which principal will be returned and may be undefined.
+     * @param principalType the principal type that should be returned.
+     * @return a principal of the specified type.
+     * @throws NoSuchPrincipalException if no principals of this type are associated with this
+     * context.
+     */
+    Principal getPrincipalByType( Class principalType ) throws NoSuchPrincipalException;
+
+    /**
+     * Returns all principals assignable from the specified type that is associated with
+     * this <tt>AuthorizationContext<tt>.
+     * @param principalType the principal type that should be returned.
+     * @return a collection of principals that are assignable from the specified type, or
+     * an empty collection if no principals of this type are associated.
+     */
+    Collection<Principal> getAllPrincipalsByType( Class principalType );
 
     /**
      * Checks if the given role identifier is associated with this context.

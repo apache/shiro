@@ -28,6 +28,7 @@ package org.jsecurity.authc.module;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
@@ -44,16 +45,24 @@ import java.util.Collection;
 public interface AuthenticationInfo {
 
     /**
-     * The primary identifying principal of the authenticated subject.  This principal is often
-     * a representation of a user's primary key id or username.
+     * Returns the primary principal associated with this authentication info.
+     * @return the primary principal associated with this authentication info.
+     */
+    Principal getPrincipal();
+
+
+    /**
+     * The principals that identify of the authenticated subject.  These principal are often
+     * a representation of a user's primary key id or username.  The first principal in this list
+     * will be interpreted as the primary principal.
      *
      * @return the identifying principal of the authenticated subject.
      */
-    public Principal getPrincipal();
+    List<Principal> getPrincipals();
 
     /**
      * The subject's credential as stored in the system associated with the
-     * {@link #getPrincipal() subject identifier}, such as a password char array or
+     * {@link #getPrincipals() subject identifier}, such as a password char array or
      * public key.
      *
      * <p>It could be encrypted in which case an
@@ -61,9 +70,9 @@ public interface AuthenticationInfo {
      * must be aware of the fact (e.g. via configuration) in order to interpret and compare
      * the credentials value.
      *
-     * @return the subject's credential verifying the {@link #getPrincipal() identifier}
+     * @return the subject's credential verifying the {@link #getPrincipals() identifier}
      */
-    public Object getCredentials();
+    Object getCredentials();
 
     /**
      * A collection of role identifiers that represent the roles that this
@@ -72,7 +81,7 @@ public interface AuthenticationInfo {
      * @return a collection of role identifiers (typically <tt>String</tt>
      * names of roles)
      */
-    public Collection<String> getRoles();
+    Collection<String> getRoles();
 
     /**
      * A collection of permissions that represent the permission that this
@@ -91,7 +100,7 @@ public interface AuthenticationInfo {
      * @return true if the user's account is locked and the user should be
      * denied authorization, false otherwise.
      */
-    public boolean isAccountLocked();
+    boolean isAccountLocked();
 
 
     /**
@@ -100,7 +109,7 @@ public interface AuthenticationInfo {
      * @return true if the user's credentials are expired and the user should
      * be denied authentication, false otherwise.
      */
-    public boolean isCredentialsExpired();
+    boolean isCredentialsExpired();
 
 
     /**
@@ -113,6 +122,6 @@ public interface AuthenticationInfo {
      * @return true if the user should be allowed to login concurrently,
      * false otherwise.
      */
-    public boolean isConcurrentLoginsAllowed();
+    boolean isConcurrentLoginsAllowed();
 
 }

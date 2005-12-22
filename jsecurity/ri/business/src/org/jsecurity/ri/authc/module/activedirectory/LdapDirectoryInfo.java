@@ -24,7 +24,11 @@
  */
 package org.jsecurity.ri.authc.module.activedirectory;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * An object containing active directory information queried from the
@@ -33,7 +37,7 @@ import java.util.Collection;
  *
  * @author Jeremy Haile
  */
-public class ActiveDirectoryInfo {
+public class LdapDirectoryInfo {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -43,17 +47,49 @@ public class ActiveDirectoryInfo {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
+     * Additional principals returned from the LDAP query that should be included in the
+     * authorization context.
+     */
+    protected List<Principal> principals;
+
+    /**
      * The role names that were determined from the active directory server.
      */
-    private Collection<String> roleNames;
+    protected Collection<String> roleNames;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
 
+    public LdapDirectoryInfo() {
+        this.principals = new ArrayList<Principal>();
+        this.roleNames = new HashSet<String>();
+    }
+
+    public LdapDirectoryInfo(List<Principal> principals, Collection<String> roleNames) {
+        this.principals = principals;
+        this.roleNames = roleNames;
+    }
+
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
+    public Collection<Principal> getPrincipals() {
+        return principals;
+    }
+
+    public void setPrincipals(List<Principal> principals) {
+        this.principals = principals;
+    }
+
+    public void addPrincipal(Principal principal) {
+        this.principals.add( principal );
+    }
+
+    public void addAllPrincipals( Collection<Principal> principals ) {
+        this.principals.addAll( principals );
+    }
 
     public Collection<String> getRoleNames() {
         return roleNames;
@@ -61,6 +97,14 @@ public class ActiveDirectoryInfo {
 
     public void setRoleNames(Collection<String> roleNames) {
         this.roleNames = roleNames;
+    }
+
+    public void addRoleName(String roleName) {
+        this.roleNames.add( roleName );
+    }
+
+    public void addAllRoleNames( Collection<String> roleNames ) {
+        this.roleNames.addAll( roleNames );
     }
 
     /*--------------------------------------------

@@ -29,11 +29,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.NoSuchPrincipalException;
 
 import java.security.Permission;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * A simple implementation of the {@link AuthorizationContext} interface that
@@ -61,9 +61,10 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     protected transient final Log logger = LogFactory.getLog( getClass() );
 
     /**
-     * The principal for this auth context.
+     * The principals that represent the identity of the user
+     * for this authorization context.
      */
-    protected Principal principal;
+    protected List<Principal> principals;
 
     /**
      * The roles that apply to this authorization context.
@@ -80,28 +81,79 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     |         C O N S T R U C T O R S           |
     ============================================*/
     /**
-     * Constructs a new instance of the auth context.
+     * Constructs a new instance of the authorization context with a single principal.
      * @param principal the principal associated with this auth context.
      * @param roles the roles associated with this auth context.
      * @param permissions the permissions associated with this auth context.
      */
     public SimpleAuthorizationContext(Principal principal, Collection<String> roles, Collection<Permission> permissions) {
-        this.principal = principal;
+        this.principals = new ArrayList<Principal>(1);
+        this.principals.add( principal );
         this.roles = roles;
         this.permissions = permissions;
     }
 
-
+    /**
+     * Constructs a new instance of the authorization context with multiple principals.
+     * @param principals the principals associated with this authorization context.
+     * @param roles the roles associated with this auth context.
+     * @param permissions the permissions associated with this authorization context.
+     */
+    public SimpleAuthorizationContext(List<Principal> principals, Collection<String> roles, Collection<Permission> permissions) {
+        this.principals = principals;
+        this.roles = roles;
+        this.permissions = permissions;
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
     /**
+     * If multiple principals are defined, this method will return the first
+     * principal in the list of principals.
      * @see org.jsecurity.authz.AuthorizationContext#getPrincipal()
      */
-    public Principal getPrincipal() {
-        return principal;
+    public Principal getPrincipal() throws NoSuchPrincipalException {
+        if( principals.size() < 1 ) {
+            throw new NoSuchPrincipalException( "No principals are associated with this authorization context." );
+        }
+        return this.principals.get(0);
+    }
+
+    /**
+     * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipals()
+     */
+    public Collection<Principal> getAllPrincipals() {
+        return principals;
+    }
+
+    /**
+     * @see org.jsecurity.authz.AuthorizationContext#getPrincipalByType(Class) ()
+     */
+    public Principal getPrincipalByType(Class principalType) throws NoSuchPrincipalException {
+        for( Principal principal : principals ) {
+            if( principalType.isAssignableFrom( principal.getClass() ) ) {
+                return principal;
+            }
+        }
+
+        throw new NoSuchPrincipalException( "No principal of type [" + principalType + "] is " +
+                "associated with this authorization context." );
+    }
+
+    /**
+     * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipalsByType(Class)()
+     */
+    public Collection<Principal> getAllPrincipalsByType(Class principalType) {
+        Set<Principal> principalsOfType = new HashSet<Principal>();
+
+        for( Principal principal : principals ) {
+            if( principalType.isAssignableFrom( principal.getClass() ) ) {
+                principalsOfType.add( principal );
+            }
+        }
+        return principalsOfType;
     }
 
     /**
@@ -224,7 +276,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append( "Principal [" ).append( principal ).append( "] " );
+        sb.append( "Principals [" ).append( getAllPrincipals() ).append( "] " );
 
         sb.append( "Roles [" );
         if( roles != null ) {
