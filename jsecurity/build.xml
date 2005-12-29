@@ -156,6 +156,7 @@ to where the build is being executed -->
             <classpath>
                 <pathelement location="${root.base.dir}/dist/jsecurity-api.jar"/>
                 <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>
+                <pathelement location="${lib.dir}/j2ee/jsp-api.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>
@@ -341,7 +342,7 @@ to where the build is being executed -->
         <jarjar jarfile="${root.dist.dir}/${project.name}-client.jar">
             <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
-            <!-- <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> -->
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-web.jar"/>
             <manifest>
                 <attribute name="Implementation-Title" value="${project.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
@@ -352,6 +353,7 @@ to where the build is being executed -->
         <jarjar jarfile="${root.dist.dir}/${project.name}.jar">
             <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-ri-web.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
             <!-- <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> -->
             <zipfileset src="${root.dist.dir}/${project.name}-spring.jar"/>

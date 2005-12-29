@@ -82,7 +82,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
                 log.trace( "Request JSecurity Session is invalid, message: [" +
                            ise.getMessage() + "].");
             }
-            continueProcessing = handleInvalidSession( request, response, handler );
+            continueProcessing = handleInvalidSession( request, response, handler, ise );
         }
 
         return continueProcessing;
@@ -95,13 +95,21 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 
     protected boolean handleInvalidSession( HttpServletRequest request,
                                             HttpServletResponse response,
-                                            Object handler ) {
+                                            Object handler,
+                                            InvalidSessionException ise ) {
         if ( log.isTraceEnabled() ) {
             log.trace( "Handling invalid session associated with the request.  Attempting to " +
                        "create a new Session to allow processing to continue" );
         }
         Session s = webSessionFactory.start( request, response );
         WebUtils.bindToThread( s );
+
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's referencing " +
+                "referenced session has expired." );
+        }
+        request.setAttribute( WebUtils.ATTEMPTED_PAGE_KEY, Boolean.TRUE );
+
         return true;
     }
 

@@ -32,6 +32,7 @@
              Any dependencies that are to be satisified by one module for another
              must be declared in the order the dendencies occur. -->
         <ant dir="common" target="${target}"/>
+        <ant dir="web" target="${target}"/>
         <ant dir="business" target="${target}"/>
         <!-- <ant dir="client" target="${target}"/> -->
 
