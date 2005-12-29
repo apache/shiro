@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+
+    <tlib-version>1.1.2</tlib-version>
+
+    <jsp-version>1.2</jsp-version>
+
+    <short-name>JSecurity</short-name>
+
+    <uri>http://www.jsecurity.org/tags</uri>
+
+    <description>JSecurity JSP Tag Library. Authors: Les Hazlewood, Jeremy Haile</description>
+
+    <tag>
+        <name>hasPermission</name>
+        <tag-class>org.jsecurity.ri.web.tags.HasPermissionTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user has the specified permission.</description>
+        <attribute>
+            <name>type</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>target</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>actions</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>lacksPermission</name>
+        <tag-class>org.jsecurity.ri.web.tags.LacksPermissionTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user does NOT have the specified permission
+            (i.e. they explicitly lack the specified permission)
+        </description>
+        <attribute>
+            <name>type</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>target</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>actions</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>hasRole</name>
+        <tag-class>org.jsecurity.ri.web.tags.HasRoleTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user has the specified role.</description>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>lacksRole</name>
+        <tag-class>org.jsecurity.ri.web.tags.LacksRoleTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user does NOT have the specified role
+            (i.e. they explicitly lack the specified role)
+        </description>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+</taglib>

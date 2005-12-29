@@ -53,7 +53,14 @@ public abstract class WebUtils {
         Session.class.getName() + "_ID_HTTP_SESSION_KEY";
 
     public static final String ATTEMPTED_PAGE_KEY =
-        WebUtils.class.getName() + "ATTEMPTED_PAGE_SESSION_KEY";
+        WebUtils.class.getName() + "_ATTEMPTED_PAGE_SESSION_KEY";
+
+    /**
+     * Key that may be used for a http session attribute or request attribute to alert that a referencing session
+     * has expired.
+     */
+    public static final String EXPIRED_SESSION_KEY =
+        WebUtils.class.getName() + "_EXPIRED_SESSION_KEY";
 
     private WebUtils(){}
 
