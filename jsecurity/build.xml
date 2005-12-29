@@ -314,6 +314,8 @@ to where the build is being executed -->
                      includes="**/*.java, **/*.properties"/>
             <fileset dir="${root.base.dir}/ri/common/src"
                      includes="**/*.java, **/*.properties"/>
+            <fileset dir="${root.base.dir}/ri/web/src"
+                     includes="**/*.java, **/*.properties"/>
             <fileset dir="${root.base.dir}/ri/business/src"
                      includes="**/*.java, **/*.properties"/>
             <fileset dir="${root.base.dir}/support/spring/src"
