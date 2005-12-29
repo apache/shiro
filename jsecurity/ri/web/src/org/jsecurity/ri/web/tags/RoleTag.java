@@ -11,8 +11,6 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class RoleTag extends SecureTag {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
     private String name = null;
 
     public RoleTag(){}

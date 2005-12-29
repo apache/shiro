@@ -14,8 +14,6 @@ import java.security.Permission;
  */
 public abstract class PermissionTag extends SecureTag {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
     private String type = null;
     private String target = null;
     private String actions = null;
