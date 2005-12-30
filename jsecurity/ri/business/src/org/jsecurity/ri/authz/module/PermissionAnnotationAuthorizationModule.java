@@ -72,7 +72,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
         Integer methodArgIndex = Integer.parseInt( buf.toString() );
         String beanUtilsPath = new String( chars, propertyStartIndex,
-            chars.length - propertyStartIndex );
+                                           chars.length - propertyStartIndex );
         Object targetValue = BeanUtils.getProperty( methodArgs[methodArgIndex], beanUtilsPath );
         return targetValue.toString();
     }
@@ -113,8 +113,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
                 String msg = "Unable to parse targetPath property.  Please see the " +
                              "javadoc for expected path syntax. HasPermission check cannot " +
                              "continue.";
-                //todo - create a meaningful exception:
-                throw new RuntimeException( msg );
+                throw new InvalidTargetPathException( msg, e );
             }
         }
         return instantiatePermission( clazz, target, actions );

@@ -1,7 +1,5 @@
 package org.jsecurity.ri.web.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.ri.util.PermissionUtils;
 
 import javax.servlet.jsp.JspException;
