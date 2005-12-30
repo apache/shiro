@@ -24,6 +24,8 @@
  */
 package org.jsecurity.authz;
 
+import org.jsecurity.JSecurityException;
+
 /**
  * Exception thrown if a principal of a particular type is requested from
  * an {@link AuthorizationContext} and no principal of that type is found
@@ -32,7 +34,7 @@ package org.jsecurity.authz;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class NoSuchPrincipalException extends RuntimeException {
+public class NoSuchPrincipalException extends JSecurityException {
 
 
     public NoSuchPrincipalException() {

@@ -91,7 +91,7 @@ public interface SessionDAO {
 
     /**
      * Returns all sessions in the EIS that are considered active, meaning all sessions that
-     * haven't been stopped/expired.  This is primarily used in to validate potential orphans.
+     * haven't been stopped/expired.  This is primarily used to validate potential orphans.
      *
      * If there are no active sessions in the EIS, this method may return an empty collection
      * or <tt>null</tt>.

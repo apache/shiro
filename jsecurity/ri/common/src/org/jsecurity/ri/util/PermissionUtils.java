@@ -26,7 +26,7 @@ public class PermissionUtils {
             p = c.newInstance( args );
         } catch ( Exception e ) {
             String msg = "Unable to instantiate Permission instance with constructor [" + c + "]";
-            throw new RuntimeException( msg, e );
+            throw new PermissionInstantiationException( msg, e );
         }
         return p;
     }

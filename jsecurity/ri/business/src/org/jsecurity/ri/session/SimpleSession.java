@@ -68,8 +68,6 @@ public class SimpleSession implements Session, Serializable {
                           "will be null", e );
             }
         }
-
-        attributes = new HashMap<Object,Object>();
     }
 
     public Serializable getSessionId() {
