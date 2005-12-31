@@ -9,8 +9,8 @@ public class LacksRoleTag extends RoleTag {
     }
 
     protected boolean showTagBody( String roleName ) {
-        boolean hasPermission = getAuthorizationContext().hasRole( roleName );
-        return !hasPermission;
+        boolean hasRole = getAuthorizationContext().hasRole( roleName );
+        return !hasRole;
     }
 
 }
