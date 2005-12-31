@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Les Hazlewood
+* Copyright (C) 2005 Les Hazlewood, Jeremy Haile
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -35,6 +35,7 @@ import java.util.Collection;
  * Abstract implementation of the <tt>AuthorizationContextFactory</tt> interface that
  * ensures the given <tt>AuthenticationInfo</tt> is valid.
  *
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */

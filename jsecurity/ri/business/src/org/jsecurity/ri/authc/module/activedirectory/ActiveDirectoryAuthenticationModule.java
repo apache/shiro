@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Tim Veil, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -64,6 +64,7 @@ import java.util.*;
  * @see #getLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)
  * @see #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)
  *
+ * @since 0.1
  * @author Tim Veil
  * @author Jeremy Haile
  */

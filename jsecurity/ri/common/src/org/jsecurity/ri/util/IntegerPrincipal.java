@@ -30,6 +30,7 @@ import java.security.Principal;
  * Simple utility class for representing an <tt>Integer</tt> as a <tt>Principal</tt>.  This is
  * useful for representing a database integer primary key as a Principal.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class IntegerPrincipal implements Principal, java.io.Serializable {

@@ -40,8 +40,8 @@ import java.security.Permission;
  * org.jsecurity.authz.annotation.HasPermission HasPermission} annotation found on the method being
  * executed.
  *
- * @author Les Hazlewood
  * @since 0.1
+ * @author Les Hazlewood
  */
 public class PermissionAnnotationAuthorizationModule extends AnnotationAuthorizationModule {
 

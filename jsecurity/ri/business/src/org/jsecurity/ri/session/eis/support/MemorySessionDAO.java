@@ -38,12 +38,13 @@ import java.util.UUID;
 
 /**
  * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
- * this implementation is not recommended in recoverable environments (i.e. those needing
- * session state restored when a server restarts).
+ * this implementation is not recommended in production-quality recoverable environments
+ * (i.e. those needing session state restored when a server restarts).
  *
  * <p>If you need session recovery in the event of a server failure or restart, consider using
- * a file-based or relational database-based implementation.
+ * a file-based or RDBMS-based implementation.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class MemorySessionDAO implements SessionDAO {

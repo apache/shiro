@@ -46,6 +46,9 @@ import java.util.List;
  * plugged in to the application's JSecurity RI configuration.  This modular technique abstracts
  * away any environment/modeling details and allows the JSecurity RI to be deployed in
  * practically any application environment.
+ *
+ * @since 0.1
+ * @author Les Hazlewood
  */
 public interface Realm {
 

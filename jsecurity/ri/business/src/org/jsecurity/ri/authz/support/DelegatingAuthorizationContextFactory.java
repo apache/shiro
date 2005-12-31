@@ -30,8 +30,10 @@ import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
 import org.jsecurity.ri.authz.Realm;
 
 /**
- * Created on: Oct 24, 2005 4:31:18 PM
+ * AuthorizationContextFactory implementation that creates
+ * {@link DelegatingAuthorizationContext} instances.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class DelegatingAuthorizationContextFactory extends AbstractAuthorizationContextFactory {

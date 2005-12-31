@@ -31,6 +31,7 @@ import java.security.Principal;
  * particularly useful for representing a database String (char/varchar) primary key or
  * username as a Principal.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class StringPrincipal implements Principal, java.io.Serializable {

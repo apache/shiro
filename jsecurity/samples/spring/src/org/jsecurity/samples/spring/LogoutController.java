@@ -35,8 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Description of class.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
 public class LogoutController extends AbstractController {
 

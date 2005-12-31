@@ -31,6 +31,7 @@ import java.util.UUID;
  * Simple utility class for representing a <tt>UUID</tt> as a <tt>Principal</tt>.  This is
  * useful for representing a database UUID primary key as a Principal.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class UUIDPrincipal implements Principal, java.io.Serializable {

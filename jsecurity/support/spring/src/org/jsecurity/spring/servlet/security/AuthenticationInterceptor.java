@@ -60,6 +60,7 @@ import javax.servlet.http.HttpSession;
  *
  * @see RedirectView RedirectView
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AuthenticationInterceptor extends HandlerInterceptorAdapter

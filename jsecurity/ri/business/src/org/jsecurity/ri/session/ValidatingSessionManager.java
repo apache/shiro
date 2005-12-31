@@ -67,13 +67,12 @@ public interface ValidatingSessionManager extends SessionManager {
      * a client without first receiving a client request), it is almost always acceptable to
      * utilize this lazy approach and run this method at defined interval.
      *
-     * <p>Systems that want to proactively validate individual sessions <em>without</em>
-     * updating a session's {@link org.jsecurity.session.Session#getLastAccessTime() last access time} may call the
-     * {@link #validateSession(Serializable) validateSession} method.  Note that even these
+     * <p>Systems that want to proactively validate individual sessions may call the
+     * {@link #validateSession(Serializable) validateSession} method.  Note that even in such
      * proactive systems, this {@link #validateSessions()} method should be invoked regularaly
      * anyway to <em>guarantee</em> no orphans exist.
      *
-     * <p><b>Note:</b> It is <em>highly</em> recommended that this method be called by a
+     * <p><b>Note:</b> It is <em>highly</em> recommended that this method be invoked by a
      * sophisticated scheduling mechanism such as {@link java.util.Timer} (not recommended
      * in managed J2EE environments) or via 3rd-party
      * scheduling tools such as the
@@ -89,6 +88,4 @@ public interface ValidatingSessionManager extends SessionManager {
      * @throws org.jsecurity.session.InvalidSessionException if, upon validation, the session was stopped or expired.
      */
     void validateSession( Serializable sessionId ) throws InvalidSessionException;
-
-
 }

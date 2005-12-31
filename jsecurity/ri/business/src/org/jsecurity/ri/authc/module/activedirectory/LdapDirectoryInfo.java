@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -35,6 +35,7 @@ import java.util.List;
  * active directory server.  This class can be subclassed to contain
  * additional information for more advanced implementations.
  *
+ * @since 0.1
  * @author Jeremy Haile
  */
 public class LdapDirectoryInfo {

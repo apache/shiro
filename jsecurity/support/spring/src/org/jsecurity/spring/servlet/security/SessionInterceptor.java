@@ -36,9 +36,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Associates an HttpServletRequest with an existing {@link Session Session}, if one can be found
- * for association based on the request.  If a <tt>Session</tt> cannot be found, this interceptor
- * creates a new one.
+ * Ensures a JSecurity {@link Session Session} exists for an incoming {@link HttpServletRequest}.
+ *
+ * <p>If an existing <tt>Session</tt> can be found that is already associated with the client
+ * executing the <tt>HttpServletRequest</tt>, it will be retrieved and made accessible.
+ *
+ * <p>If no existing <tt>Session</tt> could be associated with the <tt>HttpServletRequest</tt>,
+ * this interceptor will create a new one, associated it with the <tt>request</tt>'s corresponding
+ * client, and be made accessible to the JSecurity framework for the duration of the
+ * request (i.e. via a {@link ThreadLocal ThreadLocal}).
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -108,7 +114,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
             log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's referencing " +
                 "referenced session has expired." );
         }
-        request.setAttribute( WebUtils.ATTEMPTED_PAGE_KEY, Boolean.TRUE );
+        request.setAttribute( WebUtils.EXPIRED_SESSION_KEY, Boolean.TRUE );
 
         return true;
     }

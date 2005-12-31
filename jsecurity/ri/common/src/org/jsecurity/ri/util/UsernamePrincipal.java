@@ -30,6 +30,7 @@ import java.security.Principal;
 /**
  * A principal that represents a username.
  *
+ * @since 0.1
  * @author Jeremy Haile
  */
 public class UsernamePrincipal implements Principal, Serializable {

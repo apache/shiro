@@ -35,8 +35,9 @@ import java.util.List;
 
 /**
  * Implementation of the {@link org.jsecurity.ri.authz.AuthorizationContextFactory}
- * interface that creates a simple authorization context.
+ * interface that creates {@link SimpleAuthorizationContext} instances.
  *
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */

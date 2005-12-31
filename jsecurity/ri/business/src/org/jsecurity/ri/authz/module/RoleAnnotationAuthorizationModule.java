@@ -36,8 +36,8 @@ import java.lang.reflect.Method;
  * AuthorizationModule that votes on authorization based on any {@link
  * org.jsecurity.authz.annotation.HasRole HasRole} annotation found on the method being executed.
  *
- * @author Les Hazlewood
  * @since 0.1
+ * @author Les Hazlewood
  */
 public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationModule {
 
