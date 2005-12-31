@@ -1,5 +1,6 @@
 package org.jsecurity.ri.web.tags;
 
+import org.jsecurity.authz.InstancePermission;
 import org.jsecurity.ri.util.PermissionUtils;
 
 import javax.servlet.jsp.JspException;
@@ -15,8 +16,6 @@ public abstract class PermissionTag extends SecureTag {
     private String type = null;
     private String target = null;
     private String actions = null;
-
-    private boolean applyWildcard = true;
 
     public PermissionTag() {
     }
@@ -45,77 +44,41 @@ public abstract class PermissionTag extends SecureTag {
         this.actions = actions;
     }
 
-    /**
-     * Returns whether or not to apply the wildcard ('*') if the {@link #getTarget target} or
-     * {@link #getActions actions} tag attributes are unspecified.
-     *
-     * <p>That is, if this property is set to <tt>true</tt> (the default), and the <tt>target</tt> property is not
-     * specified (i.e. <tt>null</tt>), the target property will automatically be set to '*'.  And, if the
-     * <tt>actions</tt> property is not specified (i.e. <tt>null</tt>), the actions property will automatically be set
-     * to '*'.
-     *
-     * <p>If this attribute is set to <tt>false</tt>, and the <tt>target</tt> or <tt>actions</tt> attributes are not set,
-     * this tag considers this state a programming error, and will throw an exception.
-     *
-     * <p>The default setting is <b><tt>true</tt></b>.
-     *
-     * @return <tt>true</tt> if the wildcard token should be applied to null <tt>target</tt> or <tt>actions</tt>
-     * properties, <tt>false</tt> otherwise.
-     *
-     */
-    public boolean isApplyWildcard() {
-        return applyWildcard;
-    }
-
-    /**
-     * Turns on or off default application of the wildcard token ('*') if the {@link #getTarget target} or
-     * {@link #getActions actions} attributes are null.
-     *
-     * @param applyWildcard whether or not to apply the wildcard token in the event of null attributes.
-     * @see #isApplyWildcard
-     */
-    public void setApplyWildcard( boolean applyWildcard ) {
-        this.applyWildcard = applyWildcard;
-    }
-
     protected void verifyAttributes() throws JspException {
-        if ( getType() == null ) {
+        String type = getType();
+        String target = getTarget();
+        String actions = getActions();
+
+        if ( type == null ) {
             String msg = "the 'type' tag attribute must be set";
             throw new JspException( msg );
         }
-        if ( getTarget() == null ) {
-            if ( isApplyWildcard() ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "'target' tag attribute was not specified.  Assuming default of '*'.  If you " +
-                        "do not want this default to be applied set the 'applyWildcard' attribute " +
-                        "to false." );
-                }
-                setTarget( "*" );
-            } else {
-                String msg = "the 'target' tag attribute has not been set and default application of wildcards is " +
-                    "turned off.";
-                throw new JspException( msg );
-            }
-        }
-        if ( getActions() == null ) {
-            if ( isApplyWildcard() ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "'actions' tag attribute was not specified.  Assuming default of '*'.  If you " +
-                        "do not want this default to be applied set the 'applyWildcard' attribute " +
-                        "to false." );
-                }
-                setTarget( "*" );
-            } else {
-                String msg = "the 'actions' tag attribute has not been set and default application of wildcards is " +
-                    "turned off.";
-                throw new JspException( msg );
-            }
 
+        if ( target == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "'target' tag attribute was not specified.  Assuming default of " +
+                           "\"*\", as all Permission objects must be instantiated with a " +
+                           "name/target." );
+            }
+            setTarget( InstancePermission.WILDCARD );
         }
     }
 
     public int onDoStartTag() throws JspException {
-        Permission p = PermissionUtils.createPermission( getType(), getTarget(), getActions() );
+
+        Permission p = null;
+
+        String actions = getActions();
+
+        if ( actions == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No actions attribute specified, creating permission with target only." );
+            }
+            p = PermissionUtils.createPermission( getType(), getTarget() );
+        } else {
+            p = PermissionUtils.createPermission( getType(), getTarget(), actions );
+        }
+
         boolean show = showTagBody( p );
         if ( show ) {
             return TagSupport.EVAL_BODY_INCLUDE;
