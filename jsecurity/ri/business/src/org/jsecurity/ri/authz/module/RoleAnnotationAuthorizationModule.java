@@ -41,6 +41,7 @@ import java.lang.reflect.Method;
  */
 public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationModule {
 
+    @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public RoleAnnotationAuthorizationModule() {
         setAnnotationClass( HasRole.class );
     }
