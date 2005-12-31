@@ -47,6 +47,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
     private static final char ARRAY_CLOSE_CHAR = ']';
 
+    @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public PermissionAnnotationAuthorizationModule() {
         setAnnotationClass( HasPermission.class );
     }
