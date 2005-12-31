@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Les Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -54,6 +54,7 @@ import java.util.*;
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.
  *
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */

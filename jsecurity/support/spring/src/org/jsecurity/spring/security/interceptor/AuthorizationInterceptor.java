@@ -37,8 +37,7 @@ import org.springframework.beans.factory.InitializingBean;
 import java.lang.reflect.Method;
 
 /**
- * Created on: Oct 24, 2005 2:32:29 PM
- *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AuthorizationInterceptor implements InitializingBean, MethodInterceptor {

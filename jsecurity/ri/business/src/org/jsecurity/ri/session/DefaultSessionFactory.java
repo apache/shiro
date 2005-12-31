@@ -36,23 +36,32 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * Default JSecurity reference implementation of a {@link org.jsecurity.session.SessionFactory}.  This implementation
- * returns instances where all methods delegate to a corresponding
- * {@link org.jsecurity.ri.session.SessionManager SessionManager} method call.  That is, the objects returned act as
- * transparent proxies to the SessionManager responsible for all Sessions in a system.
- *
- * <p>Objects returned from this factory implementation should not be cached on the
- * business/server tier (e.g. in an HttpSession or in some local {@link java.util.Map Map} instance).
- * All instances should be acquired from this {@link org.jsecurity.session.SessionFactory SessionFactory} at the
- * beginning of a thread's exucution, such as at the beginning of a remote method invocation or at
- * the beginning of an Http request.  They are extremely lightweight and are designed to be created
- * as needed.
+ * Default JSecurity reference implementation of a {@link org.jsecurity.session.SessionFactory}.
+ * This implementation returns instances where all method invocations delegate to a corresponding
+ * {@link org.jsecurity.ri.session.SessionManager SessionManager} method call.  That is, the
+ * objects returned act as transparent proxies to the SessionManager responsible for all Sessions
+ * in a system.
  *
  * <p>This transparent proxy/delegate technique allows the JSecurity reference implementation to
- * maintain a stateless architecture (i.e. similar to accessing a Stateless Session Bean EJB),
+ * maintain a stateless architecture (i.e. similar to accessing a EJB Stateless Session Bean),
  * which is extremely efficient.  Any state to be maintained is the responsibility of the
- * SessionManager, not your application, thereby aking your code much cleaner and more efficient.
+ * SessionManager, not your application, thereby making your code much cleaner and more efficient.
  *
+ * <p><tt>Sessions</tt> returned from this factory implementation are extremely lightweight and are
+ * designed to be created as needed.  They should not be cached long-term in the
+ * business/server tier (e.g. in an <tt>HttpSession</tt> or in some
+ * private class {@link java.util.Map Map} attribute).
+ *
+ * <p>For best performance, an instance acquired from this factory should be created at the
+ * beginning of a thread's execution (or lazily when first needed), such as at the beginning of a
+ * remote method invocation or at the begginning of an HTTP request.  After acquisition, it should
+ * then bound to the executing thread via a {@link ThreadLocal ThreadLocal}, and then finally
+ * removed/discarded from the thread when execution is complete.  This is exactly how J2EE,
+ * Hibernate, Spring and other enterprise-level  projects perform optimization, and is also the
+ * way JSecurity RI utility classes behave (such as our
+ * {@link org.jsecurity.spring.servlet.security.SessionInterceptor SessionInterceptor}).
+ *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class DefaultSessionFactory implements SessionFactory {

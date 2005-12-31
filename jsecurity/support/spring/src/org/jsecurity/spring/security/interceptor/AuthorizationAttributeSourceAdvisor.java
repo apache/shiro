@@ -34,8 +34,7 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Method;
 
 /**
- * Created on: Oct 24, 2005 2:23:27 PM
- *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor implements InitializingBean {

@@ -32,8 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created on: Oct 13, 2005 6:47:29 PM
- *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
