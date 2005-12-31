@@ -55,8 +55,8 @@ public abstract class PermissionTag extends SecureTag {
         }
 
         if ( target == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "'target' tag attribute was not specified.  Assuming default of " +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "'target' tag attribute was not specified.  Assuming default of " +
                            "\"*\", as all Permission objects must be instantiated with a " +
                            "name/target." );
             }
@@ -77,8 +77,8 @@ public abstract class PermissionTag extends SecureTag {
         String actions = getActions();
 
         if ( actions == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No actions attribute specified, creating permission with target only." );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No actions attribute specified, creating permission with target only." );
             }
             p = PermissionUtils.createPermission( getType(), getTarget() );
         } else {
