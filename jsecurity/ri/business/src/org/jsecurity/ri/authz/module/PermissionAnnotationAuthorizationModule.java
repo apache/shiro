@@ -30,8 +30,8 @@ import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.annotation.HasPermission;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
+import org.jsecurity.ri.util.PermissionUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.Permission;
 
@@ -77,26 +77,6 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         return targetValue.toString();
     }
 
-    private Permission instantiatePermission( Class<? extends Permission> clazz,
-                                              String name, String actions ) {
-        // Instantiate the permission instance using reflection
-        Permission permission;
-        try {
-            // Get constructor for permission
-            Class[] constructorArgs = new Class[]{ String.class, String.class };
-            Constructor permConstructor = clazz.getDeclaredConstructor( constructorArgs );
-
-            // Instantiate permission with name and actions specified as attributes
-            Object[] constructorObjs = new Object[]{ name, actions };
-            permission = (Permission)permConstructor.newInstance( constructorObjs );
-            return permission;
-        } catch ( Exception e ) {
-            String msg = "Unable to instantiate Permission class [" + clazz.getName() + "].  " +
-                         "HasPermission check cannot continue.";
-            throw new IllegalStateException( msg, e );
-        }
-    }
-
     private Permission createPermission( MethodInvocation mi, HasPermission hp ) {
         Class<? extends Permission> clazz = hp.type();
         String target = hp.target();
@@ -105,6 +85,9 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
             targetPath = null;
         }
         String actions = hp.actions();
+        if ( actions.equals( "" ) ) {
+            actions = null;
+        }
 
         if ( targetPath != null ) {
             try {
@@ -116,7 +99,12 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
                 throw new InvalidTargetPathException( msg, e );
             }
         }
-        return instantiatePermission( clazz, target, actions );
+
+        if ( actions == null ) {
+            return PermissionUtils.createPermission( clazz, target );
+        } else {
+            return PermissionUtils.createPermission( clazz, target, actions );
+        }
     }
 
     public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {

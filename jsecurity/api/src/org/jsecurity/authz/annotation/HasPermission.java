@@ -187,10 +187,11 @@ public @interface HasPermission {
 
     /**
      * The actions that the user must able to perform on the related target in order for the
-     * authorization to succeed.  The default value of &quot;*&quot; means the executor must
-     * be able to perform <b>all</b> actions defined for the permission {@link #type type}.
-     * @see java.security.Permission#getActions()
+     * authorization to succeed.
+     *
+     * <p>This is an optional attribute.  If left unspecified, no actions will be used to construct
+     * the Permission
      */
-    String actions() default "*";
+    String actions() default "";
 }
 
