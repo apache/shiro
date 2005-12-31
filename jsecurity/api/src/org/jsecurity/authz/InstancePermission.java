@@ -100,7 +100,7 @@ public abstract class InstancePermission extends Permission implements Serializa
     private Set<String> actionsSet;
 
     /**
-     * Constructs an instance with <em>all</em> permissions (via the {@link #WILDCARD WILDCARD}
+     * Constructs an instance with <em>all</em> actions (via the {@link #WILDCARD WILDCARD}
      * constant).
      * @param targetName
      */
@@ -110,7 +110,7 @@ public abstract class InstancePermission extends Permission implements Serializa
 
     /**
      * Constructs a new InstancePermission associated with an entity instance with the given
-     * identifier with <em>all</em> permissions (via the {@link #WILDCARD WILDCARD}
+     * identifier with <em>all</em> actions (via the {@link #WILDCARD WILDCARD}
      * constant).
      * @param identifier the instance identifier
      */
@@ -119,17 +119,19 @@ public abstract class InstancePermission extends Permission implements Serializa
     }
 
     /**
-     * Creates a new InstancePermission bject with the specified target and
+     * Creates a new InstancePermission object with the specified target and
      * instance-specific actions.
      *
      * <p>The actions
      * String is a comma-delimited list of instance-specific actions.  That is,
      * all actions specified must be a perfect subset of those in the
-     * {@link #getPossibleActions() possibleActions} Set.
+     * {@link #getPossibleActions() possibleActions} Set.  If all actions are to be set, the
+     * {@link #WILDCARD wildcard} character may be specified instead of explicitly listing each
+     * action explicitly.
      *
      * @param targetName - the logical name (unique identifier) of the permission's target instance
      * @param actions - a comma-delimited string of actions understood
-     *        by this class.
+     *        by this class, or the wildcard string (&quot;*&quot;) if setting all actions.
      * @throws UnknownPermissionActionException if an action in the
      *         <code>actions</code> string is unknown to the class.
      */

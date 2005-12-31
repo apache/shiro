@@ -15,7 +15,7 @@ public class PermissionUtils {
 
     private static void assertTarget( String nameOrTarget ) {
         if ( nameOrTarget == null ) {
-            String msg = "name or target String argument cannot be null";
+            String msg = "name (a.k.a. target) String argument cannot be null";
             throw new IllegalArgumentException( msg );
         }
     }
