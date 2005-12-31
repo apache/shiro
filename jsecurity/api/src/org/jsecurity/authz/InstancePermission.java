@@ -67,7 +67,7 @@ import java.util.Set;
  *
  * means that the <tt>role</tt> assigned that permission would have the
  * ability to do anything (create, read, update, delete) <em>any</em> user account.  Such a
- * permission would generally be assigned to an administrative account.
+ * permission would generally be assigned to an administrative role.
  *
  * @since 0.1
  * @author Les Hazlewood
