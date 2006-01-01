@@ -29,11 +29,28 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
- * An AuthenticationModule is an {@link org.jsecurity.authc.Authenticator} that can support
- * specific types of {@link AuthenticationToken AuthenticationToken}s.
+ * An <tt>AuthenticationModule</tt> is a pluggable component that can communicate to a specific
+ * sub-system to acquire authentication data.  This data is used during the authentication process
+ * to verify if an authentication attempt is successful or not.
  *
- * <p>An implementation of this class can be used
- *    in any JSecurity compatible PAM (Pluggable Authentication Module) implementation.
+ * <p>An <tt>AuthenticationModule</tt> is sometimes called in other systems an
+ * <em>authentication provider</em>.  This means that the component has the abiblity to provide
+ * access to authentication data in a environment-specific manner (e.g. LDAP, RDBMS, fingerprint,
+ * etc.).  We chose to use the name <tt>Module</tt> for intuition's sake: JSecurity has the
+ * ability to use any number of these modules either alone, or in conjunction with each other, to
+ * perform an authentication.  This is known in the security world as
+ * PAM (Pluggable Authentication Module).  Since JSecurity is designed to support PAM
+ * architectures, we feel this name more accurately describes its purpose in a coordinated
+ * security framework than the term 'authentication provider'.
+ *
+ * <p>An <tt>AuthenticationModule</tt> typically has a 1-to-1 correspondence with a
+ * <em>type</em> of back-end authentication system.  That is, you usually will see 1 implementation
+ * that can talk to an LDAP directory, anther implementation that uses raw JDBC, or another that
+ * uses the Hibernate API, etc.
+ *
+ * <p>The coordination of how one or more modules execute is performed by an
+ * {@link org.jsecurity.authc.Authenticator Authenticator} implementation, which typically
+ * implements PAM behavior.
  *
  * @since 0.1
  * @author Les Hazlewood
