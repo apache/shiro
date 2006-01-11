@@ -70,7 +70,8 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
      * during an authentication attempt.
      *
      * <p>This is a convience constructor and maintains the password internally via a character
-     * array, i.e. <tt>password.toCharArray();</tt>
+     * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
+     * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
      * @param username the username submitted for authentication
      * @param password the password string submitted for authentication
