@@ -31,6 +31,14 @@ import java.security.Principal;
  * <p>A simple username/password authentication token.  This class is included in the API
  * since it is a very widely used authentication mechanism.</p>
  *
+ * <p>Also note that this class stores a password as a char[] instead of a String
+ * (which may seem more logical).  This is because Strings are immutable and their
+ * internal value cannot be overwritten.  For more information, see the
+ * <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jce/JCERefGuide.html#PBEEx">
+ * Java Cryptography Extension Reference Guide</a>.</p>
+ *
+ * <p>The contents of this token should always be cleared after using it by calling the
+ * {@link #clear()} method.</p>
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
