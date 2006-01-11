@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.ri.authc.module.activedirectory;
+package org.jsecurity.ri.authc.module.ldap;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -31,11 +31,10 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * An object containing active directory information queried from the
- * active directory server.  This class can be subclassed to contain
+ * An object containing LDAP directory information queried from an
+ * LDAP server.  This class can be subclassed to contain
  * additional information for more advanced implementations.
  *
- * @since 0.1
  * @author Jeremy Haile
  */
 public class LdapDirectoryInfo {
@@ -54,7 +53,7 @@ public class LdapDirectoryInfo {
     protected List<Principal> principals;
 
     /**
-     * The role names that were determined from the active directory server.
+     * The role names that were determined from the LDAP server.
      */
     protected Collection<String> roleNames;
 
