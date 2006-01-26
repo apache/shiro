@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.EventObject;
 
 /**
- * General event concerning the authentication of a particular account.
+ * General event concerning the authentication of a particular subject (aka user or account).
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -67,7 +67,7 @@ public abstract class AuthenticationEvent extends EventObject {
 
 
     /**
-     * Creates a new authentication with the given source and the given principal.
+     * Creates a new authentication event with the given source and the given principal.
      *
      * <p>As a clarification, when constructing an instance of this class, the given Principal is
      * usually the identity associated with the authentication attempt, such as a username or id.
@@ -77,8 +77,7 @@ public abstract class AuthenticationEvent extends EventObject {
      * possibility of logging the password in clear text, which may be viewed by 3rd parties.
      * Of course, this is not a requirement, just a recommendation.
      *
-     * @param source the source of this event, typically the
-     * {@link org.jsecurity.authc.Authenticator} responsible for the authentication attempt.
+     * @param source the component responsible for the event.
      * @param principal the principal of the account identity associated with the authentication.
      */
     public AuthenticationEvent( Object source, Principal principal ) {
