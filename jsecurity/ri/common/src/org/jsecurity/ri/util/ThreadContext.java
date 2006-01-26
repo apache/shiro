@@ -46,7 +46,9 @@ import java.util.Map;
  * If the desired behavior is to ensure that Thread data is not shared across
  * threads in a pooled or reusable Threaded environment, the application must
  * bind and remove any necessary values at the beginning and end of stack
- * execution, respectively.
+ * execution, respectively (e.g. via the <tt>clear</tt> method).
+ *
+ * @see #clear()
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -98,8 +100,8 @@ public abstract class ThreadContext {
         }
         Object value = getResources().get(key);
         if ((value != null) && logger.isTraceEnabled()) {
-            String msg = "Retrieved value of type [" + value.getClass() + "] for key [" + key
-                    + "] " + "bound to thread [" + Thread.currentThread().getName() + "]";
+            String msg = "Retrieved value of type [" + value.getClass().getName() + "] for key [" +
+                         key + "] " + "bound to thread [" + Thread.currentThread().getName() + "]";
             logger.trace(msg);
         }
         return value;
@@ -130,8 +132,8 @@ public abstract class ThreadContext {
         getResources().put(key, value);
 
         if (logger.isTraceEnabled()) {
-            String msg = "Bound value of type [" + value.getClass() + "] for key [" + key
-                    + "] to thread " + "[" + Thread.currentThread().getName() + "]";
+            String msg = "Bound value of type [" + value.getClass().getName() + "] for key [" +
+                         key + "] to thread " + "[" + Thread.currentThread().getName() + "]";
             logger.trace(msg);
         }
     }
@@ -149,8 +151,8 @@ public abstract class ThreadContext {
         Object value = getResources().remove(key);
 
         if ((value != null) && logger.isTraceEnabled()) {
-            String msg = "Removed value of type [" + value.getClass() + "] for key [" + key + "]"
-                    + "from thread [" + Thread.currentThread().getName() + "]";
+            String msg = "Removed value of type [" + value.getClass().getName() + "] for key [" +
+                         key + "]" + "from thread [" + Thread.currentThread().getName() + "]";
             logger.trace(msg);
         }
 
