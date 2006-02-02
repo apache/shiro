@@ -27,7 +27,7 @@ package org.jsecurity.authz;
 import java.net.InetAddress;
 
 /**
- * Thrown when a particular client (i.e. host address) has not been enabled to access the system
+ * Thrown when a particular client (that is, host address) has not been enabled to access the system
  * or if the client has been enabled access but is not permitted to perform a particluar operation
  * or access a particular resource.
  *

@@ -127,12 +127,13 @@ to where the build is being executed -->
 
         <javadoc packagenames="org.jsecurity.*"
                  destdir="${root.dist.dir}/docs/spec-api"
+                 access="public"
                  author="true"
                  version="true"
                  use="true"
                  windowTitle="JSecurity Specification API">
-            <doctitle><![CDATA[<h1>JSecurity Specification API v. 0.1 RC1</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &copy; 2005 JSecurity.org</i>]]></bottom>
+            <doctitle><![CDATA[<h1>JSecurity Specification API v. 0.1</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &copy; 2005-2006 JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
             </fileset>
@@ -151,8 +152,8 @@ to where the build is being executed -->
                  version="true"
                  use="true"
                  windowTitle="JSecurity Reference Implementation API">
-            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.1 RC1</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &copy; 2005 JSecurity.org</i>]]></bottom>
+            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.1</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &copy; 2005-2006 JSecurity.org</i>]]></bottom>
             <classpath>
                 <pathelement location="${root.base.dir}/dist/jsecurity-api.jar"/>
                 <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>

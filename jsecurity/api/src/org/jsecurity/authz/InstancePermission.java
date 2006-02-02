@@ -146,8 +146,9 @@ public abstract class InstancePermission extends Permission implements Serializa
 
     /**
      * Sets the {@link #getActions() actions} for this instance.  Once set on this instance,
-     * either via this method or via a constructory, they cannot be set again or
-     * changed (Permissions are intended to be immutable).
+     * either via this method or via a constructor, they cannot be set again or
+     * changed - as per the {@link Permission Permission} JavaDoc, Permissions are intended to be
+     * immutable like Strings.  This method is only provided to be JavaBeans compatible.
      * @param actions the actions to set for this instance
      */
     public void setActions( String actions ) {
