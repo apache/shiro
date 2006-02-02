@@ -1,0 +1,33 @@
+<html>
+<body>
+
+Core interfaces and exceptions supporting Authorization (access control).
+
+<p>JSecurity abbreviates the word 'AuthoriZation' as <tt>authz</tt> to distinguish it seperately from
+'AuthentiCation', abbreviated as <tt>authc</tt>.</p>
+
+<p>The primary interface of interest, which is the core of JSecurity authorization functionality,
+is the <tt>AuthorizationContext</tt>.  This interface handles all aspects of authorization and is
+the facade to all other JSecurity authorization components.</p>
+
+<p>JSecurity has the ability to authorize subjects (a.k.a. users) without being intrusive to
+the application's domain model.  Most applications will utilize the concepts of
+<tt>group</tt>s, <tt>role</tt>s, and <tt>permission</tt>s, but JSecurity doesn't require that
+you implement any such interfaces.  Instead, JSecurity abstracts itself away from domain
+specifics by allowing applications to use an implementation of the <tt>AuthorizationContext</tt>
+interface.</p>
+
+<p>Although
+it is possible for applications to implement this and other interfaces directly, it is not
+recommended.  The JSecurity Reference Implementation (RI) already has base implementations which
+should be suitable for 99% of deployments.  Most applications should be able to use these
+existing components via configuration only and be up and running very quickly.  See the
+Reference Implementation API or the JSecurity.org website quick-start for how to accomplish this
+instead of writing an implementation from scratch.</p>
+
+<p>Finally, as is the case with most all of JSecurity interfaces and components, they can be used
+programmatically, but it is highly recommended to use the JSecurity RI JDK 1.5 annotations and/or
+configuration to reduce or eliminate such effort.</p>
+
+</body>
+</html>
