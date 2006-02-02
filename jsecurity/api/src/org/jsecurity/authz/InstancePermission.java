@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * A InstancePermission represents an action or actions that might be performed on a single
@@ -86,6 +87,9 @@ public abstract class InstancePermission extends Permission implements Serializa
      */
     public static final String ACTION_DELIMITER = ",";
     public static final char ACTION_DELIMITER_CHAR = ',';
+
+    private static final Pattern DELIMITER_SPLIT_PATTERN = Pattern.compile( "[,; ][ ]*" );
+
 
     /**
      * Canonically ordered actions string for an instance of this class.
@@ -173,9 +177,9 @@ public abstract class InstancePermission extends Permission implements Serializa
             throw new IllegalStateException( msg );
         }
 
-        LinkedHashSet<String> nonCanonicalActions = new LinkedHashSet<String>();
+        Set<String> nonCanonicalActions = new LinkedHashSet<String>();
 
-        String[] actionsArray = actions.split("[,; ][ ]*");
+        String[] actionsArray = DELIMITER_SPLIT_PATTERN.split( actions, 0 );
 
         for( String s : actionsArray ) {
             if ( !possibleActions.contains( s ) ) {
@@ -189,7 +193,7 @@ public abstract class InstancePermission extends Permission implements Serializa
 
         //Now arrange them in canonical order, as required by the
         //java.security.Permission class:
-        LinkedHashSet<String> canonicalActions = new LinkedHashSet<String>();
+        Set<String> canonicalActions = new LinkedHashSet<String>();
         for( String s : possibleActions ) {
             if ( nonCanonicalActions.contains( s ) ) {
                 canonicalActions.add( s );
