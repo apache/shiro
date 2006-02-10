@@ -191,9 +191,9 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
 
 
     /**
-     * @see AuthorizationContext#hasPermission(java.security.Permission)
+     * @see AuthorizationContext#implies(java.security.Permission)
      */
-    public boolean hasPermission(Permission permission) {
+    public boolean implies(Permission permission) {
 
         if( permissions != null ) {
             for( Permission perm : permissions ) {
@@ -204,12 +204,12 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
         }
 
         if( logger.isDebugEnabled() ) {
-            logger.debug( "Context does not have permission [" + permission + "]" );
+            logger.debug( "Context does not imply permission [" + permission + "]" );
 
             if( permissions == null ) {
                 logger.debug( "No permissions are associated with this context.  Permissions are null." );
             } else {
-                logger.debug( "Has permissions:" );
+                logger.debug( "Implies permissions:" );
                 for( Permission perm : permissions ) {
                     logger.debug( "\t" + perm );
                 }
@@ -220,26 +220,26 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
     }
 
     /**
-     * @see AuthorizationContext#hasPermissions(java.util.List<java.security.Permission>)
+     * @see AuthorizationContext#implies(java.util.List<java.security.Permission>)
      */
-    public boolean[] hasPermissions(List<Permission> permissions) {
-        boolean[] hasPermissions = new boolean[permissions.size()];
+    public boolean[] implies(List<Permission> permissions) {
+        boolean[] implies = new boolean[permissions.size()];
 
         for( int i = 0; i < permissions.size(); i++ ) {
-            hasPermissions[i] = hasPermission( permissions.get(i) );
+            implies[i] = implies( permissions.get(i) );
         }
-        return hasPermissions;
+        return implies;
     }
 
 
     /**
-     * @see AuthorizationContext#hasAllPermissions(java.util.Collection<java.security.Permission>)
+     * @see AuthorizationContext#impliesAll(java.util.Collection<java.security.Permission>)
      */
-    public boolean hasAllPermissions(Collection<Permission> permissions) {
+    public boolean impliesAll(Collection<Permission> permissions) {
 
         if( permissions != null ) {
             for( Permission perm : permissions ) {
-                if( !hasPermission(perm) ) {
+                if( !implies(perm) ) {
                     return false;
                 }
             }
@@ -252,7 +252,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
      * @see AuthorizationContext#checkPermission(java.security.Permission)
      */
     public void checkPermission(Permission permission) throws AuthorizationException {
-        if( !hasPermission( permission ) ) {
+        if( !implies( permission ) ) {
             throw new AuthorizationException( "User [" + getPrincipal().getName() + "] does " +
                                               "not have permission [" + permission.toString() + "]" );
         }
@@ -266,7 +266,7 @@ public class SimpleAuthorizationContext implements AuthorizationContext {
 
         if( permissions != null ) {
             for( Permission permission : permissions ) {
-                if( !hasPermission( permission ) ) {
+                if( !implies( permission ) ) {
                    throw new AuthorizationException( "User [" + getPrincipal().getName() + "] does " +
                                                      "not have permission [" + permission.toString() + "]" );
                 }

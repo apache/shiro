@@ -27,9 +27,9 @@ package org.jsecurity.ri.authz.module;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
- * Exception thrown when trying to evaluate a
- * {@link org.jsecurity.authz.annotation.HasPermission HasPermission} annotation's
- * {@link org.jsecurity.authz.annotation.HasPermission#targetPath() targetPath} attribute.
+ * Exception thrown when trying to evaluate an
+ * {@link org.jsecurity.authz.annotation.Implies Implies} annotation's
+ * {@link org.jsecurity.authz.annotation.Implies#targetPath() targetPath} attribute.
  *
  * @since 0.1
  * @author Les Hazlewood

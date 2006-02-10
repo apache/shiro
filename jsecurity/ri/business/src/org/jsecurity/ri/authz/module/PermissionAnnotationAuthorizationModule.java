@@ -27,7 +27,7 @@ package org.jsecurity.ri.authz.module;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.annotation.HasPermission;
+import org.jsecurity.authz.annotation.Implies;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.ri.util.PermissionUtils;
@@ -37,7 +37,7 @@ import java.security.Permission;
 
 /**
  * AuthorizationModule that votes on authorization based on any {@link
- * org.jsecurity.authz.annotation.HasPermission HasPermission} annotation found on the method being
+ * org.jsecurity.authz.annotation.Implies Implies} annotation found on the method being
  * executed.
  *
  * @since 0.1
@@ -49,7 +49,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public PermissionAnnotationAuthorizationModule() {
-        setAnnotationClass( HasPermission.class );
+        setAnnotationClass( Implies.class );
     }
 
     private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
@@ -78,14 +78,14 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         return targetValue.toString();
     }
 
-    private Permission createPermission( MethodInvocation mi, HasPermission hp ) {
-        Class<? extends Permission> clazz = hp.type();
-        String target = hp.target();
-        String targetPath = hp.targetPath();
+    private Permission createPermission( MethodInvocation mi, Implies implies ) {
+        Class<? extends Permission> clazz = implies.type();
+        String target = implies.target();
+        String targetPath = implies.targetPath();
         if ( targetPath.equals( "" ) ) {
             targetPath = null;
         }
-        String actions = hp.actions();
+        String actions = implies.actions();
         if ( actions.equals( "" ) ) {
             actions = null;
         }
@@ -95,7 +95,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
                 target = inferTargetFromPath( mi.getArguments(), targetPath );
             } catch ( Exception e ) {
                 String msg = "Unable to parse targetPath property.  Please see the " +
-                             "javadoc for expected path syntax. HasPermission check cannot " +
+                             "javadoc for expected path syntax. Implies check cannot " +
                              "continue.";
                 throw new InvalidTargetPathException( msg, e );
             }
@@ -119,18 +119,18 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
             throw new NullPointerException( msg );
         }
 
-        HasPermission hpAnnotation = m.getAnnotation( HasPermission.class );
+        Implies implies = m.getAnnotation( Implies.class );
 
-        Permission p = createPermission( mi, hpAnnotation );
-        if ( context.hasPermission( p ) ) {
+        Permission p = createPermission( mi, implies );
+        if ( context.implies( p ) ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Authorization context has permission [" + p +
+                log.debug( "Authorization context implies permission [" + p +
                            "]. Returning grant vote." );
             }
             return AuthorizationVote.grant;
         } else {
             if ( log.isDebugEnabled() ) {
-                log.debug( "AuthorizationContext does not have permission [" + p +
+                log.debug( "AuthorizationContext does not imply permission [" + p +
                            "].  Returning deny vote." );
             }
             return AuthorizationVote.deny;
@@ -138,7 +138,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     }
 
 
-    /*private String hpToString( HasPermission annotation ) {
+    /*private String hpToString( Implies annotation ) {
         StringBuffer sb = new StringBuffer();
         sb.append( "type=" ).append( annotation.type() );
         sb.append( ",target=" ).append( annotation.target() );
