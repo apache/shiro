@@ -252,16 +252,16 @@ public class SessionHandle implements SecureSession {
         return getAuthorizationContext().hasAllRoles( roleIdentifiers );
     }
 
-    public boolean hasPermission( Permission permission ) {
-        return getAuthorizationContext().hasPermission( permission );
+    public boolean implies( Permission permission ) {
+        return getAuthorizationContext().implies( permission );
     }
 
-    public boolean[] hasPermissions( List<Permission> permissions ) {
-        return getAuthorizationContext().hasPermissions( permissions );
+    public boolean[] implies( List<Permission> permissions ) {
+        return getAuthorizationContext().implies( permissions );
     }
 
-    public boolean hasAllPermissions( Collection<Permission> permissions ) {
-        return getAuthorizationContext().hasAllPermissions( permissions );
+    public boolean impliesAll( Collection<Permission> permissions ) {
+        return getAuthorizationContext().impliesAll( permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {

@@ -134,7 +134,7 @@ public interface Realm {
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permission the permission that is being checked.
-     * @return true if the user associated with this context has the permission, false otherwise.
+     * @return true if the user associated with this context is permitted, false otherwise.
      */
     boolean isPermitted( Principal subjectIdentifier, Permission permission );
 
@@ -160,8 +160,9 @@ public interface Realm {
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value indicates the user has the
-     * permission at that index.  False indicates the user does not have the role.
+     * permissions in the given list.  A true value at an index indicates the user is permitted for
+     * for the associated <tt>Permission</tt> object in the list.  A false value at an index
+     * indicates otherwise.
      */
     boolean[] isPermitted( Principal subjectIdentifier, List<Permission> permissions );
 

@@ -31,14 +31,13 @@ import java.security.Permission;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class LacksPermissionTag extends PermissionTag {
+public class ImpliesTag extends PermissionTag {
 
-    public LacksPermissionTag() {
+    public ImpliesTag() {
     }
 
     protected boolean showTagBody( Permission p ) {
-        boolean permitted = getAuthorizationContext().hasPermission( p );
-        return !permitted;
+        return getAuthorizationContext().implies( p );
     }
 
 }

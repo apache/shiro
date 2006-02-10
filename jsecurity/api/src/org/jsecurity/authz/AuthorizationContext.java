@@ -115,37 +115,36 @@ public interface AuthorizationContext {
     /**
      * Checks if the given permission is associated with this context.
      * @param permission the permission that is being checked.
-     * @return true if the user associated with this context has the permission, false otherwise.
+     * @return true if the user associated with this context implies the permission, false otherwise.
      */
-    boolean hasPermission( Permission permission );
+    boolean implies( Permission permission );
 
     /**
-     * Checks a set of permissions to see if they are associated with this
-     * context and returns a boolean array indicating which permissions are associated
-     * with this context.
+     * Checks a set of permissions to see if they are implied by this
+     * context and returns a boolean array indicating which permissions are implied by this context.
      *
      * <p>This is primarily a performance-enhancing method to help reduce the number of
-     * {@link #hasPermission} invocations over the wire in client/server systems.
+     * {@link #implies} invocations over the wire in client/server systems.
      *
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value indicates the user has the
-     * permission at that index.  False indicates the user does not have the role.
+     * permissions in the given list.  A true value indicates the permission is implied by the user
+     * associated with this context.  A false value indicates the permission is not implied.
      */
-    boolean[] hasPermissions( List<Permission> permissions );
+    boolean[] implies( List<Permission> permissions );
 
     /**
      * Checks if the user has all of the given permissions.
      * @param permissions the permissions to be checked.
      * @return true if the user has all permissions, false otherwise.
      */
-    boolean hasAllPermissions( Collection<Permission> permissions );
+    boolean impliesAll( Collection<Permission> permissions );
 
 
     /**
-     * A convenience method to check a permission that a user is assumed to have.
-     * If the user does not have the given permission, an {@link AuthorizationException}
-     * will be thrown.
+     * A convenience method to check if this context implies the specified permission.  That is,
+     * if the authorization context does not imply the given permission, an
+     * {@link AuthorizationException} will be thrown.
      * @param permission the permission to check.
      * @throws AuthorizationException if the user does not have the permission.
      */
@@ -153,10 +152,9 @@ public interface AuthorizationContext {
 
 
     /**
-     * A convenience method for checking if a user has all of the given permissions.
+     * A convenience method for checking if this context implies all of the specified permissions.
      * @param permissions the permissions to check.
-     * @throws AuthorizationException if the user does not have all of the given
-     * permissions.
+     * @throws AuthorizationException if the context does not imply all of the given permissions.
      */
     void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException;
 

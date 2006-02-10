@@ -50,11 +50,12 @@ public interface AuthenticationInfo {
      */
     Principal getPrincipal();
 
-
     /**
-     * The principals that identify of the authenticated subject.  These principal are often
-     * a representation of a user's primary key id or username.  The first principal in this list
-     * will be interpreted as the primary principal.
+     * Returns the principals that identify the authenticated subject, such as a user's primary key
+     * id or username.  Although not a requirement,
+     * the list returned by the implementation should contain at least 1 principal.  The first
+     * pricipal in the list is usually (but still not a requirement) the subject's primary
+     * principal (e.g. user id).
      *
      * @return the identifying principal of the authenticated subject.
      */

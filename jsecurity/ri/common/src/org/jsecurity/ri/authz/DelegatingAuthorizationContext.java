@@ -138,15 +138,15 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
         return realm.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
-    public boolean hasPermission( Permission permission ) {
+    public boolean implies( Permission permission ) {
         return realm.isPermitted( getPrincipal(), permission );
     }
 
-    public boolean[] hasPermissions( List<Permission> permissions ) {
+    public boolean[] implies( List<Permission> permissions ) {
         return realm.isPermitted( getPrincipal(), permissions );
     }
 
-    public boolean hasAllPermissions( Collection<Permission> permissions ) {
+    public boolean impliesAll( Collection<Permission> permissions ) {
         return realm.isPermittedAll( getPrincipal(), permissions );
     }
 
