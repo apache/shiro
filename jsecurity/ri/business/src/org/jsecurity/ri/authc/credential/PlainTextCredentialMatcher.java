@@ -31,6 +31,8 @@ import java.util.Arrays;
  * Simple implementation of the {@link CredentialMatcher} interface that
  * compares two plain text passwords.
  *
+ * todo Make this class accept char[] or Strings.. or at least give a better error message than a ClassCastException
+ *
  * @since 0.1
  * @author Jeremy Haile
  */
