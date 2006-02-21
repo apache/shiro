@@ -93,6 +93,12 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     }
 
 
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials) {
+        this.principals = principals;
+        this.credentials = credentials;
+    }
+
+
     public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles) {
         this.principals = new ArrayList<Principal>();
         this.principals.add( principal );
