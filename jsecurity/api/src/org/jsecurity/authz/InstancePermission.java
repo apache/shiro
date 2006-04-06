@@ -236,12 +236,14 @@ public abstract class InstancePermission extends Permission implements Serializa
     /**
      * Returns a "canonically ordered" Set of all actions that this permission
      * class understands.  This set is used to verify instantiation of a new permission.
-     * That is, when a permission is being instantiated, the specified actions are verified to
-     * be a perfect subset of the values found in this Set.
      *
-     * <p>Since this data never changes for any given InstancePermission subclass, the returned Set
+     * <p>That is, when a permission is being instantiated, the actions given to the constructor
+     * are verified to be either equivalent to or a proper subset of the values found in this
+     * Set.
+     *
+     * <p>Since this Set never changes for any given InstancePermission subclass, the returned Set
      * should be constructed via a static initializer that will be executed when the class
-     * is loaded by the class loader.  This ensures the data is only constructed once for
+     * is loaded by the class loader.  This ensures the Set is only constructed once for
      * <em>all</em> instances, increasing overall performance.
      *
      * <p>E.g.:

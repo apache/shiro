@@ -35,8 +35,8 @@ import org.jsecurity.session.Session;
  * Implementation of {@link SecurityContextAccessor} that retrieves security context information
  * from a thread local variable using the {@link ThreadContext} class.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
 public class ThreadLocalSecurityContextAccessor implements SecurityContextAccessor {
 

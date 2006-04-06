@@ -36,6 +36,12 @@ import org.jsecurity.authc.event.AuthenticationEvent;
  */
 public interface AuthenticationEventSender {
 
+    /**
+     * Sends the specified AuthenticationEvent to interested parties.  The underlying transport
+     * mechanism is implementation-specific (e.g. synchronous Java Listeners, JMS, SOAP, etc).
+     *
+     * @param event the event to send.
+     */
     void send( AuthenticationEvent event );
 
 }

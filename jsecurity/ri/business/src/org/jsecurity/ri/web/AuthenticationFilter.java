@@ -40,8 +40,8 @@ import java.util.Set;
 /**
  * Description of class.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
 public class AuthenticationFilter implements Filter {
 

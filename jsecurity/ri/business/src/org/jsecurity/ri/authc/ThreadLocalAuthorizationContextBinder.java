@@ -30,8 +30,8 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.util.ThreadContext;
 
 /**
- * Implementation of the {@link AuthorizationContextBinder} interface that binds
- * the context to the thread local context using {@link org.jsecurity.ri.util.ThreadContext}
+ * {@link AuthorizationContextBinder} implementation that binds
+ * an authorization context to the calling thread using {@link org.jsecurity.ri.util.ThreadContext}
  *
  * @since 0.1
  * @author Jeremy Haile

@@ -39,7 +39,7 @@ import org.jsecurity.authz.AuthorizationContext;
 public interface AuthorizationContextBinder {
 
     /**
-     * Binds the authorization context to the application so that it is accessible to future requests.
+     * Binds the authorization context to the application so that it is accessible to future access.
      * @param context the authorization context to bind.
      */
     void bindAuthorizationContext( AuthorizationContext context );

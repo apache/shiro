@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Provides all access control behavior for an authenticated subject.
+ * Provides all access control behavior for an authenticated subject (aka a 'user account).
  * An <tt>AuthorizationContext</tt> can only be acquired upon a successful login, as access
  * control behavior must be associated with a known identity.
  *
@@ -45,7 +45,7 @@ public interface AuthorizationContext {
     /**
      * Returns the primary identifier of the subject associated with this
      * <tt>AuthorizationContext</tt> (usually a user id or username).  This is a
-     * convenience method for context's that only use a single principal.  If multiple
+     * convenience method for contexts that only use a single principal.  If multiple
      * principals are associated with the context, the primary principal will be returned.
      * Which principal is the primary principal is dependent upon the specific implementation
      * of <tt>AuthorizationContext</tt>
