@@ -35,7 +35,7 @@ import org.jsecurity.authc.AuthenticationToken;
  *
  * <p>An <tt>AuthenticationModule</tt> is sometimes called in other systems an
  * <em>authentication provider</em>.  This means that the component has the abiblity to provide
- * access to authentication data in a environment-specific manner (e.g. LDAP, RDBMS, fingerprint,
+ * access to authentication data in a environment-specific manner (e.g. LDAP, RDBMS, biometric,
  * etc.).  We chose to use the name <tt>Module</tt> for intuition's sake: JSecurity has the
  * ability to use any number of these modules either alone, or in conjunction with each other, to
  * perform an authentication.  This is known in the security world as
@@ -44,13 +44,17 @@ import org.jsecurity.authc.AuthenticationToken;
  * security framework than the term 'authentication provider'.
  *
  * <p>An <tt>AuthenticationModule</tt> typically has a 1-to-1 correspondence with a
- * <em>type</em> of back-end authentication system.  That is, you usually will see 1 implementation
- * that can talk to an LDAP directory, anther implementation that uses raw JDBC, or another that
- * uses the Hibernate API, etc.
+ * <em>type</em> of back-end authentication system.  That means, <tt>AuthenticationModule</tt>s are
+ * essentially
+ * <a href="http://java.sun.com/blueprints/corej2eepatterns/Patterns/DataAccessObject.html">DAO Design Pattern</a>
+ * implementations that ecapsulates protocol-specific details away from the authentication framework.
  *
- * <p>The coordination of how one or more modules execute is performed by an
+ * <p>Common implementations might access Relational Databases (via JDBC, Hibernate, etc), LDAP directories,
+ * Microsoft Active Directory, Kerberos systems, and more.
+ *
+ * <p>The coordination of how one or more modules execute(s) is performed by an
  * {@link org.jsecurity.authc.Authenticator Authenticator} implementation, which typically
- * implements PAM behavior.
+ * implements PAM support.
  *
  * @since 0.1
  * @author Les Hazlewood

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -45,10 +45,21 @@ import java.lang.annotation.Target;
  * </pre>
  * </blockquote>
  *
+ * <b>*Usage Note*:</b> You should not use this annotation if your application has a <em>dynamic</em>
+ * security model and the annotated role might be deleted.  That is, if your application allows the
+ * creation and deletion of groups and/or roles <em>during runtime</em>, this annotation might not
+ * make sense - the annotated Role may be deleted.
+ *
+ * <p>If you require such dynamic functionality, only the
+ * {@link Implies Implies} annotation makes sense - Permission configuration does not change for
+ * an application since permissions directly correspond to how the application's functionality is
+ * programmed.
+ *
  * @see org.jsecurity.authz.AuthorizationContext#hasRole(String)
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

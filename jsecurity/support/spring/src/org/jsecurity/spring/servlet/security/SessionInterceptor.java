@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  * executing the <tt>HttpServletRequest</tt>, it will be retrieved and made accessible.
  *
  * <p>If no existing <tt>Session</tt> could be associated with the <tt>HttpServletRequest</tt>,
- * this interceptor will create a new one, associated it with the <tt>request</tt>'s corresponding
+ * this interceptor will create a new one, associate it with the <tt>request</tt>'s corresponding
  * client, and be made accessible to the JSecurity framework for the duration of the
  * request (i.e. via a {@link ThreadLocal ThreadLocal}).
  *
@@ -111,7 +111,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
         WebUtils.bindToThread( s );
 
         if ( log.isTraceEnabled() ) {
-            log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's referencing " +
+            log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's incoming " +
                 "referenced session has expired." );
         }
         request.setAttribute( WebUtils.EXPIRED_SESSION_KEY, Boolean.TRUE );

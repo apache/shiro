@@ -1,5 +1,14 @@
 <?xml version="1.0"?>
 
+<!-- JSecurity root build file.  If you want to understand how the JSecurity build environment
+     works (useful if you want to build from scratch or join the project as a developer),
+     Read this article:
+
+     An Ant Modular Build Environment for Enterprise Applications:
+     http://www.onjava.com/pub/a/onjava/2005/06/22/modularant.html
+
+     Reading this will instantly make you familiar with our build.
+-->
 <project name="jsecurity" default="dist">
 
     <!-- Static property definitions.  These will remain the same for any module or submodule. -->
@@ -22,8 +31,8 @@
     <!-- All 3rd party libraries are in here: -->
     <property name="lib.dir" value="${root.base.dir}/lib"/>
 
-    <!-- *RELATIVE* definitions.  These properties will reflect a directory structure relative
-to where the build is being executed -->
+    <!-- *RELATIVE* definitions.  These properties will reflect a directory structure
+         relative to where the build is being executed -->
     <property name="base.dir" value="."/>
     <property name="etc.dir" value="${base.dir}/etc"/>
     <property name="src.dir" value="${base.dir}/src"/>
@@ -173,40 +182,14 @@ to where the build is being executed -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/api/"/>
             <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
-
         </javadoc>
+
     </target>
 
     <!-- =================================================================== -->
     <!-- Javadoc all source code                                             -->
     <!-- =================================================================== -->
     <target name="javadoc" depends="javadoc.api,javadoc.ri"/>
-        <!-- <echo message="Generating JSecurity JavaDoc API..."/>
-        <mkdir dir="${root.dist.dir}/docs/api"/>
-
-        <javadoc packagenames="org.jsecurity.*"
-                 destdir="${root.dist.dir}/docs/api"
-                 author="true"
-                 version="true"
-                 use="true"
-                 windowTitle="JSecurity Java API">
-            <doctitle><![CDATA[<h1>JSecurity Combined Specification and Reference Implemenatation API</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright (c) JSecurity.org</i>]]></bottom>
-            <fileset dir="${root.base.dir}">
-                <include name="api/src/**/*.java"/>
-                <include name="ri/common/src/**/*.java"/>
-                <include name="ri/business/src/**/*.java"/>
-                <include name="ri/client/src/**/*.java"/>
-            </fileset>
-            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
-            <link href="http://jakarta.apache.org/commons/logging/api/"/>
-            <classpath>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-logging.jar"/>
-                <pathelement location="${root.base.dir}/ri/lib/jakarta-commons/commons-beanutils-core.jar"/>
-            </classpath>
-        </javadoc>
-    </target> -->
 
     <target name="junit.check.warning" if="tests.failed">
         <echo>

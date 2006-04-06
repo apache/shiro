@@ -34,10 +34,10 @@ import java.security.Permission;
 
 /**
  * <p>
- * Requires the current executor to have a particular permission in order to execute the
- * annotated method.  If the executor's associated
+ * Requires the current executor's context to imply a particular permission in
+ * order to execute the annotated method.  If the executor's associated
  * {@link org.jsecurity.authz.AuthorizationContext AuthorizationContext} determines that the
- * executor does not have the specified permission, the method will not be executed.
+ * executor does not imply the specified permission, the method will not be executed.
  * </p>
  * For example, this annotation<br>
  * <blockquote><pre>
