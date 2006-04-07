@@ -47,6 +47,7 @@ import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public abstract class AbstractAuthenticator implements Authenticator {
 
@@ -60,7 +61,9 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /**
      * Commons logger.
      */
-    protected Log logger = LogFactory.getLog( getClass() );
+    protected Log log = LogFactory.getLog( getClass() );
+    /** Alias for the 'log' protected class attribute for subclass authors that may prefer one over the other. */
+    protected Log logger = log;
 
     /**
      * The factory used to wrap authorization context after authentication.
@@ -119,32 +122,71 @@ public abstract class AbstractAuthenticator implements Authenticator {
         this.authcEventSender = authcEventSender;
     }
 
-    private void sendEvent( AuthenticationToken token, AuthenticationInfo info, AuthenticationException ex ) {
-        boolean failed = ( ex != null );
-        String status = failed ? "Failed" : "Success";
+    protected AuthenticationEvent createFailureEvent( AuthenticationToken token, AuthenticationException ae ) {
+        AuthenticationEventFactory factory = getAuthenticationEventFactory();
+        return factory.createFailureEvent( token, ae );
+    }
+
+    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
+        AuthenticationEventFactory factory = getAuthenticationEventFactory();
+        return factory.createSuccessEvent( token, info );
+    }
+
+    protected void sendFailureEvent( AuthenticationToken token, AuthenticationException ae ) {
+        AuthenticationEvent event = createFailureEvent( token, ae );
+        if ( event != null ) {
+            send( event );
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No AuthenticationEvent instance returned from 'createFailureEvent' method call.  " +
+                    "No failed authentication event will be sent." );
+            }
+        }
+    }
+
+    protected void sendSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
+        AuthenticationEvent event = createSuccessEvent( token, info );
+        if ( event != null ) {
+            send( event );
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No AuthenticationEvent instance returned from 'createSuccessEvent' method call.  " +
+                    "No successful authentication event will be sent." );
+            }
+        }
+    }
+
+    protected void send( AuthenticationEvent event ) throws IllegalArgumentException {
+        if ( event == null ) {
+            throw new IllegalArgumentException( "AuthenticationEvent argument cannot be null" );
+        }
         AuthenticationEventSender sender = getAuthenticationEventSender();
         if ( sender != null ) {
-            AuthenticationEventFactory factory = getAuthenticationEventFactory();
-            AuthenticationEvent event;
-            if ( failed ) {
-                event = factory.createFailureEvent( token, ex );
-            } else {
-                event = factory.createSuccessEvent( token, info );
-            }
-            if ( event != null ) {
-                sender.send( event );
-            } else {
-                if ( logger.isDebugEnabled() ) {
-                    logger.debug( "Event object returned from authenticationEventFactory was null.  " +
-                                  status + " event will not be sent." );
-
-                }
-            }
+            sender.send( event );
         } else {
-            if ( logger.isTraceEnabled() ) {
-                logger.trace( "Property 'authenticationEventSender' was not set.  " + status + " event " +
-                        "will not be sent.");
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will not " +
+                    "be sent." );
             }
+        }
+    }
+
+    protected AuthorizationContext createAuthorizationContext( AuthenticationInfo info ) {
+        return getAuthorizationContextFactory().createAuthorizationContext( info );
+    }
+
+    protected void bind( AuthorizationContext authzCtx ) {
+        getAuthorizationContextBinder().bindAuthorizationContext( authzCtx );
+    }
+
+    private void assertCreation( AuthorizationContext authzCtx ) throws IllegalStateException {
+        if ( authzCtx == null ) {
+            String msg = "Programming or configuration error - No AuthorizationContext was created after successful " +
+                "authentication.  Verify that you have either configured the " + getClass().getName() +
+                " instance with a proper " + AuthorizationContextFactory.class.getName() + " (easier) or " +
+                "that you have overridden the " + AbstractAuthenticator.class.getName() +
+                ".createAuthorizationContext( AuthenticationInfo info ) method.";
+            throw new IllegalStateException( msg );
         }
     }
 
@@ -154,8 +196,8 @@ public abstract class AbstractAuthenticator implements Authenticator {
 
     public final AuthorizationContext authenticate( AuthenticationToken token ) throws AuthenticationException {
 
-        if (logger.isInfoEnabled()) {
-            logger.info("Authentication request received for token [" + token + "]");
+        if (log.isInfoEnabled()) {
+            log.info("Authentication request received for token [" + token + "]");
         }
 
         AuthenticationInfo info;
@@ -167,27 +209,26 @@ public abstract class AbstractAuthenticator implements Authenticator {
             }
         } catch (AuthenticationException e) {
             // Catch exception for debugging
-            if (logger.isDebugEnabled()) {
-                logger.debug("Authentication failed for token [" + token + "]", e);
+            if (log.isDebugEnabled()) {
+                log.debug("Authentication failed for token [" + token + "]", e);
             }
 
-            sendEvent( token, null, e );
+            sendFailureEvent( token, e );
 
             throw e;
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Authentication successful.  Returned authentication info: [" + info + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Authentication successful.  Returned authentication info: [" + info + "]");
         }
 
-        sendEvent( token, info, null );
+        AuthorizationContext authzCtx = createAuthorizationContext( info );
 
-        AuthorizationContextFactory factory = getAuthorizationContextFactory();
+        assertCreation( authzCtx );
 
-        AuthorizationContext authzCtx = factory.createAuthorizationContext( info );
+        bind( authzCtx );
 
-        // Bind the context to the application
-        getAuthorizationContextBinder().bindAuthorizationContext( authzCtx );
+        sendSuccessEvent( token, info );
 
         return authzCtx;
     }
