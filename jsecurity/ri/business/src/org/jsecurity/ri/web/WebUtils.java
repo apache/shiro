@@ -26,6 +26,7 @@ package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.util.ThreadContext;
+import org.jsecurity.ri.util.ThreadUtils;
 import org.jsecurity.session.Session;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,23 +66,19 @@ public abstract class WebUtils {
     private WebUtils(){}
 
     public static void bindToThread( AuthorizationContext authCtx ) {
-        if ( authCtx != null ) {
-            ThreadContext.put( ThreadContext.AUTHORIZATION_CONTEXT_KEY, authCtx );
-        }
+        ThreadUtils.bindToThread( authCtx );
     }
 
     public static void unbindAuthorizationContextFromThread() {
-        ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
+        ThreadUtils.unbindAuthorizationContextFromThread();
     }
 
     public static void bindToThread( Session s ) {
-        if ( s != null ) {
-            ThreadContext.put( ThreadContext.SESSION_KEY, s );
-        }
+        ThreadUtils.bindToThread( s );
     }
 
     public static void unbindSessionFromThread() {
-        ThreadContext.remove( ThreadContext.SESSION_KEY );
+        ThreadUtils.unbindSessionFromThread();
     }
 
     public static void bindToHttpSession( Session s, HttpServletRequest request ) {
