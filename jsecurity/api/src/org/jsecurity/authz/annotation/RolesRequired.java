@@ -23,7 +23,7 @@ package org.jsecurity.authz.annotation;
  * be executed by anyone (at least until a new role with the same name was created again).
  *
  * <p>If you require such dynamic functionality, only the
- * {@link org.jsecurity.authz.annotation.PermissionRequired PermissionRequired} annotation makes sense - Permission
+ * {@link org.jsecurity.authz.annotation.PermissionsRequired PermissionsRequired} annotation makes sense - Permission
  * capabilities will not change for an application since permissions directly correspond to how
  * the application's functionality is programmed.
  *
