@@ -22,7 +22,7 @@
     <!-- =========================================================
       -  JSecurity configuration
       ============================================================ -->
-    <bean name="authenticator" class="org.jsecurity.ri.authc.module.PluggableAuthenticator">
+    <bean name="authenticator" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
         <property name="modules">
             <list>
                 <ref bean="daoAuthenticationModule"/>

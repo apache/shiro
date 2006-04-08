@@ -39,10 +39,10 @@ import java.lang.reflect.Method;
  * (annotations).  Primarily provides automatic support for the
  * {@link org.jsecurity.authz.module.AuthorizationModule#supports supports} method.  This allows support for any
  * arbitrary number of annotations - simply create a subclass of this one and add an instance of
- * that subclass to the {@link org.jsecurity.ri.authz.module.ModuleAuthorizer ModuleAuthorizer}'s
- * set of {@link org.jsecurity.ri.authz.module.ModuleAuthorizer#setAuthorizationModules authorizationModule}s.
+ * that subclass to the {@link org.jsecurity.ri.authz.module.ModularAuthorizer ModularAuthorizer}'s
+ * set of {@link org.jsecurity.ri.authz.module.ModularAuthorizer#setAuthorizationModules authorizationModule}s.
  *
- * @see org.jsecurity.ri.authz.module.ModuleAuthorizer#setAuthorizationModules
+ * @see org.jsecurity.ri.authz.module.ModularAuthorizer#setAuthorizationModules
  *
  * @since 0.1
  * @author Les Hazlewood

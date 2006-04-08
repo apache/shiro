@@ -35,7 +35,7 @@ import java.util.Map;
 
 
 /**
- * Instance of {@link ModuleAuthorizationStrategy} that authorizes the user
+ * Instance of {@link ModularAuthorizationStrategy} that authorizes the user
  * if and only if:
  * <ol>
  * <li>At least one {@link org.jsecurity.authz.module.AuthorizationVote#grant grant} vote is given.</li>
@@ -46,11 +46,11 @@ import java.util.Map;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class NoDenialStrategy implements ModuleAuthorizationStrategy {
+public class NoDenialStrategy implements ModularAuthorizationStrategy {
 
 
     /**
-     * @see ModuleAuthorizationStrategy#isAuthorized
+     * @see ModularAuthorizationStrategy#isAuthorized
      */
     public boolean isAuthorized( AuthorizationContext context,
                                  AuthorizedAction action,
