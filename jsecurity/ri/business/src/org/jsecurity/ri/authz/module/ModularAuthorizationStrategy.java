@@ -36,12 +36,12 @@ import java.util.Map;
 /**
  * Strategy that determines whether or not a user is authorized based on the
  * votes of all {@link org.jsecurity.authz.module.AuthorizationModule}s provided by
- * the {@link ModuleAuthorizer}.
+ * the {@link ModularAuthorizer}.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public interface ModuleAuthorizationStrategy {
+public interface ModularAuthorizationStrategy {
 
     /**
      * Determines if a user is authorized to perform the given action based

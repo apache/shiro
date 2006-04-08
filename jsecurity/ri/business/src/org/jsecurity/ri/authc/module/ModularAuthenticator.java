@@ -34,7 +34,7 @@ import org.jsecurity.ri.authc.AbstractAuthenticator;
 import java.util.List;
 
 /**
- * A <tt>PluggableAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
+ * A <tt>ModularAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
  * that delgates authentication duties to a pluggable collection
  * {@link AuthenticationModule AuthenticationModule}s.
  *
@@ -45,7 +45,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class PluggableAuthenticator extends AbstractAuthenticator {
+public class ModularAuthenticator extends AbstractAuthenticator {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |

@@ -46,7 +46,7 @@ import java.util.Set;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class ModuleAuthorizer implements Authorizer {
+public class ModularAuthorizer implements Authorizer {
 
     /*------------------------------------
      *         C O N S T A N T S         |
@@ -59,7 +59,7 @@ public class ModuleAuthorizer implements Authorizer {
      * The authorization module strategy used to determine whether a user should be grant
      * authorization based on votes returned from the set of authorization modules.
      */
-    protected ModuleAuthorizationStrategy strategy;
+    protected ModularAuthorizationStrategy strategy;
 
     /**
      * The set of authorization modules that are consulted for authorization requests made to this
@@ -76,7 +76,7 @@ public class ModuleAuthorizer implements Authorizer {
      * Initializes this instance with no authorization modules and the default {@link
      * NoDenialStrategy} authorization strategy.
      */
-    public ModuleAuthorizer() {
+    public ModularAuthorizer() {
         this.authorizationModules = new HashSet<AuthorizationModule>();
         this.strategy = new NoDenialStrategy();
     }
