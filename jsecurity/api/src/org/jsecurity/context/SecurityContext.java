@@ -26,7 +26,6 @@
 package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.session.SecureSession;
 import org.jsecurity.session.Session;
 
 import java.io.IOException;
@@ -225,10 +224,6 @@ public abstract class SecurityContext {
         return accessor;
     }
 
-    /*--------------------------------------------
-    |     A B S T R A C T   M E T H O D S       |
-    ============================================*/
-
     /**
      * Returns the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
      * if there is no session associated with the current execution.
@@ -251,7 +246,7 @@ public abstract class SecurityContext {
      *
      * @see SecurityContextAccessor
      */
-    public static SecureSession getSession() {
+    public static Session getSession() {
         return getAccessor().getSession();
     }
 
@@ -287,4 +282,8 @@ public abstract class SecurityContext {
     public static void invalidate() {
         getAccessor().invalidate();
     }
+
+    /*--------------------------------------------
+    |     A B S T R A C T   M E T H O D S       |
+    ============================================*/
 }

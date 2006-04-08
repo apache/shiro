@@ -28,7 +28,6 @@ package org.jsecurity.ri.context;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContextAccessor;
 import org.jsecurity.ri.util.ThreadContext;
-import org.jsecurity.session.SecureSession;
 import org.jsecurity.session.Session;
 
 /**
@@ -43,8 +42,8 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
     /**
      * @see org.jsecurity.context.SecurityContextAccessor#getSession() SecurityContextAccessor.getSession()
      */
-    public SecureSession getSession() {
-        return (SecureSession) ThreadContext.get( ThreadContext.SESSION_KEY );
+    public Session getSession() {
+        return (Session)ThreadContext.get( ThreadContext.SESSION_KEY );
     }
 
     /**
@@ -60,12 +59,15 @@ public class ThreadLocalSecurityContextAccessor implements SecurityContextAccess
      */
     public void invalidate() {
 
-        // Stop the current session if one exists
-        Session session = getSession();
-        if( session != null ) {
-            getSession().stop();
+        try {
+            // Stop the current session if one exists
+            Session session = getSession();
+            if( session != null ) {
+                getSession().stop();
+            }
+        } finally {
+            ThreadContext.remove( ThreadContext.SESSION_KEY );
+            ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
         }
-
-        ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
     }
 }

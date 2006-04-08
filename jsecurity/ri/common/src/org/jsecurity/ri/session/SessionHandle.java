@@ -24,26 +24,16 @@
  */
 package org.jsecurity.ri.session;
 
-import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.NoSuchPrincipalException;
-import org.jsecurity.authz.UnauthenticatedException;
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.ExpiredSessionException;
-import org.jsecurity.session.SecureSession;
 import org.jsecurity.session.Session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.security.Permission;
-import java.security.Principal;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * A SessionHandle is a client-tier representation of a server side
- * {@link org.jsecurity.session.SecureSession SecureSession}.
+ * {@link org.jsecurity.session.Session Session}.
  * This implementation is basically a proxy to a server-side {@link SessionManager SessionManager},
  * which will return the proper results for each method call.
  *
@@ -59,7 +49,7 @@ import java.util.List;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class SessionHandle implements SecureSession {
+public class SessionHandle implements Session {
 
     private Serializable sessionId = null;
 
@@ -211,65 +201,5 @@ public class SessionHandle implements SecureSession {
      */
     public Object removeAttribute( Object key ) throws ExpiredSessionException {
         return sessionManager.removeAttribute( sessionId, key );
-    }
-
-    protected AuthorizationContext getAuthorizationContext() {
-        AuthorizationContext ctx = SecurityContext.getAuthorizationContext();
-        if ( ctx == null ) {
-            String msg = "No AuthorizationContext associated with the current invocation.  " +
-                         "A successful authentication must execute first in order to obtain " +
-                         "an AuthorizationContext.";
-            throw new UnauthenticatedException( msg );
-        }
-        return ctx;
-    }
-
-    public Principal getPrincipal() {
-        return getAuthorizationContext().getPrincipal();
-    }
-
-    public Collection<Principal> getAllPrincipals() {
-        return getAuthorizationContext().getAllPrincipals();
-    }
-
-    public Principal getPrincipalByType(Class principalType) throws NoSuchPrincipalException {
-        return getAuthorizationContext().getPrincipalByType( principalType );
-    }
-
-    public Collection<Principal> getAllPrincipalsByType(Class principalType) {
-        return getAuthorizationContext().getAllPrincipalsByType( principalType );
-    }
-
-    public boolean hasRole( String roleIdentifier ) {
-        return getAuthorizationContext().hasRole( roleIdentifier );
-    }
-
-    public boolean[] hasRoles( List<String> roleIdentifiers ) {
-        return getAuthorizationContext().hasRoles( roleIdentifiers );
-    }
-
-    public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
-        return getAuthorizationContext().hasAllRoles( roleIdentifiers );
-    }
-
-    public boolean implies( Permission permission ) {
-        return getAuthorizationContext().implies( permission );
-    }
-
-    public boolean[] implies( List<Permission> permissions ) {
-        return getAuthorizationContext().implies( permissions );
-    }
-
-    public boolean impliesAll( Collection<Permission> permissions ) {
-        return getAuthorizationContext().impliesAll( permissions );
-    }
-
-    public void checkPermission( Permission permission ) throws AuthorizationException {
-        getAuthorizationContext().checkPermission( permission );
-    }
-
-    public void checkPermissions( Collection<Permission> permissions )
-        throws AuthorizationException {
-        getAuthorizationContext().checkPermissions( permissions );
     }
 }
