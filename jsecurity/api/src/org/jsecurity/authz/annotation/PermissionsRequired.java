@@ -41,7 +41,7 @@ import java.security.Permission;
  * </p>
  * For example, this annotation<br>
  * <blockquote><pre>
- * &#64;PermissionRequired(
+ * &#64;PermissionsRequired(
  *     type=java.io.FilePermssion.class,
  *     target="aFile.txt",
  *     actions="read,write"
@@ -62,7 +62,7 @@ import java.security.Permission;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PermissionRequired {
+public @interface PermissionsRequired {
 
     /**
      * The permission class used to construct a <tt>Permission</tt> object which will be used
@@ -77,14 +77,14 @@ public @interface PermissionRequired {
      *
      * <p>For example, the annotation:</br>
      * <blockquote><pre>
-     * &#64;PermissionRequired(type=java.io.FilePermission.class,target="aFile.txt",actions="read,write")
+     * &#64;PermissionsRequired(type=java.io.FilePermission.class,target="aFile.txt",actions="read,write")
      * void doSomething() { ... }
      * </pre></blockquote>
      * means &quot;the current executor must have permission to read from <em>and</em> write to
      * the file 'aFile.txt' in order for the <tt>doSomething()</tt> method to execute&quot;
      * <p>and the annotation:<br/>
      * <blockquote><pre>
-     * &#64;PermissionRequired(type=java.io.FilePermission.class,actions="read")
+     * &#64;PermissionsRequired(type=java.io.FilePermission.class,actions="read")
      * void doSomething() { ... }
      * </pre></blockquote>
      * means &quot;the current executor must have permission to read <em>all</em> files in order
@@ -141,7 +141,7 @@ public @interface PermissionRequired {
      *
      * <p>It could have an annotation:
      *
-     * <pre>&#64;PermissionRequired(
+     * <pre>&#64;PermissionsRequired(
      *     type=my.pkg.security.UserPermission.class,
      *     targetPath=[0].id
      *     actions="create,update"
@@ -159,7 +159,7 @@ public @interface PermissionRequired {
      * method&quot;.
      *
      * <p>Likewise, another <tt>targetPath</tt> example that could be specified:</p>
-     * <pre>&#64;PermissionRequired(
+     * <pre>&#64;PermissionsRequired(
      *     type=my.pkg.security.PostalAddressPermission.class,
      *     targetPath=[2].parent.postalAddress.id
      *     actions="update,delete"
