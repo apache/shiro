@@ -55,7 +55,7 @@ public interface Authenticator {
      * @param authenticationToken any representation of a user's principals and credentials
      * submitted during an authentication attempt.
      *
-     * @return the AuthorizationContext maintaining the authenticated user's access rights.
+     * @return the AuthorizationContext referencing the authenticated user's access rights.
      *
      * @throws AuthenticationException if there is any problem during the authentication process.
      * See the specific exceptions listed below to as examples of what could happen in order
