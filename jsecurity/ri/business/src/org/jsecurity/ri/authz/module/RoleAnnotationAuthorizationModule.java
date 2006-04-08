@@ -26,7 +26,7 @@ package org.jsecurity.ri.authz.module;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.annotation.HasRole;
+import org.jsecurity.authz.annotation.RolesRequired;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
 
@@ -34,7 +34,8 @@ import java.lang.reflect.Method;
 
 /**
  * AuthorizationModule that votes on authorization based on any {@link
- * org.jsecurity.authz.annotation.HasRole HasRole} annotation found on the method being executed.
+ * org.jsecurity.authz.annotation.RolesRequired RolesRequired} annotation found on the method
+ * being executed.
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -43,7 +44,7 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public RoleAnnotationAuthorizationModule() {
-        setAnnotationClass( HasRole.class );
+        setAnnotationClass( RolesRequired.class );
     }
 
     public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
@@ -57,7 +58,7 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
             throw new NullPointerException( msg );
         }
 
-        HasRole hrAnnotation = m.getAnnotation( HasRole.class );
+        RolesRequired hrAnnotation = m.getAnnotation( RolesRequired.class );
 
         if ( context.hasRole( hrAnnotation.value() ) ) {
             if ( log.isDebugEnabled() ) {

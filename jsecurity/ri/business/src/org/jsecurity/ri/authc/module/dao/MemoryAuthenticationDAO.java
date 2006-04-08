@@ -42,6 +42,8 @@ import java.util.Set;
  * uses a set of configured user properties to authenticate a user.
  * The property name corresponds to the username of the user.  The
  *
+ * @deprecated New memory-based AuthenticationModule needs to be constructed.
+ *
  * @since 0.1
  * @author Jeremy Haile
  */

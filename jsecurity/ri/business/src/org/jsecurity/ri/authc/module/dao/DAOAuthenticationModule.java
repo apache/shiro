@@ -49,6 +49,9 @@ import java.security.Principal;
  * authenticating a user from a username and password based on the
  * {@link org.jsecurity.authc.module.AuthenticationInfo} retrieved from the {@link AuthenticationDAO}.</p>
  *
+ * @deprecated New implementations should subclass the AbstractAuthenticationModule or
+ * one of its children instead of this one.
+ *
  * @since 0.1
  * @author Jeremy Haile
  */

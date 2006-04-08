@@ -37,14 +37,13 @@ import java.security.Principal;
  *
  * <p>Applications adopting JSecurity that already store user
  * principals (usernames), credentials (passwords), and authorization information
- * in the data store may wish to implement this interface on their own to
- * retrieve the user's authentication info.  Alternatively, if the existing data
- * is stored in a database, the {@link org.jsecurity.ri.authc.module.dao.JDBCAuthenticationDAO} may be able to
- * retrieve the information.</p>
+ * in the data store should implement this interface on their own to
+ * retrieve the user's authentication info (e.g. using JDBC, Hibernate, etc).</p>
  *
- * @see JDBCAuthenticationDAO
- * @see FileAuthenticationDAO
  * @see MemoryAuthenticationDAO
+ *
+ * @deprecated New implementations should subclass the AbstractAuthenticationModule or 
+ * one of its children instead of implementing this interface.
  *
  * @since 0.1
  * @author Jeremy Haile

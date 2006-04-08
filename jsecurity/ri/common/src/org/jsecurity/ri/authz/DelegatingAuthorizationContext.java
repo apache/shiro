@@ -38,7 +38,7 @@ import java.util.*;
  * essentially a <tt>Realm</tt> proxy.
  *
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
- * identifier, such as a  user primary key or username) for better performance in a stateless
+ * identifier, such as a user primary key or username) for better performance in a stateless
  * architecture.  It instead asks the underlying <tt>Realm</tt> every time to perform
  * the authorization check.
  *
@@ -64,7 +64,9 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
 
     protected Realm realm;
 
-    public DelegatingAuthorizationContext() {}
+    public DelegatingAuthorizationContext() {
+        principals = new ArrayList<Principal>();
+    }
 
     public DelegatingAuthorizationContext( Principal subjectIdentifier, Realm realm ) {
         this.principals = new ArrayList<Principal>(1);
@@ -87,7 +89,7 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
      * @see org.jsecurity.authz.AuthorizationContext#getPrincipal()
      */
     public Principal getPrincipal() {
-        if( principals.size() < 1 ) {
+        if( principals.isEmpty() ) {
             throw new IllegalStateException( "No principals are associated with this authorization context." );
         }
         return this.principals.get(0);
