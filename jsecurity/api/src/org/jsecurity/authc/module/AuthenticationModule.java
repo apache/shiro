@@ -47,10 +47,10 @@ import org.jsecurity.authc.AuthenticationToken;
  * <em>type</em> of back-end authentication system.  That means, <tt>AuthenticationModule</tt>s are
  * essentially
  * <a href="http://java.sun.com/blueprints/corej2eepatterns/Patterns/DataAccessObject.html">DAO Design Pattern</a>
- * implementations that ecapsulates protocol-specific details away from the authentication framework.
+ * implementations that ecapsulate protocol-specific details away from the authentication framework.
  *
- * <p>Common implementations might access Relational Databases (via JDBC, Hibernate, etc), LDAP directories,
- * Microsoft Active Directory, Kerberos systems, and more.
+ * <p>Common implementations might access Relational Databases (via JDBC, Hibernate, etc),
+ * LDAP directories, Microsoft Active Directory, Kerberos systems, and more.
  *
  * <p>The coordination of how one or more modules execute(s) is performed by an
  * {@link org.jsecurity.authc.Authenticator Authenticator} implementation, which typically

@@ -40,10 +40,10 @@ import org.jsecurity.ri.authz.AuthorizationContextFactory;
 import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
 
 /**
- * Superclass for {@link Authenticator} implementations that performs the common work
- * of wrapping a returned {@link AuthorizationContext} using an {@link AuthorizationContextFactory}
- * and binding the context using an {@link AuthorizationContextBinder}.  Subclasses should
- * implement the {@link #doAuthenticate(org.jsecurity.authc.AuthenticationToken)} method.
+ * Superclass for {@link Authenticator} implementations that performs the common work of wrapping a
+ * returned {@link AuthorizationContext} using an {@link AuthorizationContextFactory} and binding
+ * the context using an {@link AuthorizationContextBinder}.  Subclasses should implement the {@link
+ * #doAuthenticate(org.jsecurity.authc.AuthenticationToken)} method.
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -62,7 +62,10 @@ public abstract class AbstractAuthenticator implements Authenticator {
      * Commons logger.
      */
     protected Log log = LogFactory.getLog( getClass() );
-    /** Alias for the 'log' protected class attribute for subclass authors that may prefer one over the other. */
+    /**
+     * Alias for the 'log' protected class attribute for subclass authors that may prefer one over
+     * the other.
+     */
     protected Log logger = log;
 
     /**
@@ -83,6 +86,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    public AbstractAuthenticator(){}
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -92,7 +96,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
 
-    public void setAuthorizationContextFactory(AuthorizationContextFactory authContextFactory) {
+    public void setAuthorizationContextFactory( AuthorizationContextFactory authContextFactory ) {
         this.authContextFactory = authContextFactory;
     }
 
@@ -102,7 +106,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
 
-    public void setAuthorizationContextBinder(AuthorizationContextBinder authContextBinder) {
+    public void setAuthorizationContextBinder( AuthorizationContextBinder authContextBinder ) {
         this.authzCtxBinder = authContextBinder;
     }
 
@@ -122,36 +126,63 @@ public abstract class AbstractAuthenticator implements Authenticator {
         this.authcEventSender = authcEventSender;
     }
 
-    protected AuthenticationEvent createFailureEvent( AuthenticationToken token, AuthenticationException ae ) {
+    /*-------------------------------------------
+     |               M E T H O D S               |
+     ============================================*/
+
+    protected AuthenticationEvent createFailureEvent( AuthenticationToken token,
+                                                      AuthenticationException ae ) {
         AuthenticationEventFactory factory = getAuthenticationEventFactory();
         return factory.createFailureEvent( token, ae );
     }
 
-    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
+    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token,
+                                                      AuthenticationInfo info ) {
         AuthenticationEventFactory factory = getAuthenticationEventFactory();
         return factory.createSuccessEvent( token, info );
     }
 
     protected void sendFailureEvent( AuthenticationToken token, AuthenticationException ae ) {
-        AuthenticationEvent event = createFailureEvent( token, ae );
-        if ( event != null ) {
-            send( event );
+        AuthenticationEventSender sender = getAuthenticationEventSender();
+        //only incur event creation overhead if the event can actually be sent:
+        if ( sender != null ) {
+            AuthenticationEvent event = createFailureEvent( token, ae );
+            if ( event != null ) {
+                send( event );
+            } else {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "No AuthenticationEvent instance returned from " +
+                               "'createFailureEvent' method call.  No failed authentication " +
+                               "event will be sent." );
+                }
+            }
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No AuthenticationEvent instance returned from 'createFailureEvent' method call.  " +
-                    "No failed authentication event will be sent." );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No AuthenticationEventSender configured.  No failure event will " +
+                           "be sent" );
             }
         }
+
     }
 
     protected void sendSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
-        AuthenticationEvent event = createSuccessEvent( token, info );
-        if ( event != null ) {
-            send( event );
+        AuthenticationEventSender sender = getAuthenticationEventSender();
+        //only incur event creation overhead if the event can actually be sent:
+        if ( sender != null ) {
+            AuthenticationEvent event = createSuccessEvent( token, info );
+            if ( event != null ) {
+                send( event );
+            } else {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "No AuthenticationEvent instance returned from " +
+                            "'createSuccessEvent' method call.  No successful authentication " +
+                            "event will be sent." );
+                }
+            }
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No AuthenticationEvent instance returned from 'createSuccessEvent' method call.  " +
-                    "No successful authentication event will be sent." );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No AuthenticationEventSender configured.  No success event will " +
+                           "be sent" );
             }
         }
     }
@@ -162,11 +193,17 @@ public abstract class AbstractAuthenticator implements Authenticator {
         }
         AuthenticationEventSender sender = getAuthenticationEventSender();
         if ( sender != null ) {
-            sender.send( event );
+            try {
+                sender.send( event );
+            } catch ( Throwable t ) {
+                if ( log.isWarnEnabled() ) {
+                    log.warn( "Unable to send AuthenticationEvent [" + event + "]", t );
+                }
+            }
         } else {
             if ( log.isTraceEnabled() ) {
-                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will not " +
-                    "be sent." );
+                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will " +
+                        "not be sent." );
             }
         }
     }
@@ -182,44 +219,39 @@ public abstract class AbstractAuthenticator implements Authenticator {
     private void assertCreation( AuthorizationContext authzCtx ) throws IllegalStateException {
         if ( authzCtx == null ) {
             String msg = "Programming or configuration error - No AuthorizationContext was created after successful " +
-                "authentication.  Verify that you have either configured the " + getClass().getName() +
-                " instance with a proper " + AuthorizationContextFactory.class.getName() + " (easier) or " +
-                "that you have overridden the " + AbstractAuthenticator.class.getName() +
-                ".createAuthorizationContext( AuthenticationInfo info ) method.";
+                    "authentication.  Verify that you have either configured the " + getClass().getName() +
+                    " instance with a proper " + AuthorizationContextFactory.class.getName() + " (easier) or " +
+                    "that you have overridden the " + AbstractAuthenticator.class.getName() +
+                    ".createAuthorizationContext( AuthenticationInfo info ) method.";
             throw new IllegalStateException( msg );
         }
     }
 
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
+    public final AuthorizationContext authenticate( AuthenticationToken token )
+            throws AuthenticationException {
 
-    public final AuthorizationContext authenticate( AuthenticationToken token ) throws AuthenticationException {
-
-        if (log.isInfoEnabled()) {
-            log.info("Authentication request received for token [" + token + "]");
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Authentication request received for token [" + token + "]" );
         }
 
         AuthenticationInfo info;
         try {
             info = doAuthenticate( token );
-            if( info == null ) {
-                throw new AuthenticationException( "Authentication token of type [" + token.getClass() + "] " +
-                    "could not be authenticated.  Check that the Authenticator is configured correctly." );
+            if ( info == null ) {
+                throw new AuthenticationException( "Authentication token of type [" +
+                    token.getClass() + "] could not be processed for authentication.  Check that " +
+                    "the Authenticator is configured correctly." );
             }
-        } catch (AuthenticationException e) {
-            // Catch exception for debugging
-            if (log.isDebugEnabled()) {
-                log.debug("Authentication failed for token [" + token + "]", e);
+        } catch ( AuthenticationException e ) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Authentication failed for token submission [" + token + "]" );
             }
-
             sendFailureEvent( token, e );
-
             throw e;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Authentication successful.  Returned authentication info: [" + info + "]");
+        if ( log.isInfoEnabled() ) {
+            log.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
         }
 
         AuthorizationContext authzCtx = createAuthorizationContext( info );
@@ -233,5 +265,23 @@ public abstract class AbstractAuthenticator implements Authenticator {
         return authzCtx;
     }
 
-    protected abstract AuthenticationInfo doAuthenticate( AuthenticationToken token ) throws AuthenticationException;
+    /**
+     * Template design pattern hook for subclasses to implement specific authentication behavior.
+     *
+     * <p>Common behavior for most all common authentication attempts is encapsulated in the 
+     * {@link #authenticate} method and that method invokes this one for custom behavior.
+     *
+     * <p><b>N.B.</b> Subclasses <em>should</em> throw some kind of
+     * <tt>AuthenticationException</tt> if there is a problem during
+     * authentication instead of returning <tt>null</tt>.  A <tt>null</tt> return value indicates
+     * a configuration or programming error, since <tt>AuthenticationException</tt>s should
+     * indicate any expected problem.
+     *
+     * @param token the authentication token encapsulating the user's login information.
+     * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
+     * important to JSecurity.  <tt>null</tt> should <em>not</em> be returned.
+     * @throws AuthenticationException if there is a problem logging in the user.
+     */
+    protected abstract AuthenticationInfo doAuthenticate( AuthenticationToken token )
+            throws AuthenticationException;
 }
