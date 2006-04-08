@@ -99,18 +99,12 @@ public interface Session {
     Date getStopTimestamp();
 
     /**
-     * Returns the last time the account associated with the session interacted with the system.
-     * <p>A <tt>Session</tt>'s last access time is updated when calling the following methods:
-     * <ul>
-     *   <li>{@link #touch() touch()}</li>
-     *   <li>{@link #stop() stop()}</li>
-     *   <li></li>
-     *   <li></li>
-     *   <li></li>
-     * </ul>.
-     * With the exception of the following five methods, {@link #stop()},  method, calling this or other
-     * Calling other methods on this interface will <em>not</em> update the last access time.
-     * methods on the Session will <em>not</em> update the last access time.
+     * Returns the last time the user associated with the session interacted with the system.
+     *
+     * <p>Except for the {@link #touch() touch()} method, calling the other methods in this
+     * interface will <b><em>not</em></b> update the session's last accessed time.
+     *
+     * @see #touch()
      *
      * @return The time the user last interacted with the system.
      */
@@ -140,27 +134,24 @@ public interface Session {
      * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session.  This
      * method can be used to ensure a session does not time out.
      *
-     * <p>Most applications won't use
+     * <p>Most programmers won't use
      * this method explicitly and will instead rely on a framework to update the last access time
-     * transparently, either upon a web request or a remote method invocation, or via some other
-     * mechanism.
+     * transparently, such as during a remote procedure call or upon a web request.
      *
      * <p>This method is particularly useful when supporting rich-client applications such as
      * Java Web Start apps or Java applets.  Although rare, it is possible in a rich-client
      * environment that a user continuously interacts with the client-side application without a
      * server-side method call ever being invoked.  If this happens over a long enough period of
-     * time, and the server is configured to expire sessions, the user's session could time-out.
-     * Again, such cases are rare since most rich-clients frequently require server-side method
-     * invocations.
+     * time, the user's session could time-out.  Again, such cases are rare since most
+     * rich-clients frequently require server-side method invocations.
      *
      * <p>In this example though, the user's session might still be considered valid because
-     * the user is actively &quot;using&quot; the application, just not communicating with the server.
-     * But because no server-side method calls are invoked,
-     * there is no way for the server to know if the user is sitting idle or not, so it must assume
-     * so to maintain session integrity.  This method could be invoked by the rich-client
-     * application code during those times to ensure that the next time a server-side method
-     * is invoked,  the invocation will not throw an
-     * {@link ExpiredSessionException ExpiredSessionException}.
+     * the user is actively &quot;using&quot; the application, just not communicating with the
+     * server. But because no server-side method calls are invoked, there is no way for the server
+     * to know if the user is sitting idle or not, so it must assume so to maintain session
+     * integrity.  This method could be invoked by the rich-client application code during those
+     * times to ensure that the next time a server-side method is invoked, the invocation will not
+     * throw an {@link ExpiredSessionException ExpiredSessionException}.
      *
      * <p>How often this rich-client &quot;maintenance&quot; might occur is entirely dependent upon
      * the application and would be based on variables such as session timeout configuration,
