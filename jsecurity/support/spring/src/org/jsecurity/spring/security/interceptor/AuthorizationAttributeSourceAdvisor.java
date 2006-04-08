@@ -25,8 +25,8 @@
 package org.jsecurity.spring.security.interceptor;
 
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.authz.annotation.Implies;
-import org.jsecurity.authz.annotation.HasRole;
+import org.jsecurity.authz.annotation.PermissionRequired;
+import org.jsecurity.authz.annotation.RolesRequired;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -72,19 +72,19 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     /**
-     * Returns <tt>true</tt> if the method has a JSecurity <tt>HasRole</tt> or
-     * <tt>Implies</tt> annotation, false otherwise.
+     * Returns <tt>true</tt> if the method has a JSecurity <tt>RolesRequired</tt> or
+     * <tt>PermissionRequired</tt> annotation, false otherwise.
      * @param method the method to check for a JSecurity annotation
      * @param targetClass the class potentially declaring JSecurity annotations
-     * @return <tt>true</tt> if the method has a JSecurity <tt>HasRole</tt> or
-     * <tt>Implies</tt> annotation, false otherwise.
-     * @see HasRole
-     * @see Implies
+     * @return <tt>true</tt> if the method has a JSecurity <tt>RolesRequired</tt> or
+     * <tt>PermissionRequired</tt> annotation, false otherwise.
+     * @see RolesRequired
+     * @see PermissionRequired
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
     public boolean matches( Method method, Class targetClass) {
-        return ( (method.getAnnotation( Implies.class ) != null ) ||
-                 (method.getAnnotation( HasRole.class ) != null ) );
+        return ( (method.getAnnotation( PermissionRequired.class ) != null ) ||
+                 (method.getAnnotation( RolesRequired.class ) != null ) );
     }
 
     public void afterPropertiesSet() throws Exception {

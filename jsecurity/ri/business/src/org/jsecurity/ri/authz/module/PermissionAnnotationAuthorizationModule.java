@@ -27,7 +27,7 @@ package org.jsecurity.ri.authz.module;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.annotation.Implies;
+import org.jsecurity.authz.annotation.PermissionRequired;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.ri.util.PermissionUtils;
@@ -37,7 +37,7 @@ import java.security.Permission;
 
 /**
  * AuthorizationModule that votes on authorization based on any {@link
- * org.jsecurity.authz.annotation.Implies Implies} annotation found on the method being
+ * org.jsecurity.authz.annotation.PermissionRequired PermissionRequired} annotation found on the method being
  * executed.
  *
  * @since 0.1
@@ -49,7 +49,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
     @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public PermissionAnnotationAuthorizationModule() {
-        setAnnotationClass( Implies.class );
+        setAnnotationClass( PermissionRequired.class );
     }
 
     private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
@@ -78,14 +78,14 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         return targetValue.toString();
     }
 
-    private Permission createPermission( MethodInvocation mi, Implies implies ) {
-        Class<? extends Permission> clazz = implies.type();
-        String target = implies.target();
-        String targetPath = implies.targetPath();
+    private Permission createPermission( MethodInvocation mi, PermissionRequired permissionRequired ) {
+        Class<? extends Permission> clazz = permissionRequired.type();
+        String target = permissionRequired.target();
+        String targetPath = permissionRequired.targetPath();
         if ( targetPath.equals( "" ) ) {
             targetPath = null;
         }
-        String actions = implies.actions();
+        String actions = permissionRequired.actions();
         if ( actions.equals( "" ) ) {
             actions = null;
         }
@@ -95,7 +95,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
                 target = inferTargetFromPath( mi.getArguments(), targetPath );
             } catch ( Exception e ) {
                 String msg = "Unable to parse targetPath property.  Please see the " +
-                             "javadoc for expected path syntax. Implies check cannot " +
+                             "javadoc for expected path syntax. PermissionRequired check cannot " +
                              "continue.";
                 throw new InvalidTargetPathException( msg, e );
             }
@@ -119,9 +119,9 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
             throw new NullPointerException( msg );
         }
 
-        Implies implies = m.getAnnotation( Implies.class );
+        PermissionRequired permissionRequired = m.getAnnotation( PermissionRequired.class );
 
-        Permission p = createPermission( mi, implies );
+        Permission p = createPermission( mi, permissionRequired );
         if ( context.implies( p ) ) {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Authorization context implies permission [" + p +
@@ -138,7 +138,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     }
 
 
-    /*private String hpToString( Implies annotation ) {
+    /*private String hpToString( PermissionRequired annotation ) {
         StringBuffer sb = new StringBuffer();
         sb.append( "type=" ).append( annotation.type() );
         sb.append( ",target=" ).append( annotation.target() );
