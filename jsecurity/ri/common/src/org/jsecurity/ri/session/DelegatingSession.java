@@ -32,12 +32,12 @@ import java.net.InetAddress;
 import java.util.Date;
 
 /**
- * A SessionHandle is a client-tier representation of a server side
+ * A DelegatingSession is a client-tier representation of a server side
  * {@link org.jsecurity.session.Session Session}.
  * This implementation is basically a proxy to a server-side {@link SessionManager SessionManager},
  * which will return the proper results for each method call.
  *
- * <p>A <tt>SessionHandle</tt> will cache data when appropriate to avoid a remote method invocation,
+ * <p>A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
  * only communicating with the server when necessary (for example, when determining if
  * {@link #isExpired() isExpired()}, which can only be accurately known by the server).
  *
@@ -49,7 +49,7 @@ import java.util.Date;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class SessionHandle implements Session {
+public class DelegatingSession implements Session {
 
     private Serializable sessionId = null;
 
@@ -64,9 +64,9 @@ public class SessionHandle implements Session {
     private SessionManager sessionManager = null;
 
 
-    public SessionHandle(){}
+    public DelegatingSession(){}
 
-    public SessionHandle( SessionManager sessionManager, Serializable sessionId ) {
+    public DelegatingSession( SessionManager sessionManager, Serializable sessionId ) {
         this.sessionManager = sessionManager;
         this.sessionId = sessionId;
     }
@@ -82,7 +82,7 @@ public class SessionHandle implements Session {
     }
 
     /**
-     * Sets the {@link SessionManager SessionManager} to which this <tt>SessionHandle</tt> will
+     * Sets the {@link SessionManager SessionManager} to which this <tt>DelegatingSession</tt> will
      * delegate its method calls.  In a rich client environment, this <tt>SessionManager</tt> will
      * probably be a remoting proxy which executes remote method invocations.  In a single-process
      * environment (e.g. a web  application deployed in the same JVM of the application server),

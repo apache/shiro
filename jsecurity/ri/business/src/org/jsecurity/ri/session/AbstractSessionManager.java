@@ -32,11 +32,7 @@ import org.jsecurity.ri.session.event.ExpiredSessionEvent;
 import org.jsecurity.ri.session.event.SessionEventSender;
 import org.jsecurity.ri.session.event.StartedSessionEvent;
 import org.jsecurity.ri.session.event.StoppedSessionEvent;
-import org.jsecurity.session.ExpiredSessionException;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionException;
-import org.jsecurity.session.UnknownSessionException;
+import org.jsecurity.session.*;
 import org.jsecurity.session.event.SessionEvent;
 
 import java.io.Serializable;
@@ -441,7 +437,7 @@ public abstract class AbstractSessionManager implements SessionManager {
         //If the EIS data has already been set as expired, return true:
 
         //WARNING:  This will cause an infinite loop if the session argument is a proxy back
-        //to this instance (e.g. as would be the case if passing in a SessionHandle instace.
+        //to this instance (e.g. as would be the case if passing in a DelegatingSession instace.
         //To be safe, make sure the argument is representative of EIS data and
         //the isExpired method returns a boolean class attribute and does not call another object.
         if ( session.isExpired() ) {
