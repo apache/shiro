@@ -12,7 +12,12 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Insert JavaDoc here.
+ * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
+ * that binds the correct {@link Session} and {@link org.jsecurity.authz.AuthorizationContext} to the
+ * remote invocation thread during a remote execution.
+ *
+ * @since 0.1
+ * @author Jeremy Haile
  */
 public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecutor {
 
@@ -51,22 +56,23 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
     public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
-        if( invocation instanceof SecureRemoteInvocation ) {
-            SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation) invocation;
-
-            Serializable sessionId = secureInvocation.getSessionId();
-            Session session = sessionFactory.getSession( sessionId );
-            ThreadUtils.bindToThread( session );
-
-        } else {
-            if( log.isWarnEnabled() ) {
-                log.warn( "Secure remote invocation executor used, but did not receive a " +
-                        "SecureRemoteInvocation from remote call.  Session will not be propogated to the remote invocation.  " +
-                        "Ensure that clients are using a SecureRemoteInvocationFactory to prevent this problem." );
-            }
-        }
-
         try {
+
+            if( invocation instanceof SecureRemoteInvocation ) {
+                SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation) invocation;
+
+                Serializable sessionId = secureInvocation.getSessionId();
+                Session session = sessionFactory.getSession( sessionId );
+                ThreadUtils.bindToThread( session );
+
+            } else {
+                if( log.isWarnEnabled() ) {
+                    log.warn( "Secure remote invocation executor used, but did not receive a " +
+                            "SecureRemoteInvocation from remote call.  Session will not be propogated to the remote invocation.  " +
+                            "Ensure that clients are using a SecureRemoteInvocationFactory to prevent this problem." );
+                }
+            }
+
             return super.invoke(invocation, targetObject);
         } finally {
             ThreadUtils.unbindSessionFromThread();

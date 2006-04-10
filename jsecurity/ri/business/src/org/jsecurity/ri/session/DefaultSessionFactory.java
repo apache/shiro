@@ -26,11 +26,7 @@ package org.jsecurity.ri.session;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.session.ExpiredSessionException;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.session.StoppedSessionException;
+import org.jsecurity.session.*;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -85,7 +81,7 @@ public class DefaultSessionFactory implements SessionFactory {
         throws HostUnauthorizedException, IllegalArgumentException {
 
         Serializable sessionId = sessionManager.start( hostAddress );
-        return new SessionHandle( sessionManager, sessionId );
+        return new DelegatingSession( sessionManager, sessionId );
     }
 
     public Session getSession( Serializable sessionId )
@@ -101,7 +97,7 @@ public class DefaultSessionFactory implements SessionFactory {
             throw new StoppedSessionException( msg );
         }
 
-        return new SessionHandle( sessionManager, sessionId );
+        return new DelegatingSession( sessionManager, sessionId );
     }
 
 }
