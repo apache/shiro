@@ -55,6 +55,10 @@ Some notes:
 - Log4J 1.2.9 (http://logging.apache.org/log4j)
 - required by the RI during build and runtime for logging support
 
+* quartz/quartz.jar
+- Quartz 1.5.2 (http://www.opensymphony.com/quartz)
+- required by the RI during build and runtime for scheduling support
+
 * spring/spring.jar
 - Spring Application Framework 1.2.5 (http://springframework.org)
 - required to build Spring integration support and sample apps

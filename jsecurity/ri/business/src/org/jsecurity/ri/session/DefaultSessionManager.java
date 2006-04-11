@@ -38,13 +38,42 @@ import java.util.Date;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class DefaultSessionManager extends AbstractSessionManager
     implements ValidatingSessionManager {
 
+    /**
+     * Validator used to validate sessions on a regular basis.
+     * By default, the session manager will use Quartz to schedule session validation, but this
+     * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
+     */
+    protected SessionValidationScheduler sessionValidationScheduler = new QuartzSessionValidationScheduler( this ); 
+
+
     public DefaultSessionManager(){
         super.setSessionClass( SimpleSession.class );
     }
+
+
+    public void init() {
+        super.init();
+
+        // Start session validation
+        if ( sessionValidationScheduler != null ) {
+            sessionValidationScheduler.startSessionValidation();
+        } else {
+            if (log.isWarnEnabled()) {
+                log.warn("No session validation scheduler is configured, so sessions may not be validated.");
+            }
+        }
+    }
+
+
+    public void setSessionValidationScheduler(SessionValidationScheduler sessionValidationScheduler) {
+        this.sessionValidationScheduler = sessionValidationScheduler;
+    }
+
 
     protected void onStop( Session session ) {
         if ( log.isTraceEnabled() ) {

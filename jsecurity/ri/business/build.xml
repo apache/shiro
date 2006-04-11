@@ -15,7 +15,8 @@
         <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>
         <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
         <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
-        <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>        
+        <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>
+        <pathelement location="${lib.dir}/quartz/quartz.jar"/>        
         <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>
         <pathelement location="${root.dist.dir}/${project.name}-${module.name}-common.jar"/>
     </path>
