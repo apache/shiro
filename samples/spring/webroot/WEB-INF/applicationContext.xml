@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition global to all servlet configurations.
+  -->
+<beans>
+
+    <!-- =========================================================
+      -  JSecurity configuration
+      ============================================================ -->
+
+    <!-- Authentication -->
+    <bean name="authenticator" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
+        <property name="modules">
+            <list>
+                <ref bean="memoryAuthenticationModule"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="memoryAuthenticationModule" class="org.jsecurity.ri.authc.module.memory.MemoryAuthenticationModule">
+        <property name="credentialMatcher">
+            <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
+                <property name="base64Encoded" value="true"/>
+            </bean>
+        </property>
+        <property name="accounts">
+            <set>
+                <bean class="org.jsecurity.ri.authc.module.memory.AccountEntry">
+                    <property name="username" value="user1"/>
+                    <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> <!-- 'user1' SHA-1 Base64 -->
+                    <property name="roles" value="role1, role2"/>
+                </bean>
+                <bean class="org.jsecurity.ri.authc.module.memory.AccountEntry">
+                    <property name="username" value="user2"/>
+                    <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> <!-- 'user2' SHA-1 Base64 -->
+                    <property name="roles" value="role2"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+
+    <!-- Session Management -->
+    <bean id="sessionFactory" class="org.jsecurity.ri.web.support.DefaultWebSessionFactory">
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <bean id="sessionManager" class="org.jsecurity.ri.session.DefaultSessionManager"/>
+
+    <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <!-- Web Interceptors -->
+    <bean id="authorizationInterceptor" class="org.jsecurity.spring.servlet.security.AuthorizationInterceptor"/>
+
+    <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
+        <property name="contextRelative" value="true"/>
+        <property name="loginURL" value="/gateway/login"/>
+    </bean>
+
+    <bean id="sessionInterceptor" class="org.jsecurity.spring.servlet.security.SessionInterceptor">
+        <property name="webSessionFactory" ref="sessionFactory"/>
+    </bean>
+
+
+</beans>

@@ -10,6 +10,12 @@
       -  Spring MVC configuration
       ============================================================ -->
 	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="sessionInterceptor"/>
+                <ref bean="authorizationInterceptor"/>
+            </list>
+        </property>
         <property name="mappings">
             <props>
                 <prop key="login">loginController</prop>
@@ -17,45 +23,6 @@
             </props>
         </property>
     </bean>
-
-
-    <!-- =========================================================
-      -  JSecurity configuration
-      ============================================================ -->
-    <bean name="authenticator" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
-        <property name="modules">
-            <list>
-                <ref bean="daoAuthenticationModule"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="daoAuthenticationModule" class="org.jsecurity.ri.authc.module.memory.DAOAuthenticationModule">
-        <property name="authenticationDao" ref="inMemoryAuthenticationDao"/>
-        <property name="credentialMatcher">
-            <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
-                <property name="base64Encoded" value="true"/>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="inMemoryAuthenticationDao" class="org.jsecurity.ri.authc.module.memory.MemoryAuthenticationModule">
-        <property name="accounts">
-            <set>
-                <bean class="org.jsecurity.ri.authc.module.memory.AccountEntry">
-                    <property name="username" value="user1"/>
-                    <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> <!-- 'user1' SHA-1 Base64 -->
-                    <property name="roles" value="role1, role2"/>
-                </bean>
-                <bean class="org.jsecurity.ri.authc.module.memory.AccountEntry">
-                    <property name="username" value="user2"/>
-                    <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> <!-- 'user2' SHA-1 Base64 -->
-                    <property name="roles" value="role2"/>
-                </bean>
-            </set>
-        </property>
-    </bean>
-
 
     <!-- =========================================================
       -  Spring controllers

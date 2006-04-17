@@ -5,12 +5,22 @@
 <p>You have successfully logged in.</p>
 
 <p>
-    <c:if test="${hasRole1}">You have role 1.<br/></c:if>
-    <c:if test="${!hasRole1}">You do not have role 1.<br/></c:if>
-    <c:if test="${hasRole2}">You have role 2.<br/></c:if>
-    <c:if test="${!hasRole2}">You do not have role 2.<br/></c:if>
+    <jsecurity:hasRole name="role1">You have role 1.</jsecurity:hasRole>
+    <jsecurity:lacksRole name="role1">You do not have role 1.</jsecurity:lacksRole>
+    <jsecurity:hasRole name="role2">You have role 2.</jsecurity:hasRole>
+    <jsecurity:lacksRole name="role2">You do not have role 2.</jsecurity:lacksRole>
 </p>
 
-<p>Click <a href="/jsecurity-spring/gateway/logout">here</a> to logout.</p>
+<p>
+    <form action="<c:url value="/secure/index"/>" method="POST">
+        Enter value here to store in session: <input type="text" name="value" value="${command.value}" size="30"/>
+        <input type="submit" value="Save"/>
+    </form>
+
+</p>
+
+<p>Click <a href="<c:url value="/jsecurity.jnlp"/>">here</a> to launch webstart application.</p>
+
+<p>Click <a href="<c:url value="/gateway/logout"/>>here</a> to logout.</p>
 </body>
 </html>

@@ -9,8 +9,10 @@
     <!-- "extend" parent build definition -->
     <import file="../../build.xml" />
 
-    <property name="module.name" value="spring"/>
+    <property name="module.name" value="spring-sample"/>
     <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
+    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
+    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
     <!-- Module properties -->
     <property name="module.name" value="api"/>
@@ -42,7 +44,20 @@
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist" depends="root-prepare,compile">
+    <target name="dist" depends="root-prepare,compile,jar">
+
+        <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
+        <mkdir dir="${webstart.lib.dir}"/>
+        <copy todir="${webstart.lib.dir}">
+            <fileset dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
+        </copy>
+        <signjar keystore="${etc.dir}/jsecurity-sample.jks"
+                 alias="jsecurity"
+                 keypass="jsecurity"
+                 storepass="jsecurity">
+            <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
+        </signjar>
+
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
             <classes dir="${classes.dir}" includes="**"/>
             <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
@@ -50,9 +65,13 @@
             <lib dir="${lib.dir}/log4j" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
-            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
+            <lib dir="${lib.dir}/quartz" includes="*.jar"/>
+            <lib dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
-            <fileset dir="webroot" includes="**"/>
+            <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
+
+            <!-- Jar for webstart application -->
+            <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
         </war>
     </target>
 

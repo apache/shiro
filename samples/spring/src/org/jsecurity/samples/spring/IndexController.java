@@ -26,8 +26,11 @@ package org.jsecurity.samples.spring;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.session.Session;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.validation.Errors;
+import org.springframework.validation.BindException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +43,7 @@ import java.util.Map;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class IndexController extends AbstractController {
+public class IndexController extends SimpleFormController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -63,17 +66,25 @@ public class IndexController extends AbstractController {
     ============================================*/
 
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
+    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         AuthorizationContext context = SecurityContext.getAuthorizationContext();
 
         boolean hasRole1 = context.hasRole( "role1" );
         boolean hasRole2 = context.hasRole( "role2" );
 
-        Map<String,Object> model = new HashMap<String,Object>();
-        model.put( "hasRole1", hasRole1 );
-        model.put( "hasRole2", hasRole2 );
-
-        return new ModelAndView( "index", model );
+        Map<String,Object> refData = new HashMap<String,Object>();
+        refData.put( "hasRole1", hasRole1 );
+        refData.put( "hasRole2", hasRole2 );
+        return refData;
     }
+
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
+        SessionValueCommand command = (SessionValueCommand) obj;
+
+        Session session = SecurityContext.getSession();
+        session.setAttribute( "value", command.getValue() );
+
+        return super.onSubmit(request, response, command, errors);    
+    }
+
 }
