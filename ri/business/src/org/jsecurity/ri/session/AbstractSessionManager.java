@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.ri.session.eis.SessionDAO;
+import org.jsecurity.ri.session.eis.support.MemorySessionDAO;
 import org.jsecurity.ri.session.event.ExpiredSessionEvent;
 import org.jsecurity.ri.session.event.SessionEventSender;
 import org.jsecurity.ri.session.event.StartedSessionEvent;
@@ -51,7 +52,7 @@ public abstract class AbstractSessionManager implements SessionManager {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    protected SessionDAO sessionDAO = null;
+    protected SessionDAO sessionDAO = new MemorySessionDAO();
     protected SessionEventSender sessionEventSender = null;
     protected boolean validateHost = true;
     protected Class<? extends Session> sessionClass = null;

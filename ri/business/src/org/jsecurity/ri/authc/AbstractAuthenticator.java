@@ -36,13 +36,15 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authc.event.AuthenticationEventFactory;
 import org.jsecurity.ri.authc.event.AuthenticationEventSender;
 import org.jsecurity.ri.authc.event.SimpleAuthenticationEventFactory;
+import org.jsecurity.ri.authc.bind.AuthorizationContextBinder;
+import org.jsecurity.ri.authc.bind.ThreadLocalAuthorizationContextBinder;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
 import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work of wrapping a
  * returned {@link AuthorizationContext} using an {@link AuthorizationContextFactory} and binding
- * the context using an {@link AuthorizationContextBinder}.  Subclasses should implement the {@link
+ * the context using an {@link org.jsecurity.ri.authc.bind.AuthorizationContextBinder}.  Subclasses should implement the {@link
  * #doAuthenticate(org.jsecurity.authc.AuthenticationToken)} method.
  *
  * @since 0.1

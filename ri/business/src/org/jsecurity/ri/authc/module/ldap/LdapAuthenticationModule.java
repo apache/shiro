@@ -32,7 +32,7 @@ import org.jsecurity.authc.IncorrectCredentialException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.ri.authc.module.dao.SimpleAuthenticationInfo;
+import org.jsecurity.ri.authc.module.SimpleAuthenticationInfo;
 import org.jsecurity.ri.authc.module.AbstractAuthenticationModule;
 import org.jsecurity.ri.util.UsernamePrincipal;
 
