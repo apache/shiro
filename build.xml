@@ -76,6 +76,7 @@
         <ant dir="api" target="${target}"/>
         <ant dir="ri" target="${target}"/>
         <ant dir="support" target="${target}"/>
+        <ant dir="samples/spring" target="${target}"/>        
     </target>
 
     <!-- ===================================================================
@@ -170,6 +171,7 @@
                 <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>
+                <pathelement location="${lib.dir}/quartz/quartz.jar"/>
             </classpath>
             <packageset dir="${root.base.dir}/ri/common/src">
                 <include name="org/jsecurity/ri/**"/>

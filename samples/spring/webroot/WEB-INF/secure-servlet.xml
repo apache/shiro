@@ -8,6 +8,13 @@
 <beans>
 
 	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="sessionInterceptor"/>
+                <ref bean="authorizationInterceptor"/>
+                <ref bean="authenticationInterceptor"/>
+            </list>
+        </property>
         <property name="mappings">
             <props>
                 <prop key="index">indexController</prop>
@@ -23,6 +30,19 @@
 		<property name="suffix" value=".jsp"/>
 	</bean>
 
-    <bean id="indexController" class="org.jsecurity.samples.spring.IndexController"/>
+    <bean id="indexController" class="org.jsecurity.samples.spring.IndexController">
+        <property name="commandClass" value="org.jsecurity.samples.spring.SessionValueCommand"/>
+        <property name="formView" value="index"/>
+        <property name="successView" value="index"/>
+    </bean>
+
+    <bean id="sampleManagerExporter" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="sampleManager"/>
+        <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
+        <property name="remoteInvocationExecutor" ref="secureRemoteInvocationExecutor"/>
+    </bean>
+
+    <bean id="sampleManager" class="org.jsecurity.samples.spring.DefaultSampleManager"/>
+
 
 </beans>
