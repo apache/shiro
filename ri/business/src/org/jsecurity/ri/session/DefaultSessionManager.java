@@ -24,6 +24,7 @@
  */
 package org.jsecurity.ri.session;
 
+import org.jsecurity.ri.session.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
@@ -48,7 +49,7 @@ public class DefaultSessionManager extends AbstractSessionManager
      * By default, the session manager will use Quartz to schedule session validation, but this
      * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
-    protected SessionValidationScheduler sessionValidationScheduler = new QuartzSessionValidationScheduler( this ); 
+    protected SessionValidationScheduler sessionValidationScheduler = new QuartzSessionValidationScheduler( this );
 
 
     public DefaultSessionManager(){
