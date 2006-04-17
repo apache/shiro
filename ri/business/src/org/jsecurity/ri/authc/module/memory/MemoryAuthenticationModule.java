@@ -24,9 +24,13 @@
 */
 
 
-package org.jsecurity.ri.authc.module.dao;
+package org.jsecurity.ri.authc.module.memory;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.ri.authc.module.AbstractAuthenticationModule;
+import org.jsecurity.ri.authc.module.SimpleAuthenticationInfo;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -38,16 +42,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A simple implementation of the {@link AuthenticationDAO} interface that
+ * A simple implementation of the {@link org.jsecurity.authc.module.AuthenticationModule} interface that
  * uses a set of configured user properties to authenticate a user.
  * The property name corresponds to the username of the user.  The
- *
- * @deprecated New memory-based AuthenticationModule needs to be constructed.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class MemoryAuthenticationDAO implements AuthenticationDAO {
+public class MemoryAuthenticationModule extends AbstractAuthenticationModule {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -57,12 +59,12 @@ public class MemoryAuthenticationDAO implements AuthenticationDAO {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * The set of accounts that can be authenticated using this DAO.
+     * The set of accounts that can be authenticated using this module.
      */
     private Set<AccountEntry> accounts;
 
     /**
-     * <p>A mapping of role names to permissions that can be authenticated using this DAO.
+     * <p>A mapping of role names to permissions that can be authenticated using this module.
      * It is not necessary to define any role entries if you are simply using
      * role-based authorization.  However if you want to use permission-based
      * authorization, you must define the permissions that apply to a particular
@@ -108,35 +110,40 @@ public class MemoryAuthenticationDAO implements AuthenticationDAO {
     /**
      * Builds a <tt>UserAuthenticationInfo</tt> object for the given username
      * by examining the set of configured accounts and roles held in the
-     * memory DAO.
-     * @param subjectIdentity primary identifying attribute of the account being authenticated (e.g.
-     * usually a user id or username).
+     * memory module.
+     * @param token The authentication token that is being used to authenticate the current user.
      * @return an <tt>AuthenticationInfo</tt> object that represents the
      * authentication information for the given username, or null if an
      * account cannot be found with the given username.
      *
      */
-    public AuthenticationInfo getAuthenticationInfo(Principal subjectIdentity ) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
+    protected AuthenticationInfo getInfo(AuthenticationToken token) throws AuthenticationException {
 
-        for( AccountEntry entry : accounts ) {
-            if( entry.getUsername().equals( subjectIdentity.getName() ) ) {
+        Principal principal = token.getPrincipal();
 
-                String[] roleArray = entry.getRoles().split( "," );
-                Set<String> roles = new HashSet<String>( roleArray.length );
-                for( String role : roleArray ) {
-                    roles.add( role.trim() );
-                }
+        try {
 
-                Set<Permission> permissions = getPermissionsForRoles( roles );
+            for( AccountEntry entry : accounts ) {
+                if( entry.getUsername().equals( principal.getName() ) ) {
 
-                SimpleAuthenticationInfo info =
-                    new SimpleAuthenticationInfo( subjectIdentity,
+                    String[] roleArray = entry.getRoles().split( "," );
+                    Set<String> roles = new HashSet<String>( roleArray.length );
+                    for( String role : roleArray ) {
+                        roles.add( role.trim() );
+                    }
+
+                    Set<Permission> permissions = getPermissionsForRoles( roles );
+
+                    return new SimpleAuthenticationInfo( principal,
                                                   entry.getPassword().toCharArray(),
                                                   roles,
                                                   permissions );
-                return info;
 
+                }
             }
+
+        } catch (Exception e) {
+            throw new AuthenticationException( "Unexpected exception while authenticating user.", e );
         }
 
         // User could not be found, so return null
@@ -217,4 +224,5 @@ public class MemoryAuthenticationDAO implements AuthenticationDAO {
         return (Permission) constructor.newInstance( target, actions );
 
     }
+
 }

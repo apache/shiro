@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc;
+package org.jsecurity.ri.authc.bind;
 
 import org.jsecurity.authz.AuthorizationContext;
 

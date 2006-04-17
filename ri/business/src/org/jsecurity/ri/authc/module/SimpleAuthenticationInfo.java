@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.module.dao;
+package org.jsecurity.ri.authc.module;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
 
