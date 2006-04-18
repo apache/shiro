@@ -78,7 +78,7 @@ public class WebStartView implements ActionListener {
         methodPanel.add( secureMethod2Button );
 
         frame = new JFrame( "JSecurity Sample Application" );
-        frame.setSize( 300, 150 );
+        frame.setSize( 300, 200 );
 
         Container panel = frame.getContentPane();
         panel.setLayout( new BorderLayout() );
@@ -109,9 +109,11 @@ public class WebStartView implements ActionListener {
 
             } else if( e.getSource() == secureMethod1Button ) {
                 sampleManager.secureMethod1();
+                JOptionPane.showMessageDialog( frame, "Method #1 successfully called.", "Success", JOptionPane.INFORMATION_MESSAGE );
 
             } else if( e.getSource() == secureMethod2Button ) {
                 sampleManager.secureMethod2();
+                JOptionPane.showMessageDialog( frame, "Method #2 successfully called.", "Success", JOptionPane.INFORMATION_MESSAGE );
 
             } else {
                 throw new RuntimeException( "Unexpected action event from source: " + e.getSource() );
