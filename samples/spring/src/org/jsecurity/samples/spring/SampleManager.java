@@ -3,7 +3,7 @@ package org.jsecurity.samples.spring;
 import org.jsecurity.authz.annotation.RolesRequired;
 
 /**
- * Insert JavaDoc here.
+ * Business manager interface used for sample application.
  */
 public interface SampleManager {
 
