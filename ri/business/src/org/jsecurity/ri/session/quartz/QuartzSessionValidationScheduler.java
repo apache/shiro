@@ -133,7 +133,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             detail.getJobDataMap().put( "sessionManager", sessionManager );
 
             getScheduler().scheduleJob( detail, trigger );
-
+            getScheduler().start();
+            
             if( log.isDebugEnabled() ) {
                 log.debug( "Session validation job successfully scheduled with Quartz." );
             }

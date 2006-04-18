@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy C. Haile
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,20 +22,18 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.samples.spring;
 
-import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.context.SecurityContext;
-import org.jsecurity.session.Session;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.Errors;
+package org.jsecurity.samples.spring.web;
+
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.UsernamePasswordToken;
 import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Description of class.
@@ -43,7 +41,7 @@ import java.util.Map;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class IndexController extends SimpleFormController {
+public class LoginController extends SimpleFormController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -52,6 +50,7 @@ public class IndexController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private Authenticator authenticator;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -60,31 +59,31 @@ public class IndexController extends SimpleFormController {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
 
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        AuthorizationContext context = SecurityContext.getAuthorizationContext();
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object cmd, BindException errors) throws Exception {
 
-        boolean hasRole1 = context.hasRole( "role1" );
-        boolean hasRole2 = context.hasRole( "role2" );
+        LoginCommand command = (LoginCommand) cmd;
 
-        Map<String,Object> refData = new HashMap<String,Object>();
-        refData.put( "hasRole1", hasRole1 );
-        refData.put( "hasRole2", hasRole2 );
-        return refData;
+        UsernamePasswordToken token = new UsernamePasswordToken( command.getUsername(), command.getPassword() );
+        try {
+            authenticator.authenticate( token );
+        } catch (AuthenticationException e) {
+            errors.reject( "error.invalidLogin", "The username or password was not correct." );
+        }
+
+        if( errors.hasErrors() ) {
+            return showForm( request, response, errors );
+        } else {
+            return new ModelAndView( getSuccessView() );
+        }
     }
-
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
-        SessionValueCommand command = (SessionValueCommand) obj;
-
-        Session session = SecurityContext.getSession();
-        session.setAttribute( "value", command.getValue() );
-
-        return super.onSubmit(request, response, command, errors);    
-    }
-
 }

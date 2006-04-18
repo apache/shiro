@@ -72,7 +72,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     private String sessionIdHttpSessionKeyName = Session.class.getName() + "_HTTP_SESSION_KEY";
     private int sessionIdCookieMaxAge = SESSION_ID_COOKIE_MAX_AGE;
 
-    private Class<? extends PropertyEditor> sessionIdEditorClass = null;
+    private Class<? extends PropertyEditor> sessionIdEditorClass = UUIDEditor.class;
 
     private boolean validateRequestOrigin = false; //default
 

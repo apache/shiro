@@ -41,6 +41,25 @@
       -  =================================================================== -->
     <target name="compile" depends="compile.src"/>
 
+    <target name="jar" depends="compile">
+        <jar jarfile="${dist.jar}">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="${etc.dir}">
+                <include name="*.xml"/>
+                <include name="*.gif"/>
+                <include name="*.jpg"/>                
+            </fileset>
+            <manifest>
+                <attribute name="Implementation-Title"
+                           value="${project.name}-${module.name}-${submodule.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="${project.name}-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
@@ -50,6 +69,8 @@
         <mkdir dir="${webstart.lib.dir}"/>
         <copy todir="${webstart.lib.dir}">
             <fileset dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
+            <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
+            <fileset dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
         </copy>
         <signjar keystore="${etc.dir}/jsecurity-sample.jks"
                  alias="jsecurity"

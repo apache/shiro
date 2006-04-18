@@ -47,11 +47,22 @@
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
 
-    <bean id="sessionManager" class="org.jsecurity.ri.session.DefaultSessionManager"/>
+    <bean id="sessionManager" init-method="init" class="org.jsecurity.ri.session.DefaultSessionManager"/>
 
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+
+    <!-- AOP Annotations Support-->
+    <bean id="authorizer" class="org.jsecurity.ri.authz.module.AnnotationsModularAuthorizer"/>
+
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="authorizer" ref="authorizer"/>
+    </bean>
+
 
     <!-- Web Interceptors -->
     <bean id="authorizationInterceptor" class="org.jsecurity.spring.servlet.security.AuthorizationInterceptor"/>
@@ -65,5 +76,8 @@
         <property name="webSessionFactory" ref="sessionFactory"/>
     </bean>
 
+
+    <!-- Business Managers -->
+    <bean id="sampleManager" class="org.jsecurity.samples.spring.DefaultSampleManager"/>
 
 </beans>

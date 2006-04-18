@@ -1,11 +1,9 @@
-package org.jsecurity.samples.spring;
-
-import javax.swing.*;
+package org.jsecurity.samples.spring.web;
 
 /**
  * Insert JavaDoc here.
  */
-public class WebStartDriver {
+public class SessionValueCommand {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -14,6 +12,7 @@ public class WebStartDriver {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private String value;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -27,10 +26,11 @@ public class WebStartDriver {
     |               M E T H O D S               |
     ============================================*/
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame( "JSecurity Sample Application" );
-        frame.getContentPane().add( new JButton( "Click me" ) );
-        frame.setSize( 500, 500 );
-        frame.setVisible( true );
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

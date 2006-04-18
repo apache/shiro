@@ -23,14 +23,11 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.samples.spring;
+package org.jsecurity.samples.spring.web;
 
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authc.UsernamePasswordToken;
-import org.springframework.validation.BindException;
+import org.jsecurity.context.SecurityContext;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class LoginController extends SimpleFormController {
+public class LogoutController extends AbstractController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -50,7 +47,6 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private Authenticator authenticator;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -59,31 +55,16 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setAuthenticator(Authenticator authenticator) {
-        this.authenticator = authenticator;
-    }
-
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
 
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object cmd, BindException errors) throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        LoginCommand command = (LoginCommand) cmd;
+        SecurityContext.invalidate();
 
-        UsernamePasswordToken token = new UsernamePasswordToken( command.getUsername(), command.getPassword() );
-        try {
-            authenticator.authenticate( token );
-        } catch (AuthenticationException e) {
-            errors.reject( "error.invalidLogin", "The username or password was not correct." );
-        }
-
-        if( errors.hasErrors() ) {
-            return showForm( request, response, errors );
-        } else {
-            return new ModelAndView( getSuccessView() );
-        }
+        return new ModelAndView( "redirect:login" );
     }
 }

@@ -89,6 +89,10 @@ public class ModularAuthorizer implements Authorizer {
         this.authorizationModules = authorizationModules;
     }
 
+    public void addAuthorizationModule( AuthorizationModule authorizationModule ) {
+        this.authorizationModules.add( authorizationModule );
+    }
+
 
     /*------------------------------------
      *           M E T H O D S           |
