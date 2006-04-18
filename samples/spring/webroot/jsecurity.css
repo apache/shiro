@@ -1,0 +1,17 @@
+body {
+    background: #2370cf;
+}
+
+img {
+    border: thin black solid;
+}
+
+#contentBox {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+    margin-top: 50px;
+    color: black;
+    background: #eee;
+    border: thick black solid;
+}
