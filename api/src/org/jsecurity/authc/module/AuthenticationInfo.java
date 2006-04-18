@@ -25,9 +25,7 @@
 
 package org.jsecurity.authc.module;
 
-import java.security.Permission;
 import java.security.Principal;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -74,26 +72,6 @@ public interface AuthenticationInfo {
      * @return the subject's credential verifying the {@link #getPrincipals() identifier}
      */
     Object getCredentials();
-
-    /**
-     * A collection of role identifiers that represent the roles that this
-     * user is a member of.  These roles will be used to determine the
-     * authorization privileges of the user being authenticated.
-     * @return a collection of role identifiers (typically <tt>String</tt>
-     * names of roles)
-     */
-    Collection<String> getRoles();
-
-    /**
-     * A collection of permissions that represent the permission that this
-     * user is authorized for.  These permissions will be used to determine the
-     * authorization privileges of the user being authenticated.  It is legal
-     * for this collection to be empty if the underlying DAO does not support
-     * looking up permission (for example, in applications that simply use
-     * role-based authorization.
-     * @return a collection of {@link Permission} objects.
-     */
-    Collection<Permission> getPermissions();
 
     /**
      * Determines if the user's account is locked, meaning that the user is

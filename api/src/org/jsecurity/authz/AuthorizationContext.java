@@ -60,7 +60,7 @@ public interface AuthorizationContext {
      * @return a collection of principals associated with this context, or an empty collection
      * if no principals are associated with this authorization context
      */
-    Collection<Principal> getAllPrincipals();
+    List<Principal> getAllPrincipals();
 
     /**
      * Returns a single principal assignable from the specified type

@@ -71,7 +71,8 @@ public class AuthorizationContextFilter implements Filter {
         try {
 
             // Bind a auth context from the http session to the thread local
-            WebUtils.bindAuthorizationContextToThread( request );
+            //todo Fix filter to get the realm from somewhere - currently broken
+            WebUtils.bindAuthorizationContextToThread( null, request );
 
             filterChain.doFilter( servletRequest, servletResponse );
 

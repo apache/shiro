@@ -11,15 +11,16 @@
       ============================================================ -->
 
     <!-- Authentication -->
-    <bean name="authenticator" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
+    <bean name="authenticator" init-method="init" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
+        <property name="realm" ref="memoryRealmAuthenticationModule"/>
         <property name="modules">
             <list>
-                <ref bean="memoryAuthenticationModule"/>
+                <ref bean="memoryRealmAuthenticationModule"/>
             </list>
         </property>
     </bean>
 
-    <bean id="memoryAuthenticationModule" class="org.jsecurity.ri.authc.module.memory.MemoryAuthenticationModule">
+    <bean id="memoryRealmAuthenticationModule" init-method="init" class="org.jsecurity.ri.authc.module.memory.MemoryRealmAuthenticationModule">
         <property name="credentialMatcher">
             <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>
@@ -51,6 +52,7 @@
 
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="realm" ref="memoryRealmAuthenticationModule"/>
     </bean>
 
 
@@ -65,7 +67,9 @@
 
 
     <!-- Web Interceptors -->
-    <bean id="authorizationInterceptor" class="org.jsecurity.spring.servlet.security.AuthorizationInterceptor"/>
+    <bean id="authorizationInterceptor" class="org.jsecurity.spring.servlet.security.AuthorizationInterceptor">
+        <property name="realm" ref="memoryRealmAuthenticationModule"/>
+    </bean>
 
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
         <property name="contextRelative" value="true"/>

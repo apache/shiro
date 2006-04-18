@@ -26,7 +26,6 @@ package org.jsecurity.ri.authz;
 
 import org.jsecurity.authz.AuthorizationException;
 
-import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
@@ -71,7 +70,7 @@ public interface Realm {
      * @return <tt>true</tt> if the subject with the id of <tt>subjectIdentifier</tt> has the role
      * with the id of <tt>roleIdentifier</tt>, <tt>false</tt> otherwise.
      */
-    boolean hasRole( Principal subjectIdentifier, Serializable roleIdentifier );
+    boolean hasRole( Principal subjectIdentifier, String roleIdentifier );
 
     /**
      * Checks to see if the roles with the given identifiers are associated with the subject (user)

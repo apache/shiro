@@ -25,12 +25,17 @@
 package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.ri.authz.Realm;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.ri.util.ThreadUtils;
 import org.jsecurity.session.Session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.List;
 
 /**
  * Utility method class used to consolidate functionality between any filter, interceptor, etc,
@@ -47,10 +52,10 @@ public abstract class WebUtils {
     /**
      * The key that is used to store the authorization context in the session.
      */
-    private static final String AUTHORIZATION_CONTEXT_KEY =
-        AuthorizationContext.class.getName() + "_HTTP_SESSION_KEY";
+    public static final String PRINCIPALS_SESSION_KEY =
+        Principal.class.getName() + "_SESSION_KEY";
 
-    private static final String SESSION_ID_KEY =
+    public static final String SESSION_ID_KEY =
         Session.class.getName() + "_ID_HTTP_SESSION_KEY";
 
     public static final String ATTEMPTED_PAGE_KEY =
@@ -95,33 +100,65 @@ public abstract class WebUtils {
         }
     }
 
-    public static void bindToHttpSession( AuthorizationContext ctx, HttpServletRequest request ) {
+    public static void bindToSession( AuthorizationContext ctx, HttpServletRequest request ) {
         if ( ctx != null ) {
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute( AUTHORIZATION_CONTEXT_KEY, ctx );
+            Session session = SecurityContext.getSession();
+            if( session != null ) {
+                session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+            } else {
+                HttpSession httpSession = request.getSession();
+                httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+            }
         }
     }
 
-    public static void unbindAuthorizationContextFromHttpSession( HttpServletRequest request ) {
-        HttpSession httpSession = request.getSession( false );
-        if ( httpSession != null ) {
-            httpSession.removeAttribute( AUTHORIZATION_CONTEXT_KEY );
-        }
-    }
-
-    public static void bindAuthorizationContextToThread( HttpServletRequest request ) {
-        HttpSession session = request.getSession( false );
+    public static void unbindAuthorizationContextFromSession( HttpServletRequest request ) {
+        Session session = SecurityContext.getSession();
         if( session != null ) {
-            AuthorizationContext ctx =
-                (AuthorizationContext)session.getAttribute( AUTHORIZATION_CONTEXT_KEY );
+            session.removeAttribute( PRINCIPALS_SESSION_KEY );
+        } else {
+            HttpSession httpSession = request.getSession( false );
+            if ( httpSession != null ) {
+                httpSession.removeAttribute( PRINCIPALS_SESSION_KEY );
+            }
+        }
+    }
+
+    public static void bindAuthorizationContextToThread( Realm realm, HttpServletRequest request ) {
+        List<Principal> principals = getPrincipals( request );
+        AuthorizationContext ctx = buildAuthorizationContext( principals, realm );
+        if( ctx != null ) {
             bindToThread( ctx );
+        }
+    }
+
+    private static List<Principal> getPrincipals(HttpServletRequest request) {
+        List<Principal> principals = null;
+
+        Session session = SecurityContext.getSession();
+        if( session != null ) {
+            principals = (List<Principal>) session.getAttribute( PRINCIPALS_SESSION_KEY );
+        } else {
+            HttpSession httpSession = request.getSession( false );
+            if( httpSession != null ) {
+                principals =  (List<Principal>) httpSession.getAttribute( PRINCIPALS_SESSION_KEY );
+            }
+        }
+        return principals;
+    }
+
+    private static AuthorizationContext buildAuthorizationContext(List<Principal> principals, Realm realm) {
+        if( principals != null && !principals.isEmpty() ) {
+            return new DelegatingAuthorizationContext( principals, realm );
+        } else {
+            return null;
         }
     }
 
     public static void bindAuthorizationContextToSession( HttpServletRequest request ) {
         AuthorizationContext ctx =
             (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
-        bindToHttpSession( ctx, request );
+        bindToSession( ctx, request );
     }
 
 }

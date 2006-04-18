@@ -31,15 +31,17 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.ri.authc.module.AbstractAuthenticationModule;
 import org.jsecurity.ri.authc.module.SimpleAuthenticationInfo;
+import org.jsecurity.ri.authz.Realm;
+import org.jsecurity.ri.authz.support.AuthorizationInfo;
+import org.jsecurity.ri.authz.support.MemoryRealm;
+import org.jsecurity.ri.util.UsernamePrincipal;
+import org.jsecurity.authz.AuthorizationException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A simple implementation of the {@link org.jsecurity.authc.module.AuthenticationModule} interface that
@@ -49,7 +51,7 @@ import java.util.Set;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class MemoryAuthenticationModule extends AbstractAuthenticationModule {
+public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModule implements Realm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -58,6 +60,11 @@ public class MemoryAuthenticationModule extends AbstractAuthenticationModule {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * Memory realm that is delegated to when realm requests are made.
+     */
+    private Realm memoryRealm;
+
     /**
      * The set of accounts that can be authenticated using this module.
      */
@@ -105,7 +112,27 @@ public class MemoryAuthenticationModule extends AbstractAuthenticationModule {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+    public void init() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
+        if( accounts != null && !accounts.isEmpty() ) {
 
+            Map<Principal, AuthorizationInfo> authorizationInfoMap = new HashMap<Principal, AuthorizationInfo>( accounts.size() );
+            for( AccountEntry entry : accounts ) {
+
+                String[] roleArray = entry.getRoles().split( "," );
+                Set<String> roles = new HashSet<String>( roleArray.length );
+                for( String role : roleArray ) {
+                    roles.add( role.trim() );
+                }
+
+                Set<Permission> permissions = getPermissionsForRoles( roles );
+
+                AuthorizationInfo info = new AuthorizationInfo( roles, permissions );
+                authorizationInfoMap.put( new UsernamePrincipal( entry.getUsername() ), info );
+            }
+            this.memoryRealm = new MemoryRealm( authorizationInfoMap );
+        }
+
+    }
 
     /**
      * Builds a <tt>UserAuthenticationInfo</tt> object for the given username
@@ -125,19 +152,8 @@ public class MemoryAuthenticationModule extends AbstractAuthenticationModule {
 
             for( AccountEntry entry : accounts ) {
                 if( entry.getUsername().equals( principal.getName() ) ) {
-
-                    String[] roleArray = entry.getRoles().split( "," );
-                    Set<String> roles = new HashSet<String>( roleArray.length );
-                    for( String role : roleArray ) {
-                        roles.add( role.trim() );
-                    }
-
-                    Set<Permission> permissions = getPermissionsForRoles( roles );
-
                     return new SimpleAuthenticationInfo( principal,
-                                                  entry.getPassword().toCharArray(),
-                                                  roles,
-                                                  permissions );
+                                                  entry.getPassword().toCharArray() );
 
                 }
             }
@@ -225,4 +241,35 @@ public class MemoryAuthenticationModule extends AbstractAuthenticationModule {
 
     }
 
+    public boolean hasRole(Principal subjectIdentifier, String roleIdentifier) {
+        return memoryRealm.hasRole( subjectIdentifier, roleIdentifier );
+    }
+
+    public boolean[] hasRoles(Principal subjectIdentifier, List<String> roleIdentifiers) {
+        return memoryRealm.hasRoles( subjectIdentifier, roleIdentifiers );
+    }
+
+    public boolean hasAllRoles(Principal subjectIdentifier, Collection<String> roleIdentifiers) {
+        return memoryRealm.hasAllRoles( subjectIdentifier, roleIdentifiers );
+    }
+
+    public boolean isPermitted(Principal subjectIdentifier, Permission permission) {
+        return memoryRealm.isPermitted( subjectIdentifier, permission );
+    }
+
+    public boolean[] isPermitted(Principal subjectIdentifier, List<Permission> permissions) {
+        return memoryRealm.isPermitted( subjectIdentifier, permissions );
+    }
+
+    public boolean isPermittedAll(Principal subjectIdentifier, Collection<Permission> permissions) {
+        return memoryRealm.isPermittedAll( subjectIdentifier, permissions );
+    }
+
+    public void checkPermission(Principal subjectIdentifier, Permission permission) throws AuthorizationException {
+        memoryRealm.checkPermission(subjectIdentifier, permission);
+    }
+
+    public void checkPermissions(Principal subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
+        memoryRealm.checkPermissions( subjectIdentifier, permissions );
+    }
 }

@@ -3,6 +3,9 @@ package org.jsecurity.spring.remoting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.ri.util.ThreadUtils;
+import org.jsecurity.ri.web.WebUtils;
+import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.ri.authz.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -10,6 +13,8 @@ import org.springframework.remoting.support.RemoteInvocation;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.security.Principal;
+import java.util.List;
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
@@ -39,6 +44,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
      */
     private SessionFactory sessionFactory;
 
+    private Realm realm;
+
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -48,6 +55,10 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     ============================================*/
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 
     /*--------------------------------------------
@@ -64,6 +75,11 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 Serializable sessionId = secureInvocation.getSessionId();
                 Session session = sessionFactory.getSession( sessionId );
                 ThreadUtils.bindToThread( session );
+
+                List<Principal>principals = (List<Principal>) session.getAttribute( WebUtils.PRINCIPALS_SESSION_KEY );
+                if( principals != null && !principals.isEmpty() ) {
+                    ThreadUtils.bindToThread( new DelegatingAuthorizationContext( principals, realm ) );
+                }
 
             } else {
                 if( log.isWarnEnabled() ) {
