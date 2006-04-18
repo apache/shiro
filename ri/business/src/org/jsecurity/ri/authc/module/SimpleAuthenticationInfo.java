@@ -27,11 +27,8 @@ package org.jsecurity.ri.authc.module;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
 
-import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -58,16 +55,6 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     private Object credentials;
 
     /**
-     * The collection of roles that apply to this user.
-     */
-    private Collection<String> roles;
-
-    /**
-     * The collection of permissions that apply to this user.
-     */
-    private Collection<Permission> permissions;
-
-    /**
      * True if the user's account is locked, false otherwise.
      */
     private boolean accountLocked = false;
@@ -88,83 +75,29 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     ============================================*/
     public SimpleAuthenticationInfo() {
         this.principals = new ArrayList<Principal>();
-        this.roles = new HashSet<String>();
-        this.permissions = new HashSet<Permission>();
     }
 
+    public SimpleAuthenticationInfo( Principal principal, Object credentials ) {
+        this();
+        this.principals.add( principal );
+        this.credentials = credentials;
+    }
 
     public SimpleAuthenticationInfo(List<Principal> principals, Object credentials) {
         this.principals = principals;
         this.credentials = credentials;
     }
 
-
-    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles) {
-        this.principals = new ArrayList<Principal>();
-        this.principals.add( principal );
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
+        this.principals = principals;
         this.credentials = credentials;
-        this.roles = roles;
-    }
-
-
-    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, Collection<Permission> permissions) {
-        this.principals = new ArrayList<Principal>();
-        this.principals.add( principal );
-        this.credentials = credentials;
-        this.roles = roles;
-        this.permissions = permissions;
-    }
-
-
-    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principals = new ArrayList<Principal>();
-        this.principals.add( principal );
-        this.credentials = credentials;
-        this.roles = roles;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
-        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
     }
 
-
-    public SimpleAuthenticationInfo(Principal principal, Object credentials, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principals = new ArrayList<Principal>();
-        this.principals.add( principal );
-        this.credentials = credentials;
-        this.roles = roles;
-        this.permissions = permissions;
-        this.accountLocked = accountLocked;
-        this.credentialsExpired = credentialsExpired;
-        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
-    }
-
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.principals = principals;
         this.credentials = credentials;
-        this.roles = roles;
-    }
-
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles, Collection<Permission> permissions) {
-        this.principals = principals;
-        this.credentials = credentials;
-        this.roles = roles;
-        this.permissions = permissions;
-    }
-
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principals = principals;
-        this.credentials = credentials;
-        this.roles = roles;
-        this.accountLocked = accountLocked;
-        this.credentialsExpired = credentialsExpired;
-        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
-    }
-
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Collection<String> roles, Collection<Permission> permissions, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principals = principals;
-        this.credentials = credentials;
-        this.roles = roles;
-        this.permissions = permissions;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
         this.concurrentLoginsAllowed = concurrentLoginsAllowed;
@@ -198,33 +131,6 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
         this.credentials = credentials;
     }
 
-
-    public Collection<String> getRoles() {
-        return roles;
-    }
-
-
-    public void setRoles(Collection<String> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole( String roleName ) {
-        this.roles.add( roleName );
-    }
-
-
-    public Collection<Permission> getPermissions() {
-        return permissions;
-    }
-
-
-    public void setPermissions(Collection<Permission> permissions) {
-        this.permissions = permissions;
-    }
-
-    public void addPermission( Permission permission ) {
-        this.permissions.add( permission );
-    }
 
     public boolean isAccountLocked() {
         return accountLocked;

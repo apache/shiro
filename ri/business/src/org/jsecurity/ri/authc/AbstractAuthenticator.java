@@ -33,13 +33,14 @@ import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.ri.authc.bind.AuthorizationContextBinder;
+import org.jsecurity.ri.authc.bind.ThreadLocalAuthorizationContextBinder;
 import org.jsecurity.ri.authc.event.AuthenticationEventFactory;
 import org.jsecurity.ri.authc.event.AuthenticationEventSender;
 import org.jsecurity.ri.authc.event.SimpleAuthenticationEventFactory;
-import org.jsecurity.ri.authc.bind.AuthorizationContextBinder;
-import org.jsecurity.ri.authc.bind.ThreadLocalAuthorizationContextBinder;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
-import org.jsecurity.ri.authz.support.SimpleAuthorizationContextFactory;
+import org.jsecurity.ri.authz.Realm;
+import org.jsecurity.ri.authz.support.DelegatingAuthorizationContextFactory;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work of wrapping a
@@ -70,10 +71,12 @@ public abstract class AbstractAuthenticator implements Authenticator {
      */
     protected Log logger = log;
 
+    private Realm realm = null;
+
     /**
      * The factory used to wrap authorization context after authentication.
      */
-    private AuthorizationContextFactory authContextFactory = new SimpleAuthorizationContextFactory();
+    private AuthorizationContextFactory authContextFactory = null;
 
     /**
      * The binder used to bind the authorization context so that it is accessible on subsequent
@@ -112,6 +115,14 @@ public abstract class AbstractAuthenticator implements Authenticator {
         this.authzCtxBinder = authContextBinder;
     }
 
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
     public AuthenticationEventFactory getAuthenticationEventFactory() {
         return authcEventFactory;
     }
@@ -131,6 +142,17 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /*-------------------------------------------
      |               M E T H O D S               |
      ============================================*/
+
+    public void init() {
+        if( getAuthorizationContextFactory() == null ) {
+            if( getRealm() == null ) {
+                throw new IllegalArgumentException(
+                        "A realm must be configured for the default authorization context factory.  " +
+                        "Either provide a realm for the authenticator, or configure a custom AuthorizationContextFactory." );
+            }
+            setAuthorizationContextFactory( new DelegatingAuthorizationContextFactory( getRealm() ) );
+        }
+    }
 
     protected AuthenticationEvent createFailureEvent( AuthenticationToken token,
                                                       AuthenticationException ae ) {
@@ -211,6 +233,13 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
     protected AuthorizationContext createAuthorizationContext( AuthenticationInfo info ) {
+        if( getAuthorizationContextFactory() == null ) {
+            throw new IllegalStateException(
+                    "No authorization context factory is configured, so authentication cannot " +
+                    "be completed.  Make sure the init() method is being called on the " +
+                    "authenticator before it is used." );
+        }
+
         return getAuthorizationContextFactory().createAuthorizationContext( info );
     }
 

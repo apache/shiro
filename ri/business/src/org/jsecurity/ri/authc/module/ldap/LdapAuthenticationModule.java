@@ -176,7 +176,8 @@ public abstract class LdapAuthenticationModule extends AbstractAuthenticationMod
         principals.add( principal );
         principals.addAll( ldapDirectoryInfo.getPrincipals() );
 
-        return new SimpleAuthenticationInfo( principals, password, ldapDirectoryInfo.getRoleNames() );
+        //todo Figure out how to get authz information since roles are not returned in SimpleAuthenticationInfo anymore
+        return new SimpleAuthenticationInfo( principals, password );
     }
 
     /**

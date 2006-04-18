@@ -25,8 +25,10 @@
 package org.jsecurity.spring.servlet.security;
 
 import org.jsecurity.ri.web.WebUtils;
+import org.jsecurity.ri.authz.Realm;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,12 +37,24 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
+public class AuthorizationInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
+
+    private Realm realm;
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if( realm == null ) {
+            throw new IllegalArgumentException( "A realm must be configured on the authorization interceptor." );
+        }
+    }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        WebUtils.bindAuthorizationContextToThread( request );
+        WebUtils.bindAuthorizationContextToThread( realm, request );
         return true;
     }
 

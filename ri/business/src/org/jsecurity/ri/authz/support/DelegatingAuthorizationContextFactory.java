@@ -42,6 +42,10 @@ public class DelegatingAuthorizationContextFactory extends AbstractAuthorization
 
     public DelegatingAuthorizationContextFactory(){}
 
+    public DelegatingAuthorizationContextFactory(Realm realm) {
+        this.realm = realm;
+    }
+
     public void setRealm( Realm realm ) {
         this.realm = realm;
     }

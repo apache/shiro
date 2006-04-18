@@ -98,7 +98,7 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     /**
      * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipals()
      */
-    public Collection<Principal> getAllPrincipals() {
+    public List<Principal> getAllPrincipals() {
         return principals;
     }
 
