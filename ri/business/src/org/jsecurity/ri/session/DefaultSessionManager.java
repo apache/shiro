@@ -62,6 +62,11 @@ public class DefaultSessionManager extends AbstractSessionManager
 
         // Start session validation
         if ( sessionValidationScheduler != null ) {
+
+            if( log.isInfoEnabled() ) {
+                log.info( "Starting session validation scheduler..." );
+            }
+
             sessionValidationScheduler.startSessionValidation();
         } else {
             if (log.isWarnEnabled()) {

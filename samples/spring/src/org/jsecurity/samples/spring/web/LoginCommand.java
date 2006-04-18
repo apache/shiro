@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.samples.spring;
+package org.jsecurity.samples.spring.web;
 
 /**
  * Description of class.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2005 Jeremy C. Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,15 +22,20 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
+package org.jsecurity.samples.spring.web;
 
-package org.jsecurity.samples.spring;
-
+import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.session.Session;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Description of class.
@@ -38,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class LogoutController extends AbstractController {
+public class IndexController extends SimpleFormController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -60,11 +65,34 @@ public class LogoutController extends AbstractController {
     |               M E T H O D S               |
     ============================================*/
 
+    protected Object formBackingObject(HttpServletRequest request) throws Exception {
+        SessionValueCommand command = (SessionValueCommand) createCommand();
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
-        SecurityContext.invalidate();
-
-        return new ModelAndView( "redirect:login" );
+        Session session = SecurityContext.getSession();
+        command.setValue( (String) session.getAttribute( "value" ) );
+        return command;
     }
+
+    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+        AuthorizationContext context = SecurityContext.getAuthorizationContext();
+
+        boolean hasRole1 = context.hasRole( "role1" );
+        boolean hasRole2 = context.hasRole( "role2" );
+
+        Map<String,Object> refData = new HashMap<String,Object>();
+        refData.put( "hasRole1", hasRole1 );
+        refData.put( "hasRole2", hasRole2 );
+        refData.put( "sessionId", SecurityContext.getSession().getSessionId() );
+        return refData;
+    }
+
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
+        SessionValueCommand command = (SessionValueCommand) obj;
+
+        Session session = SecurityContext.getSession();
+        session.setAttribute( "value", command.getValue() );
+
+        return showForm( request, response, errors );
+    }
+
 }

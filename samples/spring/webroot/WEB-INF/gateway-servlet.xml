@@ -20,6 +20,7 @@
             <props>
                 <prop key="login">loginController</prop>
                 <prop key="logout">logoutController</prop>
+                <prop key="jsecurity.jnlp">jnlpController</prop>
             </props>
         </property>
     </bean>
@@ -27,15 +28,15 @@
     <!-- =========================================================
       -  Spring controllers
       ============================================================ -->
-    <bean name="loginController" class="org.jsecurity.samples.spring.LoginController">
-        <property name="commandClass" value="org.jsecurity.samples.spring.LoginCommand"/>
+    <bean name="loginController" class="org.jsecurity.samples.spring.web.LoginController">
+        <property name="commandClass" value="org.jsecurity.samples.spring.web.LoginCommand"/>
         <property name="formView" value="login"/>
         <property name="successView" value="redirect:/secure/index"/>
 
         <property name="authenticator" ref="authenticator"/>
     </bean>
 
-    <bean name="logoutController" class="org.jsecurity.samples.spring.LogoutController"/>
+    <bean name="logoutController" class="org.jsecurity.samples.spring.web.LogoutController"/>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
@@ -43,5 +44,8 @@
 		<property name="suffix" value=".jsp"/>
 	</bean>
 
+    <bean id="jnlpController" class="org.jsecurity.samples.spring.web.JnlpController">
+        <property name="jnlpView" value="jsecurity.jnlp"/>
+    </bean>    
 
 </beans>

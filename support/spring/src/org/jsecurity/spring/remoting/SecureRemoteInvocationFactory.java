@@ -7,6 +7,9 @@ import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 /**
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
  * {@link SecureRemoteInvocation} instance.  This factory is the client-side part of
@@ -28,8 +31,16 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      */
     public RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
         Session session = SecurityContext.getSession();
+
+        Serializable sessionId;
         if( session != null ) {
-            return new SecureRemoteInvocation( methodInvocation, session );
+            sessionId = session.getSessionId();
+        } else {
+            sessionId = UUID.fromString( System.getProperty( "jsecurity.session.id" ) );
+        }
+
+        if( sessionId != null ) {
+            return new SecureRemoteInvocation( methodInvocation, sessionId );
         } else {
             return super.createRemoteInvocation( methodInvocation );
         }

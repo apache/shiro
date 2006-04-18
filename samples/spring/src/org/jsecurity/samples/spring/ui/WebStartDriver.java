@@ -1,9 +1,11 @@
-package org.jsecurity.samples.spring;
+package org.jsecurity.samples.spring.ui;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Insert JavaDoc here.
  */
-public class SessionValueCommand {
+public class WebStartDriver {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -12,7 +14,6 @@ public class SessionValueCommand {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private String value;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -26,11 +27,7 @@ public class SessionValueCommand {
     |               M E T H O D S               |
     ============================================*/
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public static void main(String[] args) {
+        new ClassPathXmlApplicationContext( "webstart.spring.xml" );
     }
 }
