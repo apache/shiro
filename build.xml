@@ -294,8 +294,7 @@
     </target>
 
     <target name="src.zip" depends="root-prepare">
-        <zip destfile="${root.dist.dir}/${project.name}.src.zip"
-             basedir="${basedir}">
+        <zip destfile="${root.dist.dir}/${project.name}.src.zip">
             <fileset dir="${root.base.dir}/api/src"
                      includes="**/*.java, **/*.properties"/>
             <fileset dir="${root.base.dir}/ri/common/src"
@@ -376,7 +375,7 @@
         <property name="release.zip.name" value="${project.name}-${version}-with-dependencies.zip"/>
         <zip destfile="${root.dist.dir}/${release.zip.name}"
              basedir="${basedir}"
-             excludes="**/CVS/*,**/build/**,**/${release.zip.name}"/>
+             excludes="**/.svn/*,**/build/**,**/${release.zip.name}"/>
     </target>
 
     <!-- ===================================================================
