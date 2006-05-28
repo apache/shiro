@@ -344,6 +344,7 @@
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
             <!-- <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> -->
             <zipfileset src="${root.dist.dir}/${project.name}-spring.jar"/>
+            <zipfileset src="${root.dist.dir}/${project.name}-jboss.jar"/>
 
             <manifest>
 			    <attribute name="Implementation-Title" value="${project.name}"/>

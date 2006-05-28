@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+
+    <!-- ===================================================================================
+         Authentication (log-in) Configuration
+         =================================================================================== -->
+    <!--
+         Sample AuthenticationModule used by the JSecurity Authenticator (defined below).
+
+         The following 4 bean definitions are only here as an example and show how to create a
+         purely RAM-based module, where the users are statically defined in memory.  Naturally, this
+         isn't an option for a proper application, where users are custom and vary in quantity.
+
+         You should comment-out/remove these 4
+         beans and swap them out for a better store (preferrably a module that accesses a
+         relational database or at the very least the file system.
+    -->
+    <bean name="shaCredentialMatcher" class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
+        <property name="base64Encoded">true</property>
+    </bean>
+    <bean name="sampleAccount1" class="org.jsecurity.ri.authc.module.memory.AccountEntry">
+        <property name="username">user1</property>
+        <property name="password">s9qne0wEqVUbh4HQMZH+CY8yXmc=</property><!-- 'user1' SHA-1 Base64 -->
+        <property name="roles">role1, role2</property>
+    </bean>
+    <bean name="sampleAccount2" class="org.jsecurity.ri.authc.module.memory.AccountEntry">
+        <property name="username">user2</property>
+        <property name="password">oYgcBu7JbbmQHHu/5BxCo/COnLQ=</property><!-- 'user2' SHA-1 Base64 -->
+        <property name="roles">role2</property>
+    </bean>
+    <bean name="memoryRealmAuthenticationModule" class="org.jsecurity.ri.authc.module.memory.MemoryRealmAuthenticationModule">
+        <property name="credentialMatcher">
+            <inject bean="shaCredentialMatcher"/> </property>
+        <property name="accounts">
+            <set>
+                <inject bean="sampleAccount1"/>
+                <inject bean="sampleAccount2"/>
+            </set>
+        </property>
+        <create method="init"/>
+    </bean>
+
+    <!-- Root JSecurity Authenticator - coordinates and uses a configured set of
+         AuthenticationModules to implement PAM behavior.  Add modules as necessary.  -->
+    <bean name="authenticator" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
+        <property name="realm"><inject bean="memoryRealmAuthenticationModule"/></property>
+        <property name="modules">
+            <list>
+                <!-- Remove in favor of a module that accesses your application's data store: -->
+                <inject bean="memoryRealmAuthenticationModule"/>
+            </list>
+        </property>
+        <create method="init"/>
+    </bean>
+
+
+    <!-- ===================================================================================
+         Authorization (access control) Configuration
+         =================================================================================== -->
+    <!-- AOP Annotations Support-->
+    <bean name="authorizer" class="org.jsecurity.ri.authz.module.AnnotationsModularAuthorizer"/>
+
+
+    <!-- ===================================================================================
+         Session Management Configuration
+         =================================================================================== -->
+    <bean name="sessionManager" class="org.jsecurity.ri.session.DefaultSessionManager">
+        <create method="init"/>
+    </bean>
+    <!-- SessionFactory uses the SessionManager to create/acquire sessions.  This factory works
+         in both regular and web-enabled environments: -->
+    <bean name="sessionFactory" class="org.jsecurity.ri.web.support.DefaultWebSessionFactory">
+        <property name="sessionManager"><inject bean="sessionManager"/></property>
+    </bean>
+
+</deployment>

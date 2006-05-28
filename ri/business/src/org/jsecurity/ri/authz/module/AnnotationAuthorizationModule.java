@@ -35,34 +35,33 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * Abstract class providing common functionality across modules that process metadata
- * (annotations).  Primarily provides automatic support for the
- * {@link org.jsecurity.authz.module.AuthorizationModule#supports supports} method.  This allows support for any
- * arbitrary number of annotations - simply create a subclass of this one and add an instance of
- * that subclass to the {@link org.jsecurity.ri.authz.module.ModularAuthorizer ModularAuthorizer}'s
- * set of {@link org.jsecurity.ri.authz.module.ModularAuthorizer#setAuthorizationModules authorizationModule}s.
+ * Abstract class providing common functionality across modules that process metadata (annotations).
+ *  Primarily provides automatic support for the {@link org.jsecurity.authz.module.AuthorizationModule#supports
+ * supports} method.  This allows support for any arbitrary number of annotations - simply create a
+ * subclass of this one and add an instance of that subclass to the {@link
+ * org.jsecurity.ri.authz.module.ModularAuthorizer ModularAuthorizer}'s set of {@link
+ * org.jsecurity.ri.authz.module.ModularAuthorizer#setAuthorizationModules authorizationModule}s.
  *
- * @see org.jsecurity.ri.authz.module.ModularAuthorizer#setAuthorizationModules
- *
- * @since 0.1
  * @author Les Hazlewood
+ * @see ModularAuthorizer#setAuthorizationModules
+ * @since 0.1
  */
 public abstract class AnnotationAuthorizationModule implements AuthorizationModule {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     Class<? extends Annotation> annotationClass;
 
-    public AnnotationAuthorizationModule(){}
+    public AnnotationAuthorizationModule() {}
 
     public void init() {
-        if ( annotationClass == null ) {
+        if (annotationClass == null) {
             String msg = "annotationClass property must be set";
-            throw new IllegalStateException( msg );
+            throw new IllegalStateException(msg);
         }
     }
 
-    public void setAnnotationClass( Class<? extends Annotation> annotationClass ) {
+    public void setAnnotationClass(Class<? extends Annotation> annotationClass) {
         this.annotationClass = annotationClass;
     }
 
@@ -71,8 +70,21 @@ public abstract class AnnotationAuthorizationModule implements AuthorizationModu
     }
 
     public boolean supports( AuthorizedAction action ) {
-        if ( action != null && (action instanceof MethodInvocation) ) {
-            return supports( ((MethodInvocation)action).getMethod() );
+
+        if ( action != null ) {
+            if ( action instanceof MethodInvocation ) {
+                return ( supports( ((MethodInvocation)action).getMethod() ) );
+            } else {
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Ignoring authorization check for unsupported " +
+                            "AuthorizationAction of type [" +
+                            action.getClass().getName() + "]." );
+                }
+            }
+        } else {
+            if ( log.isInfoEnabled() ) {
+                log.info( "AuthorizationAction argument is null.  Returning false." );
+            }
         }
 
         return false;
@@ -80,5 +92,30 @@ public abstract class AnnotationAuthorizationModule implements AuthorizationModu
 
     protected boolean supports( Method m ) {
         return ( m != null && ( m.getAnnotation( getAnnotationClass() ) != null ) );
+    }
+
+    protected Annotation getAnnotation( AuthorizedAction action ) {
+        if ( action == null ) {
+            throw new IllegalArgumentException( "method argument cannot be null" );
+        }
+        if ( action instanceof MethodInvocation ) {
+            MethodInvocation mi = (MethodInvocation) action;
+
+            Method m = mi.getMethod();
+            if (m == null) {
+                String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
+                        "constructed.  getMethod() returned null";
+                throw new NullPointerException(msg);
+
+            }
+            return m.getAnnotation( getAnnotationClass() );
+        } else {
+            String msg = "AuthorizedAction argument of type [" + action.getClass().getName() +
+                    "] is not an instance of [" + MethodInvocation.class.getName() + "] and " +
+                    "cannot be processed directly.  Please subclass the [" +
+                    AnnotationAuthorizationModule.class.getName() + ".getAnnotation(...) method " +
+                    "to obtain an Annotation based on the given method argument.";
+            throw new IllegalArgumentException( msg );
+        }
     }
 }
