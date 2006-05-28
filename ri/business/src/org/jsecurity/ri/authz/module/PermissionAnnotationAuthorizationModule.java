@@ -52,7 +52,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         setAnnotationClass( PermissionsRequired.class );
     }
 
-    private String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
+    protected String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
         int propertyStartIndex = -1;
 
         char[] chars = targetPath.toCharArray();
@@ -78,21 +78,31 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         return targetValue.toString();
     }
 
-    private Permission createPermission( MethodInvocation mi, PermissionsRequired permissionsRequired ) {
-        Class<? extends Permission> clazz = permissionsRequired.type();
-        String target = permissionsRequired.target();
-        String targetPath = permissionsRequired.targetPath();
+    protected Object[] getMethodArguments( AuthorizedAction action ) {
+        if ( action != null && (action instanceof MethodInvocation) ) {
+            MethodInvocation mi = (MethodInvocation)action;
+            return mi.getArguments();
+        } else {
+            return null;
+        }
+    }
+
+    protected Permission createPermission( AuthorizedAction action ) {
+        PermissionsRequired prAnnotation =  (PermissionsRequired)getAnnotation( action );
+        Class<? extends Permission> clazz = prAnnotation.type();
+        String target = prAnnotation.target();
+        String targetPath = prAnnotation.targetPath();
         if ( targetPath.equals( "" ) ) {
             targetPath = null;
         }
-        String actions = permissionsRequired.actions();
+        String actions = prAnnotation.actions();
         if ( actions.equals( "" ) ) {
             actions = null;
         }
 
         if ( targetPath != null ) {
             try {
-                target = inferTargetFromPath( mi.getArguments(), targetPath );
+                target = inferTargetFromPath( getMethodArguments( action ), targetPath );
             } catch ( Exception e ) {
                 String msg = "Unable to parse targetPath property.  Please see the " +
                              "javadoc for expected path syntax. PermissionsRequired check cannot " +
@@ -109,19 +119,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     }
 
     public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
-
-        MethodInvocation mi = (MethodInvocation)action;
-
-        Method m = mi.getMethod();
-        if ( m == null ) {
-            String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
-                         "constructed.  getMethod() returned null";
-            throw new NullPointerException( msg );
-        }
-
-        PermissionsRequired permissionsRequired = m.getAnnotation( PermissionsRequired.class );
-
-        Permission p = createPermission( mi, permissionsRequired );
+        Permission p = createPermission( action );
         if ( context.implies( p ) ) {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Authorization context implies permission [" + p +
@@ -136,15 +134,4 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
             return AuthorizationVote.deny;
         }
     }
-
-
-    /*private String hpToString( PermissionsRequired annotation ) {
-        StringBuffer sb = new StringBuffer();
-        sb.append( "type=" ).append( annotation.type() );
-        sb.append( ",target=" ).append( annotation.target() );
-        sb.append( ",targetPath=" ).append( annotation.targetPath() );
-        sb.append( ",actions=[" ).append( annotation.actions() ).append( "]" );
-        return sb.toString();
-    }*/
-
 }

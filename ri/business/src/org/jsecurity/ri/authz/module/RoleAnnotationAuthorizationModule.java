@@ -49,27 +49,20 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
 
     public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
 
-        MethodInvocation mi = (MethodInvocation)action;
+        RolesRequired rrAnnotation = (RolesRequired)getAnnotation( action );
+        
+        String roleId = rrAnnotation.value();
 
-        Method m = mi.getMethod();
-        if ( m == null ) {
-            String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
-                         "constructed.  getMethod() returned null";
-            throw new NullPointerException( msg );
-        }
-
-        RolesRequired hrAnnotation = m.getAnnotation( RolesRequired.class );
-
-        if ( context.hasRole( hrAnnotation.value() ) ) {
+        if ( context.hasRole( roleId ) ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Authorization context has role [" +
-                           hrAnnotation.value() + "]. Returning grant vote." );
+                log.debug( "Authorization context has role [" + roleId +
+                           "]. Returning grant vote." );
             }
             return AuthorizationVote.grant;
         } else {
             if ( log.isDebugEnabled() ) {
-                log.debug( "AuthorizationContext does not have role [" +
-                           hrAnnotation.value() + "].  Returning deny vote." );
+                log.debug( "AuthorizationContext does not have role [" +  roleId +
+                           "].  Returning deny vote." );
             }
             return AuthorizationVote.deny;
         }

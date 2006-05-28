@@ -30,6 +30,8 @@ import org.jsecurity.authz.annotation.RolesRequired;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.lang.reflect.Method;
 
@@ -37,8 +39,10 @@ import java.lang.reflect.Method;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor implements InitializingBean {
+public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor
+        implements InitializingBean {
 
+    protected transient final Log log = LogFactory.getLog( getClass() );
 
     private Authorizer authorizer;
 
@@ -46,21 +50,6 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * Create a new AuthorizationAttributeSourceAdvisor.
      */
     public AuthorizationAttributeSourceAdvisor() {
-    }
-
-    /**
-     * Create a new AuthorizationAttributeSourceAdvisor.
-     * @param interceptor the security interceptor to use for this advisor
-     */
-    public AuthorizationAttributeSourceAdvisor( AuthorizationInterceptor interceptor) {
-        setSecurityInterceptor(interceptor);
-    }
-
-    /**
-     * Set the security interceptor to use for this advisor.
-     */
-    public void setSecurityInterceptor(AuthorizationInterceptor interceptor) {
-        setAdvice(interceptor);
     }
 
     /**
@@ -89,10 +78,22 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
 
     public void afterPropertiesSet() throws Exception {
         if( getAdvice() == null ) {
-            AuthorizationInterceptor interceptor = new AuthorizationInterceptor();
-            Assert.notNull( authorizer, "An authorizer must be configured if no security interceptor is explicitly configured." );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No authorization advice explicitly configured via the 'advice' " +
+                        "property.  Attempting to set " +
+                        "default instance of type [" +
+                        AopAllianceAuthorizationInterceptor.class.getName() + "]");
+            }
+            if ( authorizer == null ) {
+                String msg = "The 'authorizer' property must be set if you don't " +
+                        "explicitly set authorization advice via the 'advice' property.";
+                throw new IllegalStateException( msg );
+            }
+            AopAllianceAuthorizationInterceptor interceptor = new AopAllianceAuthorizationInterceptor();
             interceptor.setAuthorizer( authorizer );
-            setAdvice( interceptor);
+            interceptor.init();
+
+            setAdvice( interceptor );
         }
     }
 }
