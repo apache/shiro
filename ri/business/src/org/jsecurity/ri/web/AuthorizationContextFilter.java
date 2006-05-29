@@ -26,13 +26,9 @@
 package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.realm.RealmManager;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
@@ -46,6 +42,14 @@ import java.io.IOException;
  * @author Jeremy Haile
  */
 public class AuthorizationContextFilter implements Filter {
+
+    private RealmManager realmManager;
+
+
+    public void setRealmManager(RealmManager realmManager) {
+        this.realmManager = realmManager;
+    }
+
 
     /**
      * Implemented for interface - does nothing.
@@ -71,8 +75,8 @@ public class AuthorizationContextFilter implements Filter {
         try {
 
             // Bind a auth context from the http session to the thread local
-            //todo Fix filter to get the realm from somewhere - currently broken
-            WebUtils.bindAuthorizationContextToThread( null, request );
+            //todo Fix filter to get the realm manager from somewhere - currently broken
+            WebUtils.bindAuthorizationContextToThread( request, realmManager );
 
             filterChain.doFilter( servletRequest, servletResponse );
 

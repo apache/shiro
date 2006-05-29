@@ -27,6 +27,7 @@ package org.jsecurity.ri.authz;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
+import org.jsecurity.realm.Realm;
 
 import java.security.Permission;
 import java.security.Principal;

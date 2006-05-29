@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.module.memory;
+package org.jsecurity.ri.realm.memory;
 
 /**
  * A simple POJO containing account information.

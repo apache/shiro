@@ -26,6 +26,7 @@
 package org.jsecurity.ri.authc.module;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
+import org.jsecurity.realm.Realm;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
 
     private Object credentials;
 
+    private Realm realm;
+
     /**
      * True if the user's account is locked, false otherwise.
      */
@@ -77,27 +80,31 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
         this.principals = new ArrayList<Principal>();
     }
 
-    public SimpleAuthenticationInfo( Principal principal, Object credentials ) {
+    public SimpleAuthenticationInfo( Principal principal, Object credentials, Realm realm ) {
         this();
         this.principals.add( principal );
         this.credentials = credentials;
+        this.realm = realm;
     }
 
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Realm realm) {
         this.principals = principals;
         this.credentials = credentials;
+        this.realm = realm;
     }
 
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Realm realm, boolean accountLocked, boolean credentialsExpired) {
         this.principals = principals;
         this.credentials = credentials;
+        this.realm = realm;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
     }
 
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Realm realm, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.principals = principals;
         this.credentials = credentials;
+        this.realm = realm;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
         this.concurrentLoginsAllowed = concurrentLoginsAllowed;
@@ -129,6 +136,16 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
 
     public void setCredentials( Object credentials ) {
         this.credentials = credentials;
+    }
+
+
+    public Realm getRealm() {
+        return realm;
+    }
+
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 
 

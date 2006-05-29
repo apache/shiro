@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.util.ThreadContext;
-import org.jsecurity.ri.authc.bind.AuthorizationContextBinder;
 
 /**
  * {@link AuthorizationContextBinder} implementation that binds

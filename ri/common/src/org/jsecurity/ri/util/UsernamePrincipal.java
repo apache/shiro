@@ -82,17 +82,26 @@ public class UsernamePrincipal implements Principal, Serializable {
     |               M E T H O D S               |
     ============================================*/
 
-    public int hashCode() {
-        return getUsername().hashCode();
+
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        final UsernamePrincipal that = (UsernamePrincipal) o;
+
+        if (username != null ? !username.equals(that.username) : that.username != null)
+            return false;
+
+        return true;
     }
 
-    public boolean equals( Object obj ) {
-        if ( obj instanceof StringPrincipal ) {
-            return getUsername().equals( ((StringPrincipal)obj).getValue() );
-        } else {
-            return false;
-        }
+
+    public int hashCode() {
+        return (username != null ? username.hashCode() : 0);
     }
+
 
     @Override
     @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})

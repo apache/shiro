@@ -2,10 +2,11 @@ package org.jsecurity.spring.remoting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.realm.Realm;
+import org.jsecurity.realm.RealmManager;
+import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
 import org.jsecurity.ri.util.ThreadUtils;
 import org.jsecurity.ri.web.WebUtils;
-import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
-import org.jsecurity.ri.authz.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -44,7 +45,11 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
      */
     private SessionFactory sessionFactory;
 
-    private Realm realm;
+    /**
+     * The realm manager used to retrieve realms that should be associated with the
+     * created authorization contexts upon remote invocation.
+     */
+    private RealmManager realmManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -57,9 +62,11 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
         this.sessionFactory = sessionFactory;
     }
 
-    public void setRealm(Realm realm) {
-        this.realm = realm;
+
+    public void setRealmManager(RealmManager realmManager) {
+        this.realmManager = realmManager;
     }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -76,8 +83,14 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 Session session = sessionFactory.getSession( sessionId );
                 ThreadUtils.bindToThread( session );
 
+                // Get the principals and realm name from the session
                 List<Principal>principals = (List<Principal>) session.getAttribute( WebUtils.PRINCIPALS_SESSION_KEY );
-                if( principals != null && !principals.isEmpty() ) {
+                String realmName = (String) session.getAttribute( WebUtils.REALM_NAME_SESSION_KEY );
+
+                // If principals and realm were found in the session, create a delegating authorization context
+                // and bind it to the thread.
+                if( principals != null && !principals.isEmpty() && realmName != null ) {
+                    Realm realm = realmManager.getRealm( realmName );
                     ThreadUtils.bindToThread( new DelegatingAuthorizationContext( principals, realm ) );
                 }
 

@@ -25,12 +25,10 @@
 
 package org.jsecurity.context;
 
+import org.jsecurity.Configuration;
 import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.ri.DefaultConfiguration;
 import org.jsecurity.session.Session;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API. This
@@ -48,38 +46,21 @@ public abstract class SecurityContext {
     /*--------------------------------------------
      |             C O N S T A N T S             |
      ============================================*/
-    /**
-     * Name of the system property or file property that determines the class name of the {@link
-     * SecurityContextAccessor} implementation class to use.
-     */
-    private static final String SECURITY_CONTEXT_ACCESSOR_PROP = "security.context.accessor.class";
 
     /**
-     * <p>This property determines whether or not the security context accessor should be cached.
-     * The JSecurity implementation is responsible for configuring whether or not caching of
-     * the accessor is allowed.  The default value of this property is true for performance
-     * reasons, although implementations are allowed to override the value either through
-     * the properties file or a system property.</p>
-     * <p>This property should be set to "false" to disable caching of the accessor.  Any other value
-     * will leave caching enabled.</p>
+     *  Will always be <tt>null</tt> if caching is turned off (i.e. accessorCached == false);
      */
-    private static final String SECURITY_CONTEXT_ACCESSOR_CACHED_PROP = "security.context.accessor.cached";
-
-    /**
-     * Name of the JSecurity properties file to be loaded.  This file should contain properties
-     * telling JSecurity how to create a security context.
-     */
-    private static final String JSECURITY_PROPS_FILE = "jsecurity.properties";
-
-    private static boolean accessorCached = true;
-
-    /** Will always be <tt>null</tt> if caching is turned off (i.e. accessorCached == false); */
     private static SecurityContextAccessor cachedAccessor = null;
 
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * Security context settings used by this security context.
+     * todo Can we remove this from being a static dependency without making the SecurityContext more difficult to use? -JCH 5/28/2006 
+     */
+    private static Configuration configuration;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -89,41 +70,24 @@ public abstract class SecurityContext {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
+    public static Configuration getConfiguration() {
+        if( configuration != null ) {
+            return configuration;
+        } else {
+            configuration = new DefaultConfiguration();
+        }
+        return configuration;
+    }
+
+
+    public static void setConfiguration(Configuration configuration) {
+        SecurityContext.configuration = configuration;
+    }
+
+
     /*--------------------------------------------
-     |        S T A T I C   M E T H O D S        |
-     ============================================*/
-
-    /**
-     * Returns whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
-     * #getAccessor()} is called.
-     * <p/>
-     * <p>The system default is <tt>true</tt>.
-     * <p/>
-     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getAccessor()}
-     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the accessor
-     * implementation.
-     *
-     * @return whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
-     *         #getAccessor()} is called.
-     */
-    protected static boolean isAccessorCached() {
-        return accessorCached;
-    }
-
-    /**
-     * Sets whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
-     * #getAccessor()} is called. <p>The system default is <tt>true</tt>.
-     * <p/>
-     * <p>Note: this does <em>not</em> determine whether or not each call to {@link #getAccessor()}
-     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the accessor
-     * implementation.
-     *
-     * @param cached whether or not to cache the accessor instance.
-     */
-    protected static void setAccessorCached( boolean cached ) {
-        accessorCached = cached;
-    }
-
+    |        S T A T I C   M E T H O D S        |
+    ============================================*/
 
     /**
      * Retrieves a {@link SecurityContextAccessor} instance based on a JSecurity implementation's
@@ -140,10 +104,12 @@ public abstract class SecurityContext {
 
         SecurityContextAccessor accessor;
 
-        if ( isAccessorCached() ) {
+        Configuration configuration = getConfiguration();
+
+        if ( configuration.isSecurityContextAccessorCached() ) {
             synchronized (SecurityContext.class ) {
                 if ( cachedAccessor == null ) {
-                    String accessorClassName = getAccessorClassName( cl );
+                    String accessorClassName = configuration.getSecurityContextAccessorClassName();
                     cachedAccessor = instantiateAccessor( accessorClassName, cl );
                 }
             }
@@ -151,52 +117,11 @@ public abstract class SecurityContext {
             accessor = cachedAccessor;
 
         } else {
-            String accessorClassName = getAccessorClassName( cl );
+            String accessorClassName = configuration.getSecurityContextAccessorClassName();
             accessor = instantiateAccessor( accessorClassName, cl );
         }
 
         return accessor;
-    }
-
-    private static String getAccessorClassName( ClassLoader cl ) {
-        String accessorClassName = System.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
-
-        if ( accessorClassName == null ) {
-
-            InputStream propsFileIs = cl.getResourceAsStream( JSECURITY_PROPS_FILE );
-            Properties props = new Properties();
-            try {
-                props.load( propsFileIs );
-            } catch ( IOException e ) {
-                String msg = "No [" + SECURITY_CONTEXT_ACCESSOR_PROP + "] system property " +
-                             "is defined and [" + JSECURITY_PROPS_FILE + "] cannot be " +
-                             "loaded from the classloader.  A " + SecurityContextAccessor.class.getName() + " " +
-                             "cannot be created.";
-                throw new SecurityContextException( msg );
-            }
-
-            accessorClassName = props.getProperty( SECURITY_CONTEXT_ACCESSOR_PROP );
-
-            String strAccessorCached = props.getProperty( SECURITY_CONTEXT_ACCESSOR_CACHED_PROP );
-            if( "false".equals( strAccessorCached ) ) {
-                setAccessorCached( false );
-            }
-
-        }
-
-        if ( accessorClassName == null || accessorClassName.length() == 0 ) {
-            String msg = "No [" + SecurityContextAccessor.class.getName() + "] implementation " +
-                         "class was found configured in the system.  The accessor " +
-                         "implementation should normally be specified by including the " +
-                         "JSecurity implementation JAR in the classpath.  The accessor can " +
-                         "also be specified by setting the [" + SECURITY_CONTEXT_ACCESSOR_PROP +
-                         "] system property or manually including a jsecurity.properties file " +
-                         "at the root of the classpath.";
-            throw new SecurityContextException( msg );
-        }
-
-        return accessorClassName;
-
     }
 
     private static SecurityContextAccessor instantiateAccessor( String accessorClassName,

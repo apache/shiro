@@ -292,7 +292,7 @@ public abstract class AbstractSessionManager implements SessionManager {
 
         //check for stopped (but not expired):
         if ( session.getStopTimestamp() != null ) {
-            //stop timestamp is set, so the session is considered stopped:
+            //destroy timestamp is set, so the session is considered stopped:
             String msg = "Session with id [" + session.getSessionId() + "] has been " +
                          "explicitly stopped.  No further interaction under this session is " +
                          "allowed.";

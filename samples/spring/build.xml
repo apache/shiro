@@ -67,7 +67,7 @@
 
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
         <mkdir dir="${webstart.lib.dir}"/>
-        <copy todir="${webstart.lib.dir}">
+        <copy todir="${webstart.lib.dir}" preservelastmodified="true">
             <fileset dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
             <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
             <fileset dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
@@ -81,6 +81,7 @@
 
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
             <classes dir="${classes.dir}" includes="**"/>
+            <lib dir="${lib.dir}/ehcache" includes="*.jar"/>
             <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
             <lib dir="${lib.dir}/spring" includes="*.jar"/>
             <lib dir="${lib.dir}/log4j" includes="*.jar"/>
@@ -96,8 +97,8 @@
         </war>
     </target>
 
-    <target name="deploy" depends="dist">
-        <copy file="${dist.war}" todir="${deploy.dir}"/>
+    <target name="deploy" depends="dist" >
+        <copy file="${dist.war}" todir="${deploy.dir}" preservelastmodified="true"/>
     </target>
 
 </project>

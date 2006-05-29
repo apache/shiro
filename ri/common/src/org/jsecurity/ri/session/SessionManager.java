@@ -45,7 +45,7 @@ public interface SessionManager {
      * address.
      *
      * <p><b>Note</b>: see the
-     * {@link org.jsecurity.session.SessionFactory#start(java.net.InetAddress) SessionFactory.start(InetAddress)} method
+     * {@link org.jsecurity.session.SessionFactory#start(java.net.InetAddress) SessionFactory.init(InetAddress)} method
      * about the implications of using <tt>InetAddress</tt>es in access control policies.
      *
      * @param originatingHost the originating host InetAddress of the external party
@@ -71,7 +71,7 @@ public interface SessionManager {
      * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> was
      * stopped or expired in the system, or <tt>null</tt> if the session is still active. A
      * session could be stopped for a number of reasons.  See the
-     * {@link org.jsecurity.session.Session#stop() Session.stop()} method for more details.
+     * {@link org.jsecurity.session.Session#stop() Session.destroy()} method for more details.
      *
      * @param sessionId
      * @return the system time the session stopped or expired, or <tt>null</tt> if the session
@@ -159,14 +159,14 @@ public interface SessionManager {
      * @return the ip address of the host where the session originated, if known.  If unknown,
      * this method returns <code>null</code>.
      *
-     * @see #start( InetAddress originatingHost ) start( InetAddress originatingHost )
+     * @see #start( InetAddress originatingHost ) init( InetAddress originatingHost )
      */
     InetAddress getHostAddress( Serializable sessionId );
 
     /**
      * Explicitly stops the session identified by <tt>sessionId</tt>, thereby releasing all
      * associated resources.
-     * @param sessionId the system identfier of the system to stop.
+     * @param sessionId the system identfier of the system to destroy.
      * @throws InvalidSessionException if the session has stopped or expired prior to calling
      * this method.
      * @see org.jsecurity.session.Session#stop

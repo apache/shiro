@@ -26,6 +26,10 @@ Some notes:
 - Thanks to the gents working on the Spring Framework (http://www.springframework.org)
   that provided the template and the idea for this file.
 
+* ehcache/ehcache.jar
+- EhCache 1.2 (http://ehcache.sourceforge.net/)
+- Required for compiling, using ehcache cache provider
+
 * j2ee/jsp-api.jar
 - JSP API 2.0 (http://java.sun.com/products/jsp)
 - Required for building the RI tag libraries

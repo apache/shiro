@@ -83,14 +83,14 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     protected void onStop( Session session ) {
         if ( log.isTraceEnabled() ) {
-            log.trace( "Updating stop time of session with id [" + session.getSessionId() + "]" );
+            log.trace( "Updating destroy time of session with id [" + session.getSessionId() + "]" );
         }
         ((SimpleSession)session).setStopTimestamp( new Date() );
     }
 
     protected void onExpire( Session session ) {
         if ( log.isTraceEnabled() ) {
-            log.trace( "Updating stop time and expiration status of session with id " +
+            log.trace( "Updating destroy time and expiration status of session with id " +
                        session.getSessionId() + "]");
         }
         SimpleSession ss = (SimpleSession)session;

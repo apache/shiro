@@ -16,6 +16,9 @@
 
     <property name="root.base.dir" value="${basedir}"/>
 
+    <!-- Override default build properties from properties file. -->
+    <property file="${root.base.dir}/jsecurity.build.properties" />
+
     <!-- application-wide config files: (all other config files should be in a respective
          module or submodule) -->
     <property name="root.etc.dir" value="${root.base.dir}/etc"/>
@@ -225,8 +228,8 @@
         <!-- Any properties files needed by test cases and/or Spring test case
              configuration must be under the JDYN_ROOT hierarchy so relative
              file references may work properly.  -->
-        <copy toDir="${classes.dir}" file="${root.base.dir}/etc/log4j.properties"/>
-        <copy toDir="${classes.dir}" file="${root.base.dir}/db/build/gen/jdbc.properties"/>
+        <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/etc/log4j.properties"/>
+        <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/db/build/gen/jdbc.properties"/>
 
         <junit printsummary="withOutAndErr"
                showoutput="true"
@@ -371,7 +374,7 @@
 
         <!-- copy over the readme file in the dist directory so people understand
              what the files do: -->
-        <copy toDir="${root.dist.dir}" file="${root.etc.dir}/README.txt"/>
+        <copy toDir="${root.dist.dir}" preservelastmodified="true" file="${root.etc.dir}/README.txt"/>
 
         <property name="release.zip.name" value="${project.name}-${version}-with-dependencies.zip"/>
         <zip destfile="${root.dist.dir}/${release.zip.name}"

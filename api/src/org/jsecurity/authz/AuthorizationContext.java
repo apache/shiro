@@ -24,6 +24,8 @@
  */
 package org.jsecurity.authz;
 
+import org.jsecurity.realm.Realm;
+
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
@@ -41,6 +43,12 @@ import java.util.List;
  * @author Jeremy Haile
  */
 public interface AuthorizationContext {
+
+    /**
+     * Returns the realm associated with this authorization context.
+     * @return the realm associated with this authorization context.
+     */
+    Realm getRealm();
 
     /**
      * Returns the primary identifier of the subject associated with this

@@ -53,7 +53,7 @@
       -  dist - create distribution jars (which will be used for deployment)
       -  =================================================================== -->
     <target name="dist" depends="jar">
-        <copy toDir="${root.dist.dir}">
+        <copy toDir="${root.dist.dir}" preservelastmodified="true">
             <fileset dir="${etc.dir}" includes="*.tld"/>
         </copy>
     </target>
