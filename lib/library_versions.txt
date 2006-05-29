@@ -51,6 +51,10 @@ Some notes:
 - Tonic Systems JarJar 0.6 (http://tonicsystems.com/products/jarjar/)
 - Required at build time to create a single jar from multiple jars for product distribution
 
+* jboss/jboss-aop.jar
+- JBoss AOP jar from the JBoss 4.0.4.GA Application Server release
+- Required at build time for JBoss integration support classes.
+
 * log4j/log4j.jar
 - Log4J 1.2.9 (http://logging.apache.org/log4j)
 - required by the RI during build and runtime for logging support

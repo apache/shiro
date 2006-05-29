@@ -16,7 +16,7 @@
         <pathelement location="${root.dist.dir}/${project.name}-ri-common.jar"/>
         <pathelement location="${root.dist.dir}/${project.name}-ri-business.jar"/>
         <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
-        <pathelement location="${lib.dir}/jboss-aop/jboss-aop.jar"/>
+        <pathelement location="${lib.dir}/jboss/jboss-aop.jar"/>
     </path>
 
     <!-- ===================================================================
