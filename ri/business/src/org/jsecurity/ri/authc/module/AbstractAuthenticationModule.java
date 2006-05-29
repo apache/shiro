@@ -24,12 +24,12 @@
  */
 package org.jsecurity.ri.authc.module;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.ri.authc.credential.CredentialMatcher;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.security.Principal;
 
@@ -140,7 +140,7 @@ public abstract class AbstractAuthenticationModule implements AuthenticationModu
     public final AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
         AuthenticationInfo info;
         try {
-            info = getInfo( token );
+            info = doGetAuthenticationInfo( token );
         } catch( AuthenticationException ae ) {
             //the subclass already formulated a meaningful AuthenticationException, just let it
             //propagate:
@@ -182,5 +182,5 @@ public abstract class AbstractAuthenticationModule implements AuthenticationModu
         return info;
     }
 
-    protected abstract AuthenticationInfo getInfo( AuthenticationToken token ) throws AuthenticationException;
+    protected abstract AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
 }

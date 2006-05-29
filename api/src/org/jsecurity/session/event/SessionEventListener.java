@@ -46,7 +46,7 @@ public interface SessionEventListener {
      *
      * @param event the event generated when a <tt>Session</tt> has been invalidated (stopped).
      *
-     * @see org.jsecurity.session.Session#stop() Session.stop()
+     * @see org.jsecurity.session.Session#stop() Session.destroy()
      */
     void sessionStopped( SessionEvent event );
 

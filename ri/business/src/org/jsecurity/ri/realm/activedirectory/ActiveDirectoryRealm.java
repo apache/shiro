@@ -22,12 +22,12 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.ri.authc.module.activedirectory;
+package org.jsecurity.ri.realm.activedirectory;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.ri.authc.module.ldap.LdapAuthenticationModule;
-import org.jsecurity.ri.authc.module.ldap.LdapDirectoryInfo;
+import org.jsecurity.ri.realm.ldap.LdapDirectoryInfo;
+import org.jsecurity.ri.realm.ldap.LdapRealm;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -49,17 +49,17 @@ import java.util.Set;
  *
  * <p>More advanced implementations would likely want to override the
  * {@link #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)} and
- * {@link #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)} methods.</p>
+ * {@link #buildAuthenticationInfo(String, char[], org.jsecurity.ri.realm.ldap.LdapDirectoryInfo)} methods.</p>
  *
- * @see LdapDirectoryInfo
+ * @see org.jsecurity.ri.realm.ldap.LdapDirectoryInfo
  * @see #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)
- * @see #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)
+ * @see #buildAuthenticationInfo(String, char[], org.jsecurity.ri.realm.ldap.LdapDirectoryInfo)
  *
  * @since 0.1
  * @author Tim Veil
  * @author Jeremy Haile
  */
-public class ActiveDirectoryAuthenticationModule extends LdapAuthenticationModule {
+public class ActiveDirectoryRealm extends LdapRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -89,7 +89,7 @@ public class ActiveDirectoryAuthenticationModule extends LdapAuthenticationModul
     ============================================*/
 
     /**
-     * <p>Builds an {@link LdapDirectoryInfo} object by querying the active directory LDAP context for the
+     * <p>Builds an {@link org.jsecurity.ri.realm.ldap.LdapDirectoryInfo} object by querying the active directory LDAP context for the
      * specified username.</p>
      *
      * <p>This method can be overridden by subclasses to query the LDAP server in a more complex way.</p>
@@ -97,7 +97,7 @@ public class ActiveDirectoryAuthenticationModule extends LdapAuthenticationModul
      * @param username the username whose information should be queried from the LDAP server.
      * @param ctx the LDAP context that is connected to the LDAP server.
      *
-     * @return an {@link LdapDirectoryInfo} instance containing information retrieved from LDAP
+     * @return an {@link org.jsecurity.ri.realm.ldap.LdapDirectoryInfo} instance containing information retrieved from LDAP
      * that can be used to build an {@link AuthenticationInfo} instance to return.
      *
      * @throws NamingException if any LDAP errors occur during the search.

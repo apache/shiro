@@ -24,24 +24,25 @@
 */
 
 
-package org.jsecurity.ri.authc.module.memory;
+package org.jsecurity.ri.realm.memory;
 
-import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.Configuration;
+import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.ri.authc.module.AbstractAuthenticationModule;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.ri.authc.module.SimpleAuthenticationInfo;
-import org.jsecurity.ri.authz.Realm;
-import org.jsecurity.ri.authz.support.AuthorizationInfo;
-import org.jsecurity.ri.authz.support.MemoryRealm;
+import org.jsecurity.ri.realm.AbstractCachingRealm;
+import org.jsecurity.ri.realm.AuthorizationInfo;
 import org.jsecurity.ri.util.UsernamePrincipal;
-import org.jsecurity.authz.AuthorizationException;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A simple implementation of the {@link org.jsecurity.authc.module.AuthenticationModule} interface that
@@ -51,7 +52,7 @@ import java.util.*;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModule implements Realm {
+public class MemoryRealm extends AbstractCachingRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -61,9 +62,9 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * Memory realm that is delegated to when realm requests are made.
+     * A mapping between a user's principal and the user's authorization information.
      */
-    private Realm memoryRealm;
+    private Map<Principal, AuthorizationInfo> authorizationInfoMap;
 
     /**
      * The set of accounts that can be authenticated using this module.
@@ -112,7 +113,10 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public void init() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
+    @Override
+    public void init( Configuration configuration )  {
+        super.init( configuration );
+
         if( accounts != null && !accounts.isEmpty() ) {
 
             Map<Principal, AuthorizationInfo> authorizationInfoMap = new HashMap<Principal, AuthorizationInfo>( accounts.size() );
@@ -129,7 +133,7 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
                 AuthorizationInfo info = new AuthorizationInfo( roles, permissions );
                 authorizationInfoMap.put( new UsernamePrincipal( entry.getUsername() ), info );
             }
-            this.memoryRealm = new MemoryRealm( authorizationInfoMap );
+            this.authorizationInfoMap = authorizationInfoMap;
         }
 
     }
@@ -144,7 +148,7 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
      * account cannot be found with the given username.
      *
      */
-    protected AuthenticationInfo getInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
         Principal principal = token.getPrincipal();
 
@@ -152,8 +156,9 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
 
             for( AccountEntry entry : accounts ) {
                 if( entry.getUsername().equals( principal.getName() ) ) {
-                    return new SimpleAuthenticationInfo( principal,
-                                                  entry.getPassword().toCharArray() );
+                    return new SimpleAuthenticationInfo( new UsernamePrincipal( principal.getName() ),
+                                                  entry.getPassword().toCharArray(),
+                                                  this );
 
                 }
             }
@@ -167,7 +172,7 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
     }
 
 
-    private Set<Permission> getPermissionsForRoles(Set<String> roleNames) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
+    private Set<Permission> getPermissionsForRoles(Set<String> roleNames) {
 
         Set<Permission> permissions = new HashSet<Permission>();
 
@@ -187,7 +192,7 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
     }
 
 
-    private Set<Permission> parsePermissions(String permissionsString) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
+    private Set<Permission> parsePermissions(String permissionsString) {
         Set<Permission> rolePermissions = new HashSet<Permission>();
 
         // For each semicolon-delimited permission in the string, build
@@ -233,43 +238,21 @@ public class MemoryRealmAuthenticationModule extends AbstractAuthenticationModul
      * @param actions the permission actions.
      * @return a new Permission object with the given properties.
      */
-    private Permission createPermission(String className, String target, String actions) throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, ClassNotFoundException {
+    private Permission createPermission(String className, String target, String actions) {
 
-        Class clazz = Class.forName( className );
-        Constructor constructor = clazz.getConstructor( String.class, String.class );
-        return (Permission) constructor.newInstance( target, actions );
+        try {
+            Class clazz = Class.forName( className );
+            Constructor constructor = clazz.getConstructor( String.class, String.class );
+            return (Permission) constructor.newInstance( target, actions );
+        } catch (Exception e) {
+            throw new JSecurityException( "Error instantiating permission specified for realm [" + getName() + "]", e );
+        }
 
     }
 
-    public boolean hasRole(Principal subjectIdentifier, String roleIdentifier) {
-        return memoryRealm.hasRole( subjectIdentifier, roleIdentifier );
+
+    protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
+        return authorizationInfoMap.get( principal );
     }
 
-    public boolean[] hasRoles(Principal subjectIdentifier, List<String> roleIdentifiers) {
-        return memoryRealm.hasRoles( subjectIdentifier, roleIdentifiers );
-    }
-
-    public boolean hasAllRoles(Principal subjectIdentifier, Collection<String> roleIdentifiers) {
-        return memoryRealm.hasAllRoles( subjectIdentifier, roleIdentifiers );
-    }
-
-    public boolean isPermitted(Principal subjectIdentifier, Permission permission) {
-        return memoryRealm.isPermitted( subjectIdentifier, permission );
-    }
-
-    public boolean[] isPermitted(Principal subjectIdentifier, List<Permission> permissions) {
-        return memoryRealm.isPermitted( subjectIdentifier, permissions );
-    }
-
-    public boolean isPermittedAll(Principal subjectIdentifier, Collection<Permission> permissions) {
-        return memoryRealm.isPermittedAll( subjectIdentifier, permissions );
-    }
-
-    public void checkPermission(Principal subjectIdentifier, Permission permission) throws AuthorizationException {
-        memoryRealm.checkPermission(subjectIdentifier, permission);
-    }
-
-    public void checkPermissions(Principal subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
-        memoryRealm.checkPermissions( subjectIdentifier, permissions );
-    }
 }

@@ -25,6 +25,8 @@
 
 package org.jsecurity.authc.module;
 
+import org.jsecurity.realm.Realm;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -58,6 +60,12 @@ public interface AuthenticationInfo {
      * @return the identifying principal of the authenticated subject.
      */
     List<Principal> getPrincipals();
+
+    /**
+     * The realm used for authentication/authorization of this user.
+     * @return the realm associated with this user.
+     */
+    Realm getRealm();
 
     /**
      * The subject's credential as stored in the system associated with the

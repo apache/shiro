@@ -11,16 +11,18 @@
       ============================================================ -->
 
     <!-- Authentication -->
-    <bean name="authenticator" init-method="init" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
-        <property name="realm" ref="memoryRealmAuthenticationModule"/>
-        <property name="modules">
+    <bean name="securityManager"
+          init-method="init"
+          destroy-method="destroy"
+          class="org.jsecurity.ri.RealmSecurityManager">
+        <property name="realms">
             <list>
-                <ref bean="memoryRealmAuthenticationModule"/>
+                <ref bean="memoryRealm"/>
             </list>
         </property>
     </bean>
 
-    <bean id="memoryRealmAuthenticationModule" init-method="init" class="org.jsecurity.ri.authc.module.memory.MemoryRealmAuthenticationModule">
+    <bean id="memoryRealm" class="org.jsecurity.ri.realm.memory.MemoryRealm">
         <property name="credentialMatcher">
             <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>
@@ -28,12 +30,12 @@
         </property>
         <property name="accounts">
             <set>
-                <bean class="org.jsecurity.ri.authc.module.memory.AccountEntry">
+                <bean class="org.jsecurity.ri.realm.memory.AccountEntry">
                     <property name="username" value="user1"/>
                     <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> <!-- 'user1' SHA-1 Base64 -->
                     <property name="roles" value="role1, role2"/>
                 </bean>
-                <bean class="org.jsecurity.ri.authc.module.memory.AccountEntry">
+                <bean class="org.jsecurity.ri.realm.memory.AccountEntry">
                     <property name="username" value="user2"/>
                     <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> <!-- 'user2' SHA-1 Base64 -->
                     <property name="roles" value="role2"/>
@@ -52,23 +54,21 @@
 
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="realm" ref="memoryRealmAuthenticationModule"/>
+        <property name="realmManager" ref="securityManager"/>
     </bean>
 
 
     <!-- AOP Annotations Support-->
-    <bean id="authorizer" class="org.jsecurity.ri.authz.module.AnnotationsModularAuthorizer"/>
-
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
     <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="authorizer" ref="authorizer"/>
+        <property name="authorizer" ref="securityManager"/>
     </bean>
 
 
     <!-- Web Interceptors -->
     <bean id="authorizationInterceptor" class="org.jsecurity.spring.servlet.security.AuthorizationInterceptor">
-        <property name="realm" ref="memoryRealmAuthenticationModule"/>
+        <property name="realmManager" ref="securityManager"/>
     </bean>
 
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">

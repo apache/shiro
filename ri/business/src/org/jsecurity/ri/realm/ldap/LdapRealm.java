@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.ri.authc.module.ldap;
+package org.jsecurity.ri.realm.ldap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +33,8 @@ import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.ri.authc.module.SimpleAuthenticationInfo;
-import org.jsecurity.ri.authc.module.AbstractAuthenticationModule;
+import org.jsecurity.ri.realm.AbstractCachingRealm;
+import org.jsecurity.ri.realm.AuthorizationInfo;
 import org.jsecurity.ri.util.UsernamePrincipal;
 
 import javax.naming.Context;
@@ -63,7 +64,7 @@ import java.util.*;
  * @since 0.1
  * @author Jeremy Haile
  */
-public abstract class LdapAuthenticationModule extends AbstractAuthenticationModule {
+public abstract class LdapRealm extends AbstractCachingRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -150,7 +151,7 @@ public abstract class LdapAuthenticationModule extends AbstractAuthenticationMod
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    protected AuthenticationInfo getInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
         LdapDirectoryInfo ldapDirectoryInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
@@ -159,7 +160,7 @@ public abstract class LdapAuthenticationModule extends AbstractAuthenticationMod
     }
 
     /**
-     * Builds an {@link org.jsecurity.authc.module.AuthenticationInfo} object to return based on an {@link org.jsecurity.ri.authc.module.ldap.LdapDirectoryInfo} object
+     * Builds an {@link org.jsecurity.authc.module.AuthenticationInfo} object to return based on an {@link org.jsecurity.ri.realm.ldap.LdapDirectoryInfo} object
      * returned from {@link #performAuthentication(String, char[])}
      *
      * @param username the username of the user being authenticated.
@@ -176,13 +177,12 @@ public abstract class LdapAuthenticationModule extends AbstractAuthenticationMod
         principals.add( principal );
         principals.addAll( ldapDirectoryInfo.getPrincipals() );
 
-        //todo Figure out how to get authz information since roles are not returned in SimpleAuthenticationInfo anymore
-        return new SimpleAuthenticationInfo( principals, password );
+        return new SimpleAuthenticationInfo( principals, password, this );
     }
 
     /**
      * Performs the actual authentication of the user by connecting to the LDAP server, querying it
-     * for user information, and returning an {@link org.jsecurity.ri.authc.module.ldap.LdapDirectoryInfo} instance containing the
+     * for user information, and returning an {@link org.jsecurity.ri.realm.ldap.LdapDirectoryInfo} instance containing the
      * results.
      *
      * <p>Typically, users that need special behavior will not override this method, but will instead
@@ -275,4 +275,9 @@ public abstract class LdapAuthenticationModule extends AbstractAuthenticationMod
      * @see #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)
      */
     protected abstract LdapDirectoryInfo queryForLdapDirectoryInfo(String username, LdapContext ctx) throws NamingException;
+
+    protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
+        //todo Implement this for LDAP - how do we authenticate without password?  Use system account? -JCH 5/29/06
+        throw new UnsupportedOperationException( "This method has not yet been implemented for LDAP." );
+    }
 }

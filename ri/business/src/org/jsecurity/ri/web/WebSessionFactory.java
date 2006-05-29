@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * A <tt>WebSessionFactory</tt> can start or acquire
+ * A <tt>WebSessionFactory</tt> can init or acquire
  * {@link org.jsecurity.session.Session session}s in the Web tier of an application via
  * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}s.
  *
@@ -54,7 +54,7 @@ public interface WebSessionFactory {
      * <p>Implementations of this interface might acquire the IP address associated with
      * the HTTP Request and simply delegate to
      * {@link org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
-     * SessionFactory.start(java.net.InetAddress)} (although this is not a strict
+     * SessionFactory.init(java.net.InetAddress)} (although this is not a strict
      * requirement - the session may be created in any number of ways).
      * @param request the current request being processed.
      * @param response the current response being generated.

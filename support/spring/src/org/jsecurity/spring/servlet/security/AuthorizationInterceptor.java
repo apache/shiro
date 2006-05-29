@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Les Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,11 +24,10 @@
  */
 package org.jsecurity.spring.servlet.security;
 
+import org.jsecurity.realm.RealmManager;
 import org.jsecurity.ri.web.WebUtils;
-import org.jsecurity.ri.authz.Realm;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,25 +35,22 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public class AuthorizationInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
+public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
-    private Realm realm;
+    private RealmManager realmManager;
 
-    public void setRealm(Realm realm) {
-        this.realm = realm;
+
+    public void setRealmManager(RealmManager realmManager) {
+        this.realmManager = realmManager;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        if( realm == null ) {
-            throw new IllegalArgumentException( "A realm must be configured on the authorization interceptor." );
-        }
-    }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        WebUtils.bindAuthorizationContextToThread( realm, request );
+        WebUtils.bindAuthorizationContextToThread( request, realmManager );
         return true;
     }
 

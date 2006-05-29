@@ -12,6 +12,7 @@
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
     <path id="compile.path">
+        <pathelement location="${lib.dir}/ehcache/ehcache.jar"/>
         <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>
         <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
         <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>

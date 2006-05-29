@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Les Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,8 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.ri.authz;
+package org.jsecurity.realm;
 
+import org.jsecurity.Configuration;
+import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.authz.AuthorizationException;
 
 import java.security.Permission;
@@ -48,8 +50,29 @@ import java.util.List;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public interface Realm {
+public interface Realm extends AuthenticationModule {
+
+    /**
+     * Initializes the realm with the given JSecurity configuration.
+     * @param configuration the configuration associated with this JSecurity deployment.
+     */
+    void init( Configuration configuration );
+
+
+    /**
+     * Allows the realm to perform any resource cleanup during application shutdown.
+     */
+    void destroy();
+
+
+    /**
+     * Returns the name of this Realm used to uniquely identify it within the application.
+     * This name must be unique amongst all realms used within this security context.
+     * @return the unique identifier for this realm.
+     */
+    String getName();
 
     /**
      * Returns <tt>true</tt> if the subject with the id of <tt>subjectIdentifier</tt> has the role

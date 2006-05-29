@@ -32,7 +32,6 @@ import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.ri.util.PermissionUtils;
 
-import java.lang.reflect.Method;
 import java.security.Permission;
 
 /**
@@ -57,12 +56,12 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
 
         char[] chars = targetPath.toCharArray();
         StringBuffer buf = new StringBuffer();
-        //start iteration at index 1 (instead of 0).  This is because the first
+        //init iteration at index 1 (instead of 0).  This is because the first
         //character must be the ARRAY_OPEN_CHAR (eliminates unnecessary iteration)
         for ( int i = 1; i < chars.length; i++ ) {
             if ( chars[i] == ARRAY_CLOSE_CHAR ) {
                 // skip the delimiting period after the ARRAY_CLOSE_CHAR.  The resulting
-                // index is the start of the property path that we'll use with
+                // index is the init of the property path that we'll use with
                 // BeanUtils.getProperty:
                 propertyStartIndex = i + 2;
                 break;

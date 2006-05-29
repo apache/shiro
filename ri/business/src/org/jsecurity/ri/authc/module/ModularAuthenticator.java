@@ -26,8 +26,8 @@
 package org.jsecurity.ri.authc.module;
 
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.ri.authc.AbstractAuthenticator;
 
@@ -58,13 +58,21 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      * List of authentication modules that will be iterated through when a user
      * authenticates.
      */
-    private List<AuthenticationModule> modules;
+    private List<? extends AuthenticationModule> modules;
 
 
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    public ModularAuthenticator() {
+    }
+
+
+    public ModularAuthenticator(List<? extends AuthenticationModule> modules) {
+        this.modules = modules;
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |

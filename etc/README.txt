@@ -36,7 +36,7 @@ Build Jars
 - Just the JSecurity API "specification" without the reference implementation.
 - You need this jar if you wish to compile against JSecurity "specification" interfaces and
   classes (but not the reference implementation).  For example, you can specify this jar in your
-  IDE or Ant classpath settings and you'll be able to compile.
+  IDE or Ant classpath configuration and you'll be able to compile.
 
 * jsecurity-ri-common.jar
 - JSecurity reference implementation's common classes and files.

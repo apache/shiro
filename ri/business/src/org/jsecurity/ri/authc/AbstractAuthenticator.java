@@ -39,7 +39,6 @@ import org.jsecurity.ri.authc.event.AuthenticationEventFactory;
 import org.jsecurity.ri.authc.event.AuthenticationEventSender;
 import org.jsecurity.ri.authc.event.SimpleAuthenticationEventFactory;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
-import org.jsecurity.ri.authz.Realm;
 import org.jsecurity.ri.authz.support.DelegatingAuthorizationContextFactory;
 
 /**
@@ -70,8 +69,6 @@ public abstract class AbstractAuthenticator implements Authenticator {
      * the other.
      */
     protected Log logger = log;
-
-    private Realm realm = null;
 
     /**
      * The factory used to wrap authorization context after authentication.
@@ -115,14 +112,6 @@ public abstract class AbstractAuthenticator implements Authenticator {
         this.authzCtxBinder = authContextBinder;
     }
 
-    public Realm getRealm() {
-        return realm;
-    }
-
-    public void setRealm(Realm realm) {
-        this.realm = realm;
-    }
-
     public AuthenticationEventFactory getAuthenticationEventFactory() {
         return authcEventFactory;
     }
@@ -145,12 +134,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
 
     public void init() {
         if( getAuthorizationContextFactory() == null ) {
-            if( getRealm() == null ) {
-                throw new IllegalArgumentException(
-                        "A realm must be configured for the default authorization context factory.  " +
-                        "Either provide a realm for the authenticator, or configure a custom AuthorizationContextFactory." );
-            }
-            setAuthorizationContextFactory( new DelegatingAuthorizationContextFactory( getRealm() ) );
+            setAuthorizationContextFactory( new DelegatingAuthorizationContextFactory() );
         }
     }
 

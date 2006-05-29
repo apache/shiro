@@ -11,7 +11,9 @@
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
-    <path id="compile.path"/>
+    <path id="compile.path">
+        <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
+    </path>
 
     <!-- ===================================================================
       -  clean - clean all build remnants from this submodule
