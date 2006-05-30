@@ -176,8 +176,11 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
         }
 
         if( info == null ) {
+
+            // Call template method if authorization info was not found in a cache
             info = doGetAuthorizationInfo( principal );
 
+            // If the info is not null and the cache has been created, then cache the info.
             if( info != null && authorizationInfoCache != null ) {
 
                 if (logger.isTraceEnabled()) {
