@@ -142,7 +142,7 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
      * is not found.
      * @param realmName the name of the realm to be retrieved.
      * @return the realm to be retrieved.
-     * @thros IllegalArgumentException if no realm is found with the given name.
+     * @throws IllegalArgumentException if no realm is found with the given name.
      */
     public Realm getRealm(String realmName) {
         Realm realm = realmMap.get( realmName );
