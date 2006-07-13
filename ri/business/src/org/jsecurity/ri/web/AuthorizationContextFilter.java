@@ -26,7 +26,7 @@
 package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.realm.RealmManager;
+import org.jsecurity.ri.realm.RealmManager;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

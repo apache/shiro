@@ -26,10 +26,14 @@
 package org.jsecurity.ri;
 
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.RealmManager;
 import org.jsecurity.ri.authc.module.ModularAuthenticator;
+import org.jsecurity.ri.realm.RealmManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Implementation of the {@link SecurityManager} interface that is based around

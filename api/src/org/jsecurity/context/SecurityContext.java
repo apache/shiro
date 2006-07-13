@@ -36,7 +36,6 @@ import org.jsecurity.session.Session;
  * {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}</p>
  *
  * @since 0.1
- * @see SecurityContextAccessor
 
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -48,9 +47,9 @@ public abstract class SecurityContext {
      ============================================*/
 
     /**
-     *  Will always be <tt>null</tt> if caching is turned off (i.e. accessorCached == false);
+     *  Will always be <tt>null</tt> if caching is turned off.
      */
-    private static SecurityContextAccessor cachedAccessor = null;
+    private static SecurityContext cachedImpl = null;
 
 
     /*--------------------------------------------
@@ -65,6 +64,8 @@ public abstract class SecurityContext {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
+    public SecurityContext(){}
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -90,77 +91,82 @@ public abstract class SecurityContext {
     ============================================*/
 
     /**
-     * Retrieves a {@link SecurityContextAccessor} instance based on a JSecurity implementation's
-     * <tt>SecurityContextAccessor</tt>.
+     * Retrieves a SecurityContext instance based on a JSecurity implementation's configuration.
      *
-     * @return the current SecurityContextAccessor
+     * @return the SecurityContext implementation.
      */
-    private static SecurityContextAccessor getAccessor() {
+    private static SecurityContext getImpl() {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if ( cl == null ) {
             cl = SecurityContext.class.getClassLoader();
         }
 
-        SecurityContextAccessor accessor;
+        SecurityContext impl;
 
         Configuration configuration = getConfiguration();
 
-        if ( configuration.isSecurityContextAccessorCached() ) {
+        if ( configuration.isSecurityContextCached() ) {
             synchronized (SecurityContext.class ) {
-                if ( cachedAccessor == null ) {
-                    String accessorClassName = configuration.getSecurityContextAccessorClassName();
-                    cachedAccessor = instantiateAccessor( accessorClassName, cl );
+                if ( cachedImpl == null ) {
+                    String implClassName = configuration.getSecurityContextClassName();
+                    cachedImpl = instantiate( implClassName, cl );
                 }
             }
 
-            accessor = cachedAccessor;
+            impl = cachedImpl;
 
         } else {
-            String accessorClassName = configuration.getSecurityContextAccessorClassName();
-            accessor = instantiateAccessor( accessorClassName, cl );
+            String implClassName = configuration.getSecurityContextClassName();
+            impl = instantiate( implClassName, cl );
         }
 
-        return accessor;
+        return impl;
     }
 
-    private static SecurityContextAccessor instantiateAccessor( String accessorClassName,
-                                                                ClassLoader cl ) {
-        SecurityContextAccessor accessor;
+    private static SecurityContext instantiate( String implClassName, ClassLoader cl ) {
+        SecurityContext impl;
         try {
 
-            Class accessorClass = cl.loadClass( accessorClassName );
-            accessor = (SecurityContextAccessor)accessorClass.newInstance();
+            Class implClass = cl.loadClass( implClassName );
+            impl = (SecurityContext)implClass.newInstance();
 
         } catch ( ClassNotFoundException e ) {
-            String msg = "Accessor class [" + accessorClassName + "] could not be found.  " +
-                         "SecurityContext cannot be loaded.";
+            String msg = "SecurityContext implementation class [" + implClassName + "] could not " +
+                         "be found.  SecurityContext cannot be created.";
             throw new SecurityContextException( msg, e );
         } catch ( IllegalAccessException e ) {
-            String msg = "Accessor class [" + accessorClassName + "] constructor could not be " +
-                         "accessed.  SecurityContext cannot be loaded.";
+            String msg = "SecurityContext implementation class [" + implClassName + "] constructor " +
+                "could not be accessed.  SecurityContext cannot be created.";
             throw new SecurityContextException( msg, e );
         } catch ( InstantiationException e ) {
-            String msg = "Accessor class [" + accessorClassName + "] could not be instantiated.  " +
-                         "SecurityContext cannot be loaded.";
+            String msg = "SecurityContext implementation class [" + implClassName + "] could not be " +
+                "instantiated.";
             throw new SecurityContextException( msg, e );
         }
 
-        return accessor;
+        return impl;
     }
+
+    public static SecurityContext current() {
+        return getImpl();
+    }
+
+    /*--------------------------------------------
+    |     A B S T R A C T   M E T H O D S       |
+    ============================================*/
 
     /**
      * Returns the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
      * if there is no session associated with the current execution.
      *
-     * <p>The term &quot;currently accessible&quot; means the Session returned by a
-     * {@link SecurityContextAccessor SecurityContextAccessor} during runtime and is
-     * implementation specific.
+     * <p>The &quot;currently accessible&quot; Session is retrieved in an
+     * implementation-specific manner.
      *
-     * <p>For example, in a multithreaded server application (such as in a J2EE application
-     * server or Servlet container), a <tt>Session</tt> might be bound to the currently-executing
+     * <p>For example, in a multithreaded server application, such as in a J2EE application
+     * server or Servlet container, a <tt>Session</tt> might be bound to the currently-executing
      * server thread via a {@link ThreadLocal ThreadLocal}.  A web application may access the
-     * JSecurity Session via a handle in the {@link javax.servlet.http.HttpSession HttpSession}}.  A
+     * JSecurity Session via a handle stored in a {@link javax.servlet.http.Cookie Cookie}.  A
      * standalone Swing application may access the <tt>Session</tt> via static memory.
      *
      * <p>These scenarios are just examples based on how a JSecurity implementation might accomplish
@@ -168,12 +174,8 @@ public abstract class SecurityContext {
      *
      * @return the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
      * if there is no session associated with the current execution.
-     *
-     * @see SecurityContextAccessor
      */
-    public static Session getSession() {
-        return getAccessor().getSession();
-    }
+    public abstract Session getSession();
 
     /**
      * Returns the AuthorizationContext associated with the current authenticated user, or
@@ -187,11 +189,8 @@ public abstract class SecurityContext {
      * <tt>null</tt> if the current user has not yet been authenticated (i.e. logged in).
      *
      * @see #getSession
-     * @see SecurityContextAccessor
      */
-    public static AuthorizationContext getAuthorizationContext() {
-        return getAccessor().getAuthorizationContext();
-    }
+    public abstract AuthorizationContext getAuthorizationContext();
 
     /**
      * Invalidates any JSecurity entities (such as a {@link Session Session} and a
@@ -202,13 +201,6 @@ public abstract class SecurityContext {
      * how this information is obtained.
      *
      * @see #getSession
-     * @see SecurityContextAccessor
      */
-    public static void invalidate() {
-        getAccessor().invalidate();
-    }
-
-    /*--------------------------------------------
-    |     A B S T R A C T   M E T H O D S       |
-    ============================================*/
+    public abstract void invalidate();
 }

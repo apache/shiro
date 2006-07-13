@@ -166,7 +166,7 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        AuthorizationContext authContext = SecurityContext.getAuthorizationContext();
+        AuthorizationContext authContext = SecurityContext.current().getAuthorizationContext();
 
         String requestedPath = httpRequest.getRequestURI();
 

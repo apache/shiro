@@ -27,7 +27,7 @@ package org.jsecurity.ri.web;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.RealmManager;
+import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.ri.util.ThreadUtils;
@@ -110,7 +110,7 @@ public abstract class WebUtils {
 
     public static void bindToSession( AuthorizationContext ctx, HttpServletRequest request ) {
         if ( ctx != null ) {
-            Session session = SecurityContext.getSession();
+            Session session = SecurityContext.current().getSession();
             if( session != null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
                 session.setAttribute( REALM_NAME_SESSION_KEY, ctx.getRealm().getName() );
@@ -123,7 +123,7 @@ public abstract class WebUtils {
     }
 
     public static void unbindAuthorizationContextFromSession( HttpServletRequest request ) {
-        Session session = SecurityContext.getSession();
+        Session session = SecurityContext.current().getSession();
         if( session != null ) {
             session.removeAttribute( PRINCIPALS_SESSION_KEY );
         } else {
@@ -152,7 +152,7 @@ public abstract class WebUtils {
     private static String getRealmName(HttpServletRequest request) {
         String realmName = null;
 
-        Session session = SecurityContext.getSession();
+        Session session = SecurityContext.current().getSession();
         if( session != null ) {
             realmName = (String) session.getAttribute( REALM_NAME_SESSION_KEY );
         } else {
@@ -168,7 +168,7 @@ public abstract class WebUtils {
     private static List<Principal> getPrincipals(HttpServletRequest request) {
         List<Principal> principals = null;
 
-        Session session = SecurityContext.getSession();
+        Session session = SecurityContext.current().getSession();
         if( session != null ) {
             principals = (List<Principal>) session.getAttribute( PRINCIPALS_SESSION_KEY );
         } else {

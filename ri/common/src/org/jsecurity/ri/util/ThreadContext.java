@@ -56,7 +56,7 @@ import java.util.Map;
 @SuppressWarnings(value = { "unchecked", "unsafe" })
 public abstract class ThreadContext {
 
-    protected static final Log logger = LogFactory.getLog(ThreadContext.class);
+    protected static transient final Log logger = LogFactory.getLog(ThreadContext.class);
 
     public static final String SESSION_KEY =
         Session.class.getName() + "_THREAD_CONTEXT_KEY";

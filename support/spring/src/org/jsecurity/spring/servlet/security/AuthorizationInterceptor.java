@@ -24,8 +24,8 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.jsecurity.realm.RealmManager;
 import org.jsecurity.ri.web.WebUtils;
+import org.jsecurity.ri.realm.RealmManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -42,7 +42,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     private RealmManager realmManager;
 
 
-    public void setRealmManager(RealmManager realmManager) {
+    public void setRealmManager( RealmManager realmManager) {
         this.realmManager = realmManager;
     }
 
