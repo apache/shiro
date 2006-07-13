@@ -68,13 +68,13 @@ public class IndexController extends SimpleFormController {
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        Session session = SecurityContext.getSession();
+        Session session = SecurityContext.current().getSession();
         command.setValue( (String) session.getAttribute( "value" ) );
         return command;
     }
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        AuthorizationContext context = SecurityContext.getAuthorizationContext();
+        AuthorizationContext context = SecurityContext.current().getAuthorizationContext();
 
         boolean hasRole1 = context.hasRole( "role1" );
         boolean hasRole2 = context.hasRole( "role2" );
@@ -82,14 +82,14 @@ public class IndexController extends SimpleFormController {
         Map<String,Object> refData = new HashMap<String,Object>();
         refData.put( "hasRole1", hasRole1 );
         refData.put( "hasRole2", hasRole2 );
-        refData.put( "sessionId", SecurityContext.getSession().getSessionId() );
+        refData.put( "sessionId", SecurityContext.current().getSession().getSessionId() );
         return refData;
     }
 
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
         SessionValueCommand command = (SessionValueCommand) obj;
 
-        Session session = SecurityContext.getSession();
+        Session session = SecurityContext.current().getSession();
         session.setAttribute( "value", command.getValue() );
 
         return showForm( request, response, errors );

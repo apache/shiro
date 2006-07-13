@@ -43,7 +43,7 @@ public abstract class SecureTag extends TagSupport {
     public SecureTag(){}
 
     protected AuthorizationContext getAuthorizationContext() {
-        return SecurityContext.getAuthorizationContext();
+        return SecurityContext.current().getAuthorizationContext();
     }
 
     protected void verifyAttributes() throws JspException {

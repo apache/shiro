@@ -46,20 +46,20 @@ public interface Configuration {
     Properties getProperties();
 
     /**
-     * Determines whether or not the security context accessor should be cached.
+     * Determines whether or not the security context implementation should be cached.
      * <tt>True</tt> by default.
-     * @return true if the security context accessor should be cached, false otherwise.
+     * @return true if the security context implementation should be cached, false otherwise.
      */
-    boolean isSecurityContextAccessorCached();
+    boolean isSecurityContextCached();
 
     /**
-     * Returns the class name of the security context accessor implementation that should
-     * be used to retrieve the security context at runtime.  The default value of this
+     * Returns the class name of the security context implementation that should
+     * be used to retrieve security data at runtime.  The default value of this
      * is implementation specific.
-     * @return the class name of the security context accessor implementation that should
-     * be used to retrieve the security context at runtime.
+     * @return the class name of the security context implementation that should
+     * be used to retrieve the security data at runtime.
      */
-    String getSecurityContextAccessorClassName();
+    String getSecurityContextClassName();
 
     /**
      * Determines whether authorization information related to user principals should be

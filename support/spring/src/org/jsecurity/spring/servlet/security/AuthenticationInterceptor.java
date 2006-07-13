@@ -132,7 +132,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        AuthorizationContext authzCtx = SecurityContext.getAuthorizationContext();
+        AuthorizationContext authzCtx = SecurityContext.current().getAuthorizationContext();
 
         if( authzCtx == null ) {
             StringBuffer attemptedPage = request.getRequestURL();

@@ -30,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.Configuration;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.context.SecurityContextAccessor;
 import org.jsecurity.context.SecurityContextException;
+import org.jsecurity.context.SecurityContext;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,20 +66,20 @@ public class DefaultConfiguration implements Configuration {
 
     /**
      * Name of the system property or file property that determines the class name of the {@link
-     * SecurityContextAccessor} implementation class to use.
+     * SecurityContext} implementation class to use.
      */
-    private static final String SECURITY_CONTEXT_ACCESSOR_PROP = "security.context.accessor.class";
+    private static final String SECURITY_CONTEXT_CLASS_NAME_PROP = "securityContext.class.name";
 
     /**
-     * <p>This property determines whether or not the security context accessor should be cached.
-     * The JSecurity implementation is responsible for configuring whether or not caching of
-     * the accessor is allowed.  The default value of this property is true for performance
+     * <p>This property determines whether or not the security context implementation should be
+     * cached. The JSecurity implementation is responsible for configuring whether or not caching of
+     * the implementation is allowed.  The default value of this property is true for performance
      * reasons, although implementations are allowed to override the value either through
      * the properties file or a system property.</p>
-     * <p>This property should be set to "false" to disable caching of the accessor.  Any other value
-     * will leave caching enabled.</p>
+     * <p>This property should be set to &quot;false&quot; to disable caching of the implementation.
+     * Any other value will leave caching enabled.</p>
      */
-    private static final String SECURITY_CONTEXT_ACCESSOR_CACHED_PROP = "security.context.accessor.cached";
+    private static final String SECURITY_CONTEXT_CACHED_PROP = "securityContext.cached";
 
     /**
      * The class name of the cache provider to use for this JSecurity deployment,
@@ -97,9 +97,9 @@ public class DefaultConfiguration implements Configuration {
     public static final String CACHE_AUTHORIZATION_INFO_PROP = "security.cache.authorization";
 
     /**
-     * The default class name of the security context accessor that should be used.
+     * The default class name of the security context implementation that should be used.
      */
-    private static final String DEFAULT_SECURITY_CONTEXT_ACCESSOR_CLASS_NAME = "org.jsecurity.ri.context.ThreadLocalSecurityContextAccessor";
+    private static final String DEFAULT_SECURITY_CONTEXT_CLASS_NAME = "org.jsecurity.ri.context.ThreadLocalSecurityContext";
 
     /**
      * The default cache provider class name that should be used if one is not specified in the configuration.
@@ -117,12 +117,12 @@ public class DefaultConfiguration implements Configuration {
     /**
      * The class name of the class used to access the security context information.
      */
-    private String securityContextAccessorClassName = DEFAULT_SECURITY_CONTEXT_ACCESSOR_CLASS_NAME;
+    private String securityContextClassName = DEFAULT_SECURITY_CONTEXT_CLASS_NAME;
 
     /**
-     * True if the security context accessor can be statically cached, or false otherwise.
+     * True if the security context implementation can be statically cached, or false otherwise.
      */
-    private boolean securityContextAccessorCached = true;
+    private boolean securityContextCached = true;
 
     /**
      * The class name of the default cache provider to use for this JSecurity deployment.
@@ -184,10 +184,10 @@ public class DefaultConfiguration implements Configuration {
         try {
             props.load( propsFileIs );
         } catch ( IOException e ) {
-            String msg = "No [" + SECURITY_CONTEXT_ACCESSOR_PROP + "] system property " +
+            String msg = "No [" + SECURITY_CONTEXT_CLASS_NAME_PROP + "] system property " +
                          "is defined and [" + JSECURITY_PROPS_FILE + "] cannot be " +
-                         "loaded from the classloader.  A " + SecurityContextAccessor.class.getName() + " " +
-                         "cannot be created.";
+                         "loaded from the classloader or as a file.  A " +
+                         SecurityContext.class.getName() + "cannot be created.";
             throw new SecurityContextException( msg );
         }
         return props;
@@ -197,32 +197,27 @@ public class DefaultConfiguration implements Configuration {
     public DefaultConfiguration( Properties props ) {
         setProperties( props );
 
-        // Accessor class name
-        String accessorClassName = getStringProperty( props, SECURITY_CONTEXT_ACCESSOR_PROP, null );
-        if ( accessorClassName == null || accessorClassName.length() == 0 ) {
-            String msg = "No [" + SecurityContextAccessor.class.getName() + "] implementation " +
-                         "class was found configured in the system.  The accessor " +
+        String implClassName = getStringProperty( props, SECURITY_CONTEXT_CLASS_NAME_PROP, null );
+        if ( implClassName == null || implClassName.length() == 0 ) {
+            String msg = "No [" + SecurityContext.class.getName() + "] implementation " +
+                         "class was found configured in the system.  The " +
                          "implementation should normally be specified by including the " +
-                         "JSecurity implementation JAR in the classpath.  The accessor can " +
-                         "also be specified by setting the [" + SECURITY_CONTEXT_ACCESSOR_PROP +
-                         "] system property or manually including a jsecurity.properties file " +
-                         "at the root of the classpath.";
+                         "JSecurity implementation JAR in the classpath.  The implementation can " +
+                         "also be specified by setting the [" + SECURITY_CONTEXT_CLASS_NAME_PROP +
+                         "] system property or manually including that value in a " +
+                         "jsecurity.properties file at the root of the classpath.";
             throw new SecurityContextException( msg );
         }
-        setSecurityContextAccessorClassName( accessorClassName );
+        setSecurityContextClassName( implClassName );
 
-        // Accessor cached
-        boolean accessorCached = getBooleanProperty(props, SECURITY_CONTEXT_ACCESSOR_CACHED_PROP, true);
-        setSecurityContextAccessorCached( accessorCached );
+        boolean implCached = getBooleanProperty(props, SECURITY_CONTEXT_CACHED_PROP, true);
+        setSecurityContextCached( implCached );
 
-        // Cache provider class name
         String cacheProviderClassName = DEFAULT_CACHE_PROVIDER_CLASS_NAME;
         setCacheProviderClassName( cacheProviderClassName );
 
-        // Cache settings
         boolean cacheAuthorizationInfo = getBooleanProperty( props, CACHE_AUTHORIZATION_INFO_PROP, true );
         setCacheAuthorizationInfo( cacheAuthorizationInfo );
-
     }
 
 
@@ -264,13 +259,13 @@ public class DefaultConfiguration implements Configuration {
     ============================================*/
 
 
-    public String getSecurityContextAccessorClassName() {
-        return securityContextAccessorClassName;
+    public String getSecurityContextClassName() {
+        return securityContextClassName;
     }
 
 
-    public void setSecurityContextAccessorClassName(String securityContextAccessorClassName) {
-        this.securityContextAccessorClassName = securityContextAccessorClassName;
+    public void setSecurityContextClassName(String securityContextClassName ) {
+        this.securityContextClassName = securityContextClassName;
     }
 
 
@@ -285,35 +280,31 @@ public class DefaultConfiguration implements Configuration {
 
 
     /**
-     * Returns whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
-     * #getAccessor()} is called.
+     * Returns whether or not the same <tt>SecurityContext</tt> implementation will be used each
+     * time {@link SecurityContext#current()} is called.
      * <p/>
      * <p>The system default is <tt>true</tt>.
      * <p/>
-     * <p>Note: this does <em>not</em> determine whether or not each call to {@link org.jsecurity.context.SecurityContext#getAccessor()}
-     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the accessor
-     * implementation.
      *
-     * @return whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
-     *         #getAccessor()} is called.
+     * @return whether or not the same <tt>SecurityContext</tt> will be used each time
+     * {@link SecurityContext#current()} is called.
      */
-    public boolean isSecurityContextAccessorCached() {
-        return securityContextAccessorCached;
+    public boolean isSecurityContextCached() {
+        return securityContextCached;
     }
 
 
     /**
-     * Sets whether or not the same <tt>SecurityContextAccessor</tt> will be used each time {@link
-     * #getAccessor()} is called. <p>The system default is <tt>true</tt>.
+     * Sets whether or not the same <tt>SecurityContext</tt> implementation will be used each
+     * time {@link SecurityContext#current()} is called.
      * <p/>
-     * <p>Note: this does <em>not</em> determine whether or not each call to {@link org.jsecurity.context.SecurityContext#getAccessor()}
-     * returns a cached <tt>SecurityContext</tt> each time.  That is determined by the accessor
-     * implementation.
+     * <p>The system default is <tt>true</tt>.
+     * <p/>
      *
-     * @param cached whether or not to cache the accessor instance.
+     * @param cached whether or not to cache the implementation instance.
      */
-    public void setSecurityContextAccessorCached(boolean cached) {
-        this.securityContextAccessorCached = cached;
+    public void setSecurityContextCached(boolean cached) {
+        this.securityContextCached = cached;
     }
 
 

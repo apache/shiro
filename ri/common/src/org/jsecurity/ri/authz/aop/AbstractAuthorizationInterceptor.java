@@ -41,7 +41,7 @@ public abstract class AbstractAuthorizationInterceptor {
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
-        AuthorizationContext authzCtx = SecurityContext.getAuthorizationContext();
+        AuthorizationContext authzCtx = SecurityContext.current().getAuthorizationContext();
 
         if ( authzCtx != null ) {
             AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
