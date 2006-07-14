@@ -25,6 +25,7 @@
 
 package org.jsecurity.ri;
 
+import org.jsecurity.SecurityManager;
 import org.jsecurity.Configuration;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
