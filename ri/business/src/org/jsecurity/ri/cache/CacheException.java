@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.cache;
+package org.jsecurity.ri.cache;
 
 import org.jsecurity.JSecurityException;
 

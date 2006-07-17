@@ -25,10 +25,13 @@
 
 package org.jsecurity.context;
 
-import org.jsecurity.Configuration;
 import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.ri.DefaultConfiguration;
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.session.Session;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API. This
@@ -47,19 +50,27 @@ public abstract class SecurityContext {
      ============================================*/
 
     /**
-     *  Will always be <tt>null</tt> if caching is turned off.
+     * Name of the JSecurity properties file to be loaded.  This file should contain properties
+     * telling JSecurity how to create a security context.
      */
-    private static SecurityContext cachedImpl = null;
+    private static final String JSECURITY_PROPS_FILE = "jsecurity.properties";
+
+
+    /**
+     * Name of the system property or file property that determines the class name of the {@link
+     * SecurityContext} implementation class to use.
+     */
+    private static final String SECURITY_CONTEXT_CLASS_NAME_PROP = "securityContext.class.name";
+
+    /**
+     *  Concrete implementation instance
+     */
+    private static SecurityContext impl = null;
 
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * Security context settings used by this security context.
-     * todo Can we remove this from being a static dependency without making the SecurityContext more difficult to use? -JCH 5/28/2006 
-     */
-    private static Configuration configuration;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -71,21 +82,6 @@ public abstract class SecurityContext {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public static Configuration getConfiguration() {
-        if( configuration != null ) {
-            return configuration;
-        } else {
-            configuration = new DefaultConfiguration();
-        }
-        return configuration;
-    }
-
-
-    public static void setConfiguration(Configuration configuration) {
-        SecurityContext.configuration = configuration;
-    }
-
-
     /*--------------------------------------------
     |        S T A T I C   M E T H O D S        |
     ============================================*/
@@ -96,32 +92,71 @@ public abstract class SecurityContext {
      * @return the SecurityContext implementation.
      */
     private static SecurityContext getImpl() {
+        if ( SecurityContext.impl != null ) {
+            return SecurityContext.impl;
+        }
+
+        //not explicitly set - attempt to construct an instance from a properties file
+        //on the classpath.  If users of JSecurity don't like this approach, they need to
+        //explicitly set the SecurityContext via the static setSecurityContext(...) method.
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if ( cl == null ) {
             cl = SecurityContext.class.getClassLoader();
         }
 
-        SecurityContext impl;
+        String implClassName = getImplClassName( cl );
+        SecurityContext impl = instantiate( implClassName, cl );
 
-        Configuration configuration = getConfiguration();
-
-        if ( configuration.isSecurityContextCached() ) {
-            synchronized (SecurityContext.class ) {
-                if ( cachedImpl == null ) {
-                    String implClassName = configuration.getSecurityContextClassName();
-                    cachedImpl = instantiate( implClassName, cl );
-                }
-            }
-
-            impl = cachedImpl;
-
-        } else {
-            String implClassName = configuration.getSecurityContextClassName();
-            impl = instantiate( implClassName, cl );
-        }
+        setSecurityContext( impl );
 
         return impl;
+    }
+
+    private static String getImplClassName( ClassLoader cl ) {
+        boolean sysProp = true;
+        String implClassName = System.getProperty( SECURITY_CONTEXT_CLASS_NAME_PROP );
+
+        if ( implClassName == null ) {
+            InputStream propsFileIs = cl.getResourceAsStream( JSECURITY_PROPS_FILE );
+            Properties props = new Properties();
+            try {
+                props.load( propsFileIs );
+            } catch ( IOException e ) {
+                String msg = "No '" + SECURITY_CONTEXT_CLASS_NAME_PROP + "' system property " +
+                             "is defined and " + JSECURITY_PROPS_FILE + " cannot be " +
+                             "loaded from the classloader.  A " + SecurityContext.class.getName() +
+                             "instance cannot be implicitly created.  To avoid this exception, you " +
+                             "may do one of three things:\n" +
+                             "\t 1. Explicitly set a SecurityContext implementation via the " +
+                             "static SecurityContext.setSecurityContext method\n" +
+                             "\t 2. Set the '" + SECURITY_CONTEXT_CLASS_NAME_PROP + "' " +
+                             "system property with the value of the implementation to instantiate " +
+                             "(must have a default no-arg constructor)\n" +
+                             "\t 3. Make a '" + JSECURITY_PROPS_FILE + "' file available at the " +
+                             "root of the classpath.  This file must have a property named '" +
+                             SECURITY_CONTEXT_CLASS_NAME_PROP + "' with a value of the " +
+                             "implementation class to instantiate (must have a default " +
+                             "no-arg constructor)";
+                throw new SecurityContextException( msg );
+            }
+
+            implClassName = props.getProperty( SECURITY_CONTEXT_CLASS_NAME_PROP );
+            sysProp = false;
+        }
+
+        if ( implClassName == null || implClassName.length() == 0 ) {
+            String msg = "No [" + SecurityContext.class.getName() + "] implementation " +
+                         "class value was specified for the '" +
+                         SECURITY_CONTEXT_CLASS_NAME_PROP + "' " +
+                         (sysProp ? "system property." :
+                                    "property in " + JSECURITY_PROPS_FILE + "." ) +
+                         "  SecurityContext cannot be created.";
+            throw new SecurityContextException( msg );
+        }
+
+        return implClassName;
+
     }
 
     private static SecurityContext instantiate( String implClassName, ClassLoader cl ) {
@@ -150,6 +185,22 @@ public abstract class SecurityContext {
 
     public static SecurityContext current() {
         return getImpl();
+    }
+
+    public static synchronized void setSecurityContext( SecurityContext impl )
+        throws AuthorizationException {
+        if ( SecurityContext.impl == null ) {
+            SecurityContext.impl = impl;
+        } else {
+            AuthorizationContext authzCtx = SecurityContext.impl.getAuthorizationContext();
+            if ( authzCtx != null ) {
+                RuntimePermission setSecCtx = new RuntimePermission( "setSecurityContext" );
+                authzCtx.checkPermission( setSecCtx );
+            }
+            //if we're at this point in the code, there was no exception (i.e. the current user
+            //is allowed to override the current SecurityContext), so set it:
+            SecurityContext.impl = impl;
+        }
     }
 
     /*--------------------------------------------

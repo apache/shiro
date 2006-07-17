@@ -24,7 +24,6 @@
  */
 package org.jsecurity.realm;
 
-import org.jsecurity.Configuration;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.authz.AuthorizationException;
 
@@ -53,19 +52,6 @@ import java.util.List;
  * @author Jeremy Haile
  */
 public interface Realm extends AuthenticationModule {
-
-    /**
-     * Initializes the realm with the given JSecurity configuration.
-     * @param configuration the configuration associated with this JSecurity deployment.
-     */
-    void init( Configuration configuration );
-
-
-    /**
-     * Allows the realm to perform any resource cleanup during application shutdown.
-     */
-    void destroy();
-
 
     /**
      * Returns the name of this Realm used to uniquely identify it within the application.
