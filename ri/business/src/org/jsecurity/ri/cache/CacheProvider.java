@@ -22,9 +22,11 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.cache;
+package org.jsecurity.ri.cache;
 
-import org.jsecurity.Configuration;
+import org.jsecurity.ri.Configuration;
+import org.jsecurity.ri.cache.Cache;
+import org.jsecurity.ri.cache.CacheException;
 
 /**
  * Interface for cache-specific implementations that can provide caches
