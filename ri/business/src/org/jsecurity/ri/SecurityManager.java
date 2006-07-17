@@ -23,10 +23,11 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity;
+package org.jsecurity.ri;
 
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.ri.Configuration;
 
 /**
  * <p>Security-management interface tying together authentication and authorization
