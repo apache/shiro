@@ -121,23 +121,6 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
             modularAuthenticator.init();
             authenticator = modularAuthenticator;
         }
-
-        for( Realm realm : getAllRealms() ) {
-            realm.init( getConfiguration() );
-        }
-    }
-
-
-    /**
-     * Destroys all realms associated with this security manager.
-     */
-    @Override
-    public void destroy() {
-        super.destroy();
-
-        for( Realm realm : getAllRealms() ) {
-            realm.destroy();
-        }
     }
 
 
