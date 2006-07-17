@@ -27,9 +27,9 @@ package org.jsecurity.ri.realm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.Configuration;
-import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.ri.Configuration;
+import org.jsecurity.ri.cache.Cache;
+import org.jsecurity.ri.cache.CacheProvider;
 import org.jsecurity.realm.Realm;
 
 import java.security.Principal;

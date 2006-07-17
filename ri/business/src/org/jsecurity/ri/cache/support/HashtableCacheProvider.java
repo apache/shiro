@@ -25,10 +25,10 @@
 
 package org.jsecurity.ri.cache.support;
 
-import org.jsecurity.Configuration;
-import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheException;
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.ri.Configuration;
+import org.jsecurity.ri.cache.Cache;
+import org.jsecurity.ri.cache.CacheException;
+import org.jsecurity.ri.cache.CacheProvider;
 
 /**
  * A {@link CacheProvider} that returns {@link HashtableCache} caches.

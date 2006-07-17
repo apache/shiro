@@ -26,7 +26,7 @@
 
 package org.jsecurity.ri.realm.memory;
 
-import org.jsecurity.Configuration;
+import org.jsecurity.ri.Configuration;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
