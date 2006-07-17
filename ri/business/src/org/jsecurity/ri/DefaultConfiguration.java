@@ -27,9 +27,8 @@ package org.jsecurity.ri;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.Configuration;
-import org.jsecurity.cache.CacheException;
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.ri.cache.CacheException;
+import org.jsecurity.ri.cache.CacheProvider;
 import org.jsecurity.context.SecurityContextException;
 import org.jsecurity.context.SecurityContext;
 

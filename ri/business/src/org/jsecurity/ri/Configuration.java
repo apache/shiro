@@ -23,9 +23,9 @@
 * http://www.opensource.org/licenses/lgpl-license.php
 */
 
-package org.jsecurity;
+package org.jsecurity.ri;
 
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.ri.cache.CacheProvider;
 
 import java.util.Properties;
 
