@@ -29,8 +29,8 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheException;
+import org.jsecurity.ri.cache.Cache;
+import org.jsecurity.ri.cache.CacheException;
 
 import java.io.IOException;
 import java.util.Collections;

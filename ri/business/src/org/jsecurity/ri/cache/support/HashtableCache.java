@@ -25,8 +25,8 @@
 
 package org.jsecurity.ri.cache.support;
 
-import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheException;
+import org.jsecurity.ri.cache.Cache;
+import org.jsecurity.ri.cache.CacheException;
 
 import java.util.Collections;
 import java.util.Hashtable;

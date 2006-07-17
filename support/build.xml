@@ -31,7 +31,7 @@
  -  =================================================================== -->
     <target name="template">
         <ant dir="spring" target="${target}"/>
-        <!--<ant dir="jboss" target="${target}"/>-->
+        <ant dir="jboss" target="${target}"/>
     </target>
 
 </project>
