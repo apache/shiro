@@ -253,7 +253,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         if ( sessionIdString == null ) {
             sessionIdString = getSessionIdFromCookie( request );
             if ( sessionIdString == null ) {
-                sessionIdString = getSessionIdFromHttpSession( request );
+                sessionId = getSessionIdFromHttpSession( request );
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Unable to find JSecurity session id from request parameters, " +
                                "cookies, or inside the HttpSession.  All heuristics exhausted. " +
@@ -347,18 +347,18 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         }
     }
 
-    protected String getSessionIdFromHttpSession( HttpServletRequest request ) {
-        String sessionIdString = null;
+    protected Serializable getSessionIdFromHttpSession( HttpServletRequest request ) {
+        Serializable sessionId = null;
         String sessionKey = getSessionIdHttpSessionKeyName();
 
         HttpSession session = request.getSession( false );
         if ( session != null ) {
-            sessionIdString = (String)session.getAttribute( sessionKey );
+            sessionId = (Serializable)session.getAttribute( sessionKey );
         }
 
-        if ( sessionIdString != null ) {
+        if ( sessionId != null ) {
             if ( log.isInfoEnabled() ) {
-                log.info( "Found JSecurity session id [" + sessionIdString + "] via " +
+                log.info( "Found JSecurity session id [" + sessionId + "] via " +
                           "HttpSession key [" + sessionKey + "]");
             }
         } else {
@@ -368,7 +368,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
             }
         }
 
-        return sessionIdString;
+        return sessionId;
     }
 
     protected void storeSessionIdInHttpSession( HttpServletRequest request, Serializable sessionId ) {
