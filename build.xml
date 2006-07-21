@@ -145,7 +145,7 @@
                  version="true"
                  use="true"
                  windowTitle="JSecurity Specification API">
-            <doctitle><![CDATA[<h1>JSecurity Specification API v. 0.1</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Specification API v. 0.2</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &copy; 2005-2006 JSecurity.org</i>]]></bottom>
             <fileset dir="${root.base.dir}">
                 <include name="api/src/**/*.java"/>
@@ -165,7 +165,7 @@
                  version="true"
                  use="true"
                  windowTitle="JSecurity Reference Implementation API">
-            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.1</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.2</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &copy; 2005-2006 JSecurity.org</i>]]></bottom>
             <classpath>
                 <pathelement location="${root.base.dir}/dist/jsecurity-api.jar"/>
@@ -175,6 +175,8 @@
                 <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
                 <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>
                 <pathelement location="${lib.dir}/quartz/quartz.jar"/>
+                <pathelement location="${lib.dir}/ehcache/ehcache.jar"/>
+                <pathelement location="${lib.dir}/spring/spring.jar"/>
             </classpath>
             <packageset dir="${root.base.dir}/ri/common/src">
                 <include name="org/jsecurity/ri/**"/>
@@ -182,11 +184,13 @@
             <packageset dir="${root.base.dir}/ri/business/src">
                 <include name="org/jsecurity/ri/**"/>
             </packageset>
-            <link href="http://www.jsecurity.org/static/jsecurity/spec/1.0/api/"/>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
             <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
-            <link href="http://jakarta.apache.org/commons/logging/api/"/>
+            <link href="http://jakarta.apache.org/commons/logging/commons-logging-1.1/apidocs/"/>
             <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
+            <link href="http://static.springframework.org/spring/docs/1.2.x/api/"/>
+            <link href="http://ehcache.sourceforge.net/apidocs/"/>
+            <link href="http://www.opensymphony.com/quartz/api/"/>
         </javadoc>
 
     </target>

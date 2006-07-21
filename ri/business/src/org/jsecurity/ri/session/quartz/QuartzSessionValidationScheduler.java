@@ -15,7 +15,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
- * An implementation of the {@link SessionValidationScheduler that uses Quartz to schedule a
+ * An implementation of the {@link SessionValidationScheduler SessionValidationScheduler} that uses Quartz to schedule a
  * job to call {@link org.jsecurity.ri.session.ValidatingSessionManager#validateSessions()} on
  * a regular basis.
  *

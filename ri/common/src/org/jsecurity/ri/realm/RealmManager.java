@@ -31,8 +31,7 @@ import java.util.List;
 
 /**
  * Interface that encapsulates realm management operations, including storing and retrieving
- * realms.  The realm manager implementation is also likely to perform operations such as
- * initializing the realms by calling {@link Realm#init(org.jsecurity.ri.Configuration)}
+ * realms.
  *
  * @since 0.2
  * @author Jeremy Haile
