@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Jeremy C. Haile
+* Copyright (C) 2005 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -26,7 +26,6 @@
 
 package org.jsecurity.ri.realm.memory;
 
-import org.jsecurity.ri.Configuration;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
@@ -51,6 +50,7 @@ import java.util.Set;
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class MemoryRealm extends AbstractCachingRealm {
 
@@ -113,10 +113,7 @@ public class MemoryRealm extends AbstractCachingRealm {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    @Override
-    public void init( Configuration configuration )  {
-        super.init( configuration );
-
+    public void onInit()  {
         if( accounts != null && !accounts.isEmpty() ) {
 
             Map<Principal, AuthorizationInfo> authorizationInfoMap = new HashMap<Principal, AuthorizationInfo>( accounts.size() );

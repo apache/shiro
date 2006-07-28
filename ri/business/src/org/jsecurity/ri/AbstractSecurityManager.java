@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Jeremy Haile
+ * Copyright (C) 2006 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -36,18 +36,15 @@ import org.jsecurity.ri.authz.module.AnnotationsModularAuthorizer;
 
 /**
  * <p>Abstract implementation of the security manager interface that delegates authentication
- * and authorization to a configured {@link Authenticator} and {@link Authorizer}  This
- * security manager loads the JSecurity configuration using a RI {@link DefaultConfiguration} iustance.</p>
+ * and authorization to a configured {@link Authenticator} and {@link Authorizer}.</p>
  *
- * <p>IF no authorizer is specified, an {@link AnnotationsModularAuthorizer} instance is used.  There is
- * <strong>no default</strong> authenticator created by this security manager, as this is left to configuration
- * or subclass implementations.</p>
+ * <p>Unless the authorizer is set, an {@link AnnotationsModularAuthorizer} instance is used by
+ * default.  There is <strong>no default</strong> authenticator created by this security manager,
+ * as this is left to configuration or subclass implementations.</p>
  *
- * <p>The {@link #init()} and {@link #destroy()} methods should be called during application initialization
- * and shutdown to propertly initialize and clean-up this security manager.</p>
- *
- * @author Jeremy Haile
  * @since 0.2
+ * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public abstract class AbstractSecurityManager implements SecurityManager {
 
@@ -66,13 +63,7 @@ public abstract class AbstractSecurityManager implements SecurityManager {
     /**
      * The authorizer that is delegated to for authorization purposes.
      */
-    protected Authorizer authorizer;
-
-    /**
-     * The JSecurity configuration used by this security manager.
-     */
-    private Configuration configuration;
-
+    protected Authorizer authorizer = new AnnotationsModularAuthorizer();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -89,43 +80,18 @@ public abstract class AbstractSecurityManager implements SecurityManager {
         this.authorizer = authorizer;
     }
 
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(DefaultConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
-    /**
-     * Initializes the JSEcurity configuration and default authorizer, if they are not
-     * configured already.
-     */
     public void init() {
-        if( configuration == null ) {
-            configuration = new DefaultConfiguration();
+        if ( this.authorizer == null ) {
+            throw new IllegalStateException( "authorizer property must be set." );
         }
-
-        if( authorizer == null ) {
-            authorizer = new AnnotationsModularAuthorizer();
-        }
+        onInit();
     }
 
-
-    /**
-     * Destroys the JSecurity configuration and any other resources.
-     */
-    public void destroy() {
-        if( configuration.getDefaultCacheProvider() != null ) {
-            configuration.getDefaultCacheProvider().destroy();
-        }
-    }
-
+    protected void onInit(){}
 
     /**
      * Delegates to the authenticator for authentication.

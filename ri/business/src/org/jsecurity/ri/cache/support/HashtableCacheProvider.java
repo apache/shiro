@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Jeremy Haile
+* Copyright (C) 2005 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -25,9 +25,7 @@
 
 package org.jsecurity.ri.cache.support;
 
-import org.jsecurity.ri.Configuration;
 import org.jsecurity.ri.cache.Cache;
-import org.jsecurity.ri.cache.CacheException;
 import org.jsecurity.ri.cache.CacheProvider;
 
 /**
@@ -35,26 +33,16 @@ import org.jsecurity.ri.cache.CacheProvider;
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class HashtableCacheProvider implements CacheProvider {
-
-    public void init(Configuration configuration) throws CacheException {
-        // Nothing to do for this cache provider
-    }
-
-
-    public void destroy() {
-        // Nothing to do for this cache provider
-    }
-
 
     /**
      * Builds a new {@link HashtableCache} with the given name.
      * @param cacheName the name of the new cache to create.
-     * @param configuration unused
      * @return a new cache.
      */
-    public Cache buildCache(String cacheName, Configuration configuration) {
+    public Cache buildCache( String cacheName ) {
         return new HashtableCache( cacheName );
     }
 }
