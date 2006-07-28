@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Jeremy Haile
+* Copyright (C) 2005 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -27,7 +27,6 @@ package org.jsecurity.ri.realm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.ri.Configuration;
 import org.jsecurity.ri.cache.Cache;
 import org.jsecurity.ri.cache.CacheProvider;
 import org.jsecurity.realm.Realm;
@@ -35,18 +34,21 @@ import org.jsecurity.realm.Realm;
 import java.security.Principal;
 
 /**
- * <p>An abstract implementation of the {@link Realm} interface that provides caching of
- * authorization information returned by subclasses.  This implementation uses caches
- * provided from a {@link CacheProvider} to cache authorization information by principal.</p>
+ * <p>An abstract implementation of the {@link Realm} interface that enables caching of
+ * authorization information returned by subclasses.  This implementation can use a
+ * {@link #setAuthorizationInfoCache cache} set explicitly or can create one using a specified
+ * {@link #setAuthorizationInfoCacheProvider cacheProvider} to cache authorization information by
+ * principal.  See the {@link #init init()} method for more information on how this class
+ * implements caching behavior.
  *
- * <p>Caching and the cache provider used can be configured using the RI-specific
- * {@link Configuration}.  In general, caching works best if the principals are {@link java.io.Serializable}.
+ * <p>In general, caching works best if the principals are {@link java.io.Serializable}.
  * The {@link Principal}s <tt>equals()</tt> and <tt>hashCode()</tt> methods must be correct for
  * the caching to be successful.</p>
  *
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public abstract class AbstractCachingRealm extends AbstractRealm implements Realm {
 
@@ -70,7 +72,13 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
      * The cache used by this realm to store authorization information associated with individual
      * principals.
      */
-    private Cache authorizationInfoCache;
+    private Cache authorizationInfoCache = null;
+
+    /**
+     * Upon initialization, if the authorizationInfoCache is null and this attribute has been set
+     * (i.e. it is not-null), it will be used to create the authorizationInfoCache.
+     */
+    private CacheProvider authzInfoCacheProvider = null;
 
     /**
      * The postfix appended to the realm name used to create the name of the authorization cache.
@@ -89,6 +97,21 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
         this.authorizationInfoCachePostfix = authorizationInfoCachePostfix;
     }
 
+    public void setAuthorizationInfoCache(Cache authorizationInfoCache) {
+        this.authorizationInfoCache = authorizationInfoCache;
+    }
+
+    public Cache getAuthorizationInfoCache() {
+        return this.authorizationInfoCache;
+    }
+
+    public void setAuthorizationInfoCacheProvider(CacheProvider authzInfoCacheProvider) {
+        this.authzInfoCacheProvider = authzInfoCacheProvider;
+    }
+
+    public CacheProvider getAuthorizationInfoCacheProvider() {
+        return this.authzInfoCacheProvider;
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -96,34 +119,63 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
 
 
     /**
-     * Initializes this realm by creating the caches.
-     * @param configuration the JSecurity configuration for this deployment.
+     * Initializes this realm and potentially enables a cache, depending on configuration.
+     *
+     * <p>When this method is called, the following logic is executed:
+     * <ol>
+     *   <li>If the {@link #setAuthorizationInfoCache cache} property has been set, it will be
+     *       used to cache the return values from {@link #getAuthorizationInfo getAuthorizationInfo}
+     *       method invocations.
+     *       All future calls to <tt>getAuthorizationInfo</tt> will attempt to use this cache first
+     *       to aleviate any potential unnecessary calls to an underlying data store.</li>
+     *   <li>If the {@link #setAuthorizationInfoCache cache} property has <b>not</b> been set,
+     *       the {@link #setAuthorizationInfoCacheProvider cacheProvider} property will be checked.
+     *       If a <tt>cacheProvider</tt> has been set, it will be used to create a
+     *       <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
+     *   <li>If neither the {@link #setAuthorizationInfoCache(org.jsecurity.ri.cache.Cache) cache}
+     *       or {@link #setAuthorizationInfoCacheProvider(org.jsecurity.ri.cache.CacheProvider) cacheProvider}
+     *       properties are set, caching will be disabled.</li>
+     * </ol>
      */
-    public void init( Configuration configuration ) {
+    public void init() {
         if (logger.isDebugEnabled()) {
             logger.debug("Initializing caches for realm [" + getName() + "]");
         }
 
-        if( configuration.isCacheAuthorizationInfo() ) {
+        Cache cache = getAuthorizationInfoCache();
+        if ( cache == null ) {
 
-            CacheProvider cacheProvider = configuration.getDefaultCacheProvider();
-
-            String cacheName =  getName() + authorizationInfoCachePostfix;
-            if (logger.isDebugEnabled()) {
-                logger.debug("Initializing authorization info cache " +
-                    "as cache named [" + cacheName + "]" );
+            if ( logger.isDebugEnabled() ) {
+                logger.debug( "No cache implementation set.  Checking cacheProvider...");
             }
 
-            authorizationInfoCache = cacheProvider.buildCache( cacheName, configuration );
+            CacheProvider cacheProvider = getAuthorizationInfoCacheProvider();
 
+            if ( cacheProvider != null ) {
+                String cacheName = getName() + authorizationInfoCachePostfix;
+                if ( logger.isDebugEnabled() ) {
+                    logger.debug( "CacheProvider [" + cacheProvider + "] set.  Building " +
+                                  "authorizationInfo cache named [" + cacheName + "]");
+                }
+                cache = cacheProvider.buildCache( cacheName );
+                setAuthorizationInfoCache( cache );
+            } else {
+                if ( logger.isInfoEnabled() ) {
+                    logger.info( "No cache or cacheProvider set.  authorizationInfo caching is " +
+                            "disabled for realm [" + getName() + "]" );
+                }
+            }
         } else {
             if (logger.isDebugEnabled()) {
-                logger.debug("Cache provider is null or authorization info cache is disabled, " +
-                    "so no cache will be initialized for realm [" + getName() + "]" );
+                logger.debug( "authorizationInfo for realm [" + getName() + "] will be cached " +
+                        "using cache [" + cache + "]" );
             }
         }
+
+        onInit();
     }
 
+    protected void onInit(){}
 
     /**
      * Destroys this realm by destroying the underlying caches.

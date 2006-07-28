@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Jeremy Haile
+* Copyright (C) 2005 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -24,42 +24,21 @@
 */
 package org.jsecurity.ri.cache;
 
-import org.jsecurity.ri.Configuration;
-import org.jsecurity.ri.cache.Cache;
-import org.jsecurity.ri.cache.CacheException;
-
 /**
  * Interface for cache-specific implementations that can provide caches
  * used by JSecurity to cache authentication and/or authorization information.
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface CacheProvider {
-
-
-        /**
-         * Callback to perform any necessary initialization of the underlying cache implementation
-         * during application initialization.
-         *
-         * @param configuration current configuration settings.
-         */
-        public void init(Configuration configuration) throws CacheException;
-
-        /**
-         * Callback to perform any necessary cleanup of the underlying cache implementation during
-         * application destruction.
-         */
-        public void destroy();
 
         /**
          * Configure and creates a cache with the given name using the specified
          * properties for configuration.
          *
          * @param cacheName the name of the cache to create.
-         * @param configuration settings used when creating this cache.
          */
-        public Cache buildCache(String cacheName, Configuration configuration) throws CacheException;
-
-
+        public Cache buildCache( String cacheName ) throws CacheException;
 }

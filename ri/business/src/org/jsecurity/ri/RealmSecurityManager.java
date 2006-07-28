@@ -106,15 +106,12 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
      * Initializes this realm security manager with a modular authenticator if none is configured and
      * initializes all of the realms that are configured for management.
      */
-    @Override
-    public void init() {
+    public void onInit() {
 
         if( realmMap == null || realmMap.isEmpty() ) {
             throw new IllegalStateException( "init() called but no realms have been configured " +
                 "for this manager.  At least one realm needs to be configured on this manager." );
         }
-
-        super.init();
 
         if( authenticator == null ) {
             ModularAuthenticator modularAuthenticator = new ModularAuthenticator( getAllRealms() );

@@ -27,7 +27,6 @@ package org.jsecurity.ri;
 
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.ri.Configuration;
 
 /**
  * <p>Security-management interface tying together authentication and authorization
@@ -39,11 +38,4 @@ import org.jsecurity.ri.Configuration;
  * @author Jeremy Haile
  */
 public interface SecurityManager extends Authenticator, Authorizer {
-
-    /**
-     * Returns the configuration associated with this JSecurity deployment.
-     * @return the configuration associated with this JSecurity deployment.
-     */
-    Configuration getConfiguration();
-
 }
