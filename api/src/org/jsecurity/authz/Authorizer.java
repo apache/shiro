@@ -54,6 +54,7 @@ public interface Authorizer {
      *
      * @param context the authorization context of the user being authorized.
      * @param action the action that the user is requesting authorization for.
+     * @throws AuthorizationException if the context is not authorized to perform the action
      */
     void checkAuthorization( AuthorizationContext context, AuthorizedAction action )
         throws AuthorizationException;
