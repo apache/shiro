@@ -35,12 +35,19 @@ import org.jsecurity.authz.Authorizer;
 import org.jsecurity.ri.authz.module.AnnotationsModularAuthorizer;
 
 /**
- * <p>Abstract implementation of the security manager interface that delegates authentication
- * and authorization to a configured {@link Authenticator} and {@link Authorizer}.</p>
+ * <p>Abstract implementation of the <code>SecurityManager</code> interface that delegates its authentication and
+ * authorization operations to an internal encapsulated {@link Authenticator} and {@link Authorizer} instance,
+ * respectively.  It also provides some sensible defaults to simplify configuration.
  *
- * <p>Unless the authorizer is set, an {@link AnnotationsModularAuthorizer} instance is used by
- * default.  There is <strong>no default</strong> authenticator created by this security manager,
- * as this is left to configuration or subclass implementations.</p>
+ * <p>This implementation is primarily a convenience mechanism that wraps both instances to consolidate
+ * both behaviors into a single point of reference.  For most JSecurity users, this simplifies configuration and
+ * tends to be a more convenient approach than referencing the <code>Authenticator</code> and <code>Authorizer</code>
+ * instances seperately.
+ *
+ * <p><b>N.B.</b> Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
+ * {@link AnnotationsModularAuthorizer} instance to simplify configuration.  There is <strong>no default</strong>
+ * {@link #setAuthenticator Authenticator} created by this <code>SecurityManager</code> abstract implementation, as it is expected to be
+ * specified by Dependency Injection or by subclass implementations.</p>
  *
  * @since 0.2
  * @author Jeremy Haile
