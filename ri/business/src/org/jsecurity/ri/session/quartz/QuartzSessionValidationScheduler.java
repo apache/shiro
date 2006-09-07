@@ -130,7 +130,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                                                        sessionValidationInterval );
 
             JobDetail detail = new JobDetail( JOB_NAME, Scheduler.DEFAULT_GROUP, QuartzSessionValidationJob.class );
-            detail.getJobDataMap().put( "sessionManager", sessionManager );
+            detail.getJobDataMap().put( QuartzSessionValidationJob.SESSION_MANAGER_KEY, sessionManager );
 
             getScheduler().scheduleJob( detail, trigger );
             getScheduler().start();
