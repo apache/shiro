@@ -22,7 +22,10 @@
         </property>
     </bean>
 
-    <bean id="memoryRealm" class="org.jsecurity.ri.realm.memory.MemoryRealm">
+    <bean id="memoryRealm"
+          class="org.jsecurity.ri.realm.memory.MemoryRealm"
+          init-method="init"
+          destroy-method="destroy" >
         <property name="credentialMatcher">
             <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>

@@ -79,25 +79,25 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
      * Calls the abstract {@link #doDigest(byte[])} method to digest the provided password
      * and compares it with the stored password after encoding the passwords using hex
      * or base64 encodings.
-     * @param providedPasswordCharArray the unhashed password char array (char[]) provided by the user.
-     * @param storedPasswordCharArray the hashed password char array (char[]) stored in the system.
+     * @param providedPassword the unhashed password char array (char[]) provided by the user.
+     * @param storedPassword the hashed password char array (char[]) stored in the system.
      * @return true if the hashes match, false otherwise.
      */
-    public boolean doCredentialsMatch( Object providedPasswordCharArray,
-                                       Object storedPasswordCharArray ) {
+    public boolean doCredentialsMatch( Object providedPassword,
+                                       Object storedPassword ) {
 
-        char[] providedPassword = (char[])providedPasswordCharArray;
-        char[] storedPassword = (char[])storedPasswordCharArray;
+        char[] providedPasswordChars = castToCharArray( providedPassword );
+        char[] storedPasswordChars = castToCharArray( storedPassword );
 
-        byte[] digestedBytes = doDigest( charsToBytes( providedPassword ) );
+        byte[] digestedBytes = doDigest( charsToBytes( providedPasswordChars ) );
 
         if( isBase64Encoded() ) {
             byte[] encodedPasswordBase64 = Base64.encodeBase64( digestedBytes );
-            byte[] storedPasswordBytes = charsToBytes( storedPassword );
+            byte[] storedPasswordBytes = charsToBytes( storedPasswordChars );
             return Arrays.equals( encodedPasswordBase64, storedPasswordBytes );
         } else {
             char[] encodedPasswordHex = Hex.encodeHex( digestedBytes );
-            return Arrays.equals( encodedPasswordHex, storedPassword );
+            return Arrays.equals( encodedPasswordHex, storedPasswordChars );
         }
     }
 
@@ -124,5 +124,26 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
      */
     protected abstract byte[] doDigest( byte[] providedPassword );
 
+
+    /**
+     * Converts given credentials into a char[] if they are of type String or char[].
+     * @param credential the credential.
+     * @return the credential in char[] form.
+     */
+    private char[] castToCharArray(Object credential) {
+        char[] chars;
+
+        if( credential instanceof String ) {
+            chars = ((String)credential).toCharArray();
+
+        } else if( credential instanceof char[] ) {
+            chars = (char[])credential;
+
+        } else {
+            throw new IllegalArgumentException( "This credential matcher only supports credentials of type String or char[]." );
+        }
+
+        return chars;
+    }
 
 }

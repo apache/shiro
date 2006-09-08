@@ -31,8 +31,6 @@ import java.util.Arrays;
  * Simple implementation of the {@link CredentialMatcher} interface that
  * compares two plain text passwords.
  *
- * todo Make this class accept char[] or Strings.. or at least give a better error message than a ClassCastException
- *
  * @since 0.1
  * @author Jeremy Haile
  */
@@ -42,14 +40,37 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
     /**
      * Compares two plain text passwords.
      * 
-     * @param providedPasswordCharArray the user-provided password as a char array (char[])
-     * @param storedPasswordCharArray the password stored in the system as a char array (char[]).
+     * @param providedPassword the user-provided password as a char array (char[])
+     * @param storedPassword the password stored in the system as a char array (char[]).
      * @return true if the passwords match, false otherwise.
      */
-    public boolean doCredentialsMatch( Object providedPasswordCharArray,
-                                       Object storedPasswordCharArray ) {
-        char[] providedPassword = (char[])providedPasswordCharArray;
-        char[] storedPassword = (char[])storedPasswordCharArray;
-        return Arrays.equals( providedPassword, storedPassword );
+    public boolean doCredentialsMatch( Object providedPassword,
+                                       Object storedPassword ) {
+        char[] providedPasswordChars = castToCharArray(providedPassword);
+        char[] storedPasswordChars = castToCharArray(storedPassword);
+
+        return Arrays.equals( providedPasswordChars, storedPasswordChars );
+    }
+
+
+    /**
+     * Converts given credentials into a char[] if they are of type String or char[].
+     * @param credential the credential.
+     * @return the credential in char[] form.
+     */
+    private char[] castToCharArray(Object credential) {
+        char[] chars;
+
+        if( credential instanceof String ) {
+            chars = ((String)credential).toCharArray();
+
+        } else if( credential instanceof char[] ) {
+            chars = (char[])credential;
+
+        } else {
+            throw new IllegalArgumentException( "This credential matcher only supports credentials of type String or char[]." );
+        }
+
+        return chars;
     }
 }
