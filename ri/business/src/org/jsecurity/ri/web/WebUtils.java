@@ -26,9 +26,8 @@ package org.jsecurity.ri.web;
 
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.realm.Realm;
-import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.ri.util.ThreadUtils;
 import org.jsecurity.session.Session;
@@ -55,12 +54,6 @@ public abstract class WebUtils {
      */
     public static final String PRINCIPALS_SESSION_KEY =
         Principal.class.getName() + "_SESSION_KEY";
-
-    /**
-     * The key that is used to store the realm in the session.
-     */
-    public static final String REALM_NAME_SESSION_KEY =
-        Realm.class.getName() + "_SESSION_KEY";
 
     public static final String SESSION_ID_KEY =
         Session.class.getName() + "_ID_HTTP_SESSION_KEY";
@@ -113,11 +106,9 @@ public abstract class WebUtils {
             Session session = SecurityContext.current().getSession();
             if( session != null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
-                session.setAttribute( REALM_NAME_SESSION_KEY, ctx.getRealm().getName() );
             } else {
                 HttpSession httpSession = request.getSession();
                 httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
-                httpSession.setAttribute( REALM_NAME_SESSION_KEY, ctx.getRealm().getName() );
             }
         }
     }
@@ -137,31 +128,12 @@ public abstract class WebUtils {
     public static void bindAuthorizationContextToThread( HttpServletRequest request, RealmManager realmManager ) {
         List<Principal> principals = getPrincipals( request );
 
-        String realmName = getRealmName( request );
-        if( principals != null && realmName != null ) {
-            Realm realm = realmManager.getRealm( realmName );
-
-            AuthorizationContext ctx = buildAuthorizationContext( principals, realm );
+        if( principals != null ) {
+            AuthorizationContext ctx = buildAuthorizationContext( principals, realmManager);
             if( ctx != null ) {
                 bindToThread( ctx );
             }
         }
-    }
-
-
-    private static String getRealmName(HttpServletRequest request) {
-        String realmName = null;
-
-        Session session = SecurityContext.current().getSession();
-        if( session != null ) {
-            realmName = (String) session.getAttribute( REALM_NAME_SESSION_KEY );
-        } else {
-            HttpSession httpSession = request.getSession( false );
-            if( httpSession != null ) {
-                realmName =  (String) httpSession.getAttribute( REALM_NAME_SESSION_KEY );
-            }
-        }
-        return realmName;
     }
 
 
@@ -180,9 +152,9 @@ public abstract class WebUtils {
         return principals;
     }
 
-    private static AuthorizationContext buildAuthorizationContext(List<Principal> principals, Realm realm) {
+    private static AuthorizationContext buildAuthorizationContext(List<Principal> principals, RealmManager realmManager ) {
         if( principals != null && !principals.isEmpty() ) {
-            return new DelegatingAuthorizationContext( principals, realm );
+            return new DelegatingAuthorizationContext( principals, realmManager );
         } else {
             return null;
         }

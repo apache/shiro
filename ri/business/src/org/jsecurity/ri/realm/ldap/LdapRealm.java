@@ -177,7 +177,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
         principals.add( principal );
         principals.addAll( ldapDirectoryInfo.getPrincipals() );
 
-        return new SimpleAuthenticationInfo( principals, password, this );
+        return new SimpleAuthenticationInfo( principals, password );
     }
 
     /**

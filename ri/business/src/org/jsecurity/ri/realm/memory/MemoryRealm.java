@@ -154,8 +154,7 @@ public class MemoryRealm extends AbstractCachingRealm {
             for( AccountEntry entry : accounts ) {
                 if( entry.getUsername().equals( principal.getName() ) ) {
                     return new SimpleAuthenticationInfo( new UsernamePrincipal( principal.getName() ),
-                                                  entry.getPassword().toCharArray(),
-                                                  this );
+                                                  entry.getPassword().toCharArray() );
 
                 }
             }

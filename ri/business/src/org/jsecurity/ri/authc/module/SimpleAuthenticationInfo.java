@@ -26,7 +26,6 @@
 package org.jsecurity.ri.authc.module;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.realm.Realm;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -51,11 +50,15 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * The principals that apply to the user who has been authenticated.
+     */
     private List<Principal> principals;
 
+    /**
+     * Credentials that were used to authenticate the user.
+     */
     private Object credentials;
-
-    private Realm realm;
 
     /**
      * True if the user's account is locked, false otherwise.
@@ -80,31 +83,27 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
         this.principals = new ArrayList<Principal>();
     }
 
-    public SimpleAuthenticationInfo( Principal principal, Object credentials, Realm realm ) {
+    public SimpleAuthenticationInfo( Principal principal, Object credentials) {
         this();
         this.principals.add( principal );
         this.credentials = credentials;
-        this.realm = realm;
     }
 
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Realm realm) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials) {
         this.principals = principals;
         this.credentials = credentials;
-        this.realm = realm;
     }
 
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Realm realm, boolean accountLocked, boolean credentialsExpired) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
         this.principals = principals;
         this.credentials = credentials;
-        this.realm = realm;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
     }
 
-    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, Realm realm, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+    public SimpleAuthenticationInfo(List<Principal> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.principals = principals;
         this.credentials = credentials;
-        this.realm = realm;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
         this.concurrentLoginsAllowed = concurrentLoginsAllowed;
@@ -115,7 +114,11 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
     ============================================*/
 
     public Principal getPrincipal() {
-        return this.principals.get(0);
+        if( this.principals == null ) {
+            return null;
+        } else {
+            return this.principals.get(0);
+        }
     }
 
     public List<Principal> getPrincipals() {
@@ -136,16 +139,6 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
 
     public void setCredentials( Object credentials ) {
         this.credentials = credentials;
-    }
-
-
-    public Realm getRealm() {
-        return realm;
-    }
-
-
-    public void setRealm(Realm realm) {
-        this.realm = realm;
     }
 
 
@@ -187,4 +180,28 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo {
         return "Authentication information for user [" + getPrincipals() + "]";
     }
 
+
+    public void merge(AuthenticationInfo info) {
+        if( this.principals == null ) {
+            this.principals = new ArrayList<Principal>();
+        }
+        this.principals.addAll( info.getPrincipals() );
+
+        if( this.credentials == null ) {
+            setCredentials( info );
+        }
+
+        if( info.isAccountLocked() ) {
+            setAccountLocked( true );
+        }
+
+        if( !info.isConcurrentLoginsAllowed() ) {
+            setConcurrentLoginsAllowed( false );
+        }
+
+        if( info.isCredentialsExpired() ) {
+            setCredentialsExpired( true );
+        }
+
+    }
 }

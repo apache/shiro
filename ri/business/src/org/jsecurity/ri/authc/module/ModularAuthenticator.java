@@ -30,6 +30,7 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.ri.authc.AbstractAuthenticator;
+import org.jsecurity.ri.realm.RealmManager;
 
 import java.util.List;
 
@@ -69,7 +70,8 @@ public class ModularAuthenticator extends AbstractAuthenticator {
     }
 
 
-    public ModularAuthenticator(List<? extends AuthenticationModule> modules) {
+    public ModularAuthenticator(RealmManager realmManager, List<? extends AuthenticationModule> modules) {
+        setRealmManager( realmManager );
         this.modules = modules;
     }
 
@@ -88,14 +90,17 @@ public class ModularAuthenticator extends AbstractAuthenticator {
 
 
     /**
-     * Attempts to authenticate the given token by iterating over the list of
+     * <p>Attempts to authenticate the given token by iterating over the list of
      * {@link AuthenticationModule}s.  For each module, first the {@link AuthenticationModule#supports(Class)}
      * method will be called to determine if the module supports the type of token.  If a module does support
      * the token, its {@link AuthenticationModule#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
-     * method will be called.  If the module returns a non-null authorization context, the token will be
-     * considered authenticated and will be returned.  If the module returns a null context, the next
+     * method will be called.  If the module returns non-null authentication information, the token will be
+     * considered authenticated and the authentication info recorded.  If the module returns a null context, the next
      * module will be consulted.  If no modules support the token or all supported modules return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
+     *
+     * <p>After all modules have been consulted, the information from each module is aggregated into a single
+     * {@link AuthenticationInfo} object and returned.
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
      * user being authenticated.
@@ -105,12 +110,13 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      */
     public AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-        AuthenticationInfo info = null;
+        SimpleAuthenticationInfo aggregatedInfo = new SimpleAuthenticationInfo();
 
         if (logger.isDebugEnabled()) {
             logger.debug("Iterating through [" + modules.size() + "] authentication modules ");
         }
 
+        boolean authenticated = false;
         for( AuthenticationModule module : modules ) {
 
             if( module.supports( authenticationToken.getClass() ) ) {
@@ -120,17 +126,20 @@ public class ModularAuthenticator extends AbstractAuthenticator {
                         "using module of type [" + module.getClass() + "]");
                 }
 
-                info = module.getAuthenticationInfo( authenticationToken );
+                AuthenticationInfo moduleInfo = module.getAuthenticationInfo( authenticationToken );
 
                 // If non-null info is returned, then the module was able to authenticate the
                 // user - so return the context.
-                if( info != null ) {
+                if( moduleInfo != null ) {
 
                     if (logger.isDebugEnabled()) {
                         logger.debug("Account authenticated using module of type [" + module.getClass().getName() + "]");
                     }
 
-                    break;
+                    // Merge the module-returned data with the aggregate data
+                    aggregatedInfo.merge( moduleInfo );
+                    authenticated = true;
+
                 }
             } else {
                 if (logger.isDebugEnabled()) {
@@ -139,14 +148,13 @@ public class ModularAuthenticator extends AbstractAuthenticator {
             }
         }
 
-        // If info is still null, throw an exception - the user was not able to be authenticated
-        // by any configured modules.
-        if( info == null ) {
+        // If no module authenticated the user, throw an exception
+        if( !authenticated ) {
             throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
                 "could not be authenticated by any configured modules.  Check that the authenticator is configured " +
                 "with appropriate modules." );
         } else {
-            return info;
+            return aggregatedInfo;
         }
     }
 }

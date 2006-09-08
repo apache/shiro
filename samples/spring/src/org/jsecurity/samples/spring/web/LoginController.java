@@ -77,6 +77,9 @@ public class LoginController extends SimpleFormController {
         try {
             authenticator.authenticate( token );
         } catch (AuthenticationException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error authenticating.", e);
+            }
             errors.reject( "error.invalidLogin", "The username or password was not correct." );
         }
 
