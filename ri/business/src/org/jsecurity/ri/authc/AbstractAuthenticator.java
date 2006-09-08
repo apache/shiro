@@ -40,6 +40,7 @@ import org.jsecurity.ri.authc.event.AuthenticationEventSender;
 import org.jsecurity.ri.authc.event.SimpleAuthenticationEventFactory;
 import org.jsecurity.ri.authz.AuthorizationContextFactory;
 import org.jsecurity.ri.authz.support.DelegatingAuthorizationContextFactory;
+import org.jsecurity.ri.realm.RealmManager;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work of wrapping a
@@ -61,14 +62,9 @@ public abstract class AbstractAuthenticator implements Authenticator {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * Commons logger.
+     * Commons-logging logger
      */
-    protected Log log = LogFactory.getLog( getClass() );
-    /**
-     * Alias for the 'log' protected class attribute for subclass authors that may prefer one over
-     * the other.
-     */
-    protected Log logger = log;
+    protected final transient Log logger = LogFactory.getLog(getClass());
 
     /**
      * The factory used to wrap authorization context after authentication.
@@ -81,9 +77,21 @@ public abstract class AbstractAuthenticator implements Authenticator {
      */
     private AuthorizationContextBinder authzCtxBinder = new ThreadLocalAuthorizationContextBinder();
 
+    /**
+     * Factory used to create authentication events for publishing.
+     */
     private AuthenticationEventFactory authcEventFactory = new SimpleAuthenticationEventFactory();
 
+    /**
+     * Sender used to publish authentication events.  The default is null, which means the events
+     * are not published.
+     */
     private AuthenticationEventSender authcEventSender = null;
+
+    /**
+     * Used to initialize the default authorization context factory.
+     */
+    private RealmManager realmManager = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -128,13 +136,24 @@ public abstract class AbstractAuthenticator implements Authenticator {
         this.authcEventSender = authcEventSender;
     }
 
+
+    public void setRealmManager(RealmManager realmManager) {
+        this.realmManager = realmManager;
+    }
+
+
     /*-------------------------------------------
-     |               M E T H O D S               |
-     ============================================*/
+    |               M E T H O D S               |
+    ============================================*/
 
     public void init() {
         if( getAuthorizationContextFactory() == null ) {
-            setAuthorizationContextFactory( new DelegatingAuthorizationContextFactory() );
+            if( realmManager == null ) {
+                throw new IllegalStateException( "If an authorization context factory is not injected, a realm manager must be " +
+                    "provided so that the default " + DelegatingAuthorizationContextFactory.class.getName() + "] " +
+                    "factory can be initialized." );
+            }
+            setAuthorizationContextFactory( new DelegatingAuthorizationContextFactory( realmManager ) );
         }
     }
 
@@ -158,15 +177,15 @@ public abstract class AbstractAuthenticator implements Authenticator {
             if ( event != null ) {
                 send( event );
             } else {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "No AuthenticationEvent instance returned from " +
+                if ( logger.isDebugEnabled() ) {
+                    logger.debug( "No AuthenticationEvent instance returned from " +
                                "'createFailureEvent' method call.  No failed authentication " +
                                "event will be sent." );
                 }
             }
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No AuthenticationEventSender configured.  No failure event will " +
+            if ( logger.isTraceEnabled() ) {
+                logger.trace( "No AuthenticationEventSender configured.  No failure event will " +
                            "be sent" );
             }
         }
@@ -181,15 +200,15 @@ public abstract class AbstractAuthenticator implements Authenticator {
             if ( event != null ) {
                 send( event );
             } else {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "No AuthenticationEvent instance returned from " +
+                if ( logger.isDebugEnabled() ) {
+                    logger.debug( "No AuthenticationEvent instance returned from " +
                             "'createSuccessEvent' method call.  No successful authentication " +
                             "event will be sent." );
                 }
             }
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No AuthenticationEventSender configured.  No success event will " +
+            if ( logger.isTraceEnabled() ) {
+                logger.trace( "No AuthenticationEventSender configured.  No success event will " +
                            "be sent" );
             }
         }
@@ -204,13 +223,13 @@ public abstract class AbstractAuthenticator implements Authenticator {
             try {
                 sender.send( event );
             } catch ( Throwable t ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Unable to send AuthenticationEvent [" + event + "]", t );
+                if ( logger.isWarnEnabled() ) {
+                    logger.warn( "Unable to send AuthenticationEvent [" + event + "]", t );
                 }
             }
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will " +
+            if ( logger.isTraceEnabled() ) {
+                logger.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will " +
                         "not be sent." );
             }
         }
@@ -245,8 +264,8 @@ public abstract class AbstractAuthenticator implements Authenticator {
     public final AuthorizationContext authenticate( AuthenticationToken token )
             throws AuthenticationException {
 
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Authentication request received for token [" + token + "]" );
+        if ( logger.isTraceEnabled() ) {
+            logger.trace( "Authentication request received for token [" + token + "]" );
         }
 
         AuthenticationInfo info;
@@ -258,15 +277,15 @@ public abstract class AbstractAuthenticator implements Authenticator {
                     "the Authenticator is configured correctly." );
             }
         } catch ( AuthenticationException e ) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "Authentication failed for token submission [" + token + "]" );
+            if ( logger.isInfoEnabled() ) {
+                logger.info( "Authentication failed for token submission [" + token + "]" );
             }
             sendFailureEvent( token, e );
             throw e;
         }
 
-        if ( log.isInfoEnabled() ) {
-            log.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
+        if ( logger.isInfoEnabled() ) {
+            logger.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
         }
 
         AuthorizationContext authzCtx = createAuthorizationContext( info );

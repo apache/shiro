@@ -25,15 +25,14 @@
 
 package org.jsecurity.ri;
 
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.ri.authc.module.ModularAuthenticator;
 import org.jsecurity.ri.realm.RealmManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * <p>Implementation of the {@link SecurityManager} interface that is based around
@@ -42,6 +41,7 @@ import java.util.Map;
  * <p>If an authenticator is not configured, a {@link ModularAuthenticator} is created using
  * the configured realms as the authentication modules for the authenticator.  At least one
  * realm must be configured before {@link #init()} is called for this manager to function properly.</p>
+ *
  *
  * @since 0.2
  * @author Jeremy Haile
@@ -56,7 +56,7 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * A map from realm name toe realm for all realms managed by this manager.
+     * A map from realm name to realm for all realms managed by this manager.
      */
     private Map<String, Realm> realmMap;
 
@@ -114,7 +114,7 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
         }
 
         if( authenticator == null ) {
-            ModularAuthenticator modularAuthenticator = new ModularAuthenticator( getAllRealms() );
+            ModularAuthenticator modularAuthenticator = new ModularAuthenticator( this, getAllRealms() );
             modularAuthenticator.init();
             authenticator = modularAuthenticator;
         }
@@ -134,6 +134,94 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
             throw new IllegalArgumentException( "No realm found with name [" + realmName + "]" );
         } else {
             return realm;
+        }
+    }
+
+
+    public boolean hasRole(Principal subjectIdentifier, String roleIdentifier) {
+        boolean hasRole = false;
+        for( Realm realm : getAllRealms() ) {
+            if( realm.hasRole( subjectIdentifier, roleIdentifier ) ) {
+                hasRole = true;
+                break;
+            }
+        }
+        return hasRole;
+    }
+
+    public boolean[] hasRoles(Principal subjectIdentifier, List<String> roleIdentifiers) {
+        boolean[] hasRoles = new boolean[roleIdentifiers.size()];
+
+        for( Realm realm : getAllRealms() ) {
+            boolean realmHasRoles[] = realm.hasRoles( subjectIdentifier, roleIdentifiers );
+
+            for( int i = 0; i < realmHasRoles.length; i++ ) {
+                if( realmHasRoles[i] ) {
+                    hasRoles[i] = true;
+                }
+            }
+        }
+        return hasRoles;
+    }
+
+
+    public boolean hasAllRoles(Principal subjectIdentifier, Collection<String> roleIdentifiers) {
+        for( String roleIdentifier : roleIdentifiers ) {
+            if( !hasRole( subjectIdentifier, roleIdentifier ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public boolean isPermitted(Principal subjectIdentifier, Permission permission) {
+        for( Realm realm : getAllRealms() ) {
+            if( realm.isPermitted( subjectIdentifier,  permission ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean[] isPermitted(Principal subjectIdentifier, List<Permission> permissions) {
+        boolean[] isPermitted = new boolean[permissions.size()];
+        for( Realm realm : getAllRealms() ) {
+            boolean realmIsPermitted[] = realm.isPermitted( subjectIdentifier, permissions );
+
+            for( int i = 0; i < realmIsPermitted.length; i++ ) {
+                if( realmIsPermitted[i] ) {
+                    isPermitted[i] = true;
+                }
+            }
+        }
+        return isPermitted;
+    }
+
+
+    public boolean isPermittedAll(Principal subjectIdentifier, Collection<Permission> permissions) {
+        for( Permission permission : permissions ) {
+            if( !isPermitted( subjectIdentifier, permission ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public void checkPermission(Principal subjectIdentifier, Permission permission) throws AuthorizationException {
+        if( !isPermitted( subjectIdentifier, permission ) ) {
+            throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
+        }
+    }
+
+
+    public void checkPermissions(Principal subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
+        if( permissions != null ) {
+            for( Permission permission : permissions ) {
+                checkPermission( subjectIdentifier, permission );
+            }
         }
     }
 

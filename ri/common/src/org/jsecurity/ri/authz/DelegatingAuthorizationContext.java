@@ -28,6 +28,7 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.ri.realm.RealmManager;
 
 import java.security.Permission;
 import java.security.Principal;
@@ -63,25 +64,21 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
 
     protected List<Principal> principals;
 
-    protected Realm realm;
+    protected RealmManager realmManager;
 
     public DelegatingAuthorizationContext() {
         principals = new ArrayList<Principal>();
     }
 
-    public DelegatingAuthorizationContext( Principal subjectIdentifier, Realm realm ) {
+    public DelegatingAuthorizationContext( Principal subjectIdentifier, RealmManager realmManager ) {
         this.principals = new ArrayList<Principal>(1);
         this.principals.add( subjectIdentifier );
-        this.realm = realm;
+        this.realmManager = realmManager;
     }
 
-    public DelegatingAuthorizationContext(List<Principal> principals, Realm realm) {
+    public DelegatingAuthorizationContext(List<Principal> principals, RealmManager realmManager) {
         this.principals = principals;
-        this.realm = realm;
-    }
-
-    public Realm getRealm() {
-        return realm;
+        this.realmManager = realmManager;
     }
 
     /**
@@ -130,36 +127,36 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     }
 
     public boolean hasRole( String roleIdentifier ) {
-        return realm.hasRole( getPrincipal(), roleIdentifier );
+        return realmManager.hasRole( getPrincipal(), roleIdentifier );
     }
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
-        return realm.hasRoles( getPrincipal(), roleIdentifiers );
+        return realmManager.hasRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
-        return realm.hasAllRoles( getPrincipal(), roleIdentifiers );
+        return realmManager.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean implies( Permission permission ) {
-        return realm.isPermitted( getPrincipal(), permission );
+        return realmManager.isPermitted( getPrincipal(), permission );
     }
 
     public boolean[] implies( List<Permission> permissions ) {
-        return realm.isPermitted( getPrincipal(), permissions );
+        return realmManager.isPermitted( getPrincipal(), permissions );
     }
 
     public boolean impliesAll( Collection<Permission> permissions ) {
-        return realm.isPermittedAll( getPrincipal(), permissions );
+        return realmManager.isPermittedAll( getPrincipal(), permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {
-        realm.checkPermission( getPrincipal(), permission );
+        realmManager.checkPermission( getPrincipal(), permission );
     }
 
     public void checkPermissions( Collection<Permission> permissions )
         throws AuthorizationException {
-        realm.checkPermissions( getPrincipal(), permissions );
+        realmManager.checkPermissions( getPrincipal(), permissions );
     }
 
 }

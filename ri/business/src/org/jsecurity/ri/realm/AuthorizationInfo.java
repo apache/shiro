@@ -184,8 +184,7 @@ public class AuthorizationInfo implements Serializable {
      */
     public void checkPermission(Permission permission) throws AuthorizationException {
         if( !implies( permission ) ) {
-            throw new AuthorizationException( "User does " +
-                                              "not have permission [" + permission.toString() + "]" );
+            throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
         }
     }
 
@@ -198,8 +197,7 @@ public class AuthorizationInfo implements Serializable {
         if( permissions != null ) {
             for( Permission permission : permissions ) {
                 if( !implies( permission ) ) {
-                   throw new AuthorizationException( "User does " +
-                                                     "not have permission [" + permission.toString() + "]" );
+                   throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
                 }
             }
         }

@@ -27,6 +27,7 @@ package org.jsecurity.ri.authz.support;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.ri.realm.RealmManager;
 
 /**
  * AuthorizationContextFactory implementation that creates
@@ -34,13 +35,17 @@ import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class DelegatingAuthorizationContextFactory extends AbstractAuthorizationContextFactory {
 
+    private RealmManager realmManager;
 
-    public DelegatingAuthorizationContextFactory(){}
+    public DelegatingAuthorizationContextFactory( RealmManager realmManager ){
+        this.realmManager = realmManager;
+    }
 
     protected AuthorizationContext onCreateAuthorizationContext( AuthenticationInfo info ) {
-        return new DelegatingAuthorizationContext( info.getPrincipals(), info.getRealm() );
+        return new DelegatingAuthorizationContext( info.getPrincipals(), realmManager );
     }
 }
