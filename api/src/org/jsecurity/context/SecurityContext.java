@@ -34,9 +34,10 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * <p>The <code>SecurityContext</code> is the programmatic entry point into the JSecurity API. This
- * class provides access to the current context of the calling code, such as its
- * {@link org.jsecurity.session.Session} and {@link org.jsecurity.authz.AuthorizationContext}</p>
+ * <p>The <code>SecurityContext</code> is an application programmer's entry point into the JSecurity API. This
+ * class provides access to the security context of the current Subject (a.k.a. 'user' or 'account'), providing
+ * support for authentication, authorization (access control), and {@link org.jsecurity.session.Session session}
+ * management.
  *
  * @since 0.1
 

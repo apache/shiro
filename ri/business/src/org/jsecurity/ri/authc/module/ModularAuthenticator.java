@@ -37,10 +37,12 @@ import java.util.List;
 /**
  * A <tt>ModularAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
  * that delgates authentication duties to a pluggable collection
- * {@link AuthenticationModule AuthenticationModule}s.
+ * {@link AuthenticationModule AuthenticationModule}s.  This in essense enables
+ * PAM (Pluggable Authentication Module) behavior in JSecurity.
  *
  * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
- * <tt>AuthenticationModule</tt>s as you see fit.
+ * <tt>AuthenticationModule</tt>s as you see fit.  Common modules are those based on accessing
+ * LDAP, relational databases, file systems, etc.
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -87,12 +89,53 @@ public class ModularAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+    /**
+     * Provided for subclass overriding behavior if necessary.
+     * 
+     * <p>Default implementation only returns <tt>new SimpleAuthenticationInfo();</tt>.
+     *
+     * <p>If this method is overridden to _not_ return an instance of <tt>SimpleAuthenticationInfo</tt>,
+     * then the {@link #merge} method will need to be overridden as well.  Please see that method's JavaDoc
+     * for more info.
+     *
+     * @param token the authentication token submitted during the authentication process which may be useful
+     * to subclasses in constructing the returned <tt>AuthenticationInfo</tt> instance.
+     * @return an <tt>AuthenticationInfo</tt> instance that will be used to aggregate all
+     * <tt>AuthenticationInfo</tt> objects returned by all configured <tt>AuthenticationModule</tt>s.
+     */
+    protected AuthenticationInfo createAggregatedAuthenticationInfo( AuthenticationToken token ) {
+        return new SimpleAuthenticationInfo();
+    }
+
+    /**
+     * Merges the <tt>AuthenticationInfo</tt> returned from a module into the aggregated
+     * <tt>AuthenticationInfo</tt> that summarizes all modules.
+     *
+     * <p>This method is primarily provided as a template method if subclasses wish to override it for custom
+     * merging behavior.
+     *
+     * <p>The default implementation
+     * only checks to see if the <tt>aggregatedInfo</tt> parameter is an <tt>instanceof</tt>
+     * {@link SimpleAuthenticationInfo}, and if so, calls
+     * <tt>aggregatedInfo.{@link SimpleAuthenticationInfo#merge merge( moduleInfo )}</tt>, otherwise
+     * nothing occurs.
+     *
+     * @param aggregatedInfo the aggregated info from all authentication modules
+     * @param moduleInfo the info provided by a single authentication module, to be joined with the aggregated info
+     */
+    protected void merge(AuthenticationInfo aggregatedInfo, AuthenticationInfo moduleInfo) {
+        if ( aggregatedInfo instanceof SimpleAuthenticationInfo ) {
+            ((SimpleAuthenticationInfo)aggregatedInfo).merge( moduleInfo );
+        }
+    }
 
 
     /**
-     * <p>Attempts to authenticate the given token by iterating over the list of
+     * <p>Attempts to authenticate the given token by iterating over the internal collection of
      * {@link AuthenticationModule}s.  For each module, first the {@link AuthenticationModule#supports(Class)}
-     * method will be called to determine if the module supports the type of token.  If a module does support
+     * method will be called to determine if the module supports the <tt>authenticationToken</tt> method argument.
+     *
+     * If a module does support
      * the token, its {@link AuthenticationModule#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
      * method will be called.  If the module returns non-null authentication information, the token will be
      * considered authenticated and the authentication info recorded.  If the module returns a null context, the next
@@ -110,7 +153,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      */
     public AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-        SimpleAuthenticationInfo aggregatedInfo = new SimpleAuthenticationInfo();
+        AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( authenticationToken );
 
         if (logger.isDebugEnabled()) {
             logger.debug("Iterating through [" + modules.size() + "] authentication modules ");
@@ -137,7 +180,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
                     }
 
                     // Merge the module-returned data with the aggregate data
-                    aggregatedInfo.merge( moduleInfo );
+                    merge( aggregatedInfo, moduleInfo );
                     authenticated = true;
 
                 }
