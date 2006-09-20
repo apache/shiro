@@ -23,7 +23,8 @@
     <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
 
     <path id="compile.path">
-        <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>        
+        <pathelement location="${root.dist.dir}/${project.name}-api.jar"/>
+        <pathelement location="${root.dist.dir}/${project.name}-ri-common.jar"/>
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
 

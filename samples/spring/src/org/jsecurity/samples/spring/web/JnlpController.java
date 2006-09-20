@@ -1,6 +1,6 @@
 package org.jsecurity.samples.spring.web;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,7 +43,7 @@ public class JnlpController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        Session session = SecurityContext.current().getSession();
+        Session session = (new ThreadLocalSecurityContext()).getSession();
         Assert.notNull( session, "Expected a non-null JSecurity session." );
 
         StringBuilder sb = new StringBuilder();

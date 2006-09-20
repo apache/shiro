@@ -24,8 +24,8 @@
  */
 package org.jsecurity.samples.spring.web;
 
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -52,6 +52,7 @@ public class IndexController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private SecurityContext securityContext = new ThreadLocalSecurityContext();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -68,28 +69,26 @@ public class IndexController extends SimpleFormController {
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        Session session = SecurityContext.current().getSession();
+        Session session = securityContext.getSession();
         command.setValue( (String) session.getAttribute( "value" ) );
         return command;
     }
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        AuthorizationContext context = SecurityContext.current().getAuthorizationContext();
-
-        boolean hasRole1 = context.hasRole( "role1" );
-        boolean hasRole2 = context.hasRole( "role2" );
+        boolean hasRole1 = securityContext.hasRole( "role1" );
+        boolean hasRole2 = securityContext.hasRole( "role2" );
 
         Map<String,Object> refData = new HashMap<String,Object>();
         refData.put( "hasRole1", hasRole1 );
         refData.put( "hasRole2", hasRole2 );
-        refData.put( "sessionId", SecurityContext.current().getSession().getSessionId() );
+        refData.put( "sessionId", securityContext.getSession().getSessionId() );
         return refData;
     }
 
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
         SessionValueCommand command = (SessionValueCommand) obj;
 
-        Session session = SecurityContext.current().getSession();
+        Session session = securityContext.getSession();
         session.setAttribute( "value", command.getValue() );
 
         return showForm( request, response, errors );

@@ -27,7 +27,7 @@
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
     <property name="major.version" value="0"/>
-    <property name="minor.version" value="1"/>
+    <property name="minor.version" value="2"/>
     <property name="patch.version" value="0"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
 

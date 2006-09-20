@@ -2,7 +2,7 @@ package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 
 /**
@@ -35,7 +35,7 @@ public class DefaultSampleManager implements SampleManager {
     ============================================*/
 
     public String getValue() {
-        Session session = SecurityContext.current().getSession();
+        Session session = (new ThreadLocalSecurityContext()).getSession();
         if( session != null ) {
             return (String) session.getAttribute( "value" );
         } else {
@@ -44,7 +44,7 @@ public class DefaultSampleManager implements SampleManager {
     }
 
     public void setValue(String newValue) {
-        Session session = SecurityContext.current().getSession();
+        Session session = (new ThreadLocalSecurityContext()).getSession();
         if( session != null ) {
             session.setAttribute( "value", newValue );
         }

@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -40,10 +41,12 @@ public abstract class SecureTag extends TagSupport {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
+    private SecurityContext securityContext = new ThreadLocalSecurityContext();
+
     public SecureTag(){}
 
     protected AuthorizationContext getAuthorizationContext() {
-        return SecurityContext.current().getAuthorizationContext();
+        return securityContext;
     }
 
     protected void verifyAttributes() throws JspException {

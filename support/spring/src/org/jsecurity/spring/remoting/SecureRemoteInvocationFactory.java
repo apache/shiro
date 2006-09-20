@@ -1,7 +1,7 @@
 package org.jsecurity.spring.remoting;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
@@ -30,7 +30,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @return a remote invocation object containing the current session ID.
      */
     public RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
-        Session session = SecurityContext.current().getSession();
+        Session session = (new ThreadLocalSecurityContext()).getSession();
 
         Serializable sessionId;
         if( session != null ) {

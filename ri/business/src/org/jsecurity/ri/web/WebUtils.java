@@ -30,6 +30,7 @@ import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
 import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.ri.util.ThreadUtils;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,7 +104,7 @@ public abstract class WebUtils {
 
     public static void bindToSession( AuthorizationContext ctx, HttpServletRequest request ) {
         if ( ctx != null ) {
-            Session session = SecurityContext.current().getSession();
+            Session session = (new ThreadLocalSecurityContext()).getSession();
             if( session != null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
             } else {
@@ -114,7 +115,7 @@ public abstract class WebUtils {
     }
 
     public static void unbindAuthorizationContextFromSession( HttpServletRequest request ) {
-        Session session = SecurityContext.current().getSession();
+        Session session = (new ThreadLocalSecurityContext()).getSession();
         if( session != null ) {
             session.removeAttribute( PRINCIPALS_SESSION_KEY );
         } else {
@@ -140,7 +141,7 @@ public abstract class WebUtils {
     private static List<Principal> getPrincipals(HttpServletRequest request) {
         List<Principal> principals = null;
 
-        Session session = SecurityContext.current().getSession();
+        Session session = (new ThreadLocalSecurityContext()).getSession();
         if( session != null ) {
             principals = (List<Principal>) session.getAttribute( PRINCIPALS_SESSION_KEY );
         } else {
