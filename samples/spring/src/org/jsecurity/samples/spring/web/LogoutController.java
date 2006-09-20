@@ -25,7 +25,7 @@
 
 package org.jsecurity.samples.spring.web;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -63,7 +63,7 @@ public class LogoutController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-        SecurityContext.current().invalidate();
+       (new ThreadLocalSecurityContext()).invalidate();
 
         return new ModelAndView( "redirect:login" );
     }

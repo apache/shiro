@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -166,7 +167,7 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        AuthorizationContext authContext = SecurityContext.current().getAuthorizationContext();
+        AuthorizationContext authContext = new ThreadLocalSecurityContext();
 
         String requestedPath = httpRequest.getRequestURI();
 

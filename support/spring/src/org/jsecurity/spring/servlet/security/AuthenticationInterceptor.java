@@ -26,9 +26,11 @@ package org.jsecurity.spring.servlet.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 import org.jsecurity.ri.web.WebUtils;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.view.RedirectView;
@@ -36,6 +38,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Simple interceptor that verifies a user is authenticated (logged-in) before allowing a
@@ -43,12 +47,11 @@ import javax.servlet.http.HttpSession;
  *
  * <p>If the user is not authenticated, they will be redirected to the login page located
  * at the URL {@link #getLoginURL() getLoginURL()}.  Just prior to being redirected, the
- * page URL they attempted to view is first saved in the <tt>HttpSession</tt> under the
- * key {@link WebUtils#ATTEMPTED_PAGE_KEY}.
+ * page URL they attempted to view is first saved in a
+ * {@link #setAttemptedPageStorageScheme configurable location} for lookup later.
  *
- * <p>Upon a successful login, the login controller may
- * use this session key to foward the user to the page they were attempting to view prior to
- * logging in, a nice usability feature.
+ * <p>Upon a successful login, the login controller may look in this location for the attempted page url
+ * and then forward the user to that attempted page - a nice usability feature in most systems.
  *
  * <p>The default redirect implementation is accomplished via a
  * Spring {@link RedirectView RedirectView}, {@link RedirectView#render rendered} with
@@ -66,6 +69,10 @@ import javax.servlet.http.HttpSession;
 public class AuthenticationInterceptor extends HandlerInterceptorAdapter
     implements InitializingBean {
 
+    public static final String ATTEMPTED_PAGE_REQUEST_PARAM = "requestParameter";
+    public static final String ATTEMPTED_PAGE_JSECURITY_SESSION = "jsecuritySession";
+    public static final String ATTEMPTED_PAGE_HTTP_SESSION = "httpSession";
+
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     private String loginURL = null;
@@ -75,6 +82,12 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
 	private boolean http10Compatible = true;
 
 	private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
+
+    private String attemptedPageStorageScheme = ATTEMPTED_PAGE_REQUEST_PARAM;
+
+    private String attemptedPageKeyName = WebUtils.ATTEMPTED_PAGE_KEY;
+
+    private SecurityContext securityContext = new ThreadLocalSecurityContext();
 
     public AuthenticationInterceptor(){}
 
@@ -122,28 +135,127 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
 	}
 
 
+    public String getAttemptedPageStorageScheme() {
+        return attemptedPageStorageScheme;
+    }
+
+    public void setAttemptedPageStorageScheme(String attemptedPageStorageScheme) {
+        this.attemptedPageStorageScheme = attemptedPageStorageScheme;
+    }
+
+
+    public String getAttemptedPageKeyName() {
+        return attemptedPageKeyName;
+    }
+
+    public void setAttemptedPageKeyName(String attemptedPageKeyName) {
+        this.attemptedPageKeyName = attemptedPageKeyName;
+    }
+
     public void afterPropertiesSet() throws Exception {
         if ( getLoginURL() == null ) {
             String msg = "loginURL property must be set";
             throw new IllegalArgumentException( msg );
         }
+        if ( attemptedPageStorageScheme == null ) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "No 'attemptedPageStorageScheme' attribute set - the user's attempted page will not " +
+                        "be available after the redirect to the login page." );
+            }
+        } else {
+            if ( !attemptedPageStorageScheme.equals( ATTEMPTED_PAGE_JSECURITY_SESSION ) ||
+                 !attemptedPageStorageScheme.equals( ATTEMPTED_PAGE_HTTP_SESSION ) ||
+                 !attemptedPageStorageScheme.equals( ATTEMPTED_PAGE_REQUEST_PARAM ) ) {
+                String msg = "the attemptedPageStorageScheme attribute must be set to one of the " +
+                        "three constants defined in the " + getClass().getName() + " class.";
+                throw new IllegalArgumentException( msg );
+            }
+        }
+    }
+
+    protected RedirectView createRedirectView( HttpServletRequest request, HttpServletResponse response ) {
+        RedirectView redirect = new RedirectView( getLoginURL(), this.contextRelative, this.http10Compatible );
+        redirect.setEncodingScheme( this.encodingScheme );
+        return redirect;
+    }
+
+    protected Map createRequestParamMap( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+        HashMap<String,String> redirectMap = new HashMap<String,String>( 1 );
+        redirectMap.put( getAttemptedPageKeyName(), attemptedPage );
+        return redirectMap;
+    }
+
+    protected Map storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+        boolean boundToSession = false;
+        try {
+            Session session = securityContext.getSession();
+            if ( session != null ) {
+                session.setAttribute( getAttemptedPageKeyName(), attemptedPage );
+                boundToSession = true;
+            } else {
+                if ( log.isWarnEnabled() ) {
+                    log.warn( "No JSecurity Session found bound to the current thread.  Attempted page cannot be " +
+                    "set on the Session." );
+                }
+            }
+        } catch (InvalidSessionException e) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Encountered an invalid Session while attempting to set the " +
+                        "attempted page for authentication redirect.", e );
+            }
+        }
+
+        if ( !boundToSession ) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Unable to set attempted page value on Session.  Defaulting to request parameter scheme." );
+            }
+            return createRequestParamMap( request, response, attemptedPage );
+        } else {
+            return null;
+        }
+    }
+
+    protected Map storeInHttpSession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute( getAttemptedPageKeyName(), attemptedPage );
+        return null;
+    }
+
+    protected Map setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+        String scheme = getAttemptedPageStorageScheme();
+        if ( scheme == null ) {
+            return null; //no attempted page to forward
+        }
+
+        if ( scheme.equals( ATTEMPTED_PAGE_REQUEST_PARAM ) ) {
+            return createRequestParamMap( request, response, attemptedPage );
+        } else if ( scheme.equals( ATTEMPTED_PAGE_JSECURITY_SESSION) ) {
+            return storeInJSecuritySession( request, response, attemptedPage );
+        } else if ( scheme.equals( ATTEMPTED_PAGE_HTTP_SESSION ) ) {
+            return storeInHttpSession( request, response, attemptedPage );
+        } else {
+            String msg = "getAttemptedPageStorageScheme() did not return a valid constant " +
+                    "defined in the " + getClass().getName() + " class.";
+            throw new IllegalStateException( msg );
+        }
+    }
+
+    protected String getAttemptedPage( HttpServletRequest request, HttpServletResponse response ) {
+        StringBuffer attemptedPage = request.getRequestURL();
+        String queryString = request.getQueryString();
+        if ( queryString != null ) {
+            attemptedPage.append( "?" );
+            attemptedPage.append( queryString );
+        }
+        return attemptedPage.toString();
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        AuthorizationContext authzCtx = SecurityContext.current().getAuthorizationContext();
+        if ( !securityContext.isAuthenticated() ) {
 
-        if( authzCtx == null ) {
-            StringBuffer attemptedPage = request.getRequestURL();
-            String queryString = request.getQueryString();
-            if ( queryString != null ) {
-                attemptedPage.append( "?" );
-                attemptedPage.append( queryString );
-            }
-
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute( WebUtils.ATTEMPTED_PAGE_KEY, attemptedPage.toString() );
+            String attemptedPage = getAttemptedPage( request, response );
 
             if ( log.isDebugEnabled() ) {
                 log.debug( "User is not allowed to access page [" + attemptedPage + "] without " +
@@ -151,10 +263,12 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
                            getLoginURL() + "]");
             }
 
-            RedirectView redirect =
-                new RedirectView( getLoginURL(), this.contextRelative, this.http10Compatible );
-            redirect.setEncodingScheme( this.encodingScheme );
-            redirect.render( null, request, response );
+            RedirectView redirect = createRedirectView( request, response );
+
+            Map redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
+
+            redirect.render( redirectModel, request, response );
+            
             return false;
         } else {
             return true;

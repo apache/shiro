@@ -7,6 +7,7 @@ import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -26,10 +27,30 @@ public abstract class AbstractAuthorizationInterceptor {
 
     private Authorizer authorizer;
 
+    private SecurityContext securityContext = new ThreadLocalSecurityContext();
+
     public AbstractAuthorizationInterceptor(){}
 
     public void setAuthorizer( Authorizer authorizer ) {
         this.authorizer = authorizer;
+    }
+
+    /**
+     * Sets the SecurityContext that will be used when performing an authorization check.
+     *
+     * <p>The default instance internally is an instance of {@link ThreadLocalSecurityContext}, 
+     * which should be used in all server environments and not overridden (unless you really know
+     * what you're doing).
+     *
+     * <p>This method is primarily presented as a
+     * convenient overriding mechanism to allow explicitly setting the <tt>SecurityContext</tt> in
+     * standalone application environments, such as Swing or command-line applications.
+     *
+     * @param securityContext the SecurityContext to use when this interceptor performs an
+     * authorization check.
+     */
+    public void setSecurityContext( SecurityContext securityContext ) {
+        this.securityContext = securityContext;
     }
 
     public void init() throws Exception {
@@ -41,7 +62,7 @@ public abstract class AbstractAuthorizationInterceptor {
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
-        AuthorizationContext authzCtx = SecurityContext.current().getAuthorizationContext();
+        AuthorizationContext authzCtx = this.securityContext;
 
         if ( authzCtx != null ) {
             AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
