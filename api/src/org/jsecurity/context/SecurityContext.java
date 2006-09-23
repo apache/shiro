@@ -30,10 +30,49 @@ import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.session.Session;
 
 /**
- * <p>The <code>SecurityContext</code> is an application programmer's entry point into the JSecurity API. This
- * interface provides access to the security context of the current Subject (a.k.a. 'user' or 'account'), providing
- * support for authentication, authorization (access control), and {@link org.jsecurity.session.Session session}
- * management.
+ * <p>The <code>SecurityContext</code> is the application programmer's entry point into the
+ * JSecurity API.  It is a component that aggregates authentication (log-in), authorization
+ * (access control), and {@link org.jsecurity.session.Session session} management for a single
+ * 'user'.  The <tt>SecurityContext</tt> should be the most frequently used
+ * JSecurity component when programming - most other classes and interfaces exist to support the
+ * <tt>SecurityContext</tt> or are provided for application configuration.
+ *
+ * <p>The definition of a 'user' is defined by your application - it is most usually a human being
+ * that uses the application, but can just as well be a 3rd party application making remote calls,
+ * a daemon process, or any other subject that interacts with the application.
+ *
+ * <p>Note that this interface extends the {@link AuthorizationContext} interface.  Because a
+ * <tt>SecurityContext</tt> exists per user, regardless if that user is logged in or not, these
+ * inherited methods don't mean much if the user hasn't logged in.  This is because a system
+ * can only determine authorization behavior (access control decisions) once the user's identity
+ * has been validated (i.e. they have logged in).
+ *
+ * <p>So, most implementations of <tt>SecurityContext</tt> will always return
+ * <tt>null</tt> or <tt>false</tt> or throw exceptions (dependong on implementation)
+ * for the corresponding  <tt>AuthorizationContext</tt> methods until after the user is
+ * authenticated.  Therefore, it is not enough to call an <tt>AuthorizationContext</tt> method to
+ * determine if the user has logged in or not.  For that purpose, the
+ * {@link #isAuthenticated()} method is provided to accurately determine this information.
+ *
+ * <p><b>Implementation Notes</b>: Also note that this interface extends the {@link Authenticator}
+ * interface for convenience purposes as well.  But because there is typically a single
+ * <tt>Authenticator</tt> per application (although this is really up to the application
+ * configuration and not a requirement), the <tt>SecurityContext</tt> typically acts as a proxy to
+ * the application's 'real' <tt>Authenticator</tt>.  This allows a programmer to do things like
+ * this:
+ *
+ * <pre><code>
+ * //get security context from framework or implementation-specifc manner:
+ * SecurityContext secCtx = getSecurityContext();
+ * //login:
+ * UsernamePasswordToken token = new UsernamePasswordToken( aUsername, aPassword );
+ * secCtx.authenticate( token );
+ * //no exceptions thrown, user is logged in - check if they can do something special:
+ * if ( secCtx.implies( new SoupPermission( "Chicken Noodle", "placeOrder" ) ) {
+ *     //dispense delicious goodness
+ * } else {
+ *     alert( "No soup for you!" );
+ * }</pre></code>
  *
  * @since 0.1
 
@@ -42,36 +81,26 @@ import org.jsecurity.session.Session;
  */
 public interface SecurityContext extends Authenticator, AuthorizationContext {
 
+    /**
+     * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
+     * logged-in to the system, <tt>false</tt> otherwise.
+     * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
+     * logged-in to the system, <tt>false</tt> otherwise.
+     */
     public abstract boolean isAuthenticated();
 
     /**
-     * Returns the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
-     * if there is no session associated with the current execution.
+     * Returns the user's application <tt>Session</tt>, or <tt>null</tt> if there is no
+     * <tt>Session</tt> associated with the user..
      *
-     * <p>The &quot;currently accessible&quot; Session is retrieved in an
-     * implementation-specific manner.
-     *
-     * <p>For example, in a multithreaded server application, such as in a J2EE application
-     * server or Servlet container, a <tt>Session</tt> might be bound to the currently-executing
-     * server thread via a {@link ThreadLocal ThreadLocal}.  A web application may access the
-     * JSecurity Session via a handle stored in a {@link javax.servlet.http.Cookie Cookie}.  A
-     * standalone Swing application may access the <tt>Session</tt> via static memory.
-     *
-     * <p>These scenarios are just examples based on how a JSecurity implementation might accomplish
-     * these things depending on an application's deployment environment.
-     *
-     * @return the <tt>Session</tt> currently accessible by the application, or <tt>null</tt>
-     * if there is no session associated with the current execution.
+     * @return the user's application <tt>Session</tt>, or <tt>null</tt>
+     * if there is no session associated with the user.
      */
     public abstract Session getSession();
 
     /**
-     * Invalidates any JSecurity entities (such as a {@link Session Session} and a
-     * {@link AuthorizationContext AuthorizationContext}) associated with the current execution.
-     *
-     * The entities for &quot;current execution&quot; are obtained in an implementation-specific
-     * manner.  Please see the {@link #getSession() getSession() JavaDoc} for an explanation of
-     * how this information is obtained.
+     * Invalidates and removes any entities (such as a {@link Session Session} and authorization
+     * context associated with the user represented by this <tt>SecurityContext</tt>.
      *
      * @see #getSession
      */
