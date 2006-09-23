@@ -50,7 +50,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         if ( authc != null ) {
             AuthorizationContext authzCtx = authc.authenticate( authenticationToken );
             ThreadContext.put( ThreadContext.AUTHORIZATION_CONTEXT_KEY, authzCtx );
-            return authzCtx;
+            return this;
         } else {
             String msg = "underlying Authenticator instance is not set.  The " +
                     getClass().getName() + " class only acts as a delegate to an underlying " +
