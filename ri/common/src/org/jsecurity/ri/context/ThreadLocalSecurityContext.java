@@ -43,6 +43,10 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         this.authenticator = authenticator;
     }
 
+    public static SecurityContext current() {
+        return (SecurityContext)ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );    
+    }
+
     public AuthorizationContext authenticate( AuthenticationToken authenticationToken )
             throws AuthenticationException {
         
