@@ -24,18 +24,20 @@
  */
 package org.jsecurity.ri.authz;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.ri.realm.RealmManager;
+import org.jsecurity.ri.util.ThreadContext;
+import org.jsecurity.session.Session;
 
 import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
 
 /**
- * Simple implementation of the <tt>AuthorizationContext</tt> interface that delegates all
+ * Simple implementation of the <tt>SecurityContext</tt> interface that delegates all
  * method calls to an underlying {@link Realm Realm} instance for security checks.  It is
  * essentially a <tt>Realm</tt> proxy.
  *
@@ -60,23 +62,23 @@ import java.util.*;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class DelegatingAuthorizationContext implements AuthorizationContext {
+public class DelegatingSecurityContext implements SecurityContext {
 
     protected List<Principal> principals;
 
     protected RealmManager realmManager;
 
-    public DelegatingAuthorizationContext() {
+    public DelegatingSecurityContext() {
         principals = new ArrayList<Principal>();
     }
 
-    public DelegatingAuthorizationContext( Principal subjectIdentifier, RealmManager realmManager ) {
+    public DelegatingSecurityContext( Principal subjectIdentifier, RealmManager realmManager ) {
         this.principals = new ArrayList<Principal>(1);
         this.principals.add( subjectIdentifier );
         this.realmManager = realmManager;
     }
 
-    public DelegatingAuthorizationContext(List<Principal> principals, RealmManager realmManager) {
+    public DelegatingSecurityContext(List<Principal> principals, RealmManager realmManager) {
         this.principals = principals;
         this.realmManager = realmManager;
     }
@@ -84,7 +86,7 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     /**
      * If multiple principals are defined, this method will return the first
      * principal in the list of principals.
-     * @see org.jsecurity.authz.AuthorizationContext#getPrincipal()
+     * @see org.jsecurity.context.SecurityContext#getPrincipal()
      */
     public Principal getPrincipal() {
         if( principals.isEmpty() ) {
@@ -94,14 +96,14 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     }
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipals()
+     * @see org.jsecurity.context.SecurityContext#getAllPrincipals()
      */
     public List<Principal> getAllPrincipals() {
         return principals;
     }
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#getPrincipalByType(Class) ()
+     * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
     public Principal getPrincipalByType(Class principalType) throws NoSuchPrincipalException {
         for( Principal principal : principals ) {
@@ -113,7 +115,7 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     }
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#getAllPrincipalsByType(Class)()
+     * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
      */
     public Collection<Principal> getAllPrincipalsByType(Class principalType) {
         Set<Principal> principalsOfType = new HashSet<Principal>();
@@ -157,6 +159,28 @@ public class DelegatingAuthorizationContext implements AuthorizationContext {
     public void checkPermissions( Collection<Permission> permissions )
         throws AuthorizationException {
         realmManager.checkPermissions( getPrincipal(), permissions );
+    }
+
+    public boolean isAuthenticated() {
+        // The presence of this security context indicates that the user is authenticated
+        return true;
+    }
+
+    public Session getSession() {
+        return (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
+    }
+
+    public void invalidate() {
+
+        try {
+            Session s = getSession();
+            if ( s != null ) {
+                s.stop();
+            }
+        } finally {
+            ThreadContext.remove( ThreadContext.SESSION_KEY );
+            ThreadContext.remove( ThreadContext.SECURITY_CONTEXT_KEY );
+        }
     }
 
 }

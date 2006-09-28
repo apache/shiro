@@ -32,20 +32,20 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.ri.authc.bind.AuthorizationContextBinder;
-import org.jsecurity.ri.authc.bind.ThreadLocalAuthorizationContextBinder;
+import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.context.bind.SecurityContextBinder;
+import org.jsecurity.ri.context.bind.ThreadLocalSecurityContextBinder;
 import org.jsecurity.ri.authc.event.AuthenticationEventFactory;
 import org.jsecurity.ri.authc.event.AuthenticationEventSender;
 import org.jsecurity.ri.authc.event.SimpleAuthenticationEventFactory;
-import org.jsecurity.ri.authz.AuthorizationContextFactory;
-import org.jsecurity.ri.authz.support.DelegatingAuthorizationContextFactory;
+import org.jsecurity.ri.context.factory.SecurityContextFactory;
+import org.jsecurity.ri.context.factory.DelegatingSecurityContextFactory;
 import org.jsecurity.ri.realm.RealmManager;
 
 /**
  * Superclass for {@link Authenticator} implementations that performs the common work of wrapping a
- * returned {@link AuthorizationContext} using an {@link AuthorizationContextFactory} and binding
- * the context using an {@link org.jsecurity.ri.authc.bind.AuthorizationContextBinder}.  Subclasses should implement the {@link
+ * returned {@link SecurityContext} using an {@link SecurityContextFactory} and binding
+ * the context using an {@link org.jsecurity.ri.context.bind.SecurityContextBinder}.  Subclasses should implement the {@link
  * #doAuthenticate(org.jsecurity.authc.AuthenticationToken)} method.
  *
  * @since 0.1
@@ -69,13 +69,13 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /**
      * The factory used to wrap authorization context after authentication.
      */
-    private AuthorizationContextFactory authContextFactory = null;
+    private SecurityContextFactory securityContextFactory = null;
 
     /**
      * The binder used to bind the authorization context so that it is accessible on subsequent
      * requests.
      */
-    private AuthorizationContextBinder authzCtxBinder = new ThreadLocalAuthorizationContextBinder();
+    private SecurityContextBinder securityContextBinder = new ThreadLocalSecurityContextBinder();
 
     /**
      * Factory used to create authentication events for publishing.
@@ -101,23 +101,23 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    protected AuthorizationContextFactory getAuthorizationContextFactory() {
-        return authContextFactory;
+    protected SecurityContextFactory getSecurityContextFactory() {
+        return securityContextFactory;
     }
 
 
-    public void setAuthorizationContextFactory( AuthorizationContextFactory authContextFactory ) {
-        this.authContextFactory = authContextFactory;
+    public void setSecurityContextFactory( SecurityContextFactory securityContextFactory ) {
+        this.securityContextFactory = securityContextFactory;
     }
 
 
-    public AuthorizationContextBinder getAuthorizationContextBinder() {
-        return authzCtxBinder;
+    public SecurityContextBinder getSecurityContextBinder() {
+        return securityContextBinder;
     }
 
 
-    public void setAuthorizationContextBinder( AuthorizationContextBinder authContextBinder ) {
-        this.authzCtxBinder = authContextBinder;
+    public void setSecurityContextBinder( SecurityContextBinder securityContextBinder ) {
+        this.securityContextBinder = securityContextBinder;
     }
 
     public AuthenticationEventFactory getAuthenticationEventFactory() {
@@ -147,13 +147,13 @@ public abstract class AbstractAuthenticator implements Authenticator {
     ============================================*/
 
     public void init() {
-        if( getAuthorizationContextFactory() == null ) {
+        if( getSecurityContextFactory() == null ) {
             if( realmManager == null ) {
                 throw new IllegalStateException( "If an authorization context factory is not injected, a realm manager must be " +
-                    "provided so that the default " + DelegatingAuthorizationContextFactory.class.getName() + "] " +
+                    "provided so that the default " + DelegatingSecurityContextFactory.class.getName() + "] " +
                     "factory can be initialized." );
             }
-            setAuthorizationContextFactory( new DelegatingAuthorizationContextFactory( realmManager ) );
+            setSecurityContextFactory( new DelegatingSecurityContextFactory( realmManager ) );
         }
     }
 
@@ -235,33 +235,33 @@ public abstract class AbstractAuthenticator implements Authenticator {
         }
     }
 
-    protected AuthorizationContext createAuthorizationContext( AuthenticationInfo info ) {
-        if( getAuthorizationContextFactory() == null ) {
+    protected SecurityContext createSecurityContext( AuthenticationInfo info ) {
+        if( getSecurityContextFactory() == null ) {
             throw new IllegalStateException(
-                    "No authorization context factory is configured, so authentication cannot " +
+                    "No security context factory is configured, so authentication cannot " +
                     "be completed.  Make sure the init() method is being called on the " +
                     "authenticator before it is used." );
         }
 
-        return getAuthorizationContextFactory().createAuthorizationContext( info );
+        return getSecurityContextFactory().createSecurityContext( info );
     }
 
-    protected void bind( AuthorizationContext authzCtx ) {
-        getAuthorizationContextBinder().bindAuthorizationContext( authzCtx );
+    protected void bind( SecurityContext authzCtx ) {
+        getSecurityContextBinder().bindSecurityContext( authzCtx );
     }
 
-    private void assertCreation( AuthorizationContext authzCtx ) throws IllegalStateException {
+    private void assertCreation( SecurityContext authzCtx ) throws IllegalStateException {
         if ( authzCtx == null ) {
-            String msg = "Programming or configuration error - No AuthorizationContext was created after successful " +
+            String msg = "Programming or configuration error - No SecurityContext was created after successful " +
                     "authentication.  Verify that you have either configured the " + getClass().getName() +
-                    " instance with a proper " + AuthorizationContextFactory.class.getName() + " (easier) or " +
+                    " instance with a proper " + SecurityContextFactory.class.getName() + " (easier) or " +
                     "that you have overridden the " + AbstractAuthenticator.class.getName() +
-                    ".createAuthorizationContext( AuthenticationInfo info ) method.";
+                    ".createSecurityContext( AuthenticationInfo info ) method.";
             throw new IllegalStateException( msg );
         }
     }
 
-    public final AuthorizationContext authenticate( AuthenticationToken token )
+    public final SecurityContext authenticate( AuthenticationToken token )
             throws AuthenticationException {
 
         if ( logger.isTraceEnabled() ) {
@@ -288,7 +288,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
             logger.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
         }
 
-        AuthorizationContext authzCtx = createAuthorizationContext( info );
+        SecurityContext authzCtx = createSecurityContext( info );
 
         assertCreation( authzCtx );
 

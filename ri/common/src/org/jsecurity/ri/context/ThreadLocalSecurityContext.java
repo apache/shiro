@@ -1,10 +1,9 @@
 package org.jsecurity.ri.context;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.authc.AuthenticationToken;
@@ -47,13 +46,13 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         return (SecurityContext)ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );    
     }
 
-    public AuthorizationContext authenticate( AuthenticationToken authenticationToken )
+    public SecurityContext authenticate( AuthenticationToken authenticationToken )
             throws AuthenticationException {
         
         Authenticator authc = getAuthenticator();
         if ( authc != null ) {
-            AuthorizationContext authzCtx = authc.authenticate( authenticationToken );
-            ThreadContext.put( ThreadContext.AUTHORIZATION_CONTEXT_KEY, authzCtx );
+            SecurityContext authzCtx = authc.authenticate( authenticationToken );
+            ThreadContext.put( ThreadContext.SECURITY_CONTEXT_KEY, authzCtx );
             return this;
         } else {
             String msg = "underlying Authenticator instance is not set.  The " +
@@ -69,11 +68,11 @@ public class ThreadLocalSecurityContext implements SecurityContext {
 
 
     public boolean isAuthenticated() {
-        return getAuthorizationContext() != null;
+        return getSecurityContext() != null;
     }
 
     public Principal getPrincipal() throws NoSuchPrincipalException {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         if ( authzCtx != null ) {
             return authzCtx.getPrincipal();
         }
@@ -81,7 +80,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public List<Principal> getAllPrincipals() {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         if ( authzCtx != null ) {
             return authzCtx.getAllPrincipals();
         }
@@ -89,7 +88,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public Principal getPrincipalByType( Class principalType ) throws NoSuchPrincipalException {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         if ( authzCtx != null ) {
             return authzCtx.getPrincipalByType( principalType );
         }
@@ -97,7 +96,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public Collection<Principal> getAllPrincipalsByType( Class principalType ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         if ( authzCtx != null ) {
             return authzCtx.getAllPrincipalsByType( principalType );
         }
@@ -105,12 +104,12 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public boolean hasRole( String roleIdentifier ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         return authzCtx != null && authzCtx.hasRole( roleIdentifier );
     }
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         boolean[] hasRoles;
 
         if ( authzCtx != null ) {
@@ -127,17 +126,17 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         return authzCtx != null && authzCtx.hasAllRoles( roleIdentifiers );
     }
 
     public boolean implies( Permission permission ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         return authzCtx != null && authzCtx.implies ( permission );
     }
 
     public boolean[] implies( List<Permission> permissions ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         boolean[] implies;
 
         if ( authzCtx != null ) {
@@ -154,27 +153,27 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public boolean impliesAll( Collection<Permission> permissions ) {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         return authzCtx != null && authzCtx.impliesAll( permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         if ( authzCtx != null ) {
             authzCtx.checkPermission( permission );
         } else {
-            String msg = "No AuthorizationContext bound to the current thread - user has not " +
+            String msg = "No SecurityContext bound to the current thread - user has not " +
                     "authenticated yet?  Permission check failed.";
             throw new UnauthorizedException( msg );
         }
     }
 
     public void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException {
-        AuthorizationContext authzCtx = getAuthorizationContext();
+        SecurityContext authzCtx = getSecurityContext();
         if ( authzCtx != null ) {
             authzCtx.checkPermissions( permissions );
         } else {
-            String msg = "No AuthorizationContext bound to the current thread - user has not " +
+            String msg = "No SecurityContext bound to the current thread - user has not " +
                     "authenticated yet?  Permissions check failed.";
             throw new UnauthorizedException( msg );
         }
@@ -184,8 +183,8 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         return (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
     }
 
-    public AuthorizationContext getAuthorizationContext() {
-        return (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
+    public SecurityContext getSecurityContext() {
+        return (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
     }
 
     public void invalidate() {
@@ -197,7 +196,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
             }
         } finally {
             ThreadContext.remove( ThreadContext.SESSION_KEY );
-            ThreadContext.remove( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
+            ThreadContext.remove( ThreadContext.SECURITY_CONTEXT_KEY );
         }
     }
 

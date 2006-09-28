@@ -23,25 +23,25 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.bind;
+package org.jsecurity.ri.context.bind;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 
 /**
  * <p>The authorization context binder is responsible for binding an
- * {@link org.jsecurity.authz.AuthorizationContext} object after authentication takes place
+ * {@link org.jsecurity.context.SecurityContext} object after authentication takes place
  * to the application so that it can be retrieved on later requests.  For example, the
  * binder could bind the context to a thread local, HTTP session, static variable, etc.</p>
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public interface AuthorizationContextBinder {
+public interface SecurityContextBinder {
 
     /**
      * Binds the authorization context to the application so that it is accessible to future access.
      * @param context the authorization context to bind.
      */
-    void bindAuthorizationContext( AuthorizationContext context );
+    void bindSecurityContext( SecurityContext context );
 
 }

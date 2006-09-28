@@ -28,7 +28,7 @@ package org.jsecurity.ri;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
@@ -91,7 +91,7 @@ public abstract class AbstractSecurityManager implements SecurityManager {
     |               M E T H O D S               |
     ============================================*/
 
-    public void init() {
+    public final void init() {
         if ( this.authorizer == null ) {
             throw new IllegalStateException( "authorizer property must be set." );
         }
@@ -100,24 +100,30 @@ public abstract class AbstractSecurityManager implements SecurityManager {
 
     protected void onInit(){}
 
+    public final void destroy() {
+        onDestroy();
+    }
+
+    protected void onDestroy(){}
+
     /**
      * Delegates to the authenticator for authentication.
      */
-    public AuthorizationContext authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+    public SecurityContext authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
         return authenticator.authenticate( authenticationToken );
     }
 
     /**
      * Delegates to the authorizer for autorization.
      */
-    public boolean isAuthorized(AuthorizationContext context, AuthorizedAction action) {
+    public boolean isAuthorized(SecurityContext context, AuthorizedAction action) {
         return authorizer.isAuthorized( context, action );
     }
 
     /**
      * Delegates to the authorizer for authorization.
      */
-    public void checkAuthorization(AuthorizationContext context, AuthorizedAction action) throws AuthorizationException {
+    public void checkAuthorization(SecurityContext context, AuthorizedAction action) throws AuthorizationException {
         authorizer.checkAuthorization( context, action );
     }
 

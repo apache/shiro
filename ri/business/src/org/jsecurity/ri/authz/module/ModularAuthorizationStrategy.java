@@ -25,7 +25,7 @@
 
 package org.jsecurity.ri.authz.module;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.module.AuthorizationModule;
 import org.jsecurity.authz.module.AuthorizationVote;
@@ -54,7 +54,7 @@ public interface ModularAuthorizationStrategy {
      * @return true if the user should be authorized based on the votes, or
      * false otherwise.
      */
-    boolean isAuthorized( AuthorizationContext context,
+    boolean isAuthorized( SecurityContext context,
                           AuthorizedAction action,
                           Map<AuthorizationModule, AuthorizationVote> votes );
     

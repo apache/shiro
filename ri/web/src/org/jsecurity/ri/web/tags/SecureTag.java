@@ -26,7 +26,6 @@ package org.jsecurity.ri.web.tags;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 
@@ -45,7 +44,7 @@ public abstract class SecureTag extends TagSupport {
 
     public SecureTag(){}
 
-    protected AuthorizationContext getAuthorizationContext() {
+    protected SecurityContext getSecurityContext() {
         return securityContext;
     }
 

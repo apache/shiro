@@ -24,7 +24,7 @@
  */
 package org.jsecurity.authc;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 
 /**
  * An Authenticator is responsible for authenticating accounts in an application.  It
@@ -45,17 +45,17 @@ public interface Authenticator {
     /**
      * Authenticates a user based on the submitted <tt>authenticationToken</tt>.
      *
-     * <p>If the authentication is successful, an {@link AuthorizationContext AuthorizationContext}
+     * <p>If the authentication is successful, an {@link org.jsecurity.context.SecurityContext SecurityContext}
      * is returned that represents the authenticated user's access rights.
      *
      * Because authorization operations can only occur under the context of a known and valid
-     * identity, an account's <tt>AuthorizationContext</tt> is only available after a successful
+     * identity, an account's <tt>SecurityContext</tt> is only available after a successful
      * log-in, when the identity has been verified.
      *
      * @param authenticationToken any representation of a user's principals and credentials
      * submitted during an authentication attempt.
      *
-     * @return the AuthorizationContext referencing the authenticated user's access rights.
+     * @return the SecurityContext referencing the authenticated user's access rights.
      *
      * @throws AuthenticationException if there is any problem during the authentication process.
      * See the specific exceptions listed below to as examples of what could happen in order
@@ -73,6 +73,6 @@ public interface Authenticator {
      *
      * @see org.jsecurity.authc.module.AuthenticationModule
      */
-    public AuthorizationContext authenticate( AuthenticationToken authenticationToken )
+    public SecurityContext authenticate( AuthenticationToken authenticationToken )
         throws AuthenticationException;
 }

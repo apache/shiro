@@ -4,7 +4,7 @@ package org.jsecurity.authz.annotation;
  * <p>
  * Requires the current executor to have one or more specified roles in order to execute the
  * annotated method.  If the executor's associated
- * {@link org.jsecurity.authz.AuthorizationContext AuthorizationContext} determines that the
+ * {@link org.jsecurity.context.SecurityContext SecurityContext} determines that the
  * executor does not have the specified role(s), the method will not be executed.
  * </p>
  * <p>For example,<br>
@@ -27,7 +27,7 @@ package org.jsecurity.authz.annotation;
  * capabilities will not change for an application since permissions directly correspond to how
  * the application's functionality is programmed.
  *
- * @see org.jsecurity.authz.AuthorizationContext#hasRole(String)
+ * @see org.jsecurity.context.SecurityContext#hasRole(String)
  *
  * @since 0.1
  * @author Jeremy Haile

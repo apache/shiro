@@ -2,7 +2,7 @@ package org.jsecurity.spring.remoting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.ri.authz.DelegatingSecurityContext;
 import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.util.ThreadUtils;
 import org.jsecurity.ri.web.WebUtils;
@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
- * that binds the correct {@link Session} and {@link org.jsecurity.authz.AuthorizationContext} to the
+ * that binds the correct {@link Session} and {@link org.jsecurity.context.SecurityContext} to the
  * remote invocation thread during a remote execution.
  *
  * @since 0.1
@@ -88,7 +88,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 // If principals and realm were found in the session, create a delegating authorization context
                 // and bind it to the thread.
                 if( principals != null && !principals.isEmpty() ) {
-                    ThreadUtils.bindToThread( new DelegatingAuthorizationContext( principals, realmManager ) );
+                    ThreadUtils.bindToThread( new DelegatingSecurityContext( principals, realmManager ) );
                 }
 
             } else {

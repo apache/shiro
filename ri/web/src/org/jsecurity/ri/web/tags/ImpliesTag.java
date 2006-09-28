@@ -37,7 +37,7 @@ public class ImpliesTag extends PermissionTag {
     }
 
     protected boolean showTagBody( Permission p ) {
-        return getAuthorizationContext().implies( p );
+        return getSecurityContext().implies( p );
     }
 
 }
