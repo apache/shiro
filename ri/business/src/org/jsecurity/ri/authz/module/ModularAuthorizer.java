@@ -25,7 +25,7 @@
 
 package org.jsecurity.ri.authz.module;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.UnauthorizedException;
@@ -99,9 +99,9 @@ public class ModularAuthorizer implements Authorizer {
      *================================== */
 
     /**
-     * @see Authorizer#isAuthorized(AuthorizationContext,AuthorizedAction)
+     * @see Authorizer#isAuthorized(SecurityContext,AuthorizedAction)
      */
-    public boolean isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
+    public boolean isAuthorized( SecurityContext context, AuthorizedAction action ) {
 
         Map<AuthorizationModule, AuthorizationVote> votes =
             new HashMap<AuthorizationModule, AuthorizationVote>( authorizationModules.size() );
@@ -122,9 +122,9 @@ public class ModularAuthorizer implements Authorizer {
     }
 
     /**
-     * @see Authorizer#checkAuthorization(AuthorizationContext,AuthorizedAction)
+     * @see Authorizer#checkAuthorization(SecurityContext,AuthorizedAction)
      */
-    public void checkAuthorization( AuthorizationContext context, AuthorizedAction action ) {
+    public void checkAuthorization( SecurityContext context, AuthorizedAction action ) {
         if ( !isAuthorized( context, action ) ) {
             String msg = "Unauthorized to perform action [" + action + "]";
             throw new UnauthorizedException( msg );

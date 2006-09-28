@@ -22,30 +22,31 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.ri.authz.support;
+package org.jsecurity.ri.context.factory;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.context.SecurityContext;
+import org.jsecurity.ri.authz.DelegatingSecurityContext;
 import org.jsecurity.ri.realm.RealmManager;
+import org.jsecurity.ri.context.factory.AbstractSecurityContextFactory;
 
 /**
- * AuthorizationContextFactory implementation that creates
- * {@link DelegatingAuthorizationContext} instances.
+ * SecurityContextFactory implementation that creates
+ * {@link DelegatingSecurityContext} instances.
  *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class DelegatingAuthorizationContextFactory extends AbstractAuthorizationContextFactory {
+public class DelegatingSecurityContextFactory extends AbstractSecurityContextFactory {
 
     private RealmManager realmManager;
 
-    public DelegatingAuthorizationContextFactory( RealmManager realmManager ){
+    public DelegatingSecurityContextFactory( RealmManager realmManager ){
         this.realmManager = realmManager;
     }
 
-    protected AuthorizationContext onCreateAuthorizationContext( AuthenticationInfo info ) {
-        return new DelegatingAuthorizationContext( info.getPrincipals(), realmManager );
+    protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
+        return new DelegatingSecurityContext( info.getPrincipals(), realmManager );
     }
 }

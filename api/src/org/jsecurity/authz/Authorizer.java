@@ -25,9 +25,11 @@
 
 package org.jsecurity.authz;
 
+import org.jsecurity.context.SecurityContext;
+
 /**
  * An <tt>Authorizer</tt> performs the actual authorization check to determine if a particular
- * {@link AuthorizationContext AuthorizationContext} is permitted to execute a specific
+ * {@link SecurityContext SecurityContext} is permitted to execute a specific
  * {@link AuthorizedAction AuthorizedAction}.
  *
  * @since 0.1
@@ -37,17 +39,17 @@ package org.jsecurity.authz;
 public interface Authorizer {
 
     /**
-     * Returns whether or not the specified <tt>AuthorizationContext</tt> is authorized to
+     * Returns whether or not the specified <tt>SecurityContext</tt> is authorized to
      * execute the given <tt>AuthorizedAction</tt>.
-     * @param context the <tt>AuthorizationContext</tt> used to check for action authorization
+     * @param context the <tt>SecurityContext</tt> used to check for action authorization
      * @param action the action to check for authorization
      * @return true if the <tt>context</tt> can execute the specified <tt>action</tt>, false
      *         otherwise.
      */
-    boolean isAuthorized( AuthorizationContext context, AuthorizedAction action );
+    boolean isAuthorized( SecurityContext context, AuthorizedAction action );
 
     /**
-     * Checks whether the user with the given {@link AuthorizationContext}
+     * Checks whether the user with the given {@link SecurityContext}
      * is authorized to perform the given {@link AuthorizedAction}.  If
      * the user is not authorized to perform the action, an
      * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
@@ -56,7 +58,7 @@ public interface Authorizer {
      * @param action the action that the user is requesting authorization for.
      * @throws AuthorizationException if the context is not authorized to perform the action
      */
-    void checkAuthorization( AuthorizationContext context, AuthorizedAction action )
+    void checkAuthorization( SecurityContext context, AuthorizedAction action )
         throws AuthorizationException;
 
 }

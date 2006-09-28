@@ -2,11 +2,10 @@ package org.jsecurity.ri.authz.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.UnauthorizedException;
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 
 /**
@@ -62,15 +61,14 @@ public abstract class AbstractAuthorizationInterceptor {
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
-        AuthorizationContext authzCtx = this.securityContext;
+        SecurityContext authzCtx = this.securityContext;
 
         if ( authzCtx != null ) {
             AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
             //will throw an exception if not authorized to execute the action:
             this.authorizer.checkAuthorization( authzCtx, action );
         } else {
-            String msg = "No AuthorizationContext available via " +
-                         SecurityContext.class.getName() + ".getAuthorizationContext() " +
+            String msg = "No SecurityContext available " +
                          "(User not authenticated?).  Authorization failed.";
             throw new UnauthorizedException( msg );
         }

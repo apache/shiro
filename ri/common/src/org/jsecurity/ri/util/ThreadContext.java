@@ -26,9 +26,8 @@ package org.jsecurity.ri.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.AuthorizationContext;
-import org.jsecurity.session.Session;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.session.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,9 +60,6 @@ public abstract class ThreadContext {
 
     public static final String SESSION_KEY =
         Session.class.getName() + "_THREAD_CONTEXT_KEY";
-
-    public static final String AUTHORIZATION_CONTEXT_KEY =
-        AuthorizationContext.class.getName() + "_THREAD_CONTEXT_KEY";
 
     public static final String SECURITY_CONTEXT_KEY =
         SecurityContext.class.getName() + "_THREAD_CONTEXT_KEY";

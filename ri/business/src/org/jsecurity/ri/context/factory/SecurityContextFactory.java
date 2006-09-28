@@ -23,10 +23,10 @@
 * http://www.opensource.org/licenses/lgpl-license.php
 */
 
-package org.jsecurity.ri.authz;
+package org.jsecurity.ri.context.factory;
 
 import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 
 
 /**
@@ -37,14 +37,14 @@ import org.jsecurity.authz.AuthorizationContext;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public interface AuthorizationContextFactory {
+public interface SecurityContextFactory {
 
     /**
-     * Returns an implementation of the AuthorizationContext instance for the
+     * Returns an implementation of the SecurityContext instance for the
      * given authentication info after a successful authentication.
      * @param info authentication info after a successful authentication.
      * @return an authorization context that will be used by the application.
      */
-    AuthorizationContext createAuthorizationContext( AuthenticationInfo info );
+    SecurityContext createSecurityContext( AuthenticationInfo info );
 
 }

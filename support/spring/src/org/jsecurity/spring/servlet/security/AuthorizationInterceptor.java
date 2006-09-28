@@ -50,18 +50,18 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        WebUtils.bindAuthorizationContextToThread( request, realmManager );
+        WebUtils.bindSecurityContextToThread( request, realmManager );
         return true;
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response,
                             Object handler, ModelAndView modelAndView ) throws Exception {
-        WebUtils.bindAuthorizationContextToSession( request );
+        WebUtils.bindSecurityContextToSession( request );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        WebUtils.unbindAuthorizationContextFromThread();
+        WebUtils.unbindSecurityContextFromThread();
     }
 
 }

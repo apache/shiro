@@ -28,7 +28,7 @@ import org.jsecurity.JSecurityException;
 
 /**
  * Exception thrown if a principal of a particular type is requested from
- * an {@link AuthorizationContext} and no principal of that type is found
+ * an {@link org.jsecurity.context.SecurityContext} and no principal of that type is found
  * within the context.
  *
  * @since 0.1

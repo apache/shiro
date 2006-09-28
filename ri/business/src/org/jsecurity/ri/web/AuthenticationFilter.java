@@ -27,7 +27,6 @@ package org.jsecurity.ri.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.ri.context.ThreadLocalSecurityContext;
 
@@ -167,7 +166,7 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        AuthorizationContext authContext = new ThreadLocalSecurityContext();
+        SecurityContext authContext = new ThreadLocalSecurityContext();
 
         String requestedPath = httpRequest.getRequestURI();
 

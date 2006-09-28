@@ -25,7 +25,7 @@
 
 package org.jsecurity.ri.web;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.ri.realm.RealmManager;
 
 import javax.servlet.*;
@@ -33,15 +33,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Filter that is used to ensure an {@link AuthorizationContext} is bound to the
+ * Filter that is used to ensure an {@link org.jsecurity.context.SecurityContext} is bound to the
  * thread local on every request, if it exists in the HTTP session.  Also ensures that
- * any {@link AuthorizationContext} bound to the thread local during a request is stored
+ * any {@link SecurityContext} bound to the thread local during a request is stored
  * in the HTTP session when the request is complete.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class AuthorizationContextFilter implements Filter {
+public class SecurityContextFilter implements Filter {
 
     private RealmManager realmManager;
 
@@ -58,9 +58,9 @@ public class AuthorizationContextFilter implements Filter {
 
 
     /**
-     * Before the filter continues, any {@link AuthorizationContext} is bound to the thread local for the
+     * Before the filter continues, any {@link SecurityContext} is bound to the thread local for the
      * duration of the request.  After the filter returns from the request, any thread local
-     * {@link AuthorizationContext} is set back as an attribute on the session.  After every request,
+     * {@link SecurityContext} is set back as an attribute on the session.  After every request,
      * the thread local is cleared to ensure that the context is not leaked if this thread is reused for another
      * request.
      *
@@ -76,15 +76,15 @@ public class AuthorizationContextFilter implements Filter {
 
             // Bind a auth context from the http session to the thread local
             //todo Fix filter to get the realm manager from somewhere - currently broken
-            WebUtils.bindAuthorizationContextToThread( request, realmManager );
+            WebUtils.bindSecurityContextToThread( request, realmManager );
 
             filterChain.doFilter( servletRequest, servletResponse );
 
             // Bind the auth context from the thread local to the session
-            WebUtils.bindAuthorizationContextToSession( request );
+            WebUtils.bindSecurityContextToSession( request );
 
         } finally {
-            WebUtils.unbindAuthorizationContextFromThread();
+            WebUtils.unbindSecurityContextFromThread();
         }
 
 

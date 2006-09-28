@@ -24,13 +24,10 @@
  */
 package org.jsecurity.ri.authz.module;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.annotation.RolesRequired;
-import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
-
-import java.lang.reflect.Method;
 
 /**
  * AuthorizationModule that votes on authorization based on any {@link
@@ -47,10 +44,10 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
         setAnnotationClass( RolesRequired.class );
     }
 
-    public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
+    public AuthorizationVote isAuthorized( SecurityContext context, AuthorizedAction action ) {
 
         RolesRequired rrAnnotation = (RolesRequired)getAnnotation( action );
-        
+
         String roleId = rrAnnotation.value();
 
         if ( context.hasRole( roleId ) ) {
@@ -61,7 +58,7 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
             return AuthorizationVote.grant;
         } else {
             if ( log.isDebugEnabled() ) {
-                log.debug( "AuthorizationContext does not have role [" +  roleId +
+                log.debug( "SecurityContext does not have role [" +  roleId +
                            "].  Returning deny vote." );
             }
             return AuthorizationVote.deny;

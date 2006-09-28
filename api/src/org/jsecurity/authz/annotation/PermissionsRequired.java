@@ -36,7 +36,7 @@ import java.security.Permission;
  * <p>
  * Requires the current executor's context to imply a particular permission in
  * order to execute the annotated method.  If the executor's associated
- * {@link org.jsecurity.authz.AuthorizationContext AuthorizationContext} determines that the
+ * {@link org.jsecurity.context.SecurityContext SecurityContext} determines that the
  * executor does not imply the specified permission, the method will not be executed.
  * </p>
  * For example, this annotation<br>
@@ -54,7 +54,7 @@ import java.security.Permission;
  * to the file <tt>aFile.txt</tt> in order for the <tt>someMethod()</tt> to execute, otherwise
  * an {@link org.jsecurity.authz.AuthorizationException AuthorizationException} will be thrown.
  *
- * @see org.jsecurity.authz.AuthorizationContext#checkPermission
+ * @see org.jsecurity.context.SecurityContext#checkPermission
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -66,7 +66,7 @@ public @interface PermissionsRequired {
 
     /**
      * The permission class used to construct a <tt>Permission</tt> object which will be used
-     * during an {@link org.jsecurity.authz.AuthorizationContext#checkPermission(java.security.Permission) AuthorizationContext.checkPermission}  check.
+     * during an {@link org.jsecurity.context.SecurityContext#checkPermission(java.security.Permission) SecurityContext.checkPermission}  check.
      */
     Class<? extends Permission> type();
 
@@ -151,7 +151,7 @@ public @interface PermissionsRequired {
      * <p>This annotation declares that a <tt>my.pkg.security.UserPermission</tt> instance with
      * {@link Permission#getName() name} <tt>aUser.getId().toString()</tt> and
      * {@link Permission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
-     * verified by {@link org.jsecurity.authz.AuthorizationContext#checkPermission(Permission)}.
+     * verified by {@link org.jsecurity.context.SecurityContext#checkPermission(Permission)}.
      *
      * <p>Therefore the above annotation could be read as:</p>
      * <p>&quot;The current executor must have permission to create <em>and</em> update the

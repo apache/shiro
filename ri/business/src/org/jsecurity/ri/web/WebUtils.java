@@ -24,9 +24,8 @@
  */
 package org.jsecurity.ri.web;
 
-import org.jsecurity.authz.AuthorizationContext;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.ri.authz.DelegatingAuthorizationContext;
+import org.jsecurity.ri.authz.DelegatingSecurityContext;
 import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.ri.util.ThreadUtils;
@@ -41,7 +40,7 @@ import java.util.List;
 /**
  * Utility method class used to consolidate functionality between any filter, interceptor, etc,
  * that is used for binding a JSecurity components such as
- * {@link Session Session}s and {@link AuthorizationContext AuthorizationContext}s to the
+ * {@link Session Session}s and {@link org.jsecurity.context.SecurityContext SecurityContext}s to the
  * thread and <tt>HTTPSession</tt>.
  *
  * @since 0.1
@@ -72,12 +71,12 @@ public abstract class WebUtils {
 
     private WebUtils(){}
 
-    public static void bindToThread( AuthorizationContext authCtx ) {
+    public static void bindToThread( SecurityContext authCtx ) {
         ThreadUtils.bindToThread( authCtx );
     }
 
-    public static void unbindAuthorizationContextFromThread() {
-        ThreadUtils.unbindAuthorizationContextFromThread();
+    public static void unbindSecurityContextFromThread() {
+        ThreadUtils.unbindSecurityContextFromThread();
     }
 
     public static void bindToThread( Session s ) {
@@ -102,7 +101,7 @@ public abstract class WebUtils {
         }
     }
 
-    public static void bindToSession( AuthorizationContext ctx, HttpServletRequest request ) {
+    public static void bindToSession( SecurityContext ctx, HttpServletRequest request ) {
         if ( ctx != null ) {
             Session session = (new ThreadLocalSecurityContext()).getSession();
             if( session != null ) {
@@ -114,7 +113,7 @@ public abstract class WebUtils {
         }
     }
 
-    public static void unbindAuthorizationContextFromSession( HttpServletRequest request ) {
+    public static void unbindSecurityContextFromSession( HttpServletRequest request ) {
         Session session = (new ThreadLocalSecurityContext()).getSession();
         if( session != null ) {
             session.removeAttribute( PRINCIPALS_SESSION_KEY );
@@ -126,11 +125,11 @@ public abstract class WebUtils {
         }
     }
 
-    public static void bindAuthorizationContextToThread( HttpServletRequest request, RealmManager realmManager ) {
+    public static void bindSecurityContextToThread( HttpServletRequest request, RealmManager realmManager ) {
         List<Principal> principals = getPrincipals( request );
 
         if( principals != null ) {
-            AuthorizationContext ctx = buildAuthorizationContext( principals, realmManager);
+            SecurityContext ctx = buildSecurityContext( principals, realmManager);
             if( ctx != null ) {
                 bindToThread( ctx );
             }
@@ -153,17 +152,17 @@ public abstract class WebUtils {
         return principals;
     }
 
-    private static AuthorizationContext buildAuthorizationContext(List<Principal> principals, RealmManager realmManager ) {
+    private static SecurityContext buildSecurityContext(List<Principal> principals, RealmManager realmManager ) {
         if( principals != null && !principals.isEmpty() ) {
-            return new DelegatingAuthorizationContext( principals, realmManager );
+            return new DelegatingSecurityContext( principals, realmManager );
         } else {
             return null;
         }
     }
 
-    public static void bindAuthorizationContextToSession( HttpServletRequest request ) {
-        AuthorizationContext ctx =
-            (AuthorizationContext) ThreadContext.get( ThreadContext.AUTHORIZATION_CONTEXT_KEY );
+    public static void bindSecurityContextToSession( HttpServletRequest request ) {
+        SecurityContext ctx =
+            (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
         bindToSession( ctx, request );
     }
 

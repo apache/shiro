@@ -26,7 +26,7 @@ package org.jsecurity.ri.realm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizationException;
 
 import java.io.Serializable;
@@ -88,14 +88,19 @@ public class AuthorizationInfo implements Serializable {
     ============================================*/
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#hasRole(String)
+     * @see org.jsecurity.context.SecurityContext#hasRole(String)
      */
     public boolean hasRole(String roleIdentifier) {
-        return roles.contains( roleIdentifier );
+        if( roles != null ) {
+            return roles.contains( roleIdentifier );
+        } else {
+            return false;
+        }
+
     }
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#hasRoles(java.util.List)
+     * @see org.jsecurity.context.SecurityContext#hasRoles(java.util.List)
      */
     public boolean[] hasRoles(List<String> roleIdentifiers) {
         boolean[] hasRoles = new boolean[roleIdentifiers.size()];
@@ -109,7 +114,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#hasAllRoles(java.util.Collection)
+     * @see org.jsecurity.context.SecurityContext#hasAllRoles(java.util.Collection)
      */
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
         for( String roleIdentifier : roleIdentifiers ) {
@@ -122,7 +127,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see AuthorizationContext#implies(java.security.Permission)
+     * @see SecurityContext#implies(java.security.Permission)
      */
     public boolean implies(Permission permission) {
 
@@ -151,7 +156,7 @@ public class AuthorizationInfo implements Serializable {
     }
 
     /**
-     * @see AuthorizationContext#implies(java.util.List)
+     * @see SecurityContext#implies(java.util.List)
      */
     public boolean[] implies(List<Permission> permissions) {
         boolean[] implies = new boolean[permissions.size()];
@@ -164,7 +169,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see AuthorizationContext#impliesAll(java.util.Collection)
+     * @see org.jsecurity.context.SecurityContext#impliesAll(java.util.Collection)
      */
     public boolean impliesAll(Collection<Permission> permissions) {
 
@@ -180,7 +185,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see AuthorizationContext#checkPermission(java.security.Permission)
+     * @see org.jsecurity.context.SecurityContext#checkPermission(java.security.Permission)
      */
     public void checkPermission(Permission permission) throws AuthorizationException {
         if( !implies( permission ) ) {
@@ -190,7 +195,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see org.jsecurity.authz.AuthorizationContext#checkPermissions(java.util.Collection)
+     * @see org.jsecurity.context.SecurityContext#checkPermissions(java.util.Collection)
      */
     public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
 

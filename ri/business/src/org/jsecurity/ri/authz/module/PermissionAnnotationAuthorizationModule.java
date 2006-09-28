@@ -25,7 +25,7 @@
 package org.jsecurity.ri.authz.module;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.method.MethodInvocation;
@@ -117,7 +117,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         }
     }
 
-    public AuthorizationVote isAuthorized( AuthorizationContext context, AuthorizedAction action ) {
+    public AuthorizationVote isAuthorized( SecurityContext context, AuthorizedAction action ) {
         Permission p = createPermission( action );
         if ( context.implies( p ) ) {
             if ( log.isDebugEnabled() ) {
@@ -127,7 +127,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
             return AuthorizationVote.grant;
         } else {
             if ( log.isDebugEnabled() ) {
-                log.debug( "AuthorizationContext does not imply permission [" + p +
+                log.debug( "SecurityContext does not imply permission [" + p +
                            "].  Returning deny vote." );
             }
             return AuthorizationVote.deny;

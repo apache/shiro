@@ -25,7 +25,7 @@
 
 package org.jsecurity.ri.authz.module;
 
-import org.jsecurity.authz.AuthorizationContext;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.module.AuthorizationModule;
 import org.jsecurity.authz.module.AuthorizationVote;
@@ -52,7 +52,7 @@ public class NoDenialStrategy implements ModularAuthorizationStrategy {
     /**
      * @see ModularAuthorizationStrategy#isAuthorized
      */
-    public boolean isAuthorized( AuthorizationContext context,
+    public boolean isAuthorized( SecurityContext context,
                                  AuthorizedAction action,
                                  Map<AuthorizationModule, AuthorizationVote> votes ) {
 

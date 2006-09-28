@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Les Hazlewood Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -65,13 +65,10 @@ import java.util.Map;
  *
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class AuthenticationInterceptor extends HandlerInterceptorAdapter
     implements InitializingBean {
-
-    public static final String ATTEMPTED_PAGE_REQUEST_PARAM = "requestParameter";
-    public static final String ATTEMPTED_PAGE_JSECURITY_SESSION = "jsecuritySession";
-    public static final String ATTEMPTED_PAGE_HTTP_SESSION = "httpSession";
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -83,7 +80,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
 
 	private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
 
-    private String attemptedPageStorageScheme = ATTEMPTED_PAGE_REQUEST_PARAM;
+    private AttemptedPageStorageScheme attemptedPageStorageScheme = AttemptedPageStorageScheme.httpSession;
 
     private String attemptedPageKeyName = WebUtils.ATTEMPTED_PAGE_KEY;
 
@@ -135,11 +132,11 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
 	}
 
 
-    public String getAttemptedPageStorageScheme() {
+    public AttemptedPageStorageScheme getAttemptedPageStorageScheme() {
         return attemptedPageStorageScheme;
     }
 
-    public void setAttemptedPageStorageScheme(String attemptedPageStorageScheme) {
+    public void setAttemptedPageStorageScheme(AttemptedPageStorageScheme attemptedPageStorageScheme) {
         this.attemptedPageStorageScheme = attemptedPageStorageScheme;
     }
 
@@ -161,14 +158,6 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
             if ( log.isInfoEnabled() ) {
                 log.info( "No 'attemptedPageStorageScheme' attribute set - the user's attempted page will not " +
                         "be available after the redirect to the login page." );
-            }
-        } else {
-            if ( !attemptedPageStorageScheme.equals( ATTEMPTED_PAGE_JSECURITY_SESSION ) ||
-                 !attemptedPageStorageScheme.equals( ATTEMPTED_PAGE_HTTP_SESSION ) ||
-                 !attemptedPageStorageScheme.equals( ATTEMPTED_PAGE_REQUEST_PARAM ) ) {
-                String msg = "the attemptedPageStorageScheme attribute must be set to one of the " +
-                        "three constants defined in the " + getClass().getName() + " class.";
-                throw new IllegalArgumentException( msg );
             }
         }
     }
@@ -222,21 +211,22 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
     }
 
     protected Map setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
-        String scheme = getAttemptedPageStorageScheme();
+        AttemptedPageStorageScheme scheme = getAttemptedPageStorageScheme();
         if ( scheme == null ) {
             return null; //no attempted page to forward
         }
 
-        if ( scheme.equals( ATTEMPTED_PAGE_REQUEST_PARAM ) ) {
-            return createRequestParamMap( request, response, attemptedPage );
-        } else if ( scheme.equals( ATTEMPTED_PAGE_JSECURITY_SESSION) ) {
-            return storeInJSecuritySession( request, response, attemptedPage );
-        } else if ( scheme.equals( ATTEMPTED_PAGE_HTTP_SESSION ) ) {
-            return storeInHttpSession( request, response, attemptedPage );
-        } else {
-            String msg = "getAttemptedPageStorageScheme() did not return a valid constant " +
-                    "defined in the " + getClass().getName() + " class.";
-            throw new IllegalStateException( msg );
+        switch( scheme ) {
+            case requestParameter:
+                return createRequestParamMap( request, response, attemptedPage );
+            case jsecuritySession:
+                return storeInJSecuritySession( request, response, attemptedPage );
+            case httpSession:
+                return storeInHttpSession( request, response, attemptedPage );
+            default:
+                String msg = "getAttemptedPageStorageScheme() did not return an expected value, " +
+                        "but was: [" + scheme.toString() + "]";
+                throw new IllegalStateException( msg );
         }
     }
 
