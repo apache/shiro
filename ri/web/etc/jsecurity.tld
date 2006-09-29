@@ -86,4 +86,40 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>authenticated</name>
+        <tag-class>org.jsecurity.ri.web.tags.AuthenticatedTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user is authenticated.</description>
+    </tag>
+
+    <tag>
+        <name>notAuthenticated</name>
+        <tag-class>org.jsecurity.ri.web.tags.NotAuthenticatedTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user is not authenticated.</description>
+    </tag>
+
+    <tag>
+        <name>principal</name>
+        <tag-class>org.jsecurity.ri.web.tags.PrincipalTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays the user's principal or a property of the user's principal.</description>
+        <attribute>
+            <name>type</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>property</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>defaultValue</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
 </taglib>
