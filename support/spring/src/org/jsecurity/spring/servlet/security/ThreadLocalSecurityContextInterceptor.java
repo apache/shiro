@@ -24,8 +24,8 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.jsecurity.ri.web.WebUtils;
 import org.jsecurity.ri.realm.RealmManager;
+import org.jsecurity.ri.web.WebUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -33,11 +33,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Interceptor that is used to ensure an {@link org.jsecurity.context.SecurityContext} is bound to the
+ * thread local on every request.  Also ensures that any {@link org.jsecurity.context.SecurityContext} bound to
+ * the thread local during a request is stored in the HTTP session when the request is complete.
+ *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
+public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAdapter {
 
     private RealmManager realmManager;
 

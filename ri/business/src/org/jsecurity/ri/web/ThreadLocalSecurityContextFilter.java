@@ -41,7 +41,7 @@ import java.io.IOException;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SecurityContextFilter implements Filter {
+public class ThreadLocalSecurityContextFilter implements Filter {
 
     private RealmManager realmManager;
 

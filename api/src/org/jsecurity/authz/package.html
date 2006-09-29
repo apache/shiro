@@ -7,14 +7,14 @@ Core interfaces and exceptions supporting Authorization (access control).
 'AuthentiCation', abbreviated as <tt>authc</tt>.</p>
 
 <p>The primary interface of interest, which is the core of JSecurity authorization functionality,
-is the <tt>AuthorizationContext</tt>.  This interface handles all aspects of authorization and is
+is the <tt>SecurityContext</tt>.  This interface handles all aspects of context-related security and is
 the facade to all other JSecurity authorization components.</p>
 
 <p>JSecurity has the ability to authorize subjects (a.k.a. users) without being intrusive to
 the application's domain model.  Most applications will utilize the concepts of
 <tt>group</tt>s, <tt>role</tt>s, and <tt>permission</tt>s, but JSecurity doesn't require that
 you implement any such interfaces.  Instead, JSecurity abstracts itself away from domain
-specifics by allowing applications to use an implementation of the <tt>AuthorizationContext</tt>
+specifics by allowing applications to use an implementation of the <tt>SecurityContext</tt>
 interface.</p>
 
 <p>Although
