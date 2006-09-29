@@ -70,7 +70,7 @@
 
 
     <!-- Web Interceptors -->
-    <bean id="authorizationInterceptor" class="org.jsecurity.spring.servlet.security.AuthorizationInterceptor">
+    <bean id="threadLocalSecurityContextInterceptor" class="org.jsecurity.spring.servlet.security.ThreadLocalSecurityContextInterceptor">
         <property name="realmManager" ref="securityManager"/>
     </bean>
 
