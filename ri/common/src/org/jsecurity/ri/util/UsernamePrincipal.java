@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -111,7 +111,7 @@ public class UsernamePrincipal implements Principal, Serializable {
             sp.setUsername( getUsername() ); //Strings are immutable, no need to clone
             return sp;
         } catch ( CloneNotSupportedException e ) {
-            throw new InternalError( "Unable to clone StringPrincipal");
+            throw new InternalError( "Unable to clone " + getClass().getName());
         }
     }
 

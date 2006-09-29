@@ -278,7 +278,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
             }
         } catch ( AuthenticationException e ) {
             if ( logger.isInfoEnabled() ) {
-                logger.info( "Authentication failed for token submission [" + token + "]" );
+                logger.info( "Authentication failed for token submission [" + token + "] because [" + e.getMessage() + "]" );
             }
             sendFailureEvent( token, e );
             throw e;

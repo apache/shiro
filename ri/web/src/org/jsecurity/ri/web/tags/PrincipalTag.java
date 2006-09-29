@@ -181,7 +181,7 @@ public class PrincipalTag extends SecureTag {
             }
 
             if( !foundProperty ) {
-                final String message = "Property [" + property + "] not found in principal of type [" + principal + "]";
+                final String message = "Property [" + property + "] not found in principal of type [" + principal.getClass().getName() + "]";
                 if (logger.isErrorEnabled()) {
                     logger.error(message);
                 }
@@ -189,7 +189,7 @@ public class PrincipalTag extends SecureTag {
             }
 
         } catch (Exception e) {
-            final String message = "Error reading property [" + property + "] from principal of type [" + principal + "]";
+            final String message = "Error reading property [" + property + "] from principal of type [" + principal.getClass().getName() + "]";
             if (logger.isErrorEnabled()) {
                 logger.error(message, e);
             }

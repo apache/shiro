@@ -28,6 +28,7 @@ import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
 import org.jsecurity.ri.realm.ldap.LdapDirectoryInfo;
 import org.jsecurity.ri.realm.ldap.LdapRealm;
+import org.jsecurity.ri.util.NamePrincipal;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -148,6 +149,12 @@ public class ActiveDirectoryRealm extends LdapRealm {
 
             info.addAllRoleNames( roleNames );
 
+        } else if( attr.getID().equals( "displayName" ) ) {
+            Collection<String> names = getAllAttributeValues( attr );
+            for( String name : names ) {
+                info.addPrincipal( new NamePrincipal( name ) );
+            }
+
         }
 
     }
@@ -155,9 +162,18 @@ public class ActiveDirectoryRealm extends LdapRealm {
     protected Collection<String> translateRoleNames(Collection<String> groupNames) {
         Set<String> roleNames = new HashSet<String>( groupNames.size() );
 
-        for( String groupName : groupNames ) {
-            String roleName = groupRoleMap.get( groupName );
-            roleNames.add( roleName );
+        if( groupRoleMap != null ) {
+            for( String groupName : groupNames ) {
+                String roleName = groupRoleMap.get( groupName );
+                if( roleName != null ) {
+
+                    if( log.isDebugEnabled() ) {
+                        log.debug( "User is member of group [" + groupName + "] so adding role [" + roleName + "]" );
+                    }
+
+                    roleNames.add( roleName );
+                }
+            }
         }
         return roleNames;
     }

@@ -154,9 +154,23 @@ public abstract class LdapRealm extends AbstractCachingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
-        LdapDirectoryInfo ldapDirectoryInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
+        LdapDirectoryInfo ldapDirectoryInfo = null;
+        try {
 
-        return buildAuthenticationInfo( upToken.getUsername(), upToken.getPassword(), ldapDirectoryInfo );
+            ldapDirectoryInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
+
+        } catch (NamingException e) {
+            final String message = "LDAP naming error while attempting to authenticate user.";
+            if( log.isErrorEnabled() ) {
+                log.error( message );
+            }
+        }
+
+        if( ldapDirectoryInfo != null ) {
+            return buildAuthenticationInfo( upToken.getUsername(), upToken.getPassword(), ldapDirectoryInfo );
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -193,7 +207,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
      *
      * @return the results of the LDAP directory search.
      */
-    protected LdapDirectoryInfo performAuthentication(String username, char[] password) {
+    protected LdapDirectoryInfo performAuthentication(String username, char[] password) throws NamingException {
 
         if( searchBase == null ) {
             throw new IllegalStateException( "A search base must be specified." );
@@ -229,9 +243,6 @@ public abstract class LdapRealm extends AbstractCachingRealm {
 
         } catch (javax.naming.AuthenticationException e) {
             throw new IncorrectCredentialException( "User could not be authenticated with LDAP server.", e );
-
-        } catch (NamingException e) {
-            throw new AuthenticationException( "LDAP naming error while attempting to authenticate user.", e );
 
         } finally {
             // Always close the LDAP context

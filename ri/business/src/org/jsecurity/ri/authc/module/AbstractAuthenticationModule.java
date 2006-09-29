@@ -147,9 +147,12 @@ public abstract class AbstractAuthenticationModule implements AuthenticationModu
             throw ae;
         } catch (Throwable t) {
             //probably unexpected exception.  Wrap and propagate:
-            throw new AuthenticationException(
-                "AuthenticationToken [" + token + "] could not be authenticated because an error " +
-                "occurred during authentication.", t );
+            final String message = "AuthenticationToken [" + token + "] could not be authenticated because an error " +
+                    "occurred during authentication.";
+            if( log.isErrorEnabled() ) {
+                log.error( message, t );
+            }
+            throw new AuthenticationException( message, t );
         }
 
         if( info == null ) {
