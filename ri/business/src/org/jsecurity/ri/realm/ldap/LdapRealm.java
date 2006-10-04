@@ -162,7 +162,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
         } catch (NamingException e) {
             final String message = "LDAP naming error while attempting to authenticate user.";
             if( log.isErrorEnabled() ) {
-                log.error( message );
+                log.error( message, e );
             }
         }
 
