@@ -144,7 +144,7 @@ public class ActiveDirectoryRealm extends LdapRealm {
             Collection<String> roleNames = translateRoleNames(groupNames);
 
             if( log.isDebugEnabled() ) {
-                log.debug( "Adding roles [" + groupNames + "] to LDAP directory info." );
+                log.debug( "Adding roles [" + roleNames + "] to LDAP directory info." );
             }
 
             info.addAllRoleNames( roleNames );
