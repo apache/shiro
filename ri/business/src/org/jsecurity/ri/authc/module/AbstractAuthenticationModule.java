@@ -27,9 +27,9 @@ package org.jsecurity.ri.authc.module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
+import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.ri.authc.credential.CredentialMatcher;
 
 import java.security.Principal;
 

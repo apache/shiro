@@ -23,10 +23,11 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.credential;
+package org.jsecurity.authc.credential.commonsdigest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.jsecurity.authc.credential.CredentialMatcher;
 
 import java.util.Arrays;
 

@@ -23,7 +23,9 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.ri.authc.credential;
+package org.jsecurity.authc.credential.support;
+
+import org.jsecurity.authc.credential.CredentialMatcher;
 
 import java.util.Arrays;
 
@@ -40,8 +42,8 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
     /**
      * Compares two plain text passwords.
      * 
-     * @param providedPassword the user-provided password as a char array (char[])
-     * @param storedPassword the password stored in the system as a char array (char[]).
+     * @param providedPassword the user-provided password as a String or char array (char[])
+     * @param storedPassword the password stored in the system as a String or char array (char[]).
      * @return true if the passwords match, false otherwise.
      */
     public boolean doCredentialsMatch( Object providedPassword,

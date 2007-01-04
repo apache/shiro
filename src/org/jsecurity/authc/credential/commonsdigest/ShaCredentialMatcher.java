@@ -24,20 +24,22 @@
 */
 
 
-package org.jsecurity.ri.authc.credential;
+package org.jsecurity.authc.credential.commonsdigest;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jsecurity.authc.credential.commonsdigest.DigestCredentialMatcher;
 
 /**
- * Digest password matcher that uses the MD5 hashing algorithm
+ * Digest password matcher that uses the SHA-1 hashing algorithm
  * to hash the provided password.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class Md5CredentialMatcher extends DigestCredentialMatcher {
+public class ShaCredentialMatcher extends DigestCredentialMatcher {
 
     protected byte[] doDigest(byte[] providedPassword) {
-        return DigestUtils.md5( providedPassword );
+        return DigestUtils.sha( providedPassword );
     }
+
 }

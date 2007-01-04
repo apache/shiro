@@ -22,7 +22,7 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.ri.authc.credential;
+package org.jsecurity.authc.credential;
 
 /**
  * Interface that can be implemented by classes that can determine if a provided
@@ -31,9 +31,9 @@ package org.jsecurity.ri.authc.credential;
  * <p>As a commone example, an implementation of this interface might verify a user-submitted
  * text password with a corresponding account password stored in the system.
  *
- * @see PlainTextCredentialMatcher
- * @see Md5CredentialMatcher
- * @see ShaCredentialMatcher
+ * @see org.jsecurity.authc.credential.support.PlainTextCredentialMatcher
+ * @see org.jsecurity.authc.credential.commonsdigest.Md5CredentialMatcher
+ * @see org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher
  *
  * @since 0.1
  * @author Jeremy Haile
