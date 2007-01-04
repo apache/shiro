@@ -45,12 +45,8 @@ public interface Authenticator {
     /**
      * Authenticates a user based on the submitted <tt>authenticationToken</tt>.
      *
-     * <p>If the authentication is successful, an {@link org.jsecurity.context.SecurityContext SecurityContext}
-     * is returned that represents the authenticated user's access rights.
-     *
-     * Because authorization operations can only occur under the context of a known and valid
-     * identity, an account's <tt>SecurityContext</tt> is only available after a successful
-     * log-in, when the identity has been verified.
+     * <p>If the authentication is successful, a {@link org.jsecurity.context.SecurityContext SecurityContext}
+     * is returned that represents that user's access rights.
      *
      * @param authenticationToken any representation of a user's principals and credentials
      * submitted during an authentication attempt.

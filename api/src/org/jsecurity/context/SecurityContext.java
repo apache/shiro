@@ -34,9 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Provides all access control behavior for an authenticated subject (aka a 'user account).
- * An <tt>SecurityContext</tt> can only be acquired upon a successful login, as access
- * control behavior must be associated with a known identity.
+ * Provides all access control behavior and session access for a subject (aka a 'user' account).
  *
  * @see org.jsecurity.authc.Authenticator
  *
@@ -51,9 +49,9 @@ public interface SecurityContext {
      * <tt>SecurityContext</tt> (usually a user id or username).  This is a
      * convenience method for contexts that only use a single principal.  If multiple
      * principals are associated with the context, the primary principal will be returned.
-     * Which principal is the primary principal is dependent upon the specific implementation
-     * of <tt>SecurityContext</tt>
-     * @return the primary identifier of the subject associated with this authorization context.
+     * The interpretation of the meaning of &quot;primary principal&quot; is left to the implementation
+     * (although most will choose a unique identifier such as a user id or username).
+     * @return the primary principal (a.k.a. identifying attribute) of the subject associated with this SecurityContext.
      * @throws org.jsecurity.authz.NoSuchPrincipalException is thrown if no principals are associated with this
      * authorization context.
      */
@@ -172,7 +170,7 @@ public interface SecurityContext {
 
     /**
      * Returns the user's application <tt>Session</tt>, or <tt>null</tt> if there is no
-     * <tt>Session</tt> associated with the user..
+     * <tt>Session</tt> associated with the user.
      *
      * @return the user's application <tt>Session</tt>, or <tt>null</tt>
      * if there is no session associated with the user.
@@ -181,7 +179,7 @@ public interface SecurityContext {
 
     /**
      * Invalidates and removes any entities (such as a {@link Session Session} and authorization
-     * context associated with the user represented by this <tt>SecurityContext</tt>.
+     * context associated with this <tt>SecurityContext</tt>.
      *
      * @see #getSession
      */

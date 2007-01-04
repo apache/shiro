@@ -24,10 +24,9 @@
  */
 package org.jsecurity.ri.authz;
 
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
-import org.jsecurity.realm.Realm;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.ri.realm.RealmManager;
 import org.jsecurity.ri.util.ThreadContext;
 import org.jsecurity.session.Session;
@@ -38,21 +37,22 @@ import java.util.*;
 
 /**
  * Simple implementation of the <tt>SecurityContext</tt> interface that delegates all
- * method calls to an underlying {@link Realm Realm} instance for security checks.  It is
- * essentially a <tt>Realm</tt> proxy.
+ * method calls to an underlying {@link RealmManager RealmManager} instance for security checks.  It is
+ * essentially a <tt>RealmManager</tt> proxy.
  *
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
- * architecture.  It instead asks the underlying <tt>Realm</tt> every time to perform
+ * architecture.  It instead asks the underlying <tt>RealmManager</tt> every time to perform
  * the authorization check.
  *
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
- * up to the implementation of the underlying <tt>Realm</tt> instance.  If caching of authorization
+ * up to the implementation of the underlying <tt>RealmManager</tt> instance.  If caching of authorization
  * context data is desired (to eliminate EIS round trips and therefore improve database
  * performance), it is considered much more
- * elegant to let the underlying Realm implementation manage caching, not this class.  A Realm is
- * considered a business-tier component, where caching strategies are better managed.
+ * elegant to let the underlying <tt>RealmManager</tt> implementation manage caching, not this class.  A
+ * <tt>RealmManager</tt> is
+ * considered a business-tier component, where caching strategies are better suited.
  *
  * <p>Applications from large and clustered to simple and vm local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
