@@ -27,7 +27,7 @@
           init-method="init"
           destroy-method="destroy" >
         <property name="credentialMatcher">
-            <bean class="org.jsecurity.ri.authc.credential.ShaCredentialMatcher">
+            <bean class="org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>
             </bean>
         </property>
