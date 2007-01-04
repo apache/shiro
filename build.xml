@@ -9,15 +9,17 @@
 
      Reading this will instantly make you familiar with our build.
 -->
-<project name="jsecurity" default="dist">
+<project name="jsecurity" default="all">
 
     <!-- Static property definitions.  These will remain the same for any module or submodule. -->
     <property name="project.name" value="jsecurity"/>
 
     <property name="root.base.dir" value="${basedir}"/>
 
-    <!-- Override default build properties from properties file. -->
-    <property file="${root.base.dir}/jsecurity.build.properties" />
+    <!-- Allow override of default build properties from properties file. -->
+    <property file="build.properties"/>
+    <property file="${root.base.dir}/${project.name}.build.properties" />
+    <property file="${user.home}/${project.name}.properties"/>
 
     <!-- application-wide config files: (all other config files should be in a respective
          module or submodule) -->
@@ -51,156 +53,120 @@
     <!-- compile flags, can be overridden on the command line using the -D flag -->
     <property name="compile.debug" value="true"/>
     <property name="compile.deprecation" value="false"/>
-    <property name="compile.optimize" value="true"/>
+    <property name="compile.optimize" value="false"/>
 
-    <target name="root-prepare">
-        <mkdir dir="${root.dist.dir}"/>
-    </target>
+    <property name="dist.jarName" value="${project.name}.jar"/>
+    <property name="dist.jar" value="${dist.dir}/${dist.jarName}"/>
 
-    <target name="prepare">
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${classes.dir}"/>
-        <mkdir dir="${test.classes.dir}"/>
-        <mkdir dir="${docs.dir}"/>
-        <mkdir dir="${api.dir}"/>
-        <mkdir dir="${test.docs.dir}"/>
-    </target>
-
-    <!-- ===================================================================
-      -  Template target.  Never called explicitly, only used to pass target
-      -  calls to the underlying children builds.
-      -  =================================================================== -->
-    <target name="template">
-        <!-- This section defines the modules and the order in which they are
-             executed for any given target.  This means ORDER MATTERS.
-             Any dependencies that are to be satisified by one module for another
-             must be declared in the order the dendencies occur. -->
-        <ant dir="api" target="${target}"/>
-        <ant dir="ri" target="${target}"/>
-        <ant dir="support" target="${target}"/>
-        <ant dir="samples/spring" target="${target}"/>        
-    </target>
+    <path id="all.libs">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
 
     <!-- ===================================================================
       -  Clean all local and children build files
       -  =================================================================== -->
     <target name="clean">
-        <!-- Clean all children builds: -->
-        <antcall target="template">
-            <param name="target" value="clean"/>
-        </antcall>
-        <!-- Clean local build: -->
-        <delete dir="${root.dist.dir}"/>
+        <delete dir="${build.dir}"/>
     </target>
 
 
-    <!-- ===================================================================
-      -  compile-sources - default Java compile behavior for a submodule
-      -  not used at the root level, but listed here so it can be shared
-      -  by all submodules (since they import this file).
-      -  =================================================================== -->
-    <target name="compile.src" depends="prepare">
-        <javac destdir="${classes.dir}"
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}/META-INF"/>
+
+		<javac destdir="${classes.dir}"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
-               classpathref="compile.path">
-            <src path="${src.dir}"/>
-        </javac>
+               failonerror="true"
+               classpathref="all.libs">
+			<src path="${src.dir}"/>
+		</javac>
+
+		<copy todir="${classes.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/ri/web/src/org/jsecurity/ri/web/tags">
+				<include name="*.tld"/>
+			</fileset>
+            <!-- <fileset dir="${src.dir}/org/jsecurity/web/tags">
+				<include name="*.tld"/>
+			</fileset> -->
+		</copy>
     </target>
 
-    <!-- ===================================================================
-      -  compile-test - default Java compile behavior for a submodule
-      -  not used at the root level, but listed here so it can be shared
-      -  by all submodules (since they import this file).
-      -  =================================================================== -->
-    <target name="compile.test" depends="prepare">
-        <javac srcdir="${test.dir}"
-               destdir="${test.classes.dir}"
-               debug="${compile.debug}"
-               deprecation="${compile.deprecation}"
-               optimize="${compile.optimize}"
-               classpathref="test.path"/>
-    </target>
+    <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
 
-    <!-- Compile all children modules and/or submodules -->
-    <target name="compile" depends="root-prepare">
-        <antcall target="template">
-            <param name="target" value="compile"/>
-        </antcall>
-    </target>
+        <mkdir dir="${dist.dir}"/>
+
+        <delete file="${dist.jar}"/>
+
+		<jar jarfile="${dist.jar}">
+			<fileset dir="${classes.dir}">
+				<include name="org/jsecurity/**"/>
+			</fileset>
+            <metainf dir="${classes.dir}/META-INF">
+                <include name="**"/>
+            </metainf>
+			<manifest>
+				<attribute name="Implementation-Title" value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="${project.name}-Version" value="${version}"/>
+				<!-- Allow use of this JAR as a Java agent -->
+				<!-- <attribute name="Premain-Class" value="org.jsecurity.instrument.InstrumentationSavingAgent" /> -->
+			</manifest>
+		</jar>
+
+	</target>
+
 
     <!-- =================================================================== -->
     <!-- Javadoc all main sources                                            -->
     <!-- =================================================================== -->
-    <target name="javadoc.api" depends="root-prepare">
-        <echo message="Generating JavaDoc API for specification sources..."/>
-        <mkdir dir="${root.dist.dir}/docs/spec-api"/>
+	<target name="javadoc" description="Generate Javadocs">
 
-        <javadoc packagenames="org.jsecurity.*"
-                 destdir="${root.dist.dir}/docs/spec-api"
-                 access="public"
-                 author="true"
-                 version="true"
-                 use="true"
-                 windowTitle="JSecurity Specification API">
-            <doctitle><![CDATA[<h1>JSecurity Specification API v. 0.2</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &copy; 2005-2006 JSecurity.org</i>]]></bottom>
-            <fileset dir="${root.base.dir}">
-                <include name="api/src/**/*.java"/>
-            </fileset>
-            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
-        </javadoc>
-    </target>
+        <echo message="Generating JavaDoc API..."/>
+        <delete dir="${api.dir}" failonerror="false"/>
+        <mkdir dir="${api.dir}"/>
 
-    <target name="javadoc.ri">
-        <echo message="Generating JavaDoc API for reference implementation sources..."/>
-        <mkdir dir="${root.dist.dir}/docs/ri-api"/>
-
-        <javadoc packagenames="org.jsecurity.*"
-                 destdir="${root.dist.dir}/docs/ri-api"
-                 author="true"
-                 version="true"
-                 use="true"
-                 windowTitle="JSecurity Reference Implementation API">
-            <doctitle><![CDATA[<h1>JSecurity Reference Implementation API v. 0.2</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &copy; 2005-2006 JSecurity.org</i>]]></bottom>
-            <classpath>
-                <pathelement location="${root.base.dir}/dist/jsecurity-api.jar"/>
-                <pathelement location="${lib.dir}/j2ee/servlet-api.jar"/>
-                <pathelement location="${lib.dir}/j2ee/jsp-api.jar"/>
-                <pathelement location="${lib.dir}/jakarta-commons/commons-logging.jar"/>
-                <pathelement location="${lib.dir}/jakarta-commons/commons-beanutils-core.jar"/>
-                <pathelement location="${lib.dir}/jakarta-commons/commons-codec.jar"/>
-                <pathelement location="${lib.dir}/quartz/quartz.jar"/>
-                <pathelement location="${lib.dir}/ehcache/ehcache.jar"/>
-                <pathelement location="${lib.dir}/spring/spring.jar"/>
-            </classpath>
-            <packageset dir="${root.base.dir}/ri/common/src">
-                <include name="org/jsecurity/ri/**"/>
-            </packageset>
-            <packageset dir="${root.base.dir}/ri/business/src">
-                <include name="org/jsecurity/ri/**"/>
-            </packageset>
-            <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
-            <link href="http://jakarta.apache.org/commons/logging/commons-logging-1.1/apidocs/"/>
+		<javadoc sourcepath="${src.dir}" destdir="${api.dir}" windowtitle="JSecurity API ${version}"
+				source="1.5" access="package" author="true" version="true" use="true"
+				defaultexcludes="true"
+				header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;JSecurity&lt;/a&gt;'>
+			<arg value="-breakiterator"/>
+			<arg value="-J-Xmx128m"/>
+			<arg value="-J-XX:MaxPermSize=128m"/>
+			<!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
+			<arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
+			<doctitle><![CDATA[<h1>JSecurity API 0.2</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &copy; 2004-2007 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i>]]></bottom>
+			<classpath refid="all.libs"/>
+			<packageset dir="${src.dir}">
+				<include name="org/jsecurity/**"/>
+			</packageset>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
+			<!-- Jakarta Commons -->
+			<link href="http://jakarta.apache.org/commons/collections/apidocs/"/>
+			<link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
             <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
-            <link href="http://static.springframework.org/spring/docs/1.2.x/api/"/>
+            <link href="http://quartz.sourceforge.net/javadoc/"/>
+            <link href="http://www.springframework.org/docs/api/"/>
             <link href="http://ehcache.sourceforge.net/apidocs/"/>
-            <link href="http://www.opensymphony.com/quartz/api/"/>
         </javadoc>
 
-    </target>
+	</target>
 
-    <!-- =================================================================== -->
-    <!-- Javadoc all source code                                             -->
-    <!-- =================================================================== -->
-    <target name="javadoc" depends="javadoc.api,javadoc.ri"/>
-
-    <target name="junit.check.warning" if="tests.failed">
+    <!-- <target name="junit.check.warning" if="tests.failed">
         <echo>
         ***********************************************************
         * One or more unit tests failed!
@@ -210,12 +176,12 @@
         </echo>
     </target>
 
-    <!-- ===================================================================
+    <!- - ===================================================================
       -  quick-test-report - quickly generates test report documentation based
       -  on the xml test reports previously created during a junit task
       -  execution. (this does not run the task).
-      -  =================================================================== -->
-    <target name="test.report" depends="prepare">
+      -  =================================================================== - ->
+    <target name="test.report">
         <echo message="Generating test reports..."/>
 
         <junitreport todir="${test.docs.dir}">
@@ -229,9 +195,9 @@
     <target name="unit.tests" depends="compile">
         <echo message="Executing unit tests..."/>
 
-        <!-- Any properties files needed by test cases and/or Spring test case
-             configuration must be under the JDYN_ROOT hierarchy so relative
-             file references may work properly.  -->
+        <!- - Any properties files needed by test cases and/or Spring test case
+             configuration must be under the base root dir hierarchy so relative
+             file references may work properly.  - ->
         <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/etc/log4j.properties"/>
         <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/db/build/gen/jdbc.properties"/>
 
@@ -246,7 +212,7 @@
 
             <formatter type="brief" usefile="false"/>
             <formatter type="xml"/>
-            <!-- allows us to generate web reports -->
+            <!- - allows us to generate web reports - ->
 
             <batchtest fork="true" todir="${gen.dir}">
                 <fileset dir="${test.classes.dir}">
@@ -268,54 +234,20 @@
         <antcall target="template">
             <param name="target" value="test"/>
         </antcall>
-    </target>
+    </target> -->
 
-    <!-- ===================================================================
-         jar - not called from the master or module builds, but provided
-         as a default convenience target for submodules to jar up
-         their resources.  If a submodule has more complex requirements
-         when creating their jar, it can override this task by
-         defining a 'jar' target in its local build file.
-         =================================================================== -->
-    <target name="jar" depends="compile">
-        <jar jarfile="${dist.jar}">
-            <fileset dir="${classes.dir}">
-                <include name="**/*.class"/>
-            </fileset>
-            <fileset dir="${src.dir}">
-                <include name="**/*.properties"/>
-            </fileset>
-            <fileset dir="${src.dir}">
-                <include name="**/*.gif"/>
-            </fileset>
-            <fileset dir="${src.dir}">
-                <include name="**/*.png"/>
-            </fileset>
-            <manifest>
-				<attribute name="Implementation-Title"
-                           value="${project.name}-${module.name}-${submodule.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="${project.name}-Version" value="${version}"/>
-			</manifest>
-        </jar>
-    </target>
 
-    <target name="src.zip" depends="root-prepare">
-        <zip destfile="${root.dist.dir}/${project.name}.src.zip">
-            <fileset dir="${root.base.dir}/api/src"
-                     includes="**/*.java, **/*.properties"/>
-            <fileset dir="${root.base.dir}/ri/common/src"
-                     includes="**/*.java, **/*.properties"/>
-            <fileset dir="${root.base.dir}/ri/web/src"
-                     includes="**/*.java, **/*.properties"/>
-            <fileset dir="${root.base.dir}/ri/business/src"
-                     includes="**/*.java, **/*.properties"/>
-            <fileset dir="${root.base.dir}/support/spring/src"
-                     includes="**/*.java, **/*.properties"/>
+    <target name="src.zip" description="Create source ZIP (containing Java sources)">
+        <mkdir dir="${dist.dir}"/>
+        <delete file="${dist.dir}/${project.name}.src.zip"/>
+        <zip destfile="${dist.dir}/${project.name}.src.zip">
+            <fileset dir="${src.dir}">
+                <include name="org/jsecurity/**"/>
+            </fileset>
         </zip>
     </target>
 
-    <target name="composite-jars" depends="root-prepare">
+    <!-- <target name="composite-jars">
         <path id="jarjar.path">
             <pathelement location="${lib.dir}/jarjar/jarjar.jar"/>
         </path>
@@ -349,7 +281,7 @@
             <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-web.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
-            <!-- <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> -->
+            <!- - <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> - ->
             <zipfileset src="${root.dist.dir}/${project.name}-spring.jar"/>
             <zipfileset src="${root.dist.dir}/${project.name}-jboss.jar"/>
 
@@ -360,28 +292,17 @@
 			</manifest>
         </jarjar>
 
-    </target>
+    </target>  -->
 
 
-    <!-- ===================================================================
-   dist - calls the "dist" target for all modules.  All modules are
-          required to have this defined as it creates a module's
-          artifacts (jars, wars, etc).
-   =================================================================== -->
-    <target name="dist" depends="root-prepare">
-        <antcall target="template">
-            <param name="target" value="dist"/>
-        </antcall>
-    </target>
-
-    <target name="release" depends="dist,composite-jars,src.zip,javadoc">
+    <target name="release" depends="jar,src.zip,javadoc">
 
         <!-- copy over the readme file in the dist directory so people understand
              what the files do: -->
-        <copy toDir="${root.dist.dir}" preservelastmodified="true" file="${root.etc.dir}/README.txt"/>
+        <!-- <copy toDir="${dist.dir}" preservelastmodified="true" file="${root.etc.dir}/README.txt"/> -->
 
         <property name="release.zip.name" value="${project.name}-${version}-with-dependencies.zip"/>
-        <zip destfile="${root.dist.dir}/${release.zip.name}"
+        <zip destfile="${dist.dir}/${release.zip.name}"
              basedir="${basedir}"
              excludes="**/.svn/*,**/build/**,**/${release.zip.name}"/>
     </target>
