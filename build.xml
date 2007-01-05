@@ -95,12 +95,9 @@
 		</copy>
 
 		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${root.base.dir}/ri/web/src/org/jsecurity/ri/web/tags">
+            <fileset dir="${src.dir}/org/jsecurity/web/tags">
 				<include name="*.tld"/>
 			</fileset>
-            <!-- <fileset dir="${src.dir}/org/jsecurity/web/tags">
-				<include name="*.tld"/>
-			</fileset> -->
 		</copy>
     </target>
 

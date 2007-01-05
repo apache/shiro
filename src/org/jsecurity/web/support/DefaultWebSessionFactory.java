@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -44,7 +44,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Default JSecurity Reference Implementation of the {@link WebSessionFactory} interface.
+ * Default JSecurity implementation of the {@link WebSessionFactory} interface.
  *
  * @since 0.1
  * @author Les Hazlewood

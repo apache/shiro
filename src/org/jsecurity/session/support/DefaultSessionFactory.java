@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005 Les Hazlewood
+* Copyright (C) 2005-2007 Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -32,13 +32,13 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * Default JSecurity reference implementation of a {@link org.jsecurity.session.SessionFactory}.
+ * Default JSecurity implementation of a {@link org.jsecurity.session.SessionFactory}.
  * This implementation returns instances where all method invocations delegate to a corresponding
  * {@link org.jsecurity.session.SessionManager SessionManager} method call.  That is, the
  * objects returned act as transparent proxies to the SessionManager responsible for all Sessions
  * in a system.
  *
- * <p>This transparent proxy/delegate technique allows the JSecurity reference implementation to
+ * <p>This transparent proxy/delegate technique allows the JSecurity support classes to
  * maintain a stateless architecture (i.e. similar to accessing a EJB Stateless Session Bean),
  * which is extremely efficient.  Any state to be maintained is the responsibility of the
  * SessionManager, not your application, thereby making your code much cleaner and more efficient.
@@ -54,7 +54,7 @@ import java.net.InetAddress;
  * then bound to the executing thread via a {@link ThreadLocal ThreadLocal}, and then finally
  * removed/discarded from the thread when execution is complete.  This is exactly how J2EE,
  * Hibernate, Spring and other enterprise-level  projects perform optimization, and is also the
- * way JSecurity RI utility classes behave (such as our
+ * way JSecurity utility classes behave (such as our
  * {@link org.jsecurity.spring.servlet.security.SessionInterceptor SessionInterceptor}).
  *
  * @since 0.1

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 All rights reserved.
+ * Copyright (C) 2005-2007 All rights reserved.
  */
 
 package org.jsecurity.session.support.quartz;

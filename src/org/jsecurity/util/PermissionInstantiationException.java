@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -27,7 +27,7 @@ package org.jsecurity.util;
 import org.jsecurity.JSecurityException;
 
 /**
- * Thrown internally by the JSecurity RI when dynamically instantiating a Permission
+ * Thrown internally by support implementations when dynamically instantiating a Permission
  * class and that instantiation unexpectedly fails.
  *
  * @since 0.1

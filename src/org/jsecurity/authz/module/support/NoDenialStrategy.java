@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile, Les Hazlewood
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
