@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -36,9 +36,6 @@ import java.net.InetAddress;
  *
  * <p>A {@link Session Session} is a data context associated with a single entity (user,
  * 3rd party process, etc) that communicates with a software system over a period of time.
- *
- * <p>All interaction with a secure system is done in the course of a Session, even if that
- * Session only exists over the course of a single method invocation.
  *
  * @since 0.1
  * @author Les Hazlewood

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood, Jeremy Haile
+ * Copyright (C) 2005-2007 Les Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -41,7 +41,7 @@ import java.util.List;
  * maintain a non-intrusive development philosophy whenever possible, it does not require you to
  * implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt> interfaces or classes.
  *
- * <p>Instead, the JSecurity RI allows applications to implement this interface to access
+ * <p>Instead, JSecurity allows applications to implement this interface to access
  * environment-specific components and data model objects.  The implementation can then be
  * plugged in to the application's JSecurity configuration.  This modular technique abstracts
  * away any environment/modeling details and allows JSecurity to be deployed in
@@ -70,7 +70,7 @@ public interface Realm extends AuthenticationModule {
      * primary key or a String role name.
      *
      * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
@@ -95,7 +95,7 @@ public interface Realm extends AuthenticationModule {
      * entity primary keys or String role names.
      *
      * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
@@ -116,7 +116,7 @@ public interface Realm extends AuthenticationModule {
      * entity primary keys or a String role names.
      *
      * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
@@ -137,7 +137,7 @@ public interface Realm extends AuthenticationModule {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
@@ -162,7 +162,7 @@ public interface Realm extends AuthenticationModule {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
@@ -186,7 +186,7 @@ public interface Realm extends AuthenticationModule {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to be checked.
@@ -206,7 +206,7 @@ public interface Realm extends AuthenticationModule {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).

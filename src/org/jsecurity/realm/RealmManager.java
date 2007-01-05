@@ -73,7 +73,7 @@ public interface RealmManager {
      * primary key or a String role name.
      *
      * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
@@ -98,7 +98,7 @@ public interface RealmManager {
      * entity primary keys or String role names.
      *
      * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
@@ -119,7 +119,7 @@ public interface RealmManager {
      * entity primary keys or a String role names.
      *
      * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
@@ -140,7 +140,7 @@ public interface RealmManager {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
@@ -165,7 +165,7 @@ public interface RealmManager {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
@@ -189,7 +189,7 @@ public interface RealmManager {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to be checked.
@@ -209,7 +209,7 @@ public interface RealmManager {
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
-     * determined by the application's JSecurity RI configuration.
+     * determined by the application's JSecurity configuration.
      *
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).
