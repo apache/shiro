@@ -3,7 +3,7 @@ package org.jsecurity.spring.security.interceptor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.ri.authz.aop.AbstractAuthorizationInterceptor;
+import org.jsecurity.authz.aop.AbstractAuthorizationInterceptor;
 
 import java.lang.reflect.Method;
 

@@ -2,7 +2,7 @@ package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.ri.context.ThreadLocalSecurityContext;
+import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 
 /**

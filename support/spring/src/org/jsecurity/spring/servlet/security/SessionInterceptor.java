@@ -26,8 +26,8 @@ package org.jsecurity.spring.servlet.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.ri.web.WebSessionFactory;
-import org.jsecurity.ri.web.WebUtils;
+import org.jsecurity.web.WebSessionFactory;
+import org.jsecurity.web.WebUtils;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;

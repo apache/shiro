@@ -25,8 +25,8 @@
 
 package org.jsecurity.authz.module;
 
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.authz.AuthorizedAction;
+import org.jsecurity.context.SecurityContext;
 
 
 /**

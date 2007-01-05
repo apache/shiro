@@ -1,6 +1,6 @@
 package org.jsecurity.samples.spring.web;
 
-import org.jsecurity.ri.context.ThreadLocalSecurityContext;
+import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;

@@ -27,7 +27,6 @@
 package org.jsecurity.authc.credential.commonsdigest;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.jsecurity.authc.credential.commonsdigest.DigestCredentialMatcher;
 
 /**
  * Digest password matcher that uses the SHA-1 hashing algorithm
