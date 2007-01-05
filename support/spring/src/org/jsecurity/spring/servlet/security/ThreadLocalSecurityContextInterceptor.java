@@ -24,8 +24,8 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.jsecurity.ri.realm.RealmManager;
-import org.jsecurity.ri.web.WebUtils;
+import org.jsecurity.realm.RealmManager;
+import org.jsecurity.web.WebUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 

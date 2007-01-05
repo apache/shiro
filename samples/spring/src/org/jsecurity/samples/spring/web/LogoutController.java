@@ -25,7 +25,7 @@
 
 package org.jsecurity.samples.spring.web;
 
-import org.jsecurity.ri.context.ThreadLocalSecurityContext;
+import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 

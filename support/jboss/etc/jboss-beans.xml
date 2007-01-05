@@ -45,7 +45,7 @@
 
     <!-- Root JSecurity Authenticator - coordinates and uses a configured set of
          AuthenticationModules to implement PAM behavior.  Add modules as necessary.  -->
-    <bean name="authenticator" class="org.jsecurity.ri.authc.module.ModularAuthenticator">
+    <bean name="authenticator" class="org.jsecurity.authc.module.support.ModularAuthenticator">
         <property name="realm"><inject bean="memoryRealmAuthenticationModule"/></property>
         <property name="modules">
             <list>
@@ -61,18 +61,18 @@
          Authorization (access control) Configuration
          =================================================================================== -->
     <!-- AOP Annotations Support-->
-    <bean name="authorizer" class="org.jsecurity.ri.authz.module.AnnotationsModularAuthorizer"/>
+    <bean name="authorizer" class="org.jsecurity.authz.module.support.AnnotationsModularAuthorizer"/>
 
 
     <!-- ===================================================================================
          Session Management Configuration
          =================================================================================== -->
-    <bean name="sessionManager" class="org.jsecurity.ri.session.DefaultSessionManager">
+    <bean name="sessionManager" class="org.jsecurity.session.support.DefaultSessionManager">
         <create method="init"/>
     </bean>
     <!-- SessionFactory uses the SessionManager to create/acquire sessions.  This factory works
          in both regular and web-enabled environments: -->
-    <bean name="sessionFactory" class="org.jsecurity.ri.web.support.DefaultWebSessionFactory">
+    <bean name="sessionFactory" class="org.jsecurity.web.support.DefaultWebSessionFactory">
         <property name="sessionManager"><inject bean="sessionManager"/></property>
     </bean>
 

@@ -14,7 +14,7 @@
     <bean name="securityManager"
           init-method="init"
           destroy-method="destroy"
-          class="org.jsecurity.ri.RealmSecurityManager">
+          class="org.jsecurity.RealmSecurityManager">
         <property name="realms">
             <list>
                 <ref bean="memoryRealm"/>
@@ -23,7 +23,7 @@
     </bean>
 
     <bean id="memoryRealm"
-          class="org.jsecurity.ri.realm.memory.MemoryRealm"
+          class="org.jsecurity.realm.support.memory.MemoryRealm"
           init-method="init"
           destroy-method="destroy" >
         <property name="credentialMatcher">
@@ -33,12 +33,12 @@
         </property>
         <property name="accounts">
             <set>
-                <bean class="org.jsecurity.ri.realm.memory.AccountEntry">
+                <bean class="org.jsecurity.realm.support.memory.AccountEntry">
                     <property name="username" value="user1"/>
                     <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> <!-- 'user1' SHA-1 Base64 -->
                     <property name="roles" value="role1, role2"/>
                 </bean>
-                <bean class="org.jsecurity.ri.realm.memory.AccountEntry">
+                <bean class="org.jsecurity.realm.support.memory.AccountEntry">
                     <property name="username" value="user2"/>
                     <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> <!-- 'user2' SHA-1 Base64 -->
                     <property name="roles" value="role2"/>
@@ -49,11 +49,11 @@
 
 
     <!-- Session Management -->
-    <bean id="sessionFactory" class="org.jsecurity.ri.web.support.DefaultWebSessionFactory">
+    <bean id="sessionFactory" class="org.jsecurity.web.support.DefaultWebSessionFactory">
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
 
-    <bean id="sessionManager" init-method="init" class="org.jsecurity.ri.session.DefaultSessionManager"/>
+    <bean id="sessionManager" init-method="init" class="org.jsecurity.session.support.DefaultSessionManager"/>
 
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="sessionFactory" ref="sessionFactory"/>

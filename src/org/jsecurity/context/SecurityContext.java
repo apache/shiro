@@ -24,9 +24,9 @@
  */
 package org.jsecurity.context;
 
-import org.jsecurity.session.Session;
-import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.NoSuchPrincipalException;
+import org.jsecurity.session.Session;
 
 import java.security.Permission;
 import java.security.Principal;

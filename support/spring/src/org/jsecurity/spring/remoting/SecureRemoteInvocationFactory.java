@@ -1,7 +1,7 @@
 package org.jsecurity.spring.remoting;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.jsecurity.ri.context.ThreadLocalSecurityContext;
+import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;

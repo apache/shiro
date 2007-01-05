@@ -5,7 +5,7 @@ import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.ri.authz.aop.AbstractAuthorizationInterceptor;
+import org.jsecurity.authz.aop.AbstractAuthorizationInterceptor;
 
 import java.lang.reflect.Method;
 

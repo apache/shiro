@@ -55,7 +55,7 @@
         diskExpiryThreadIntervalSeconds="120"
         />
 
-    <cache name="org.jsecurity.ri.realm.memory.MemoryRealm.authorization"
+    <cache name="org.jsecurity.realm.support.memory.MemoryRealm.authorization"
         maxElementsInMemory="100"
         eternal="false"
         timeToLiveSeconds="600"

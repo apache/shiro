@@ -37,14 +37,14 @@ import java.util.List;
  * such as users, roles, and permissions to determine authorization behavior.
  *
  * <p>Because every application is different, security data such as users and roles can be
- * represented in any number of ways.  Because the JSecurity Reference Implementation tries to
+ * represented in any number of ways.  Because JSecurity tries to
  * maintain a non-intrusive development philosophy whenever possible, it does not require you to
  * implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt> interfaces or classes.
  *
  * <p>Instead, the JSecurity RI allows applications to implement this interface to access
  * environment-specific components and data model objects.  The implementation can then be
- * plugged in to the application's JSecurity RI configuration.  This modular technique abstracts
- * away any environment/modeling details and allows the JSecurity RI to be deployed in
+ * plugged in to the application's JSecurity configuration.  This modular technique abstracts
+ * away any environment/modeling details and allows JSecurity to be deployed in
  * practically any application environment.
  *
  * @since 0.1
