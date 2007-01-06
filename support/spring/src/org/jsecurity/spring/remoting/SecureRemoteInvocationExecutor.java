@@ -71,6 +71,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |               M E T H O D S               |
     ============================================*/
 
+    @SuppressWarnings({"unchecked"})
     public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {

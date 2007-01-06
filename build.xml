@@ -62,7 +62,7 @@
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar"/>
 		</fileset>
-	</path>
+    </path>
 
     <!-- ===================================================================
       -  Clean all local and children build files
@@ -72,7 +72,7 @@
     </target>
 
 
-    <target name="compile">
+    <target name="compile.core">
         <mkdir dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}/META-INF"/>
 
@@ -95,11 +95,68 @@
 		</copy>
 
 		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${src.dir}/org/jsecurity/web/tags">
-				<include name="*.tld"/>
+            <fileset dir="${src.dir}">
+				<include name="**/*.tld"/>
 			</fileset>
 		</copy>
     </target>
+
+
+    <target name="compile.spring" depends="compile.core" description="Build 3rd party Spring Framework support">
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true">
+            <classpath refid="all.libs"/>
+            <classpath location="${classes.dir}"/>
+            <src path="${root.base.dir}/support/spring/src"/>
+		</javac>
+
+		<copy todir="${classes.dir}" preservelastmodified="true">
+			<fileset dir="${root.base.dir}/support/spring/src">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/support/spring/src">
+				<include name="**/*.tld"/>
+			</fileset>
+		</copy>
+    </target>
+
+    <target name="compile.jboss" depends="compile.core" description="Build 3rd party JBoss support">
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true">
+            <classpath refid="all.libs"/>
+            <classpath location="${classes.dir}"/>
+            <src path="${root.base.dir}/support/jboss/src"/>
+		</javac>
+
+		<copy todir="${classes.dir}" preservelastmodified="true">
+			<fileset dir="${root.base.dir}/support/jboss/src">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/support/jboss/src">
+				<include name="**/*.tld"/>
+			</fileset>
+		</copy>
+    </target>
+
+    <target name="compile" depends="compile.core, compile.spring, compile.jboss"/>
 
     <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
 
@@ -131,15 +188,22 @@
     <!-- =================================================================== -->
 	<target name="javadoc" description="Generate Javadocs">
 
+        <path id="javadocSrcPath">
+            <pathelement location="${src.dir}"/>
+            <pathelement location="${root.base.dir}/support/jboss/src"/>
+            <pathelement location="${root.base.dir}/support/spring/src"/>
+        </path>
+
         <echo message="Generating JavaDoc API..."/>
         <delete dir="${api.dir}" failonerror="false"/>
         <mkdir dir="${api.dir}"/>
 
-		<javadoc sourcepath="${src.dir}" destdir="${api.dir}" windowtitle="JSecurity API ${version}"
+		<javadoc destdir="${api.dir}" windowtitle="JSecurity API ${version}"
 				source="1.5" access="package" author="true" version="true" use="true"
 				defaultexcludes="true"
 				header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;JSecurity&lt;/a&gt;'>
-			<arg value="-breakiterator"/>
+            <sourcepath refid="javadocSrcPath"/>
+            <arg value="-breakiterator"/>
 			<arg value="-J-Xmx128m"/>
 			<arg value="-J-XX:MaxPermSize=128m"/>
 			<!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
@@ -148,6 +212,12 @@
 			<bottom><![CDATA[<i>Copyright &copy; 2004-2007 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i>]]></bottom>
 			<classpath refid="all.libs"/>
 			<packageset dir="${src.dir}">
+				<include name="org/jsecurity/**"/>
+			</packageset>
+			<packageset dir="${root.base.dir}/support/jboss/src">
+				<include name="org/jsecurity/**"/>
+			</packageset>
+			<packageset dir="${root.base.dir}/support/spring/src">
 				<include name="org/jsecurity/**"/>
 			</packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
