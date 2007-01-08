@@ -91,11 +91,11 @@ public abstract class AbstractRealm extends AbstractAuthenticationModule impleme
     protected abstract AuthorizationInfo getAuthorizationInfo(Principal principal);
 
     /**
-     * The default implementation of getName() returns the class name if no
+     * The default implementation of getName() returns the fully-qualified class name if no
      * name has been specified for this Realm.  If more than one realm of a
      * particular Realm class is used in an application, the name must be
      * manually specified.
-     * @return the name associated with this realm, or the class name
+     * @return the name associated with this realm, or the fully-qualified class name
      * of the realm implementation if a name has not been assigned.
      */
     public String getName() {

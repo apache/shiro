@@ -29,10 +29,11 @@ import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
 
 /**
- * <p>Security-management interface tying together authentication and authorization
- * responsibilities as well as providing a source for JSecurity configuration.  The Security
- * Manager interface is a central interface allowing access to the most common JSecurity
- * security-related functionality</p>
+ * A <tt>SecurityManager</tt> is a convenience mechanism - it extends both the {@link Authenticator} and
+ * {@link Authorizer} interfaces, thereby consolidating both behaviors into one.  This allows applications to
+ * interact with a single component for most JSecurity operations should they choose to do so.
+ *
+ * @see AbstractSecurityManager
  *
  * @since 0.2
  * @author Jeremy Haile

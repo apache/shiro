@@ -129,6 +129,30 @@ public class ModularAuthenticator extends AbstractAuthenticator {
         }
     }
 
+    /**
+     * Used by the internal {@link #doAuthenticate} implementation to ensure that the <tt>modules</tt> property
+     * has been set.  The default implementation ensures the property is not null and not empty.
+     * @throws IllegalStateException if the <tt>modules</tt> property is configured incorrectly.
+     */
+    protected void assertModulesConfigured() throws IllegalStateException {
+        if ( modules == null || modules.size() <= 0 ) {
+            String msg = "No authentication modules configured for this ModularAuthenticator.  Configuration error.";
+            throw new IllegalStateException( msg );
+        }
+    }
+
+    protected AuthenticationInfo modulesComplete( boolean oneOrMoreSuccessful, AuthenticationToken authenticationToken,
+                                                  AuthenticationInfo aggregated ) {
+        // If no module authenticated the user, throw an exception
+        if( !oneOrMoreSuccessful ) {
+            throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
+                "could not be authenticated by any configured modules.  Check that this authenticator is configured " +
+                "with appropriate modules." );
+        } else {
+            return aggregated;
+        }
+    }
+
 
     /**
      * <p>Attempts to authenticate the given token by iterating over the internal collection of
@@ -151,7 +175,9 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
      * for the given principal and credentials.
      */
-    public AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+    protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+
+        assertModulesConfigured();
 
         AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( authenticationToken );
 
@@ -186,18 +212,12 @@ public class ModularAuthenticator extends AbstractAuthenticator {
                 }
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Module of type [" + module.getClass().getName() + "] does not support token." );
+                    logger.debug("Module of type [" + module.getClass().getName() + "] does not support token " +
+                            "of type [" + authenticationToken.getClass().getName() + "].  Skipping module." );
                 }
             }
         }
 
-        // If no module authenticated the user, throw an exception
-        if( !authenticated ) {
-            throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
-                "could not be authenticated by any configured modules.  Check that the authenticator is configured " +
-                "with appropriate modules." );
-        } else {
-            return aggregatedInfo;
-        }
+        return modulesComplete( authenticated, authenticationToken, aggregatedInfo );
     }
 }
