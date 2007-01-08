@@ -36,24 +36,28 @@ import org.jsecurity.context.SecurityContext;
 
 /**
  * <p>Abstract implementation of the <code>SecurityManager</code> interface that delegates its authentication and
- * authorization operations to an internal encapsulated {@link Authenticator} and {@link Authorizer} instance,
- * respectively.  It also provides some sensible defaults to simplify configuration.
+ * authorization operations to wrapped {@link Authenticator} and {@link Authorizer} instances.
+ * It also provides some sensible defaults to simplify configuration.
  *
  * <p>This implementation is primarily a convenience mechanism that wraps both instances to consolidate
  * both behaviors into a single point of reference.  For most JSecurity users, this simplifies configuration and
  * tends to be a more convenient approach than referencing the <code>Authenticator</code> and <code>Authorizer</code>
- * instances seperately.
+ * instances seperately in their application code;  instead they only need to interact with a single
+ * <tt>SecurityManager</tt> instance.
  *
- * <p><b>N.B.</b> Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
- * {@link org.jsecurity.authz.module.support.AnnotationsModularAuthorizer} instance to simplify configuration.  There is <strong>no default</strong>
- * {@link #setAuthenticator Authenticator} created by this <code>SecurityManager</code> abstract implementation, as it is expected to be
- * specified by Dependency Injection or by subclass implementations.</p>
+ * <p><b>Note:</b> <ol><li>Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
+ * {@link org.jsecurity.authz.module.support.AnnotationsModularAuthorizer} instance to simplify configuration; if you
+ * don't want to use JDK 1.5+ annotataions for authorization checks, you'll need to inject another implementation or 
+ * programmatically interact with a subject's SecurityContext directly in code (ok, but not as 'clean').</li>
+ * <li>There is <strong>no default</strong> {@link #setAuthenticator Authenticator} created by this
+ * <code>SecurityManager</code> abstract implementation, as it is expected to be
+ * specified by Dependency Injection or by subclass implementations.</li></ol>
  *
  * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class AbstractSecurityManager implements org.jsecurity.SecurityManager {
+public abstract class AbstractSecurityManager implements SecurityManager {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -91,20 +95,20 @@ public abstract class AbstractSecurityManager implements org.jsecurity.SecurityM
     |               M E T H O D S               |
     ============================================*/
 
-    public final void init() {
+    public void init() {
         if ( this.authorizer == null ) {
             throw new IllegalStateException( "authorizer property must be set." );
         }
         onInit();
+        if ( this.authenticator == null ) {
+            throw new IllegalStateException( "authenticator property must be set." );   
+        }
     }
 
     protected void onInit(){}
 
-    public final void destroy() {
-        onDestroy();
+    public void destroy() { //default implementation does nothing
     }
-
-    protected void onDestroy(){}
 
     /**
      * Delegates to the authenticator for authentication.

@@ -36,16 +36,31 @@ import java.util.List;
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
  * such as users, roles, and permissions to determine authorization behavior.
  *
+ * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
+ * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
+ * determine authorization information, such as JDBC, File IO, Hibernate or JPA, or any other Data Access API.
+ *
+ * <p>Because most of these datasources usually contain subject (user) information such as usernames and passwords,
+ * this
+ * interface also extends the {@link AuthenticationModule} interface for convenience, thereby allowing a Realm to act
+ * as a pluggable authentication module in a PAM configuration.  This allows a Realm to perform <i>both</i>
+ * authentication and authorization duties for a single datasource, which caters to 90% of the use cases of most
+ * applications.  If for some reason you don't want your Realm implementation to perform authentication duties, you
+ * should override the {@link AuthenticationModule#supports(Class)} method to always return <tt>false</tt>.
+ *
  * <p>Because every application is different, security data such as users and roles can be
  * represented in any number of ways.  Because JSecurity tries to
  * maintain a non-intrusive development philosophy whenever possible, it does not require you to
  * implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt> interfaces or classes.
  *
  * <p>Instead, JSecurity allows applications to implement this interface to access
- * environment-specific components and data model objects.  The implementation can then be
+ * environment-specific datasources and data model objects.  The implementation can then be
  * plugged in to the application's JSecurity configuration.  This modular technique abstracts
  * away any environment/modeling details and allows JSecurity to be deployed in
  * practically any application environment.
+ *
+ * @see AuthenticationModule
+ * @see org.jsecurity.authc.module.support.ModularAuthenticator ModularAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood

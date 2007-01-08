@@ -36,6 +36,9 @@ import org.jsecurity.context.SecurityContext;
  * and interacting with an application-configured set of
  * {@link org.jsecurity.authc.module.AuthenticationModule AuthenticationModule}s.
  *
+ * @see org.jsecurity.authc.module.support.ModularAuthenticator ModularAuthenticator
+ *
+ *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
