@@ -61,8 +61,14 @@ import java.util.List;
  * away any environment/modeling details and allows JSecurity to be deployed in
  * practically any application environment.
  *
+ * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend
+ * one of the subclasses, {@link org.jsecurity.realm.support.AbstractRealm} or {@link org.jsecurity.realm.support.AbstractCachingRealm},
+ * which reduce the tedious methods required to implement a <tt>Realm</tt>.</p>
+ *
  * @see Realm
  * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularAuthenticator
+ * @see org.jsecurity.realm.support.AbstractRealm
+ * @see org.jsecurity.realm.support.AbstractCachingRealm
  *
  * @since 0.1
  * @author Les Hazlewood
