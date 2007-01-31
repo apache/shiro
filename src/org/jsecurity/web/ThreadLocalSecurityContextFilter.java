@@ -25,8 +25,8 @@
 
 package org.jsecurity.web;
 
+import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.realm.RealmManager;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -45,11 +45,11 @@ import java.io.IOException;
  */
 public class ThreadLocalSecurityContextFilter implements Filter {
 
-    private RealmManager realmManager;
+    private SecurityManager SecurityManager;
 
 
-    public void setRealmManager(RealmManager realmManager) {
-        this.realmManager = realmManager;
+    public void setSecurityManager(SecurityManager SecurityManager) {
+        this.SecurityManager = SecurityManager;
     }
 
 
@@ -78,7 +78,7 @@ public class ThreadLocalSecurityContextFilter implements Filter {
 
             // Bind a auth context from the http session to the thread local
             //todo Fix filter to get the realm manager from somewhere - currently broken
-            WebUtils.bindSecurityContextToThread( request, realmManager );
+            WebUtils.bindSecurityContextToThread( request, SecurityManager );
 
             filterChain.doFilter( servletRequest, servletResponse );
 

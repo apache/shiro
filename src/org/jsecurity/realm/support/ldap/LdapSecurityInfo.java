@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -38,7 +38,7 @@ import java.util.List;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class LdapDirectoryInfo {
+public class LdapSecurityInfo {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -62,12 +62,12 @@ public class LdapDirectoryInfo {
     |         C O N S T R U C T O R S           |
     ============================================*/
 
-    public LdapDirectoryInfo() {
+    public LdapSecurityInfo() {
         this.principals = new ArrayList<Principal>();
         this.roleNames = new HashSet<String>();
     }
 
-    public LdapDirectoryInfo(List<Principal> principals, Collection<String> roleNames) {
+    public LdapSecurityInfo(List<Principal> principals, Collection<String> roleNames) {
         this.principals = principals;
         this.roleNames = roleNames;
     }

@@ -25,7 +25,10 @@
 
 package org.jsecurity.realm.support;
 
-import org.jsecurity.authc.module.support.AbstractAuthenticationModule;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authc.*;
+import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoAuthorizationInfoFoundException;
 import org.jsecurity.realm.Realm;
@@ -37,7 +40,7 @@ import java.util.List;
 
 /**
  * <p>An abstract implementation of the {@link Realm} interface that allows
- * subclasses to simply implement the {@link AbstractAuthenticationModule#doGetAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
+ * subclasses to simply implement the {@link AbstractRealm#doGetAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
  * and {@link AbstractRealm#getAuthorizationInfo(java.security.Principal)} methods.</p>
  *
  * <p>This realm also returns the fully qualified class name of the realm implementation as the
@@ -47,7 +50,7 @@ import java.util.List;
  * @since 0.2
  * @author Jeremy Haile
  */
-public abstract class AbstractRealm extends AbstractAuthenticationModule implements Realm {
+public abstract class AbstractRealm implements Realm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -57,10 +60,24 @@ public abstract class AbstractRealm extends AbstractAuthenticationModule impleme
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
+     * Commons-logger.
+     */
+    protected transient final Log log = LogFactory.getLog( getClass() );
+
+    /**
      * The name of this realm, or null if the fully-qualified class name should be returned
      * as the realm name.
      */
     private String name;
+
+    /**
+     * Password matcher used to determine if the provided password matches
+     * the password stored in the data store.  Only utilized if non-null.
+     */
+    protected CredentialMatcher credentialMatcher = null;
+
+    protected Class<? extends AuthenticationToken> authenticationTokenClass = UsernamePasswordToken.class;
+
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -73,10 +90,56 @@ public abstract class AbstractRealm extends AbstractAuthenticationModule impleme
         this.name = name;
     }
 
+    public CredentialMatcher getCredentialMatcher() {
+        return credentialMatcher;
+    }
+
+    /**
+     * Sets the CrendialMatcher implementation to use to verify submitted credentials with those stored in the system
+     * for a given authentication attempt.  The implementation of this matcher can be switched via configuration to
+     * support any number of schemes, including plain text password comparison, digest/hashing comparisons, and others.
+     *
+     * <p>If not set, no crendtial checking will occur.
+     *
+     * @param credentialMatcher the matcher to use.
+     */
+    public void setCredentialMatcher(CredentialMatcher credentialMatcher) {
+        this.credentialMatcher = credentialMatcher;
+    }
+
+    /**
+     * Returns the authenticationToken class supported by this module.
+     *
+     * <p>The default value is <tt>{@link UsernamePasswordToken UsernamePasswordToken.class}</tt>, since
+     * about 90% of modules use username/password authentication, regardless of their protocol (e.g. over jdbc, ldap,
+     * kerberos, http, etc).
+     *
+     * <p>Subclasses must override this method if they won't support <tt>UsernamePasswordToken</tt> authentications and
+     * they haven't already overridden the {@link #supports} method.
+     *
+     * @return the authenticationToken class supported by this module.
+     *
+     * @see #setAuthenticationTokenClass
+     */
+    public Class getAuthenticationTokenClass() {
+        return authenticationTokenClass;
+    }
+
+    /**
+     * Sets the authenticationToken class supported by this module.
+     *
+     * @param authenticationTokenClass the class of authentication token instances supported by this module.
+     */
+    public void setAuthenticationTokenClass(Class<? extends AuthenticationToken> authenticationTokenClass) {
+        this.authenticationTokenClass = authenticationTokenClass;
+    }
+
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+
+    protected abstract AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
 
 
     /**
@@ -89,6 +152,95 @@ public abstract class AbstractRealm extends AbstractAuthenticationModule impleme
      * be found for the given principal.
      */
     protected abstract AuthorizationInfo getAuthorizationInfo(Principal principal);
+
+    /**
+     * Convenience implementation that returns
+     * <tt>getAuthenticationTokenClass().isAssignableFrom( tokenClass );</tt>.  Can be overridden
+     * by subclasses for more complex token type checking.
+     * <p>Most implementations will only need to set a different class via
+     * {@link #setAuthenticationTokenClass}, as opposed to overriding this method.
+     *
+     * @param tokenClass the class of the authenticationToken being submitted for authentication.
+     * @return true if this authentication module "understands" how to process submissions for the submitted token
+     * instances of the class, false otherwise.
+     */
+    public boolean supports(Class tokenClass) {
+        return getAuthenticationTokenClass().isAssignableFrom( tokenClass );
+    }
+
+    /**
+     * Primarily used to acquire a string to display in exceptions and logging.  Default implementation
+     * returns a value based on info.getPrincipal();
+     *
+     * <p>If overridding, be careful to not include any private credentials (such as passwords or private keys) if this
+     * information should not show up in log entries or error messages.
+     * @param info account info after a successful authentication attempt.
+     * @return string representation of the given info that can be used in exceptions and logging.
+     */
+    protected String displayName( AuthenticationInfo info ) {
+        Principal p = info.getPrincipal();
+        if ( p != null ) {
+            return p.toString();
+        } else {
+            return info.toString();
+        }
+    }
+
+    protected boolean isAccountLocked( AuthenticationInfo info ) {
+        return info.isAccountLocked();
+    }
+
+    protected boolean isCredentialsExpired( AuthenticationInfo info ) {
+        return info.isCredentialsExpired();
+    }
+
+    public final AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
+        AuthenticationInfo info;
+        try {
+            info = doGetAuthenticationInfo( token );
+        } catch( AuthenticationException ae ) {
+            //the subclass already formulated a meaningful AuthenticationException, just let it
+            //propagate:
+            throw ae;
+        } catch (Throwable t) {
+            //probably unexpected exception.  Wrap and propagate:
+            final String message = "AuthenticationToken [" + token + "] could not be authenticated because an error " +
+                    "occurred during authentication.";
+            if( log.isErrorEnabled() ) {
+                log.error( message, t );
+            }
+            throw new AuthenticationException( message, t );
+        }
+
+        if( info == null ) {
+            String msg = "No account information found for submitted authentication token [" + token + "]";
+            throw new UnknownAccountException( msg );
+        }
+
+        if( isAccountLocked( info ) ) {
+            throw new LockedAccountException( "Account [" + displayName( info ) + "] is locked." );
+        }
+
+        if( isCredentialsExpired( info ) ) {
+            String msg = "The credentials for account [" + displayName( info ) + "] are expired";
+            throw new ExpiredCredentialException( msg );
+        }
+
+        CredentialMatcher cm = getCredentialMatcher();
+        if ( cm != null ) {
+            if ( !cm.doCredentialsMatch( token.getCredentials(), info.getCredentials() ) ) {
+                String msg = "The credentials provided for account [" + token +
+                             "] did not match the expected credentials.";
+                throw new IncorrectCredentialException( msg );
+            }
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No CredentialMatcher configured.  Credential comparison check has been bypassed." );
+            }
+        }
+
+        return info;
+    }
 
     /**
      * The default implementation of getName() returns the fully-qualified class name if no

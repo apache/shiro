@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authc.module;
+package org.jsecurity.authc;
 
 import java.security.Principal;
 import java.util.List;
@@ -65,7 +65,7 @@ public interface AuthenticationInfo {
      * public key.
      *
      * <p>It could be encrypted in which case an
-     * {@link org.jsecurity.authc.module.AuthenticationModule AuthenticationModule}
+     * {@link org.jsecurity.realm.Realm Realm}
      * must be aware of the fact (e.g. via configuration) in order to interpret and compare
      * the credentials value.
      *

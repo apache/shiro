@@ -24,7 +24,9 @@
  */
 package org.jsecurity.realm;
 
-import org.jsecurity.authc.module.AuthenticationModule;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authz.AuthorizationException;
 
 import java.security.Permission;
@@ -42,11 +44,11 @@ import java.util.List;
  *
  * <p>Because most of these datasources usually contain subject (user) information such as usernames and passwords,
  * this
- * interface also extends the {@link AuthenticationModule} interface for convenience, thereby allowing a Realm to act
+ * interface also extends the {@link Realm} interface for convenience, thereby allowing a Realm to act
  * as a pluggable authentication module in a PAM configuration.  This allows a Realm to perform <i>both</i>
  * authentication and authorization duties for a single datasource, which caters to 90% of the use cases of most
  * applications.  If for some reason you don't want your Realm implementation to perform authentication duties, you
- * should override the {@link AuthenticationModule#supports(Class)} method to always return <tt>false</tt>.
+ * should override the {@link Realm#supports(Class)} method to always return <tt>false</tt>.
  *
  * <p>Because every application is different, security data such as users and roles can be
  * represented in any number of ways.  JSecurity tries to
@@ -59,14 +61,14 @@ import java.util.List;
  * away any environment/modeling details and allows JSecurity to be deployed in
  * practically any application environment.
  *
- * @see AuthenticationModule
- * @see org.jsecurity.authc.module.support.ModularAuthenticator ModularAuthenticator
+ * @see Realm
+ * @see org.jsecurity.authc.support.RealmAuthenticator ModularAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public interface Realm extends AuthenticationModule {
+public interface Realm {
 
     /**
      * Returns the name of this Realm used to uniquely identify it within the application.
@@ -74,6 +76,37 @@ public interface Realm extends AuthenticationModule {
      * @return the unique identifier for this realm.
      */
     String getName();
+
+
+    /**
+     * Returns true if this module can authenticate subjects with
+     * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances of the specified Class,
+     * false otherwise.
+     *
+     * <p>If the module does not support the specified type, it will not be used to authenticate any
+     * tokens of that type.
+     *
+     * @param authenticationTokenClass the <tt>AuthenticationToken</tt> Class to check for support.
+     *
+     * @return true if this module can authenticate subjects represented by tokens of the
+     * specified class, false otherwise.
+     */
+    boolean supports( Class authenticationTokenClass );
+
+    /**
+     * Returns account information for the account associated with the specified <tt>token</tt>,
+     * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
+     *
+     * @param token the application-specific representation of an account principal and credentials.
+     *
+     * @return the account information for the account associated with the specified <tt>token</tt>,
+     * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
+     *
+     * @throws org.jsecurity.authc.AuthenticationException if there is an error obtaining obtaining or
+     * constructing an AuthenticationInfo based on the specified <tt>token</tt>.
+     */
+    AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
+
 
     /**
      * Returns <tt>true</tt> if the subject with the id of <tt>subjectIdentifier</tt> has the role

@@ -24,7 +24,7 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.jsecurity.realm.RealmManager;
+import org.jsecurity.SecurityManager;
 import org.jsecurity.web.WebUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -43,18 +43,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAdapter {
 
-    private RealmManager realmManager;
+    private SecurityManager SecurityManager;
 
 
-    public void setRealmManager( RealmManager realmManager) {
-        this.realmManager = realmManager;
+    public void setSecurityManager( SecurityManager SecurityManager) {
+        this.SecurityManager = SecurityManager;
     }
 
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        WebUtils.bindSecurityContextToThread( request, realmManager );
+        WebUtils.bindSecurityContextToThread( request, SecurityManager );
         return true;
     }
 

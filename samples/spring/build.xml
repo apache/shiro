@@ -9,7 +9,7 @@
     <!-- "extend" parent build definition -->
     <import file="../../build.xml" />
 
-    <property name="module.name" value="spring-sample"/>
+    <property name="module.name" value="spring"/>
     <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
@@ -40,7 +40,35 @@
     <!-- ===================================================================
       -  compile - compile Java source files
       -  =================================================================== -->
-    <target name="compile" depends="compile.src"/>
+    <target name="compile">
+                <mkdir dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}/META-INF"/>
+
+		<javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true"
+               classpathref="all.libs">
+			<src path="${src.dir}"/>
+            <classpath location="${root.base.dir}/build/dist/jsecurity.jar"/>
+        </javac>
+
+		<copy todir="${classes.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${src.dir}">
+				<include name="**/*.tld"/>
+			</fileset>
+		</copy>
+    </target>
 
     <target name="jar" depends="compile">
         <jar jarfile="${dist.jar}">
@@ -54,7 +82,7 @@
             </fileset>
             <manifest>
                 <attribute name="Implementation-Title"
-                           value="${project.name}-${module.name}-${submodule.name}"/>
+                           value="${project.name}-${module.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="${project.name}-Version" value="${version}"/>
             </manifest>
@@ -64,7 +92,7 @@
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist" depends="root-prepare,compile,jar">
+    <target name="dist" depends="compile,jar">
 
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
         <mkdir dir="${webstart.lib.dir}"/>
@@ -89,7 +117,7 @@
             <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
             <lib dir="${lib.dir}/quartz" includes="*.jar"/>
-            <lib dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
+            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
 

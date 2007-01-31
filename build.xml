@@ -24,7 +24,7 @@
     <!-- application-wide config files: (all other config files should be in a respective
          module or submodule) -->
     <property name="root.etc.dir" value="${root.base.dir}/etc"/>
-    <property name="root.dist.dir" value="${root.base.dir}/dist"/>
+    <property name="root.dist.dir" value="${root.base.dir}/build/dist"/>
 
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
@@ -313,54 +313,6 @@
             </fileset>
         </zip>
     </target>
-
-    <!-- <target name="composite-jars">
-        <path id="jarjar.path">
-            <pathelement location="${lib.dir}/jarjar/jarjar.jar"/>
-        </path>
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
-                 classpathref="jarjar.path"/>
-
-        <jarjar jarfile="${root.dist.dir}/${project.name}-business.jar">
-            <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
-            <manifest>
-                <attribute name="Implementation-Title" value="${project.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="${project.name}-Version" value="${version}"/>
-			</manifest>
-        </jarjar>
-
-        <jarjar jarfile="${root.dist.dir}/${project.name}-client.jar">
-            <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-web.jar"/>
-            <manifest>
-                <attribute name="Implementation-Title" value="${project.name}"/>
-                <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="${project.name}-Version" value="${version}"/>
-            </manifest>
-        </jarjar>
-
-        <jarjar jarfile="${root.dist.dir}/${project.name}.jar">
-            <zipfileset src="${root.dist.dir}/${project.name}-api.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-common.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-web.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-ri-business.jar"/>
-            <!- - <zipfileset src="${root.dist.dir}/${project.name}-ri-client.jar"/> - ->
-            <zipfileset src="${root.dist.dir}/${project.name}-spring.jar"/>
-            <zipfileset src="${root.dist.dir}/${project.name}-jboss.jar"/>
-
-            <manifest>
-			    <attribute name="Implementation-Title" value="${project.name}"/>
-				<attribute name="Implementation-Version" value="${version}"/>
-				<attribute name="${project.name}-Version" value="${version}"/>
-			</manifest>
-        </jarjar>
-
-    </target>  -->
-
 
     <target name="release" depends="jar,src.zip,javadoc">
 

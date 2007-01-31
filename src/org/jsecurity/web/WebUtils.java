@@ -24,10 +24,10 @@
  */
 package org.jsecurity.web;
 
+import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.context.support.ThreadLocalSecurityContext;
-import org.jsecurity.realm.RealmManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.util.ThreadUtils;
@@ -125,11 +125,11 @@ public abstract class WebUtils {
         }
     }
 
-    public static void bindSecurityContextToThread( HttpServletRequest request, RealmManager realmManager ) {
+    public static void bindSecurityContextToThread( HttpServletRequest request, SecurityManager SecurityManager ) {
         List<Principal> principals = getPrincipals( request );
 
         if( principals != null ) {
-            SecurityContext ctx = buildSecurityContext( principals, realmManager);
+            SecurityContext ctx = buildSecurityContext( principals, SecurityManager);
             if( ctx != null ) {
                 bindToThread( ctx );
             }
@@ -152,9 +152,9 @@ public abstract class WebUtils {
         return principals;
     }
 
-    private static SecurityContext buildSecurityContext(List<Principal> principals, RealmManager realmManager ) {
+    private static SecurityContext buildSecurityContext(List<Principal> principals, SecurityManager SecurityManager ) {
         if( principals != null && !principals.isEmpty() ) {
-            return new DelegatingSecurityContext( principals, realmManager );
+            return new DelegatingSecurityContext( principals, SecurityManager );
         } else {
             return null;
         }

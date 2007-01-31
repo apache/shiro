@@ -25,7 +25,7 @@
 
 package org.jsecurity.context.factory;
 
-import org.jsecurity.authc.module.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
 
 

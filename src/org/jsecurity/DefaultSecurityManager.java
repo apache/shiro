@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Jeremy Haile
+ * Copyright (C) 2006 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,10 +25,16 @@
 
 package org.jsecurity;
 
-import org.jsecurity.authc.module.support.ModularAuthenticator;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.support.RealmAuthenticator;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizedAction;
+import org.jsecurity.authz.Authorizer;
+import org.jsecurity.authz.module.support.AnnotationsModularAuthorizer;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.RealmManager;
 
 import java.security.Permission;
 import java.security.Principal;
@@ -36,17 +42,32 @@ import java.util.*;
 
 /**
  * <p>Implementation of the {@link org.jsecurity.SecurityManager} interface that is based around
- * a set of security {@link Realm}s.</p>
+ * a set of security {@link org.jsecurity.realm.Realm}s.  This implementation delegates its authentication and
+ * authorization operations to wrapped {@link Authenticator} and {@link Authorizer} instances.
+ * It also provides some sensible defaults to simplify configuration.
  *
- * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.module.support.ModularAuthenticator} is created using
+ * <p>This implementation is primarily a convenience mechanism that wraps both instances to consolidate
+ * both behaviors into a single point of reference.  For most JSecurity users, this simplifies configuration and
+ * tends to be a more convenient approach than referencing the <code>Authenticator</code> and <code>Authorizer</code>
+ * instances seperately in their application code;  instead they only need to interact with a single
+ * <tt>SecurityManager</tt> instance.
+ *
+ * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.RealmAuthenticator} is created using
  * the configured realms as the authentication modules for the authenticator.  At least one
  * realm must be configured before {@link #init()} is called for this manager to function properly.</p>
- *
+ * <p><b>Note:</b> <ol><li>Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
+ * {@link org.jsecurity.authz.module.support.AnnotationsModularAuthorizer} instance to simplify configuration; if you
+ * don't want to use JDK 1.5+ annotataions for authorization checks, you'll need to inject another implementation or 
+ * programmatically interact with a subject's SecurityContext directly in code (ok, but not as 'clean').</li>
+ * <li>There is <strong>no default</strong> {@link #setAuthenticator Authenticator} created by this
+ * <code>SecurityManager</code> abstract implementation, as it is expected to be
+ * specified by Dependency Injection or by subclass implementations.</li></ol>
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
-public class RealmSecurityManager extends AbstractSecurityManager implements RealmManager {
+public abstract class DefaultSecurityManager implements SecurityManager {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -56,6 +77,16 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
+     * The authenticator that is delegated to for authentication purposes.
+     */
+    protected Authenticator authenticator;
+
+    /**
+     * The authorizer that is delegated to for authorization purposes.
+     */
+    protected Authorizer authorizer = new AnnotationsModularAuthorizer();
+
+    /**
      * A map from realm name to realm for all realms managed by this manager.
      */
     private Map<String, Realm> realmMap;
@@ -63,11 +94,34 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    public void init() {
+
+        if( realmMap == null || realmMap.isEmpty() ) {
+            throw new IllegalStateException( "init() called but no realms have been configured " +
+                "for this manager.  At least one realm needs to be configured on this manager." );
+        }
+
+        if( authenticator == null ) {
+            RealmAuthenticator realmAuthenticator = new RealmAuthenticator( this, getAllRealms() );
+            realmAuthenticator.init();
+            authenticator = realmAuthenticator;
+        }
+
+    }
+
+    public void destroy() { //default implementation does nothing
+    }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    public void setAuthenticator(Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
 
+    public void setAuthorizer(Authorizer authorizer) {
+        this.authorizer = authorizer;
+    }
 
     /**
      * Sets the realms managed by this manager.
@@ -95,29 +149,30 @@ public class RealmSecurityManager extends AbstractSecurityManager implements Rea
             return Collections.EMPTY_LIST;
         }
     }
-
-
+    
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
+    /**
+     * Delegates to the authenticator for authentication.
+     */
+    public SecurityContext authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+        return authenticator.authenticate( authenticationToken );
+    }
 
     /**
-     * Initializes this realm security manager with a modular authenticator if none is configured and
-     * initializes all of the realms that are configured for management.
+     * Delegates to the authorizer for autorization.
      */
-    public void onInit() {
+    public boolean isAuthorized(SecurityContext context, AuthorizedAction action) {
+        return authorizer.isAuthorized( context, action );
+    }
 
-        if( realmMap == null || realmMap.isEmpty() ) {
-            throw new IllegalStateException( "init() called but no realms have been configured " +
-                "for this manager.  At least one realm needs to be configured on this manager." );
-        }
-
-        if( authenticator == null ) {
-            ModularAuthenticator modularAuthenticator = new ModularAuthenticator( this, getAllRealms() );
-            modularAuthenticator.init();
-            authenticator = modularAuthenticator;
-        }
+    /**
+     * Delegates to the authorizer for authorization.
+     */
+    public void checkAuthorization(SecurityContext context, AuthorizedAction action) throws AuthorizationException {
+        authorizer.checkAuthorization( context, action );
     }
 
 

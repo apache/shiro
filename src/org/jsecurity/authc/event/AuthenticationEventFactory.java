@@ -25,8 +25,8 @@
 package org.jsecurity.authc.event;
 
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.module.AuthenticationInfo;
 
 /**
  * An AuthenticationEventFactory functions as its name implies - a Factory design pattern
