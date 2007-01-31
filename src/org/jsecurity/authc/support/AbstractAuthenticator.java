@@ -85,12 +85,12 @@ public abstract class AbstractAuthenticator implements Authenticator {
     protected final transient Log logger = LogFactory.getLog(getClass());
 
     /**
-     * The factory used to wrap authorization context after authentication.
+     * The factory used to create a SecurityContext after a successful authentication.
      */
     private SecurityContextFactory securityContextFactory = null;
 
     /**
-     * The binder used to bind the authorization context so that it is accessible on subsequent
+     * The binder used to bind the SecurityContext so that it is accessible on subsequent
      * requests.
      */
     private SecurityContextBinder securityContextBinder = new ThreadLocalSecurityContextBinder();
@@ -107,7 +107,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     private AuthenticationEventSender authcEventSender = null;
 
     /**
-     * Used to initialize the default authorization context factory.
+     * Used to initialize the default SecurityContextFactory.
      */
     private SecurityManager securityManager = null;
 
@@ -253,7 +253,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     public void init() {
         if( getSecurityContextFactory() == null ) {
             if( securityManager == null ) {
-                throw new IllegalStateException( "If an authorization context factory is not injected, a realm manager must be " +
+                throw new IllegalStateException( "If an SecurityContextFactory is not injected, a realm manager must be " +
                     "provided so that the default " + DelegatingSecurityContextFactory.class.getName() +
                     " factory can be initialized." );
             }
@@ -261,7 +261,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
         }
         onInit();
     }
-
+        
     /**
      * Subclass template hook to allow subclasses additional initialization behavior without having to override the
      * {@link #init init()} method.
