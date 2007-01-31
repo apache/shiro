@@ -109,12 +109,17 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /**
      * Used to initialize the default authorization context factory.
      */
-    private SecurityManager SecurityManager = null;
+    private SecurityManager securityManager = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
     public AbstractAuthenticator(){}
+
+    public AbstractAuthenticator( SecurityManager securityManager ) {
+        this.securityManager = securityManager;
+        init();
+    }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -137,9 +142,10 @@ public abstract class AbstractAuthenticator implements Authenticator {
      * upon a successful authentication attempt.
      *
      * <p>It is not recommended to override this property, but instead set the
-     * {@link #setSecurityManager SecurityManager} property.  When a <tt>SecurityManager</tt> property is set, this class will
-     * use it to construct an internal {@link DelegatingSecurityContextFactory DelegatingSecurityContextFactory}, which
-     * uses the SecurityManager in a more efficient manner.
+     * {@link #setSecurityManager securityManager} property.  When a <tt>securityManager</tt> property is set, this
+     * class will use it to construct an internal
+     * {@link DelegatingSecurityContextFactory DelegatingSecurityContextFactory}, which uses the securityManager in a 
+     * more efficient manner.
      *
      * @param securityContextFactory the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a
      * <tt>SecurityContext</tt> upon a successful authentication attempt.
@@ -222,17 +228,18 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
     /**
-     * Sets the SecurityManager that will be used to construct and set this class's <tt>SecurityContextFactory</tt>
+     * Sets the securityManager that will be used to construct and set this class's <tt>SecurityContextFactory</tt>
      * property if one is not explicitly set via the {@link #setSecurityContextFactory} method.
      *
-     * <p>It <b>IS</b> recommended that most configurations set this <tt>SecurityManager</tt> property and
+     * <p>It <b>IS</b> recommended that most configurations set this <tt>securityManager</tt> property and
      * <b><em>NOT</em></b> explicitly set the <tt>SecurityContextFactory</tt> property unless you know what you're
      * doing and/or need special behavior.
      * 
-     * @param SecurityManager the SecurityManager that will be used to construct an internal <tt>SecurityContextFactory</tt>.
+     * @param securityManager the <tt>SecurityManager</tt> that will be used to construct a <tt>SecurityContextFactory</tt>
+     * upon initialization.
      */
-    public void setSecurityManager(SecurityManager SecurityManager) {
-        this.SecurityManager = SecurityManager;
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
 
@@ -245,12 +252,12 @@ public abstract class AbstractAuthenticator implements Authenticator {
      */
     public void init() {
         if( getSecurityContextFactory() == null ) {
-            if( SecurityManager == null ) {
+            if( securityManager == null ) {
                 throw new IllegalStateException( "If an authorization context factory is not injected, a realm manager must be " +
                     "provided so that the default " + DelegatingSecurityContextFactory.class.getName() +
                     " factory can be initialized." );
             }
-            setSecurityContextFactory( new DelegatingSecurityContextFactory( SecurityManager ) );
+            setSecurityContextFactory( new DelegatingSecurityContextFactory( securityManager ) );
         }
         onInit();
     }

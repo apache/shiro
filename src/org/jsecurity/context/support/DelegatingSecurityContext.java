@@ -37,8 +37,8 @@ import java.util.*;
 
 /**
  * Simple implementation of the <tt>SecurityContext</tt> interface that delegates all
- * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.  It is
- * essentially a <tt>SecurityManager</tt> proxy.
+ * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
+ * It is essentially a <tt>SecurityManager</tt> proxy.
  *
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
@@ -48,11 +48,9 @@ import java.util.*;
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
- * context data is desired (to eliminate EIS round trips and therefore improve database
- * performance), it is considered much more
- * elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
- * <tt>SecurityManager</tt> is
- * considered a business-tier component, where caching strategies are better suited.
+ * context data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
+ * much more elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
+ * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.
  *
  * <p>Applications from large and clustered to simple and vm local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
@@ -66,21 +64,21 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected List<Principal> principals;
 
-    protected SecurityManager SecurityManager;
+    protected SecurityManager securityManager;
 
     public DelegatingSecurityContext() {
         principals = new ArrayList<Principal>();
     }
 
-    public DelegatingSecurityContext( Principal subjectIdentifier, SecurityManager SecurityManager ) {
+    public DelegatingSecurityContext( Principal subjectIdentifier, SecurityManager securityManager ) {
         this.principals = new ArrayList<Principal>(1);
         this.principals.add( subjectIdentifier );
-        this.SecurityManager = SecurityManager;
+        this.securityManager = securityManager;
     }
 
-    public DelegatingSecurityContext(List<Principal> principals, SecurityManager SecurityManager) {
+    public DelegatingSecurityContext(List<Principal> principals, SecurityManager securityManager) {
         this.principals = principals;
-        this.SecurityManager = SecurityManager;
+        this.securityManager = securityManager;
     }
 
     /**
@@ -90,7 +88,7 @@ public class DelegatingSecurityContext implements SecurityContext {
      */
     public Principal getPrincipal() {
         if( principals.isEmpty() ) {
-            throw new IllegalStateException( "No principals are associated with this authorization context." );
+            throw new IllegalStateException( "No principals are associated with this SecurityContext." );
         }
         return this.principals.get(0);
     }
@@ -105,7 +103,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
-    public Principal getPrincipalByType(Class principalType) throws NoSuchPrincipalException {
+    public Principal getPrincipalByType( Class principalType ) throws NoSuchPrincipalException {
         for( Principal principal : principals ) {
             if( principalType.isAssignableFrom( principal.getClass() ) ) {
                 return principal;
@@ -129,36 +127,36 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public boolean hasRole( String roleIdentifier ) {
-        return SecurityManager.hasRole( getPrincipal(), roleIdentifier );
+        return securityManager.hasRole( getPrincipal(), roleIdentifier );
     }
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
-        return SecurityManager.hasRoles( getPrincipal(), roleIdentifiers );
+        return securityManager.hasRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
-        return SecurityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
+        return securityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean implies( Permission permission ) {
-        return SecurityManager.isPermitted( getPrincipal(), permission );
+        return securityManager.isPermitted( getPrincipal(), permission );
     }
 
     public boolean[] implies( List<Permission> permissions ) {
-        return SecurityManager.isPermitted( getPrincipal(), permissions );
+        return securityManager.isPermitted( getPrincipal(), permissions );
     }
 
     public boolean impliesAll( Collection<Permission> permissions ) {
-        return SecurityManager.isPermittedAll( getPrincipal(), permissions );
+        return securityManager.isPermittedAll( getPrincipal(), permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {
-        SecurityManager.checkPermission( getPrincipal(), permission );
+        securityManager.checkPermission( getPrincipal(), permission );
     }
 
     public void checkPermissions( Collection<Permission> permissions )
         throws AuthorizationException {
-        SecurityManager.checkPermissions( getPrincipal(), permissions );
+        securityManager.checkPermissions( getPrincipal(), permissions );
     }
 
     public boolean isAuthenticated() {
