@@ -35,12 +35,12 @@ import java.util.List;
 
 /**
  * A <tt>ModularRealmAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
- * that delgates authentication duties to a pluggable collection of
+ * that delgates authentication duties to a pluggable (modular) collection of
  * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity
- * for authentication.
+ * for authentication.  For all intents and purposes, a JSecurity Realm can be thought of a PAM 'module'.
  *
  * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
- * <tt>Realm</tt>s as you see fit.  Common modules are those based on accessing
+ * <tt>Realm</tt>s as you see fit.  Common realms are those based on accessing
  * LDAP, relational databases, file systems, etc.
  *
  * @see #setRealms
@@ -59,8 +59,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * List of authentication modules that will be iterated through when a user
-     * authenticates.
+     * List of realms that will be iterated through when a user authenticates.
      */
     private List<? extends Realm> realms;
 
@@ -73,16 +72,16 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
 
-    public ModularRealmAuthenticator(SecurityManager SecurityManager, List<? extends Realm> modules) {
+    public ModularRealmAuthenticator(SecurityManager SecurityManager, List<? extends Realm> realms ) {
         setSecurityManager( SecurityManager );
-        this.realms = modules;
+        this.realms = realms;
     }
 
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setRealms(List<Realm> realms) {
+    public void setRealms( List<Realm> realms ) {
         this.realms = realms;
     }
 
@@ -109,8 +108,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
     /**
-     * Merges the <tt>AuthenticationInfo</tt> returned from a module into the aggregated
-     * <tt>AuthenticationInfo</tt> that summarizes all modules.
+     * Merges the <tt>AuthenticationInfo</tt> returned from a single realm into the aggregated
+     * <tt>AuthenticationInfo</tt> that summarizes all realms.
      *
      * <p>This method is primarily provided as a template method if subclasses wish to override it for custom
      * merging behavior.
@@ -118,37 +117,37 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * <p>The default implementation
      * only checks to see if the <tt>aggregatedInfo</tt> parameter is an <tt>instanceof</tt>
      * {@link SimpleAuthenticationInfo}, and if so, calls
-     * <tt>aggregatedInfo.{@link SimpleAuthenticationInfo#merge merge( moduleInfo )}</tt>, otherwise
+     * <tt>aggregatedInfo.{@link SimpleAuthenticationInfo#merge merge( singleRealmInfo )}</tt>, otherwise
      * nothing occurs.
      *
-     * @param aggregatedInfo the aggregated info from all authentication modules
-     * @param moduleInfo the info provided by a single authentication module, to be joined with the aggregated info
+     * @param aggregatedInfo the aggregated info from all realms
+     * @param singleRealmInfo the info provided by a single realm, to be joined with the aggregated info
      */
-    protected void merge(AuthenticationInfo aggregatedInfo, AuthenticationInfo moduleInfo) {
+    protected void merge(AuthenticationInfo aggregatedInfo, AuthenticationInfo singleRealmInfo ) {
         if ( aggregatedInfo instanceof SimpleAuthenticationInfo ) {
-            ((SimpleAuthenticationInfo)aggregatedInfo).merge( moduleInfo );
+            ((SimpleAuthenticationInfo)aggregatedInfo).merge( singleRealmInfo );
         }
     }
 
     /**
-     * Used by the internal {@link #doAuthenticate} implementation to ensure that the <tt>modules</tt> property
+     * Used by the internal {@link #doAuthenticate} implementation to ensure that the <tt>realms</tt> property
      * has been set.  The default implementation ensures the property is not null and not empty.
-     * @throws IllegalStateException if the <tt>modules</tt> property is configured incorrectly.
+     * @throws IllegalStateException if the <tt>realms</tt> property is configured incorrectly.
      */
-    protected void assertModulesConfigured() throws IllegalStateException {
+    protected void assertRealmsConfigured() throws IllegalStateException {
         if ( realms == null || realms.size() <= 0 ) {
-            String msg = "No authentication modules configured for this ModularAuthenticator.  Configuration error.";
+            String msg = "No realms configured for this ModularRealmAuthenticator.  Configuration error.";
             throw new IllegalStateException( msg );
         }
     }
 
     /**
-     * This is a final 'housekeeping' method that is called after all modules have been consulted during the
+     * This is a final 'housekeeping' method that is called after all realms have been consulted during the
      * authentication attempt for the specified token.
      *
-     * <p>The default implementation only verifies that one or more modules successfully retrieved AuthenticationInfo
+     * <p>The default implementation only verifies that one or more realms successfully retrieved AuthenticationInfo
      * for the specified <tt>AuthenticationToken</tt> (i.e. <tt>oneOrMoreSuccessful == true</tt>).  If so, it just
-     * returns the <tt>aggregated</tt> argument.  If not, it throws an AuthenticationException stating that no modules
+     * returns the <tt>aggregated</tt> argument.  If not, it throws an AuthenticationException stating that no realms
      * could authenticate the token.  Subclasses may override this method for more custom behavior, but a
      * non-null value must be returned (otherwise the authentication attempt is considered to be failed and an
      * exception will be thrown).
@@ -157,18 +156,18 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * <tt>AuthenticationInfo</tt> for the specified token
      * @param authenticationToken the token submitted during the login process that encapsulates the user's
      * principals and credentials.
-     * @param aggregated the aggregated <tt>AuthenticationInfo</tt> data from all modules that processed the token
+     * @param aggregated the aggregated <tt>AuthenticationInfo</tt> data from all realms that processed the token
      * during the authentication attempt.
-     * @return the modules' <tt>AuthenticationInfo</tt> for the given token
-     * @throws AuthenticationException if no modules could associate any <tt>AuthenticationInfo</tt> with the token
+     * @return the realms' <tt>AuthenticationInfo</tt> for the given token
+     * @throws AuthenticationException if no realms could associate any <tt>AuthenticationInfo</tt> with the token
      */
-    protected AuthenticationInfo modulesComplete( boolean oneOrMoreSuccessful, AuthenticationToken authenticationToken,
+    protected AuthenticationInfo realmsComplete( boolean oneOrMoreSuccessful, AuthenticationToken authenticationToken,
                                                   AuthenticationInfo aggregated ) throws AuthenticationException {
-        // If no module authenticated the user, throw an exception
+        // If no realm authenticated the user, throw an exception
         if( !oneOrMoreSuccessful ) {
             throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
-                "could not be authenticated by any configured modules.  Check that this authenticator is configured " +
-                "with appropriate modules." );
+                "could not be authenticated by any configured realms.  Check that this authenticator is configured " +
+                "with appropriate realms." );
         } else {
             return aggregated;
         }
@@ -177,17 +176,17 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /**
      * <p>Attempts to authenticate the given token by iterating over the internal collection of
-     * {@link Realm}s.  For each module, first the {@link Realm#supports(Class)}
-     * method will be called to determine if the module supports the <tt>authenticationToken</tt> method argument.
+     * {@link Realm}s.  For each realm, first the {@link Realm#supports(Class)}
+     * method will be called to determine if the realm supports the <tt>authenticationToken</tt> method argument.
      *
-     * If a module does support
+     * If a realm does support
      * the token, its {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
-     * method will be called.  If the module returns non-null authentication information, the token will be
-     * considered authenticated and the authentication info recorded.  If the module returns <tt>null</tt>, the next
-     * module will be consulted.  If no modules support the token or all supported modules return null,
+     * method will be called.  If the realm returns non-null authentication information, the token will be
+     * considered authenticated and the authentication info recorded.  If the realm returns <tt>null</tt>, the next
+     * realm will be consulted.  If no realms support the token or all supported realms return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
      *
-     * <p>After all modules have been consulted, the information from each module is aggregated into a single
+     * <p>After all realms have been consulted, the information from each realm is aggregated into a single
      * {@link AuthenticationInfo} object and returned.
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
@@ -198,52 +197,52 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-        assertModulesConfigured();
+        assertRealmsConfigured();
 
         AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( authenticationToken );
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Iterating through [" + realms.size() + "] authentication modules ");
+            logger.debug("Iterating through [" + realms.size() + "] realms");
         }
 
         boolean authenticated = false;
-        for( Realm module : realms) {
+        for( Realm realm : realms) {
 
-            if( module.supports( authenticationToken.getClass() ) ) {
+            if( realm.supports( authenticationToken.getClass() ) ) {
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("Attempting to authenticate token [" + authenticationToken + "] " +
-                        "using module of type [" + module.getClass() + "]");
+                        "using realm of type [" + realm.getClass() + "]");
                 }
 
-                AuthenticationInfo moduleInfo = module.getAuthenticationInfo( authenticationToken );
+                AuthenticationInfo realmInfo = realm.getAuthenticationInfo( authenticationToken );
 
-                // If non-null info is returned, then the module was able to authenticate the
+                // If non-null info is returned, then the realm was able to authenticate the
                 // user - so return the context.
-                if( moduleInfo != null ) {
+                if( realmInfo != null ) {
 
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Account authenticated using module of type [" + module.getClass().getName() + "]");
+                        logger.debug("Account authenticated using realm of type [" + realm.getClass().getName() + "]");
                     }
 
                     // Merge the module-returned data with the aggregate data
-                    merge( aggregatedInfo, moduleInfo );
+                    merge( aggregatedInfo, realmInfo );
                     authenticated = true;
 
                 }
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Module of type [" + module.getClass().getName() + "] does not support token " +
-                            "of type [" + authenticationToken.getClass().getName() + "].  Skipping module." );
+                    logger.debug("Realm of type [" + realm.getClass().getName() + "] does not support token " +
+                            "of type [" + authenticationToken.getClass().getName() + "].  Skipping realm." );
                 }
             }
         }
 
-        AuthenticationInfo info = modulesComplete( authenticated, authenticationToken, aggregatedInfo );
+        AuthenticationInfo info = realmsComplete( authenticated, authenticationToken, aggregatedInfo );
         if ( info == null ) {
             throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
-                "could not be authenticated by any configured modules.  Check that this authenticator is configured " +
-                "with appropriate modules." );
+                "could not be authenticated by any configured realms.  Check that this authenticator is configured " +
+                "with appropriate realms." );
         }
 
         return info;

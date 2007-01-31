@@ -39,13 +39,13 @@ import org.jsecurity.context.support.DelegatingSecurityContext;
  */
 public class DelegatingSecurityContextFactory extends AbstractSecurityContextFactory {
 
-    private SecurityManager SecurityManager;
+    private SecurityManager securityManager;
 
-    public DelegatingSecurityContextFactory( SecurityManager SecurityManager ){
-        this.SecurityManager = SecurityManager;
+    public DelegatingSecurityContextFactory( SecurityManager securityManager ){
+        this.securityManager = securityManager;
     }
 
     protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
-        return new DelegatingSecurityContext( info.getPrincipals(), SecurityManager );
+        return new DelegatingSecurityContext( info.getPrincipals(), securityManager );
     }
 }

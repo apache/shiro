@@ -36,7 +36,7 @@ import org.jsecurity.context.SecurityContext;
  * and interacting with an application-configured set of
  * {@link org.jsecurity.realm.Realm Realm}s.
  *
- * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularAuthenticator
+ * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood
