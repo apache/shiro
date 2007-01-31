@@ -62,7 +62,7 @@ import java.util.List;
  * practically any application environment.
  *
  * @see Realm
- * @see org.jsecurity.authc.support.RealmAuthenticator ModularAuthenticator
+ * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood

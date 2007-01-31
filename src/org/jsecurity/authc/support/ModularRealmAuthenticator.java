@@ -34,22 +34,22 @@ import org.jsecurity.realm.Realm;
 import java.util.List;
 
 /**
- * A <tt>ModularAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
- * that delgates authentication duties to a pluggable collection
- * {@link Realm Realm}s.  This in essense enables
- * PAM (Pluggable Authentication Module) behavior in JSecurity.
+ * A <tt>ModularRealmAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
+ * that delgates authentication duties to a pluggable collection of
+ * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity
+ * for authentication.
  *
  * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
  * <tt>Realm</tt>s as you see fit.  Common modules are those based on accessing
  * LDAP, relational databases, file systems, etc.
  *
- * @see #setModules
+ * @see #setRealms
  *
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class RealmAuthenticator extends AbstractAuthenticator {
+public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -62,28 +62,28 @@ public class RealmAuthenticator extends AbstractAuthenticator {
      * List of authentication modules that will be iterated through when a user
      * authenticates.
      */
-    private List<? extends Realm> modules;
+    private List<? extends Realm> realms;
 
 
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
-    public RealmAuthenticator() {
+    public ModularRealmAuthenticator() {
     }
 
 
-    public RealmAuthenticator(SecurityManager SecurityManager, List<? extends Realm> modules) {
+    public ModularRealmAuthenticator(SecurityManager SecurityManager, List<? extends Realm> modules) {
         setSecurityManager( SecurityManager );
-        this.modules = modules;
+        this.realms = modules;
     }
 
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setModules(List<Realm> modules) {
-        this.modules = modules;
+    public void setRealms(List<Realm> realms) {
+        this.realms = realms;
     }
 
 
@@ -136,7 +136,7 @@ public class RealmAuthenticator extends AbstractAuthenticator {
      * @throws IllegalStateException if the <tt>modules</tt> property is configured incorrectly.
      */
     protected void assertModulesConfigured() throws IllegalStateException {
-        if ( modules == null || modules.size() <= 0 ) {
+        if ( realms == null || realms.size() <= 0 ) {
             String msg = "No authentication modules configured for this ModularAuthenticator.  Configuration error.";
             throw new IllegalStateException( msg );
         }
@@ -203,11 +203,11 @@ public class RealmAuthenticator extends AbstractAuthenticator {
         AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( authenticationToken );
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Iterating through [" + modules.size() + "] authentication modules ");
+            logger.debug("Iterating through [" + realms.size() + "] authentication modules ");
         }
 
         boolean authenticated = false;
-        for( Realm module : modules ) {
+        for( Realm module : realms) {
 
             if( module.supports( authenticationToken.getClass() ) ) {
 
