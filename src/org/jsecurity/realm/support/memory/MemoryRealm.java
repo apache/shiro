@@ -67,12 +67,12 @@ public class MemoryRealm extends AbstractCachingRealm {
     private Map<Principal, AuthorizationInfo> authorizationInfoMap;
 
     /**
-     * The set of accounts that can be authenticated using this module.
+     * The set of accounts that can be authenticated using this realm.
      */
     private Set<AccountEntry> accounts;
 
     /**
-     * <p>A mapping of role names to permissions that can be authenticated using this module.
+     * <p>A mapping of role names to permissions that can be authenticated using this realm.
      * It is not necessary to define any role entries if you are simply using
      * role-based authorization.  However if you want to use permission-based
      * authorization, you must define the permissions that apply to a particular
@@ -138,7 +138,7 @@ public class MemoryRealm extends AbstractCachingRealm {
     /**
      * Builds a <tt>UserAuthenticationInfo</tt> object for the given username
      * by examining the set of configured accounts and roles held in the
-     * memory module.
+     * memory realm.
      * @param token The authentication token that is being used to authenticate the current user.
      * @return an <tt>AuthenticationInfo</tt> object that represents the
      * authentication information for the given username, or null if an

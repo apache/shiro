@@ -31,19 +31,18 @@ import org.jsecurity.authz.AuthorizationOperations;
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
- * such as users, roles, and permissions to determine authorization behavior.
+ * such as users, roles, and permissions to determine authentication and authorization data.
  *
  * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
  * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
  * determine authorization information, such as JDBC, File IO, Hibernate or JPA, or any other Data Access API.
  *
  * <p>Because most of these datasources usually contain subject (user) information such as usernames and passwords,
- * this
- * interface also extends the {@link Realm} interface for convenience, thereby allowing a Realm to act
+ * a Realm can act
  * as a pluggable authentication module in a PAM configuration.  This allows a Realm to perform <i>both</i>
  * authentication and authorization duties for a single datasource, which caters to 90% of the use cases of most
  * applications.  If for some reason you don't want your Realm implementation to perform authentication duties, you
- * should override the {@link Realm#supports(Class)} method to always return <tt>false</tt>.
+ * should override the {@link #supports(Class)} method to always return <tt>false</tt>.
  *
  * <p>Because every application is different, security data such as users and roles can be
  * represented in any number of ways.  JSecurity tries to
@@ -57,11 +56,12 @@ import org.jsecurity.authz.AuthorizationOperations;
  * practically any application environment.
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend
- * one of the subclasses, {@link org.jsecurity.realm.support.AbstractRealm} or {@link org.jsecurity.realm.support.AbstractCachingRealm},
- * which reduce the tedious methods required to implement a <tt>Realm</tt>.</p>
+ * one of the subclasses, {@link org.jsecurity.realm.support.AbstractRealm} or
+ * {@link org.jsecurity.realm.support.AbstractCachingRealm},
+ * which reduce the tedious methods required to implement a <tt>Realm</tt> from scratch.</p>
  *
  * @see Realm
- * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularAuthenticator
+ * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
  * @see org.jsecurity.realm.support.AbstractRealm
  * @see org.jsecurity.realm.support.AbstractCachingRealm
  *
@@ -80,16 +80,16 @@ public interface Realm extends AuthorizationOperations {
 
 
     /**
-     * Returns true if this module can authenticate subjects with
+     * Returns true if this realm can authenticate subjects with
      * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances of the specified Class,
      * false otherwise.
      *
-     * <p>If the module does not support the specified type, it will not be used to authenticate any
+     * <p>If the realm does not support the specified type, it will not be used to authenticate any
      * tokens of that type.
      *
      * @param authenticationTokenClass the <tt>AuthenticationToken</tt> Class to check for support.
      *
-     * @return true if this module can authenticate subjects represented by tokens of the
+     * @return true if this realm can authenticate subjects represented by tokens of the
      * specified class, false otherwise.
      */
     boolean supports( Class authenticationTokenClass );

@@ -53,7 +53,7 @@ import java.util.*;
  * <tt>SecurityManager</tt> instance.
  *
  * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.ModularRealmAuthenticator} is created using
- * the configured realms as the authentication modules for the authenticator.  At least one
+ * the configured realms for the authenticator.  At least one
  * realm must be configured before {@link #init()} is called for this manager to function properly.</p>
  * <p><b>Note:</b> <ol><li>Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
  * {@link org.jsecurity.authz.module.support.AnnotationsModularAuthorizer} instance to simplify configuration; if you
