@@ -2,12 +2,12 @@ package org.jsecurity.spring.remoting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityManager;
 import org.jsecurity.context.support.DelegatingSecurityContext;
-import org.jsecurity.realm.RealmManager;
-import org.jsecurity.util.ThreadUtils;
-import org.jsecurity.web.WebUtils;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
+import org.jsecurity.util.ThreadUtils;
+import org.jsecurity.web.WebUtils;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -48,7 +48,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
      * The realm manager used to retrieve realms that should be associated with the
      * created authorization contexts upon remote invocation.
      */
-    private RealmManager realmManager;
+    private SecurityManager SecurityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -62,8 +62,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     }
 
 
-    public void setRealmManager(RealmManager realmManager) {
-        this.realmManager = realmManager;
+    public void setSecurityManager(SecurityManager SecurityManager) {
+        this.SecurityManager = SecurityManager;
     }
 
 
@@ -89,7 +89,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 // If principals and realm were found in the session, create a delegating authorization context
                 // and bind it to the thread.
                 if( principals != null && !principals.isEmpty() ) {
-                    ThreadUtils.bindToThread( new DelegatingSecurityContext( principals, realmManager ) );
+                    ThreadUtils.bindToThread( new DelegatingSecurityContext( principals, SecurityManager ) );
                 }
 
             } else {

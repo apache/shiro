@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -26,13 +26,9 @@ package org.jsecurity.realm.support.ldap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.IncorrectCredentialException;
-import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.authc.module.support.SimpleAuthenticationInfo;
+import org.jsecurity.authc.*;
+import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.support.AbstractCachingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.util.UsernamePrincipal;
@@ -47,7 +43,7 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * <p>An {@link AuthenticationModule} that authenticates with an LDAP
+ * <p>An {@link Realm} that authenticates with an LDAP
  * server to build the authorization context for a user.  This implementation only returns roles for a
  * particular user, and not permissions - but it can be subclassed to build a permission
  * list as well.</p>
@@ -55,11 +51,11 @@ import java.util.*;
  * <p>Implementations would need to implement the
  * {@link #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)} abstract method,
  * and may wish to override
- * {@link #buildAuthenticationInfo(String, char[],LdapDirectoryInfo)}.</p>
+ * {@link #buildAuthenticationInfo(String, char[],LdapSecurityInfo)}.</p>
  *
- * @see LdapDirectoryInfo
+ * @see LdapSecurityInfo
  * @see #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)
- * @see #buildAuthenticationInfo(String, char[],LdapDirectoryInfo)
+ * @see #buildAuthenticationInfo(String, char[],LdapSecurityInfo)
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -154,10 +150,10 @@ public abstract class LdapRealm extends AbstractCachingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
-        LdapDirectoryInfo ldapDirectoryInfo = null;
+        LdapSecurityInfo ldapSecurityInfo = null;
         try {
 
-            ldapDirectoryInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
+            ldapSecurityInfo = performAuthentication(upToken.getUsername(), upToken.getPassword());
 
         } catch (NamingException e) {
             final String message = "LDAP naming error while attempting to authenticate user.";
@@ -166,37 +162,37 @@ public abstract class LdapRealm extends AbstractCachingRealm {
             }
         }
 
-        if( ldapDirectoryInfo != null ) {
-            return buildAuthenticationInfo( upToken.getUsername(), upToken.getPassword(), ldapDirectoryInfo );
+        if( ldapSecurityInfo != null ) {
+            return buildAuthenticationInfo( upToken.getUsername(), upToken.getPassword(), ldapSecurityInfo);
         } else {
             return null;
         }
     }
 
     /**
-     * Builds an {@link org.jsecurity.authc.module.AuthenticationInfo} object to return based on an {@link LdapDirectoryInfo} object
+     * Builds an {@link org.jsecurity.authc.AuthenticationInfo} object to return based on an {@link LdapSecurityInfo} object
      * returned from {@link #performAuthentication(String, char[])}
      *
      * @param username the username of the user being authenticated.
      * @param password the password of the user being authenticated.
-     * @param ldapDirectoryInfo the LDAP directory information queried from the LDAP server.
-     * @return an instance of {@link org.jsecurity.authc.module.AuthenticationInfo} that represents the principal, credentials, and
+     * @param ldapSecurityInfo the LDAP directory information queried from the LDAP server.
+     * @return an instance of {@link org.jsecurity.authc.AuthenticationInfo} that represents the principal, credentials, and
      * roles that this user has.
      */
-    protected AuthenticationInfo buildAuthenticationInfo(String username, char[] password, LdapDirectoryInfo ldapDirectoryInfo) {
-        List<Principal> principals = new ArrayList<Principal>( ldapDirectoryInfo.getPrincipals().size() + 1 );
+    protected AuthenticationInfo buildAuthenticationInfo(String username, char[] password, LdapSecurityInfo ldapSecurityInfo) {
+        List<Principal> principals = new ArrayList<Principal>( ldapSecurityInfo.getPrincipals().size() + 1 );
 
         UsernamePrincipal principal = new UsernamePrincipal( username );
 
         principals.add( principal );
-        principals.addAll( ldapDirectoryInfo.getPrincipals() );
+        principals.addAll( ldapSecurityInfo.getPrincipals() );
 
         return new SimpleAuthenticationInfo( principals, password );
     }
 
     /**
      * Performs the actual authentication of the user by connecting to the LDAP server, querying it
-     * for user information, and returning an {@link LdapDirectoryInfo} instance containing the
+     * for user information, and returning an {@link LdapSecurityInfo} instance containing the
      * results.
      *
      * <p>Typically, users that need special behavior will not override this method, but will instead
@@ -206,8 +202,9 @@ public abstract class LdapRealm extends AbstractCachingRealm {
      * @param password the password of the user being authenticated.
      *
      * @return the results of the LDAP directory search.
+     * @throws NamingException if there is an error accessing the LDAP server.
      */
-    protected LdapDirectoryInfo performAuthentication(String username, char[] password) throws NamingException {
+    protected LdapSecurityInfo performAuthentication(String username, char[] password) throws NamingException {
 
         if( searchBase == null ) {
             throw new IllegalStateException( "A search base must be specified." );
@@ -221,14 +218,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
             username = username + principalSuffix;
         }
 
-        Hashtable<String, String> env = new Hashtable<String, String>(6);
-
-        env.put(Context.SECURITY_AUTHENTICATION, authentication);
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, new String( password ));
-        env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
-        env.put(Context.PROVIDER_URL, url);
-        env.put(Context.REFERRAL, refferal);
+        Hashtable<String, String> env = initializeLdapContext(username, password);
 
         if (log.isDebugEnabled()) {
             log.debug( "Initializing LDAP context using URL [" + url + "] for user [" + username + "]." );
@@ -246,16 +236,28 @@ public abstract class LdapRealm extends AbstractCachingRealm {
 
         } finally {
             // Always close the LDAP context
-            try {
-                if (ctx != null) {
-                    ctx.close();
-                }
-            } catch (NamingException e) {
-                if( log.isErrorEnabled() ) {
-                    log.error("Problem closing Context: ", e);
-                }
-            }
+            LdapUtils.closeContext(ctx);
         }
+    }
+
+    /**
+     * Initializes the LDAP context for authentication with the given username and password.
+     * @param username the username to use for authentication.
+     * @param password the password to use for authentication.
+     * @return a <tt>Hashtable</tt> with the environment properties
+     *         that can be used to initialize an LDAP context.
+     */
+    protected Hashtable<String, String> initializeLdapContext(String username, char[] password) {
+        Hashtable<String, String> env = new Hashtable<String, String>(6);
+
+        env.put(Context.SECURITY_AUTHENTICATION, authentication);
+        env.put(Context.SECURITY_PRINCIPAL, username);
+        env.put(Context.SECURITY_CREDENTIALS, new String( password ));
+        env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
+        env.put(Context.PROVIDER_URL, url);
+        env.put(Context.REFERRAL, refferal);
+
+        return env;
     }
 
     /**
@@ -272,23 +274,23 @@ public abstract class LdapRealm extends AbstractCachingRealm {
 
     /**
      * <p>Abstract method that should be implemented by subclasses to builds an
-     * {@link LdapDirectoryInfo} object by querying the LDAP context for the
+     * {@link LdapSecurityInfo} object by querying the LDAP context for the
      * specified username.</p>
      *
      * @param username the username whose information should be queried from the LDAP server.
      * @param ctx the LDAP context that is connected to the LDAP server.
      *
-     * @return an {@link LdapDirectoryInfo} instance containing information retrieved from LDAP
+     * @return an {@link LdapSecurityInfo} instance containing information retrieved from LDAP
      * that can be used to build an {@link AuthenticationInfo} instance to return.
      *
      * @throws NamingException if any LDAP errors occur during the search.
      *
-     * @see #buildAuthenticationInfo(String, char[], LdapDirectoryInfo)
+     * @see #buildAuthenticationInfo(String, char[],LdapSecurityInfo)
      */
-    protected abstract LdapDirectoryInfo queryForLdapDirectoryInfo(String username, LdapContext ctx) throws NamingException;
+    protected abstract LdapSecurityInfo queryForLdapDirectoryInfo(String username, LdapContext ctx) throws NamingException;
 
     protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
-        //todo Implement this for LDAP - how do we authenticate without password?  Use system account? -JCH 5/29/06
+        //todo Implement this for LDAP - Need to configure a system account? -JCH 5/29/06
         throw new UnsupportedOperationException( "This method has not yet been implemented for LDAP." );
     }
 }

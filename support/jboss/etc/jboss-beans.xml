@@ -8,7 +8,7 @@
          Authentication (log-in) Configuration
          =================================================================================== -->
     <!--
-         Sample AuthenticationModule used by the JSecurity Authenticator (defined below).
+         Sample Realm used by the JSecurity Authenticator (defined below).
 
          The following 4 bean definitions are only here as an example and show how to create a
          purely RAM-based module, where the users are statically defined in memory.  Naturally, this
@@ -31,7 +31,7 @@
         <property name="password">oYgcBu7JbbmQHHu/5BxCo/COnLQ=</property><!-- 'user2' SHA-1 Base64 -->
         <property name="roles">role2</property>
     </bean>
-    <bean name="memoryRealmAuthenticationModule" class="org.jsecurity.ri.authc.module.memory.MemoryRealmAuthenticationModule">
+    <bean name="memoryRealmRealm" class="org.jsecurity.ri.authc.module.memory.MemoryRealmRealm">
         <property name="credentialMatcher">
             <inject bean="shaCredentialMatcher"/> </property>
         <property name="accounts">
@@ -44,13 +44,13 @@
     </bean>
 
     <!-- Root JSecurity Authenticator - coordinates and uses a configured set of
-         AuthenticationModules to implement PAM behavior.  Add modules as necessary.  -->
-    <bean name="authenticator" class="org.jsecurity.authc.module.support.ModularAuthenticator">
-        <property name="realm"><inject bean="memoryRealmAuthenticationModule"/></property>
+         Realms to implement PAM behavior.  Add modules as necessary.  -->
+    <bean name="authenticator" class="org.jsecurity.authc.support.RealmAuthenticator">
+        <property name="realm"><inject bean="memoryRealmRealm"/></property>
         <property name="modules">
             <list>
                 <!-- Remove in favor of a module that accesses your application's data store: -->
-                <inject bean="memoryRealmAuthenticationModule"/>
+                <inject bean="memoryRealmRealm"/>
             </list>
         </property>
         <create method="init"/>

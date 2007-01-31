@@ -24,10 +24,10 @@
  */
 package org.jsecurity.context.support;
 
+import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.realm.RealmManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
@@ -37,21 +37,21 @@ import java.util.*;
 
 /**
  * Simple implementation of the <tt>SecurityContext</tt> interface that delegates all
- * method calls to an underlying {@link org.jsecurity.realm.RealmManager RealmManager} instance for security checks.  It is
- * essentially a <tt>RealmManager</tt> proxy.
+ * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.  It is
+ * essentially a <tt>SecurityManager</tt> proxy.
  *
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
- * architecture.  It instead asks the underlying <tt>RealmManager</tt> every time to perform
+ * architecture.  It instead asks the underlying <tt>SecurityManager</tt> every time to perform
  * the authorization check.
  *
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
- * up to the implementation of the underlying <tt>RealmManager</tt> instance.  If caching of authorization
+ * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
  * context data is desired (to eliminate EIS round trips and therefore improve database
  * performance), it is considered much more
- * elegant to let the underlying <tt>RealmManager</tt> implementation manage caching, not this class.  A
- * <tt>RealmManager</tt> is
+ * elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
+ * <tt>SecurityManager</tt> is
  * considered a business-tier component, where caching strategies are better suited.
  *
  * <p>Applications from large and clustered to simple and vm local all benefit from
@@ -66,21 +66,21 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected List<Principal> principals;
 
-    protected RealmManager realmManager;
+    protected SecurityManager SecurityManager;
 
     public DelegatingSecurityContext() {
         principals = new ArrayList<Principal>();
     }
 
-    public DelegatingSecurityContext( Principal subjectIdentifier, RealmManager realmManager ) {
+    public DelegatingSecurityContext( Principal subjectIdentifier, SecurityManager SecurityManager ) {
         this.principals = new ArrayList<Principal>(1);
         this.principals.add( subjectIdentifier );
-        this.realmManager = realmManager;
+        this.SecurityManager = SecurityManager;
     }
 
-    public DelegatingSecurityContext(List<Principal> principals, RealmManager realmManager) {
+    public DelegatingSecurityContext(List<Principal> principals, SecurityManager SecurityManager) {
         this.principals = principals;
-        this.realmManager = realmManager;
+        this.SecurityManager = SecurityManager;
     }
 
     /**
@@ -129,36 +129,36 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public boolean hasRole( String roleIdentifier ) {
-        return realmManager.hasRole( getPrincipal(), roleIdentifier );
+        return SecurityManager.hasRole( getPrincipal(), roleIdentifier );
     }
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
-        return realmManager.hasRoles( getPrincipal(), roleIdentifiers );
+        return SecurityManager.hasRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
-        return realmManager.hasAllRoles( getPrincipal(), roleIdentifiers );
+        return SecurityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean implies( Permission permission ) {
-        return realmManager.isPermitted( getPrincipal(), permission );
+        return SecurityManager.isPermitted( getPrincipal(), permission );
     }
 
     public boolean[] implies( List<Permission> permissions ) {
-        return realmManager.isPermitted( getPrincipal(), permissions );
+        return SecurityManager.isPermitted( getPrincipal(), permissions );
     }
 
     public boolean impliesAll( Collection<Permission> permissions ) {
-        return realmManager.isPermittedAll( getPrincipal(), permissions );
+        return SecurityManager.isPermittedAll( getPrincipal(), permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {
-        realmManager.checkPermission( getPrincipal(), permission );
+        SecurityManager.checkPermission( getPrincipal(), permission );
     }
 
     public void checkPermissions( Collection<Permission> permissions )
         throws AuthorizationException {
-        realmManager.checkPermissions( getPrincipal(), permissions );
+        SecurityManager.checkPermissions( getPrincipal(), permissions );
     }
 
     public boolean isAuthenticated() {

@@ -27,20 +27,20 @@ package org.jsecurity.authc.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventFactory;
 import org.jsecurity.authc.event.AuthenticationEventSender;
 import org.jsecurity.authc.event.support.SimpleAuthenticationEventFactory;
-import org.jsecurity.authc.module.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.bind.SecurityContextBinder;
 import org.jsecurity.context.bind.support.ThreadLocalSecurityContextBinder;
 import org.jsecurity.context.factory.SecurityContextFactory;
 import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
-import org.jsecurity.realm.RealmManager;
 
 /**
  * Superclass for almost all {@link Authenticator} implementations that performs the common work around authentication
@@ -109,7 +109,7 @@ public abstract class AbstractAuthenticator implements Authenticator {
     /**
      * Used to initialize the default authorization context factory.
      */
-    private RealmManager realmManager = null;
+    private SecurityManager SecurityManager = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -137,9 +137,9 @@ public abstract class AbstractAuthenticator implements Authenticator {
      * upon a successful authentication attempt.
      *
      * <p>It is not recommended to override this property, but instead set the
-     * {@link #setRealmManager RealmManager} property.  When a <tt>RealmManager</tt> property is set, this class will
+     * {@link #setSecurityManager SecurityManager} property.  When a <tt>SecurityManager</tt> property is set, this class will
      * use it to construct an internal {@link DelegatingSecurityContextFactory DelegatingSecurityContextFactory}, which
-     * uses the RealmManager in a more efficient manner.
+     * uses the SecurityManager in a more efficient manner.
      *
      * @param securityContextFactory the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a
      * <tt>SecurityContext</tt> upon a successful authentication attempt.
@@ -222,17 +222,17 @@ public abstract class AbstractAuthenticator implements Authenticator {
     }
 
     /**
-     * Sets the RealmManager that will be used to construct and set this class's <tt>SecurityContextFactory</tt>
+     * Sets the SecurityManager that will be used to construct and set this class's <tt>SecurityContextFactory</tt>
      * property if one is not explicitly set via the {@link #setSecurityContextFactory} method.
      *
-     * <p>It <b>IS</b> recommended that most configurations set this <tt>realmManager</tt> property and
+     * <p>It <b>IS</b> recommended that most configurations set this <tt>SecurityManager</tt> property and
      * <b><em>NOT</em></b> explicitly set the <tt>SecurityContextFactory</tt> property unless you know what you're
      * doing and/or need special behavior.
      * 
-     * @param realmManager the RealmManager that will be used to construct an internal <tt>SecurityContextFactory</tt>.
+     * @param SecurityManager the SecurityManager that will be used to construct an internal <tt>SecurityContextFactory</tt>.
      */
-    public void setRealmManager(RealmManager realmManager) {
-        this.realmManager = realmManager;
+    public void setSecurityManager(SecurityManager SecurityManager) {
+        this.SecurityManager = SecurityManager;
     }
 
 
@@ -245,12 +245,12 @@ public abstract class AbstractAuthenticator implements Authenticator {
      */
     public void init() {
         if( getSecurityContextFactory() == null ) {
-            if( realmManager == null ) {
+            if( SecurityManager == null ) {
                 throw new IllegalStateException( "If an authorization context factory is not injected, a realm manager must be " +
                     "provided so that the default " + DelegatingSecurityContextFactory.class.getName() +
                     " factory can be initialized." );
             }
-            setSecurityContextFactory( new DelegatingSecurityContextFactory( realmManager ) );
+            setSecurityContextFactory( new DelegatingSecurityContextFactory( SecurityManager ) );
         }
         onInit();
     }

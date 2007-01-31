@@ -34,9 +34,9 @@ import org.jsecurity.context.SecurityContext;
  * an application.  Enabling Pluggable Authentication Module (PAM) behavior
  * (Two Phase Commit, etc.) is usually achieved by the single <tt>Authenticator</tt> coordinating
  * and interacting with an application-configured set of
- * {@link org.jsecurity.authc.module.AuthenticationModule AuthenticationModule}s.
+ * {@link org.jsecurity.realm.Realm Realm}s.
  *
- * @see org.jsecurity.authc.module.support.ModularAuthenticator ModularAuthenticator
+ * @see org.jsecurity.authc.support.RealmAuthenticator ModularAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood

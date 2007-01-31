@@ -14,7 +14,7 @@
     <bean name="securityManager"
           init-method="init"
           destroy-method="destroy"
-          class="org.jsecurity.RealmSecurityManager">
+          class="org.jsecurity.DefaultSecurityManager">
         <property name="realms">
             <list>
                 <ref bean="memoryRealm"/>
@@ -57,7 +57,7 @@
 
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="realmManager" ref="securityManager"/>
+        <property name="SecurityManager" ref="securityManager"/>
     </bean>
 
 
@@ -71,7 +71,7 @@
 
     <!-- Web Interceptors -->
     <bean id="threadLocalSecurityContextInterceptor" class="org.jsecurity.spring.servlet.security.ThreadLocalSecurityContextInterceptor">
-        <property name="realmManager" ref="securityManager"/>
+        <property name="SecurityManager" ref="securityManager"/>
     </bean>
 
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">

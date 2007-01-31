@@ -28,9 +28,9 @@ package org.jsecurity.realm.support.memory;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authc.module.support.SimpleAuthenticationInfo;
+import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.realm.support.AbstractCachingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.util.UsernamePrincipal;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A simple implementation of the {@link org.jsecurity.authc.module.AuthenticationModule} interface that
+ * A simple implementation of the {@link org.jsecurity.realm.Realm} interface that
  * uses a set of configured user properties to authenticate a user.
  * The property name corresponds to the username of the user.  The
  *

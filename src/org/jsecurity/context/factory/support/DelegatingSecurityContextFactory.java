@@ -24,10 +24,10 @@
 */
 package org.jsecurity.context.factory.support;
 
-import org.jsecurity.authc.module.AuthenticationInfo;
+import org.jsecurity.SecurityManager;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
-import org.jsecurity.realm.RealmManager;
 
 /**
  * SecurityContextFactory implementation that creates
@@ -39,13 +39,13 @@ import org.jsecurity.realm.RealmManager;
  */
 public class DelegatingSecurityContextFactory extends AbstractSecurityContextFactory {
 
-    private RealmManager realmManager;
+    private SecurityManager SecurityManager;
 
-    public DelegatingSecurityContextFactory( RealmManager realmManager ){
-        this.realmManager = realmManager;
+    public DelegatingSecurityContextFactory( SecurityManager SecurityManager ){
+        this.SecurityManager = SecurityManager;
     }
 
     protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
-        return new DelegatingSecurityContext( info.getPrincipals(), realmManager );
+        return new DelegatingSecurityContext( info.getPrincipals(), SecurityManager );
     }
 }

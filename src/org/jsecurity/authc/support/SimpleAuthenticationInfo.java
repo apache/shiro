@@ -23,20 +23,20 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authc.module.support;
+package org.jsecurity.authc.support;
 
-import org.jsecurity.authc.module.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationInfo;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple implementation of the {@link org.jsecurity.authc.module.AuthenticationInfo} interface that
+ * Simple implementation of the {@link org.jsecurity.authc.AuthenticationInfo} interface that
  * contains all necessary information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * @see org.jsecurity.authc.module.AuthenticationInfo
+ * @see org.jsecurity.authc.AuthenticationInfo
  *
  * @since 0.1
  * @author Jeremy Haile

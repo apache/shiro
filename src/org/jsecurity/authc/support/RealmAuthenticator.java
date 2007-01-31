@@ -23,25 +23,24 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authc.module.support;
+package org.jsecurity.authc.support;
 
+import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.module.AuthenticationInfo;
-import org.jsecurity.authc.module.AuthenticationModule;
-import org.jsecurity.authc.support.AbstractAuthenticator;
-import org.jsecurity.realm.RealmManager;
+import org.jsecurity.realm.Realm;
 
 import java.util.List;
 
 /**
  * A <tt>ModularAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
  * that delgates authentication duties to a pluggable collection
- * {@link AuthenticationModule AuthenticationModule}s.  This in essense enables
+ * {@link Realm Realm}s.  This in essense enables
  * PAM (Pluggable Authentication Module) behavior in JSecurity.
  *
  * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
- * <tt>AuthenticationModule</tt>s as you see fit.  Common modules are those based on accessing
+ * <tt>Realm</tt>s as you see fit.  Common modules are those based on accessing
  * LDAP, relational databases, file systems, etc.
  *
  * @see #setModules
@@ -50,7 +49,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class ModularAuthenticator extends AbstractAuthenticator {
+public class RealmAuthenticator extends AbstractAuthenticator {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -63,19 +62,19 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      * List of authentication modules that will be iterated through when a user
      * authenticates.
      */
-    private List<? extends AuthenticationModule> modules;
+    private List<? extends Realm> modules;
 
 
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
-    public ModularAuthenticator() {
+    public RealmAuthenticator() {
     }
 
 
-    public ModularAuthenticator(RealmManager realmManager, List<? extends AuthenticationModule> modules) {
-        setRealmManager( realmManager );
+    public RealmAuthenticator(SecurityManager SecurityManager, List<? extends Realm> modules) {
+        setSecurityManager( SecurityManager );
         this.modules = modules;
     }
 
@@ -83,7 +82,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setModules(List<AuthenticationModule> modules) {
+    public void setModules(List<Realm> modules) {
         this.modules = modules;
     }
 
@@ -103,7 +102,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      * @param token the authentication token submitted during the authentication process which may be useful
      * to subclasses in constructing the returned <tt>AuthenticationInfo</tt> instance.
      * @return an <tt>AuthenticationInfo</tt> instance that will be used to aggregate all
-     * <tt>AuthenticationInfo</tt> objects returned by all configured <tt>AuthenticationModule</tt>s.
+     * <tt>AuthenticationInfo</tt> objects returned by all configured <tt>Realm</tt>s.
      */
     protected AuthenticationInfo createAggregatedAuthenticationInfo( AuthenticationToken token ) {
         return new SimpleAuthenticationInfo();
@@ -154,7 +153,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      * non-null value must be returned (otherwise the authentication attempt is considered to be failed and an
      * exception will be thrown).
      *
-     * @param oneOrMoreSuccessful specifies if one or more <tt>AuthenticationModule</tt>s were able to obtain
+     * @param oneOrMoreSuccessful specifies if one or more <tt>Realm</tt>s were able to obtain
      * <tt>AuthenticationInfo</tt> for the specified token
      * @param authenticationToken the token submitted during the login process that encapsulates the user's
      * principals and credentials.
@@ -178,11 +177,11 @@ public class ModularAuthenticator extends AbstractAuthenticator {
 
     /**
      * <p>Attempts to authenticate the given token by iterating over the internal collection of
-     * {@link AuthenticationModule}s.  For each module, first the {@link AuthenticationModule#supports(Class)}
+     * {@link Realm}s.  For each module, first the {@link Realm#supports(Class)}
      * method will be called to determine if the module supports the <tt>authenticationToken</tt> method argument.
      *
      * If a module does support
-     * the token, its {@link AuthenticationModule#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
+     * the token, its {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
      * method will be called.  If the module returns non-null authentication information, the token will be
      * considered authenticated and the authentication info recorded.  If the module returns <tt>null</tt>, the next
      * module will be consulted.  If no modules support the token or all supported modules return null,
@@ -208,7 +207,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
         }
 
         boolean authenticated = false;
-        for( AuthenticationModule module : modules ) {
+        for( Realm module : modules ) {
 
             if( module.supports( authenticationToken.getClass() ) ) {
 
