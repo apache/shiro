@@ -44,7 +44,7 @@ import java.util.*;
 
 /**
  * <p>An {@link Realm} that authenticates with an LDAP
- * server to build the authorization context for a user.  This implementation only returns roles for a
+ * server to build the SecurityContext for a user.  This implementation only returns roles for a
  * particular user, and not permissions - but it can be subclassed to build a permission
  * list as well.</p>
  *

@@ -191,7 +191,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
      * user being authenticated.
-     * @return an authorization context for the authenticated user.
+     * @return account information attributed to the authenticated user.
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
      * for the given principal and credentials.
      */

@@ -45,8 +45,8 @@ import org.jsecurity.context.SecurityContext;
 public interface SecurityContextBinder {
 
     /**
-     * Binds the authorization context to the application so that it is accessible to future access.
-     * @param context the authorization context to bind.
+     * Binds the SecurityContext to the application so that it is accessible to future access.
+     * @param context the SecurityContext to bind to the application for later use.
      */
     void bindSecurityContext( SecurityContext context );
 

@@ -121,7 +121,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         Permission p = createPermission( action );
         if ( context.implies( p ) ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Authorization context implies permission [" + p +
+                log.debug( "SecurityContext implies permission [" + p +
                            "]. Returning grant vote." );
             }
             return AuthorizationVote.grant;

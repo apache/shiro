@@ -49,7 +49,7 @@ public class LdapSecurityInfo {
     ============================================*/
     /**
      * Additional principals returned from the LDAP query that should be included in the
-     * authorization context.
+     * SecurityContext.
      */
     protected List<Principal> principals;
 

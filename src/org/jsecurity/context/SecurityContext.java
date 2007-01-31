@@ -54,14 +54,14 @@ public interface SecurityContext {
      * (although most will choose a unique identifier such as a user id or username).
      * @return the primary principal (a.k.a. identifying attribute) of the subject associated with this SecurityContext.
      * @throws org.jsecurity.authz.NoSuchPrincipalException is thrown if no principals are associated with this
-     * authorization context.
+     * security context.
      */
     Principal getPrincipal() throws NoSuchPrincipalException;
 
     /**
      * Returns all principals associated with this <tt>SecurityContext</tt>.
      * @return a collection of principals associated with this context, or an empty collection
-     * if no principals are associated with this authorization context
+     * if no principals are associated with this security context
      */
     List<Principal> getAllPrincipals();
 
@@ -146,7 +146,7 @@ public interface SecurityContext {
 
     /**
      * A convenience method to check if this context implies the specified permission.  That is,
-     * if the authorization context does not imply the given permission, an
+     * if the security context does not imply the given permission, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
