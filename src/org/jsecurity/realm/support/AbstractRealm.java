@@ -113,16 +113,16 @@ public abstract class AbstractRealm implements Realm {
     }
 
     /**
-     * Returns the authenticationToken class supported by this module.
+     * Returns the authenticationToken class supported by this realm.
      *
      * <p>The default value is <tt>{@link UsernamePasswordToken UsernamePasswordToken.class}</tt>, since
-     * about 90% of modules use username/password authentication, regardless of their protocol (e.g. over jdbc, ldap,
+     * about 90% of realms use username/password authentication, regardless of their protocol (e.g. over jdbc, ldap,
      * kerberos, http, etc).
      *
      * <p>Subclasses must override this method if they won't support <tt>UsernamePasswordToken</tt> authentications and
      * they haven't already overridden the {@link #supports} method.
      *
-     * @return the authenticationToken class supported by this module.
+     * @return the authenticationToken class supported by this realm.
      *
      * @see #setAuthenticationTokenClass
      */
@@ -131,9 +131,9 @@ public abstract class AbstractRealm implements Realm {
     }
 
     /**
-     * Sets the authenticationToken class supported by this module.
+     * Sets the authenticationToken class supported by this realm.
      *
-     * @param authenticationTokenClass the class of authentication token instances supported by this module.
+     * @param authenticationTokenClass the class of authentication token instances supported by this realm.
      */
     public void setAuthenticationTokenClass(Class<? extends AuthenticationToken> authenticationTokenClass) {
         this.authenticationTokenClass = authenticationTokenClass;
@@ -166,7 +166,7 @@ public abstract class AbstractRealm implements Realm {
      * {@link #setAuthenticationTokenClass}, as opposed to overriding this method.
      *
      * @param tokenClass the class of the authenticationToken being submitted for authentication.
-     * @return true if this authentication module "understands" how to process submissions for the submitted token
+     * @return true if this authentication realm "understands" how to process submissions for the submitted token
      * instances of the class, false otherwise.
      */
     public boolean supports(Class tokenClass) {
