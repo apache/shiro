@@ -63,7 +63,7 @@ public class LogoutController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 
-       (new ThreadLocalSecurityContext()).invalidate();
+        ThreadLocalSecurityContext.current().invalidate();
 
         return new ModelAndView( "redirect:login" );
     }

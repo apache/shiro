@@ -38,7 +38,6 @@ import org.jsecurity.context.SecurityContext;
  *
  * @see org.jsecurity.authc.module.support.ModularAuthenticator ModularAuthenticator
  *
- *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -69,8 +68,6 @@ public interface Authenticator {
      * @see LockedAccountException
      * @see ConcurrentAccessException
      * @see UnknownAccountException
-     *
-     * @see org.jsecurity.authc.module.AuthenticationModule
      */
     public SecurityContext authenticate( AuthenticationToken authenticationToken )
         throws AuthenticationException;

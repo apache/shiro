@@ -51,6 +51,20 @@ import java.net.UnknownHostException;
  */
 public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
 
+    /**
+     * Enum representing the possible values of where a JSecurity session id will be stored once this factory
+     * creates a {@link Session}.
+     *
+     * <p>Once a JSecurity Session is created, only its id needs to be stored between requests.  Upon subsequent requests
+     * a Session instance can be instantiated via the WebSessionFactory using only this id.  The values of this enum
+     * represent where this framework class will store the id once the Session is created.
+     *
+     * If using JSecurity sessions to begin with, it is recommended that only the <tt>Cookie</tt> value is used.
+     * Choosing <tt>HttpSession</tt> or <tt>Both</tt> might unnecessarily create an HttpSession, which would be
+     * extraneous and could have unnecessary performance implications in clustered systems.
+     */
+    public enum IdStorageLocation { Cookie, HttpSession, Both }
+
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     public static final String SESSION_ID_REQUEST_PARAM_NAME = "sessionId";
@@ -72,9 +86,11 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     private String sessionIdHttpSessionKeyName = Session.class.getName() + "_HTTP_SESSION_KEY";
     private int sessionIdCookieMaxAge = SESSION_ID_COOKIE_MAX_AGE;
 
-    private Class<? extends PropertyEditor> sessionIdEditorClass = UUIDEditor.class;
+    private Class<? extends PropertyEditor> sessionIdEditorClass = null;
 
     private boolean validateRequestOrigin = false; //default
+
+    protected IdStorageLocation idStorageLocation = IdStorageLocation.Cookie;
 
     public DefaultWebSessionFactory(){}
 
@@ -162,11 +178,41 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
      * reading and populating values in
      * {@link HttpServletRequest HttpServletRequest}s, {@link Cookie Cookie}s or
      * {@link HttpSession HttpSession}s.
+     *
+     * <p>If not set, the string itself will be used.
+     *
+     * <p>Default is <tt>null</tt>, thereby not using PropertyEditor conversion by default.
+     *
      * @param clazz {@link PropertyEditor PropertyEditor} implementation used to
      * convert between string values and JSecurity sessionId objects.
      */
     public void setSessionIdEditorClass( Class<? extends PropertyEditor> clazz ) {
         this.sessionIdEditorClass = clazz;
+    }
+
+    /**
+     * Returns the location where a JSecurity sessionId will be stored for later repeated access after a Session
+     * is created.
+     *
+     * <p>To avoid potentially unnecessarily creating an HttpSession when JSecurity sessions are already used, the
+     * default value for this property is {@link IdStorageLocation#Cookie IdStorageLocation.Cookie}.
+     *
+     * @return the location where a JSecurity sessionId will be stored for later access after initial retrieval from
+     * the web request.
+     */
+    public IdStorageLocation getIdStorageLocation() {
+        return this.idStorageLocation;
+    }
+
+    /**
+     * Sets the location where a created Session's id will be stored for retrieval during subsequent web requests.
+     *
+     * See the enum JavaDoc for more detail.
+     *
+     * @param location where to store the JSecurity Session's id for retrieval during subsequent web requests.
+     */
+    public void setIdStorageLocation( IdStorageLocation location ) {
+        this.idStorageLocation = location;
     }
 
     protected InetAddress getInetAddress( HttpServletRequest request ) {
@@ -188,8 +234,15 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         InetAddress clientAddress = getInetAddress( request );
         Session session = start( clientAddress );
         Serializable sessionId = session.getSessionId();
-        storeSessionIdInHttpSession( request, sessionId );
-        storeSessionIdInCookie( response, sessionId );
+
+        IdStorageLocation idsl = getIdStorageLocation();
+        if ( idsl == IdStorageLocation.Cookie || idsl == IdStorageLocation.Both ) {
+            storeSessionIdInCookie( response, sessionId );
+        }
+        if ( idsl == IdStorageLocation.HttpSession || idsl == IdStorageLocation.Both ) {
+            storeSessionIdInHttpSession( request, sessionId );
+        }
+        
         return session;
     }
 
@@ -206,8 +259,8 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
                 validateSessionOrigin( request, session );
             }
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No JSecurity session id associated with the given " +
+            if ( log.isWarnEnabled() ) {
+                log.warn( "No JSecurity session id associated with the given " +
                            "HttpServletRequest.  A Session will not be returned." );
             }
         }
@@ -254,8 +307,8 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
             sessionIdString = getSessionIdFromCookie( request );
             if ( sessionIdString == null ) {
                 sessionId = getSessionIdFromHttpSession( request );
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Unable to find JSecurity session id from request parameters, " +
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Unable to find JSecurity session id from request parameters, " +
                                "cookies, or inside the HttpSession.  All heuristics exhausted. " +
                                "Returning null session id");
                 }

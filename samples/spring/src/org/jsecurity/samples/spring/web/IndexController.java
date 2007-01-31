@@ -52,7 +52,6 @@ public class IndexController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private SecurityContext securityContext = new ThreadLocalSecurityContext();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -66,15 +65,21 @@ public class IndexController extends SimpleFormController {
     |               M E T H O D S               |
     ============================================*/
 
+    protected SecurityContext getSecurityContext( HttpServletRequest request ) {
+        //ignore the request - just return the one assigned to the Servlet thread previously by the JSecurity interceptor:
+        return ThreadLocalSecurityContext.current();
+    }
+
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        Session session = securityContext.getSession();
+        Session session = getSecurityContext(request).getSession();
         command.setValue( (String) session.getAttribute( "value" ) );
         return command;
     }
 
     protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+        SecurityContext securityContext = getSecurityContext( request );
         boolean hasRole1 = securityContext.hasRole( "role1" );
         boolean hasRole2 = securityContext.hasRole( "role2" );
 
@@ -88,7 +93,7 @@ public class IndexController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
         SessionValueCommand command = (SessionValueCommand) obj;
 
-        Session session = securityContext.getSession();
+        Session session = getSecurityContext(request).getSession();
         session.setAttribute( "value", command.getValue() );
 
         return showForm( request, response, errors );

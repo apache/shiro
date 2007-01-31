@@ -71,8 +71,8 @@ public abstract class WebUtils {
 
     private WebUtils(){}
 
-    public static void bindToThread( SecurityContext authCtx ) {
-        ThreadUtils.bindToThread( authCtx );
+    public static void bindToThread( SecurityContext secCtx ) {
+        ThreadUtils.bindToThread( secCtx );
     }
 
     public static void unbindSecurityContextFromThread() {
@@ -103,7 +103,7 @@ public abstract class WebUtils {
 
     public static void bindToSession( SecurityContext ctx, HttpServletRequest request ) {
         if ( ctx != null ) {
-            Session session = (new ThreadLocalSecurityContext()).getSession();
+            Session session = ThreadLocalSecurityContext.current().getSession();
             if( session != null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
             } else {
@@ -114,7 +114,7 @@ public abstract class WebUtils {
     }
 
     public static void unbindSecurityContextFromSession( HttpServletRequest request ) {
-        Session session = (new ThreadLocalSecurityContext()).getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession();
         if( session != null ) {
             session.removeAttribute( PRINCIPALS_SESSION_KEY );
         } else {
@@ -140,7 +140,7 @@ public abstract class WebUtils {
     private static List<Principal> getPrincipals(HttpServletRequest request) {
         List<Principal> principals = null;
 
-        Session session = (new ThreadLocalSecurityContext()).getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession();
         if( session != null ) {
             principals = (List<Principal>) session.getAttribute( PRINCIPALS_SESSION_KEY );
         } else {

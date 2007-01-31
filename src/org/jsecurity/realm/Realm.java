@@ -49,8 +49,8 @@ import java.util.List;
  * should override the {@link AuthenticationModule#supports(Class)} method to always return <tt>false</tt>.
  *
  * <p>Because every application is different, security data such as users and roles can be
- * represented in any number of ways.  Because JSecurity tries to
- * maintain a non-intrusive development philosophy whenever possible, it does not require you to
+ * represented in any number of ways.  JSecurity tries to
+ * maintain a non-intrusive development philosophy whenever possible - it does not require you to
  * implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt> interfaces or classes.
  *
  * <p>Instead, JSecurity allows applications to implement this interface to access

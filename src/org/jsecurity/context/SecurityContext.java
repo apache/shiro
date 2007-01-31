@@ -34,7 +34,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Provides all access control behavior and session access for a subject (aka a 'user' account).
+ * Provides all access control behavior and session access for a subject (aka a 'user' account).  This is the primary
+ * JSecurity interaction point for a single subject (user).
  *
  * @see org.jsecurity.authc.Authenticator
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,13 +28,19 @@ package org.jsecurity.context.bind;
 import org.jsecurity.context.SecurityContext;
 
 /**
- * <p>The authorization context binder is responsible for binding an
+ * <p>A <tt>SecurityContextBinder</tt> is responsible for binding an
  * {@link org.jsecurity.context.SecurityContext} object after authentication takes place
- * to the application so that it can be retrieved on later requests.  For example, the
- * binder could bind the context to a thread local, HTTP session, static variable, etc.</p>
+ * to the application so that it can be retrieved for later access.  For example, the
+ * binder could bind the context to a thread local, HTTP cookie, static variable, etc.</p>
+ *
+ * <p>Typically another framework class would access this stored context to make it available in an easy manner
+ * for application components.
+ *
+ * @see org.jsecurity.context.bind.support.ThreadLocalSecurityContextBinder
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface SecurityContextBinder {
 

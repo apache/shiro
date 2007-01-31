@@ -61,19 +61,19 @@ public abstract class AbstractAuthorizationInterceptor {
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
-        SecurityContext authzCtx = this.securityContext;
+        SecurityContext secCtx = this.securityContext;
 
-        if ( authzCtx != null ) {
+        if ( secCtx != null ) {
             AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
             //will throw an exception if not authorized to execute the action:
-            this.authorizer.checkAuthorization( authzCtx, action );
+            this.authorizer.checkAuthorization(secCtx, action );
         } else {
             String msg = "No SecurityContext available " +
                          "(User not authenticated?).  Authorization failed.";
             throw new UnauthorizedException( msg );
         }
 
-        //authzCtx was found, and it determined the AOP invocation chain should proceed:
+        //secCtx was found, and it determined the AOP invocation chain should proceed:
         return continueInvocation( implSpecificMethodInvocation );
     }
 
