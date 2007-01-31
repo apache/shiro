@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * <p>
- * Interface that specifies the set of authorization operations that are implemented by the {@link SecurityManager}
+ * Interface that specifies the set of authorization operations that are implemented by the {@link org.jsecurity.SecurityManager}
  * and all {@link org.jsecurity.realm.Realm}s.
  * </p>
  *
