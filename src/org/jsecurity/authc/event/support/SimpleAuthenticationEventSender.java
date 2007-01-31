@@ -62,7 +62,7 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
      * @see AuthenticationEventSender#send( org.jsecurity.authc.event.AuthenticationEvent event )
      */
     public void send( AuthenticationEvent event ) {
-        if ( listeners != null ) {
+        if ( listeners != null && !listeners.isEmpty() ) {
             synchronized ( listeners ) {
                 for ( AuthenticationEventListener ael : listeners ) {
                     if ( event instanceof SuccessfulAuthenticationEvent) {

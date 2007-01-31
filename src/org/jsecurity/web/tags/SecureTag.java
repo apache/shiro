@@ -40,12 +40,10 @@ public abstract class SecureTag extends TagSupport {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    private SecurityContext securityContext = new ThreadLocalSecurityContext();
-
     public SecureTag(){}
 
     protected SecurityContext getSecurityContext() {
-        return securityContext;
+        return ThreadLocalSecurityContext.current();
     }
 
     protected void verifyAttributes() throws JspException {

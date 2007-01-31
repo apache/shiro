@@ -15,9 +15,9 @@ public class ThreadUtils {
 
     private ThreadUtils(){}
 
-    public static void bindToThread( SecurityContext authCtx ) {
-        if ( authCtx != null ) {
-            ThreadContext.put( ThreadContext.SECURITY_CONTEXT_KEY, authCtx );
+    public static void bindToThread( SecurityContext secCtx ) {
+        if ( secCtx != null ) {
+            ThreadContext.put( ThreadContext.SECURITY_CONTEXT_KEY, secCtx );
         }
     }
 

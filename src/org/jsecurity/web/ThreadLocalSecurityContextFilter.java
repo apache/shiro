@@ -38,6 +38,8 @@ import java.io.IOException;
  * any {@link SecurityContext} bound to the thread local during a request is stored
  * in the HTTP session when the request is complete.
  *
+ * TODO - DO NOT USE - CURRENTLY BROKEN
+ *
  * @since 0.1
  * @author Jeremy Haile
  */

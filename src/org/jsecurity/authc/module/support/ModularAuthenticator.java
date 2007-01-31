@@ -44,6 +44,8 @@ import java.util.List;
  * <tt>AuthenticationModule</tt>s as you see fit.  Common modules are those based on accessing
  * LDAP, relational databases, file systems, etc.
  *
+ * @see #setModules
+ *
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -141,8 +143,28 @@ public class ModularAuthenticator extends AbstractAuthenticator {
         }
     }
 
+    /**
+     * This is a final 'housekeeping' method that is called after all modules have been consulted during the
+     * authentication attempt for the specified token.
+     *
+     * <p>The default implementation only verifies that one or more modules successfully retrieved AuthenticationInfo
+     * for the specified <tt>AuthenticationToken</tt> (i.e. <tt>oneOrMoreSuccessful == true</tt>).  If so, it just
+     * returns the <tt>aggregated</tt> argument.  If not, it throws an AuthenticationException stating that no modules
+     * could authenticate the token.  Subclasses may override this method for more custom behavior, but a
+     * non-null value must be returned (otherwise the authentication attempt is considered to be failed and an
+     * exception will be thrown).
+     *
+     * @param oneOrMoreSuccessful specifies if one or more <tt>AuthenticationModule</tt>s were able to obtain
+     * <tt>AuthenticationInfo</tt> for the specified token
+     * @param authenticationToken the token submitted during the login process that encapsulates the user's
+     * principals and credentials.
+     * @param aggregated the aggregated <tt>AuthenticationInfo</tt> data from all modules that processed the token
+     * during the authentication attempt.
+     * @return the modules' <tt>AuthenticationInfo</tt> for the given token
+     * @throws AuthenticationException if no modules could associate any <tt>AuthenticationInfo</tt> with the token
+     */
     protected AuthenticationInfo modulesComplete( boolean oneOrMoreSuccessful, AuthenticationToken authenticationToken,
-                                                  AuthenticationInfo aggregated ) {
+                                                  AuthenticationInfo aggregated ) throws AuthenticationException {
         // If no module authenticated the user, throw an exception
         if( !oneOrMoreSuccessful ) {
             throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
@@ -162,7 +184,7 @@ public class ModularAuthenticator extends AbstractAuthenticator {
      * If a module does support
      * the token, its {@link AuthenticationModule#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
      * method will be called.  If the module returns non-null authentication information, the token will be
-     * considered authenticated and the authentication info recorded.  If the module returns a null context, the next
+     * considered authenticated and the authentication info recorded.  If the module returns <tt>null</tt>, the next
      * module will be consulted.  If no modules support the token or all supported modules return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
      *
@@ -218,6 +240,13 @@ public class ModularAuthenticator extends AbstractAuthenticator {
             }
         }
 
-        return modulesComplete( authenticated, authenticationToken, aggregatedInfo );
+        AuthenticationInfo info = modulesComplete( authenticated, authenticationToken, aggregatedInfo );
+        if ( info == null ) {
+            throw new AuthenticationException( "Authentication token of type [" + authenticationToken.getClass() + "] " +
+                "could not be authenticated by any configured modules.  Check that this authenticator is configured " +
+                "with appropriate modules." );
+        }
+
+        return info;
     }
 }

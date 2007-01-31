@@ -181,9 +181,8 @@ public abstract class ThreadContext {
     public static void clear() {
         getResources().clear();
         if ( logger.isTraceEnabled() ) {
-            logger.trace( "Removed all ThreadContext values" );
+            logger.trace( "Removed all ThreadContext values from thread [" + Thread.currentThread().getName() + "]" );
         }
-
     }
 
 }

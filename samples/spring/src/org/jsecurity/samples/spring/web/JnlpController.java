@@ -43,7 +43,7 @@ public class JnlpController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        Session session = (new ThreadLocalSecurityContext()).getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession();
         Assert.notNull( session, "Expected a non-null JSecurity session." );
 
         StringBuilder sb = new StringBuilder();

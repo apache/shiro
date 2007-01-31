@@ -134,7 +134,7 @@ public class AuthenticationFilter implements Filter {
                         "greater than 0, but was [" + serverPort + "]" );
                 }
 
-                setUnauthenticatedServerPort( Integer.parseInt( unauthenticatedServerPort ) );
+                setUnauthenticatedServerPort( serverPort );
 
             } catch (NumberFormatException e) {
                 throw new ServletException( "The unauthenticated server port must be a valid integer, " +
@@ -166,11 +166,11 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        SecurityContext authContext = new ThreadLocalSecurityContext();
+        SecurityContext secCtx = ThreadLocalSecurityContext.current();
 
         String requestedPath = httpRequest.getRequestURI();
 
-        if( authContext == null && !isPathExcluded(requestedPath)) {
+        if( secCtx == null && !isPathExcluded(requestedPath)) {
             handleUnauthenticatedRequest(request, response);
         } else {
             filterChain.doFilter( request, response );

@@ -85,6 +85,10 @@ public interface WebSessionFactory {
      * @param response the current response being generated.
      * @return the <tt>Session</tt> associated with the request, or <tt>null</tt> if no
      * <tt>Session</tt> can be acquired.
+     * @throws InvalidSessionException if the session attempting to be retrieved based on the current request is
+     * invalid.
+     * @throws AuthorizationException if the subject or machine associated with the current request is not authorized
+     * to acquire the session associated with the request. 
      */
     Session getSession( HttpServletRequest request, HttpServletResponse response )
         throws InvalidSessionException, AuthorizationException;

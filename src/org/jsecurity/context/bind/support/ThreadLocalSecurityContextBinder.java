@@ -32,7 +32,18 @@ import org.jsecurity.util.ThreadContext;
 
 /**
  * {@link org.jsecurity.context.bind.SecurityContextBinder} implementation that binds
- * an authorization context to the calling thread using {@link org.jsecurity.util.ThreadContext}
+ * a <tt>SecurityContext</tt> to the calling thread using a thread-local.  This implementation
+ * should almost always be used in server-side multi-threaded environments such as web applications or enterprise
+ * middleware.
+ *
+ * <p>Once the thread stack is finished executing (for example, at the end of a web
+ * request), the application is responsible for ensuring the SecurityContext is available on subsequent requests.
+ * Framework AOP
+ * interceptors or Servlet Filters usually fulfill this role (e.g. by persistently storing the SecurityContext somewhere
+ * for later access, or more commonly, reconstructing the SecurityContext on every request based on some critieria -
+ * such as a user's id or sessionId - to maintain a stateless architecture).
+ *
+ * @see org.jsecurity.context.support.ThreadLocalSecurityContext
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -45,8 +56,8 @@ public class ThreadLocalSecurityContextBinder implements SecurityContextBinder {
     protected final transient Log logger = LogFactory.getLog(getClass());
 
     /**
-     * Binds the given context to a thread local.
-     * @param context the context to be bound.
+     * Binds the given context to the calling thread via the {@link ThreadContext}.
+     * @param context the context to be bound to the application for later access.
      */
     public void bindSecurityContext(SecurityContext context) {
 

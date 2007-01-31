@@ -30,7 +30,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @return a remote invocation object containing the current session ID.
      */
     public RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
-        Session session = (new ThreadLocalSecurityContext()).getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession();
 
         Serializable sessionId;
         if( session != null ) {
