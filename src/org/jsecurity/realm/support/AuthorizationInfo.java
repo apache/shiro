@@ -60,12 +60,12 @@ public class AuthorizationInfo implements Serializable {
     protected transient final Log logger = LogFactory.getLog( getClass() );
 
     /**
-     * The roles that apply to this authorization context.
+     * The roles that apply to this info object.
      */
     protected Collection<String> roles;
 
     /**
-     * The permissions that apply to this authorization context.
+     * The permissions that apply to this info object.
      */
     protected Collection<Permission> permissions;
 

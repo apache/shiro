@@ -62,7 +62,7 @@ public class ThreadLocalSecurityContextBinder implements SecurityContextBinder {
     public void bindSecurityContext(SecurityContext context) {
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Binding authorization context [" + context + "] to the thread local context...");
+            logger.debug("Binding SecurityContext [" + context + "] to the thread local context...");
         }
 
         ThreadContext.put( ThreadContext.SECURITY_CONTEXT_KEY, context );

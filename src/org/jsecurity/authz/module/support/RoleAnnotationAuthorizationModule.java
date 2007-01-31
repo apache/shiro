@@ -52,7 +52,7 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
 
         if ( context.hasRole( roleId ) ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Authorization context has role [" + roleId +
+                log.debug( "SecurityContext has role [" + roleId +
                            "]. Returning grant vote." );
             }
             return AuthorizationVote.grant;

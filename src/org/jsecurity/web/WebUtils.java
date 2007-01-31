@@ -50,7 +50,7 @@ import java.util.List;
 public abstract class WebUtils {
 
     /**
-     * The key that is used to store the authorization context in the session.
+     * The key that is used to store subject principals in the session.
      */
     public static final String PRINCIPALS_SESSION_KEY =
         Principal.class.getName() + "_SESSION_KEY";

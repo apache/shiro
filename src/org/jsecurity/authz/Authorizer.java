@@ -54,7 +54,7 @@ public interface Authorizer {
      * the user is not authorized to perform the action, an
      * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
      *
-     * @param context the authorization context of the user being authorized.
+     * @param context the security context of the user being authorized.
      * @param action the action that the user is requesting authorization for.
      * @throws AuthorizationException if the context is not authorized to perform the action
      */

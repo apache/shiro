@@ -30,7 +30,7 @@ import org.jsecurity.context.SecurityContext;
 
 
 /**
- * <p>Factory used to create the authorization context that is returned from the
+ * <p>Factory used to create the SecurityContext that is returned from the
  * {@link org.jsecurity.authc.Authenticator}.
  *
  * @since 0.1
@@ -43,7 +43,7 @@ public interface SecurityContextFactory {
      * Returns an implementation of the SecurityContext instance for the
      * given authentication info after a successful authentication.
      * @param info authentication info after a successful authentication.
-     * @return an authorization context that will be used by the application.
+     * @return a SecurityContext for the corresponding subject that will be used by the application.
      */
     SecurityContext createSecurityContext( AuthenticationInfo info );
 

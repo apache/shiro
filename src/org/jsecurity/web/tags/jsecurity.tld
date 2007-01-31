@@ -17,7 +17,7 @@
         <name>implies</name>
         <tag-class>org.jsecurity.web.tags.ImpliesTag</tag-class>
         <body-content>JSP</body-content>
-        <description>Displays body content only if the current user's authorization context
+        <description>Displays body content only if the current user's security context
             implies the specified permission (i.e the user has the specified ability).</description>
         <attribute>
             <name>type</name>
@@ -40,7 +40,7 @@
         <name>notImplies</name>
         <tag-class>org.jsecurity.web.tags.NotImpliesTag</tag-class>
         <body-content>JSP</body-content>
-        <description>Displays body content only if the current user's authorization context does
+        <description>Displays body content only if the current user's security context does
             NOT imply the specified permission (i.e. the user lacks the specified ability)
         </description>
         <attribute>
