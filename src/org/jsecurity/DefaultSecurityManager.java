@@ -28,7 +28,7 @@ package org.jsecurity;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authc.support.RealmAuthenticator;
+import org.jsecurity.authc.support.ModularRealmAuthenticator;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
@@ -52,7 +52,7 @@ import java.util.*;
  * instances seperately in their application code;  instead they only need to interact with a single
  * <tt>SecurityManager</tt> instance.
  *
- * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.RealmAuthenticator} is created using
+ * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.ModularRealmAuthenticator} is created using
  * the configured realms as the authentication modules for the authenticator.  At least one
  * realm must be configured before {@link #init()} is called for this manager to function properly.</p>
  * <p><b>Note:</b> <ol><li>Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
@@ -102,7 +102,7 @@ public abstract class DefaultSecurityManager implements SecurityManager {
         }
 
         if( authenticator == null ) {
-            RealmAuthenticator realmAuthenticator = new RealmAuthenticator( this, getAllRealms() );
+            ModularRealmAuthenticator realmAuthenticator = new ModularRealmAuthenticator( this, getAllRealms() );
             realmAuthenticator.init();
             authenticator = realmAuthenticator;
         }
