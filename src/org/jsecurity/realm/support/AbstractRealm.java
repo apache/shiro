@@ -76,6 +76,11 @@ public abstract class AbstractRealm implements Realm {
      */
     protected CredentialMatcher credentialMatcher = null;
 
+    /**
+     * The class that this realm supports for authentication tokens.  This is used by the
+     * default implementation of the {@link #supports(Class)} method to determine whether or not the
+     * given authentication token is supported by this realm.
+     */
     protected Class<? extends AuthenticationToken> authenticationTokenClass = UsernamePasswordToken.class;
 
 
