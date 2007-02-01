@@ -71,22 +71,45 @@ public abstract class WebUtils {
 
     private WebUtils(){}
 
+
+    /**
+     * Binds the given <tt>SecurityContext</tt> to a thread local.
+     * @param secCtx the security context to bind.
+     */
     public static void bindToThread( SecurityContext secCtx ) {
         ThreadUtils.bindToThread( secCtx );
     }
 
+    /**
+     * Unbinds any <tt>SecurityContext</tt> from the thread local.
+     */
     public static void unbindSecurityContextFromThread() {
         ThreadUtils.unbindSecurityContextFromThread();
     }
 
-    public static void bindToThread( Session s ) {
-        ThreadUtils.bindToThread( s );
+    /**
+     * Binds the given <tt>Session</tt> to a thread local.
+     * @param session the session to bind.
+     */
+    public static void bindToThread( Session session ) {
+        ThreadUtils.bindToThread( session );
     }
 
+    /**
+     * Unbinds any session from the thread local.
+     */
     public static void unbindSessionFromThread() {
         ThreadUtils.unbindSessionFromThread();
     }
 
+
+    /**
+     * Constructs a <tt>SecurityContext</tt> by retrieving the current user's principals from their session and
+     * then binds the <tt>SecurityContext</tt> to the thread local.  The <tt>SecurityContext</tt> <b>MUST</b> be
+     * unbound from the thread at the end of the request by calling {@link #unbindSecurityContextFromThread()}
+     * @param request the request that is used to access the user's principals (from session).
+     * @param securityManager the current security manager used to construct the <tt>SecurityContext</tt>.
+     */
     public static void constructAndBindSecurityContextToThread( HttpServletRequest request, SecurityManager securityManager ) {
         List<Principal> principals = getPrincipals( request );
 
@@ -99,6 +122,13 @@ public abstract class WebUtils {
     }
 
 
+    /**
+     * Retrieves the current user's principals from their session.  If JSecurity sessions are enabled,
+     * the user's principals are retrieved from the JSecurity session.  Otherwise, the HTTP session is used.  This
+     * method is called when building a <tt>SecurityContext</tt> to attach to the current thread on each request.
+     * @param request the request that will be used to access the HTTP session if necessary.
+     * @return the principals retrieved from the user's session.
+     */
     @SuppressWarnings( "unchecked" )
     private static List<Principal> getPrincipals(HttpServletRequest request) {
         List<Principal> principals = null;
@@ -115,6 +145,14 @@ public abstract class WebUtils {
         return principals;
     }
 
+
+    /**
+     * Builds a <tt>SecurityContext</tt> given a set of principals and a <tt>SecurityManager</tt>  Called on each
+     * request to construct the <tt>SecurityContext</tt> that is bound to a thread local.
+     * @param principals the current user's principals.
+     * @param securityManager the security manager for this application.
+     * @return a newly constructed <tt>SecurityContext</tt>
+     */
     private static SecurityContext buildSecurityContext(List<Principal> principals, SecurityManager securityManager ) {
         if( principals != null && !principals.isEmpty() ) {
             return new DelegatingSecurityContext( principals, securityManager );
@@ -123,6 +161,14 @@ public abstract class WebUtils {
         }
     }
 
+
+    /**
+     * Binds the current user's principals to their session.  If JSecurity sessions are enabled, they will be stored
+     * in the JSecurity session. Otherwise they are stored in the HTTP session.  This is called after each request
+     * to ensure that the principals are stored in the session.  This allows a <tt>SecurityContext</tt> to be
+     * constructed on the next request by {@link #constructAndBindSecurityContextToThread(javax.servlet.http.HttpServletRequest, org.jsecurity.SecurityManager)}
+     * @param request the request used to retrieve the HTTP session if necessary.
+     */
     public static void bindPrincipalsToSessionIfNecessary( HttpServletRequest request ) {
         SecurityContext ctx = (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
 

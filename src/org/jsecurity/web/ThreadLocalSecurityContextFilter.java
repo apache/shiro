@@ -103,12 +103,14 @@ public class ThreadLocalSecurityContextFilter implements Filter {
                 throw new IllegalStateException( message );
             }
 
-            // Bind a auth context from the http session to the thread local
+            // Create a security context by retrieving the user's principals from the session and construcing
+            // a security context
             WebUtils.constructAndBindSecurityContextToThread( request, securityManager);
 
             filterChain.doFilter( servletRequest, servletResponse );
 
-            // Bind the auth context from the thread local to the session
+            // Bind the principals from the security context to the session so that a security context can be
+            // reconstructed on the next request
             WebUtils.bindPrincipalsToSessionIfNecessary( request );
 
         } finally {
