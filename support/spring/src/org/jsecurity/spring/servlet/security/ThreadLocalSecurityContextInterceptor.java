@@ -43,18 +43,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAdapter {
 
-    private SecurityManager SecurityManager;
+    private SecurityManager securityManager;
 
 
-    public void setSecurityManager( SecurityManager SecurityManager) {
-        this.SecurityManager = SecurityManager;
+    public void setSecurityManager( SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        WebUtils.bindSecurityContextToThread( request, SecurityManager );
+        WebUtils.bindSecurityContextToThread( request, securityManager);
         return true;
     }
 

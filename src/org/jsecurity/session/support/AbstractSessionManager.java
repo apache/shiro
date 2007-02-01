@@ -517,7 +517,7 @@ public abstract class AbstractSessionManager implements SessionManager {
     }
 
     public Principal getPrincipal( Serializable sessionId ) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Session s = retrieveAndValidateSession( sessionId );
     }
 
     public InetAddress getHostAddress( Serializable sessionId ) {

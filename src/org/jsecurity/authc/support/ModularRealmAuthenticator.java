@@ -72,8 +72,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
 
-    public ModularRealmAuthenticator(SecurityManager SecurityManager, List<? extends Realm> realms ) {
-        setSecurityManager( SecurityManager );
+    public ModularRealmAuthenticator(SecurityManager securityManager, List<? extends Realm> realms ) {
+        setSecurityManager( securityManager );
         this.realms = realms;
     }
 
