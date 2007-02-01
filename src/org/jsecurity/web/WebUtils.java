@@ -53,11 +53,17 @@ public abstract class WebUtils {
      * The key that is used to store subject principals in the session.
      */
     public static final String PRINCIPALS_SESSION_KEY =
-        Principal.class.getName() + "_SESSION_KEY";
+        WebUtils.class.getName() + "_PRINCIPALS_SESSION_KEY";
 
+    /**
+     * The key that is used to store the session ID in the session.
+     */
     public static final String SESSION_ID_KEY =
-        Session.class.getName() + "_ID_HTTP_SESSION_KEY";
+        WebUtils.class.getName() + "_SESSION_ID_SESSION_KEY";
 
+    /**
+     * The key that is used to store the attempted page in the session.
+     */
     public static final String ATTEMPTED_PAGE_KEY =
         WebUtils.class.getName() + "_ATTEMPTED_PAGE_SESSION_KEY";
 
