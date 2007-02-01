@@ -174,11 +174,14 @@ public abstract class WebUtils {
 
         if ( ctx != null ) {
             Session session = ThreadLocalSecurityContext.current().getSession();
-            if( session != null ) {
+            if( session != null && session.getAttribute( PRINCIPALS_SESSION_KEY) == null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+
             } else {
                 HttpSession httpSession = request.getSession();
-                httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+                if( httpSession.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
+                    httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+                }
             }
         }
     }
