@@ -104,12 +104,12 @@ public class ThreadLocalSecurityContextFilter implements Filter {
             }
 
             // Bind a auth context from the http session to the thread local
-            WebUtils.bindSecurityContextToThread( request, securityManager);
+            WebUtils.constructAndBindSecurityContextToThread( request, securityManager);
 
             filterChain.doFilter( servletRequest, servletResponse );
 
             // Bind the auth context from the thread local to the session
-            WebUtils.bindSecurityContextToSession( request );
+            WebUtils.bindPrincipalsToSessionIfNecessary( request );
 
         } finally {
             WebUtils.unbindSecurityContextFromThread();

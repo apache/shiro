@@ -87,19 +87,7 @@ public abstract class WebUtils {
         ThreadUtils.unbindSessionFromThread();
     }
 
-    public static void bindToSession( SecurityContext ctx, HttpServletRequest request ) {
-        if ( ctx != null ) {
-            Session session = ThreadLocalSecurityContext.current().getSession();
-            if( session != null ) {
-                session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
-            } else {
-                HttpSession httpSession = request.getSession();
-                httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
-            }
-        }
-    }
-
-    public static void bindSecurityContextToThread( HttpServletRequest request, SecurityManager securityManager ) {
+    public static void constructAndBindSecurityContextToThread( HttpServletRequest request, SecurityManager securityManager ) {
         List<Principal> principals = getPrincipals( request );
 
         if( principals != null ) {
@@ -135,10 +123,18 @@ public abstract class WebUtils {
         }
     }
 
-    public static void bindSecurityContextToSession( HttpServletRequest request ) {
-        SecurityContext ctx =
-            (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
-        bindToSession( ctx, request );
+    public static void bindPrincipalsToSessionIfNecessary( HttpServletRequest request ) {
+        SecurityContext ctx = (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
+
+        if ( ctx != null ) {
+            Session session = ThreadLocalSecurityContext.current().getSession();
+            if( session != null ) {
+                session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+            } else {
+                HttpSession httpSession = request.getSession();
+                httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
+            }
+        }
     }
 
 }
