@@ -106,7 +106,7 @@ public abstract class InstancePermission extends Permission implements Serializa
     /**
      * Constructs an instance with <em>all</em> actions (via the {@link #WILDCARD WILDCARD}
      * constant).
-     * @param targetName
+     * @param targetName name of the permission target.
      */
     protected InstancePermission( String targetName ) {
         this( targetName, WILDCARD );
@@ -227,6 +227,7 @@ public abstract class InstancePermission extends Permission implements Serializa
 
     /**
      * Returns this permission's actions in <em>canonical order</em>
+     * @return the set of actions for this permission.
      */
     public Set<String> getActionsSet() {
         return this.actionsSet;
@@ -262,6 +263,7 @@ public abstract class InstancePermission extends Permission implements Serializa
     }
     ...
 }</pre>
+     * @return the set of actions that are supported by this permission type.
      */
     public abstract Set<String> getPossibleActions();
 

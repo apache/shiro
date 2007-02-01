@@ -3,16 +3,16 @@
 <html>
 
 <head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/jsecurity.css"/>" />
+    <link type="text/css" rel="stylesheet" href="<c:url value="/jsecurity.css"/>"/>
 </head>
 
-<body onload="javascript:document.forms[0].elements[0].focus();">
+<body onload="document.forms[0].elements[0].focus();">
 
-    <div id="contentBox">
+<div id="contentBox">
 
-        <h3>JSecurity Login</h3>
+    <h3>JSecurity Login</h3>
 
-        <p>
+    <p>
         <span style="color: red;">
             <spring:bind path="command.*">
                 ${status.errorMessage}
