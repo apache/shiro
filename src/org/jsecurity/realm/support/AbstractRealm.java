@@ -144,6 +144,14 @@ public abstract class AbstractRealm implements Realm {
     |               M E T H O D S               |
     ============================================*/
 
+    /**
+     * This method should be implemented by subclasses to retrieve authentication information for
+     * the given authentication token.
+     * @param token the authentication token containing the user's principal and credentials.
+     * @return an {@link AuthenticationInfo} object containing user information resulting from the authentication
+     * ONLY if the authentication is successful (i.e. the credentials were correct, etc.)
+     * @throws AuthenticationException if there is an error authenticating the user using the given token.
+     */    
     protected abstract AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
 
 
@@ -153,10 +161,12 @@ public abstract class AbstractRealm implements Realm {
      * @param principal the principal that authorization information should be retrieved for.
      * @return an {@link AuthorizationInfo} object encapsulating the authorization information
      * associated with the given principal.
+     * @throws AuthorizationException if there is an error while retrieving authorization information for
+     * the given principal
      * @throws NoAuthorizationInfoFoundException if authorization information could not
      * be found for the given principal.
      */
-    protected abstract AuthorizationInfo getAuthorizationInfo(Principal principal);
+    protected abstract AuthorizationInfo getAuthorizationInfo(Principal principal) throws AuthorizationException;
 
     /**
      * Convenience implementation that returns
