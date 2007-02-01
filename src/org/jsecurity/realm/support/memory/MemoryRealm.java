@@ -44,9 +44,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A simple implementation of the {@link org.jsecurity.realm.Realm} interface that
- * uses a set of configured user properties to authenticate a user.
- * The property name corresponds to the username of the user.  The
+ * <p>A simple implementation of the {@link org.jsecurity.realm.Realm} interface that
+ * uses a set of configured user accounts to authenticate the user.  Each account entry
+ * specifies the username, password, and roles for a user.  Roles can also be mapped
+ * to permissions and will be associated with users.</p>
+ *
+ * <p>See the <tt>applicationContext.xml</tt> in the Spring sample application for an example
+ * of configuring a <tt>MemoryRealm</tt></p>
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -66,10 +70,26 @@ public class MemoryRealm extends AbstractCachingRealm {
      */
     private Map<Principal, AuthorizationInfo> authorizationInfoMap;
 
-    /**
-     * The set of accounts that can be authenticated using this realm.
-     */
     private Set<AccountEntry> accounts;
+
+    private Map<String,String> rolesPermissionsMap = new HashMap<String,String>();
+
+    /*--------------------------------------------
+    |         C O N S T R U C T O R S           |
+    ============================================*/
+
+    /*--------------------------------------------
+    |  A C C E S S O R S / M O D I F I E R S    |
+    ============================================*/
+    /**
+     * Sets the account entries that are used to authenticate users and associate them
+     * with roles for this realm.
+     * @param accounts 
+     */
+    public void setAccounts(Set<AccountEntry> accounts) {
+        this.accounts = accounts;
+    }
+
 
     /**
      * <p>A mapping of role names to permissions that can be authenticated using this realm.
@@ -90,21 +110,9 @@ public class MemoryRealm extends AbstractCachingRealm {
      * <tt>"com.mycompany.PermissionClass,myTarget,myAction1,myAction2,myAction3;<br>
      *     java.io.FilePermission,/myDir/myFile,read,write"</tt>
      * </p>
+     *
+     * @param rolesPermissionsMap
      */
-    private Map<String,String> rolesPermissionsMap = new HashMap<String,String>();
-
-    /*--------------------------------------------
-    |         C O N S T R U C T O R S           |
-    ============================================*/
-
-    /*--------------------------------------------
-    |  A C C E S S O R S / M O D I F I E R S    |
-    ============================================*/
-    public void setAccounts(Set<AccountEntry> accounts) {
-        this.accounts = accounts;
-    }
-
-
     public void setRolesPermissionsMap(Map<String, String> rolesPermissionsMap) {
         this.rolesPermissionsMap = rolesPermissionsMap;
     }
