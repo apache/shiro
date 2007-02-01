@@ -32,6 +32,7 @@ import org.jsecurity.context.SecurityContext;
 import java.io.Serializable;
 import java.security.Permission;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ import java.util.List;
  * @since 0.1
  * @author Jeremy Haile
  */
+@SuppressWarnings({"JavaDoc", "SimplifiableIfStatement"})
 public class AuthorizationInfo implements Serializable {
 
     /*--------------------------------------------
@@ -78,9 +80,19 @@ public class AuthorizationInfo implements Serializable {
      * @param roles the roles associated with this auth info.
      * @param permissions the permissions associated with this authorization info.
      */
+    @SuppressWarnings( "unchecked" )
     public AuthorizationInfo(Collection<String> roles, Collection<Permission> permissions) {
-        this.roles = roles;
-        this.permissions = permissions;
+        if( roles != null ) {
+            this.roles = roles;
+        } else {
+            this.roles = Collections.EMPTY_LIST;
+        }
+
+        if( permissions != null ) {
+            this.permissions = permissions;
+        } else {
+            this.permissions = Collections.EMPTY_LIST;
+        }
     }
 
     /*--------------------------------------------

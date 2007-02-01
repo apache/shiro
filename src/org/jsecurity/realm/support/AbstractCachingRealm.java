@@ -27,6 +27,7 @@ package org.jsecurity.realm.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.realm.Realm;
@@ -207,6 +208,10 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
 
         if (logger.isDebugEnabled()) {
             logger.debug("Retrieving authorization information for principal [" + principal + "]");
+        }
+
+        if( principal == null ) {
+            throw new AuthorizationException( "Authorization information cannot be retrieved for null principals." );
         }
 
         if( authorizationInfoCache != null ) {
