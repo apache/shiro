@@ -132,7 +132,7 @@ public class PrincipalTag extends SecureTag {
         if( getSecurityContext().isAuthenticated() ) {
 
             // Get the principal to print out
-            Principal principal = null;
+            Principal principal;
             if( type == null ) {
                 principal = getSecurityContext().getPrincipal();
             } else {

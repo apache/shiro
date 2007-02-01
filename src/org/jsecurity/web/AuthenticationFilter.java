@@ -222,7 +222,7 @@ public class AuthenticationFilter implements Filter {
         sb.append( serverName );
         sb.append( includePort ? ":" + serverPort : "" );
         sb.append( contextPath );
-        sb.append( getUnauthenticatedPath() );
+        sb.append( path );
 
         return sb.toString();
     }

@@ -53,6 +53,8 @@ public interface SessionManager {
      * @return the system identifier of the newly created session.
      *
      * @see org.jsecurity.session.SessionFactory#start(InetAddress)
+     * @throws IllegalArgumentException if the host specified is not valid.
+     * @throws org.jsecurity.authz.HostUnauthorizedException if the host specified is not allowed to start sessions.
      */
     Serializable start( InetAddress originatingHost )
         throws HostUnauthorizedException, IllegalArgumentException;
@@ -72,7 +74,7 @@ public interface SessionManager {
      * session could be stopped for a number of reasons.  See the
      * {@link org.jsecurity.session.Session#stop() Session.destroy()} method for more details.
      *
-     * @param sessionId
+     * @param sessionId the session ID whose stop timestamp is being retrieved.
      * @return the system time the session stopped or expired, or <tt>null</tt> if the session
      * is still active.
      * @see org.jsecurity.session.Session#getStopTimestamp()
@@ -143,7 +145,7 @@ public interface SessionManager {
      * <p>The principal itself can be any valid Java security principal.  In the above example, it
      * was a username.  In other systems (especially RDBMS-based ones) it is often an
      * entity/user id such as a UUID or Integer or even a Public Key.
-     *
+     * @param sessionId The session ID whose principal is being retrieved.
      * @return the identifying principal of the user or entity that authenticated this session,
      * or <code>null</code> if this session hasn't yet been authenticated.
      */
