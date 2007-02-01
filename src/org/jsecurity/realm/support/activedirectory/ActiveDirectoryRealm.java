@@ -48,11 +48,11 @@ import java.util.Set;
  * {@link #groupRolesMap}.</p>
  *
  * <p>More advanced implementations would likely want to override the
- * {@link #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)} and
+ * {@link #queryForLdapSecurityInfo(String, javax.naming.ldap.LdapContext)} and
  * {@link #buildAuthenticationInfo(String, char[],org.jsecurity.realm.support.ldap.LdapSecurityInfo)} methods.</p>
  *
  * @see org.jsecurity.realm.support.ldap.LdapSecurityInfo
- * @see #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)
+ * @see # queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
  * @see #buildAuthenticationInfo(String, char[],org.jsecurity.realm.support.ldap.LdapSecurityInfo)
  *
  * @since 0.1
@@ -104,7 +104,7 @@ public class ActiveDirectoryRealm extends LdapRealm {
      *
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected LdapSecurityInfo queryForLdapDirectoryInfo(String username, LdapContext ctx) throws NamingException {
+    protected LdapSecurityInfo queryForLdapSecurityInfo(String username, LdapContext ctx) throws NamingException {
 
         LdapSecurityInfo info = new LdapSecurityInfo();
 
