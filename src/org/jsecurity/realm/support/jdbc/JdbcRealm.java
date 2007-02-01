@@ -31,7 +31,7 @@ import org.jsecurity.realm.support.AbstractCachingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.UsernamePrincipal;
-import org.springframework.jdbc.support.JdbcUtils;
+import org.jsecurity.util.JdbcUtils;
 
 import javax.sql.DataSource;
 import java.security.Permission;
