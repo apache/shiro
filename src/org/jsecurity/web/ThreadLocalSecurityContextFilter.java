@@ -25,6 +25,8 @@
 
 package org.jsecurity.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 
@@ -38,16 +40,29 @@ import java.io.IOException;
  * any {@link SecurityContext} bound to the thread local during a request is stored
  * in the HTTP session when the request is complete.
  *
- * TODO - DO NOT USE - CURRENTLY BROKEN
- *
  * @since 0.1
  * @author Jeremy Haile
  */
 public class ThreadLocalSecurityContextFilter implements Filter {
 
+    /**
+     * Commons-logging logger
+     */
+    protected final transient Log logger = LogFactory.getLog(getClass());
+
     private SecurityManager securityManager;
 
 
+    public SecurityManager getSecurityManager() {
+        return securityManager;
+    }
+
+
+    /**
+     * Sets the JSecurity <tt>SecurityManager</tt> to be used by this filter.  This method must be called
+     * by the user's framework for this filter to be usable.
+     * @param securityManager the securityManager that should be used by this filter.
+     */
     public void setSecurityManager(SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
@@ -76,8 +91,19 @@ public class ThreadLocalSecurityContextFilter implements Filter {
 
         try {
 
+            SecurityManager securityManager = getSecurityManager();
+
+            if( securityManager == null ) {
+                final String message = "SecurityManager must be configured in filter before it can be used.  This could be " +
+                    "done by calling setSecurityManager() on the filter object, or by subclassing the filter to " +
+                    "retrieve the SecurityManager from the application framework.";
+                if (logger.isErrorEnabled()) {
+                    logger.error(message);
+                }
+                throw new IllegalStateException( message );
+            }
+
             // Bind a auth context from the http session to the thread local
-            //todo Fix filter to get the security manager from somewhere - currently broken
             WebUtils.bindSecurityContextToThread( request, securityManager);
 
             filterChain.doFilter( servletRequest, servletResponse );
