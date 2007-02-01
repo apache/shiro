@@ -87,20 +87,6 @@ public abstract class WebUtils {
         ThreadUtils.unbindSessionFromThread();
     }
 
-    public static void bindToHttpSession( Session s, HttpServletRequest request ) {
-        if ( s != null ) {
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute( SESSION_ID_KEY, s.getSessionId() );
-        }
-    }
-
-    public static void unbindSessionFromHttpSession( HttpServletRequest request ) {
-        HttpSession httpSession = request.getSession( false );
-        if ( httpSession != null ) {
-            httpSession.removeAttribute( SESSION_ID_KEY );
-        }
-    }
-
     public static void bindToSession( SecurityContext ctx, HttpServletRequest request ) {
         if ( ctx != null ) {
             Session session = ThreadLocalSecurityContext.current().getSession();
@@ -109,18 +95,6 @@ public abstract class WebUtils {
             } else {
                 HttpSession httpSession = request.getSession();
                 httpSession.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
-            }
-        }
-    }
-
-    public static void unbindSecurityContextFromSession( HttpServletRequest request ) {
-        Session session = ThreadLocalSecurityContext.current().getSession();
-        if( session != null ) {
-            session.removeAttribute( PRINCIPALS_SESSION_KEY );
-        } else {
-            HttpSession httpSession = request.getSession( false );
-            if ( httpSession != null ) {
-                httpSession.removeAttribute( PRINCIPALS_SESSION_KEY );
             }
         }
     }
@@ -137,6 +111,7 @@ public abstract class WebUtils {
     }
 
 
+    @SuppressWarnings( "unchecked" )
     private static List<Principal> getPrincipals(HttpServletRequest request) {
         List<Principal> principals = null;
 
