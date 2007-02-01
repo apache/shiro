@@ -138,7 +138,7 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
      *       properties are set, caching will be disabled.</li>
      * </ol>
      */
-    public void init() {
+    public final void init() {
         if (logger.isDebugEnabled()) {
             logger.debug("Initializing caches for realm [" + getName() + "]");
         }
@@ -176,6 +176,10 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
         onInit();
     }
 
+    /**
+     * Template method that subclasses can override for custom initialization behavior.  The default
+     * implementation does nothing.
+     */
     protected void onInit(){}
 
     /**

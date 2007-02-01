@@ -22,34 +22,27 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
+package org.jsecurity.authc.credential.support;
 
-package org.jsecurity.authz;
+import org.jsecurity.authc.credential.CredentialMatcher;
 
 /**
- * An exception thrown when no authorization information is found
- * for the current user.
+ * A credential matcher that always returns <tt>true</tt> when matching credentials no matter what arguments
+ * are passed in.  This can be used for testing or when credentials are trusted implicitly for a particular
+ * <tt>Realm</tt>.
  *
  * @since 0.2
  * @author Jeremy Haile
  */
-public class NoAuthorizationInfoFoundException extends AuthorizationException {
+public class AllowAllCredentialMatcher implements CredentialMatcher {
 
-    public NoAuthorizationInfoFoundException() {
-        super();
-    }
-
-
-    public NoAuthorizationInfoFoundException(String message) {
-        super(message);
-    }
-
-
-    public NoAuthorizationInfoFoundException(Throwable cause) {
-        super(cause);
-    }
-
-
-    public NoAuthorizationInfoFoundException(String message, Throwable cause) {
-        super(message, cause);
+    /**
+     * Always returns true for any credentials.
+     * @param providedCredential provided credential, ignored.
+     * @param storedCredential stored credential, ignored.
+     * @return true always.
+     */
+    public boolean doCredentialsMatch(Object providedCredential, Object storedCredential) {
+        return true;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialMatcher;
+import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoAuthorizationInfoFoundException;
 import org.jsecurity.realm.Realm;
@@ -74,7 +75,7 @@ public abstract class AbstractRealm implements Realm {
      * Password matcher used to determine if the provided password matches
      * the password stored in the data store.  Only utilized if non-null.
      */
-    protected CredentialMatcher credentialMatcher = null;
+    protected CredentialMatcher credentialMatcher = new PlainTextCredentialMatcher();
 
     /**
      * The class that this realm supports for authentication tokens.  This is used by the
@@ -249,9 +250,9 @@ public abstract class AbstractRealm implements Realm {
                 throw new IncorrectCredentialException( msg );
             }
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No CredentialMatcher configured.  Credential comparison check has been bypassed." );
-            }
+            throw new AuthenticationException( "A CredentialMatcher must be configured in order to verify " +
+                    "credentials during authentication.  If you do not wish for credentials to be examined, you " +
+                    "can configure an AllowAllCredentialMatcher." );
         }
 
         return info;
