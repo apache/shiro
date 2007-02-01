@@ -517,7 +517,7 @@ public abstract class AbstractSessionManager implements SessionManager {
     }
 
     public Principal getPrincipal( Serializable sessionId ) {
-        Session s = retrieveAndValidateSession( sessionId );
+        return null;
     }
 
     public InetAddress getHostAddress( Serializable sessionId ) {
