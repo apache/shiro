@@ -54,13 +54,13 @@ public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAda
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
 
-        WebUtils.bindSecurityContextToThread( request, securityManager);
+        WebUtils.constructAndBindSecurityContextToThread( request, securityManager);
         return true;
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response,
                             Object handler, ModelAndView modelAndView ) throws Exception {
-        WebUtils.bindSecurityContextToSession( request );
+        WebUtils.bindPrincipalsToSessionIfNecessary( request );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
