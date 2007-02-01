@@ -56,8 +56,7 @@ public interface AuthenticationEventListener {
 
     /**
      * Notification callback that an account has been locked from further authentication
-     * attempts (usually due to
-     * too many failed authentication attempts).
+     * attempts (usually due to too many failed authentication attempts).
      * @param event the event generated due to an account being locked.
      */
     void accountLocked( AuthenticationEvent event );

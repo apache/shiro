@@ -49,12 +49,12 @@ import java.util.*;
  * list as well.</p>
  *
  * <p>Implementations would need to implement the
- * {@link #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)} abstract method,
+ * {@link #queryForLdapSecurityInfo(String, javax.naming.ldap.LdapContext)} abstract method,
  * and may wish to override
  * {@link #buildAuthenticationInfo(String, char[],LdapSecurityInfo)}.</p>
  *
  * @see LdapSecurityInfo
- * @see #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)
+ * @see # queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
  * @see #buildAuthenticationInfo(String, char[],LdapSecurityInfo)
  *
  * @since 0.1
@@ -74,38 +74,21 @@ public abstract class LdapRealm extends AbstractCachingRealm {
      */
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    /**
-     * The type of LDAP authentication to perform.
-     */
     protected String authentication = "simple";
 
-    /**
-     * A suffix appended to the username. This is typically for
-     * domain names.  (e.g. "@MyDomain.local")
-     */
     protected String principalSuffix = null;
 
-    /**
-     * The search base for the search to perform in the LDAP server.
-     * (e.g. OU=OrganizationName,DC=MyDomain,DC=local )
-     */
     protected String searchBase = null;
 
-    /**
-     * The context factory to use. This defaults to the SUN LDAP JNDI implementation
-     * but can be overridden to use custom LDAP factories.
-     */
     protected String contextFactory = "com.sun.jndi.ldap.LdapCtxFactory";
 
-    /**
-     * The LDAP url to connect to. (e.g. ldap://<ldapDirectoryHostname>:<port>)
-     */
     protected String url = null;
 
-    /**
-     * The LDAP referral property.  Defaults to "follow"
-     */
     protected String refferal = "follow";
+
+    protected String systemUsername = null;
+
+    protected String systemPassword = null;
 
 
     /*--------------------------------------------
@@ -119,29 +102,78 @@ public abstract class LdapRealm extends AbstractCachingRealm {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+    /**
+     * Sets the type of LDAP authentication to perform when connecting to the LDAP server.  Defaults to "simple"
+     * @param authentication the type of LDAP authentication to perform.
+     */
     public void setAuthentication(String authentication) {
         this.authentication = authentication;
     }
 
+    /**
+     * A suffix appended to the username. This is typically for
+     * domain names.  (e.g. "@MyDomain.local")
+     * @param principalSuffix the suffix.
+     */
     public void setPrincipalSuffix(String principalSuffix) {
         this.principalSuffix = principalSuffix;
     }
 
+    /**
+     * The search base for the search to perform in the LDAP server.
+     * (e.g. OU=OrganizationName,DC=MyDomain,DC=local )
+     * @param searchBase the search base.
+     */
     public void setSearchBase(String searchBase) {
         this.searchBase = searchBase;
     }
 
+    /**
+     * The context factory to use. This defaults to the SUN LDAP JNDI implementation
+     * but can be overridden to use custom LDAP factories.
+     * @param contextFactory the context factory that should be used.
+     */
     public void setContextFactory(String contextFactory) {
         this.contextFactory = contextFactory;
     }
 
+    /**
+     * The LDAP url to connect to. (e.g. ldap://<ldapDirectoryHostname>:<port>)
+     * @param url the LDAP url.
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+     * Sets the LDAP referral property.  Defaults to "follow"
+     * @param refferal the referral property.
+     */
     public void setRefferal(String refferal) {
         this.refferal = refferal;
     }
+
+    /**
+     * The system username that will be used when connecting to the LDAP server to retrieve authorization
+     * information about a user.  This must be specified for LDAP authorization to work, but is not required for
+     * only authentication.
+     * @param systemUsername the username to use when logging into the LDAP server for authorization.
+     */
+    public void setSystemUsername(String systemUsername) {
+        this.systemUsername = systemUsername;
+    }
+
+
+    /**
+     * The system password that will be used when connecting to the LDAP server to retrieve authorization
+     * information about a user.  This must be specified for LDAP authorization to work, but is not required for
+     * only authentication.
+     * @param systemPassword the password to use when logging into the LDAP server for authorization.
+     */
+    public void setSystemPassword(String systemPassword) {
+        this.systemPassword = systemPassword;
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -196,7 +228,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
      * results.
      *
      * <p>Typically, users that need special behavior will not override this method, but will instead
-     * override {@link #queryForLdapDirectoryInfo(String, javax.naming.ldap.LdapContext)}</p>
+     * override {@link #queryForLdapSecurityInfo(String, javax.naming.ldap.LdapContext)}</p>
      *
      * @param username the username of the user being authenticated.
      * @param password the password of the user being authenticated.
@@ -228,7 +260,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
         try {
             ctx = new InitialLdapContext(env, null);
 
-            return queryForLdapDirectoryInfo(username, ctx);
+            return queryForLdapSecurityInfo(username, ctx);
 
 
         } catch (javax.naming.AuthenticationException e) {
@@ -287,10 +319,10 @@ public abstract class LdapRealm extends AbstractCachingRealm {
      *
      * @see #buildAuthenticationInfo(String, char[],LdapSecurityInfo)
      */
-    protected abstract LdapSecurityInfo queryForLdapDirectoryInfo(String username, LdapContext ctx) throws NamingException;
+    protected abstract LdapSecurityInfo queryForLdapSecurityInfo(String username, LdapContext ctx) throws NamingException;
 
     protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
-        //todo Implement this for LDAP - Need to configure a system account? -JCH 5/29/06
+
         throw new UnsupportedOperationException( "This method has not yet been implemented for LDAP." );
     }
 }
