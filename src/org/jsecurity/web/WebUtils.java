@@ -125,11 +125,11 @@ public abstract class WebUtils {
         }
     }
 
-    public static void bindSecurityContextToThread( HttpServletRequest request, SecurityManager SecurityManager ) {
+    public static void bindSecurityContextToThread( HttpServletRequest request, SecurityManager securityManager ) {
         List<Principal> principals = getPrincipals( request );
 
         if( principals != null ) {
-            SecurityContext ctx = buildSecurityContext( principals, SecurityManager);
+            SecurityContext ctx = buildSecurityContext( principals, securityManager);
             if( ctx != null ) {
                 bindToThread( ctx );
             }
@@ -152,9 +152,9 @@ public abstract class WebUtils {
         return principals;
     }
 
-    private static SecurityContext buildSecurityContext(List<Principal> principals, SecurityManager SecurityManager ) {
+    private static SecurityContext buildSecurityContext(List<Principal> principals, SecurityManager securityManager ) {
         if( principals != null && !principals.isEmpty() ) {
-            return new DelegatingSecurityContext( principals, SecurityManager );
+            return new DelegatingSecurityContext( principals, securityManager );
         } else {
             return null;
         }

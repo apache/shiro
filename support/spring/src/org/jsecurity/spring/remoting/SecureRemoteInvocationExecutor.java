@@ -48,7 +48,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
      * The realm manager used to retrieve realms that should be associated with the
      * created authorization contexts upon remote invocation.
      */
-    private SecurityManager SecurityManager;
+    private SecurityManager securityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -62,8 +62,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     }
 
 
-    public void setSecurityManager(SecurityManager SecurityManager) {
-        this.SecurityManager = SecurityManager;
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
 
@@ -89,7 +89,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 // If principals and realm were found in the session, create a delegating authorization context
                 // and bind it to the thread.
                 if( principals != null && !principals.isEmpty() ) {
-                    ThreadUtils.bindToThread( new DelegatingSecurityContext( principals, SecurityManager ) );
+                    ThreadUtils.bindToThread( new DelegatingSecurityContext( principals, securityManager) );
                 }
 
             } else {

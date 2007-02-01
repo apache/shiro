@@ -45,11 +45,11 @@ import java.io.IOException;
  */
 public class ThreadLocalSecurityContextFilter implements Filter {
 
-    private SecurityManager SecurityManager;
+    private SecurityManager securityManager;
 
 
-    public void setSecurityManager(SecurityManager SecurityManager) {
-        this.SecurityManager = SecurityManager;
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
 
@@ -77,8 +77,8 @@ public class ThreadLocalSecurityContextFilter implements Filter {
         try {
 
             // Bind a auth context from the http session to the thread local
-            //todo Fix filter to get the realm manager from somewhere - currently broken
-            WebUtils.bindSecurityContextToThread( request, SecurityManager );
+            //todo Fix filter to get the security manager from somewhere - currently broken
+            WebUtils.bindSecurityContextToThread( request, securityManager);
 
             filterChain.doFilter( servletRequest, servletResponse );
 
