@@ -179,7 +179,7 @@ public class JdbcRealm extends AbstractCachingRealm {
     |               M E T H O D S               |
     ============================================*/
 
-    public void init() {
+    public void onInit() {
         setAuthenticationTokenClass( UsernamePasswordToken.class );
     }
 
