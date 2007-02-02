@@ -60,6 +60,21 @@ public class AccountEntry {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    public AccountEntry() {
+    }
+
+
+    public AccountEntry(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public AccountEntry(String username, String password, String roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |

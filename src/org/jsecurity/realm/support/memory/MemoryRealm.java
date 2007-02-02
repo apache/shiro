@@ -31,7 +31,7 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
-import org.jsecurity.realm.support.AbstractCachingRealm;
+import org.jsecurity.realm.support.AbstractRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.util.UsernamePrincipal;
 
@@ -56,7 +56,7 @@ import java.util.Set;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class MemoryRealm extends AbstractCachingRealm {
+public class MemoryRealm extends AbstractRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -84,7 +84,7 @@ public class MemoryRealm extends AbstractCachingRealm {
     /**
      * Sets the account entries that are used to authenticate users and associate them
      * with roles for this realm.
-     * @param accounts 
+     * @param accounts the accounts for this realm.
      */
     public void setAccounts(Set<AccountEntry> accounts) {
         this.accounts = accounts;
@@ -111,7 +111,7 @@ public class MemoryRealm extends AbstractCachingRealm {
      *     java.io.FilePermission,/myDir/myFile,read,write"</tt>
      * </p>
      *
-     * @param rolesPermissionsMap
+     * @param rolesPermissionsMap the mapping between role names and permissions.
      */
     public void setRolesPermissionsMap(Map<String, String> rolesPermissionsMap) {
         this.rolesPermissionsMap = rolesPermissionsMap;
@@ -121,7 +121,7 @@ public class MemoryRealm extends AbstractCachingRealm {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public void onInit()  {
+    public void init()  {
         if( accounts != null && !accounts.isEmpty() ) {
 
             Map<Principal, AuthorizationInfo> authorizationInfoMap = new HashMap<Principal, AuthorizationInfo>( accounts.size() );
@@ -255,7 +255,7 @@ public class MemoryRealm extends AbstractCachingRealm {
     }
 
 
-    protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
+    protected AuthorizationInfo getAuthorizationInfo(Principal principal) {
         return authorizationInfoMap.get( principal );
     }
 
