@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -32,6 +32,7 @@ import java.security.Principal;
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class UsernamePrincipal implements Principal, Serializable {
 
@@ -83,18 +84,17 @@ public class UsernamePrincipal implements Principal, Serializable {
     ============================================*/
 
 
-    public boolean equals(Object o) {
+    public boolean equals( Object o ) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+
+        if ( o instanceof UsernamePrincipal ) {
+            final UsernamePrincipal other = (UsernamePrincipal)o;
+            String username = getUsername();
+            return ( username != null ? username.equals( other.getUsername() ) : other.getUsername() == null );
+        } else {
             return false;
-
-        final UsernamePrincipal that = (UsernamePrincipal) o;
-
-        if (username != null ? !username.equals(that.username) : that.username != null)
-            return false;
-
-        return true;
+        }
     }
 
 

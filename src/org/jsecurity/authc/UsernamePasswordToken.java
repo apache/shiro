@@ -25,6 +25,8 @@
 
 package org.jsecurity.authc;
 
+import org.jsecurity.util.UsernamePrincipal;
+
 import java.security.Principal;
 
 /**
@@ -136,29 +138,7 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
      * @return the {@link #getUsername() username} as a Principal.
      */
     public Principal getPrincipal() {
-        final String username = getUsername();
-        return new Principal() {
-            public int hashCode() {
-                return username.hashCode();
-            }
-
-            public boolean equals( Object obj ) {
-                if ( obj instanceof Principal ) {
-                    String otherName = ((Principal)obj).getName();
-                    return getName().equals( otherName );
-                } else {
-                    return false;
-                }
-            }
-
-            public String toString() {
-                return username;
-            }
-
-            public String getName() {
-                return username;
-            }
-        };
+        return new UsernamePrincipal( getUsername() );
     }
 
     /**
