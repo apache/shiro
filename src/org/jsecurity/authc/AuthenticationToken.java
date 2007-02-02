@@ -26,6 +26,7 @@
 package org.jsecurity.authc;
 
 import java.security.Principal;
+import java.io.Serializable;
 
 /**
  * <p>An <tt>AuthenticationToken</tt> is a consolidation of an account's principals and supporting
@@ -47,7 +48,7 @@ import java.security.Principal;
  *
  * <p>If your application's authentication process is  username/password based
  * (like most), instead of implementing this interface yourself, take a look at the
- * {@link UsernamePasswordToken UsernamePasswordToken} class, as it is probably sufficient for your needs
+ * {@link UsernamePasswordToken UsernamePasswordToken} class, as it is probably sufficient for your needs.
  *
  * <p>If you are familiar with JAAS, an <tt>AuthenticationToken</tt> replaces the concept of a
  * {@link javax.security.auth.callback.Callback}, and  defines meaningful behavior
@@ -55,18 +56,12 @@ import java.security.Principal;
  * also think the name <em>AuthenticationToken</em> more accurately reflects its true purpose
  * in a login framework, whereas <em>Callback</em> is less obvious.
  *
- * <p><b>Implementation Note:</b> It is often the case that authentication submissions
- * are done in client/server systems, where the token would be created on the client tier and
- * sent over the wire to a remote server where the actual authentication process occurs.  If this
- * is the case in your system, ensure your <tt>AuthenticationToken</tt> implementation also
- * implements the {@link java.io.Serializable} interface.
- *
  * @see UsernamePasswordToken
  *
  * @since 0.1
  * @author Les Hazlewood
  */
-public interface AuthenticationToken {
+public interface AuthenticationToken extends Serializable {
 
     /**
      * Returns the account identity submitted during the authentication process.
@@ -97,7 +92,7 @@ public interface AuthenticationToken {
      * <p>Ultimately, the credentials Object returned is application specific and can represent
      * any credential mechanism.
      *
-     * @return the credential submitted by the user during the authenticatin process.
+     * @return the credential submitted by the user during the authentication process.
      */
     Object getCredentials();
 

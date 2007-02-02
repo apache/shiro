@@ -143,7 +143,12 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
             }
 
             public boolean equals( Object obj ) {
-                return getName().equals( username );
+                if ( obj instanceof Principal ) {
+                    String otherName = ((Principal)obj).getName();
+                    return getName().equals( otherName );
+                } else {
+                    return false;
+                }
             }
 
             public String toString() {
