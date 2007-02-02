@@ -25,17 +25,25 @@
 
 package org.jsecurity.realm.support.file;
 
+import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.realm.support.AbstractCachingRealm;
+import org.jsecurity.realm.support.AbstractRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.realm.support.memory.AccountEntry;
+import org.jsecurity.realm.support.memory.MemoryRealm;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple file-based <tt>Realm</tt> that can be used to implement role-based security with
@@ -45,7 +53,7 @@ import java.util.Properties;
  * @since 0.2
  * @author Jeremy Haile
  */
-public class PropertyFilesRealm extends AbstractCachingRealm {
+public class PropertyFilesRealm extends AbstractRealm implements Runnable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -54,15 +62,46 @@ public class PropertyFilesRealm extends AbstractCachingRealm {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private boolean useXmlFormat = false;
+    protected boolean useXmlFormat = false;
 
-    private String userFile;
+    protected String userFilePath;
 
-    private String permissionsFile;
+    protected String permissionsFilePath;
+
+    protected long userFileLastModified;
+
+    protected long permissionsFileLastModified;
+
+    protected MemoryRealm memoryRealm;
+
+    protected int reloadIntervalSeconds = 10;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    public void init() {
+        reloadProperties();
+        startReloadThread();
+    }
+
+    protected void startReloadThread() {
+        if( this.reloadIntervalSeconds > 0 ) {
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+            scheduler.scheduleAtFixedRate( this, reloadIntervalSeconds, reloadIntervalSeconds, TimeUnit.SECONDS );
+        }
+    }
+
+    public void run() {
+        try {
+            reloadPropertiesIfNecessary();
+
+        } catch (Exception e) {
+            if( log.isErrorEnabled() ) {
+                log.error( "Error while reloading property files for realm.", e );
+            }
+        }
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -71,36 +110,98 @@ public class PropertyFilesRealm extends AbstractCachingRealm {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public void onInit() {
-        loadProperties();
+
+
+    private void reloadPropertiesIfNecessary() {
+        if( haveFilesBeenModified() ) {
+            reloadProperties();
+        }
+
     }
 
-    private void loadProperties() {
+    private boolean haveFilesBeenModified() {
+        File userFile = new File( this.userFilePath );
+        long newUserFileLastModified = userFile.lastModified();
+
+        if( newUserFileLastModified > this.userFileLastModified ) {
+            this.userFileLastModified = newUserFileLastModified;
+            return true;
+        }
+
+        File permissionsFile = new File( this.permissionsFilePath );
+        long newPermissionsFileLastModified = permissionsFile.lastModified();
+
+        if( newPermissionsFileLastModified > this.permissionsFileLastModified ) {
+            this.permissionsFileLastModified = newPermissionsFileLastModified;
+            return true;
+        }
+
+        return false;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private void reloadProperties() {
+        Properties userProperties = loadProperties( userFilePath );
+
+        MemoryRealm newRealm = new MemoryRealm();
+
+        Enumeration<String> propNames = (Enumeration<String>) userProperties.propertyNames();
+        while( propNames.hasMoreElements() ) {
+
+            //todo validate this input
+            String username = propNames.nextElement();
+            String passwordRoles = userProperties.getProperty( username );
+
+            String[] passwordRolesArray = passwordRoles.split( "," );
+            String password = passwordRolesArray[0];
+
+            AccountEntry entry = new AccountEntry();
+            entry.setUsername( username );
+        }
+
+
+
+        Properties permissionProperties = loadProperties( permissionsFilePath );
+
+
+    }
+
+    private Properties loadProperties( String fileName ) {
         Properties props = new Properties();
         try {
 
-            InputStream userStream = new FileInputStream( userFile );
-
+            InputStream is = new FileInputStream( fileName );
             if( useXmlFormat ) {
-                props.loadFromXML( userStream );
+                props.loadFromXML( is );
             } else {
-                props.load( userStream );
+                props.load( is );
             }
+
         } catch( IOException e ) {
-            //todo throw exception here
+            throw new JSecurityException( "Error reading properties file [" + fileName + "].  " +
+                    "Initializing of the realm from this file failed.", e );
         }
+
+        return props;
     }
 
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
+        // Check to make sure files haven't changed
+        reloadPropertiesIfNecessary();
 
 
 
         return null;
     }
 
-    protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
+    protected AuthorizationInfo getAuthorizationInfo(Principal principal) {
+
+        // Check to make sure files haven't changed
+        reloadPropertiesIfNecessary();
+
         return null;
     }
+
 
 }
