@@ -39,8 +39,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -58,6 +57,7 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable {
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    private static final int DEFAULT_RELOAD_INTERVAL_SECONDS = 10;
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -74,7 +74,7 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable {
 
     protected MemoryRealm memoryRealm;
 
-    protected int reloadIntervalSeconds = 10;
+    protected int reloadIntervalSeconds = DEFAULT_RELOAD_INTERVAL_SECONDS;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -141,29 +141,55 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable {
 
     @SuppressWarnings( "unchecked" )
     private void reloadProperties() {
-        Properties userProperties = loadProperties( userFilePath );
-
         MemoryRealm newRealm = new MemoryRealm();
 
+        //todo throw exception if user file path isn't set
+        Properties userProperties = loadProperties( userFilePath );
+        Set<AccountEntry> entries = buildAccountEntriesFromProperties(userProperties);
+        newRealm.setAccounts( entries );
+
+        // Load permissions if enabled
+        if( permissionsFilePath != null && permissionsFilePath.length() > 0 ) {
+            //todo add debug output here and in else block
+            Properties permissionProperties = loadProperties( permissionsFilePath );
+            Map<String,String> rolesPermissionsMap = buildRolesPermissionsMapFromProperties( permissionProperties );
+            newRealm.setRolesPermissionsMap( rolesPermissionsMap );
+        }
+
+        // Initialize new realm and replace old realm
+        newRealm.init();
+        this.memoryRealm = newRealm;
+    }
+
+    private Set<AccountEntry> buildAccountEntriesFromProperties(Properties userProperties) {
         Enumeration<String> propNames = (Enumeration<String>) userProperties.propertyNames();
+        Set<AccountEntry> entries = new HashSet<AccountEntry>( userProperties.size() );
         while( propNames.hasMoreElements() ) {
 
             //todo validate this input
             String username = propNames.nextElement();
             String passwordRoles = userProperties.getProperty( username );
 
-            String[] passwordRolesArray = passwordRoles.split( "," );
+            String[] passwordRolesArray = passwordRoles.split( ",", 2 );
             String password = passwordRolesArray[0];
+            String roles = passwordRolesArray[1];
 
             AccountEntry entry = new AccountEntry();
             entry.setUsername( username );
+            entry.setPassword( password );
+
+            if( roles != null && roles.length() > 0 ) {
+                entry.setRoles( roles );
+            }
+
+            entries.add( entry );
         }
+        return entries;
+    }
 
-
-
-        Properties permissionProperties = loadProperties( permissionsFilePath );
-
-
+    private Map<String, String> buildRolesPermissionsMapFromProperties(Properties permissionProperties) {
+        
+        return null;
     }
 
     private Properties loadProperties( String fileName ) {
