@@ -39,6 +39,11 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.SessionManager;
+import org.jsecurity.session.support.DefaultSessionManager;
+import org.jsecurity.web.support.DefaultWebSessionFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.security.Permission;
 import java.security.Principal;
@@ -82,6 +87,8 @@ public class DefaultSecurityManager implements SecurityManager {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    protected transient final Log log = LogFactory.getLog( getClass() );
+
     /**
      * The authenticator that is delegated to for authentication purposes.
      */
@@ -93,6 +100,7 @@ public class DefaultSecurityManager implements SecurityManager {
     protected Authorizer authorizer = new AnnotationsModularAuthorizer();
 
     protected SessionFactory sessionFactory;
+    protected SessionManager sessionManager;
 
     /**
      * A map from realm name to realm for all realms managed by this manager.
@@ -102,6 +110,55 @@ public class DefaultSecurityManager implements SecurityManager {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    /**
+     * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
+     * {@link #init()} after the necessary properties have been set.
+     */
+    public DefaultSecurityManager(){}
+
+    /**
+     * Supporting constructor that sets the required realms property.
+     *
+     * <p>Because this constructor does not accept a
+     * <tt>SessionFactory</tt> or <tt>SessionManager</tt> argument (like others in this class), and therefore uses
+     * the default <tt>init()</tt> logic to create a memory-based <tt>SessionFactory</tt>, it is not recommended that
+     * this constructor is used in production environments, where file-based or RDBMS-based solutions are better
+     * utilized.
+     *
+     * @param realms the realm instances backing this SecurityManager.
+     */
+    public DefaultSecurityManager( List<Realm> realms ) {
+        setRealms( realms );
+        init();
+    }
+
+    /**
+     * Supporting constructor that sets common properties and then automatically calls {@link #init()}.  Can be
+     * used both inside and outside of IoC environments.
+     * 
+     * @param realms the Realm instances backing this SecurityManager
+     * @param sessionFactory sessionFactory delegate instance - see {@link #setSessionFactory} for more info.
+     */
+    public DefaultSecurityManager( List<Realm> realms, SessionFactory sessionFactory ) {
+        setRealms( realms );
+        setSessionFactory( sessionFactory );
+        init();
+    }
+
+    /**
+     * Supporting constructor that sets common properties and then automatically calls {@link #init()}.  Can be
+     * used both inside and outside of IoC environments.
+     * @param realms the Realm instances backing this SecurityManager
+     * @param sessionManager the sessionManager instance that will be used to construct an internal <tt>SessionFactory</tt>
+     * instance - this is the recommended approach for most applications - see {@link #setSessionManager} for more info.
+     */
+    public DefaultSecurityManager( List<Realm> realms, SessionManager sessionManager ) {
+        setRealms( realms );
+        setSessionManager( sessionManager );
+        init();
+    }
+
+
     public void init() {
 
         if( realmMap == null || realmMap.isEmpty() ) {
@@ -110,8 +167,30 @@ public class DefaultSecurityManager implements SecurityManager {
         }
 
         if ( sessionFactory == null ) {
-            throw new IllegalStateException( "init() called but no SessionFactory has been configured for this " +
-                    "SecurityManager.  An underlying delegate instance of SessionFactory must be set." );
+            if ( log.isInfoEnabled() ) {
+                log.info( "No delegate SessionFactory instance has been set as a property of this class.  Defaulting " +
+                        "to a SessionFactory instance backed by a SessionManager implementation..." );
+            }
+
+            if ( sessionManager == null ) {
+                if ( log.isInfoEnabled() ) {
+                    log.info( "No SessionManager instance has been explicitly set as a property of this class.  " +
+                            "Defaulting to memory-based SessionManager.  Production environments should use a " +
+                            "file-based or RDBMS-based SessionManager instead." );
+                }
+                sessionManager = new DefaultSessionManager();
+                ((DefaultSessionManager)sessionManager).init();
+            } else {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Using configured SessionManager [" + sessionManager + "] to construct the default " +
+                            "SessionFactory delegate instance." );
+                }
+            }
+
+            DefaultWebSessionFactory sessionFactory = new DefaultWebSessionFactory();
+            sessionFactory.setSessionManager( sessionManager );
+
+            this.sessionFactory = sessionFactory;
         }
 
         if( authenticator == null ) {
@@ -135,8 +214,44 @@ public class DefaultSecurityManager implements SecurityManager {
         this.authorizer = authorizer;
     }
 
+    /**
+     * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
+     * manager's {@link #start} and {@link #getSession} calls.
+     *
+     * <p>This implementation does not provide logic to support the inherited <tt>SessionFactory</tt> interface, but
+     * instead delegates these calls to an internal instance.
+     *
+     * <p><b>N.B.</b>: That internal delegate instance can be set by this method, but it is usually a good idea
+     * <em>not</em> to set this property and instead set a {@link SessionManager} instance via the
+     * {@link #setSessionManager} method.  Then this class implementation will automatically create a
+     * <tt>SessionFactory</tt> during the {@link #init} phase.
+     *
+     * @see #setSessionManager
+     *
+     * @param sessionFactory delegate instance to use to support this manager's {@link #start} and {@link #getSession}
+     * implementations.
+     */
     public void setSessionFactory( SessionFactory sessionFactory ) {
         this.sessionFactory = sessionFactory;
+    }
+
+    /**
+     * Used to construct a default internal {@link SessionFactory} delegate instance if one is not explicitly set
+     * in configuration via the {@link #setSessionFactory} method.
+     *
+     * <p>If a <tt>SessionFactory</tt> instance <em>is</em> set via {@link #setSessionFactory}, then this property is
+     * ignored.
+     *
+     * <p><b>N.B.</b>: It is usually a good idea to set this property and <em>not</em> set the <tt>SessionFactory</tt>
+     * instance explicitly unless you have a good reason to do so.
+     *
+     * @see #setSessionFactory
+     *
+     * @param sessionManager the <tt>SessionManager</tt> used to create an internal <tt>SessionFactory</tt> if one is
+     * not already provided via configuration.
+     */
+    public void setSessionManager( SessionManager sessionManager ) {
+        this.sessionManager = sessionManager;
     }
 
     /**

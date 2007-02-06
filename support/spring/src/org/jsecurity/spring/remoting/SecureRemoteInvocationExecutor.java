@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadUtils;
 import org.jsecurity.web.WebUtils;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -39,12 +38,6 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     /**
-     * Session factory used to create/retrieve sessions that are specified in
-     * remote requests.
-     */
-    private SessionFactory sessionFactory;
-
-    /**
      * The realm manager used to retrieve realms that should be associated with the
      * created authorization contexts upon remote invocation.
      */
@@ -57,11 +50,6 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-
     public void setSecurityManager(SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
@@ -80,7 +68,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation) invocation;
 
                 Serializable sessionId = secureInvocation.getSessionId();
-                Session session = sessionFactory.getSession( sessionId );
+                Session session = securityManager.getSession( sessionId );
                 ThreadUtils.bindToThread( session );
 
                 // Get the principals and realm name from the session
