@@ -29,6 +29,7 @@ import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.AuthorizationOperations;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.session.SessionFactory;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ import java.util.List;
  * @since 0.2
  * @author Jeremy Haile
  */
-public interface SecurityManager extends Authenticator, Authorizer, AuthorizationOperations {
+public interface SecurityManager extends Authenticator, Authorizer, AuthorizationOperations, SessionFactory {
 
     /**
      * Retrieves a realm by its unique name.

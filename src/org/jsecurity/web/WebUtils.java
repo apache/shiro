@@ -139,7 +139,7 @@ public abstract class WebUtils {
     private static List<Principal> getPrincipals(HttpServletRequest request) {
         List<Principal> principals = null;
 
-        Session session = ThreadLocalSecurityContext.current().getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession( false );
         if( session != null ) {
             principals = (List<Principal>) session.getAttribute( PRINCIPALS_SESSION_KEY );
         } else {
@@ -179,7 +179,7 @@ public abstract class WebUtils {
         SecurityContext ctx = (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
 
         if ( ctx != null ) {
-            Session session = ThreadLocalSecurityContext.current().getSession();
+            Session session = ThreadLocalSecurityContext.current().getSession( false );
             if( session != null && session.getAttribute( PRINCIPALS_SESSION_KEY) == null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
 

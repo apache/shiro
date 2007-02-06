@@ -35,7 +35,7 @@ public class DefaultSampleManager implements SampleManager {
     ============================================*/
 
     public String getValue() {
-        Session session = ThreadLocalSecurityContext.current().getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession( false );
         if( session != null ) {
             return (String) session.getAttribute( "value" );
         } else {
@@ -44,7 +44,7 @@ public class DefaultSampleManager implements SampleManager {
     }
 
     public void setValue(String newValue) {
-        Session session = ThreadLocalSecurityContext.current().getSession();
+        Session session = ThreadLocalSecurityContext.current().getSession( false );
         if( session != null ) {
             session.setAttribute( "value", newValue );
         }
