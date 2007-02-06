@@ -55,8 +55,8 @@ public class SimpleSession implements Session, Serializable {
 
     public SimpleSession() {
 
-        //JSecurity uses UUID's by default.  This can be overridden via the setSessionId method:
-        sessionId = java.util.UUID.randomUUID();
+        //JSecurity uses String UUIDs by default.  This can be overridden via the setSessionId method:
+        sessionId = java.util.UUID.randomUUID().toString();
         startTimestamp = new Date();
         lastAccessTime = startTimestamp; //default when first instantiated
         try {

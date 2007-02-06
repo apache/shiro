@@ -27,14 +27,13 @@ package org.jsecurity.session.support.eis.support;
 
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
-import org.jsecurity.session.support.SimpleSession;
 import org.jsecurity.session.support.eis.SessionDAO;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
@@ -52,14 +51,8 @@ public class MemorySessionDAO implements SessionDAO {
     private final Map<Serializable, Session> activeSessions = new HashMap<Serializable, Session>();
     private final Map<Serializable, Session> stoppedSessions = new HashMap<Serializable, Session>();
 
-    protected void assignId( Session session ) {
-        if ( session instanceof SimpleSession ) {
-            ( (SimpleSession)session ).setSessionId( UUID.randomUUID() );
-        }
-    }
-
     public void create( Session session ) {
-        assignId( session );
+
         Serializable id = session.getSessionId();
         if ( id == null ) {
             String msg = "session must be assigned an id.  Please check assignId( Session s ) " +
@@ -117,7 +110,7 @@ public class MemorySessionDAO implements SessionDAO {
     }
 
     public Collection<Session> getActiveSessions() {
-        return activeSessions.values();
+        return Collections.unmodifiableCollection( activeSessions.values() );
     }
 
     public int getActiveSessionCount() {

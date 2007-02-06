@@ -21,9 +21,7 @@
     <resources>
         <j2se version="1.5+"/>
         <jar href="jsecurity-spring-sample.jar"/>
-        <jar href="jsecurity-api.jar"/>
-        <jar href="jsecurity-ri-common.jar"/>
-        <jar href="jsecurity-spring.jar"/>
+        <jar href="jsecurity.jar"/>
         <jar href="spring.jar"/>
         <jar href="commons-logging.jar"/>
         <property name="jsecurity.session.id" value="${sessionId}"/>

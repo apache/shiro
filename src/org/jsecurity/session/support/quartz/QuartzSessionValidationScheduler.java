@@ -75,7 +75,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     /**
      * Constructor that specifies the session manager that should be used for validating sessions.
-     * @param sessionManager
+     * @param sessionManager the <tt>SessionManager</tt> that should be used to validate sessions.
      */
     public QuartzSessionValidationScheduler(ValidatingSessionManager sessionManager) {
         this.sessionManager = sessionManager;
@@ -144,6 +144,27 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                 log.error("Error starting the Quartz session validation job.  Session validation may not occur.", e);
             }
         }
+    }
+
+    public void stopSessionValidation() {
+        if( log.isDebugEnabled() ) {
+            log.debug( "Stopping Quartz session validation job..." );
+        }
+
+        try {
+
+            getScheduler().unscheduleJob( JOB_NAME, Scheduler.DEFAULT_GROUP );
+
+            if( log.isDebugEnabled() ) {
+                log.debug( "Quartz session validation job stopped successfully." );
+            }
+
+        } catch (SchedulerException e) {
+            if( log.isErrorEnabled() ) {
+                log.error( "Error stopping the Quartz session validation job.", e );
+            }
+        }
+
 
     }
 }

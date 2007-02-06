@@ -71,7 +71,10 @@
     </target>
 
     <target name="jar" depends="compile">
-        <jar jarfile="${dist.jar}">
+
+        <mkdir dir="${dist.dir}"/>
+
+        <jar jarfile="${dist.dir}/jsecurity-spring-sample.jar">
             <fileset dir="${classes.dir}">
                 <include name="**/*.class"/>
             </fileset>
@@ -97,7 +100,8 @@
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
         <mkdir dir="${webstart.lib.dir}"/>
         <copy todir="${webstart.lib.dir}" preservelastmodified="true">
-            <fileset dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
+            <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
+            <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
             <fileset dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
         </copy>
@@ -113,8 +117,6 @@
             <lib dir="${lib.dir}/ehcache" includes="*.jar"/>
             <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
             <lib dir="${lib.dir}/spring" includes="*.jar"/>
-            <lib dir="${lib.dir}/log4j" includes="*.jar"/>
-            <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
             <lib dir="${lib.dir}/quartz" includes="*.jar"/>
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>

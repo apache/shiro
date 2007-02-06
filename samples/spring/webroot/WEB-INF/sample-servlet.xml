@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for "jsecurity" DispatcherServlet.
+  -->
+
+<beans>
+
+	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="sessionInterceptor"/>
+                <ref bean="threadLocalSecurityContextInterceptor"/>
+                <ref bean="authenticationInterceptor"/>
+            </list>
+        </property>
+        <property name="mappings">
+            <props>
+                <prop key="index">indexController</prop>
+                <prop key="jsecurity.jnlp">jnlpController</prop>
+                <prop key="sampleManager">sampleManagerService</prop>
+            </props>
+        </property>
+    </bean>
+
+	<bean id="unauthenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="sessionInterceptor"/>
+                <ref bean="threadLocalSecurityContextInterceptor"/>
+            </list>
+        </property>
+        <property name="mappings">
+            <props>
+                <prop key="login">loginController</prop>
+                <prop key="logout">logoutController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
+		<property name="prefix" value="/WEB-INF/resources/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+
+    <!-- =========================================================
+      -  Spring controllers
+      ============================================================ -->
+    <bean name="loginController" class="org.jsecurity.samples.spring.web.LoginController">
+        <property name="commandClass" value="org.jsecurity.samples.spring.web.LoginCommand"/>
+        <property name="formView" value="login"/>
+        <property name="successView" value="redirect:/s/index"/>
+
+        <property name="authenticator" ref="securityManager"/>
+    </bean>
+
+    <bean name="logoutController" class="org.jsecurity.samples.spring.web.LogoutController"/>
+
+    <bean id="jnlpController" class="org.jsecurity.samples.spring.web.JnlpController">
+        <property name="jnlpView" value="jsecurity.jnlp"/>
+    </bean>
+
+    <bean id="indexController" class="org.jsecurity.samples.spring.web.IndexController">
+        <property name="commandClass" value="org.jsecurity.samples.spring.web.SessionValueCommand"/>
+        <property name="formView" value="index"/>
+        <property name="successView" value="index"/>
+    </bean>
+
+    <bean name="urlController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+
+    <bean name="sampleManagerService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="sampleManager"/>
+        <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
+        <property name="remoteInvocationExecutor" ref="secureRemoteInvocationExecutor"/>
+    </bean>
+
+</beans>
