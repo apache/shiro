@@ -32,13 +32,19 @@ import org.jsecurity.authc.support.ModularRealmAuthenticator;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.authz.module.support.AnnotationsModularAuthorizer;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.session.SessionFactory;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.InvalidSessionException;
 
 import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
+import java.net.InetAddress;
+import java.io.Serializable;
 
 /**
  * <p>Implementation of the {@link org.jsecurity.SecurityManager} interface that is based around
@@ -67,7 +73,7 @@ import java.util.*;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class DefaultSecurityManager implements SecurityManager {
+public class DefaultSecurityManager implements SecurityManager {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -86,6 +92,8 @@ public abstract class DefaultSecurityManager implements SecurityManager {
      */
     protected Authorizer authorizer = new AnnotationsModularAuthorizer();
 
+    protected SessionFactory sessionFactory;
+
     /**
      * A map from realm name to realm for all realms managed by this manager.
      */
@@ -101,12 +109,16 @@ public abstract class DefaultSecurityManager implements SecurityManager {
                 "for this manager.  At least one realm needs to be configured on this manager." );
         }
 
+        if ( sessionFactory == null ) {
+            throw new IllegalStateException( "init() called but no SessionFactory has been configured for this " +
+                    "SecurityManager.  An underlying delegate instance of SessionFactory must be set." );
+        }
+
         if( authenticator == null ) {
             ModularRealmAuthenticator realmAuthenticator = new ModularRealmAuthenticator( this, getAllRealms() );
             realmAuthenticator.init();
             authenticator = realmAuthenticator;
         }
-
     }
 
     public void destroy() { //default implementation does nothing
@@ -121,6 +133,10 @@ public abstract class DefaultSecurityManager implements SecurityManager {
 
     public void setAuthorizer(Authorizer authorizer) {
         this.authorizer = authorizer;
+    }
+
+    public void setSessionFactory( SessionFactory sessionFactory ) {
+        this.sessionFactory = sessionFactory;
     }
 
     /**
@@ -281,4 +297,11 @@ public abstract class DefaultSecurityManager implements SecurityManager {
     }
 
 
+    public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
+        return sessionFactory.start( hostAddress );
+    }
+
+    public Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException {
+        return sessionFactory.getSession( sessionId );
+    }
 }

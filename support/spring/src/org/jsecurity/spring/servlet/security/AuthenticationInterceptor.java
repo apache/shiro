@@ -177,7 +177,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
     protected Map storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         boolean boundToSession = false;
         try {
-            Session session = securityContext.getSession();
+            Session session = securityContext.getSession( false );
             if ( session != null ) {
                 session.setAttribute( getAttemptedPageKeyName(), attemptedPage );
                 boundToSession = true;

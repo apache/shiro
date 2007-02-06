@@ -179,25 +179,20 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         }
     }
 
-    public Session getSession() {
-        return (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
-    }
-
     protected SecurityContext getSecurityContext() {
         return (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
     }
 
-    public void invalidate() {
+    public Session getSession() {
+        return getSecurityContext().getSession();
+    }
 
-        try {
-            Session s = getSession();
-            if ( s != null ) {
-                s.stop();
-            }
-        } finally {
-            ThreadContext.remove( ThreadContext.SESSION_KEY );
-            ThreadContext.remove( ThreadContext.SECURITY_CONTEXT_KEY );
-        }
+    public Session getSession( boolean create ) {
+        return getSecurityContext().getSession( create );
+    }
+
+    public void invalidate() {
+        getSecurityContext().invalidate();
     }
 
 }

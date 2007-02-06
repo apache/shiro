@@ -167,16 +167,37 @@ public interface SecurityContext {
      * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
      * logged-in to the system, <tt>false</tt> otherwise.
      */
-    public abstract boolean isAuthenticated();
+    boolean isAuthenticated();
 
     /**
-     * Returns the user's application <tt>Session</tt>, or <tt>null</tt> if there is no
-     * <tt>Session</tt> associated with the user.
+     * Returns the application <tt>Session</tt> associated with this SecurityContext.  If no session exists when this
+     * method is called, a new session will be created and associated with this context and then returned.
      *
-     * @return the user's application <tt>Session</tt>, or <tt>null</tt>
-     * if there is no session associated with the user.
+     * <p>This is a convenience method and is equivalent to calling {@link #getSession(boolean) getSession(true)}.
+     * 
+     * @see #getSession(boolean)
+     *
+     * @return the application <tt>Session</tt> associated with this context.
      */
-    public abstract Session getSession();
+    Session getSession();
+
+    /**
+     * Returns the application <tt>Session</tt> associated with this SecurityContext.  Based on the boolean argument,
+     * this method functions as follows:
+     *
+     * <ul>
+     *   <li>If there is already an existing session associated with this <tt>SecurityContext</tt>, it is returned and
+     * the <tt>create</tt> argument is ignored.</li>
+     *   <li>If no session exists and <tt>create</tt> is <tt>true</tt>, a new session will be created, associated with
+     * this <tt>SecurityContext</tt> and then returned.</li>
+     *   <li>If no session exists and <tt>create</tt> is <tt>false</tt>, <tt>null</tt> is returned.</li>
+     * </ul>
+     *
+     * @param create boolean argument determining if a new session should be created or not if there is no existing session.
+     * @return the application <tt>Session</tt> associated with this <tt>SecurityContext</tt> or <tt>null</tt> based
+     * on the above described logic.
+     */
+    Session getSession( boolean create );
 
     /**
      * Invalidates and removes any entities (such as a {@link Session Session} and authorization

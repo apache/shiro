@@ -165,13 +165,22 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public Session getSession() {
-        return (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
+        return getSession( true );
+    }
+
+    public Session getSession( boolean create ) {
+        Session s = (Session)ThreadContext.get( ThreadContext.SESSION_KEY );
+        if ( s == null && create ) {
+            s = securityManager.start( null ); //TODO - get IP from somewhere
+            ThreadContext.put( ThreadContext.SESSION_KEY, s );
+        }
+        return s;
     }
 
     public void invalidate() {
 
         try {
-            Session s = getSession();
+            Session s = getSession( false );
             if ( s != null ) {
                 s.stop();
             }
