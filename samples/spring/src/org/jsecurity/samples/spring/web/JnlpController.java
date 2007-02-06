@@ -53,7 +53,7 @@ public class JnlpController extends AbstractController {
             sb.append( ":" );
             sb.append( request.getServerPort() );
         }
-        sb.append( "/jsecurity-spring-sample/" );
+        sb.append( request.getContextPath() );
 
         // prevent JNLP caching by setting response headers
         response.setHeader( "cache-control", "no-cache" );

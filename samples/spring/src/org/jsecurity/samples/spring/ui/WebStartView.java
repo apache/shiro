@@ -3,6 +3,7 @@ package org.jsecurity.samples.spring.ui;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.samples.spring.DefaultSampleManager;
 import org.jsecurity.samples.spring.SampleManager;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.swing.*;
@@ -11,12 +12,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 /**
  * Insert JavaDoc here.
  */
-public class WebStartView implements ActionListener {
+public class WebStartView implements ActionListener, InitializingBean {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -48,7 +48,7 @@ public class WebStartView implements ActionListener {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public void init() throws IOException {
+    public void afterPropertiesSet() throws Exception {
         ClassPathResource resource = new ClassPathResource( "webstartTitle.gif" );
         ImageIcon icon = new ImageIcon( resource.getURL() );
         JLabel logo = new JLabel( icon );
@@ -124,9 +124,11 @@ public class WebStartView implements ActionListener {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         WebStartView test = new WebStartView();
         test.setSampleManager( new DefaultSampleManager() );
-        test.init();
+        test.afterPropertiesSet();
     }
+
+
 }

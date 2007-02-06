@@ -35,36 +35,14 @@
 	 -  Servlets
 	 -  =================================================================== -->
     <servlet>
-        <servlet-name>gateway</servlet-name>
+        <servlet-name>sample</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>gateway</servlet-name>
-        <url-pattern>/gateway/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>remoting</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>remoting</servlet-name>
-        <url-pattern>/remoting/*</url-pattern>
-    </servlet-mapping>    
-
-    <servlet>
-        <servlet-name>secure</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>secure</servlet-name>
-        <url-pattern>/secure/*</url-pattern>
+        <servlet-name>sample</servlet-name>
+        <url-pattern>/s/*</url-pattern>
     </servlet-mapping>
 
 	<!-- ===================================================================

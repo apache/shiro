@@ -7,6 +7,7 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.SecurityContextException;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
@@ -39,11 +40,19 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public void setAuthenticator( Authenticator authenticator ) {
-        this.authenticator = authenticator;
+        this.authenticator = authenticator; 
     }
 
     public static SecurityContext current() {
-        return (SecurityContext)ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
+        SecurityContext sc = (SecurityContext)ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
+
+        if( sc == null ) {
+            throw new SecurityContextException( "No SecurityContext is bound to the thread.  Make sure " +
+                    "you have a ThreadLocalSecurityContextFilter or ThreadLocalSecurityContextInterceptor configured to " +
+                    "filter web requests." );
+        }
+
+        return sc;
     }
 
     public SecurityContext authenticate( AuthenticationToken authenticationToken )

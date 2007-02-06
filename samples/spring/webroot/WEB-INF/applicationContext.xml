@@ -58,17 +58,17 @@
 
     <!-- Ensure any Spring-based remote method invocations can be associated with a SecurityContext and a Session -->
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
-        <property name="SecurityManager" ref="securityManager"/>
+        <property name="securityManager" ref="securityManager"/>
     </bean>
 
 
     <!-- Web Interceptors -->
     <bean id="threadLocalSecurityContextInterceptor" class="org.jsecurity.spring.servlet.security.ThreadLocalSecurityContextInterceptor">
-        <property name="SecurityManager" ref="securityManager"/>
+        <property name="securityManager" ref="securityManager"/>
     </bean>
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
         <property name="contextRelative" value="true"/>
-        <property name="loginURL" value="/gateway/login"/>
+        <property name="loginURL" value="/s/login"/>
     </bean>
     <bean id="sessionInterceptor" class="org.jsecurity.spring.servlet.security.SessionInterceptor">
         <property name="webSessionFactory" ref="sessionFactory"/>

@@ -20,21 +20,21 @@
         </p>
 
         <p>
-            <form action="<c:url value="/secure/index"/>" method="POST">
+            <form action="<c:url value="/s/index"/>" method="POST">
                 Enter value here to store in session: <input type="text" name="value" value="${command.value}" size="30"/>
                 <input type="submit" value="Save"/>
-                <button type="button" onclick="document.location.href='<c:url value="/secure/index"/>';">Refresh</button>
+                <button type="button" onclick="document.location.href='<c:url value="/s/index"/>';">Refresh</button>
             </form>
 
         </p>
 
         <p>
-            Click <a href="<c:url value="/gateway/jsecurity.jnlp?sessionId=${sessionId}"/>">here</a> to launch webstart application.
+            Click <a href="<c:url value="/s/jsecurity.jnlp?sessionId=${sessionId}"/>">here</a> to launch webstart application.
         </p>
 
 
         <p>
-            Click <a href="<c:url value="/gateway/logout"/>>here</a> to logout.
+            Click <a href="<c:url value="/s/logout"/>>here</a> to logout.
         </p>
     </div>
 </body>

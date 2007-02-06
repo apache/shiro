@@ -2,8 +2,8 @@ package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
+import org.jsecurity.util.ThreadContext;
 
 /**
  * Insert JavaDoc here.
@@ -35,7 +35,7 @@ public class DefaultSampleManager implements SampleManager {
     ============================================*/
 
     public String getValue() {
-        Session session = ThreadLocalSecurityContext.current().getSession( false );
+        Session session = (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
         if( session != null ) {
             return (String) session.getAttribute( "value" );
         } else {
@@ -44,7 +44,7 @@ public class DefaultSampleManager implements SampleManager {
     }
 
     public void setValue(String newValue) {
-        Session session = ThreadLocalSecurityContext.current().getSession( false );
+        Session session = (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
         if( session != null ) {
             session.setAttribute( "value", newValue );
         }

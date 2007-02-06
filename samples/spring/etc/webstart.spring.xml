@@ -7,14 +7,13 @@
 <beans>
 
     <bean id="webStartView"
-          class="org.jsecurity.samples.spring.ui.WebStartView"
-          init-method="init">
+          class="org.jsecurity.samples.spring.ui.WebStartView">
         <property name="sampleManager" ref="sampleManager"/>
     </bean>
 
     <bean id="sampleManager"
           class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-        <property name="serviceUrl" value="http://localhost:8080/jsecurity-spring-sample/remoting/SampleManager"/>
+        <property name="serviceUrl" value="http://localhost:8080/jsecurity-spring/remoting/sampleManager"/>
         <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
         <property name="remoteInvocationFactory" ref="secureRemoteInvocationFactory"/>
     </bean>
