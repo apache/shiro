@@ -10,18 +10,7 @@
       -  JSecurity configuration
       ============================================================ -->
 
-    <!-- Authentication -->
-    <bean name="securityManager"
-          init-method="init"
-          destroy-method="destroy"
-          class="org.jsecurity.DefaultSecurityManager">
-        <property name="realms">
-            <list>
-                <ref bean="memoryRealm"/>
-            </list>
-        </property>
-    </bean>
-
+    <!-- Access authentication and authorization info for a single data source - called a 'Realm': -->
     <bean id="memoryRealm"
           class="org.jsecurity.realm.support.memory.MemoryRealm"
           init-method="init"
@@ -47,25 +36,29 @@
         </property>
     </bean>
 
-
-    <!-- Session Management -->
-    <bean id="sessionFactory" class="org.jsecurity.web.support.DefaultWebSessionFactory">
-        <property name="sessionManager" ref="sessionManager"/>
+    <!-- JSecurity's main business-tier object:  -->
+    <bean name="securityManager"
+          init-method="init"
+          destroy-method="destroy"
+          class="org.jsecurity.DefaultSecurityManager">
+        <property name="realms">
+            <list>
+                <ref bean="memoryRealm"/>
+            </list>
+        </property>
     </bean>
 
-    <bean id="sessionManager" init-method="init" class="org.jsecurity.session.support.DefaultSessionManager"/>
 
-    <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
-        <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="SecurityManager" ref="securityManager"/>
-    </bean>
-
-
-    <!-- AOP Annotations Support-->
+    <!-- Enable JSecurity Annotations for Spring-configured beans: -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
-
     <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="authorizer" ref="securityManager"/>
+    </bean>
+
+
+    <!-- Ensure any Spring-based remote method invocations can be associated with a SecurityContext and a Session -->
+    <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
+        <property name="SecurityManager" ref="securityManager"/>
     </bean>
 
 
@@ -73,18 +66,16 @@
     <bean id="threadLocalSecurityContextInterceptor" class="org.jsecurity.spring.servlet.security.ThreadLocalSecurityContextInterceptor">
         <property name="SecurityManager" ref="securityManager"/>
     </bean>
-
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
         <property name="contextRelative" value="true"/>
         <property name="loginURL" value="/gateway/login"/>
     </bean>
-
     <bean id="sessionInterceptor" class="org.jsecurity.spring.servlet.security.SessionInterceptor">
         <property name="webSessionFactory" ref="sessionFactory"/>
     </bean>
 
 
-    <!-- Business Managers -->
+    <!-- Sample application-level business Managers -->
     <bean id="sampleManager" class="org.jsecurity.samples.spring.DefaultSampleManager"/>
 
 </beans>
