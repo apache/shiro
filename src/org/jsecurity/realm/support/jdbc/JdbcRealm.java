@@ -151,14 +151,13 @@ public class JdbcRealm extends AbstractCachingRealm {
      * per permission with three columns containing the fully qualified name of the permission class, the permission
      * target, and the permission actions (in that order).  If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthorizationInfo(java.security.Principal)} or just
-     * {@link #getPermissions(java.sql.Connection, String, java.util.Collection)}
-     * </p>
+     * {@link #getPermissions(java.sql.Connection, String, java.util.Collection)}</p>
      *
      * <p><b>Permissions are only retrieved if you set {@link #permissionsLookupEnabled} to true.  Otherwise,
      * this query is ignored.</b></p>
      * @param permissionsQuery the query to use for retrieving permissions for a role.
      * @see #DEFAULT_PERMISSIONS_QUERY
-     * @see {@link #setPermissionsLookupEnabled(boolean)}
+     * @see #setPermissionsLookupEnabled(boolean)
      */
     public void setPermissionsQuery(String permissionsQuery) {
         this.permissionsQuery = permissionsQuery;

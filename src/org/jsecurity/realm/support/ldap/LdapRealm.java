@@ -54,7 +54,7 @@ import java.util.*;
  * {@link #buildAuthenticationInfo(String, char[],LdapSecurityInfo)}.</p>
  *
  * @see LdapSecurityInfo
- * @see # queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
+ * @see #queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
  * @see #buildAuthenticationInfo(String, char[],LdapSecurityInfo)
  *
  * @since 0.1

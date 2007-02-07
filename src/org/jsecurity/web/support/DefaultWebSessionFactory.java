@@ -31,7 +31,7 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.support.DefaultSessionFactory;
+import org.jsecurity.session.SessionFactory;
 import org.jsecurity.web.WebSessionFactory;
 
 import javax.servlet.http.Cookie;
@@ -49,7 +49,7 @@ import java.net.UnknownHostException;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
+public class DefaultWebSessionFactory implements WebSessionFactory {
 
     /**
      * Enum representing the possible values of where a JSecurity session id will be stored once this factory
@@ -92,7 +92,13 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
 
     protected IdStorageLocation idStorageLocation = IdStorageLocation.Cookie;
 
+    protected SessionFactory sessionFactory = null;
+
     public DefaultWebSessionFactory(){}
+
+    public DefaultWebSessionFactory( SessionFactory sessionFactory ) {
+        this.sessionFactory = sessionFactory;
+    }
 
     public String getSessionIdRequestParamName() {
         return sessionIdRequestParamName;
@@ -232,7 +238,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
 
     public Session start( HttpServletRequest request, HttpServletResponse response ) {
         InetAddress clientAddress = getInetAddress( request );
-        Session session = start( clientAddress );
+        Session session = sessionFactory.start( clientAddress );
         Serializable sessionId = session.getSessionId();
 
         IdStorageLocation idsl = getIdStorageLocation();
@@ -251,7 +257,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         Session session = null;
         Serializable sessionId = getSessionId( request );
         if ( sessionId != null ) {
-            session = getSession( sessionId );
+            session = sessionFactory.getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Validating request origin against session origin" );

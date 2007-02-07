@@ -41,7 +41,8 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.SessionManager;
 import org.jsecurity.session.support.DefaultSessionManager;
-import org.jsecurity.web.support.DefaultWebSessionFactory;
+import org.jsecurity.session.support.DefaultSessionFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -187,8 +188,9 @@ public class DefaultSecurityManager implements SecurityManager {
                 }
             }
 
-            DefaultWebSessionFactory sessionFactory = new DefaultWebSessionFactory();
+            DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
             sessionFactory.setSessionManager( sessionManager );
+            sessionFactory.init();
 
             this.sessionFactory = sessionFactory;
         }
