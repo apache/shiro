@@ -28,9 +28,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebUtils;
+import org.jsecurity.web.support.DefaultWebSessionFactory;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.SessionFactory;
+
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,14 +53,29 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SessionInterceptor extends HandlerInterceptorAdapter {
+public class SessionInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     private WebSessionFactory webSessionFactory = null;
-
+    private SessionFactory sessionFactory = null;
+                                    
     public void setWebSessionFactory( WebSessionFactory webSessionFactory ) {
         this.webSessionFactory = webSessionFactory;
+    }
+
+    public void setSessionFactory( SessionFactory sessionFactory ) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if ( this.webSessionFactory == null ) {
+            if ( this.sessionFactory == null ) {
+                String msg = "SessionFactory property must be set if the WebSessionProperty is not set.";
+                throw new IllegalStateException( msg );
+            }
+            this.webSessionFactory = new DefaultWebSessionFactory( this.sessionFactory );
+        }
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,

@@ -52,7 +52,7 @@ import java.util.Set;
  * {@link #buildAuthenticationInfo(String, char[],org.jsecurity.realm.support.ldap.LdapSecurityInfo)} methods.</p>
  *
  * @see org.jsecurity.realm.support.ldap.LdapSecurityInfo
- * @see # queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
+ * @see #queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
  * @see #buildAuthenticationInfo(String, char[],org.jsecurity.realm.support.ldap.LdapSecurityInfo)
  *
  * @since 0.1
