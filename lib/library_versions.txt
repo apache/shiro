@@ -27,8 +27,8 @@ Some notes:
   that provided the template and the idea for this file.
 
 * ehcache/ehcache.jar
-- EhCache 1.2 (http://ehcache.sourceforge.net/)
-- Required for compiling, using ehcache cache provider
+- ehcache 1.2.4 (http://ehcache.sourceforge.net/)
+- Required for compiling, using ehcache cache provider, and for runtime session management
 
 * j2ee/jsp-api.jar
 - JSP API 2.0 (http://java.sun.com/products/jsp)
