@@ -24,13 +24,13 @@
  */
 package org.jsecurity.session.support.eis.support;
 
-import org.jsecurity.session.support.eis.SessionDAO;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.UnknownSessionException;
-import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.cache.Cache;
+import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.UnknownSessionException;
+import org.jsecurity.session.support.eis.SessionDAO;
 
 import java.io.Serializable;
 
@@ -40,7 +40,7 @@ import java.io.Serializable;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class CachingSessionDAO implements SessionDAO {
+public abstract class AbstractCachingSessionDAO implements SessionDAO {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -53,7 +53,7 @@ public abstract class CachingSessionDAO implements SessionDAO {
     private static int activeSessionsCacheCounter = 0;
     private static int stoppedSessionsCacheCounter = 0;
 
-    public CachingSessionDAO(){}
+    public AbstractCachingSessionDAO(){}
 
     public void setCacheProvider( CacheProvider cacheProvider ) {
         this.cacheProvider = cacheProvider;
@@ -63,11 +63,11 @@ public abstract class CachingSessionDAO implements SessionDAO {
         this.maintainStoppedSessions = maintainStoppedSessions;
     }
 
-    public CachingSessionDAO( CacheProvider provider ) {
+    public AbstractCachingSessionDAO( CacheProvider provider ) {
         this( provider, false );
     }
 
-    public CachingSessionDAO( CacheProvider provider, boolean maintainStoppedSessions ) {
+    public AbstractCachingSessionDAO( CacheProvider provider, boolean maintainStoppedSessions ) {
         setCacheProvider( provider );
         setMaintainStoppedSessions( maintainStoppedSessions );
         init();
