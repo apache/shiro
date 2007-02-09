@@ -99,8 +99,13 @@ public class HashtableCache implements Cache {
         return -1;
     }
 
-    public long getElementCountInMemory() {
+
+    public long getElementCount() {
         return hashtable.size();
+    }
+
+    public long getElementCountInMemory() {
+        return getElementCount();
     }
 
     public long getElementCountOnDisk() {

@@ -90,6 +90,12 @@ public interface Cache {
     public long getSizeInMemory();
 
     /**
+     * Returns the number of cache entries currently contained in the cache (sum of both in-memory and on disk).
+     * @return the number of cache entries currently contained in the cache (sum both in-memory and on disk).
+     */
+    public long getElementCount();
+
+    /**
      * The number of cache entries currently contained in the cache's in-memory store.
      *
      * @return The count of entries in memory, or -1 if unknown or unsupported.
