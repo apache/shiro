@@ -46,8 +46,6 @@ import java.util.Date;
 public class DefaultSessionManager extends AbstractSessionManager
         implements ValidatingSessionManager {
 
-    private boolean usingConstructorEhCacheSessionDAO;
-
     /**
      * Validator used to validate sessions on a regular basis.
      * By default, the session manager will use Quartz to schedule session validation, but this
@@ -58,21 +56,13 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     public DefaultSessionManager(){
         setSessionClass( SimpleSession.class );
-        setSessionDAO( new EhcacheSessionDAO() );
-        usingConstructorEhCacheSessionDAO = true;
     }
-
-    public void setSessionDAO( SessionDAO sessionDAO ) {
-        super.setSessionDAO( sessionDAO );
-        usingConstructorEhCacheSessionDAO = false;
-    }
-
 
     public void init() {
 
-        if ( usingConstructorEhCacheSessionDAO ) {
-            ((EhcacheSessionDAO)getSessionDAO()).init();
-        }
+
+        SessionDAO sessionDAO = new EhcacheSessionDAO( true );
+        setSessionDAO( sessionDAO );
 
         super.init();
 
