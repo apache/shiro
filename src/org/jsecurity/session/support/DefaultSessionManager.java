@@ -28,6 +28,8 @@ import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
+import org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO;
+import org.jsecurity.session.support.eis.SessionDAO;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -44,6 +46,8 @@ import java.util.Date;
 public class DefaultSessionManager extends AbstractSessionManager
         implements ValidatingSessionManager {
 
+    private boolean usingConstructorEhCacheSessionDAO;
+
     /**
      * Validator used to validate sessions on a regular basis.
      * By default, the session manager will use Quartz to schedule session validation, but this
@@ -53,11 +57,23 @@ public class DefaultSessionManager extends AbstractSessionManager
 
 
     public DefaultSessionManager(){
-        super.setSessionClass( SimpleSession.class );
+        setSessionClass( SimpleSession.class );
+        setSessionDAO( new EhcacheSessionDAO() );
+        usingConstructorEhCacheSessionDAO = true;
+    }
+
+    public void setSessionDAO( SessionDAO sessionDAO ) {
+        super.setSessionDAO( sessionDAO );
+        usingConstructorEhCacheSessionDAO = false;
     }
 
 
     public void init() {
+
+        if ( usingConstructorEhCacheSessionDAO ) {
+            ((EhcacheSessionDAO)getSessionDAO()).init();
+        }
+
         super.init();
 
         // Start session validation

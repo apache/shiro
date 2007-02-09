@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -169,9 +168,6 @@ public class EhCache implements Cache {
         catch (IllegalStateException e) {
             throw new CacheException(e);
         }
-        catch (IOException e) {
-            throw new CacheException(e);
-        }
     }
 
     /**
@@ -199,9 +195,18 @@ public class EhCache implements Cache {
         }
     }
 
-    public long getElementCountInMemory() {
+
+    public long getElementCount() {
         try {
             return cache.getSize();
+        } catch( net.sf.ehcache.CacheException ce ) {
+            throw new CacheException( ce );
+        }
+    }
+
+    public long getElementCountInMemory() {
+        try {
+            return cache.getMemoryStoreSize();
         }
         catch (net.sf.ehcache.CacheException ce) {
             throw new CacheException(ce);

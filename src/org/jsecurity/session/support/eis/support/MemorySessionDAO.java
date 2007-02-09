@@ -28,6 +28,7 @@ package org.jsecurity.session.support.eis.support;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
 import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.cache.support.HashtableCacheProvider;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -46,75 +47,33 @@ import java.util.Map;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class MemorySessionDAO implements SessionDAO {
+public class MemorySessionDAO extends CachingSessionDAO {
 
-    private final Map<Serializable, Session> activeSessions = new HashMap<Serializable, Session>();
-    private final Map<Serializable, Session> stoppedSessions = new HashMap<Serializable, Session>();
-
-    public void create( Session session ) {
-
-        Serializable id = session.getSessionId();
-        if ( id == null ) {
-            String msg = "session must be assigned an id.  Please check assignId( Session s ) " +
-                         "implementation.";
-            throw new IllegalStateException( msg );
-        }
-
-        if ( activeSessions.containsKey( id ) || stoppedSessions.containsKey( id ) ) {
-            String msg = "There is an existing session already created with session id [" +
-                         id + "].  Session Id's must be unique.";
-            throw new IllegalArgumentException( msg );
-        }
-
-        synchronized ( activeSessions ) {
-            activeSessions.put( id, session );
-        }
+    public MemorySessionDAO() {
+        setCacheProvider( new HashtableCacheProvider() );
+        setMaintainStoppedSessions( true );
     }
 
-    public Session readSession( Serializable sessionId ) throws UnknownSessionException {
-        Session s = activeSessions.get( sessionId );
-        if ( s == null ) {
-            s = stoppedSessions.get( sessionId );
-        }
-        if ( s == null ) {
-            String msg = "There is no session with id [" + sessionId + "].";
-            throw new UnknownSessionException( msg );
-        }
-        return s;
+
+    protected Serializable doCreate(Session session) {
+        //no need to do anything with the session - parent class persists to in-memory cache already.  Just return id:
+        return session.getSessionId();
     }
 
-    public void update( Session session ) throws UnknownSessionException {
-        Serializable id = session.getSessionId();
-        //verify the session exists:
-        Session s = readSession( id );
-        if ( (s.getStopTimestamp() != null) || s.isExpired() ) {
-            synchronized ( activeSessions ) {
-                activeSessions.remove( id );
-            }
-            synchronized ( stoppedSessions ) {
-                stoppedSessions.put( id, session );
-            }
-        }
+    protected Session doReadSession( Serializable sessionId ) {
+        return null; //should never execute because this implementation relies on parent class to access cache, which
+                     //is where all in-memory sessions reside.
     }
 
-    public void delete( Session session ) {
-        Serializable id = session.getSessionId();
-        readSession( id ); //verify it exists
-        //delete it:
-        synchronized ( activeSessions ) {
-            activeSessions.remove( id );
-        }
-        synchronized ( stoppedSessions ) {
-            stoppedSessions.remove( id );
-        }
+    protected void doUpdate(Session session) {
+        //does nothing - parent class persists to in-memory cache.
+    }
+
+    protected void doDelete(Session session) {
+        //does nothing - parent class removes from in-memory cache.
     }
 
     public Collection<Session> getActiveSessions() {
-        return Collections.unmodifiableCollection( activeSessions.values() );
+        return Collections.unmodifiableCollection( activeSessions.toMap().values() );
     }
-
-    public int getActiveSessionCount() {
-        return getActiveSessions().size();
-    }
-
 }
