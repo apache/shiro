@@ -41,8 +41,14 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
     private String configurationResourceName = "EhcacheSessionDAO.defaultSettings.ehcache.xml";
 
     public EhcacheSessionDAO() {
-        setCacheProvider( new EhCacheProvider() );
+        this( false );
+    }
+
+    public EhcacheSessionDAO( boolean initCache ) {
         setMaintainStoppedSessions( false );
+        if ( initCache ) {
+            init();
+        }
     }
 
     public void setCacheManager( CacheManager cacheManager ) {
@@ -57,17 +63,21 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
         CacheProvider provider = this.cacheProvider;
         if ( provider == null ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "no EhCacheProvider specified.  Creating one automatically..." );
+                log.debug( "no CacheProvider specified.  Creating an EhCacheProvider automatically..." );
             }
             EhCacheProvider ehCacheProvider = new EhCacheProvider();
+            ehCacheProvider.setConfigurationResourceName( configurationResourceName );
 
             if ( manager != null ) {
                 ehCacheProvider.setCacheManager( manager );
             }
-            if ( configurationResourceName != null ) {
-                ehCacheProvider.setConfigurationResourceName( configurationResourceName );
-            }
+            setCacheProvider( ehCacheProvider );
+
             ehCacheProvider.init();
+
+            if ( manager == null ) {
+                setCacheManager( ehCacheProvider.getCacheManager() );
+            }
 
             setCacheProvider( ehCacheProvider );
         }
