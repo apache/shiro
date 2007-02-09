@@ -162,13 +162,13 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
                 setAuthorizationInfoCache( cache );
             } else {
                 if ( logger.isInfoEnabled() ) {
-                    logger.info( "No cache or cacheProvider set.  authorizationInfo caching is " +
+                    logger.info( "No cache or cacheProvider set.  AuthorizationInfo caching is " +
                             "disabled for realm [" + getName() + "]" );
                 }
             }
         } else {
             if (logger.isDebugEnabled()) {
-                logger.debug( "authorizationInfo for realm [" + getName() + "] will be cached " +
+                logger.debug( "AuthorizationInfo for realm [" + getName() + "] will be cached " +
                         "using cache [" + cache + "]" );
             }
         }

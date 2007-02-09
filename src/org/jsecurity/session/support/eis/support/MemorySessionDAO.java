@@ -25,16 +25,12 @@
 
 package org.jsecurity.session.support.eis.support;
 
-import org.jsecurity.session.Session;
-import org.jsecurity.session.UnknownSessionException;
-import org.jsecurity.session.support.eis.SessionDAO;
 import org.jsecurity.cache.support.HashtableCacheProvider;
+import org.jsecurity.session.Session;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
@@ -47,7 +43,7 @@ import java.util.Map;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class MemorySessionDAO extends CachingSessionDAO {
+public class MemorySessionDAO extends AbstractCachingSessionDAO {
 
     public MemorySessionDAO() {
         setCacheProvider( new HashtableCacheProvider() );

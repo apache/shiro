@@ -123,6 +123,7 @@ public class EhCacheProvider implements CacheProvider {
      * <p>If both the <tt>CacheManager</tt> and <tt>configurationResourceName</tt> properties
      * have not been set, a default <tt>CacheManager</tt> implementation will be created and used.
      *
+     * @throws org.jsecurity.cache.CacheException if there are any CacheExceptions thrown by EhCache.
      * @see #destroy
      */
     public final void init() throws CacheException {
@@ -166,7 +167,9 @@ public class EhCacheProvider implements CacheProvider {
 
 
     /**
-     * Helper method to load the configuration resource from the class path.
+     * Helper method to load the configuration resource from the classpath.
+     * @param configurationResourceName the name of the configuration file to be loaded.
+     * @return the URL for the configuration file with the given name in the classpath.
      */
     private URL loadResource( String configurationResourceName ) {
         ClassLoader standardClassloader = ClassLoaderUtil.getStandardClassLoader();

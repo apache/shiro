@@ -1,5 +1,14 @@
 body {
+    margin: 1px;
+    padding: 1px;
     background: #2370cf;
+    font: 12px 'Lucida Grande', Geneva, Arial, Verdana, sans-serif;
+    color: #000;
+}
+
+table, td {
+    font: 12px 'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
+    color: #000;
 }
 
 img {

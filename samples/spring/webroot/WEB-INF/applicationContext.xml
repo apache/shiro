@@ -66,10 +66,12 @@
     <bean id="threadLocalSecurityContextInterceptor" class="org.jsecurity.spring.servlet.security.ThreadLocalSecurityContextInterceptor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
+
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
         <property name="contextRelative" value="true"/>
         <property name="loginURL" value="/s/login"/>
     </bean>
+
     <bean id="sessionInterceptor" class="org.jsecurity.spring.servlet.security.SessionInterceptor">
         <property name="sessionFactory" ref="securityManager"/>
     </bean>

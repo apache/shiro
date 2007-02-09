@@ -39,6 +39,8 @@ public interface CacheProvider {
          * properties for configuration.
          *
          * @param cacheName the name of the cache to create.
+         * @return a new cache built using the given name.
+         * @throws CacheException if there is a cache error in the provider implementation.
          */
         public Cache buildCache( String cacheName ) throws CacheException;
 }
