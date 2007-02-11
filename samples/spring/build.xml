@@ -119,6 +119,8 @@
             <lib dir="${lib.dir}/spring" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
             <lib dir="${lib.dir}/quartz" includes="*.jar"/>
+            <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
+            <lib dir="${lib.dir}/log4j" includes="log4j.jar"/>
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>

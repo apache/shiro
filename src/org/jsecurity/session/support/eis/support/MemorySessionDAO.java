@@ -31,6 +31,7 @@ import org.jsecurity.session.Session;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
@@ -69,7 +70,14 @@ public class MemorySessionDAO extends AbstractCachingSessionDAO {
         //does nothing - parent class removes from in-memory cache.
     }
 
+    @SuppressWarnings({"unchecked"})
     public Collection<Session> getActiveSessions() {
-        return Collections.unmodifiableCollection( activeSessions.toMap().values() );
+        if ( activeSessions != null ) {
+            Map sessionsMap = activeSessions.toMap();
+            if ( sessionsMap != null && !sessionsMap.isEmpty() ) {
+                return Collections.unmodifiableCollection( sessionsMap.values() );
+            }
+        }
+        return Collections.EMPTY_LIST;
     }
 }

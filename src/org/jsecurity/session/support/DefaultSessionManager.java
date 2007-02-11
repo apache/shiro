@@ -60,9 +60,19 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     public void init() {
 
+        SessionDAO sessionDAO = getSessionDAO();
+        if ( sessionDAO == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No sessionDAO set.  Defaulting to EhcacheSessionDAO instance." );
+            }
+            EhcacheSessionDAO ehcacheSessionDAO = new EhcacheSessionDAO();
+            setSessionDAO( ehcacheSessionDAO );
 
-        SessionDAO sessionDAO = new EhcacheSessionDAO( true );
-        setSessionDAO( sessionDAO );
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Initializing EhcacheSessionDAO instance..." );
+            }
+            ehcacheSessionDAO.init();
+        }
 
         super.init();
 
@@ -113,7 +123,6 @@ public class DefaultSessionManager extends AbstractSessionManager
     }
 
     protected void init( Session newInstance, InetAddress hostAddr ) {
-
         if ( newInstance instanceof SimpleSession ) {
             SimpleSession ss = (SimpleSession)newInstance;
             ss.setHostAddress( hostAddr );
@@ -161,5 +170,9 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     public void validateSession( Serializable sessionId ) {
         retrieveAndValidateSession( sessionId );
+    }
+
+    public void destroy() {
+
     }
 }
