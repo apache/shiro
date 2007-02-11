@@ -13,8 +13,7 @@
     <!-- Access authentication and authorization info for a single data source - called a 'Realm': -->
     <bean id="memoryRealm"
           class="org.jsecurity.realm.support.memory.MemoryRealm"
-          init-method="init"
-          destroy-method="destroy" >
+          init-method="init">
         <property name="credentialMatcher">
             <bean class="org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>

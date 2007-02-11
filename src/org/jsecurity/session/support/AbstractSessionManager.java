@@ -30,7 +30,6 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.*;
 import org.jsecurity.session.support.eis.SessionDAO;
-import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -48,7 +47,7 @@ public abstract class AbstractSessionManager implements SessionManager {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    protected SessionDAO sessionDAO = new MemorySessionDAO();
+    protected SessionDAO sessionDAO = null;
     protected SessionEventSender sessionEventSender = null;
     protected boolean validateHost = true;
     protected Class<? extends Session> sessionClass = null;
@@ -140,7 +139,7 @@ public abstract class AbstractSessionManager implements SessionManager {
      * <p>
      *   <ul>
      *     <li>A negative return value means sessions never expire.</li>
-     *     <li>A <tt>zero</tt> return value means sessions expire immediately (of little value).</li>
+     *     <li>A <tt>zero</tt> return value means sessions expire immediately.</li>
      *     <li>A positive return alue indicates normal session timeout will be calculated.</li>
      *   </ul>
      * </p>
@@ -283,6 +282,9 @@ public abstract class AbstractSessionManager implements SessionManager {
                          ".  Current time: " + df.format( new Date() ) +
                          ".  Session timeout is set to " + timeout + " seconds (" +
                          timeout / 60 + " minutes)";
+            if ( log.isTraceEnabled() ) {
+                log.trace( msg );
+            }
             throw new ExpiredSessionException( msg, sessionId );
         }
 

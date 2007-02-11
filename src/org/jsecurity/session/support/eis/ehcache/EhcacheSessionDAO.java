@@ -26,7 +26,6 @@ package org.jsecurity.session.support.eis.ehcache;
 
 import net.sf.ehcache.CacheManager;
 import org.jsecurity.cache.ehcache.EhCacheProvider;
-import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 
 /**
@@ -38,17 +37,11 @@ import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 public class EhcacheSessionDAO extends MemorySessionDAO {
 
     private CacheManager manager;
-    private String configurationResourceName = "EhcacheSessionDAO.defaultSettings.ehcache.xml";
+    private String configurationResourceName = "/org/jsecurity/session/support/eis/ehcache/EhcacheSessionDAO.defaultSettings.ehcache.xml";
 
     public EhcacheSessionDAO() {
-        this( false );
-    }
-
-    public EhcacheSessionDAO( boolean initCache ) {
+        setCacheProvider( new EhCacheProvider() );
         setMaintainStoppedSessions( false );
-        if ( initCache ) {
-            init();
-        }
     }
 
     public void setCacheManager( CacheManager cacheManager ) {
@@ -60,26 +53,17 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
     }
 
     public void init() {
-        CacheProvider provider = this.cacheProvider;
-        if ( provider == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "no CacheProvider specified.  Creating an EhCacheProvider automatically..." );
-            }
-            EhCacheProvider ehCacheProvider = new EhCacheProvider();
-            ehCacheProvider.setConfigurationResourceName( configurationResourceName );
+        EhCacheProvider provider = (EhCacheProvider)this.cacheProvider;
+        provider.setConfigurationResourceName( configurationResourceName );
 
-            if ( manager != null ) {
-                ehCacheProvider.setCacheManager( manager );
-            }
-            setCacheProvider( ehCacheProvider );
+        if ( manager != null ) {
+            provider.setCacheManager( manager );
+        }
 
-            ehCacheProvider.init();
+        provider.init();
 
-            if ( manager == null ) {
-                setCacheManager( ehCacheProvider.getCacheManager() );
-            }
-
-            setCacheProvider( ehCacheProvider );
+        if ( manager == null ) {
+            setCacheManager( provider.getCacheManager() );
         }
 
         super.init();

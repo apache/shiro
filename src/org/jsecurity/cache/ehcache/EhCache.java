@@ -35,6 +35,7 @@ import org.jsecurity.cache.CacheException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 /**
  * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an EhCache cache.
@@ -220,9 +221,17 @@ public class EhCache implements Cache {
     public Map toMap() {
         try {
             Map result = new HashMap();
-            for (Object key : cache.getKeys()) {
-                Object value = cache.get(key).getValue();
-                result.put(key, value);
+            if ( cache != null ) {
+                List keys = cache.getKeys();
+                for (Object key : keys) {
+                    Element cacheElement = cache.get( key );
+                    if ( cacheElement != null ) {
+                        Object value = cacheElement.getValue();
+                        if ( value != null ) {
+                            result.put( key, value );
+                        }
+                    }
+                }
             }
             return Collections.unmodifiableMap( result );
         }
