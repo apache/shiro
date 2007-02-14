@@ -27,6 +27,7 @@ package org.jsecurity.session.support;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
+import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -60,7 +61,7 @@ import java.net.InetAddress;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class DefaultSessionFactory implements SessionFactory {
+public class DefaultSessionFactory implements SessionFactory, Initializable {
 
     private SessionManager sessionManager = null;
 

@@ -31,6 +31,8 @@ import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
 import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.util.Initializable;
+import org.jsecurity.util.Destroyable;
 
 import java.io.Serializable;
 
@@ -40,7 +42,7 @@ import java.io.Serializable;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AbstractCachingSessionDAO implements SessionDAO {
+public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializable, Destroyable {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -50,8 +52,8 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO {
     protected CacheProvider cacheProvider = null;
     protected boolean maintainStoppedSessions = false;
 
-    private static int activeSessionsCacheCounter = 0;
-    private static int stoppedSessionsCacheCounter = 0;
+    protected static final String ACTIVE_SESSIONS_CACHE_NAME = "jsecurity-activeSessionCache";
+    protected static final String STOPPED_SESSIONS_CACHE_NAME = "jsecurity-stoppedSessionsCache";
 
     public AbstractCachingSessionDAO(){}
 
@@ -86,18 +88,38 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO {
         onInit();
     }
 
+    protected void destroy( Cache cache ) {
+        try {
+            if ( cache != null ) {
+                cache.destroy();
+            }
+        } catch (Exception e) {
+            if ( log.isWarnEnabled() ) {
+                log.warn( "Unable to cleanly destroy cache [" + cache + "]." );
+            }
+        }
+        onDestroy();
+    }
+
+    public void destroy() {
+        destroy( activeSessions );
+        destroy( stoppedSessions );
+    }
+
+    protected Cache buildCache( CacheProvider cacheProvider, String cacheName ) {
+        return cacheProvider.buildCache( cacheName );
+    }
     protected Cache buildActiveSessionsCache( CacheProvider cacheProvider ) {
-        String activeSessionsCacheName = getClass().getName() + "-activeSessionsCache-" + activeSessionsCacheCounter++;
-        return cacheProvider.buildCache( activeSessionsCacheName );
+        return buildCache( cacheProvider, ACTIVE_SESSIONS_CACHE_NAME );
     }
 
     protected Cache buildStoppedSessionsCache( CacheProvider cacheProvider ) {
-        String stoppedSessionsCacheName = getClass().getName() + "-stoppedSessionsCache-" + stoppedSessionsCacheCounter++;
-        return cacheProvider.buildCache( stoppedSessionsCacheName );   
+        return buildCache( cacheProvider, STOPPED_SESSIONS_CACHE_NAME );   
     }
 
     protected void onInit(){}
 
+    protected void onDestroy(){}
 
     public void create(Session session) {
         Serializable sessionId = doCreate( session );

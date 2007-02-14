@@ -30,6 +30,7 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.*;
 import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -41,7 +42,7 @@ import java.util.Date;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class AbstractSessionManager implements SessionManager {
+public abstract class AbstractSessionManager implements SessionManager, Initializable {
 
     protected static final int GLOBAL_SESSION_TIMEOUT = 60 * 30; //30 minutes by default;
 

@@ -42,6 +42,8 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.SessionManager;
 import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.session.support.DefaultSessionFactory;
+import org.jsecurity.util.Initializable;
+import org.jsecurity.util.Destroyable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +81,7 @@ import java.io.Serializable;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class DefaultSecurityManager implements SecurityManager {
+public class DefaultSecurityManager implements SecurityManager, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -98,10 +100,15 @@ public class DefaultSecurityManager implements SecurityManager {
     /**
      * The authorizer that is delegated to for authorization purposes.
      */
-    protected Authorizer authorizer = new AnnotationsModularAuthorizer();
+    protected Authorizer authorizer = null;
 
     protected SessionFactory sessionFactory;
     protected SessionManager sessionManager;
+
+    private boolean sessionFactoryImplicitlyCreated = false;
+    private boolean sessionManagerImplicitlyCreated = false;
+    private boolean authenticatorImplicitlyCreated = false;
+    private boolean authorizerImplicitlyCreated = false;
 
     /**
      * A map from realm name to realm for all realms managed by this manager.
@@ -167,6 +174,18 @@ public class DefaultSecurityManager implements SecurityManager {
                 "for this manager.  At least one realm needs to be configured on this manager." );
         }
 
+        if( authenticator == null ) {
+            ModularRealmAuthenticator realmAuthenticator = new ModularRealmAuthenticator( this, getAllRealms() );
+            realmAuthenticator.init();
+            authenticator = realmAuthenticator;
+            authenticatorImplicitlyCreated = true;
+        }
+
+        if ( authorizer == null ) {
+            authorizer = new AnnotationsModularAuthorizer();
+            authorizerImplicitlyCreated = true;
+        }
+
         if ( sessionFactory == null ) {
             if ( log.isInfoEnabled() ) {
                 log.info( "No delegate SessionFactory instance has been set as a property of this class.  Defaulting " +
@@ -175,11 +194,11 @@ public class DefaultSecurityManager implements SecurityManager {
 
             if ( sessionManager == null ) {
                 if ( log.isInfoEnabled() ) {
-                    log.info( "No SessionManager instance has been explicitly set as a property of this class.  " +
-                            "Defaulting to memory-based SessionManager.  Production environments should use a " +
-                            "file-based or RDBMS-based SessionManager instead." );
+                    log.info( "No SessionManager instance has been set as a property of this class.  " +
+                            "Defaulting to the default SessionManager implementation." );
                 }
                 sessionManager = new DefaultSessionManager();
+                sessionManagerImplicitlyCreated = true;
                 ((DefaultSessionManager)sessionManager).init();
             } else {
                 if ( log.isDebugEnabled() ) {
@@ -190,19 +209,50 @@ public class DefaultSecurityManager implements SecurityManager {
 
             DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
             sessionFactory.setSessionManager( sessionManager );
+            sessionFactoryImplicitlyCreated = true;
             sessionFactory.init();
 
             this.sessionFactory = sessionFactory;
         }
 
-        if( authenticator == null ) {
-            ModularRealmAuthenticator realmAuthenticator = new ModularRealmAuthenticator( this, getAllRealms() );
-            realmAuthenticator.init();
-            authenticator = realmAuthenticator;
+        if ( sessionManager == null ) {
+            
+        }
+
+    }
+
+    private void destroy( Destroyable d ) {
+        try {
+            d.destroy();
+        } catch ( Exception e ) {
+            if ( log.isDebugEnabled() ) {
+                String msg = "Unable to cleanly destroy implicitly created instance [" + d + "].";
+                log.debug( msg, e );
+            }
         }
     }
 
-    public void destroy() { //default implementation does nothing
+    public void destroy() {
+        if ( sessionFactoryImplicitlyCreated ) {
+            if ( sessionFactory instanceof Destroyable ) {
+                destroy( (Destroyable)sessionFactory );
+            }
+        }
+        if ( sessionManagerImplicitlyCreated ) {
+            if ( sessionManager instanceof Destroyable ) {
+                destroy( (Destroyable)sessionManager );
+            }
+        }
+        if ( authorizerImplicitlyCreated ) {
+            if ( authorizer instanceof Destroyable ) {
+                destroy( (Destroyable)authorizer );
+            }
+        }
+        if ( authenticatorImplicitlyCreated ) {
+            if ( authenticator instanceof Destroyable ) {
+                destroy( (Destroyable)authenticator );
+            }
+        }
     }
 
     /*--------------------------------------------
@@ -220,13 +270,18 @@ public class DefaultSecurityManager implements SecurityManager {
      * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
      * manager's {@link #start} and {@link #getSession} calls.
      *
-     * <p>This implementation does not provide logic to support the inherited <tt>SessionFactory</tt> interface, but
-     * instead delegates these calls to an internal instance.
+     * <p>This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
+     * <tt>SessionFactory</tt> interface, but instead delegates these calls to an internal
+     * <tt>SessionFactory</tt> instance.
      *
-     * <p><b>N.B.</b>: That internal delegate instance can be set by this method, but it is usually a good idea
-     * <em>not</em> to set this property and instead set a {@link SessionManager} instance via the
+     * <p><b>N.B.</b>: The internal delegate instance can be set by this method, but it is usually a good idea
+     * <em>not</em> to set this property and instead set a <tt>SessionManager</tt> instance via the
      * {@link #setSessionManager} method.  Then this class implementation will automatically create a
      * <tt>SessionFactory</tt> during the {@link #init} phase.
+     *
+     * <p>However, if <em>neither</em> this property or the {@link #setSessionManager sessionManager} properties are
+     * set, this implementation will create sensible defaults for both properties automatically during
+     * {@link #init()} execution.
      *
      * @see #setSessionManager
      *
@@ -266,8 +321,9 @@ public class DefaultSecurityManager implements SecurityManager {
         for( Realm realm : realms ) {
 
             if( realmMap.containsKey( realm.getName() ) ) {
-                throw new IllegalArgumentException( "Two or more realmMap have a non-unique name [" + realm.getName() + "].  All " +
-                    "realmMap must have unique names.  Please configure these realmMap with unique names." );
+                throw new IllegalArgumentException( "Two or more realms have a non-unique name ["
+                        + realm.getName() + "].  All realms must have unique names.  Please configure these realms " +
+                        "with unique names." );
             }
 
             realmMap.put( realm.getName(), realm );
