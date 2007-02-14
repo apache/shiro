@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile
+* Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -37,14 +37,15 @@ import java.net.URL;
 
 /**
  * <p>JSecurity {@link CacheProvider} for ehcache 1.2.</p>
- *
+ * <p/>
  * <p>This provider requires EhCache 1.2. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
- *
+ * <p/>
  * <p>See http://ehcache.sf.net for documentation on EhCache</p>
  *
- * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @since 0.2
  */
 public class EhCacheProvider implements CacheProvider {
 
@@ -57,6 +58,8 @@ public class EhCacheProvider implements CacheProvider {
      * The EhCache cache manager used by this provider to create caches.
      */
     private CacheManager manager;
+
+    private static final String DEFAULT_CONFIGURATION_RESOURCE_NAME = "jsecurity-failsafe.ehcache.xml";
 
     private String configurationResourceName = null;
     private boolean managerCreatedImplicitly = false;
@@ -80,26 +83,27 @@ public class EhCacheProvider implements CacheProvider {
 
     /**
      * Loads an existing EhCache from the cache manager, or starts a new cache if one is not found.
+     *
      * @param name the name of the cache to load/create.
      */
-    public final Cache buildCache( String name ) throws CacheException {
+    public final Cache buildCache(String name) throws CacheException {
 
         if (log.isDebugEnabled()) {
             log.debug("Loading a new EhCache cache named [" + name + "]");
         }
 
         try {
-            net.sf.ehcache.Cache cache = getCacheManager().getCache( name );
+            net.sf.ehcache.Cache cache = getCacheManager().getCache(name);
             if (cache == null) {
 
-                if( log.isWarnEnabled() ) {
+                if (log.isWarnEnabled()) {
                     log.warn("Could not find a specific ehcache configuration for cache named [" + name + "]; using defaults.");
                 }
 
                 manager.addCache(name);
                 cache = manager.getCache(name);
 
-                if( log.isDebugEnabled() ) {
+                if (log.isDebugEnabled()) {
                     log.debug("Started EHCache named [" + name + "]");
                 }
             }
@@ -112,7 +116,7 @@ public class EhCacheProvider implements CacheProvider {
 
     /**
      * Initializes this cache provider.
-     *
+     * <p/>
      * <p>If a {@link #setCacheManager CacheManager} has been
      * explicitly set (e.g. via Dependency Injection or programatically) prior to calling this
      * method, this method does nothing.
@@ -123,42 +127,45 @@ public class EhCacheProvider implements CacheProvider {
      * <p>If both the <tt>CacheManager</tt> and <tt>configurationResourceName</tt> properties
      * have not been set, a default <tt>CacheManager</tt> implementation will be created and used.
      *
-     * @throws org.jsecurity.cache.CacheException if there are any CacheExceptions thrown by EhCache.
+     * @throws org.jsecurity.cache.CacheException
+     *          if there are any CacheExceptions thrown by EhCache.
      * @see #destroy
      */
     public final void init() throws CacheException {
         try {
             CacheManager cacheMgr = getCacheManager();
-            if ( cacheMgr == null ) {
+            if (cacheMgr == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("cacheManager property not set.  Attempting to create one from " +
                             "configurationResource...");
                 }
 
                 String cfgName = getConfigurationResourceName();
-                if ( cfgName != null ) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Creating CacheManager from configurationResourceName [" +
-                                  cfgName + "]" );
+
+                if (cfgName == null) {
+                    if (log.isInfoEnabled()) {
+                        String msg = "no ehcache configuration resource name set (i.e. ehcache.xml).  Using default " +
+                                "JSecurity ehcache configuration located in the classpath at /" +
+                                DEFAULT_CONFIGURATION_RESOURCE_NAME + ".";
+                        log.info(msg);
                     }
-                    if (!cfgName.startsWith("/")) {
-                        cfgName = "/" + cfgName;
-                        if (log.isDebugEnabled()) {
-                            log.debug("prepending '/' to " + cfgName + ". This file should be placed " +
-                                     "in the root of the classpath rather than in a package." );
-                        }
-                    }
-                    URL url = loadResource( cfgName );
-                    setCacheManager( new CacheManager( url ) );
-                    managerCreatedImplicitly = true;
-                } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("configurationResourceName property was not specified.  " +
-                                "Using default CacheManager instance.");
-                    }
-                    setCacheManager( new CacheManager() );
-                    managerCreatedImplicitly = true;
+                    cfgName = "/" + DEFAULT_CONFIGURATION_RESOURCE_NAME;
                 }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Creating CacheManager from configurationResourceName [" +
+                            cfgName + "]");
+                }
+                if (!cfgName.startsWith("/")) {
+                    cfgName = "/" + cfgName;
+                    if (log.isDebugEnabled()) {
+                        log.debug("prepending '/' to " + cfgName + ". This file should be placed " +
+                                "in the root of the classpath rather than in a package.");
+                    }
+                }
+                URL url = loadResource(cfgName);
+                setCacheManager(new CacheManager(url));
+                managerCreatedImplicitly = true;
             }
         } catch (net.sf.ehcache.CacheException e) {
             throw new CacheException(e);
@@ -168,21 +175,22 @@ public class EhCacheProvider implements CacheProvider {
 
     /**
      * Helper method to load the configuration resource from the classpath.
+     *
      * @param configurationResourceName the name of the configuration file to be loaded.
      * @return the URL for the configuration file with the given name in the classpath.
      */
-    private URL loadResource( String configurationResourceName ) {
+    private URL loadResource(String configurationResourceName) {
         ClassLoader standardClassloader = ClassLoaderUtil.getStandardClassLoader();
         URL url = null;
         if (standardClassloader != null) {
-            url = standardClassloader.getResource( configurationResourceName );
+            url = standardClassloader.getResource(configurationResourceName);
         }
         if (url == null) {
-            url = this.getClass().getResource( configurationResourceName );
+            url = this.getClass().getResource(configurationResourceName);
         }
         if (log.isDebugEnabled()) {
-            log.debug( "Found resource [" +  configurationResourceName +
-                       "] - resolved to URL [" + url + "]");
+            log.debug("Found resource [" + configurationResourceName +
+                    "] - resolved to URL [" + url + "]");
         }
         return url;
     }
@@ -190,7 +198,7 @@ public class EhCacheProvider implements CacheProvider {
     /**
      * If this provider was responsible for implicitly creating the internal Ehcache {@link CacheManager},
      * it will call the manager's {@link CacheManager#shutdown shutdown} method.
-     *
+     * <p/>
      * <p>If this provider
      * <em>did not</em> implicitly create the manager (e.g. because it was created by a DI framework
      * or explicitly by programming), this method does nothing.  In this case, it is assumed that
@@ -202,11 +210,11 @@ public class EhCacheProvider implements CacheProvider {
         //Only manage the lifecycle of the manager if this object was the one that created it.
         //Otherwise, the manager was set explicitly (DI, manually, etc), so it is the responsibility
         //of the party that created it to destroy it.
-        if ( managerCreatedImplicitly ) {
+        if (managerCreatedImplicitly) {
             CacheManager mgr = getCacheManager();
-            if ( mgr != null ) {
+            if (mgr != null) {
                 mgr.shutdown();
-                setCacheManager( null );
+                setCacheManager(null);
             }
             managerCreatedImplicitly = false;
         }

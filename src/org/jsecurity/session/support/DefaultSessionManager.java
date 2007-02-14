@@ -30,6 +30,7 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO;
 import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.util.Destroyable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -44,7 +45,7 @@ import java.util.Date;
  * @author Jeremy Haile
  */
 public class DefaultSessionManager extends AbstractSessionManager
-        implements ValidatingSessionManager {
+        implements ValidatingSessionManager, Destroyable {
 
     /**
      * Validator used to validate sessions on a regular basis.
@@ -52,6 +53,8 @@ public class DefaultSessionManager extends AbstractSessionManager
      * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
     protected SessionValidationScheduler sessionValidationScheduler = new QuartzSessionValidationScheduler( this );
+
+    private boolean sessionDAOImplicitlyCreated = false;
 
 
     public DefaultSessionManager(){
@@ -67,6 +70,7 @@ public class DefaultSessionManager extends AbstractSessionManager
             }
             EhcacheSessionDAO ehcacheSessionDAO = new EhcacheSessionDAO();
             setSessionDAO( ehcacheSessionDAO );
+            sessionDAOImplicitlyCreated = true;
 
             if ( log.isDebugEnabled() ) {
                 log.debug( "Initializing EhcacheSessionDAO instance..." );
@@ -91,6 +95,30 @@ public class DefaultSessionManager extends AbstractSessionManager
         }
     }
 
+    public void destroy() {
+        try {
+            if ( sessionValidationScheduler != null ) {
+                sessionValidationScheduler.stopSessionValidation();
+            }
+        } catch (Exception e) {
+            if ( log.isWarnEnabled() ) {
+                String msg = "Unable to cleanly destroy sessionValidationScheduler [" + sessionValidationScheduler + "].";
+                log.warn( msg, e );
+            }
+        }
+
+        if ( sessionDAOImplicitlyCreated ) {
+            if ( sessionDAO instanceof Destroyable ) {
+                try {
+                    ((Destroyable)sessionDAO).destroy();
+                } catch ( Exception e ) {
+                    if ( log.isDebugEnabled() ) {
+                        log.debug( "Unable to cleanly destroy implicitly created sessionDAO [" + sessionDAO + "]." );
+                    }
+                }
+            }
+        }
+    }
 
     public void setSessionValidationScheduler(SessionValidationScheduler sessionValidationScheduler) {
         this.sessionValidationScheduler = sessionValidationScheduler;
@@ -172,7 +200,4 @@ public class DefaultSessionManager extends AbstractSessionManager
         retrieveAndValidateSession( sessionId );
     }
 
-    public void destroy() {
-
-    }
 }

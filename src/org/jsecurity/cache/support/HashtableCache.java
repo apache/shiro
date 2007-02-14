@@ -92,7 +92,7 @@ public class HashtableCache implements Cache {
     }
 
     public void destroy() throws CacheException {
-
+        clear();
     }
 
     public long getSizeInMemory() {

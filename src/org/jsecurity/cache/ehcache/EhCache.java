@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile
+* Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -34,16 +34,17 @@ import org.jsecurity.cache.CacheException;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an EhCache cache.
  *
- * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @since 0.2
  */
-@SuppressWarnings( "unchecked" )
+@SuppressWarnings("unchecked")
 public class EhCache implements Cache {
 
     /**
@@ -58,6 +59,7 @@ public class EhCache implements Cache {
 
     /**
      * Constructs a new EhCache instance with the given cache.
+     * @param cache - delegate EhCache instance this JSecurity cache instance will wrap.
      */
     public EhCache(net.sf.ehcache.Cache cache) {
         this.cache = cache;
@@ -69,39 +71,39 @@ public class EhCache implements Cache {
 
     /**
      * Gets a value of an element which matches the given key.
+     *
      * @param key the key of the element to return.
      * @return The value placed into the cache with an earlier put, or null if not found or expired
      */
     public Object get(Object key) throws CacheException {
         try {
-            if ( logger.isDebugEnabled() ) {
-                logger.debug("Getting object from cache [" + getCacheName() + "] for key [" + key + "]");
+            if (logger.isTraceEnabled()) {
+                logger.trace("Getting object from cache [" + getCacheName() + "] for key [" + key + "]");
             }
             if (key == null) {
                 return null;
-            }
-            else {
-                Element element = cache.get( key );
+            } else {
+                Element element = cache.get(key);
                 if (element == null) {
-                    if ( logger.isDebugEnabled() ) {
-                        logger.debug("Element for [" + key + "] is null.");
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("Element for [" + key + "] is null.");
                     }
                     return null;
-                }
-                else {
+                } else {
                     return element.getObjectValue();
                 }
             }
         }
-        catch (net.sf.ehcache.CacheException e) {
-            throw new CacheException(e);
+        catch (Throwable t) {
+            throw new CacheException(t);
         }
     }
 
 
     /**
      * Puts an object into the cache.
-     * @param key the key associated with the object
+     *
+     * @param key   the key associated with the object
      * @param value the value associated with the key.
      */
     public void update(Object key, Object value) throws CacheException {
@@ -110,47 +112,42 @@ public class EhCache implements Cache {
 
     /**
      * Puts an object into the cache.
-     * @param key the key.
+     *
+     * @param key   the key.
      * @param value the value.
      */
     public void put(Object key, Object value) throws CacheException {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Putting object in cache [" + getCacheName() + "] for key [" + key + "]" );
+        if (logger.isTraceEnabled()) {
+            logger.trace("Putting object in cache [" + getCacheName() + "] for key [" + key + "]");
         }
 
         try {
-            Element element = new Element( key, value );
+            Element element = new Element(key, value);
             cache.put(element);
         }
-        catch (IllegalArgumentException e) {
-            throw new CacheException(e);
+        catch (Throwable t) {
+            throw new CacheException(t);
         }
-        catch (IllegalStateException e) {
-            throw new CacheException(e);
-        }
-
     }
 
     /**
      * Removes the element which matches the key.
-     * <p>
+     * <p/>
      * If no element matches, nothing is removed and no Exception is thrown.
+     *
      * @param key the key of the element to remove
      */
     public void remove(Object key) throws CacheException {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Removing object from cache [" + getCacheName() + "] for key [" + key + "]" );
+        if (logger.isTraceEnabled()) {
+            logger.trace("Removing object from cache [" + getCacheName() + "] for key [" + key + "]");
         }
         try {
-            cache.remove( key );
+            cache.remove(key);
         }
-        catch (ClassCastException e) {
-            throw new CacheException(e);
-        }
-        catch (IllegalStateException e) {
-            throw new CacheException(e);
+        catch ( Throwable t) {
+            throw new CacheException(t);
         }
     }
 
@@ -160,14 +157,13 @@ public class EhCache implements Cache {
      */
     public void clear() throws CacheException {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Clearing all objects from cache [" + getCacheName() + "]" );
+        if (logger.isTraceEnabled()) {
+            logger.trace("Clearing all objects from cache [" + getCacheName() + "]");
         }
         try {
             cache.removeAll();
-        }
-        catch (IllegalStateException e) {
-            throw new CacheException(e);
+        } catch ( Throwable t ) {
+            throw new CacheException( t );
         }
     }
 
@@ -175,14 +171,14 @@ public class EhCache implements Cache {
      * Remove the cache and make it unuseable.
      */
     public void destroy() throws CacheException {
+        if ( logger.isDebugEnabled() ) {
+            logger.debug( "Cleaning up and removing cache [" + getCacheName() + "]" );
+        }
         try {
-            CacheManager.getInstance().removeCache( cache.getName() );
+            CacheManager.getInstance().removeCache(cache.getName());
         }
-        catch (IllegalStateException e) {
-            throw new CacheException(e);
-        }
-        catch (net.sf.ehcache.CacheException e) {
-            throw new CacheException(e);
+        catch ( Throwable t ) {
+            throw new CacheException(t);
         }
     }
 
@@ -191,7 +187,7 @@ public class EhCache implements Cache {
         try {
             return cache.calculateInMemorySize();
         }
-        catch(Throwable t) {
+        catch (Throwable t) {
             return -1;
         }
     }
@@ -200,8 +196,8 @@ public class EhCache implements Cache {
     public long getElementCount() {
         try {
             return cache.getSize();
-        } catch( net.sf.ehcache.CacheException ce ) {
-            throw new CacheException( ce );
+        } catch (Throwable t) {
+            throw new CacheException(t);
         }
     }
 
@@ -209,34 +205,38 @@ public class EhCache implements Cache {
         try {
             return cache.getMemoryStoreSize();
         }
-        catch (net.sf.ehcache.CacheException ce) {
-            throw new CacheException(ce);
+        catch (Throwable t) {
+            throw new CacheException(t);
         }
     }
 
     public long getElementCountOnDisk() {
-        return cache.getDiskStoreSize();
+        try {
+            return cache.getDiskStoreSize();
+        } catch ( Throwable t ) {
+            throw new CacheException(t);
+        }
     }
 
     public Map toMap() {
         try {
             Map result = new HashMap();
-            if ( cache != null ) {
+            if (cache != null) {
                 List keys = cache.getKeys();
                 for (Object key : keys) {
-                    Element cacheElement = cache.get( key );
-                    if ( cacheElement != null ) {
+                    Element cacheElement = cache.get(key);
+                    if (cacheElement != null) {
                         Object value = cacheElement.getValue();
-                        if ( value != null ) {
-                            result.put( key, value );
+                        if (value != null) {
+                            result.put(key, value);
                         }
                     }
                 }
             }
-            return Collections.unmodifiableMap( result );
+            return Collections.unmodifiableMap(result);
         }
-        catch (Exception e) {
-            throw new CacheException(e);
+        catch ( Throwable t ) {
+            throw new CacheException(t);
         }
     }
 

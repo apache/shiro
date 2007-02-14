@@ -168,6 +168,9 @@
 			<fileset dir="${classes.dir}">
 				<include name="org/jsecurity/**"/>
 			</fileset>
+            <fileset dir="${classes.dir}">
+                <include name="jsecurity-failsafe.ehcache.xml"/>
+            </fileset>
             <metainf dir="${classes.dir}/META-INF">
                 <include name="**"/>
             </metainf>

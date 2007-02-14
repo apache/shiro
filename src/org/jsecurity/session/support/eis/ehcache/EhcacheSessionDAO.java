@@ -37,7 +37,9 @@ import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 public class EhcacheSessionDAO extends MemorySessionDAO {
 
     private CacheManager manager;
-    private String configurationResourceName = "/org/jsecurity/session/support/eis/ehcache/EhcacheSessionDAO.defaultSettings.ehcache.xml";
+    private String configurationResourceName = null;
+
+    private boolean managerSetImplicitly = false;
 
     public EhcacheSessionDAO() {
         setCacheProvider( new EhCacheProvider() );
@@ -54,7 +56,10 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
 
     public void init() {
         EhCacheProvider provider = (EhCacheProvider)this.cacheProvider;
-        provider.setConfigurationResourceName( configurationResourceName );
+
+        if ( configurationResourceName != null ) {
+            provider.setConfigurationResourceName( configurationResourceName );
+        }
 
         if ( manager != null ) {
             provider.setCacheManager( manager );
@@ -64,8 +69,25 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
 
         if ( manager == null ) {
             setCacheManager( provider.getCacheManager() );
+            managerSetImplicitly = true;
         }
 
         super.init();
+    }
+
+    public void destroy() {
+        super.destroy();
+        EhCacheProvider provider = (EhCacheProvider)this.cacheProvider;
+        try {
+            provider.destroy();
+        } catch (Exception e) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Unable to cleanly destroy implicitly created EhCacheProvider." );
+            }
+        }
+        if ( managerSetImplicitly ) {
+            setCacheManager( null );
+            managerSetImplicitly = false;
+        }
     }
 }

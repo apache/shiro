@@ -28,6 +28,7 @@ package org.jsecurity.authc.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
+import org.jsecurity.util.Initializable;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
@@ -70,7 +71,7 @@ import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class AbstractAuthenticator implements Authenticator {
+public abstract class AbstractAuthenticator implements Authenticator, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
