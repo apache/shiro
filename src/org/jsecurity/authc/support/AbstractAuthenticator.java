@@ -28,7 +28,6 @@ package org.jsecurity.authc.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
-import org.jsecurity.util.Initializable;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
@@ -42,6 +41,7 @@ import org.jsecurity.context.bind.SecurityContextBinder;
 import org.jsecurity.context.bind.support.ThreadLocalSecurityContextBinder;
 import org.jsecurity.context.factory.SecurityContextFactory;
 import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
+import org.jsecurity.util.Initializable;
 
 /**
  * Superclass for almost all {@link Authenticator} implementations that performs the common work around authentication
@@ -83,7 +83,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     /**
      * Commons-logging logger
      */
-    protected final transient Log logger = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     /**
      * The factory used to create a SecurityContext after a successful authentication.
@@ -280,8 +280,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * @param ae the <tt>AuthenticationException</tt> that occurred as a result of the attempt.
      * @return an event that represents the failed attempt.
      */
-    protected AuthenticationEvent createFailureEvent( AuthenticationToken token,
-                                                      AuthenticationException ae ) {
+    protected AuthenticationEvent createFailureEvent( AuthenticationToken token, AuthenticationException ae ) {
         AuthenticationEventFactory factory = getAuthenticationEventFactory();
         return factory.createFailureEvent( token, ae );
     }
@@ -297,8 +296,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * @param info the <tt>AuthenticationInfo</tt> returned by {@link #doAuthenticate} after the successful attempt.
      * @return an event that represents the successful attempt.
      */
-    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token,
-                                                      AuthenticationInfo info ) {
+    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
         AuthenticationEventFactory factory = getAuthenticationEventFactory();
         return factory.createSuccessEvent( token, info );
     }
@@ -322,15 +320,15 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             if ( event != null ) {
                 send( event );
             } else {
-                if ( logger.isDebugEnabled() ) {
-                    logger.debug( "No AuthenticationEvent instance returned from " +
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "No AuthenticationEvent instance returned from " +
                                "'createFailureEvent' method call.  No failed authentication " +
                                "event will be sent." );
                 }
             }
         } else {
-            if ( logger.isTraceEnabled() ) {
-                logger.trace( "No AuthenticationEventSender configured.  No failure event will " +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No AuthenticationEventSender configured.  No failure event will " +
                            "be sent" );
             }
         }
@@ -356,15 +354,15 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             if ( event != null ) {
                 send( event );
             } else {
-                if ( logger.isDebugEnabled() ) {
-                    logger.debug( "No AuthenticationEvent instance returned from " +
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "No AuthenticationEvent instance returned from " +
                             "'createSuccessEvent' method call.  No successful authentication " +
                             "event will be sent." );
                 }
             }
         } else {
-            if ( logger.isTraceEnabled() ) {
-                logger.trace( "No AuthenticationEventSender configured.  No success event will " +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No AuthenticationEventSender configured.  No success event will " +
                            "be sent" );
             }
         }
@@ -389,13 +387,13 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             try {
                 sender.send( event );
             } catch ( Throwable t ) {
-                if ( logger.isWarnEnabled() ) {
-                    logger.warn( "Unable to send AuthenticationEvent [" + event + "]", t );
+                if ( log.isWarnEnabled() ) {
+                    log.warn( "Unable to send AuthenticationEvent [" + event + "]", t );
                 }
             }
         } else {
-            if ( logger.isTraceEnabled() ) {
-                logger.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will " +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will " +
                         "not be sent." );
             }
         }
@@ -475,28 +473,47 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     public final SecurityContext authenticate( AuthenticationToken token )
             throws AuthenticationException {
 
-        if ( logger.isTraceEnabled() ) {
-            logger.trace( "Authentication request received for token [" + token + "]" );
+        if ( token == null ) {
+            throw new IllegalArgumentException( "Method argumet (authentication token) cannot be null." );
+        }
+
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Authentication attempt received for token [" + token + "]" );
         }
 
         AuthenticationInfo info;
         try {
             info = doAuthenticate( token );
             if ( info == null ) {
-                throw new AuthenticationException( "Authentication token of type [" +
-                    token.getClass() + "] could not be processed for authentication.  Check that " +
-                    "the Authenticator is configured correctly." );
+                String msg = "Authentication token [" + token + "] could not be processed for authentication by this " +
+                        "Authenticator instance.  Please check that it is configured correctly.";
+                throw new AuthenticationException( msg );
             }
-        } catch ( AuthenticationException e ) {
-            if ( logger.isInfoEnabled() ) {
-                logger.info( "Authentication failed for token submission [" + token + "] because [" + e.getMessage() + "]" );
+        } catch ( Throwable t ) {
+            AuthenticationException ae = null;
+            if ( t instanceof AuthenticationException ) {
+                ae = (AuthenticationException)t;
             }
-            sendFailureEvent( token, e );
-            throw e;
+            if ( ae != null ) {
+                //Expected authentication exception, log to trace (this can happen a lot in an app):
+                if ( log.isTraceEnabled() ) {
+                    log.trace( ae );
+                }
+            } else {
+                //probably more severe or unexpected; convert to AuthenticationException and log to warn:
+                String msg = "Authentication failed for token submission [" + token + "]";
+                ae = new AuthenticationException( msg, t );
+                if ( log.isWarnEnabled() ) {
+                    log.warn( msg, t );
+                }
+            }
+            sendFailureEvent( token, ae );
+
+            throw ae;
         }
 
-        if ( logger.isInfoEnabled() ) {
-            logger.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
+        if ( log.isInfoEnabled() ) {
+            log.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
         }
 
         SecurityContext secCtx = createSecurityContext( info );
@@ -520,11 +537,12 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * <tt>AuthenticationException</tt> if there is a problem during
      * authentication instead of returning <tt>null</tt>.  A <tt>null</tt> return value indicates
      * a configuration or programming error, since <tt>AuthenticationException</tt>s should
-     * indicate any expected problem.
+     * indicate any expected problem (such as an unknown account or username, or invalid password, etc).
      *
      * @param token the authentication token encapsulating the user's login information.
      * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
-     * important to JSecurity.  <tt>null</tt> should <em>not</em> be returned.
+     * important to JSecurity.  <tt>null</tt> should <em>not</em> be returned - throw a proper AuthenticationException
+     * instead (like {@link org.jsecurity.authc.UnknownAccountException} if the account can't be found, etc).
      * @throws AuthenticationException if there is a problem logging in the user.
      */
     protected abstract AuthenticationInfo doAuthenticate( AuthenticationToken token )
