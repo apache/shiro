@@ -146,8 +146,13 @@ public abstract class AbstractRealm implements Realm {
     ============================================*/
 
     /**
-     * This method should be implemented by subclasses to retrieve authentication information for
-     * the given authentication token.
+     * This method should be implemented by subclasses to retrieve authentication information from a impl-specific
+     * datasource (RDBMS, file system, memory, etc) for the given authentication token.
+     *
+     * <p>A <tt>null</tt> return value means that no account could be associated with
+     * the specified token, whereby the caller (the {@link #getAuthenticationInfo} method) will then throw an
+     * {@link UnknownAccountException} to indicate this condition.
+     * 
      * @param token the authentication token containing the user's principal and credentials.
      * @return an {@link AuthenticationInfo} object containing user information resulting from the authentication
      * ONLY if the authentication is successful (i.e. the credentials were correct, etc.)
@@ -211,22 +216,8 @@ public abstract class AbstractRealm implements Realm {
     }
 
     public final AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
-        AuthenticationInfo info;
-        try {
-            info = doGetAuthenticationInfo( token );
-        } catch( AuthenticationException ae ) {
-            //the subclass already formulated a meaningful AuthenticationException, just let it
-            //propagate:
-            throw ae;
-        } catch (Throwable t) {
-            //probably unexpected exception.  Wrap and propagate:
-            final String message = "AuthenticationToken [" + token + "] could not be authenticated because an error " +
-                    "occurred during authentication.";
-            if( log.isErrorEnabled() ) {
-                log.error( message, t );
-            }
-            throw new AuthenticationException( message, t );
-        }
+
+        AuthenticationInfo info = doGetAuthenticationInfo( token );
 
         if( info == null ) {
             String msg = "No account information found for submitted authentication token [" + token + "]";

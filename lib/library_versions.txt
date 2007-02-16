@@ -26,6 +26,10 @@ Some notes:
 - Thanks to the gents working on the Spring Framework (http://www.springframework.org)
   that provided the template and the idea for this file.
 
+* easymock/easymock.jar, easymockclassextension.jar
+- EasyMock 2.2 w/ ClassExtension 2.2 (http://www.easymock.org)
+- Used in test cases for creating dynamic mock objects
+
 * ehcache/ehcache.jar
 - ehcache 1.2.4 (http://ehcache.sourceforge.net/)
 - Required for compiling, using ehcache cache provider, and for runtime session management
@@ -54,6 +58,10 @@ Some notes:
 * jboss/jboss-aop.jar
 - JBoss AOP jar from the JBoss 4.0.4.GA Application Server release
 - Required at build time for JBoss integration support classes.
+
+* junit/junit.jar
+- JUnit Test Framework 4.1 (http://www.junit.org)
+- Required for building and running test cases
 
 * log4j/log4j.jar
 - Log4J 1.2.9 (http://logging.apache.org/log4j)

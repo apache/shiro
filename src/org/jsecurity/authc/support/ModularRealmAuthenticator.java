@@ -201,8 +201,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( authenticationToken );
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Iterating through [" + realms.size() + "] realms");
+        if (log.isDebugEnabled()) {
+            log.debug("Iterating through [" + realms.size() + "] realms");
         }
 
         boolean authenticated = false;
@@ -210,8 +210,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
             if( realm.supports( authenticationToken.getClass() ) ) {
 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Attempting to authenticate token [" + authenticationToken + "] " +
+                if (log.isDebugEnabled()) {
+                    log.debug("Attempting to authenticate token [" + authenticationToken + "] " +
                         "using realm of type [" + realm.getClass() + "]");
                 }
 
@@ -221,8 +221,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                 // user - so return the context.
                 if( realmInfo != null ) {
 
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Account authenticated using realm of type [" + realm.getClass().getName() + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("Account authenticated using realm of type [" + realm.getClass().getName() + "]");
                     }
 
                     // Merge the module-returned data with the aggregate data
@@ -231,8 +231,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
                 }
             } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Realm of type [" + realm.getClass().getName() + "] does not support token " +
+                if (log.isDebugEnabled()) {
+                    log.debug("Realm of type [" + realm.getClass().getName() + "] does not support token " +
                             "of type [" + authenticationToken.getClass().getName() + "].  Skipping realm." );
                 }
             }

@@ -25,6 +25,8 @@
 
 package org.jsecurity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
@@ -36,23 +38,20 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.authz.module.support.AnnotationsModularAuthorizer;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.session.Session;
 import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.SessionManager;
-import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.session.support.DefaultSessionFactory;
-import org.jsecurity.util.Initializable;
+import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.util.Destroyable;
+import org.jsecurity.util.Initializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.io.Serializable;
+import java.net.InetAddress;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
-import java.net.InetAddress;
-import java.io.Serializable;
 
 /**
  * <p>Implementation of the {@link org.jsecurity.SecurityManager} interface that is based around
@@ -312,8 +311,8 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     }
 
     /**
-     * Sets the realms managed by this manager.
-     * @param realms the realms that should be managed by this manager.
+     * Sets the realms managed by this <tt>SecurityManager</tt> instance.
+     * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
      */
     public void setRealms(List<Realm> realms) {
         this.realmMap = new LinkedHashMap<String, Realm>( realms.size() );
