@@ -54,18 +54,36 @@ import org.jsecurity.util.Initializable;
  * <p>In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
  * is perform the actual principal/credential verification process for the submitted <tt>AuthenticationToken</tt>.
  *
- * <p>Failure or success events are triggered based on {@link #doAuthenticate} throwing an exception or not,
- * respectively.  The actual events themselves are constructed via an {@link AuthenticationEventFactory} and sent
- * to interested parties via a {@link AuthenticationEventSender}, both of which may be set as properties of this class
- * (instead of overriding this class for event creation and sending).
+ * <p>This implementation employs an event-based architecture so other components may react to both failed and
+ * successful authentication attempts.  Failure or success events are triggered based on the
+ * subclass's {@link #doAuthenticate} implementation throwing an exception or not, respectively (i.e. a failure event
+ * will be created and sent if the authentication attempt fails, and a success event will be created and sent if the
+ * authentication event is successful.  The actual events
+ * themselves are constructed via an {@link AuthenticationEventFactory} and sent to interested components via a
+ * {@link AuthenticationEventSender}.
+ * 
+ * <p>Both the event factory and the event sender may be set as properties of this class
+ * (instead of overriding this class for event creation and sending).  A simple default event factory is already
+ * provided, but a sender <b>must</b> be set, either by injection or by subclass implementation, if you wish to send 
+ * AuthenticationEvents.  By omitting an event sender, you are implicitly directing this implementation to ignore
+ * event logic.
  *
- * <p>After a successful login attempt, <tt>SecurityContext</tt>s are also created via a {@link SecurityContextFactory}.
- * This may also be set as a property of this class to avoid overriding this class if desired.
+ * <p>During a subject's (a.k.a. user's) successful login attempt, a <tt>SecurityContext</tt> is created for that user
+ * by a {@link SecurityContextFactory}.  This factory may also be set as a property of this class if desired, but it 
+ * is generally recommended that a SecurityManager is set instead, and the factory be created automatically
+ * based on the manager - see the {@link #setSecurityManager} javadoc for more details).
  *
- * <p>Once a <tt>SecurityContext</tt> is created for authenticated subject, it is <em>bound</em> to the application for
- * later access in an application-specific manner (thread-local, http cookie, etc).  This binding is performed by this 
- * class via a default thread-local {@link SecurityContextBinder}, which also may be overridden as a
- * {@link #setSecurityContextBinder class property}.
+ * <p>Once a <tt>SecurityContext</tt> is created for a successfully authenticated subject (a.k.a. 'user'), it is
+ * first <em>bound</em> to the application for convenient access before being returned to the {@link #authenticate}
+ * caller.  Because binding is dependent upon runtime environment, the binding logic is delegated to an internal
+ * {@link SecurityContextBinder} implementation.  The <tt>AbstractAuthenticator</tt> already provides a default that
+ * binds the context to the local thread to cater to the majority of server-side deployments.  If operating outside of
+ * a server-side environment (e.g. in an applet or standalone application), you might wish to bind the
+ * <tt>SecurityContext</tt> in another way by setting a different implementation with the
+ * {@link #setSecurityContextBinder} method.
+ *
+ * <p>After all class attributes have been set (event factory, security context binder, etc.), the {@link #init()}
+ * method must be called, either by a framework or explicitly in code, before the Authenticator can be used.
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -142,7 +160,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * Sets the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a <tt>SecurityContext</tt>
      * upon a successful authentication attempt.
      *
-     * <p>It is not recommended to override this property, but instead set the
+     * <p>It is not usually recommended to override this property, but instead set the
      * {@link #setSecurityManager securityManager} property.  When a <tt>securityManager</tt> property is set, this
      * class will use it to construct an internal
      * {@link DelegatingSecurityContextFactory DelegatingSecurityContextFactory}, which uses the securityManager in a 
@@ -177,7 +195,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * in server-side applications such as Web or EJB apps unless you know what you are doing.
      *
      * <p>This property probably <b><em>will</em></b> however probably need to be changed if in a standalone
-     * client environment, such as in an Applet or Java Web Start application, where the <tt>SecurityContext</tt> will
+     * client environment, such as in an Applet or standalone application, where the <tt>SecurityContext</tt> will
      * need to be accessible in a well-known location such as in a static memory variable (less desireable), or in
      * a better managed application context (e.g. Spring or Pico - more desireable).
      *
@@ -229,8 +247,9 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     }
 
     /**
-     * Sets the securityManager that will be used to construct and set this class's <tt>SecurityContextFactory</tt>
-     * property if one is not explicitly set via the {@link #setSecurityContextFactory} method.
+     * Sets the securityManager that will be used to construct and set this class's default
+     * <tt>SecurityContextFactory</tt> property if one is not explicitly set via the
+     * {@link #setSecurityContextFactory} method.
      *
      * <p>It <b>IS</b> recommended that most configurations set this <tt>securityManager</tt> property and
      * <b><em>NOT</em></b> explicitly set the <tt>SecurityContextFactory</tt> property unless you know what you're
@@ -253,12 +272,18 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      */
     public void init() {
         if( getSecurityContextFactory() == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No securityContextFactory set.  Attempting to create the default SecurityContextFactory " +
+                        "based on the SecurityManager attribute..." );
+            }
             if( securityManager == null ) {
-                throw new IllegalStateException( "If an SecurityContextFactory is not injected, a realm manager must be " +
-                    "provided so that the default " + DelegatingSecurityContextFactory.class.getName() +
-                    " factory can be initialized." );
+                throw new IllegalStateException( "If the SecurityContextFactory class attribute is not set, a " +
+                        "SecurityManager must be provided so that the default factory can be created." );
             }
             setSecurityContextFactory( new DelegatingSecurityContextFactory( securityManager ) );
+            if ( log.isInfoEnabled() ) {
+                log.info( "Created SecurityContextFactory based on provided SecurityManager class attribute." );
+            }
         }
         onInit();
     }
@@ -412,9 +437,9 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         SecurityContextFactory factory = getSecurityContextFactory();
         if( factory == null ) {
             throw new IllegalStateException(
-                    "No security context factory is configured, so authentication cannot " +
-                    "be completed.  Make sure the init() method is being called on the " +
-                    "authenticator before it is used." );
+                    "No SecurityContextFactory class attribute has been set, so authentication cannot " +
+                    "be completed.  Make sure the init() method is being called on this " +
+                    "Authenticator before it is used." );
         }
 
         return factory.createSecurityContext( info );
@@ -436,7 +461,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         if ( secCtx == null ) {
             String msg = "Programming or configuration error - No SecurityContext was created after successful " +
                     "authentication.  Verify that you have either configured the " + getClass().getName() +
-                    " instance with a proper " + SecurityContextFactory.class.getName() + " (easier) or " +
+                    " instance with a proper SecurityManager or SecurityContextFactory (easier) or " +
                     "that you have overridden the " + AbstractAuthenticator.class.getName() +
                     ".createSecurityContext( AuthenticationInfo info ) method.";
             throw new IllegalStateException( msg );
@@ -494,14 +519,11 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             if ( t instanceof AuthenticationException ) {
                 ae = (AuthenticationException)t;
             }
-            if ( ae != null ) {
-                //Expected authentication exception, log to trace (this can happen a lot in an app):
-                if ( log.isTraceEnabled() ) {
-                    log.trace( ae );
-                }
-            } else {
-                //probably more severe or unexpected; convert to AuthenticationException and log to warn:
-                String msg = "Authentication failed for token submission [" + token + "]";
+            if ( ae == null ) {
+                //Exception thrown was not an expected AuthenticationException.  Therefore it is probably a little more
+                //severe or unexpected.  So, wrap in an AuthenticationException, log to warn, and propagate:
+                String msg = "Authentication failed for token submission [" + token + "].  Possibe unexpected " +
+                        "error? (Typical or expected login exceptions should extend from AuthenticationException).";
                 ae = new AuthenticationException( msg, t );
                 if ( log.isWarnEnabled() ) {
                     log.warn( msg, t );
