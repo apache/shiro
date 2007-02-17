@@ -11,6 +11,8 @@
       <sourceFolder url="file://$MODULE_DIR$/support/jboss/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/support/jboss/build" />
       <excludeFolder url="file://$MODULE_DIR$/support/spring/build" />
     </content>
