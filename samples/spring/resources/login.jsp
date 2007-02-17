@@ -10,7 +10,7 @@
 
 <div id="contentBox">
 
-    <h3>JSecurity Login</h3>
+    <h1>JSecurity Login</h1>
 
     <p>
         <span style="color: red;">

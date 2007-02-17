@@ -145,7 +145,7 @@ public class EhCacheProvider implements CacheProvider, Initializable {
 
                 if (cfgName == null) {
                     if (log.isInfoEnabled()) {
-                        String msg = "no ehcache configuration resource name set (i.e. ehcache.xml).  Using default " +
+                        String msg = "No ehcache configuration resource name set (i.e. ehcache.xml).  Using default " +
                                 "JSecurity ehcache configuration located in the classpath at /" +
                                 DEFAULT_CONFIGURATION_RESOURCE_NAME + ".";
                         log.info(msg);
