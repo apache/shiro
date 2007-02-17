@@ -72,5 +72,5 @@ Some notes:
 - required by the RI during build and runtime for scheduling support
 
 * spring/spring.jar
-- Spring Application Framework 1.2.5 (http://springframework.org)
+- Spring Application Framework 2.0.2 (http://springframework.org)
 - required to build Spring integration support and sample apps

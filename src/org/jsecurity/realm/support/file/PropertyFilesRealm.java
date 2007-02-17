@@ -33,6 +33,7 @@ import org.jsecurity.realm.support.AbstractRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.realm.support.memory.AccountEntry;
 import org.jsecurity.realm.support.memory.MemoryRealm;
+import org.jsecurity.util.Initializable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +53,7 @@ import java.util.concurrent.TimeUnit;
  * @since 0.2
  * @author Jeremy Haile
  */
-public class PropertyFilesRealm extends AbstractRealm implements Runnable {
+public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |

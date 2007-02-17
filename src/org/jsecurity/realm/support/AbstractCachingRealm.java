@@ -31,6 +31,7 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.util.Initializable;
 
 import java.security.Principal;
 
@@ -51,7 +52,7 @@ import java.security.Principal;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class AbstractCachingRealm extends AbstractRealm implements Realm {
+public abstract class AbstractCachingRealm extends AbstractRealm implements Realm, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |

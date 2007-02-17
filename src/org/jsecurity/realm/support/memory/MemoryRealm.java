@@ -33,6 +33,7 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.realm.support.AbstractRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.util.Initializable;
 import org.jsecurity.util.UsernamePrincipal;
 
 import java.lang.reflect.Constructor;
@@ -56,7 +57,7 @@ import java.util.Set;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class MemoryRealm extends AbstractRealm {
+public class MemoryRealm extends AbstractRealm implements Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
