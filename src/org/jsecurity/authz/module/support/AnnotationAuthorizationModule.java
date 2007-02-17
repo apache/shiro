@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationModule;
+import org.jsecurity.util.Initializable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -46,7 +47,7 @@ import java.lang.reflect.Method;
  * @see org.jsecurity.authz.module.support.ModularAuthorizer#setAuthorizationModules
  * @since 0.1
  */
-public abstract class AnnotationAuthorizationModule implements AuthorizationModule {
+public abstract class AnnotationAuthorizationModule implements AuthorizationModule, Initializable {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 

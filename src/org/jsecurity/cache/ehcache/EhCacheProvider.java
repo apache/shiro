@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.util.Initializable;
 
 import java.net.URL;
 
@@ -47,7 +48,7 @@ import java.net.URL;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class EhCacheProvider implements CacheProvider {
+public class EhCacheProvider implements CacheProvider, Initializable {
 
     /**
      * Commons-logging logger

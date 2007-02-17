@@ -7,6 +7,7 @@ import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.ThreadLocalSecurityContext;
+import org.jsecurity.util.Initializable;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -20,7 +21,7 @@ import org.jsecurity.context.support.ThreadLocalSecurityContext;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AbstractAuthorizationInterceptor {
+public abstract class AbstractAuthorizationInterceptor implements Initializable {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
