@@ -348,6 +348,21 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="easymock">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/easymock/easymock.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/easymock/easymockclassextension.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="junit">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/junit/junit.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
   <component name="uidesigner-configuration">
     <option name="INSTRUMENT_CLASSES" value="true" />

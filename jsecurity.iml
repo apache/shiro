@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/jboss/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/classes" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
@@ -27,6 +28,8 @@
     <orderEntry type="library" name="log4j" level="project" />
     <orderEntry type="library" name="quartz" level="project" />
     <orderEntry type="library" name="spring" level="project" />
+    <orderEntry type="library" name="easymock" level="project" />
+    <orderEntry type="library" name="junit" level="project" />
     <orderEntryProperties />
   </component>
 </module>
