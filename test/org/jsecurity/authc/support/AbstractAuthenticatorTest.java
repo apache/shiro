@@ -237,18 +237,6 @@ public class AbstractAuthenticatorTest {
         abstractAuthenticator.send( successEvent );
     }
 
-    public void sendSuccessEventWithSenderException() {
-        AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
-        abstractAuthenticator.setAuthenticationEventSender( mockSender );
-        initAuthc();
-        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
-        mockSender.send( successEvent );
-        expectLastCall().andThrow( new RuntimeException() );
-        replay( mockSender );
-        abstractAuthenticator.sendSuccessEvent( newToken(), authInfo );
-        verify( mockSender );
-    }
-
     @Test
     public void sendWithSenderThrowingException() {
         AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
