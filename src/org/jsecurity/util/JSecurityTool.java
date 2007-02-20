@@ -26,7 +26,6 @@
 package org.jsecurity.util;
 
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 
 import java.security.Permission;
 
@@ -48,8 +47,8 @@ public class JSecurityTool {
     /**
      * Initializes a new <tt>JSecurityTool</tt> for the given security context.
      *
-     * The security context may typically be retrieved using
-     * {@link ThreadLocalSecurityContext#current()}
+     * The security context may typically be retrieved in server-side environments using
+     * {@link org.jsecurity.context.support.ThreadLocalSecurityContext#current()}
      *
      * @param securityContext the current security context.
      */

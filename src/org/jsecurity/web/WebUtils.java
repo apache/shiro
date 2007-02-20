@@ -27,7 +27,6 @@ package org.jsecurity.web;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.util.ThreadUtils;
@@ -179,7 +178,7 @@ public abstract class WebUtils {
         SecurityContext ctx = (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
 
         if ( ctx != null ) {
-            Session session = ThreadLocalSecurityContext.current().getSession();
+            Session session = ctx.getSession();
             if( session != null && session.getAttribute( PRINCIPALS_SESSION_KEY) == null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
 
