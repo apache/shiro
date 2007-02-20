@@ -45,21 +45,26 @@ public class AbstractAuthenticatorTest {
         return new UsernamePasswordToken( "user1", "secret".toCharArray() );
     }
 
+    protected void initAuthc() {
+        abstractAuthenticator.setSecurityManager( mockSecurityManager );
+        abstractAuthenticator.init();
+    }
+
     @Before
     public void setUp() {
         abstractAuthenticator = createAuthcReturnValidAuthcInfo();
         mockSecurityManager = createMock( SecurityManager.class );
     }
 
-    /**
-     * Asserts that if neither a SecurityContextFactory or a SessionManager have been set and init() is called, that
-     * an exception is thrown due to the instance not being in an intializable state.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void initNoSessionFactoryNoSecurityManager() {
-        assertNotNull( abstractAuthenticator.getSecurityContextBinder() ); //default impl set when instance created
-        assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
-        abstractAuthenticator.init();
+    @Test
+    public void newAbstractAuthenticatorSecurityManagerConstructor() {
+        mockSecurityManager = createMock( SecurityManager.class );
+        abstractAuthenticator = new AbstractAuthenticator( mockSecurityManager ) {
+            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+                return authInfo;
+            }
+        };
+        initAuthc();
     }
 
     /**
@@ -67,7 +72,7 @@ public class AbstractAuthenticatorTest {
      * a SecurityContextFactory is lazily created (based on a previously injected SecurityManager) and non-null.
      */
     @Test
-    public void initNoSessionFactory() {
+    public void initWithoutSessionFactory() {
         abstractAuthenticator.setSecurityManager( mockSecurityManager );
         abstractAuthenticator.init();
         assertNotNull( abstractAuthenticator.getSecurityContextBinder() ); //default impl set when instance created
@@ -77,8 +82,14 @@ public class AbstractAuthenticatorTest {
                 abstractAuthenticator.getSecurityContextFactory() );
     }
 
-    protected void initAuthc() {
-        abstractAuthenticator.setSecurityManager( mockSecurityManager );
+    /**
+     * Asserts that if neither a SecurityContextFactory or a SessionManager have been set and init() is called, that
+     * an exception is thrown due to the instance not being in an intializable state.
+     */
+    @Test(expected=IllegalStateException.class)
+    public void initWithoutSessionFactoryOrSecurityManager() {
+        assertNotNull( abstractAuthenticator.getSecurityContextBinder() ); //default impl set when instance created
+        assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
         abstractAuthenticator.init();
     }
 
@@ -86,7 +97,7 @@ public class AbstractAuthenticatorTest {
      * Tests that the authenticate() method fails if the instance's init() method wasn't called.
      */
     @Test(expected=IllegalStateException.class)
-    public void authenticateNoInit() {
+    public void authenticateWithoutFirstCallingInit() {
         abstractAuthenticator.authenticate( newToken() );
     }
 
@@ -95,7 +106,7 @@ public class AbstractAuthenticatorTest {
      * argument.
      */
     @Test(expected=IllegalArgumentException.class)
-    public void authenticateNullAgument() {
+    public void authenticateWithNullArgument() {
         initAuthc();
         abstractAuthenticator.authenticate( null );
     }
@@ -105,7 +116,7 @@ public class AbstractAuthenticatorTest {
      * as the return value to the doAuthenticate() method.
      */
     @Test(expected=AuthenticationException.class)
-    public void authenticateSubclassDoAuthenticateReturnNull() {
+    public void throwAuthenticationExceptionIfDoAuthenticateReturnsNull() {
         abstractAuthenticator = createAuthcReturnNull();
         initAuthc();
         abstractAuthenticator.authenticate( newToken() );
@@ -117,18 +128,18 @@ public class AbstractAuthenticatorTest {
      * AuthenticationInfo object).
      */
     @Test
-    public void authenticateSuccessful() {
+    public void nonNullSecurityContextAfterAuthenticate() {
         initAuthc();
         SecurityContext securityContext = abstractAuthenticator.authenticate( newToken() );
         assertNotNull( securityContext );
     }
 
     /**
-     * Asserts that whatever <tt>SecurityContextFactory</tt> is in use by the Authenticator (either default or
+     * Asserts that the internal <tt>SecurityContextFactory</tt> (either the default or
      * explicitly injected) does not return a null SecurityContext during the authentication phase.
      */
     @Test(expected=IllegalStateException.class)
-    public void authenticateReturnedContextFactoryNull() {
+    public void securityContextFactoryReturnsNullAfterSuccessfulAuthentication() {
         SecurityContextFactory mockSCF = createMock( SecurityContextFactory.class );
         abstractAuthenticator.setSecurityContextFactory( mockSCF );
         expect( mockSCF.createSecurityContext( authInfo ) ).andReturn( null );
@@ -144,7 +155,7 @@ public class AbstractAuthenticatorTest {
      * authentication attempt.
      */
     @Test
-    public void authenticateBindSecurityContext() {
+    public void bindSecurityContextAfterDoAuthenticate() {
         SecurityContextBinder mockBinder = createMock( SecurityContextBinder.class );
         SecurityContextFactory mockFactory = createMock( SecurityContextFactory.class );
 
@@ -169,8 +180,116 @@ public class AbstractAuthenticatorTest {
         verify( mockBinder );
     }
 
+    @Test(expected=AuthenticationException.class)
+    public void createFailureEventReturnsNull() {
+        abstractAuthenticator = new AbstractAuthenticator() {
+            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+                throw new AuthenticationException();
+            }
+            protected AuthenticationEvent createFailureEvent(AuthenticationToken token, AuthenticationException ae) {
+                return null;
+            }
+        };
+        abstractAuthenticator.setSecurityManager( mockSecurityManager );
+        abstractAuthenticator.setAuthenticationEventSender( new SimpleAuthenticationEventSender() );
+        initAuthc();
+        abstractAuthenticator.authenticate( newToken() );
+    }
+
     @Test
-    public void authenticateSuccessfulSendSuccessEvent() {
+    public void createSuccessEventReturnsNull() {
+        abstractAuthenticator = new AbstractAuthenticator() {
+            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+                return authInfo;
+            }
+            protected AuthenticationEvent createSuccessEvent(AuthenticationToken token, AuthenticationInfo info ) {
+                return null;
+            }
+        };
+        abstractAuthenticator.setSecurityManager( mockSecurityManager );
+        abstractAuthenticator.setAuthenticationEventSender( new SimpleAuthenticationEventSender() );
+        initAuthc();
+        abstractAuthenticator.authenticate( newToken() );
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void sendWithNullArgument() {
+        initAuthc();
+        abstractAuthenticator.send( null );
+    }
+
+    @Test
+    public void sendWithNonNullSender() {
+        AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
+        abstractAuthenticator.setAuthenticationEventSender( mockSender );
+        initAuthc();
+        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        mockSender.send( successEvent );
+        replay( mockSender );
+        abstractAuthenticator.send( successEvent );
+        verify( mockSender );
+    }
+
+    @Test
+    public void sendWithNullSender() {
+        initAuthc();
+        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        abstractAuthenticator.send( successEvent );
+    }
+
+    public void sendSuccessEventWithSenderException() {
+        AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
+        abstractAuthenticator.setAuthenticationEventSender( mockSender );
+        initAuthc();
+        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        mockSender.send( successEvent );
+        expectLastCall().andThrow( new RuntimeException() );
+        replay( mockSender );
+        abstractAuthenticator.sendSuccessEvent( newToken(), authInfo );
+        verify( mockSender );
+    }
+
+    @Test
+    public void sendWithSenderThrowingException() {
+        AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
+        AuthenticationEventFactory mockFactory = createMock( AuthenticationEventFactory.class );
+        abstractAuthenticator.setAuthenticationEventFactory( mockFactory );
+        abstractAuthenticator.setAuthenticationEventSender( mockSender );
+        initAuthc();
+        AuthenticationToken token = newToken();
+        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        expect( mockFactory.createSuccessEvent( token, authInfo ) ).andReturn( successEvent );
+        mockSender.send( successEvent );
+        expectLastCall().andThrow( new RuntimeException() );
+        replay( mockFactory );
+        replay( mockSender );
+        abstractAuthenticator.sendSuccessEvent( token, authInfo );
+        verify( mockFactory );
+        verify( mockSender );
+    }
+
+    @Test(expected=AuthenticationException.class)
+    public void sendWithSenderThrowingExceptionFailingAuthentication() {
+        AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
+        AuthenticationEventFactory mockFactory = createMock( AuthenticationEventFactory.class );
+        abstractAuthenticator.setAuthenticationEventFactory( mockFactory );
+        abstractAuthenticator.setAuthenticationEventSender( mockSender );
+        abstractAuthenticator.setEventSendErrorFailsAuthentication( true );
+        initAuthc();
+        AuthenticationToken token = newToken();
+        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        expect( mockFactory.createSuccessEvent( token, authInfo ) ).andReturn( successEvent );
+        mockSender.send( successEvent );
+        expectLastCall().andThrow( new RuntimeException() );
+        replay( mockFactory );
+        replay( mockSender );
+        abstractAuthenticator.sendSuccessEvent( token, authInfo );
+        verify( mockFactory );
+        verify( mockSender );
+    }
+
+    @Test
+    public void sendSuccessEventAfterDoAuthenticate() {
         AuthenticationEventSender mockAuthcEvtSender = createMock( AuthenticationEventSender.class );
         AuthenticationEventFactory mockEvtFactory = createMock( AuthenticationEventFactory.class );
 
@@ -196,7 +315,7 @@ public class AbstractAuthenticatorTest {
     }
 
     @Test
-    public void authenticateFailedSendFailedEvent() {
+    public void sendFailedEventAfterDoAuthenticateThrowsAuthenticationException() {
         AuthenticationEventSender mockAuthcEvtSender = createMock( AuthenticationEventSender.class );
         AuthenticationEventFactory mockEvtFactory = createMock( AuthenticationEventFactory.class );
 
@@ -240,7 +359,7 @@ public class AbstractAuthenticatorTest {
     }
 
     @Test(expected=AuthenticationException.class)
-    public void authenticateFailedNotAuthenticationExceptionSubclassSendFailedEvent() {
+    public void sendFailedEventAfterDoAuthenticateThrowsNonAuthenticationException() {
 
         AuthenticationEventSender dummyAuthcEvtSender = new SimpleAuthenticationEventSender();
 

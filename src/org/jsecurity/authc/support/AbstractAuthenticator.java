@@ -130,6 +130,13 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      */
     private SecurityManager securityManager = null;
 
+    /**
+     * Whether or not to fail the authentication process when sending an event (via the sender) and the sender
+     * can't send the event (i.e. it throws an exception );  Default is false for system-resiliency so that a user
+     * can still login even if the event subsystem fails.
+     */
+    private boolean eventSendErrorFailsAuthentication = false;
+
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -263,6 +270,30 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     }
 
 
+    /**
+     * Returns whether or not a problem sending an authentication event causes authentication to fail
+     * for the attempting subject.
+     *
+     * <p>JSecurity employs an event-based architecture to allow components to react when interesting things happen.
+     * When a subject's authentication attempt is successful or fails, this Authenticator implementation will use an
+     * underlying {@link #setAuthenticationEventSender AuthenticationEventSender} to send the event in either case.
+     *
+     * <p>If for some reason the event sender throws an exception during the send operation, this property determines
+     * whether or not the entire authentication attempt will fail.
+     *
+     * <p>The default is <b>false</b> for resiliency's sake: an event sending problem does not fail the authentication.
+     *
+     * @return whether or not a problem sending an authentication event causes the entire authentication process to fail
+     * for the attempting subject (user).
+     */
+    public boolean isEventSendErrorFailsAuthentication() {
+        return eventSendErrorFailsAuthentication;
+    }
+
+    public void setEventSendErrorFailsAuthentication(boolean eventSendErrorFailsAuthentication) {
+        this.eventSendErrorFailsAuthentication = eventSendErrorFailsAuthentication;
+    }
+
     /*-------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -377,7 +408,23 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         if ( sender != null ) {
             AuthenticationEvent event = createSuccessEvent( token, info );
             if ( event != null ) {
-                send( event );
+                try {
+                    send( event );
+                } catch (Throwable t) {
+                    if ( isEventSendErrorFailsAuthentication() ) {
+                        String msg = "Unable to send event [" + event + "].  This authenticator is configured to " +
+                            "interpret an event sending error as a failure during the authentication process " +
+                            "via the setEventSendErrorFailsAuthentication property.  Authentication failed.";
+                        throw new AuthenticationException( msg, t );
+                    } else {
+                        if ( log.isWarnEnabled() ) {
+                            String msg = "Unable to send AuthenticationEvent [" + event + "].  Ignoring send error " +
+                                "(for system resiliency) and continuing with the authentication process.  Please " +
+                                "check your sender configuration and/or implementation.";
+                            log.warn( msg, t );
+                        }
+                    }
+                }
             } else {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "No AuthenticationEvent instance returned from " +
@@ -409,17 +456,10 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         }
         AuthenticationEventSender sender = getAuthenticationEventSender();
         if ( sender != null ) {
-            try {
-                sender.send( event );
-            } catch ( Throwable t ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Unable to send AuthenticationEvent [" + event + "]", t );
-                }
-            }
+            sender.send( event );
         } else {
             if ( log.isTraceEnabled() ) {
-                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will " +
-                        "not be sent." );
+                log.trace( "No AuthenticationEventSender configured.  Event [" + event + "] will not be sent." );
             }
         }
     }
@@ -522,14 +562,23 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             if ( ae == null ) {
                 //Exception thrown was not an expected AuthenticationException.  Therefore it is probably a little more
                 //severe or unexpected.  So, wrap in an AuthenticationException, log to warn, and propagate:
-                String msg = "Authentication failed for token submission [" + token + "].  Possibe unexpected " +
+                String msg = "Authentication failed for token submission [" + token + "].  Possible unexpected " +
                         "error? (Typical or expected login exceptions should extend from AuthenticationException).";
                 ae = new AuthenticationException( msg, t );
                 if ( log.isWarnEnabled() ) {
                     log.warn( msg, t );
                 }
             }
-            sendFailureEvent( token, ae );
+            try {
+                sendFailureEvent( token, ae );
+            } catch (Throwable t2) {
+                String msg = "Unable to send event for failed authentication attempt.  Please check the " +
+                        "authenticationEventSender implementation.  Logging sending exception and propagating " +
+                        "original AuthenticationException instead...";
+                if ( log.isWarnEnabled() ) {
+                    log.warn( msg, t2 );
+                }
+            }
 
             throw ae;
         }
