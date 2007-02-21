@@ -28,7 +28,6 @@ import org.jsecurity.authz.HostUnauthorizedException;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.security.Principal;
 import java.util.Date;
 
 /**
@@ -127,29 +126,6 @@ public interface SessionManager {
      * @throws org.jsecurity.session.InvalidSessionException if the session has expired prior to calling this method.
      */
     void touch( Serializable sessionId ) throws InvalidSessionException;
-
-    /**
-     * Returns the principal of the authenticated user or entity that initiated the session
-     * identified by <code>sessionId</code>, if known.  A session is usually created before an
-     * authc takes place, so this method may return <code>null</code> if the principal
-     * is unknown or the session hasn't yet been authenticated.
-     *
-     * <p>For example, in a web-based system, just visiting the first web page usually initiates a
-     * session.  But if that web page happens to be the log-in page, the session that was created
-     * hasn't yet been authenticated.  In this case, there is no principal (i.e. username
-     * in this case) yet associated with the session.
-     *
-     * <p>However, if the user submits the log-in form and is successful, this method could
-     * then be called to get the principal (username) of that person.
-     *
-     * <p>The principal itself can be any valid Java security principal.  In the above example, it
-     * was a username.  In other systems (especially RDBMS-based ones) it is often an
-     * entity/user id such as a UUID or Integer or even a Public Key.
-     * @param sessionId The session ID whose principal is being retrieved.
-     * @return the identifying principal of the user or entity that authenticated this session,
-     * or <code>null</code> if this session hasn't yet been authenticated.
-     */
-    Principal getPrincipal( Serializable sessionId );
 
 
     /**
