@@ -107,6 +107,10 @@ public class ThreadLocalSecurityContextFilter implements Filter {
             // a security context
             WebUtils.constructAndBindSecurityContextToThread( request, securityManager);
 
+            //if the SecurityContext.getSession is called, we need an IP as well - to do that, we need to bind
+            //the IP of the incoming request to the thread to make sure it is available if that happens:
+            WebUtils.bindInetAddressToThread( request );
+
             filterChain.doFilter( servletRequest, servletResponse );
 
             // Bind the principals from the security context to the session so that a security context can be
@@ -115,6 +119,7 @@ public class ThreadLocalSecurityContextFilter implements Filter {
 
         } finally {
             WebUtils.unbindSecurityContextFromThread();
+            WebUtils.unbindInetAddressFromThread();
         }
 
 

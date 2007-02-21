@@ -3,6 +3,8 @@ package org.jsecurity.util;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 
+import java.net.InetAddress;
+
 /**
  * Utility method class used to bind and unbind {@link Session Session}s and
  * {@link org.jsecurity.context.SecurityContext SecurityContext}s to the thread.
@@ -33,6 +35,16 @@ public class ThreadUtils {
 
     public static void unbindSessionFromThread() {
         ThreadContext.remove( ThreadContext.SESSION_KEY );
+    }
+
+    public static void bindToThread( InetAddress ip ) {
+        if ( ip != null ) {
+            ThreadContext.put( ThreadContext.INET_ADDRESS_KEY, ip );
+        }
+    }
+
+    public static void unbindInetAddressFromThread() {
+        ThreadContext.remove( ThreadContext.INET_ADDRESS_KEY );
     }
 
 }

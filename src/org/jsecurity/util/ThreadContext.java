@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +64,9 @@ public abstract class ThreadContext {
 
     public static final String SECURITY_CONTEXT_KEY =
         SecurityContext.class.getName() + "_THREAD_CONTEXT_KEY";
+
+    public static final String INET_ADDRESS_KEY =
+        InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =
         new ThreadLocal<Map<Object, Object>>() {

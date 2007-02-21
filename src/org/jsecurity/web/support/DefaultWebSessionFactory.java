@@ -33,6 +33,7 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.web.WebSessionFactory;
+import org.jsecurity.web.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,6 @@ import javax.servlet.http.HttpSession;
 import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Default JSecurity implementation of the {@link WebSessionFactory} interface.
@@ -221,23 +221,8 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
         this.idStorageLocation = location;
     }
 
-    protected InetAddress getInetAddress( HttpServletRequest request ) {
-        InetAddress clientAddress = null;
-        //get the Host/IP they're coming from:
-        String addrString = request.getRemoteHost();
-        try {
-            clientAddress = InetAddress.getByName( addrString );
-        } catch ( UnknownHostException e ) {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "Unable to acquire InetAddress from HttpServletRequest", e );
-            }
-        }
-
-        return clientAddress;
-    }
-
     public Session start( HttpServletRequest request, HttpServletResponse response ) {
-        InetAddress clientAddress = getInetAddress( request );
+        InetAddress clientAddress = WebUtils.getInetAddress( request );
         Session session = sessionFactory.start( clientAddress );
         Serializable sessionId = session.getSessionId();
 
@@ -275,7 +260,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
     protected void validateSessionOrigin( HttpServletRequest request, Session session )
         throws HostUnauthorizedException {
-        InetAddress requestIp = getInetAddress( request );
+        InetAddress requestIp = WebUtils.getInetAddress( request );
         InetAddress originIp = session.getHostAddress();
         Serializable sessionId = session.getSessionId();
 

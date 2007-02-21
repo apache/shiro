@@ -31,6 +31,7 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
+import java.net.InetAddress;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
@@ -79,6 +80,18 @@ public class DelegatingSecurityContext implements SecurityContext {
     public DelegatingSecurityContext(List<Principal> principals, SecurityManager securityManager) {
         this.principals = principals;
         this.securityManager = securityManager;
+    }
+
+    /**
+     * Returns the InetAddress associated with the client who created/is interacting with this SecurityContext.
+     *
+     * <p>The default implementation attempts to get the InetAddress from a thread local for use in server-side
+     * environments.  Subclasses can override this method to retrieve the InetAddress from somewhere else (for
+     * example, as a system property in a standalone application, or an applet parameter for an applet).
+     * @return the InetAddress associated with the client who created/is interacting with this SecurityContext.
+     */
+    protected InetAddress getInetAddress() {
+        return (InetAddress)ThreadContext.get( ThreadContext.INET_ADDRESS_KEY );
     }
 
     /**
@@ -171,7 +184,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     public Session getSession( boolean create ) {
         Session s = (Session)ThreadContext.get( ThreadContext.SESSION_KEY );
         if ( s == null && create ) {
-            s = securityManager.start( null ); //TODO - get IP from somewhere
+            s = securityManager.start( getInetAddress() ); 
             ThreadContext.put( ThreadContext.SESSION_KEY, s );
         }
         return s;
