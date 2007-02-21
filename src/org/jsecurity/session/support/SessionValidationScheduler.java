@@ -5,17 +5,24 @@
 package org.jsecurity.session.support;
 
 /**
- * Description of class.
+ * Interface that should be implemented by classes that can control validating sessions on a regular
+ * basis.  This interface is used as a delegate for session validation by the {@link DefaultSessionManager}
  *
- * todo Needs JavaDoc
+ * @see org.jsecurity.session.support.DefaultSessionManager#setSessionValidationScheduler(SessionValidationScheduler)
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public interface SessionValidationScheduler {
 
+    /**
+     * Starts the session validation job.
+     */
     void startSessionValidation();
 
+    /**
+     * Stops the session validation job.
+     */    
     void stopSessionValidation();
 
 }
