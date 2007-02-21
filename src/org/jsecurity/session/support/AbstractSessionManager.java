@@ -520,6 +520,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     public Principal getPrincipal( Serializable sessionId ) {
+        //todo Implement principal lookup from session 
         return null;
     }
 
