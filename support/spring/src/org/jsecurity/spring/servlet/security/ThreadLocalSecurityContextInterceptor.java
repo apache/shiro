@@ -55,6 +55,9 @@ public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAda
                               Object handler ) throws Exception {
 
         WebUtils.constructAndBindSecurityContextToThread( request, securityManager);
+        //we should bind the IP of the request too, in case SecurityContext.getSession() is called - an IP
+        //should be known in most all cases:
+        WebUtils.bindInetAddressToThread( request );
         return true;
     }
 
@@ -66,6 +69,7 @@ public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAda
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
         WebUtils.unbindSecurityContextFromThread();
+        WebUtils.unbindInetAddressFromThread();
     }
 
 }
