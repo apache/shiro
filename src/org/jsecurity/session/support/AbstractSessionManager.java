@@ -241,8 +241,8 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         send( createExpireEvent( session ) );
     }
 
-    protected SessionEvent createStartEvent( Session session ) {
-        return new StartedSessionEvent( this, session.getSessionId() );
+    protected SessionEvent createStartEvent( Session created, Serializable sessionIdFromEIS ) {
+        return new StartedSessionEvent( this, sessionIdFromEIS );
     }
 
     protected SessionEvent createStopEvent( Session session ) {
@@ -355,9 +355,9 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         if ( log.isDebugEnabled() ) {
             log.debug( "Creating new EIS record for new session instance [" + s + "]" );
         }
-        sessionDAO.create( s );
+        Serializable sessionId = sessionDAO.create( s );
 
-        send( createStartEvent( s ) );
+        send( createStartEvent( s, sessionId ) );
 
         return s;
     }

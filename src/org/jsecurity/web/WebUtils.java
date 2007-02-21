@@ -24,6 +24,8 @@
  */
 package org.jsecurity.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
@@ -33,6 +35,8 @@ import org.jsecurity.util.ThreadUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.List;
 
@@ -47,6 +51,8 @@ import java.util.List;
  * @author Les Hazlewood
  */
 public abstract class WebUtils {
+
+    protected static transient final Log log = LogFactory.getLog( WebUtils.class );
 
     /**
      * The key that is used to store subject principals in the session.
@@ -189,6 +195,32 @@ public abstract class WebUtils {
                 }
             }
         }
+    }
+
+    public static InetAddress getInetAddress( HttpServletRequest request ) {
+        InetAddress clientAddress = null;
+        //get the Host/IP the client is coming from:
+        String addrString = request.getRemoteHost();
+        try {
+            clientAddress = InetAddress.getByName( addrString );
+        } catch ( UnknownHostException e ) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Unable to acquire InetAddress from HttpServletRequest", e );
+            }
+        }
+
+        return clientAddress;
+    }
+
+    public static void bindInetAddressToThread( HttpServletRequest request ) {
+        InetAddress ip = getInetAddress( request );
+        if ( ip != null ) {
+            ThreadUtils.bindToThread( ip );
+        }
+    }
+
+    public static void unbindInetAddressFromThread() {
+        ThreadUtils.unbindInetAddressFromThread();
     }
 
 }

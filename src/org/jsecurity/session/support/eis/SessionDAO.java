@@ -44,15 +44,19 @@ public interface SessionDAO {
      * etc, depending on the DAO implementation).
      *
      * <p>After this method is invoked, the {@link org.jsecurity.session.Session#getSessionId()}
-     * method executed on the argument must return a valid session identifier.
+     * method executed on the argument must return a valid session identifier.  That is, the following should
+     * always be true:
+     * <br/><br/><code>
+     * <pre>Serializable id = create( session );
+id.equals( session.getId() ) == true</pre></code>
      *
      * <p>Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.
      *
      * @param session the {@link Session} object to create in the EIS.
+     * @return the EIS id (e.g. primary key) of the created <tt>Session</tt> object.
      */
-    //TODO - make this method return Serializable (session id)
-    void create( Session session );
+    Serializable create( Session session );
 
     /**
      * Retrieves the session from the EIS uniquely identified by the specified

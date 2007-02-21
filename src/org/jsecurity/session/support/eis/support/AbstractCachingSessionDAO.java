@@ -215,10 +215,11 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
      *
      * @param session Session object to create in the EIS and then cache.
      */
-    public void create(Session session) {
+    public Serializable create(Session session) {
         Serializable sessionId = doCreate( session );
         verifySessionId( sessionId );
         activeSessions.put( sessionId, session );
+        return sessionId;
     }
 
     /**
