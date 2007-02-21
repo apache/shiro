@@ -34,7 +34,6 @@ import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.security.Principal;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -517,11 +516,6 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         Session s = retrieveAndValidateSession( sessionId );
         onTouch( s );
         sessionDAO.update( s );
-    }
-
-    public Principal getPrincipal( Serializable sessionId ) {
-        //todo Implement principal lookup from session 
-        return null;
     }
 
     public InetAddress getHostAddress( Serializable sessionId ) {

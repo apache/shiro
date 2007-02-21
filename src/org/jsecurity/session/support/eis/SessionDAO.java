@@ -40,7 +40,7 @@ import java.util.Collection;
 public interface SessionDAO {
 
     /**
-     * Inserts a new Session record into the underling EIS (e.g. Relational database, mainframe,
+     * Inserts a new Session record into the underling EIS (e.g. Relational database, file system, mainframe,
      * etc, depending on the DAO implementation).
      *
      * <p>After this method is invoked, the {@link org.jsecurity.session.Session#getSessionId()}
@@ -51,6 +51,7 @@ public interface SessionDAO {
      *
      * @param session the {@link Session} object to create in the EIS.
      */
+    //TODO - make this method return Serializable (session id)
     void create( Session session );
 
     /**
