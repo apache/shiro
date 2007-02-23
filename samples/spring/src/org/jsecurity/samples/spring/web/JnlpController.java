@@ -12,7 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Insert JavaDoc here.
+ * Controller used to dynamically build a JNLP file used to launch the JSecurity
+ * Spring WebStart sample application.
+ *
+ * @since 0.1
+ * @author Jeremy Haile
  */
 public class JnlpController extends AbstractController {
 

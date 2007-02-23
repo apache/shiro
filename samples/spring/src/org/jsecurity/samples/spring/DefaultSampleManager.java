@@ -1,3 +1,27 @@
+/*
+ * Copyright (C) 2007 Jeremy Haile
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the
+ *
+ * Free Software Foundation, Inc.
+ * 59 Temple Place, Suite 330
+ * Boston, MA 02111-1307
+ * USA
+ *
+ * Or, you may view it online at
+ * http://www.opensource.org/licenses/lgpl-license.php
+ */
 package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
@@ -6,13 +30,21 @@ import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
 /**
- * Insert JavaDoc here.
+ * Default implementation of the {@link SampleManager} interface that stores
+ * and retrieves a value from the user's session.
+ *
+ * @since 0.1
+ * @author Jeremy Haile
  */
 public class DefaultSampleManager implements SampleManager {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    /**
+     * Key used to store the value in the user's session.
+     */
+    private static final String VALUE_KEY = "value";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -37,7 +69,7 @@ public class DefaultSampleManager implements SampleManager {
     public String getValue() {
         Session session = (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
         if( session != null ) {
-            return (String) session.getAttribute( "value" );
+            return (String) session.getAttribute(VALUE_KEY);
         } else {
             return null;
         }
@@ -46,7 +78,7 @@ public class DefaultSampleManager implements SampleManager {
     public void setValue(String newValue) {
         Session session = (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
         if( session != null ) {
-            session.setAttribute( "value", newValue );
+            session.setAttribute(VALUE_KEY, newValue );
         }
     }
 

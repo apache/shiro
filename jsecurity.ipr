@@ -363,6 +363,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="clover">
+      <CLASSES>
+        <root url="jar://$APPLICATION_HOME_DIR$/plugins/clover-idea6.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
   <component name="uidesigner-configuration">
     <option name="INSTRUMENT_CLASSES" value="true" />

@@ -29,9 +29,9 @@ import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.realm.support.AbstractCachingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.util.JdbcUtils;
 import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.UsernamePrincipal;
-import org.jsecurity.util.JdbcUtils;
 
 import javax.sql.DataSource;
 import java.security.Permission;
@@ -315,8 +315,6 @@ public class JdbcRealm extends AbstractCachingRealm {
     }
 
     protected Collection<Permission> getPermissions(Connection conn, String username, Collection<String> roleNames) throws SQLException {
-        //todo Currently the default implementation runs the permissions query once per role, which is inefficient.  We should explore how to improve this.
-
         PreparedStatement ps = null;
         ResultSet rs = null;
         Collection<Permission> permissions = new HashSet<Permission>();
