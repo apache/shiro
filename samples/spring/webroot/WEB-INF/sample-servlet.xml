@@ -19,7 +19,6 @@
             <props>
                 <prop key="index">indexController</prop>
                 <prop key="jsecurity.jnlp">jnlpController</prop>
-                <prop key="sampleManager">sampleManagerService</prop>
             </props>
         </property>
     </bean>
@@ -70,11 +69,5 @@
     </bean>
 
     <bean name="urlController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
-
-    <bean name="sampleManagerService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-        <property name="service" ref="sampleManager"/>
-        <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
-        <property name="remoteInvocationExecutor" ref="secureRemoteInvocationExecutor"/>
-    </bean>
 
 </beans>
