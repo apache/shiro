@@ -19,7 +19,7 @@
         <all-permissions/>
     </security>
     <resources>
-        <j2se version="1.5+"/>
+        <j2se version="1.5"/>
         <jar href="jsecurity-spring-sample.jar"/>
         <jar href="jsecurity.jar"/>
         <jar href="spring.jar"/>

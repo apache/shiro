@@ -25,6 +25,8 @@
 
 package org.jsecurity.realm.support.file;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
@@ -63,6 +65,11 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /**
+     * Commons-logging logger
+     */
+    protected final transient Log logger = LogFactory.getLog(getClass());
+
     protected boolean useXmlFormat = false;
 
     protected String userFilePath;
@@ -144,17 +151,34 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
     private void reloadProperties() {
         MemoryRealm newRealm = new MemoryRealm();
 
-        //todo throw exception if user file path isn't set
+        if( userFilePath == null || userFilePath.length() == 0 ) {
+            throw new IllegalStateException( "The userFilePath property is not set.  " +
+                "It must be set prior to this realm being initialized." );
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loading user account information from file [" + userFilePath + "]..." );
+        }
+
         Properties userProperties = loadProperties( userFilePath );
         Set<AccountEntry> entries = buildAccountEntriesFromProperties(userProperties);
         newRealm.setAccounts( entries );
 
         // Load permissions if enabled
         if( permissionsFilePath != null && permissionsFilePath.length() > 0 ) {
-            //todo add debug output here and in else block
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Loading permission information from file [" + permissionsFilePath + "]...");
+            }
+
             Properties permissionProperties = loadProperties( permissionsFilePath );
             Map<String,String> rolesPermissionsMap = buildRolesPermissionsMapFromProperties( permissionProperties );
             newRealm.setRolesPermissionsMap( rolesPermissionsMap );
+
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Permissions are not being loaded, because no permissionsFilePath has been configured.");
+            }
         }
 
         // Initialize new realm and replace old realm
@@ -162,6 +186,7 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
         this.memoryRealm = newRealm;
     }
 
+    @SuppressWarnings( "unchecked" )
     private Set<AccountEntry> buildAccountEntriesFromProperties(Properties userProperties) {
         Enumeration<String> propNames = (Enumeration<String>) userProperties.propertyNames();
         Set<AccountEntry> entries = new HashSet<AccountEntry>( userProperties.size() );
@@ -199,8 +224,18 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
 
             InputStream is = new FileInputStream( fileName );
             if( useXmlFormat ) {
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Loading properties from file [" + fileName + "] in XML format...");
+                }
+
                 props.loadFromXML( is );
             } else {
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Loading properties from file [" + fileName + "]...");
+                }
+
                 props.load( is );
             }
 
@@ -214,18 +249,10 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
 
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-        // Check to make sure files haven't changed
-        reloadPropertiesIfNecessary();
-
-
-
         return null;
     }
 
     protected AuthorizationInfo getAuthorizationInfo(Principal principal) {
-
-        // Check to make sure files haven't changed
-        reloadPropertiesIfNecessary();
 
         return null;
     }

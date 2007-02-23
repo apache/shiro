@@ -2,7 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
-  - Application context definition for "jsecurity" DispatcherServlet.
+  - Application context definition for "sample" DispatcherServlet.
   -->
 
 <beans>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2007 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -26,7 +26,8 @@
 package org.jsecurity.samples.spring.web;
 
 /**
- * Description of class.
+ * Command object that parameters are bound to when logging into the sample
+ * application.
  *
  * @since 0.1
  * @author Jeremy Haile

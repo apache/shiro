@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy Haile
+ * Copyright (C) 2007 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.context.support.ThreadLocalSecurityContext;
@@ -33,38 +32,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Description of class.
+ * Controller responsible for logging out the current user by invoking
+ * {@link org.jsecurity.context.SecurityContext#invalidate()} 
  *
  * @since 0.1
  * @author Jeremy Haile
  */
 public class LogoutController extends AbstractController {
 
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-
-    /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
-
-    /*--------------------------------------------
-    |         C O N S T R U C T O R S           |
-    ============================================*/
-
-    /*--------------------------------------------
-    |  A C C E S S O R S / M O D I F I E R S    |
-    ============================================*/
-
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
-
-
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
         ThreadLocalSecurityContext.current().invalidate();
-
         return new ModelAndView( "redirect:login" );
     }
 }

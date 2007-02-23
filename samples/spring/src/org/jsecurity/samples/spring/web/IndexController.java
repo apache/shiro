@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Jeremy C. Haile
+ * Copyright (C) 2007 Jeremy C. Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -38,7 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Description of class.
+ * Spring MVC controller responsible for rendering the JSecurity Spring sample
+ * application index page.
  *
  * @since 0.1
  * @author Jeremy Haile
