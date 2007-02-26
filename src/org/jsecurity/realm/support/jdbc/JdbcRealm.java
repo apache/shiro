@@ -210,8 +210,13 @@ public class JdbcRealm extends AbstractCachingRealm {
             info.setCredentials( password );
 
         } catch( SQLException e ) {
+            final String message = "There was a SQL error while authenticating user [" + username + "]";
+            if (logger.isErrorEnabled()) {
+                logger.error(message, e);
+            }
+
             // Rethrow any SQL errors as an authentication exception
-            throw new AuthenticationException( "There was a SQL error while authenticating user [" + username + "]", e );
+            throw new AuthenticationException(message, e );
         } finally {
             JdbcUtils.closeConnection( conn );
         }
@@ -273,8 +278,13 @@ public class JdbcRealm extends AbstractCachingRealm {
             permissions = getPermissions(conn, username, roleNames);
 
         } catch( SQLException e ) {
+            final String message = "There was a SQL error while authorizing user [" + username + "]";
+            if (logger.isErrorEnabled()) {
+                logger.error(message, e);
+            }
+
             // Rethrow any SQL errors as an authorization exception
-            throw new AuthorizationException( "There was a SQL error while authorizing user [" + username + "]", e );
+            throw new AuthorizationException( message, e );
         } finally {
             JdbcUtils.closeConnection( conn );
         }

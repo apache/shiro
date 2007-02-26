@@ -8,7 +8,6 @@ import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
@@ -36,7 +35,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         if( session != null ) {
             sessionId = session.getSessionId();
         } else {
-            sessionId = UUID.fromString( System.getProperty( "jsecurity.session.id" ) );
+            sessionId = System.getProperty( "jsecurity.session.id" );
         }
 
         if( sessionId != null ) {

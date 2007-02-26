@@ -13,7 +13,7 @@
     <bean class="org.jsecurity.spring.SecurityBeanPostProcessor"/>
 
     <!-- Access authentication and authorization info for a single data source - called a 'Realm': -->
-    <bean id="memoryRealm" class="org.jsecurity.realm.support.memory.MemoryRealm">
+<!--    <bean id="realm" class="org.jsecurity.realm.support.memory.MemoryRealm">
         <property name="credentialMatcher">
             <bean class="org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>
@@ -23,15 +23,29 @@
             <set>
                 <bean class="org.jsecurity.realm.support.memory.AccountEntry">
                     <property name="username" value="user1"/>
-                    <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> <!-- 'user1' SHA-1 Base64 -->
+                    <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> --><!-- 'user1' SHA-1 Base64 --><!--
                     <property name="roles" value="role1, role2"/>
                 </bean>
                 <bean class="org.jsecurity.realm.support.memory.AccountEntry">
                     <property name="username" value="user2"/>
-                    <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> <!-- 'user2' SHA-1 Base64 -->
+                    <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> --><!-- 'user2' SHA-1 Base64 --><!--
                     <property name="roles" value="role2"/>
                 </bean>
             </set>
+        </property>
+    </bean>-->
+
+    <bean id="realm" class="org.jsecurity.realm.support.jdbc.JdbcRealm">
+        <property name="credentialMatcher">
+            <bean class="org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher">
+                <property name="base64Encoded" value="true"/>
+            </bean>
+        </property>
+        <property name="dataSource">
+            <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+                <property name="url" value="jdbc:hsqldb:mem:jsecurity-spring"/>
+                <property name="username" value="sa"/>
+            </bean>
         </property>
     </bean>
 
@@ -39,7 +53,7 @@
     <bean id="securityManager" class="org.jsecurity.DefaultSecurityManager">
         <property name="realms">
             <list>
-                <ref bean="memoryRealm"/>
+                <ref bean="realm"/>
             </list>
         </property>
     </bean>
