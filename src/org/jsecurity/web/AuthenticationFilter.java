@@ -39,6 +39,7 @@ import java.util.Set;
 
 /**
  * Description of class.
+ * todo JavaDoc
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -61,7 +62,8 @@ public class AuthenticationFilter implements Filter {
     private String unauthenticatedPath = DEFAULT_UNAUTHENTICATED_PATH;
     private String unauthenticatedScheme = null;
     private int unauthenticatedServerPort = -1;
-    private Set<String> excludedPaths;
+    private Set<String> excludedPaths = new HashSet<String>();
+    private SecurityContext securityContext = new ThreadLocalSecurityContext();
 
 
     /*--------------------------------------------
@@ -71,7 +73,7 @@ public class AuthenticationFilter implements Filter {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    protected void setUnauthenticatedPath(String unauthenticatedPath) {
+    public void setUnauthenticatedPath(String unauthenticatedPath) {
         this.unauthenticatedPath = unauthenticatedPath;
     }
 
@@ -86,7 +88,7 @@ public class AuthenticationFilter implements Filter {
     }
 
 
-    protected void setUnauthenticatedScheme(String unauthenticatedScheme) {
+    public void setUnauthenticatedScheme(String unauthenticatedScheme) {
         this.unauthenticatedScheme = unauthenticatedScheme;
     }
 
@@ -96,12 +98,19 @@ public class AuthenticationFilter implements Filter {
     }
 
 
-    protected void setUnauthenticatedServerPort(int unauthenticatedServerPort) {
+    public void setUnauthenticatedServerPort(int unauthenticatedServerPort) {
         this.unauthenticatedServerPort = unauthenticatedServerPort;
     }
 
     protected Set<String> getExcludedPaths() {
         return this.excludedPaths;
+    }
+
+    public void setExcludedPaths( String commaSeparatedExcludedPaths ) {
+        String[] excludedPathArray = commaSeparatedExcludedPaths.split(",");
+        for (String path : excludedPathArray) {
+            addExcludedPath(path);
+        }
     }
 
     protected void addExcludedPath(String excludedPath) {
@@ -147,17 +156,12 @@ public class AuthenticationFilter implements Filter {
             setUnauthenticatedPath( unauthenticatedUrlParam );
         }
 
-        this.excludedPaths = new HashSet<String>();
-
         // Add the unauthenticated path to the set of excluded paths
         addExcludedPath(getUnauthenticatedPath());
 
         String commaSeparatedExcludedPaths = filterConfig.getInitParameter(EXCLUDED_PATHS_PARAM);
         if (commaSeparatedExcludedPaths != null) {
-            String[] excludedPathArray = commaSeparatedExcludedPaths.split(",");
-            for (String path : excludedPathArray) {
-                addExcludedPath(path);
-            }
+            setExcludedPaths( commaSeparatedExcludedPaths );
         }
     }
 
@@ -166,11 +170,10 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        SecurityContext secCtx = ThreadLocalSecurityContext.current();
-
         String requestedPath = httpRequest.getRequestURI();
 
-        if( secCtx == null && !isPathExcluded(requestedPath)) {
+        boolean authenticated = securityContext.isAuthenticated();
+        if( !authenticated && !isPathExcluded(requestedPath)) {
             handleUnauthenticatedRequest(request, response);
         } else {
             filterChain.doFilter( request, response );
@@ -179,7 +182,12 @@ public class AuthenticationFilter implements Filter {
     }
 
     private boolean isPathExcluded(String requestedPath) {
-        return excludedPaths.contains(requestedPath);
+        for( String excludedPath : excludedPaths ) {
+            if( requestedPath.contains( excludedPath ) ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws IOException {
