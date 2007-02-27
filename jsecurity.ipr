@@ -365,7 +365,7 @@
     </library>
     <library name="clover">
       <CLASSES>
-        <root url="jar://$APPLICATION_HOME_DIR$/plugins/clover-idea6.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/clover/clover-idea6.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

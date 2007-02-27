@@ -103,6 +103,7 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
 
     protected SessionFactory sessionFactory;
     protected SessionManager sessionManager;
+    protected boolean sessionsEnabled = false;
 
     private boolean sessionFactoryImplicitlyCreated = false;
     private boolean sessionManagerImplicitlyCreated = false;
@@ -185,7 +186,7 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
             authorizerImplicitlyCreated = true;
         }
 
-        if ( sessionFactory == null ) {
+        if ( sessionFactory == null && sessionsEnabled ) {
             if ( log.isInfoEnabled() ) {
                 log.info( "No delegate SessionFactory instance has been set as a property of this class.  Defaulting " +
                         "to a SessionFactory instance backed by a SessionManager implementation..." );
@@ -266,6 +267,15 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     }
 
     /**
+     * Enables session support in this security manager (disabled by default).  This is automatically set to true
+     * when a session manager or session factory is set.
+     * @param sessionsEnabled true to enable sessions, or false to disable them.
+     */
+    public void setSessionsEnabled(boolean sessionsEnabled) {
+        this.sessionsEnabled = sessionsEnabled;
+    }
+
+    /**
      * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
      * manager's {@link #start} and {@link #getSession} calls.
      *
@@ -289,6 +299,7 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
      */
     public void setSessionFactory( SessionFactory sessionFactory ) {
         this.sessionFactory = sessionFactory;
+        setSessionsEnabled( true );
     }
 
     /**
@@ -308,6 +319,7 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
      */
     public void setSessionManager( SessionManager sessionManager ) {
         this.sessionManager = sessionManager;
+        setSessionsEnabled( true );
     }
 
     /**
@@ -470,10 +482,20 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
 
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
+        checkSessionsEnabled();
         return sessionFactory.start( hostAddress );
     }
 
     public Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException {
+        checkSessionsEnabled();
         return sessionFactory.getSession( sessionId );
+    }
+
+
+    private void checkSessionsEnabled() {
+        if( !sessionsEnabled ) {
+            throw new IllegalStateException( "Attempt to start a session, but sessions are not enabled.  " +
+                    "Set the sessionsEnabled property to true to enable session support." );
+        }
     }
 }
