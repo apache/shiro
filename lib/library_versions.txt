@@ -34,6 +34,10 @@ Some notes:
 - ehcache 1.2.4 (http://ehcache.sourceforge.net/)
 - Required for compiling, using ehcache cache provider, and for runtime session management
 
+* hsqldb/hsqldb.jar
+- HSQLDB 1.8.0.7 (http://www.hsqldb.org)
+- Used in the sample application to show an example of a JDBC-based Realm.
+
 * j2ee/jsp-api.jar
 - JSP API 2.0 (http://java.sun.com/products/jsp)
 - Required for building the RI tag libraries
