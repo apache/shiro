@@ -116,6 +116,7 @@
             <classes dir="${classes.dir}" includes="**"/>
             <lib dir="${lib.dir}/ehcache" includes="*.jar"/>
             <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
+            <lib dir="${lib.dir}/hsqldb" includes="hsqldb.jar"/>
             <lib dir="${lib.dir}/spring" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
             <lib dir="${lib.dir}/quartz" includes="*.jar"/>
