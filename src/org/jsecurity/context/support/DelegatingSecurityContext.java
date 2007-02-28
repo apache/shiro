@@ -178,7 +178,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public Session getSession() {
-        return getSession( false );
+        return getSession( true );
     }
 
     public Session getSession( boolean create ) {
