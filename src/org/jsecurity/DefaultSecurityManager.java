@@ -103,7 +103,7 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
 
     protected SessionFactory sessionFactory;
     protected SessionManager sessionManager;
-    protected boolean sessionsEnabled = false;
+    protected boolean sessionsEnabled = true;
 
     private boolean sessionFactoryImplicitlyCreated = false;
     private boolean sessionManagerImplicitlyCreated = false;
@@ -167,6 +167,38 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     }
 
 
+    protected void ensureSessionFactory() {
+        if ( this.sessionFactory == null && sessionsEnabled ) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "No delegate SessionFactory instance has been set as a property of this class.  Defaulting " +
+                        "to a SessionFactory instance backed by a SessionManager implementation..." );
+            }
+
+            if ( this.sessionManager == null ) {
+                if ( log.isInfoEnabled() ) {
+                    log.info( "No SessionManager instance has been set as a property of this class.  " +
+                            "Defaulting to the default SessionManager implementation." );
+                }
+                DefaultSessionManager sessionManager = new DefaultSessionManager();
+                sessionManagerImplicitlyCreated = true;
+                sessionManager.init();
+                setSessionManager( sessionManager );
+            } else {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Using configured SessionManager [" + sessionManager + "] to construct the default " +
+                            "SessionFactory delegate instance." );
+                }
+            }
+
+            DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
+            sessionFactory.setSessionManager( sessionManager );
+            sessionFactoryImplicitlyCreated = true;
+            sessionFactory.init();
+
+            setSessionFactory( sessionFactory );
+        }
+    }
+
     public void init() {
 
         if( realmMap == null || realmMap.isEmpty() ) {
@@ -186,39 +218,7 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
             authorizerImplicitlyCreated = true;
         }
 
-        if ( sessionFactory == null && sessionsEnabled ) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "No delegate SessionFactory instance has been set as a property of this class.  Defaulting " +
-                        "to a SessionFactory instance backed by a SessionManager implementation..." );
-            }
-
-            if ( sessionManager == null ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "No SessionManager instance has been set as a property of this class.  " +
-                            "Defaulting to the default SessionManager implementation." );
-                }
-                sessionManager = new DefaultSessionManager();
-                sessionManagerImplicitlyCreated = true;
-                ((DefaultSessionManager)sessionManager).init();
-            } else {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Using configured SessionManager [" + sessionManager + "] to construct the default " +
-                            "SessionFactory delegate instance." );
-                }
-            }
-
-            DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
-            sessionFactory.setSessionManager( sessionManager );
-            sessionFactoryImplicitlyCreated = true;
-            sessionFactory.init();
-
-            this.sessionFactory = sessionFactory;
-        }
-
-        if ( sessionManager == null ) {
-            
-        }
-
+        ensureSessionFactory();
     }
 
     private void destroy( Destroyable d ) {
@@ -233,14 +233,14 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     }
 
     public void destroy() {
-        if ( sessionFactoryImplicitlyCreated ) {
-            if ( sessionFactory instanceof Destroyable ) {
-                destroy( (Destroyable)sessionFactory );
-            }
-        }
         if ( sessionManagerImplicitlyCreated ) {
             if ( sessionManager instanceof Destroyable ) {
                 destroy( (Destroyable)sessionManager );
+            }
+        }
+        if ( sessionFactoryImplicitlyCreated ) {
+            if ( sessionFactory instanceof Destroyable ) {
+                destroy( (Destroyable)sessionFactory );
             }
         }
         if ( authorizerImplicitlyCreated ) {
