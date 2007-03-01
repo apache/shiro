@@ -103,7 +103,6 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
 
     protected SessionFactory sessionFactory;
     protected SessionManager sessionManager;
-    protected boolean sessionsEnabled = true;
 
     private boolean sessionFactoryImplicitlyCreated = false;
     private boolean sessionManagerImplicitlyCreated = false;
@@ -168,34 +167,40 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
 
 
     protected void ensureSessionFactory() {
-        if ( this.sessionFactory == null && sessionsEnabled ) {
+        if ( this.sessionFactory == null ) {
             if ( log.isInfoEnabled() ) {
                 log.info( "No delegate SessionFactory instance has been set as a property of this class.  Defaulting " +
-                        "to a SessionFactory instance backed by a SessionManager implementation..." );
+                          "to a SessionFactory instance backed by a SessionManager implementation..." );
             }
 
-            if ( this.sessionManager == null ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "No SessionManager instance has been set as a property of this class.  " +
-                            "Defaulting to the default SessionManager implementation." );
-                }
-                DefaultSessionManager sessionManager = new DefaultSessionManager();
-                sessionManagerImplicitlyCreated = true;
-                sessionManager.init();
-                setSessionManager( sessionManager );
-            } else {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Using configured SessionManager [" + sessionManager + "] to construct the default " +
-                            "SessionFactory delegate instance." );
+            //since a SessionManager can be lazily created when a session is first requested, we have to account for
+            //the race condition when two sessions are requested at almost the exact same time - we want to ensure
+            //that only one SessionManager is created due to the quartz and ehcache initialization overhead and to
+            //avoid more than one SessionValidationScheduler from validating sessions too often.  So, we
+            //synchronize on this object to ensure the implicit SessionManager instance creation only ever occurs once.
+            synchronized ( this ) {
+                if ( this.sessionManager == null ) {
+                    if ( log.isInfoEnabled() ) {
+                        log.info( "No SessionManager instance has been set as a property of this class.  " +
+                                  "Defaulting to the default SessionManager implementation." );
+                    }
+                    DefaultSessionManager sessionManager = new DefaultSessionManager();
+                    setSessionManager( sessionManager );
+                    sessionManagerImplicitlyCreated = true;
+                    sessionManager.init();
+                } else {
+                    if ( log.isDebugEnabled() ) {
+                        log.debug( "Using configured SessionManager [" + sessionManager + "] to construct the default " +
+                                   "SessionFactory delegate instance." );
+                    }
                 }
             }
 
             DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
+            setSessionFactory( sessionFactory );
             sessionFactory.setSessionManager( sessionManager );
             sessionFactoryImplicitlyCreated = true;
             sessionFactory.init();
-
-            setSessionFactory( sessionFactory );
         }
     }
 
@@ -217,8 +222,6 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
             authorizer = new AnnotationsModularAuthorizer();
             authorizerImplicitlyCreated = true;
         }
-
-        ensureSessionFactory();
     }
 
     private void destroy( Destroyable d ) {
@@ -267,15 +270,6 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     }
 
     /**
-     * Enables session support in this security manager (disabled by default).  This is automatically set to true
-     * when a session manager or session factory is set.
-     * @param sessionsEnabled true to enable sessions, or false to disable them.
-     */
-    public void setSessionsEnabled(boolean sessionsEnabled) {
-        this.sessionsEnabled = sessionsEnabled;
-    }
-
-    /**
      * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
      * manager's {@link #start} and {@link #getSession} calls.
      *
@@ -299,7 +293,6 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
      */
     public void setSessionFactory( SessionFactory sessionFactory ) {
         this.sessionFactory = sessionFactory;
-        setSessionsEnabled( true );
     }
 
     /**
@@ -319,7 +312,6 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
      */
     public void setSessionManager( SessionManager sessionManager ) {
         this.sessionManager = sessionManager;
-        setSessionsEnabled( true );
     }
 
     /**
@@ -482,20 +474,12 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
 
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        checkSessionsEnabled();
+        ensureSessionFactory();
         return sessionFactory.start( hostAddress );
     }
 
     public Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException {
-        checkSessionsEnabled();
+        ensureSessionFactory();
         return sessionFactory.getSession( sessionId );
-    }
-
-
-    private void checkSessionsEnabled() {
-        if( !sessionsEnabled ) {
-            throw new IllegalStateException( "Attempt to start a session, but sessions are not enabled.  " +
-                    "Set the sessionsEnabled property to true to enable session support." );
-        }
     }
 }
