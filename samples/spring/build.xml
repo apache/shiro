@@ -54,20 +54,6 @@
             <classpath location="${root.base.dir}/build/dist/jsecurity.jar"/>
         </javac>
 
-		<copy todir="${classes.dir}" preservelastmodified="true">
-			<fileset dir="${src.dir}">
-				<include name="**/*.properties"/>
-				<include name="**/*.xml"/>
-				<include name="**/*.dtd"/>
-				<include name="**/*.xsd"/>
-			</fileset>
-		</copy>
-
-		<copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${src.dir}">
-				<include name="**/*.tld"/>
-			</fileset>
-		</copy>
     </target>
 
     <target name="jar" depends="compile">
@@ -113,7 +99,6 @@
         </signjar>
 
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
-            <classes dir="${classes.dir}" includes="**"/>
             <lib dir="${lib.dir}/ehcache" includes="*.jar"/>
             <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
             <lib dir="${lib.dir}/hsqldb" includes="hsqldb.jar"/>
@@ -124,6 +109,8 @@
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
+
+            <lib dir="${dist.dir}" includes="*.jar"/>
 
             <!-- Jar for webstart application -->
             <fileset dir="${webstart.lib.dir}" includes="*.jar"/>

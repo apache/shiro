@@ -174,7 +174,7 @@ public abstract class WebUtils {
 
 
     /**
-     * Binds the current user's principals to their session.  If JSecurity sessions are enabled, they will be stored
+     * Binds the current user's principals to their session.  If JSecurity sessions are used, they will be stored
      * in the JSecurity session. Otherwise they are stored in the HTTP session.  This is called after each request
      * to ensure that the principals are stored in the session.  This allows a <tt>SecurityContext</tt> to be
      * constructed on the next request by {@link #constructAndBindSecurityContextToThread(javax.servlet.http.HttpServletRequest, org.jsecurity.SecurityManager)}
@@ -184,7 +184,7 @@ public abstract class WebUtils {
         SecurityContext ctx = (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
 
         if ( ctx != null ) {
-            Session session = ctx.getSession();
+            Session session = ctx.getSession( false );
             if( session != null && session.getAttribute( PRINCIPALS_SESSION_KEY) == null ) {
                 session.setAttribute( PRINCIPALS_SESSION_KEY, ctx.getAllPrincipals() );
 
