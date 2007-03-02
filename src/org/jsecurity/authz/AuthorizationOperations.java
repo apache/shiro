@@ -211,4 +211,38 @@ public interface AuthorizationOperations {
      */
     void checkPermissions( Principal subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException;
 
+    /**
+     * A convenience method to ensure a subject (and/or user) has the specified <tt>Role</tt>.
+     * If not, an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     *
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * representing a <tt>User</tt> database primary
+     * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
+     * is specific to the application and  determined by the application's JSecurity configuration.
+     *
+     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param role the role to check.
+     * @throws org.jsecurity.authz.AuthorizationException if the user does not have the role.
+     */
+    void checkRole( Principal subjectIdentifier, String role ) throws AuthorizationException;
+
+    /**
+     * A convenience method to ensure a subject (and/or user) has all of the specified <tt>Roles</tt>.
+     * If not, an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     *
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * representing a <tt>User</tt> database primary
+     * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
+     * is specific to the application and  determined by the application's JSecurity configuration.
+     *
+     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param roles the roles to check.
+     * @throws org.jsecurity.authz.AuthorizationException if the user does not have all of the specified roles.
+     */
+    void checkRoles( Principal subjectIdentifier, Collection<String> roles ) throws AuthorizationException;
+
+
+
 }

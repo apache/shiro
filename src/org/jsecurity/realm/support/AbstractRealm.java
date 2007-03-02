@@ -328,4 +328,15 @@ public abstract class AbstractRealm implements Realm {
     }
 
 
+    public void checkRole(Principal principal, String role) throws AuthorizationException {
+        AuthorizationInfo info = getAuthorizationInfo( principal );
+        checkAuthorizationInfo( info, principal );
+        info.checkRole( role );
+    }
+
+    public void checkRoles(Principal principal, Collection<String> roles) throws AuthorizationException {
+        AuthorizationInfo info = getAuthorizationInfo( principal );
+        checkAuthorizationInfo( info, principal );
+        info.checkRoles( roles );
+    }
 }

@@ -88,10 +88,10 @@ public interface SecurityContext {
 
     /**
      * Checks if the given role identifier is associated with this context.
-     * @param roleIdentifier the role identifier that is being checked.
+     * @param role the role identifier that is being checked.
      * @return true if the user associated with this context has the role, false otherwise.
      */
-    boolean hasRole( String roleIdentifier );
+    boolean hasRole( String role );
 
     /**
      * Checks a set of role identifiers to see if they are associated with this
@@ -101,19 +101,19 @@ public interface SecurityContext {
      * <p>This is primarily a performance-enhancing method to help reduce the number of
      * {@link #hasRole} invocations over the wire in client/server systems.
      *
-     * @param roleIdentifiers the role identifiers to check for.
+     * @param roles the role identifiers to check for.
      * @return an array of booleans whose indices correspond to the index of the
      * roles in the given identifiers.  A true value indicates the user has the
      * role at that index.  False indicates the user does not have the role.
      */
-    boolean[] hasRoles( List<String> roleIdentifiers );
+    boolean[] hasRoles( List<String> roles);
 
     /**
      * Checks if the user has all of the given roles.
-     * @param roleIdentifiers the roles to be checked.
+     * @param roles the roles to be checked.
      * @return true if the user has all roles, false otherwise.
      */
-    boolean hasAllRoles( Collection<String> roleIdentifiers );
+    boolean hasAllRoles( Collection<String> roles );
 
     /**
      * Checks if the given permission is associated with this context.
@@ -145,8 +145,8 @@ public interface SecurityContext {
 
 
     /**
-     * A convenience method to check if this context implies the specified permission.  That is,
-     * if the security context does not imply the given permission, an
+     * A convenience method to check if this context implies the specified permission.
+     * If the security context does not imply the given permission, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
@@ -156,10 +156,31 @@ public interface SecurityContext {
 
     /**
      * A convenience method for checking if this context implies all of the specified permissions.
+     * If the security context does not imply all of the given permissions, an
+     * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permissions the permissions to check.
      * @throws AuthorizationException if the context does not imply all of the given permissions.
      */
     void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException;
+
+    /**
+     * A convenience method to check if the given role is associated with this context.
+     * If the security context does not imply the given role, an
+     * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     * @param role the role identifier to check.
+     * @throws org.jsecurity.authz.AuthorizationException if the user does not have the role.
+     */
+    void checkRole( String role ) throws AuthorizationException;
+
+
+    /**
+     * A convenience method for checking if all of the given roles are associated with this context.
+     * If the security context does not imply all of the given roles, an
+     * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     * @param roles the roles to check..
+     * @throws AuthorizationException if the context is not associated with the given roles.
+     */
+    void checkRoles( Collection<String> roles ) throws AuthorizationException;
 
     /**
      * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
