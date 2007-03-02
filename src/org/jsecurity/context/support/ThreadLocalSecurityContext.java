@@ -124,9 +124,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         if ( secCtx != null ) {
             secCtx.checkPermission( permission );
         } else {
-            String msg = "No SecurityContext bound to the current thread: unable to perform permission check. " +
-                    "Defaulting to a more secure disallow policy - permission check failed.";
-            throw new UnauthorizedException( msg );
+            handleNoSecurityContextCheck();
         }
     }
 
@@ -135,10 +133,32 @@ public class ThreadLocalSecurityContext implements SecurityContext {
         if ( secCtx != null ) {
             secCtx.checkPermissions( permissions );
         } else {
-            String msg = "No SecurityContext bound to the current thread: unable to perform permission check. " +
-                    "Defaulting to a more secure disallow policy - permissions check failed.";
-            throw new UnauthorizedException( msg );
+            handleNoSecurityContextCheck();
         }
+    }
+
+    public void checkRole(String role) throws AuthorizationException {
+        SecurityContext secCtx = getSecurityContext();
+        if ( secCtx != null ) {
+            secCtx.checkRole( role );
+        } else {
+            handleNoSecurityContextCheck();
+        }
+    }
+
+    public void checkRoles(Collection<String> roles) throws AuthorizationException {
+        SecurityContext secCtx = getSecurityContext();
+        if ( secCtx != null ) {
+            secCtx.checkRoles( roles );
+        } else {
+            handleNoSecurityContextCheck();
+        }
+    }
+
+    protected void handleNoSecurityContextCheck() {
+        String msg = "No SecurityContext bound to the current thread: unable to perform authorization check. " +
+                "Defaulting to a more secure disallow policy - authorization check failed.";
+        throw new UnauthorizedException( msg );
     }
 
     protected SecurityContext getSecurityContext() {

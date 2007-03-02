@@ -172,6 +172,14 @@ public class DelegatingSecurityContext implements SecurityContext {
         securityManager.checkPermissions( getPrincipal(), permissions );
     }
 
+    public void checkRole(String role) throws AuthorizationException {
+        securityManager.checkRole( getPrincipal(), role );
+    }
+
+    public void checkRoles(Collection<String> roles) throws AuthorizationException {
+        securityManager.checkRoles( getPrincipal(), roles );
+    }
+
     public boolean isAuthenticated() {
         // The presence of this security context indicates that the user is authenticated
         return true;

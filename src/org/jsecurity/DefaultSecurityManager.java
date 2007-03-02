@@ -472,6 +472,20 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
         }
     }
 
+    public void checkRole(Principal subjectIdentifier, String role) throws AuthorizationException {
+        if( !hasRole( subjectIdentifier, role ) ) {
+            throw new AuthorizationException( "User does not have role [" + role + "]" );
+        }
+    }
+
+    public void checkRoles(Principal subjectIdentifier, Collection<String> roles) throws AuthorizationException {
+        if( roles != null ) {
+            for( String role : roles ) {
+                checkRole( subjectIdentifier, role );
+            }
+        }
+    }
+
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
         ensureSessionFactory();

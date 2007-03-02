@@ -210,12 +210,31 @@ public class AuthorizationInfo implements Serializable {
      * @see org.jsecurity.context.SecurityContext#checkPermissions(java.util.Collection)
      */
     public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
-
         if( permissions != null ) {
             for( Permission permission : permissions ) {
                 if( !implies( permission ) ) {
                    throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
                 }
+            }
+        }
+    }
+
+    /**
+     * @see org.jsecurity.context.SecurityContext#checkRole(String)
+     */
+    public void checkRole(String role) {
+        if( !hasRole( role ) ) {
+            throw new AuthorizationException( "User does not have role [" + role + "]" );
+        }
+    }
+
+    /**
+     * @see org.jsecurity.context.SecurityContext#checkRoles(Collection<String>)
+     */    
+    public void checkRoles(Collection<String> roles) {
+       if( roles != null ) {
+            for( String role : roles ) {
+                checkRole( role );
             }
         }
     }
