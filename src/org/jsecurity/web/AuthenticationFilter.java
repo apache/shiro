@@ -183,7 +183,7 @@ public class AuthenticationFilter implements Filter {
 
     private boolean isPathExcluded(String requestedPath) {
         for( String excludedPath : excludedPaths ) {
-            if( requestedPath.contains( excludedPath ) ) {
+            if( requestedPath.indexOf( excludedPath ) != -1 ) {
                 return true;
             }
         }
