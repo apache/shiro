@@ -162,7 +162,7 @@ public abstract class InstancePermission extends Permission implements Serializa
             throw new NullPointerException( msg );
         }
 
-        if ( actions.contains( WILDCARD ) ) {
+        if ( actions.indexOf( WILDCARD ) != -1 ) {
             this.actions = WILDCARD;
             this.actionsSet = new HashSet<String>(1);
             this.actionsSet.add( WILDCARD );
