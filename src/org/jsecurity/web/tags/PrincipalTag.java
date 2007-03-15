@@ -129,7 +129,7 @@ public class PrincipalTag extends SecureTag {
     public int onDoStartTag() throws JspException {
         String strValue = null;
 
-        if( getSecurityContext().isAuthenticated() ) {
+        if( getSecurityContext() != null && getSecurityContext().isAuthenticated() ) {
 
             // Get the principal to print out
             Principal principal;

@@ -34,7 +34,7 @@ public class LacksRoleTag extends RoleTag {
     }
 
     protected boolean showTagBody( String roleName ) {
-        boolean hasRole = getSecurityContext().hasRole( roleName );
+        boolean hasRole = getSecurityContext() != null && getSecurityContext().hasRole( roleName );
         return !hasRole;
     }
 

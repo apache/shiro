@@ -37,7 +37,7 @@ public class NotImpliesTag extends PermissionTag {
     }
 
     protected boolean showTagBody( Permission p ) {
-        boolean permitted = getSecurityContext().implies( p );
+        boolean permitted = getSecurityContext() != null && getSecurityContext().implies( p );
         return !permitted;
     }
 

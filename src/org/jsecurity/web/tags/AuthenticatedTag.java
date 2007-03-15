@@ -37,7 +37,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 public class AuthenticatedTag extends SecureTag {
 
     public int onDoStartTag() throws JspException {
-        if ( getSecurityContext().isAuthenticated() ) {
+        if ( getSecurityContext() != null && getSecurityContext().isAuthenticated() ) {
             return TagSupport.EVAL_BODY_INCLUDE;
         } else {
             return TagSupport.SKIP_BODY;
