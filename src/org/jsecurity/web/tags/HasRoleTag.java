@@ -33,7 +33,7 @@ public class HasRoleTag extends RoleTag {
     public HasRoleTag(){}
 
     protected boolean showTagBody( String roleName ) {
-        return getSecurityContext().hasRole( roleName );
+        return getSecurityContext() != null && getSecurityContext().hasRole( roleName );
     }
 
 }
