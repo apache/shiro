@@ -111,5 +111,5 @@ id.equals( session.getId() ) == true</pre></code>
      * reporting.
      * @return the total number of active sessions (those that haven't been stopped or expired).
      */
-    int getActiveSessionCount();
+    long getActiveSessionCount();
 }

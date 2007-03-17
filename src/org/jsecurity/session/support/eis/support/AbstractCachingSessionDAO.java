@@ -61,8 +61,8 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
     protected CacheProvider cacheProvider = null;
     protected boolean maintainStoppedSessions = false;
 
-    protected static final String ACTIVE_SESSIONS_CACHE_NAME = "jsecurity-activeSessionCache";
-    protected static final String STOPPED_SESSIONS_CACHE_NAME = "jsecurity-stoppedSessionsCache";
+    public static final String ACTIVE_SESSIONS_CACHE_NAME = "jsecurity-activeSessionCache";
+    public static final String STOPPED_SESSIONS_CACHE_NAME = "jsecurity-stoppedSessionsCache";
 
     /**
      * JavaBeans compatible constructor.  The {@link #setCacheProvider CacheProvider} property must be set and the
@@ -150,7 +150,6 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
                 log.warn( "Unable to cleanly destroy cache [" + cache + "]." );
             }
         }
-        onDestroy();
     }
 
     /**
@@ -159,6 +158,7 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
     public void destroy() {
         destroy( activeSessions );
         destroy( stoppedSessions );
+        onDestroy();
     }
 
     /**
@@ -362,7 +362,7 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
      * RDBMS query or other means.
      * @return the number of sessions in the system that are currently active (i.e. not stopped or expired).
      */
-    public int getActiveSessionCount() {
-        return ( new Long( activeSessions.getElementCount() ) ).intValue();
+    public long getActiveSessionCount() {
+        return activeSessions.getElementCount();
     }
 }

@@ -192,9 +192,7 @@ public interface SecurityContext {
 
     /**
      * Returns the application <tt>Session</tt> associated with this SecurityContext.  If no session exists when this
-     * method is called, a new session will be created and associated with this context and then returned.
-     *
-     * <p>This is a convenience method and is equivalent to calling {@link #getSession(boolean) getSession(true)}.
+     * method is called, a new session will be created, associated with this context, and then returned.
      * 
      * @see #getSession(boolean)
      *

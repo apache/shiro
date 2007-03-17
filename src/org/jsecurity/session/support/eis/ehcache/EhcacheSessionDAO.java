@@ -31,14 +31,28 @@ import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 /**
  * Provides memory caching <em>and</em> disk-based caching for production environments via Ehcache.
  *
+ * <p>This implementation is intended to be used on its own and not necessarily when a relational database will be used
+ * to store sessions.
+ *
+ * <p>However, if a RDBMS will be used to store sessions and you wish to use this class as a parent, you must override
+ * all of the parent {@link MemorySessionDAO MemorySessionDAO} methods (doCreate, doReadSession, etc) to interact w/
+ * the underlying RDBMS (e.g. via JDBC or Hibernate or JPA, etc).
+ *
+ * <p>Note that if using Hibernate or JPA for example, both of these technologies manage their own 2nd-level caching 
+ * strategies internally, and using this class as a parent would be considered redundant and probably less desireable
+ * due to the redundancy overhead.  In this case (and other EIS technologies that use their own caching mechanisms),
+ * it is probably better to implement the {@link org.jsecurity.session.support.eis.SessionDAO SessionDAO} interface
+ * explicitly instead of using this class as a parent.
+ *
+ * <p>Raw JDBC-based implementations however would probably benefit from using this class as a parent and overriding
+ * all the <tt>MemorySessionDAO</tt> parent methods as mentioned above.
+ *
  * @since 0.2
  * @author Les Hazlewood
  */
 public class EhcacheSessionDAO extends MemorySessionDAO {
 
     private CacheManager manager;
-    private String configurationResourceName = null;
-
     private boolean managerSetImplicitly = false;
 
     public EhcacheSessionDAO() {
@@ -50,16 +64,8 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
         this.manager = cacheManager;
     }
 
-    public void setConfigurationResourceName( String configurationResourceName ) {
-        this.configurationResourceName = configurationResourceName;
-    }
-
     public void init() {
         EhCacheProvider provider = (EhCacheProvider)this.cacheProvider;
-
-        if ( configurationResourceName != null ) {
-            provider.setConfigurationResourceName( configurationResourceName );
-        }
 
         if ( manager != null ) {
             provider.setCacheManager( manager );
@@ -75,16 +81,7 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
         super.init();
     }
 
-    public void destroy() {
-        super.destroy();
-        EhCacheProvider provider = (EhCacheProvider)this.cacheProvider;
-        try {
-            provider.destroy();
-        } catch (Exception e) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Unable to cleanly destroy implicitly created EhCacheProvider." );
-            }
-        }
+    public void onDestroy() {
         if ( managerSetImplicitly ) {
             setCacheManager( null );
             managerSetImplicitly = false;

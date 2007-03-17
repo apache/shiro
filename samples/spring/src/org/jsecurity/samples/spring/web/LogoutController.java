@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller responsible for logging out the current user by invoking
- * {@link org.jsecurity.context.SecurityContext#invalidate()} 
+ * {@link org.jsecurity.context.SecurityContext#invalidate()}
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -42,12 +42,10 @@ import javax.servlet.http.HttpServletResponse;
 public class LogoutController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        SecurityContext securityContext = ThreadLocalSecurityContext.current();
-
-        if( securityContext != null ) {
-            securityContext.invalidate();
+        SecurityContext secCtx = ThreadLocalSecurityContext.current();
+        if ( secCtx != null ) {
+            secCtx.invalidate();
         }
-
         return new ModelAndView( "redirect:login" );
     }
 }

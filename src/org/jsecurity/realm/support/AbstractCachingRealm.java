@@ -31,6 +31,7 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 
 import java.security.Principal;
@@ -52,7 +53,7 @@ import java.security.Principal;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class AbstractCachingRealm extends AbstractRealm implements Realm, Initializable {
+public abstract class AbstractCachingRealm extends AbstractRealm implements Realm, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -75,6 +76,7 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
      * principals.
      */
     private Cache authorizationInfoCache = null;
+    private boolean authzInfoCacheCreatedImplicitly = false;
 
     /**
      * Upon initialization, if the authorizationInfoCache is null and this attribute has been set
@@ -161,9 +163,10 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
                 }
                 cache = cacheProvider.buildCache( cacheName );
                 setAuthorizationInfoCache( cache );
+                authzInfoCacheCreatedImplicitly = true;
             } else {
                 if ( logger.isInfoEnabled() ) {
-                    logger.info( "No cache or cacheProvider set.  AuthorizationInfo caching is " +
+                    logger.info( "No cache or cacheProvider properties have been set.  AuthorizationInfo caching is " +
                             "disabled for realm [" + getName() + "]" );
                 }
             }
@@ -184,10 +187,12 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
     protected void onInit(){}
 
     /**
-     * Destroys this realm by destroying the underlying caches.
+     * Cleans up this realm's implicitly created cache.  If the cache was not created implicitly (i.e. it was set
+     * explicitly via the {@link #setAuthorizationInfoCache} method, that cache is expected to be explicitly cleaned
+     * up by the caller as well.
      */
     public void destroy() {
-        if( authorizationInfoCache != null ) {
+        if( authorizationInfoCache != null && authzInfoCacheCreatedImplicitly ) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Destroying authorization info cache for realm [" + getName() + "]");
             }
