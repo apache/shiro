@@ -41,6 +41,8 @@ import java.util.Map;
  * <p>If you need session recovery in the event of a server failure or restart, consider using
  * a file-based or RDBMS-based implementation.
  *
+ * @see org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO EhcacheSessionDAO
+ *
  * @since 0.1
  * @author Les Hazlewood
  */
@@ -50,7 +52,6 @@ public class MemorySessionDAO extends AbstractCachingSessionDAO {
         setCacheProvider( new HashtableCacheProvider() );
         setMaintainStoppedSessions( true );
     }
-
 
     protected Serializable doCreate(Session session) {
         //no need to do anything with the session - parent class persists to in-memory cache already.  Just return id:

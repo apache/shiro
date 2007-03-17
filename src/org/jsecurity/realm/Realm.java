@@ -78,7 +78,6 @@ public interface Realm extends AuthorizationOperations {
      */
     String getName();
 
-
     /**
      * Returns true if this realm can authenticate subjects with
      * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances of the specified Class,

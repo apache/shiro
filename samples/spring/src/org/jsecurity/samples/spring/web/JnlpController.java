@@ -1,8 +1,8 @@
 package org.jsecurity.samples.spring.web;
 
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -47,9 +47,16 @@ public class JnlpController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        // Assume the user is authenticated
-        Session session = ThreadLocalSecurityContext.current().getSession();
-        Assert.notNull( session, "Expected a non-null JSecurity session." );
+        SecurityContext securityContext = ThreadLocalSecurityContext.current();
+        Session session = null;
+
+        if ( securityContext != null ) {
+            session = securityContext.getSession();
+        }
+        if ( session == null ) {
+            String msg = "Expected a non-null JSecurity session.";
+            throw new IllegalArgumentException( msg );
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append( "http://" );

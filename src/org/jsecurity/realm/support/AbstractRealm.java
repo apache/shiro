@@ -73,7 +73,7 @@ public abstract class AbstractRealm implements Realm {
 
     /**
      * Password matcher used to determine if the provided password matches
-     * the password stored in the data store.  Only utilized if non-null.
+     * the password stored in the data store.
      */
     protected CredentialMatcher credentialMatcher = new PlainTextCredentialMatcher();
 
@@ -92,6 +92,34 @@ public abstract class AbstractRealm implements Realm {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    /**
+     * Returns the name assigned to this realm instance.  Names must be unique across all realms configured in the
+     * system.
+     *
+     * <p>The default implementation of this method returns the fully-qualified class name of the implementation
+     * class.  Therefore, if more than one realm exists of the same type, this method must be called to set a different
+     * value.
+     *
+     * @return the name associated with this realm instance.
+     */
+    public String getName() {
+        if( this.name == null ) {
+            return getClass().getName();
+        } else {
+            return this.name;
+        }
+    }
+
+    /**
+     * Sets the name associated with the realm instance.  Names must be unique across all realms configured in the
+     * system.
+     *
+     * <p>Unless overridden, the realm's default name is the fully qualified name of the implementation class.
+     * Therefore, if more than one realm exists of the same type, this method needs to be called to set a different
+     * value.
+     *
+     * @param name the unique name assigned to the realm instance.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -105,7 +133,7 @@ public abstract class AbstractRealm implements Realm {
      * for a given authentication attempt.  The implementation of this matcher can be switched via configuration to
      * support any number of schemes, including plain text password comparison, digest/hashing comparisons, and others.
      *
-     * <p>If not set, no crendtial checking will occur.
+     * <p>Unless overridden by this method, the default value is a {@link PlainTextCredentialMatcher} instance.
      *
      * @param credentialMatcher the matcher to use.
      */
@@ -134,7 +162,12 @@ public abstract class AbstractRealm implements Realm {
     /**
      * Sets the authenticationToken class supported by this realm.
      *
+     * <p>Unless overridden by this method, the default value is {@link UsernamePasswordToken} to support 90% of
+     * application's out of the box.
+     *
      * @param authenticationTokenClass the class of authentication token instances supported by this realm.
+     *
+     * @see #getAuthenticationTokenClass getAuthenticationTokenClass() for more explanation.
      */
     public void setAuthenticationTokenClass(Class<? extends AuthenticationToken> authenticationTokenClass) {
         this.authenticationTokenClass = authenticationTokenClass;
@@ -150,7 +183,7 @@ public abstract class AbstractRealm implements Realm {
      * datasource (RDBMS, file system, memory, etc) for the given authentication token.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with
-     * the specified token, whereby the caller (the {@link #getAuthenticationInfo} method) will then throw an
+     * the specified token, whereby this class (the {@link #getAuthenticationInfo} method) will then throw an
      * {@link UnknownAccountException} to indicate this condition.
      * 
      * @param token the authentication token containing the user's principal and credentials.
@@ -247,22 +280,6 @@ public abstract class AbstractRealm implements Realm {
         }
 
         return info;
-    }
-
-    /**
-     * The default implementation of getName() returns the fully-qualified class name if no
-     * name has been specified for this Realm.  If more than one realm of a
-     * particular Realm class is used in an application, the name must be
-     * manually specified.
-     * @return the name associated with this realm, or the fully-qualified class name
-     * of the realm implementation if a name has not been assigned.
-     */
-    public String getName() {
-        if( this.name == null ) {
-            return getClass().getName();
-        } else {
-            return this.name;
-        }
     }
 
 
