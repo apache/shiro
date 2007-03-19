@@ -27,6 +27,7 @@ package org.jsecurity.authc.support;
 
 import org.jsecurity.authc.AuthenticationInfo;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import java.util.List;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SimpleAuthenticationInfo implements AuthenticationInfo {
+public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
