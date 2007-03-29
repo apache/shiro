@@ -27,10 +27,13 @@ package org.jsecurity.session.support;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
-import org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO;
 import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO;
+import org.jsecurity.session.support.eis.support.MemorySessionDAO;
+import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
+import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Destroyable;
+import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -47,6 +50,8 @@ import java.util.Date;
 public class DefaultSessionManager extends AbstractSessionManager
         implements ValidatingSessionManager, Destroyable {
 
+    private static final String EHCACHE_VALID_CLASS_NAME = "net.sf.ehcache.CacheManager";
+
     /**
      * Validator used to validate sessions on a regular basis.
      * By default, the session manager will use Quartz to schedule session validation, but this
@@ -61,21 +66,76 @@ public class DefaultSessionManager extends AbstractSessionManager
         setSessionClass( SimpleSession.class );
     }
 
+    private boolean isEhcacheAvailable() {
+        return ClassUtils.isAvailable( EHCACHE_VALID_CLASS_NAME );
+    }
+
+    /**
+     * Creates a default <tt>SessionDAO</tt> during {@link #init initialization} as a fail-safe mechanism if one has
+     * not already been explicitly set via {@link #setSessionDAO}.
+     *
+     * <p>This default implementation tries to use an {@link EhcacheSessionDAO EhcacheSessionDAO} instance by default if
+     * <a href="">Ehcache</a> is in the classpath.  If ehcache is not in the classpath, a
+     * {@link org.jsecurity.session.support.eis.support.MemorySessionDAO} will be used instead.
+     *
+     * <p><b>N.B.</b> The MemorySessionDAO implementation is not production capable, as it maintains all sessions in
+     * memory (never removed, eating up memory over time) and loses session after server restarts.  It is really only
+     * suitable during testing.  For production environments, please ensure
+     * that you either have the <tt>ehcache</tt> jar in the classpath, or explicitly set a SessionDAO via the
+     * {@link #setSessionDAO} method so a sensible default will be used.
+     *
+     * @return a lazily created SessionDAO instance.
+     */
+    protected SessionDAO createSessionDAO() {
+        SessionDAO dao = null;
+
+        if ( log.isDebugEnabled() ) {
+            log.debug( "No sessionDAO set.  Attempting to create default instance." );
+        }
+        if ( isEhcacheAvailable() ) {
+            if ( log.isDebugEnabled() ) {
+                String msg = "Ehcache found in the classpath.  Using default EhcacheSessionDAO implementation.";
+                log.debug( msg );
+            }
+            dao = new EhcacheSessionDAO();
+        } else {
+            if ( log.isWarnEnabled() ) {
+                String msg = "Ehcache is not in the classpath.  JSecurity's default production-quality session " +
+                        "DAO is implemented w/ Ehcache.  Defaulting to a simple memory-based DAO, but this should " +
+                        "NOT be used in a production environment.  Please either put ehcache.jar in the classpath " +
+                        "or set a production-quality implementation explicitly via the " + getClass().getName() +
+                        "#setSessionDAO method.";
+                log.warn( msg );
+            }
+            dao = new MemorySessionDAO();
+        }
+        this.sessionDAOImplicitlyCreated = true;
+        return dao;
+    }
+
     public void init() {
 
         SessionDAO sessionDAO = getSessionDAO();
         if ( sessionDAO == null ) {
+            sessionDAO = createSessionDAO();
+            setSessionDAO( sessionDAO );
             if ( log.isDebugEnabled() ) {
-                log.debug( "No sessionDAO set.  Defaulting to EhcacheSessionDAO instance." );
+                log.debug( "No sessionDAO set.  Attempting to create default instance." );
             }
-            EhcacheSessionDAO ehcacheSessionDAO = new EhcacheSessionDAO();
-            setSessionDAO( ehcacheSessionDAO );
-            sessionDAOImplicitlyCreated = true;
-
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing EhcacheSessionDAO instance..." );
+            if ( sessionDAOImplicitlyCreated && (sessionDAO instanceof Initializable ) ) {
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Initializing implicitly created instance..." );
+                }
+                try {
+                    ((Initializable)sessionDAO).init();
+                    if ( log.isDebugEnabled() ) {
+                        log.debug( "Initializing default instance..." );
+                    }
+                } catch (Exception e) {
+                    String msg = "Unable to initialize sessionDAO [" + sessionDAO + "]";
+                    throw new IllegalStateException( msg );
+                }
             }
-            ehcacheSessionDAO.init();
         }
 
         super.init();
