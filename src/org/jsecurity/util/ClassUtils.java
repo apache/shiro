@@ -49,4 +49,13 @@ public class ClassUtils {
         }
     }
 
+    public static boolean isAvailable( String fullyQualifiedClassName ) {
+        try {
+            forName( fullyQualifiedClassName );
+            return true;
+        } catch (UnknownClassException e) {
+            return false;
+        }
+    }
+
 }
