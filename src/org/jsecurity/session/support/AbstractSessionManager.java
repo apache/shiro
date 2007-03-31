@@ -136,13 +136,10 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
      * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
      * so desired.
      *
-     * <p>
-     *   <ul>
+     * <ul>
      *     <li>A negative return value means sessions never expire.</li>
-     *     <li>A <tt>zero</tt> return value means sessions expire immediately.</li>
-     *     <li>A positive return alue indicates normal session timeout will be calculated.</li>
-     *   </ul>
-     * </p>
+     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
+     * </ul>
      *
      * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
      * 60 * 30 (30 minutes).
@@ -202,13 +199,19 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
 
     /**
      * Ensures the originatingHost is a value allowed by the system for session interaction.
-     * Default implementation just ensures the value is not null.  Subclasses may override this
+     *
+     * <p>The default implementation just ensures the value is not null and throws an
+     * {@link IllegalArgumentException} if this is the case.
+     *
+     * <p>Subclasses may override this
      * method to do any number of checks, such as ensuring the originatingHost is in a valid
      * range, part of a particular subnet, or configured in the database as a valid IP.
+     * 
      * @param originatingHost the originating host address associated with the session
      * creation attempt.
+     * @throws IllegalArgumentException if the originatingHost argument is <tt>null</tt>
      */
-    protected void validate( InetAddress originatingHost ) throws IllegalArgumentException {
+    protected void validate( InetAddress originatingHost ) {
         if ( originatingHost == null ) {
             String msg = "originatingHost argument is null.  A valid non-null originating " +
                          "host address must be specified when initiating a session";
@@ -397,6 +400,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
      * <tt>Session</tt> and determine per-user timeout settings in a specific manner.
      *
      * @param session the session for which to determine if timeout expiration is enabled.
+     * @return true if expiration is enabled for the specified session, false otherwise.
      */
     protected boolean isExpirationEnabled( Session session ) {
         return true;
@@ -408,13 +412,10 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
      * <p>Most overriding implementations usually infer a user or user id from the specified
      * <tt>Session</tt> and determine per-user timeout values in a specific manner.
      *
-     * <p>
-     *   <ul>
+     * <ul>
      *     <li>A negative return value means the session does not time-out/expire.</li>
-     *     <li>A <tt>zero</tt> return value means the session should expire immediately (of little value).</li>
-     *     <li>A positive return alue indicates normal session timeout will be calculated.</li>
-     *   </ul>
-     * </p>
+     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li> 
+     * </ul>
      *
      * <p>Default implementation returns the
      * {@link #getGlobalSessionTimeout() global session timeout} for all sessions.
@@ -428,7 +429,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
 
     /**
      * Determines if the specified session is expired.
-     * @param session
+     * @param session the persistent pojo Session implementation to check for expiration.
      * @return true if the specified session has expired, false otherwise.
      */
     protected boolean isExpired( Session session ) {
@@ -469,14 +470,14 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
                 Date expireTime = new Date( expireTimeMillis );
                 return lastAccessTime.before( expireTime );
             } else {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "No timeout for session with id [" + session.getSessionId() +
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "No timeout for session with id [" + session.getSessionId() +
                               "].  Session is not considered expired." );
                 }
             }
         } else {
-            if ( log.isInfoEnabled() ) {
-                log.info( "Time-out is disabled for Session with id [" + session.getSessionId() +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Time-out is disabled for Session with id [" + session.getSessionId() +
                           "].  Session is not expired." );
             }
         }
@@ -507,14 +508,27 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     public boolean isExpired( Serializable sessionId ) {
-        return retrieveSession( sessionId ).isExpired();
+        Session s = retrieveSession( sessionId );
+        boolean expired = isExpired( s );
+        if ( expired ) {
+            //ensure the persistent object reflects this state:
+            if ( !s.isExpired() ) {
+                expire( s );
+            }
+        }
+        return expired;
+    }
+
+    protected Session retrieveSessionForUpdate( Serializable sessionId ) throws InvalidSessionException {
+        Session s = retrieveAndValidateSession( sessionId );
+        onTouch( s );
+        return s;
     }
 
     protected void onTouch( Session session ){}
 
     public void touch( Serializable sessionId ) throws InvalidSessionException {
-        Session s = retrieveAndValidateSession( sessionId );
-        onTouch( s );
+        Session s = retrieveSessionForUpdate( sessionId );
         sessionDAO.update( s );
     }
 
@@ -523,22 +537,30 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     public void stop( Serializable sessionId ) throws InvalidSessionException {
-        Session s = retrieveAndValidateSession( sessionId );
+        Session s = retrieveSessionForUpdate( sessionId );
         stop( s );
     }
 
     public Object getAttribute( Serializable sessionId, Object key )
         throws InvalidSessionException {
-        return retrieveAndValidateSession( sessionId ).getAttribute( key );
+        Session s = retrieveSessionForUpdate( sessionId );
+        Object value = s.getAttribute( s );
+        sessionDAO.update( s );
+        return value;
     }
 
     public void setAttribute( Serializable sessionId, Object key, Object value )
         throws InvalidSessionException {
-        retrieveAndValidateSession( sessionId ).setAttribute( key, value );
+        Session s = retrieveSessionForUpdate( sessionId );
+        s.setAttribute( key, value );
+        sessionDAO.update( s );
     }
 
     public Object removeAttribute( Serializable sessionId, Object key )
         throws InvalidSessionException {
-        return retrieveAndValidateSession( sessionId ).removeAttribute( key );
+        Session s = retrieveSessionForUpdate( sessionId );
+        Object removed = s.removeAttribute( key );
+        sessionDAO.update( s );
+        return removed;
     }
 }
