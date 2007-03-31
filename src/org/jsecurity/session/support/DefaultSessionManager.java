@@ -187,9 +187,14 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     protected void onStop( Session session ) {
         if ( log.isTraceEnabled() ) {
-            log.trace( "Updating destroy time of session with id [" + session.getSessionId() + "]" );
+            log.trace( "Updating last access and destroy time of session with id [" + session.getSessionId() + "]" );
         }
-        ((SimpleSession)session).setStopTimestamp( new Date() );
+        // when properly stopping a session, it makes sense (for most systems) that the stop time and last access time
+        // are the same:
+        Date timestamp = new Date();
+        SimpleSession simpleSession = (SimpleSession)session;
+        simpleSession.setLastAccessTime( timestamp );
+        simpleSession.setStopTimestamp( timestamp );
     }
 
     protected void onExpire( Session session ) {

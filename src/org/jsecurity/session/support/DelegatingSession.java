@@ -24,7 +24,7 @@
  */
 package org.jsecurity.session.support;
 
-import org.jsecurity.session.ExpiredSessionException;
+import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionManager;
 
@@ -168,28 +168,28 @@ public class DelegatingSession implements Session {
     /**
      * @see org.jsecurity.session.Session#touch()
      */
-    public void touch() throws ExpiredSessionException {
+    public void touch() throws InvalidSessionException {
         sessionManager.touch( sessionId );
     }
 
     /**
      * @see org.jsecurity.session.Session#stop()
      */
-    public void stop() throws ExpiredSessionException {
+    public void stop() throws InvalidSessionException {
         sessionManager.stop( sessionId );
     }
 
     /**
      * @see Session#getAttribute(Object key)
      */
-    public Object getAttribute( Object key ) throws ExpiredSessionException {
+    public Object getAttribute( Object key ) throws InvalidSessionException {
         return sessionManager.getAttribute( sessionId, key );
     }
 
     /**
      * @see Session#setAttribute(Object key, Object value)
      */
-    public void setAttribute( Object key, Object value ) throws ExpiredSessionException {
+    public void setAttribute( Object key, Object value ) throws InvalidSessionException {
         if ( value == null ) {
             removeAttribute( key );
         } else {
@@ -200,7 +200,7 @@ public class DelegatingSession implements Session {
     /**
      * @see Session#removeAttribute(Object key)
      */
-    public Object removeAttribute( Object key ) throws ExpiredSessionException {
+    public Object removeAttribute( Object key ) throws InvalidSessionException {
         return sessionManager.removeAttribute( sessionId, key );
     }
 }

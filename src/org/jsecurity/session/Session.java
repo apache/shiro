@@ -134,24 +134,24 @@ public interface Session {
      * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session.  This
      * method can be used to ensure a session does not time out.
      *
-     * <p>Most programmers won't use
-     * this method explicitly and will instead rely on a framework to update the last access time
-     * transparently, such as during a remote procedure call or upon a web request.
+     * <p>Most programmers won't use this method explicitly and will instead rely calling the other Session methods
+     * to update the time transparently, or on a framework during a remote procedure call or upon a web request.
      *
-     * <p>This method is particularly useful when supporting rich-client applications such as
-     * Java Web Start apps or Java applets.  Although rare, it is possible in a rich-client
+     * <p>This method is particularly useful however when supporting rich-client applications such as
+     * Java Web Start appp, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
      * environment that a user continuously interacts with the client-side application without a
      * server-side method call ever being invoked.  If this happens over a long enough period of
-     * time, the user's session could time-out.  Again, such cases are rare since most
+     * time, the user's server-side session could time-out.  Again, such cases are rare since most
      * rich-clients frequently require server-side method invocations.
      *
      * <p>In this example though, the user's session might still be considered valid because
      * the user is actively &quot;using&quot; the application, just not communicating with the
      * server. But because no server-side method calls are invoked, there is no way for the server
      * to know if the user is sitting idle or not, so it must assume so to maintain session
-     * integrity.  This method could be invoked by the rich-client application code during those
+     * integrity.  The touch method could be invoked by the rich-client application code during those
      * times to ensure that the next time a server-side method is invoked, the invocation will not
-     * throw an {@link ExpiredSessionException ExpiredSessionException}.
+     * throw an {@link ExpiredSessionException ExpiredSessionException}.  In short terms, it could be used periodically
+     * to ensure a session does not time out.
      *
      * <p>How often this rich-client &quot;maintenance&quot; might occur is entirely dependent upon
      * the application and would be based on variables such as session timeout configuration,
@@ -167,16 +167,16 @@ public interface Session {
      * Explicitly stops this session and releases all associated resources.
      *
      * <p>If this session has already been authenticated (i.e. the user associated with this
-     * session has logged-in),
+     * session has logged-in and has a {@link org.jsecurity.context.SecurityContext SecurityContext} ),
      * this method should only be called during the logout process, when it is
      * considered a graceful operation.
      *
-     * <p>Calling this method on an authenticated
-     * session <em>without</em> first logging the user out is considered an ungraceful operation,
-     * as doing so prevents system from updating session data indicating that the user
-     * explicitly logged out.
-     *
-     * <p>If the session has not yet been authenticated, this method may be called at any time.
+     * <p><b>N.B.</b> Under most applications' circumstances, it is usually far better to stop the session implicitly
+     * by invalidating the 'owning'
+     * <tt>SecurityContext</tt> instead.  This is done by calling the
+     * {@link org.jsecurity.context.SecurityContext#invalidate SecurityContext#invalidate} method, since
+     * <tt>invalidate</tt> is expected to stop the corresponding session automatically, and also allows the framework
+     * to do any other additional cleanup.
      *
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      * this method.
