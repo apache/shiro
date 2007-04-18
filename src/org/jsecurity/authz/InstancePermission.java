@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
  *
  * means that any <tt>role</tt> assigned that permission would have
  * the ability to "read" (view) and "write" (change) the user account data for the user with the
- * system id <tt>aUser.getId()</tt>.  Such a permission would usually be associated with the user
+ * system id <tt>aUser.getId()</tt>.  Such a permission might be associated with the user
  * account with the same Id, so the user could edit their own account information.
  *
  * <p>Finally, this instance:
@@ -70,10 +70,13 @@ import java.util.regex.Pattern;
  * ability to do anything (create, read, update, delete) <em>any</em> user account.  Such a
  * permission would generally be assigned to an administrative role.
  *
+ * @deprecated Extend the {@link AbstractPermission AbstractPermission} class instead.  This class will be removed in
+ * a future JSecurity release.
+ *
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class InstancePermission extends Permission implements Serializable, Cloneable {
+public abstract class InstancePermission extends Permission implements Serializable, Cloneable, org.jsecurity.authz.Permission {
 
     /**
      * Used to specify all instances of an object type when used in the {@link #getName() name/target}
@@ -131,7 +134,7 @@ public abstract class InstancePermission extends Permission implements Serializa
      * all actions specified must be a perfect subset of those in the
      * {@link #getPossibleActions() possibleActions} Set.  If all actions are to be set, the
      * {@link #WILDCARD wildcard} character may be specified instead of explicitly listing each
-     * action explicitly.
+     * action.
      *
      * @param targetName - the logical name (unique identifier) of the permission's target instance
      * @param actions - a comma-delimited string of actions understood
@@ -159,7 +162,7 @@ public abstract class InstancePermission extends Permission implements Serializa
 
         if ( actions == null ) {
             String msg = "actions parameter cannot be null";
-            throw new NullPointerException( msg );
+            throw new IllegalArgumentException( msg );
         }
 
         if ( actions.indexOf( WILDCARD ) != -1 ) {
@@ -245,7 +248,7 @@ public abstract class InstancePermission extends Permission implements Serializa
      * <p>Since this Set never changes for any given InstancePermission subclass, the returned Set
      * should be constructed via a static initializer that will be executed when the class
      * is loaded by the class loader.  This ensures the Set is only constructed once for
-     * <em>all</em> instances, increasing overall performance.
+     * <em>all</em> instances, better for performance.
      *
      * <p>E.g.:
      *
@@ -292,6 +295,15 @@ public abstract class InstancePermission extends Permission implements Serializa
         return implies;
     }
 
+
+    public Serializable getTargetId() {
+        return getTargetName();
+    }
+
+    public String getTargetName() {
+        return getName();
+    }
+
     /**
      * Returns a string describing this Permission.  The convention is to
      * specify the class name, the permission name, and the actions in
@@ -318,10 +330,10 @@ public abstract class InstancePermission extends Permission implements Serializa
         }
 
         if ( o instanceof InstancePermission ) {
-            InstancePermission ep = (InstancePermission)o;
-            return ( getClass().getName().equals( ep.getClass().getName() ) ) &&
-                   ( getName() != null ? getName().equals(ep.getName()) : ep.getName() == null ) &&
-                   ( this.actions != null ? this.actions.equals( ep.actions ) : ep.actions == null );
+            InstancePermission ip = (InstancePermission)o;
+            return ( getClass().getName().equals( ip.getClass().getName() ) ) &&
+                   ( getName() != null ? getName().equals(ip.getName()) : ip.getName() == null ) &&
+                   ( this.actions != null ? this.actions.equals( ip.actions ) : ip.actions == null );
         }
 
         return false;

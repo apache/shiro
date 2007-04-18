@@ -132,7 +132,7 @@ public interface AuthorizationOperations {
      * permissions are associated with the subject.
      *
      * <p>More specifically, this method should determine if each <tt>Permission</tt> in
-     * the array is {@link Permission#implies(java.security.Permission) implied by} permissions
+     * the array is {@link java.security.Permission#implies(java.security.Permission) implied by} permissions
      * already associated with the subject.
      *
      * <p>This is primarily a performance-enhancing method to help reduce the number of
@@ -159,7 +159,7 @@ public interface AuthorizationOperations {
      * specified permissions.
      *
      * <p>More specifically, this method should determine if <em>all</em> of the given
-     * <tt>Permission</tt>s are {@link Permission#implies(java.security.Permission) implied by}
+     * <tt>Permission</tt>s are {@link java.security.Permission#implies(java.security.Permission) implied by}
      * permissions already associated with the subject.
      *
      * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
@@ -177,9 +177,9 @@ public interface AuthorizationOperations {
 
     /**
      * A convenience method to ensure a subject (and/or user)
-     * {@link Permission#implies(java.security.Permission) implies} the specified <tt>Permission</tt>.
+     * {@link java.security.Permission#implies(java.security.Permission) implies} the specified <tt>Permission</tt>.
      * If the subject's exisiting associated permissions do not
-     * {@link Permission#implies(java.security.Permission) imply} the given permission,
+     * {@link java.security.Permission#implies(java.security.Permission) imply} the given permission,
      * an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      *
      * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
@@ -198,10 +198,10 @@ public interface AuthorizationOperations {
 
     /**
      * A convenience method to ensure a subject (and/or user)
-     * {@link Permission#implies(java.security.Permission) implies} <em>all</em> of the
+     * {@link java.security.Permission#implies(java.security.Permission) implies} <em>all</em> of the
      * specified <tt>Permission</tt>s.
      * If the subject's exisiting associated permissions do not
-     * {@link Permission#implies(java.security.Permission) imply} <em>all</em> of the given permissions,
+     * {@link java.security.Permission#implies(java.security.Permission) imply} <em>all</em> of the given permissions,
      * an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
      * for the subject to check (usually a user id or username).

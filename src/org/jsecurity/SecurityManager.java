@@ -34,9 +34,10 @@ import org.jsecurity.session.SessionFactory;
 import java.util.List;
 
 /**
- * A <tt>SecurityManager</tt> is a convenience mechanism - it extends both the {@link Authenticator} and
- * {@link Authorizer} interfaces, thereby consolidating both behaviors into one.  This allows applications to
- * interact with a single component for most JSecurity operations should they choose to do so.
+ * A <tt>SecurityManager</tt> is a convenience mechanism - it extends the {@link Authenticator},
+ * {@link Authorizer}, {@link SessionFactory} and {@link AuthorizationOperations} interfaces, thereby consolidating
+ * these behaviors into a single interface.  This allows applications to interact with a single
+ * <tt>SecurityManager</tt> component for most JSecurity operations should they choose to do so.
  *
  * @see DefaultSecurityManager
  *

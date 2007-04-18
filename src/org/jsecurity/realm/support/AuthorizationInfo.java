@@ -229,7 +229,7 @@ public class AuthorizationInfo implements Serializable {
     }
 
     /**
-     * @see org.jsecurity.context.SecurityContext#checkRoles(Collection<String>)
+     * @see org.jsecurity.context.SecurityContext#checkRoles
      */    
     public void checkRoles(Collection<String> roles) {
        if( roles != null ) {

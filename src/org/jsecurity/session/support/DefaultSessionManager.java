@@ -128,12 +128,9 @@ public class DefaultSessionManager extends AbstractSessionManager
                 }
                 try {
                     ((Initializable)sessionDAO).init();
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Initializing default instance..." );
-                    }
                 } catch (Exception e) {
                     String msg = "Unable to initialize sessionDAO [" + sessionDAO + "]";
-                    throw new IllegalStateException( msg );
+                    throw new IllegalStateException( msg, e );
                 }
             }
         }
