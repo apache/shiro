@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.tags;
 
-import java.security.Permission;
+import org.jsecurity.authz.Permission;
 
 /**
  * @since 0.1

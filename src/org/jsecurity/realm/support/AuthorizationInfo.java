@@ -27,10 +27,10 @@ package org.jsecurity.realm.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
 
 import java.io.Serializable;
-import java.security.Permission;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -139,7 +139,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see SecurityContext#implies(java.security.Permission)
+     * @see SecurityContext#implies(Permission)
      */
     public boolean implies(Permission permission) {
 
@@ -197,7 +197,7 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see org.jsecurity.context.SecurityContext#checkPermission(java.security.Permission)
+     * @see org.jsecurity.context.SecurityContext#checkPermission(Permission)
      */
     public void checkPermission(Permission permission) throws AuthorizationException {
         if( !implies( permission ) ) {

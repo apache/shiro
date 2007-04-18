@@ -25,7 +25,6 @@
 package org.jsecurity.authz;
 
 import java.io.Serializable;
-import java.security.Permission;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -76,7 +75,7 @@ import java.util.regex.Pattern;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class InstancePermission extends Permission implements Serializable, Cloneable, org.jsecurity.authz.Permission {
+public abstract class InstancePermission extends java.security.Permission implements Serializable, Cloneable, org.jsecurity.authz.Permission {
 
     /**
      * Used to specify all instances of an object type when used in the {@link #getName() name/target}

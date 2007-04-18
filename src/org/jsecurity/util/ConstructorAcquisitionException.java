@@ -27,7 +27,7 @@ package org.jsecurity.util;
 import org.jsecurity.JSecurityException;
 
 /**
- * Exception thrown when trying to construct a {@link java.security.Permission Permission} via reflection, and
+ * Exception thrown when trying to construct a {@link org.jsecurity.authz.Permission Permission} via reflection, and
  * JSecurity can't find a suitable constructor with which to instantiate the Permission class.
  *
  * @since 0.1
