@@ -25,9 +25,8 @@
 
 package org.jsecurity.util;
 
+import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
-
-import java.security.Permission;
 
 /**
  * Utility object that can be used for templating frameworks such as

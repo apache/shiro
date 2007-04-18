@@ -27,6 +27,7 @@ package org.jsecurity.realm.support.jdbc;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.realm.support.AbstractCachingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.util.JdbcUtils;
@@ -34,7 +35,6 @@ import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.UsernamePrincipal;
 
 import javax.sql.DataSource;
-import java.security.Permission;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

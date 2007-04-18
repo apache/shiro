@@ -25,7 +25,8 @@
 
 package org.jsecurity.realm.support;
 
-import java.security.Permission;
+import org.jsecurity.authz.Permission;
+
 import java.util.Collection;
 
 /**

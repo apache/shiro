@@ -25,12 +25,12 @@
 
 package org.jsecurity.authz.annotation;
 
+import org.jsecurity.authz.Permission;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.security.Permission;
-
 
 /**
  * <p>
@@ -66,7 +66,7 @@ public @interface PermissionsRequired {
 
     /**
      * The permission class used to construct a <tt>Permission</tt> object which will be used
-     * during an {@link org.jsecurity.context.SecurityContext#checkPermission(java.security.Permission) SecurityContext.checkPermission}  check.
+     * during an {@link org.jsecurity.context.SecurityContext#checkPermission(Permission) SecurityContext.checkPermission}  check.
      */
     Class<? extends Permission> type();
 
@@ -92,13 +92,13 @@ public @interface PermissionsRequired {
      *
      * <p>This property is ignored if the {@link #targetPath} property is specified.
      *
-     * @see java.security.Permission#getName()
+     * @see Permission#getTargetId()
      */
     String target() default "*";
 
     /**
      * Uses the {@link Object#toString() toString()} value of the object at the specified
-     * path as the <tt>Permission {@link Permission#getName() name}</tt> to use during
+     * path as the <tt>Permission {@link Permission#getTargetId() targetId}</tt> to use during
      * <tt>Permission</tt> construction.
      *
      * <p>The objects in this path must conform to property getter and setter naming conventions
@@ -149,8 +149,8 @@ public @interface PermissionsRequired {
      * public void saveUser( User aUser ) { ... }</pre>
      *
      * <p>This annotation declares that a <tt>my.pkg.security.UserPermission</tt> instance with
-     * {@link Permission#getName() name} <tt>aUser.getId().toString()</tt> and
-     * {@link Permission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
+     * {@link Permission#getTargetId() targetId} <tt>aUser.getId().toString()</tt> and
+     * {@link org.jsecurity.authz.AbstractPermission#getActionsString actionsString} &quot;create&quot;,&quot;update&quot; will be created and
      * verified by {@link org.jsecurity.context.SecurityContext#checkPermission(Permission)}.
      *
      * <p>Therefore the above annotation could be read as:</p>

@@ -26,13 +26,12 @@ package org.jsecurity.authz.module.support;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.authz.AuthorizedAction;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.util.PermissionUtils;
-
-import java.security.Permission;
 
 /**
  * AuthorizationModule that votes on authorization based on any {@link

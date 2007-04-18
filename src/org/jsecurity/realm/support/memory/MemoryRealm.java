@@ -31,13 +31,13 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.realm.support.AbstractRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.UsernamePrincipal;
 
 import java.lang.reflect.Constructor;
-import java.security.Permission;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;

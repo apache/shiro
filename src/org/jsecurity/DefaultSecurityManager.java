@@ -31,10 +31,7 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.support.ModularRealmAuthenticator;
-import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.Authorizer;
-import org.jsecurity.authz.HostUnauthorizedException;
+import org.jsecurity.authz.*;
 import org.jsecurity.authz.module.support.AnnotationsModularAuthorizer;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
@@ -49,7 +46,6 @@ import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
 

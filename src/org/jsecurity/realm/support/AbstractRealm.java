@@ -32,9 +32,9 @@ import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoAuthorizationInfoFoundException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.realm.Realm;
 
-import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;

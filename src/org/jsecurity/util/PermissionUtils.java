@@ -26,9 +26,9 @@ package org.jsecurity.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authz.Permission;
 
 import java.lang.reflect.Constructor;
-import java.security.Permission;
 
 /**
  * @since 0.1

@@ -27,12 +27,12 @@ package org.jsecurity.context.support;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
 import java.net.InetAddress;
-import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
 

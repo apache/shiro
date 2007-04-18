@@ -2,12 +2,12 @@ package org.jsecurity.context.support;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.NoSuchPrincipalException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
-import java.security.Permission;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
