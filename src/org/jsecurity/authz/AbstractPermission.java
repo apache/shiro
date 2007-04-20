@@ -66,6 +66,15 @@ public abstract class AbstractPermission implements Permission, Serializable {
 
     private static final Pattern DELIMITER_SPLIT_PATTERN = Pattern.compile( "[,; ][ ]*" );
 
+    private static final Set<String> WILDCARD_SET = initWildcardSet();
+
+
+    private static Set<String> initWildcardSet() {
+        Set<String> set = new LinkedHashSet<String>( 1 );
+        set.add( WILDCARD );
+        return set;
+    }
+
     /**
      * The actions of an instance of this class, which is a
      * perfect subset of the <code>getPossibleActions</code> Set. It is constructed
@@ -75,6 +84,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
     private String actionsString = null; //cached version of the actions set in canonical form
 
     public AbstractPermission() {
+        this( WILDCARD, WILDCARD_SET );
     }
 
     public AbstractPermission( Serializable targetId, Set<String> actions ) {
@@ -181,9 +191,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
     }
 
     /**
-     * Returns this permission's actions in <em>canonical order</em>
-     *
-     * @return the set of actions for this permission.
+     * @see org.jsecurity.authz.Permission#getActions
      */
     public Set<String> getActions() {
         return this.actions;
