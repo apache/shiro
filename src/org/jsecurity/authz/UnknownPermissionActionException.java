@@ -27,8 +27,8 @@ package org.jsecurity.authz;
 import org.jsecurity.JSecurityException;
 
 /**
- * An exception thrown when an {@link InstancePermission} is constructed with an element in the
- * actions string that is unknown to the <tt>InstancePermission</tt> implementation.
+ * An exception thrown when a {@link Permission} is constructed with an element in the
+ * actions set (or String) that is unknown to the <tt>Permission</tt> implementation.
  *
  * @since 0.1
  * @author Les Hazlewood

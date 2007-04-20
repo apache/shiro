@@ -25,6 +25,7 @@
 package org.jsecurity.authz;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * A Permission represents access to a specific type of resource or ability to perform an action.  It is the most
@@ -109,6 +110,28 @@ public interface Permission {
      * @return the {@link #getTargetId() permission target's identifier} in a convenient string format.
      */
     String getTargetName();
+
+    /**
+     * Returns all actions represented by a permission instance associated with the {@link #getTargetId target}, or
+     * <tt>null</tt> if there are none.
+     *
+     * @return all actions represented by a permission instance associated with the {@link #getTargetId target}, or 
+     * <tt>null</tt> if there are none.
+     */
+    Set<String> getActions();
+
+    /**
+     * Returns the canonically ordered String containing all actions represented by a permission
+     * instance, or <tt>null</tt> if there no actions.  The string must be composed of, and match exactly, those
+     * actions in the {@link #getActions actions} set. 
+     *
+     * <p>For example, a FilePermission class might have the possible actions of <tt>read</tt>, <tt>write</tt>, and
+     * <tt>execute</tt>.  If there were a FilePermission for with a target of <tt>/home/jsmith</tt>, a FilePermission
+     * instance for that file might return an actionsString of &quot;read,write&quot; only.
+     *
+     * @return the canonically ordered string representation of this instance's permission actions.
+     */
+    String getActionsString();
 
     boolean implies( Permission p );
 
