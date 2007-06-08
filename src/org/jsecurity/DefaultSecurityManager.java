@@ -62,8 +62,9 @@ import java.util.*;
  * <tt>SecurityManager</tt> instance.
  *
  * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.ModularRealmAuthenticator} is created using
- * the configured realms for the authenticator.  At least one
- * realm must be configured before {@link #init()} is called for this manager to function properly.</p>
+ * the configured realms for the authenticator, (at least one
+ * realm must be configured before {@link #init()} is called for this manager to function properly).</p>
+ *
  * <p><b>Note:</b> <ol><li>Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
  * {@link org.jsecurity.authz.module.support.AnnotationsModularAuthorizer} instance to simplify configuration; if you
  * don't want to use JDK 1.5+ annotataions for authorization checks, you'll need to inject another implementation or 

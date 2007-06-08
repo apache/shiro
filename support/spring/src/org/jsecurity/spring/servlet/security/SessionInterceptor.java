@@ -26,32 +26,31 @@ package org.jsecurity.spring.servlet.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.web.WebSessionFactory;
-import org.jsecurity.web.WebUtils;
-import org.jsecurity.web.support.DefaultWebSessionFactory;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
-
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.jsecurity.web.WebSessionFactory;
+import org.jsecurity.web.WebUtils;
+import org.jsecurity.web.support.DefaultWebSessionFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * Ensures a JSecurity {@link Session Session} exists for an incoming {@link HttpServletRequest}.
- *
+ * <p/>
  * <p>If an existing <tt>Session</tt> can be found that is already associated with the client
  * executing the <tt>HttpServletRequest</tt>, it will be retrieved and made accessible.
- *
+ * <p/>
  * <p>If no existing <tt>Session</tt> could be associated with the <tt>HttpServletRequest</tt>,
  * this interceptor will create a new one, associate it with the <tt>request</tt>'s corresponding
  * client, and be made accessible to the JSecurity framework for the duration of the
  * request (i.e. via a {@link ThreadLocal ThreadLocal}).
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public class SessionInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
 
@@ -59,7 +58,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter implements Ini
 
     private WebSessionFactory webSessionFactory = null;
     private SessionFactory sessionFactory = null;
-                                    
+
     public void setWebSessionFactory( WebSessionFactory webSessionFactory ) {
         this.webSessionFactory = webSessionFactory;
     }
@@ -92,8 +91,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter implements Ini
                 }
                 session = webSessionFactory.start( request, response );
                 if ( log.isDebugEnabled() ) {
-                    log.debug( "Created new JSecurity Session with id [" +
-                               session.getSessionId() + "]");
+                    log.debug( "Created new JSecurity Session with id [" + session.getSessionId() + "]" );
                 }
             } else {
                 //update last accessed time:
@@ -104,8 +102,7 @@ public class SessionInterceptor extends HandlerInterceptorAdapter implements Ini
 
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Request JSecurity Session is invalid, message: [" +
-                           ise.getMessage() + "].");
+                log.trace( "Request JSecurity Session is invalid, message: [" + ise.getMessage() + "]." );
             }
             continueProcessing = handleInvalidSession( request, response, handler, ise );
         }
@@ -131,13 +128,13 @@ public class SessionInterceptor extends HandlerInterceptorAdapter implements Ini
 
         if ( log.isTraceEnabled() ) {
             log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's incoming " +
-                "referenced session has expired." );
+                       "referenced session had expired." );
         }
         request.setAttribute( WebUtils.EXPIRED_SESSION_KEY, Boolean.TRUE );
 
+
         return true;
     }
-
 
 
 }

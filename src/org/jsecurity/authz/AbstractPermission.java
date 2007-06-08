@@ -49,10 +49,8 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractPermission implements Permission, Serializable {
 
-    private Serializable targetId = null;
-
     /**
-     * Used to specify all instances of an object type when used in the {@link #getTargetId() targetId}
+     * Used to specify all instances of an object type when used in the {@link #getTargetName() targetName}
      * field or all permission actions when used in the {@link #getActions actions} field.
      */
     public static final String WILDCARD = "*";
@@ -66,42 +64,36 @@ public abstract class AbstractPermission implements Permission, Serializable {
 
     private static final Pattern DELIMITER_SPLIT_PATTERN = Pattern.compile( "[,; ][ ]*" );
 
-    private static final Set<String> WILDCARD_SET = initWildcardSet();
-
-
-    private static Set<String> initWildcardSet() {
-        Set<String> set = new LinkedHashSet<String>( 1 );
-        set.add( WILDCARD );
-        return set;
-    }
-
+    private String targetName = null;
     /**
      * The actions of an instance of this class, which is a
      * perfect subset of the <code>getPossibleActions</code> Set. It is constructed
      * by this class during the setActions method
      */
-    private Set<String> actions = null;
-    private String actionsString = null; //cached version of the actions set in canonical form
+    private Set<String> actionsSet = null;
+    private String actions = null; //cached version of the actions set in canonical form
 
     public AbstractPermission() {
-        this( WILDCARD, WILDCARD_SET );
     }
 
-    public AbstractPermission( Serializable targetId, Set<String> actions ) {
-        setTargetId( targetId );
-        setActions( actions );
+    public AbstractPermission( String targetName ) {
+        setTargetName( targetName );
     }
 
-    public AbstractPermission( Serializable targetId, String delimited ) {
-        setTargetId( targetId );
-        setActions( fromActionsString( delimited ) );
+    public AbstractPermission( Set<String> actionsSet ) {
+        setActionsSet( actionsSet );
     }
 
-    protected String toCommaDelimited( Set<String> actions ) {
+    public AbstractPermission( String targetName, Set<String> actionsSet ) {
+        setTargetName( targetName );
+        setActionsSet( actionsSet );
+    }
+
+    protected String toCommaDelimited( Set<String> actionsSet ) {
         String actionsString = null;
-        if ( actions != null ) {
+        if ( actionsSet != null ) {
             StringBuffer buffer = new StringBuffer();
-            Iterator<String> i = actions.iterator();
+            Iterator<String> i = actionsSet.iterator();
             while ( i.hasNext() ) {
                 buffer.append( i.next() );
                 if ( i.hasNext() ) {
@@ -115,7 +107,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
 
     protected Set<String> toSet( String commaDelimited ) {
         if ( commaDelimited == null || commaDelimited.equals( "" ) ) {
-            String msg = "actions string parameter cannot be null";
+            String msg = "actions string parameter cannot be null or empty";
             throw new IllegalArgumentException( msg );
         }
 
@@ -163,44 +155,32 @@ public abstract class AbstractPermission implements Permission, Serializable {
     }
 
     protected Set<String> fromActionsString( String delimited ) {
+        if ( delimited == null ) {
+            return null;
+        }
         return canonicalize( toSet( delimited ) );
     }
 
-    public Serializable getTargetId() {
-        return targetId;
-    }
-
-
-    protected void setTargetId( Serializable targetId ) {
-        this.targetId = targetId;
-    }
-
-    /**
-     * Default implementation simply returns <tt>getTargetId().toString()</tt> if getTargetId() is non-null, otherwise
-     * it returns <tt>null</tt>.  Can be overridden by subclasses.
-     *
-     * @return <tt>getTargetId().toString()</tt> if getTargetId() returns non-null, otherwise returns <tt>null</tt>.
-     *         Can be overridden by subclasses.
-     */
     public String getTargetName() {
-        Serializable targetId = getTargetId();
-        if ( targetId != null ) {
-            return targetId.toString();
-        }
-        return null;
+        return targetName;
+    }
+
+
+    protected void setTargetName( String targetId ) {
+        this.targetName = targetId;
     }
 
     /**
      * @see org.jsecurity.authz.Permission#getActions
      */
-    public Set<String> getActions() {
-        return this.actions;
+    public Set<String> getActionsSet() {
+        return this.actionsSet;
     }
 
 
-    protected void setActions( Set<String> actions ) {
-        this.actions = canonicalize( actions );
-        this.actionsString = toCommaDelimited( this.actions );
+    protected void setActionsSet( Set<String> actions ) {
+        this.actionsSet = canonicalize( actions );
+        this.actions = toCommaDelimited( this.actionsSet );
     }
 
     /**
@@ -210,9 +190,9 @@ public abstract class AbstractPermission implements Permission, Serializable {
      *
      * @param actions the actions to set for this instance
      */
-    protected void setActionsString( String actions ) {
-        this.actions = fromActionsString( actions );
-        this.actionsString = toCommaDelimited( this.actions );
+    protected void setActions( String actions ) {
+        this.actionsSet = fromActionsString( actions );
+        this.actions = toCommaDelimited( this.actionsSet );
     }
 
 
@@ -222,8 +202,8 @@ public abstract class AbstractPermission implements Permission, Serializable {
      *
      * @return the canonical string representation of this instance's permission actions.
      */
-    public String getActionsString() {
-        return this.actionsString;
+    public String getActions() {
+        return this.actions;
     }
 
 
@@ -269,17 +249,17 @@ public abstract class AbstractPermission implements Permission, Serializable {
         if ( p != null && ( p instanceof AbstractPermission ) ) {
             AbstractPermission ap = (AbstractPermission)p;
 
-            Serializable targetId = getTargetId();
+            String targetName = getTargetName();
 
-            if ( targetId != null ) {
-                implies = targetId.equals( WILDCARD ) || targetId.equals( ap.getTargetId() );
+            if ( targetName != null ) {
+                implies = targetName.equals( WILDCARD ) || targetName.equals( ap.getTargetName() );
             } else {
-                implies = ( ap.getTargetId() == null );
+                implies = ( ap.getTargetName() == null );
             }
 
             if ( implies ) {
                 if ( !getActions().contains( WILDCARD ) ) {
-                    implies = getActions().containsAll( ap.getActions() );
+                    implies = getActionsSet().containsAll( ap.getActionsSet() );
                 }
             }
         }
@@ -302,8 +282,8 @@ public abstract class AbstractPermission implements Permission, Serializable {
     protected StringBuffer toStringBuffer() {
         StringBuffer sb = new StringBuffer();
         sb.append( "(\"" ).append( getClass().getName() ).append( "\" " );
-        sb.append( "\"" ).append( getTargetId() ).append( "\" " );
-        sb.append( "\"" ).append( getActionsString() ).append( "\")" );
+        sb.append( "\"" ).append( getTargetName() ).append( "\" " );
+        sb.append( "\"" ).append( getActions() ).append( "\")" );
         return sb;
     }
 
@@ -315,8 +295,8 @@ public abstract class AbstractPermission implements Permission, Serializable {
         if ( o instanceof AbstractPermission ) {
             AbstractPermission ap = (AbstractPermission)o;
             return ( getClass().getName().equals( ap.getClass().getName() ) ) &&
-                    ( getTargetId() != null ? getTargetId().equals( ap.getTargetId() ) : ap.getTargetId() == null ) &&
-                    ( getActionsString() != null ? getActionsString().equals( ap.getActionsString() ) : ap.getActionsString() == null );
+                    ( getTargetName() != null ? getTargetName().equals( ap.getTargetName() ) : ap.getTargetName() == null ) &&
+                    ( getActions() != null ? getActions().equals( ap.getActions() ) : ap.getActions() == null );
         }
 
         return false;
@@ -324,8 +304,8 @@ public abstract class AbstractPermission implements Permission, Serializable {
 
     public int hashCode() {
         int result = getClass().getName().hashCode();
-        result = 29 * result + ( getTargetId() != null ? getTargetId().hashCode() : 0 );
-        result = 29 * result + ( getActionsString() != null ? getActionsString().hashCode() : 0 );
+        result = 29 * result + ( getTargetName() != null ? getTargetName().hashCode() : 0 );
+        result = 29 * result + ( getActions() != null ? getActions().hashCode() : 0 );
         return result;
     }
 
@@ -341,7 +321,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
                     "happen).";
             throw new InternalError( msg );
         }
-        ap.setActionsString( getActionsString() );
+        ap.setActions( getActions() );
         return ap;
     }
 }

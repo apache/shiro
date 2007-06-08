@@ -24,7 +24,6 @@
  */
 package org.jsecurity.authz;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -33,17 +32,15 @@ import java.util.Set;
  * built.
  *
  * <p>Most Permission instances will have an &quot;actions&quot; <tt>Set</tt> that specifies the behavior
- * allowed on the resource identified by the {@link #getTargetId() targetId}.  For example a <tt>FilePermission</tt>
- * class might have the total actions available of &quot;read&quot;, &quot;write&quot;, &quot;execute&quot;, and
- * &quot;delete&quot;.  A specific instance of the <tt>FilePermission</tt> might have a targetId of "/bin/bash" with
- * actions of &quot;read&quot; and &quot;execute&quot;, meaning whoever is granted that permission could only read and
- * execute <tt>/bin/bash</tt>, but not write to it or delete it.  The actions <tt>Set</tt> is optional though - a
- * permission class is not required to recognize actions, as in the
- * {@link org.jsecurity.authz.AllPermission AllPermission} class.
+ * allowed on the resource identified by the {@link #getTargetName() targetName}.  For example a <tt>FilePermission</tt>
+ * class might have the total actions possible of &quot;read&quot;, &quot;write&quot;, &quot;execute&quot;, and
+ * &quot;delete&quot;.  A specific instance of the <tt>FilePermission</tt> might have a targetName of "/bin/bash" with
+ * actions of &quot;read&quot; and &quot;execute&quot;, meaning whomever is granted that permission could only read and
+ * execute <tt>/bin/bash</tt>, but not write to it or delete it.
  *
  * <p>It is important to understand a Permission instance only represents access or behavior - it does not grant it.
  * Granting access to a particular resource or application behavior is done by the application's security configuration,
- * typically by assigning Permissions to users, groups, and/or roles.
+ * typically by assigning Permissions to users, roles and/or groups.
  *
  * <p>Most typical systems are what the JSecurity team calls <em>role-based</em> in nature, where a role represents
  * common behavior for certain user types.  For example, a system might have an <em>Aministrator</em> role, a
@@ -70,68 +67,42 @@ import java.util.Set;
 public interface Permission {
 
     /**
-     * Returns the permission target's identifier in the application's native format.
+     * Returns the target's name.  That is, if this Permission and its actions are targed at a specific
+     * resource, this method returns the name of that resource.  For example, this instance:<br/><br/>
      *
-     * <p>A &quot;target identifier&quot; is whatever object that best represents the target for which the permission
-     * models access, according to the application's needs.
+     * <pre>new FilePermission( "/bin/bash", "execute" );</pre>
      *
-     * <p>For example, a <tt>UrlPermission</tt> class would represent access to a URL.  Calling
-     * <tt>UrlPermission.getTargetId()</tt>
-     * might return an actual {@link java.net.URL URL} instance, where the application could perform specific logic on
-     * it (open a connection, call toString, whatever).
+     * <p>would have a <tt>targetName</tt> of &quot;/bin/bash&quot;, since that is the <em>target</em> of actions
+     * represented by this permission (&quot;execute&quot;).
      *
-     * <p>Another example might be a <tt>UserPermission</tt> class, representing access to a specific user.  In this
-     * example, <tt>UserPermission.getTargetId()</tt> might return the actual ID of a user in the application.  This ID
-     * object could be a String username in some systems, a Integer representing a RDBMS primary key in others,
-     * a {@link java.util.UUID UUID} in others (etc., etc).
-     *
-     * <p>This method allows applications to represent access to (or behavior on) resources in the format they prefer.
-     *  
-     * @return the permission target's identifier in the application's native format.
-     */
-    Serializable getTargetId();
-
-    /**
-     * Returns the permission target's identifier in a convenient string format.
-     * See {@link #getTargetId() getTargetId()}'s JavaDoc for some examples on what a &quot;target identifier&quot;
-     * means.
-     *
-     * <p>This will typically return a string suitable for printing in log files, error messages, or any other form that
-     * would generally be considered useful for human legibility.
-     *
-     * <p>If you're implementing an instance of this class, most times it is perfectly acceptable to just return
-     * <tt>getTargetId().toString()</tt>, assuming of course the object returned from getTargetId() has a proper
-     * toString() implementation and it is easy/safe for people to read.  Just realize that this implemention 
-     * technique is not required by this interface.
-     *
-     * <p>As this is more or less a convenience method, the {@link #implies} implementation should not use this value
-     * in the implication check - the {@link #getTargetId() targetId} should be used instead.
-     *
-     * @return the {@link #getTargetId() permission target's identifier} in a convenient string format.
+     * @return the name of the target corresponding to the permission's actions, or <tt>null</tt> if no specific
+     * resource is targeted.
      */
     String getTargetName();
 
     /**
-     * Returns all actions represented by a permission instance associated with the {@link #getTargetId target}, or
-     * <tt>null</tt> if there are none.
+     * Returns all actions represented by the permission instance, or <tt>null</tt> if there are none.
      *
-     * @return all actions represented by a permission instance associated with the {@link #getTargetId target}, or 
-     * <tt>null</tt> if there are none.
+     * <p>If the permission is {@link #getTargetName targeted}, these are the actions associated with that target
+     *
+     * @return all actions represented by the permission instance or <tt>null</tt> if there are none.
      */
-    Set<String> getActions();
+    Set<String> getActionsSet();
 
     /**
      * Returns the canonically ordered String containing all actions represented by a permission
-     * instance, or <tt>null</tt> if there no actions.  The string must be composed of, and match exactly, those
+     * instance, or <tt>null</tt> if there are no actions.  The string must be composed of, and match exactly, those
      * actions in the {@link #getActions actions} set. 
      *
      * <p>For example, a FilePermission class might have the possible actions of <tt>read</tt>, <tt>write</tt>, and
-     * <tt>execute</tt>.  If there were a FilePermission for with a target of <tt>/home/jsmith</tt>, a FilePermission
-     * instance for that file might return an actionsString of &quot;read,write&quot; only.
+     * <tt>execute</tt> and <tt>delete</tt>.  If there were a FilePermission for a target of
+     * <tt>/home/jsmith</tt>, a FilePermission instance for that file might return an actions string of
+     * &quot;read,write&quot; only.
      *
-     * @return the canonically ordered string representation of this instance's permission actions.
+     * @return the canonically ordered string representation of this instance's permission actions, or <tt>null</tt> if
+     * there are none.
      */
-    String getActionsString();
+    String getActions();
 
     boolean implies( Permission p );
 
