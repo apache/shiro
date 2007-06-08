@@ -98,7 +98,6 @@ public class EhCacheProvider implements CacheProvider, Initializable {
                     manager.addCache( name );
                     cache = manager.getCache( name );
                 }
-                cache.initialise();
 
                 if (log.isDebugEnabled()) {
                     log.debug("Started EHCache named [" + name + "]");
