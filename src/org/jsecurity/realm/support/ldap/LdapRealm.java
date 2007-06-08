@@ -84,7 +84,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
 
     protected String url = null;
 
-    protected String refferal = "follow";
+    protected String referral = "follow";
 
     protected String systemUsername = null;
 
@@ -147,10 +147,10 @@ public abstract class LdapRealm extends AbstractCachingRealm {
 
     /**
      * Sets the LDAP referral property.  Defaults to "follow"
-     * @param refferal the referral property.
+     * @param referral the referral property.
      */
-    public void setRefferal(String refferal) {
-        this.refferal = refferal;
+    public void setReferral(String referral ) {
+        this.referral = referral;
     }
 
     /**
@@ -287,7 +287,7 @@ public abstract class LdapRealm extends AbstractCachingRealm {
         env.put(Context.SECURITY_CREDENTIALS, new String( password ));
         env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
         env.put(Context.PROVIDER_URL, url);
-        env.put(Context.REFERRAL, refferal);
+        env.put(Context.REFERRAL, referral );
 
         return env;
     }
