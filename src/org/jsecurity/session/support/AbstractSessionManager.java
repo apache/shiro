@@ -544,7 +544,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     public Object getAttribute( Serializable sessionId, Object key )
         throws InvalidSessionException {
         Session s = retrieveSessionForUpdate( sessionId );
-        Object value = s.getAttribute( s );
+        Object value = s.getAttribute( key );
         sessionDAO.update( s );
         return value;
     }
