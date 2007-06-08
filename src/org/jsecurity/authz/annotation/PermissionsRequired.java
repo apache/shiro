@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * Requires the current executor's context to imply a particular permission in
+ * Requires the current executor's security context to imply a particular permission in
  * order to execute the annotated method.  If the executor's associated
  * {@link org.jsecurity.context.SecurityContext SecurityContext} determines that the
  * executor does not imply the specified permission, the method will not be executed.
@@ -87,18 +87,18 @@ public @interface PermissionsRequired {
      * &#64;PermissionsRequired(type=java.io.FilePermission.class,actions="read")
      * void doSomething() { ... }
      * </pre></blockquote>
-     * means &quot;the current executor must have permission to read <em>all</em> files in order
+     * means &quot;the current executor must have permission to read <em>any/all</em> files in order
      * for the <tt>doSomething()</tt> method to execute&quot;
      *
      * <p>This property is ignored if the {@link #targetPath} property is specified.
      *
-     * @see Permission#getTargetId()
+     * @see Permission#getTargetName()
      */
     String target() default "*";
 
     /**
      * Uses the {@link Object#toString() toString()} value of the object at the specified
-     * path as the <tt>Permission {@link Permission#getTargetId() targetId}</tt> to use during
+     * path as the <tt>Permission {@link Permission#getTargetName() targetName}</tt> to use during
      * <tt>Permission</tt> construction.
      *
      * <p>The objects in this path must conform to property getter and setter naming conventions
@@ -149,8 +149,8 @@ public @interface PermissionsRequired {
      * public void saveUser( User aUser ) { ... }</pre>
      *
      * <p>This annotation declares that a <tt>my.pkg.security.UserPermission</tt> instance with
-     * {@link Permission#getTargetId() targetId} <tt>aUser.getId().toString()</tt> and
-     * {@link org.jsecurity.authz.AbstractPermission#getActionsString actionsString} &quot;create&quot;,&quot;update&quot; will be created and
+     * {@link Permission#getTargetName() targetName} <tt>aUser.getId().toString()</tt> and
+     * {@link org.jsecurity.authz.AbstractPermission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
      * verified by {@link org.jsecurity.context.SecurityContext#checkPermission(Permission)}.
      *
      * <p>Therefore the above annotation could be read as:</p>

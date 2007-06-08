@@ -46,6 +46,9 @@ import java.net.InetAddress;
 /**
  * Default JSecurity implementation of the {@link WebSessionFactory} interface.
  *
+ * <p>This SessionFactory implementation handles web-specific APIs and delegates session creation/acquisition
+ * behavior to an underlying wrapped {@link SessionFactory SessionFactory} instance.
+ *
  * @since 0.1
  * @author Les Hazlewood
  */

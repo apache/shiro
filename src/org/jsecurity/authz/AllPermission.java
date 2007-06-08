@@ -10,7 +10,6 @@ import java.util.Set;
  */
 public class AllPermission extends AbstractPermission {
 
-
     private static final LinkedHashSet<String> possibleActions = initPossibleActionsSet();
 
     private static LinkedHashSet<String> initPossibleActionsSet() {
@@ -20,9 +19,8 @@ public class AllPermission extends AbstractPermission {
     }
 
     public AllPermission() {
-        super( WILDCARD, WILDCARD );
+        super( WILDCARD, possibleActions );
     }
-
 
     public Set<String> getPossibleActions() {
         return possibleActions;
