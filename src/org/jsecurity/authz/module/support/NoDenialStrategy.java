@@ -48,7 +48,6 @@ import java.util.Map;
  */
 public class NoDenialStrategy implements ModularAuthorizationStrategy {
 
-
     /**
      * @see org.jsecurity.authz.module.support.ModularAuthorizationStrategy#isAuthorized
      */

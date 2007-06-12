@@ -102,7 +102,7 @@ public interface Realm extends AuthorizationOperations {
      * @return the account information for the account associated with the specified <tt>token</tt>,
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
-     * @throws org.jsecurity.authc.AuthenticationException if there is an error obtaining obtaining or
+     * @throws org.jsecurity.authc.AuthenticationException if there is an error obtaining or
      * constructing an AuthenticationInfo based on the specified <tt>token</tt>.
      */
     AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;

@@ -253,8 +253,12 @@ public abstract class AbstractRealm implements Realm {
         AuthenticationInfo info = doGetAuthenticationInfo( token );
 
         if( info == null ) {
-            String msg = "No account information found for submitted authentication token [" + token + "]";
-            throw new UnknownAccountException( msg );
+            if ( log.isDebugEnabled() ) {
+                String msg = "No account information found for submitted authentication token [" + token + "].  " +
+                "Returning null to inform calling Authenticator.";
+                log.debug( msg );
+            }
+            return null;
         }
 
         if( isAccountLocked( info ) ) {
