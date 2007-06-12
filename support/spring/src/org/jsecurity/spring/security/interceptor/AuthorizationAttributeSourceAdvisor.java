@@ -24,14 +24,13 @@
  */
 package org.jsecurity.spring.security.interceptor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.annotation.RolesRequired;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 
 import java.lang.reflect.Method;
 

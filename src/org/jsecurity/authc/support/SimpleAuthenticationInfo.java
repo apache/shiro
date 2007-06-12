@@ -196,13 +196,12 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
             setAccountLocked( true );
         }
 
-        if( !info.isConcurrentLoginsAllowed() ) {
-            setConcurrentLoginsAllowed( false );
-        }
-
         if( info.isCredentialsExpired() ) {
             setCredentialsExpired( true );
         }
 
+        if( !info.isConcurrentLoginsAllowed() ) {
+            setConcurrentLoginsAllowed( false );
+        }
     }
 }
