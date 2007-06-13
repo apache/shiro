@@ -117,11 +117,11 @@ public class DefaultSessionManager extends AbstractSessionManager
 
         SessionDAO sessionDAO = getSessionDAO();
         if ( sessionDAO == null ) {
-            sessionDAO = createSessionDAO();
-            setSessionDAO( sessionDAO );
             if ( log.isDebugEnabled() ) {
                 log.debug( "No sessionDAO set.  Attempting to create default instance." );
             }
+            sessionDAO = createSessionDAO();
+            setSessionDAO( sessionDAO );
             if ( sessionDAOImplicitlyCreated && (sessionDAO instanceof Initializable ) ) {
                 if ( log.isTraceEnabled() ) {
                     log.trace( "Initializing implicitly created instance..." );
