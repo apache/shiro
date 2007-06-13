@@ -94,7 +94,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
         setActions( actions );
     }
 
-    protected String toCommaDelimited( Set<String> actionsSet ) {
+    public static String toCommaDelimited( Set<String> actionsSet ) {
         String actionsString = null;
         if ( actionsSet != null ) {
             StringBuffer buffer = new StringBuffer();
@@ -110,7 +110,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
         return actionsString;
     }
 
-    protected Set<String> toSet( String commaDelimited ) {
+    public static Set<String> toSet( String commaDelimited ) {
         if ( commaDelimited == null || commaDelimited.equals( "" ) ) {
             String msg = "actions string parameter cannot be null or empty";
             throw new IllegalArgumentException( msg );
