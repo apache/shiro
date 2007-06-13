@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -49,6 +49,7 @@ import java.util.List;
  * if more than one realm of the same type is used in an application.</p>
  *
  * @since 0.2
+ * @author Les Hazlewood
  * @author Jeremy Haile
  */
 public abstract class AbstractRealm implements Realm {
