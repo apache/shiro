@@ -501,7 +501,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         if ( secCtx == null ) {
             String msg = "Programming or configuration error - No SecurityContext was created after successful " +
                     "authentication.  Verify that you have either configured the " + getClass().getName() +
-                    " instance with a proper SecurityManager or SecurityContextFactory (easier) or " +
+                    " instance with a proper SecurityContextFactory or SecurityManager (easier) or " +
                     "that you have overridden the " + AbstractAuthenticator.class.getName() +
                     ".createSecurityContext( AuthenticationInfo info ) method.";
             throw new IllegalStateException( msg );
