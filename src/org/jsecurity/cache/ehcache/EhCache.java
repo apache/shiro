@@ -40,9 +40,9 @@ import java.util.Map;
 /**
  * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an EhCache cache.
  *
+ * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @since 0.2
  */
 @SuppressWarnings("unchecked")
 public class EhCache implements Cache {

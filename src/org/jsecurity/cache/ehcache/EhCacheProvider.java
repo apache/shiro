@@ -42,9 +42,9 @@ import org.jsecurity.util.Initializable;
  * <p/>
  * <p>See http://ehcache.sf.net for documentation on EhCache</p>
  *
+ * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @since 0.2
  */
 public class EhCacheProvider implements CacheProvider, Initializable {
 
