@@ -26,7 +26,9 @@ package org.jsecurity.session.event.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.session.event.*;
+import org.jsecurity.session.event.SessionEvent;
+import org.jsecurity.session.event.SessionEventListener;
+import org.jsecurity.session.event.SessionEventSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,22 +59,9 @@ public class SimpleSessionEventSender implements SessionEventSender {
      * @see SessionEventSender#send( org.jsecurity.session.event.SessionEvent event )
      */
     public void send( SessionEvent event ) {
-        synchronized( listeners ) {
+        if ( listeners != null && !listeners.isEmpty() ) {
             for( SessionEventListener sel : listeners ) {
-                if ( event instanceof StartedSessionEvent) {
-                    sel.sessionStarted( event );
-                } else if ( event instanceof ExpiredSessionEvent) {
-                    sel.sessionExpired( event );
-                } else if ( event instanceof StoppedSessionEvent) {
-                    sel.sessionStopped( event );
-                } else {
-                    String msg = "Received argument of type [" + event.getClass() + "].  This " +
-                                 "implementation can only send event instances of types " +
-                        StartedSessionEvent.class.getName() + ", " +
-                        ExpiredSessionEvent.class.getName() + ", or " +
-                        StoppedSessionEvent.class.getName();
-                    throw new IllegalArgumentException( msg );
-                }
+                sel.onEvent( event );
             }
         }
     }

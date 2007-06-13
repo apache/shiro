@@ -584,7 +584,8 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         }
 
         if ( log.isInfoEnabled() ) {
-            log.info( "Authentication successful.  Returned authentication info: [" + info + "]" );
+            log.info( "Authentication successful for token [" + token + "].  " +
+                      "Returned authentication info: [" + info + "]" );
         }
 
         SecurityContext secCtx = createSecurityContext( info );
