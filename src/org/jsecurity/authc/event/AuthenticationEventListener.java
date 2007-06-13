@@ -37,36 +37,11 @@ package org.jsecurity.authc.event;
 public interface AuthenticationEventListener {
 
     /**
-     * Notification callback that an account has authenticated successfully.
-     * @param event the event associated with the successful authentication attempt.
+     * Notification callback that something occured during an authentication attempt.  Implementations decide how to
+     * process the event (e.g. delegation, visitor pattern, etc).
+     * @param event the event generated during the authentication attempt.
      */
-    void accountAuthenticated( AuthenticationEvent event );
-
-    /**
-     * Notification callback that an account has logged-out.
-     * @param event the event associated with the log-out.
-     */
-    void accountLoggedOut( AuthenticationEvent event );
-
-    /**
-     * Notification callback that an account authentication attempt had failed.
-     * @param event the event associated with the failed authentication attempt.
-     */
-    void authenticationFailed( AuthenticationEvent event );
-
-    /**
-     * Notification callback that an account has been locked from further authentication
-     * attempts (usually due to too many failed authentication attempts).
-     * @param event the event generated due to an account being locked.
-     */
-    void accountLocked( AuthenticationEvent event );
-
-    /**
-     * Notification callback that an account has been unlocked and is available for future
-     * authentication attempts (usually by an administrator or after a certain time has passed).
-     * @param event the event generated due to an account being unlocked.
-     */
-    void accountUnlocked( AuthenticationEvent event );
+    void onEvent( AuthenticationEvent event );
 
 }
 

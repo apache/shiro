@@ -26,18 +26,19 @@ package org.jsecurity.authc.event.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.LockedAccountException;
-import org.jsecurity.authc.event.*;
+import org.jsecurity.authc.event.AuthenticationEvent;
+import org.jsecurity.authc.event.AuthenticationEventListener;
+import org.jsecurity.authc.event.AuthenticationEventSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple implementation of the {@link AuthenticationEventSender} interface that synchronously calls
- * any registered {@link org.jsecurity.authc.event.AuthenticationEventListener}s.
+ * Simple implementation that synchronously calls any registered 
+ * {@link org.jsecurity.authc.event.AuthenticationEventListener}s.
  *
- * @see #setListeners
+ * @see AuthenticationEventListener#onEvent
+ *
  * @since 0.1
  * @author Les Hazlewood
  */
@@ -58,44 +59,17 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
 
     /**
      * Sends the specified <tt>event</tt> to all registered {@link AuthenticationEventListener}s.
-     *
-     * @see AuthenticationEventSender#send( org.jsecurity.authc.event.AuthenticationEvent event )
      */
     public void send( AuthenticationEvent event ) {
         if ( listeners != null && !listeners.isEmpty() ) {
-            synchronized ( listeners ) {
-                for ( AuthenticationEventListener ael : listeners ) {
-                    if ( event instanceof SuccessfulAuthenticationEvent) {
-                        ael.accountAuthenticated( event );
-                    } else if ( event instanceof UnlockedAccountEvent) {
-                        ael.accountUnlocked( event );
-                    } else if ( event instanceof LogoutEvent) {
-                        ael.accountLoggedOut( event );
-                    } else if ( event instanceof FailedAuthenticationEvent) {
-                        FailedAuthenticationEvent failedEvent = (FailedAuthenticationEvent)event;
-                        AuthenticationException cause = failedEvent.getCause();
-
-                        if ( cause != null && ( cause instanceof LockedAccountException ) ) {
-                            ael.accountLocked( event );
-                        } else {
-                            ael.authenticationFailed( event );
-                        }
-                    } else {
-                        String msg = "Received argument of type [" + event.getClass() + "].  This " +
-                                     "implementation can only send event instances of types " +
-                                     SuccessfulAuthenticationEvent.class.getName() + ", " +
-                                     FailedAuthenticationEvent.class.getName() + ", " +
-                                     UnlockedAccountEvent.class.getName() + ", or " +
-                                     LogoutEvent.class.getName();
-                        throw new IllegalArgumentException( msg );
-                    }
-                }
+            for ( AuthenticationEventListener ael : listeners ) {
+                ael.onEvent( event );
             }
         } else {
             if ( log.isWarnEnabled() ) {
                 String msg = "internal listeners collection is null.  No " +
-                             "AuthenticationEventListeners will be notified of event [" +
-                             event + "]";
+                    "AuthenticationEventListeners will be notified of event [" +
+                    event + "]";
                 log.warn( msg );
             }
         }
