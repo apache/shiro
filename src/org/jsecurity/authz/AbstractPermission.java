@@ -81,12 +81,17 @@ public abstract class AbstractPermission implements Permission, Serializable {
     }
 
     public AbstractPermission( Set<String> actionsSet ) {
-        setActionsSet( actionsSet );
+        setActionsSet( canonicalize( actionsSet ) );
     }
 
     public AbstractPermission( String targetName, Set<String> actionsSet ) {
         setTargetName( targetName );
         setActionsSet( actionsSet );
+    }
+
+    public AbstractPermission( String targetName, String actions ) {
+        setTargetName( targetName );
+        setActions( actions );
     }
 
     protected String toCommaDelimited( Set<String> actionsSet ) {
@@ -166,8 +171,8 @@ public abstract class AbstractPermission implements Permission, Serializable {
     }
 
 
-    protected void setTargetName( String targetId ) {
-        this.targetName = targetId;
+    protected void setTargetName( String targetName ) {
+        this.targetName = targetName;
     }
 
     /**
@@ -212,8 +217,8 @@ public abstract class AbstractPermission implements Permission, Serializable {
      * class understands.  This set is used to verify instantiation of a new permission.
      * <p/>
      * <p>That is, when a permission is being instantiated, the actions given to the constructor
-     * are verified to be either equivalent to or a proper subset of the values found in this
-     * Set.
+     * are verified to be either equivalent to or a proper subset of the values found in the
+     * Set returned by this method.
      * <p/>
      * <p>Since this Set never changes for any given AbstractPermission subclass, the returned Set
      * should be constructed via a static initializer that will be executed when the class
