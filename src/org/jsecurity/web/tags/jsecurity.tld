@@ -72,6 +72,20 @@
         </attribute>
     </tag>
 
+
+    <tag>
+        <name>hasAnyRoles</name>
+        <tag-class>org.jsecurity.web.tags.HasAnyRolesTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current user has one of the specified roles from a
+            comma-separated list of role names.</description>
+        <attribute>
+            <name>names</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
     <tag>
         <name>lacksRole</name>
         <tag-class>org.jsecurity.web.tags.LacksRoleTag</tag-class>
