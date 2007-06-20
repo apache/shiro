@@ -80,7 +80,7 @@
         <description>Displays body content only if the current user has one of the specified roles from a
             comma-separated list of role names.</description>
         <attribute>
-            <name>names</name>
+            <name>name</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
