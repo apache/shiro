@@ -48,7 +48,7 @@ public class HasAnyRolesTag extends RoleTag {
             // Iterate through roles and check to see if the user has one of the roles
             for( String role : roleNames.split(ROLE_NAMES_DELIMETER) ) {
 
-                if( securityContext.hasRole( role ) ) {
+                if( securityContext.hasRole( role.trim() ) ) {
                     hasAnyRole = true;
                     break;
                 }
