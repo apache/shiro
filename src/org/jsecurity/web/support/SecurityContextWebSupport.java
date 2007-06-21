@@ -44,13 +44,15 @@ import java.util.List;
  * <p>Primarily a parent class to consolidate common behaviors in obtaining a SecurityContext in different
  * web environments (e.g. Servlet Filters, framework specific interceptors, etc).
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
 public class SecurityContextWebSupport extends SecurityWebSupport {
 
-    protected enum SecurityContextStorageOrder { Cookie_HttpSession_JSecuritySession,
-                                                 Cookie_JSecuritySession_HttpSession }
+    protected enum SecurityContextStorageOrder {
+        Cookie_HttpSession_JSecuritySession,
+        Cookie_JSecuritySession_HttpSession
+    }
 
     /**
      * The key that is used to store subject principals in the session.
@@ -60,9 +62,19 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
 
     protected SecurityManager securityManager = null;
 
-    protected SecurityContextStorageOrder storageOrder = SecurityContextStorageOrder.Cookie_JSecuritySession_HttpSession;
+    /**
+     * If a cookie is not used to store the Principal object(s) that will be used to re-construct a SecurityContext
+     * on every request, a <tt>false</tt> value here (default) will attempt to use the JSecurity Session to
+     * store the Principal(s) between requests, if it exists.  If it does not exist, then the storage mechanism will
+     * always fall back to the HttpSession.
+     *
+     * <p>If a cookie is not used to store the Principal(s), and this value is <tt>true</tt>, the JSecurity Session
+     * is not utilized at all - instead the HttpSession will be used immediately to store the Principal(s).
+     */
+    protected boolean preferHttpSessionStorage = false;
 
-    public SecurityContextWebSupport(){}
+    public SecurityContextWebSupport() {
+    }
 
     public SecurityManager getSecurityManager() {
         return securityManager;
@@ -72,12 +84,12 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
         this.securityManager = securityManager;
     }
 
-    public SecurityContextStorageOrder getStorageOrder() {
-        return storageOrder;
+    public boolean isPreferHttpSessionStorage() {
+        return preferHttpSessionStorage;
     }
 
-    public void setStorageOrder( SecurityContextStorageOrder storageOrder ) {
-        this.storageOrder = storageOrder;
+    public void setPreferHttpSessionStorage( boolean preferHttpSessionStorage ) {
+        this.preferHttpSessionStorage = preferHttpSessionStorage;
     }
 
     public void init() {
@@ -90,7 +102,7 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
 
     protected List<Principal> getPrincipalsFromCookie( HttpServletRequest request ) {
         return null;//no cookie storage by default - application Principals are application dependent and require the 
-                    //app to do string-to-principal conversion & vice versa for cookies to work;
+        //app to do string-to-principal conversion & vice versa for cookies to work;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -123,8 +135,8 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
     protected List<Principal> getPrincipalsFromHttpSession( HttpServletRequest request ) {
         List<Principal> principals = null;
         HttpSession httpSession = request.getSession( false );
-        if( httpSession != null ) {
-            principals =  (List<Principal>) httpSession.getAttribute( PRINCIPALS_SESSION_KEY );
+        if ( httpSession != null ) {
+            principals = (List<Principal>)httpSession.getAttribute( PRINCIPALS_SESSION_KEY );
             if ( principals == null ) {
                 if ( log.isTraceEnabled() ) {
                     log.trace( "HttpSession exists, but does not contain any principals from which a " +
@@ -148,14 +160,17 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
         List<Principal> principals = getPrincipalsFromCookie( request );
 
         if ( principals == null || principals.isEmpty() ) {
-            if ( getStorageOrder().equals( SecurityContextStorageOrder.Cookie_JSecuritySession_HttpSession ) ) {
+
+            if ( !isPreferHttpSessionStorage() ) {
                 principals = getPrincipalsFromJSecuritySession( request );
             }
-            if ( principals == null || principals.isEmpty() ) { //fall back to http session
+
+            if ( principals == null || principals.isEmpty() ) {
+                //fall back to HttpSession:
                 principals = getPrincipalsFromHttpSession( request );
             }
         }
-        
+
         return principals;
     }
 
@@ -168,14 +183,14 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
 
         SecurityContext securityContext = null;
 
-        if( principals != null && !principals.isEmpty() ) {
+        if ( principals != null && !principals.isEmpty() ) {
             SecurityManager securityManager = getSecurityManager();
             if ( securityManager == null ) {
                 final String message = "the SecurityManager attribute must be configured.  This could be " +
                     "done by calling setSecurityManager() on the " + getClass() + " instance, or by subclassing this " +
                     "class to retrieve the SecurityManager from an application framework.";
-                if (log.isErrorEnabled()) {
-                    log.error(message);
+                if ( log.isErrorEnabled() ) {
+                    log.error( message );
                 }
                 throw new IllegalStateException( message );
             }
@@ -199,17 +214,68 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
         ThreadContext.unbindSecurityContext();
     }
 
+    protected boolean bindInCookieForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
+                                                         SecurityContext securityContxt ) {
+        return false;
+    }
+
+    protected boolean bindInJSecuritySessionForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
+                                                                   SecurityContext securityContext ) {
+        boolean saved = false;
+
+        Session session = null;
+
+        try {
+            session = securityContext.getSession();
+        } catch ( Exception t ) {
+            if ( log.isWarnEnabled() ) {
+                String msg = "Unable to acquire a JSecurity Session from the SecurityContext.  SecurityContext " +
+                    "Principal(s) cannot be stored here for access on subsequent requests: ";
+                log.warn( msg, t );
+            }
+            return false;
+        }
+
+        try {
+            if ( session != null ) {
+                // don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
+                // initialized session is not allowed.
+                if ( session.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
+                    session.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
+                }
+                saved = true;
+            }
+        } catch ( Throwable t ) {
+            if ( log.isWarnEnabled() ) {
+                String msg = "Unable to store SecurityContext Principal(s) collection in JSecurity Session for " +
+                    "reconstruction on subsequent requests: ";
+                log.warn( msg, t );
+            }
+        }
+
+        return saved;
+    }
+
+    protected boolean bindInHttpSessionForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
+                                                              SecurityContext securityContext ) {
+        HttpSession httpSession = request.getSession();
+        if ( httpSession.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
+            httpSession.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
+        }
+        return true;
+    }
+
     protected void bindForSubsequentRequests( HttpServletRequest request, HttpServletResponse response, SecurityContext securityContext ) {
         if ( securityContext != null ) {
-            Session session = securityContext.getSession( false );
-            if( session != null && session.getAttribute( PRINCIPALS_SESSION_KEY) == null ) {
-                session.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
-
-            } else {
-                HttpSession httpSession = request.getSession();
-                if( httpSession.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
-                    httpSession.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
+            boolean saved = bindInCookieForSubsequentRequests( request, response, securityContext );
+            if ( !saved ) {
+                if ( !isPreferHttpSessionStorage() ) {
+                    saved = bindInJSecuritySessionForSubsequentRequests( request, response, securityContext );
                 }
+            }
+            if ( !saved ) {
+                //fall back to HttpSession:
+                saved = bindInHttpSessionForSubsequentRequests( request, response, securityContext );
             }
         }
     }
