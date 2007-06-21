@@ -44,8 +44,8 @@ import javax.servlet.http.HttpServletResponse;
  * client, and be made accessible to the JSecurity framework for the duration of the
  * request (i.e. via a {@link ThreadLocal ThreadLocal}).
  *
- * @author Les Hazlewood
  * @since 0.1
+ * @author Les Hazlewood
  */
 public class SessionInterceptor extends DefaultSessionWebInterceptor implements HandlerInterceptor, InitializingBean {
 
@@ -55,16 +55,18 @@ public class SessionInterceptor extends DefaultSessionWebInterceptor implements 
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
-        super.preHandle( request, response );
+        preHandle( request, response );
         return true;
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
-        super.postHandle( request, response, null );
+        postHandle( request, response, null );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        super.afterCompletion( request, response, null, ex );
+        Session session = null; //set to null explicitly + use type safety so the apropriate method is called at runtime
+        afterCompletion( request, response, session, ex );
     }
+    
 }

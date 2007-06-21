@@ -11,7 +11,7 @@
         <property name="interceptors">
             <list>
                 <ref bean="sessionInterceptor"/>
-                <ref bean="threadLocalSecurityContextInterceptor"/>
+                <ref bean="securityContextInterceptor"/>
                 <ref bean="authenticationInterceptor"/>
             </list>
         </property>
@@ -27,7 +27,7 @@
         <property name="interceptors">
             <list>
                 <ref bean="sessionInterceptor"/>
-                <ref bean="threadLocalSecurityContextInterceptor"/>
+                <ref bean="securityContextInterceptor"/>
             </list>
         </property>
         <property name="mappings">

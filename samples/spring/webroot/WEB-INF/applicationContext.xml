@@ -73,7 +73,7 @@
 
 
     <!-- Web Interceptors -->
-    <bean id="threadLocalSecurityContextInterceptor" class="org.jsecurity.spring.servlet.security.ThreadLocalSecurityContextInterceptor">
+    <bean id="securityContextInterceptor" class="org.jsecurity.spring.servlet.security.SecurityContextInterceptor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
 

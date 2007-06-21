@@ -41,7 +41,7 @@ import java.io.IOException;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class ThreadLocalSecurityContextFilter extends DefaultSecurityContextWebInterceptor implements Filter {
+public class SecurityContextFilter extends DefaultSecurityContextWebInterceptor implements Filter {
 
     /**
      * Implemented for interface - does nothing.
