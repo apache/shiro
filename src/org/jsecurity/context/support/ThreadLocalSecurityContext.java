@@ -50,7 +50,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     public ThreadLocalSecurityContext(){}
 
     public static SecurityContext current() {
-        return (SecurityContext)ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
+        return ThreadContext.getSecurityContext();
     }
 
     public boolean isAuthenticated() {
@@ -177,7 +177,7 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     protected SecurityContext getSecurityContext() {
-        return (SecurityContext) ThreadContext.get( ThreadContext.SECURITY_CONTEXT_KEY );
+        return ThreadContext.getSecurityContext();
     }
 
     public Session getSession() {

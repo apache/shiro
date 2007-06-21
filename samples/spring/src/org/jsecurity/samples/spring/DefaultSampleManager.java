@@ -67,7 +67,7 @@ public class DefaultSampleManager implements SampleManager {
     ============================================*/
 
     public String getValue() {
-        Session session = (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
+        Session session = ThreadContext.getSession();
         if( session != null ) {
             return (String) session.getAttribute(VALUE_KEY);
         } else {
@@ -76,7 +76,7 @@ public class DefaultSampleManager implements SampleManager {
     }
 
     public void setValue(String newValue) {
-        Session session = (Session) ThreadContext.get( ThreadContext.SESSION_KEY );
+        Session session = ThreadContext.getSession();
         if( session != null ) {
             session.setAttribute(VALUE_KEY, newValue );
         }

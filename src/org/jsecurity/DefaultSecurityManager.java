@@ -65,13 +65,10 @@ import java.util.*;
  * the configured realms for the authenticator, (at least one
  * realm must be configured before {@link #init()} is called for this manager to function properly).</p>
  *
- * <p><b>Note:</b> <ol><li>Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
+ * <p><b>Note:</b> Unless specified otherwise, the {@link #setAuthorizer Authorizer} property defaults to an
  * {@link org.jsecurity.authz.module.support.AnnotationsModularAuthorizer} instance to simplify configuration; if you
  * don't want to use JDK 1.5+ annotataions for authorization checks, you'll need to inject another implementation or 
- * programmatically interact with a subject's SecurityContext directly in code (ok, but not as 'clean').</li>
- * <li>There is <strong>no default</strong> {@link #setAuthenticator Authenticator} created by this
- * <code>SecurityManager</code> abstract implementation, as it is expected to be
- * specified by Dependency Injection or by subclass implementations.</li></ol>
+ * programmatically interact with a subject's SecurityContext directly in code (ok, but not as 'clean').
  *
  * @since 0.2
  * @author Jeremy Haile

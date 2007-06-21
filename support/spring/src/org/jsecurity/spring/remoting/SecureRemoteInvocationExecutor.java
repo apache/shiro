@@ -27,10 +27,11 @@ package org.jsecurity.spring.remoting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.ThreadUtils;
-import org.jsecurity.web.WebUtils;
+import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.support.SecurityContextWebSupport;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -93,15 +94,16 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
                 Serializable sessionId = secureInvocation.getSessionId();
                 Session session = securityManager.getSession( sessionId );
-                ThreadUtils.bindToThread( session );
+                ThreadContext.bind( session );
 
                 // Get the principals and realm name from the session
-                List<Principal>principals = (List<Principal>) session.getAttribute( WebUtils.PRINCIPALS_SESSION_KEY );
+                List<Principal>principals = (List<Principal>) session.getAttribute( SecurityContextWebSupport.PRINCIPALS_SESSION_KEY );
 
                 // If principals and realm were found in the session, create a delegating authorization context
                 // and bind it to the thread.
                 if( principals != null && !principals.isEmpty() ) {
-                    ThreadUtils.bindToThread( new DelegatingSecurityContext( principals, securityManager) );
+                    SecurityContext securityContext = new DelegatingSecurityContext( principals, securityManager );
+                    ThreadContext.bind( securityContext );
                 }
 
             } else {
@@ -114,7 +116,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
             return super.invoke(invocation, targetObject);
         } finally {
-            ThreadUtils.unbindSessionFromThread();
+            ThreadContext.unbindSession();
         }
     }
 }

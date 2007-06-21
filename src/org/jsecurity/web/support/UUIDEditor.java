@@ -28,7 +28,10 @@ import java.beans.PropertyEditorSupport;
 import java.util.UUID;
 
 /**
- * Insert JavaDoc here.
+ * TODO JavaDoc
+ *
+ * @since 0.1
+ * @author Les Hazlewood
  */
 public class UUIDEditor extends PropertyEditorSupport {
 
