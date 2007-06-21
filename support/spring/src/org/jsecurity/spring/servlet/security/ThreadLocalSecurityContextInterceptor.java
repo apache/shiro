@@ -24,52 +24,39 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.jsecurity.SecurityManager;
-import org.jsecurity.web.WebUtils;
+import org.jsecurity.web.support.DefaultSecurityContextWebInterceptor;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * Interceptor that is used to ensure an {@link org.jsecurity.context.SecurityContext} is bound to the
- * thread local on every request.  Also ensures that any {@link org.jsecurity.context.SecurityContext} bound to
- * the thread local during a request is stored in the HTTP session when the request is complete.
+ * thread local on every request, if it exists.
  *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class ThreadLocalSecurityContextInterceptor extends HandlerInterceptorAdapter {
-
-    private SecurityManager securityManager;
-
-
-    public void setSecurityManager( SecurityManager securityManager) {
-        this.securityManager = securityManager;
-    }
-
+public class ThreadLocalSecurityContextInterceptor extends DefaultSecurityContextWebInterceptor implements
+    HandlerInterceptor {
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
-
-        WebUtils.constructAndBindSecurityContextToThread( request, securityManager);
-        //we should bind the IP of the request too, in case SecurityContext.getSession() is called - an IP
-        //should be known in most all cases:
-        WebUtils.bindInetAddressToThread( request );
+        super.preHandle( request, response );
         return true;
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response,
                             Object handler, ModelAndView modelAndView ) throws Exception {
-        WebUtils.bindPrincipalsToSessionIfNecessary( request );
+        //3rd null argument forces parent impl to get from thread (what we want):
+        super.postHandle( request, response, null ); 
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        WebUtils.unbindSecurityContextFromThread();
-        WebUtils.unbindInetAddressFromThread();
+        super.afterCompletion( request, response, null, ex );
     }
 
 }

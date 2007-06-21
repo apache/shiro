@@ -73,8 +73,8 @@ public interface WebSessionFactory {
      * Cookie} or from the {@link javax.servlet.http.HttpSession HttpSession} itself.  Once an
      * id is obtained, the <tt>Session</tt> can be acquired by delegating the call to an underlying
      * {@link org.jsecurity.session.SessionFactory#getSession(java.io.Serializable)
-     * SessionFactory.getSession(Serializable sessionId)} method call.  (This is not a strict
-     * requirement, but merely suggests how it might commonly be done).
+     * SessionFactory.getSession(Serializable sessionId)} method call.  (This is not a requirement,
+     * but merely suggests how it might commonly be done).
      *
      * <p>It is important to note that the <tt>HttpSession</tt> should only ever be
      * used to store a handle to the JSecurity <tt>Session</tt> to eliminate dependencies on

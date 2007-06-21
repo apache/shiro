@@ -37,36 +37,31 @@ import java.util.Map;
  * A ThreadContext provides a means of binding and unbinding objects to the
  * current thread based on key/value pairs.
  *
- * <p>
- * An internal {@link java.util.HashMap} is used to maintain the key/value pairs
+ * <p>An internal {@link java.util.HashMap} is used to maintain the key/value pairs
  * for each thread. If a Thread is pooled or reused, the internal map will not
  * be cleared upon thread reuse. It is the application's responsibility to bind
- * and remove values as necessary.
+ * and remove values as necessary.</p>
  *
- * <p>
- * If the desired behavior is to ensure that Thread data is not shared across
+ * <p>If the desired behavior is to ensure that Thread data is not shared across
  * threads in a pooled or reusable Threaded environment, the application must
  * bind and remove any necessary values at the beginning and end of stack
- * execution, respectively (e.g. via the <tt>clear</tt> method).
+ * execution, respectively (i.e. individually explicitly or all via the <tt>clear</tt> method).</p>
  *
  * @see #clear()
- *
+ * 
  * @since 0.1
  * @author Les Hazlewood
  */
-@SuppressWarnings(value = { "unchecked", "unsafe" })
+@SuppressWarnings( value = { "unchecked", "unsafe" } )
 public abstract class ThreadContext {
 
-    protected static transient final Log logger = LogFactory.getLog(ThreadContext.class);
+    protected static transient final Log logger = LogFactory.getLog( ThreadContext.class );
 
-    public static final String SESSION_KEY =
-        Session.class.getName() + "_THREAD_CONTEXT_KEY";
+    public static final String SESSION_KEY = Session.class.getName() + "_THREAD_CONTEXT_KEY";
 
-    public static final String SECURITY_CONTEXT_KEY =
-        SecurityContext.class.getName() + "_THREAD_CONTEXT_KEY";
+    public static final String SECURITY_CONTEXT_KEY = SecurityContext.class.getName() + "_THREAD_CONTEXT_KEY";
 
-    public static final String INET_ADDRESS_KEY =
-        InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
+    public static final String INET_ADDRESS_KEY = InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =
         new ThreadLocal<Map<Object, Object>>() {
@@ -92,53 +87,55 @@ public abstract class ThreadContext {
      * Returns the object for the specified <code>key</code> that is bound to
      * the current thread.
      *
-     * @param key
-     *            the key that identifies the value to return
+     * @param key the key that identifies the value to return
      * @return the object keyed by <code>key</code> or <code>null</code> if
      *         no value exists for the specified <code>key</code>
      */
-    public static Object get(Object key) {
-        if (logger.isTraceEnabled()) {
+    public static Object get( Object key ) {
+        if ( logger.isTraceEnabled() ) {
             String msg = "get() - in thread [" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+            logger.trace( msg );
         }
-        Object value = getResources().get(key);
-        if ((value != null) && logger.isTraceEnabled()) {
+        Object value = getResources().get( key );
+        if ( ( value != null ) && logger.isTraceEnabled() ) {
             String msg = "Retrieved value of type [" + value.getClass().getName() + "] for key [" +
-                         key + "] " + "bound to thread [" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+                key + "] " + "bound to thread [" + Thread.currentThread().getName() + "]";
+            logger.trace( msg );
         }
         return value;
     }
 
     /**
-     * Binds <code>value</code> for the given <code>key</code> to the
-     * current thread.
+     * Binds <tt>value</tt> for the given <code>key</code> to the current thread.
      *
-     * @param key
-     *            The key with which to identify the <code>value</code>.
-     * @param value
-     *            The value to bind to the thread.
-     * @throws IllegalArgumentException
-     *             if either <code>key</code> or <code>value</code> are
-     *             <code>null</code>.
+     * <p>A <tt>null</tt> <tt>value</tt> has the same effect as if <tt>remove</tt> was called for the given
+     * <tt>key</tt>, i.e.:
+     *
+     * <pre>
+     * if ( value == null ) {
+     *     remove( key );
+     * }</pre>
+     *
+     * @param key   The key with which to identify the <code>value</code>.
+     * @param value The value to bind to the thread.
+     * @throws IllegalArgumentException if the <code>key</code> argument is <tt>null</tt>.
      */
-    public static void put(Object key, Object value) {
-        if (key == null) {
-            throw new IllegalArgumentException("key cannot be null");
-        }
-        if (value == null) {
-            throw new IllegalArgumentException("value cannot be null.  If you"
-                    + "are trying to unbind a resource" + "from the thread, use the "
-                    + "'remove' method instead.");
+    public static void put( Object key, Object value ) {
+        if ( key == null ) {
+            throw new IllegalArgumentException( "key cannot be null" );
         }
 
-        getResources().put(key, value);
+        if ( value == null ) {
+            remove( key );
+            return;
+        }
 
-        if (logger.isTraceEnabled()) {
+        getResources().put( key, value );
+
+        if ( logger.isTraceEnabled() ) {
             String msg = "Bound value of type [" + value.getClass().getName() + "] for key [" +
-                         key + "] to thread " + "[" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+                key + "] to thread " + "[" + Thread.currentThread().getName() + "]";
+            logger.trace( msg );
         }
     }
 
@@ -146,39 +143,38 @@ public abstract class ThreadContext {
      * Unbinds the value for the given <code>key</code> from the current
      * thread.
      *
-     * @param key
-     *            The key identifying the value bound to the current thread.
+     * @param key The key identifying the value bound to the current thread.
      * @return the object unbound or <tt>null</tt> if there was nothing bound
      *         under the specified <tt>key</tt> name.
      */
-    public static Object remove(Object key) {
-        Object value = getResources().remove(key);
+    public static Object remove( Object key ) {
+        Object value = getResources().remove( key );
 
-        if ((value != null) && logger.isTraceEnabled()) {
+        if ( ( value != null ) && logger.isTraceEnabled() ) {
             String msg = "Removed value of type [" + value.getClass().getName() + "] for key [" +
-                         key + "]" + "from thread [" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+                key + "]" + "from thread [" + Thread.currentThread().getName() + "]";
+            logger.trace( msg );
         }
 
         return value;
     }
 
     /**
-     * Returns true if a value for the <code>key</code> is bound to the
-     * current thread, false otherwise.
+     * Returns true if a value for the <code>key</code> is bound to the current thread, false otherwise.
      *
-     * @param key
-     *            the key that may identify a value bound to the current thread.
+     * @param key the key that may identify a value bound to the current thread.
      * @return true if a value for the key is bound to the current thread, false
      *         otherwise.
      */
-    public static boolean containsKey(Object key) {
-        return getResources().containsKey(key);
+    public static boolean containsKey( Object key ) {
+        return getResources().containsKey( key );
     }
 
     /**
-     * Removes all values bound to this ThreadContext.
-     *
+     * Removes <em>all</em> values bound to this ThreadContext, which includes any SecurityContext, Session, or InetAddress
+     * that may be bound by these respective objects' conveninece methods, as well as all values bound by your
+     * application code.
+     * 
      * <p>This operation is meant as a clean-up operation that may be called at the end of
      * thread execution to prevent data corruption in a pooled thread environment.
      */
@@ -188,6 +184,180 @@ public abstract class ThreadContext {
             logger.trace( "Removed all ThreadContext values from thread [" + Thread.currentThread().getName() + "]" );
         }
     }
+
+    /**
+     * Convenience method that simplifies retrieval of a thread-bound SecurityContext.  If there is no
+     * SecurityContext bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
+     * for the following:
+     * <pre>
+     * return (SecurityContext)get( SECURITY_CONTEXT_KEY );</pre>
+     *
+     * <p>This method only returns the bound value if it exists - it does not remove it
+     * from the thread.  To remove it, one must call {@link #unbindSecurityContext() unbindSecurityContext()} instead.
+     *
+     * @return the SecurityContext object bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @since 0.2
+     */
+    public static SecurityContext getSecurityContext() {
+        return (SecurityContext)get( SECURITY_CONTEXT_KEY );
+    }
+
+
+    /**
+     * Convenience method that simplifies binding a SecurityContext to the ThreadContext.
+     *
+     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
+     * ThreadContext key names.  The implementation is simple in that, if the security context is not <tt>null</tt>,
+     * it binds it to the thread, i.e.:
+     *
+     * <pre>
+     * if (securityContext != null) {
+     *     put( SECURITY_CONTEXT_KEY, securityContext );
+     * }</pre>
+     *
+     * @param securityContext the SecurityContext object to bind to the thread.  If the argument is null, nothing will be done.
+     * @since 0.2
+     */
+    public static void bind( SecurityContext securityContext ) {
+        if ( securityContext != null ) {
+            put( SECURITY_CONTEXT_KEY, securityContext );
+        }
+    }
+
+    /**
+     * Convenience method that simplifies removal of a thread-local SecurityContext from the thread.
+     * 
+     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * merely a conveient wrapper for the following:
+     *
+     * <pre>
+     * return (SecurityContext)remove( SECURITY_CONTEXT_KEY );</pre>
+     *
+     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * thread execution), you should use the {@link #getSecurityContext() getSecurityContext()} method for that purpose.
+     *
+     * @return the SecurityContext object previously bound to the thread, or <tt>null</tt> if there was none bound.
+     * @since 0.2
+     */
+    public static SecurityContext unbindSecurityContext() {
+        return (SecurityContext)remove( SECURITY_CONTEXT_KEY );
+    }
+
+
+    /**
+     * Convenience method that simplifies retrieval of a thread-bound Session.  If there is no
+     * Session bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
+     * for the following:
+     * <pre>
+     * return (Session)get( SESSION_KEY );</pre>
+     *
+     * <p>This method only returns the bound value if it exists - it does not remove it
+     * from the thread.  To remove it, one must call {@link #unbindSession() unbindSession} instead.
+     *
+     * @return the Session object bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @since 0.2
+     */
+    public static Session getSession() {
+        return (Session)get( SESSION_KEY );
+    }
+
+    /**
+     * Convenience method that simplifies binding a Session to the ThreadContext.
+     *
+     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
+     * ThreadContext key names.  The implementation is simple in that, if the session is not <tt>null</tt>,
+     * it binds it to the thread, i.e.:
+     *
+     * <pre>
+     * if (session != null) {
+     *     put( SESSION_KEY, session );
+     * }</pre>
+     *
+     * @param session the Session object to bind to the thread.  If the argument is null, nothing will be done.
+     * @since 0.2
+     */
+    public static void bind( Session session ) {
+        if ( session != null ) {
+            put( SESSION_KEY, session );
+        }
+    }
+
+    /**
+     * Convenience method that simplifies removal of a thread-local Session from the thread.
+     *
+     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * merely a conveient wrapper for the following:
+     *
+     * <pre>
+     * return (Session)remove( SESSION_KEY );</pre>
+     *
+     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * thread execution), you should use the {@link #getSession() getSession()} method for that purpose.
+     *
+     * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
+     * @since 0.2
+     */
+    public static Session unbindSession() {
+        return (Session)remove( SESSION_KEY );
+    }
+
+    /**
+     * Convenience method that simplifies retrieval of a thread-bound InetAddress.  If there is no
+     * InetAddress bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
+     * for the following:
+     * <pre>
+     * return (InetAddress)get( INET_ADDRESS_KEY );</pre>
+     *
+     * <p>This method only returns the bound value if it exists - it does not remove it
+     * from the thread.  To remove it, one must call {@link #unbindInetAddress() unbindInetAddress} instead.
+     *
+     * @return the InetAddress object bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @since 0.2
+     */
+    public static InetAddress getInetAddress() {
+        return (InetAddress)get( INET_ADDRESS_KEY );
+    }
+
+    /**
+     * Convenience method that simplifies binding an InetAddress to the ThreadContext.
+     *
+     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
+     * ThreadContext key names.  The implementation is simple in that, if the inetAddress is not <tt>null</tt>,
+     * it binds it to the thread, i.e.:
+     *
+     * <pre>
+     * if (inetAddress != null) {
+     *     put( INET_ADDRESS_KEY, inetAddress );
+     * }</pre>
+     *
+     * @param inetAddress the InetAddress to bind to the thread.  If the argument is null, nothing will be done.
+     * @since 0.2
+     */
+    public static void bind( InetAddress inetAddress ) {
+        if ( inetAddress != null ) {
+            put( INET_ADDRESS_KEY, inetAddress );
+        }
+    }
+
+    /**
+     * Convenience method that simplifies removal of a thread-local InetAddress from the thread.
+     *
+     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * merely a conveient wrapper for the following:
+     *
+     * <pre>
+     * return (InetAddress)remove( INET_ADDRESS_KEY );</pre>
+     *
+     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * thread execution), you should use the {@link #getInetAddress() getInetAddress()} method for that purpose.
+     *
+     * @return the InetAddress object previously bound to the thread, or <tt>null</tt> if there was none bound.
+     * @since 0.2
+     */
+    public static InetAddress unbindInetAddress() {
+        return (InetAddress)remove( INET_ADDRESS_KEY );
+    }
+
 
 }
 

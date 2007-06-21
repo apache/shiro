@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Les Hazlewood
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,16 +24,11 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.web.WebSessionFactory;
-import org.jsecurity.web.WebUtils;
-import org.jsecurity.web.support.DefaultWebSessionFactory;
+import org.jsecurity.web.support.DefaultSessionWebInterceptor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,89 +47,24 @@ import javax.servlet.http.HttpServletResponse;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class SessionInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
-
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
-    private WebSessionFactory webSessionFactory = null;
-    private SessionFactory sessionFactory = null;
-
-    public void setWebSessionFactory( WebSessionFactory webSessionFactory ) {
-        this.webSessionFactory = webSessionFactory;
-    }
-
-    public void setSessionFactory( SessionFactory sessionFactory ) {
-        this.sessionFactory = sessionFactory;
-    }
+public class SessionInterceptor extends DefaultSessionWebInterceptor implements HandlerInterceptor, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
-        if ( this.webSessionFactory == null ) {
-            if ( this.sessionFactory == null ) {
-                String msg = "SessionFactory property must be set if the WebSessionProperty is not set.";
-                throw new IllegalStateException( msg );
-            }
-            this.webSessionFactory = new DefaultWebSessionFactory( this.sessionFactory );
-        }
+        super.init();
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
+        super.preHandle( request, response );
+        return true;
+    }
 
-        boolean continueProcessing = true;
-
-        try {
-            Session session = webSessionFactory.getSession( request, response );
-            if ( session == null ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "No JSecurity Session associated with the HttpServletRequest.  " +
-                               "Attempting to create a new one." );
-                }
-                session = webSessionFactory.start( request, response );
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Created new JSecurity Session with id [" + session.getSessionId() + "]" );
-                }
-            } else {
-                //update last accessed time:
-                session.touch();
-            }
-
-            WebUtils.bindToThread( session );
-
-        } catch ( InvalidSessionException ise ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Request JSecurity Session is invalid, message: [" + ise.getMessage() + "]." );
-            }
-            continueProcessing = handleInvalidSession( request, response, handler, ise );
-        }
-
-        return continueProcessing;
+    public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
+        super.postHandle( request, response, null );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        WebUtils.unbindSessionFromThread();
+        super.afterCompletion( request, response, null, ex );
     }
-
-    protected boolean handleInvalidSession( HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            Object handler,
-                                            InvalidSessionException ise ) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Handling invalid session associated with the request.  Attempting to " +
-                       "create a new Session to allow processing to continue" );
-        }
-        Session s = webSessionFactory.start( request, response );
-        WebUtils.bindToThread( s );
-
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's incoming " +
-                       "referenced session had expired." );
-        }
-        request.setAttribute( WebUtils.EXPIRED_SESSION_KEY, Boolean.TRUE );
-
-
-        return true;
-    }
-
-
 }

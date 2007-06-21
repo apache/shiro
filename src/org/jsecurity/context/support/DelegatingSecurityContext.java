@@ -91,7 +91,7 @@ public class DelegatingSecurityContext implements SecurityContext {
      * @return the InetAddress associated with the client who created/is interacting with this SecurityContext.
      */
     protected InetAddress getInetAddress() {
-        return (InetAddress)ThreadContext.get( ThreadContext.INET_ADDRESS_KEY );
+        return ThreadContext.getInetAddress();
     }
 
     /**
@@ -190,10 +190,10 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public Session getSession( boolean create ) {
-        Session s = (Session)ThreadContext.get( ThreadContext.SESSION_KEY );
+        Session s = ThreadContext.getSession();
         if ( s == null && create ) {
-            s = securityManager.start( getInetAddress() ); 
-            ThreadContext.put( ThreadContext.SESSION_KEY, s );
+            s = securityManager.start( getInetAddress() );
+            ThreadContext.bind( s );
         }
         return s;
     }
@@ -206,8 +206,8 @@ public class DelegatingSecurityContext implements SecurityContext {
                 s.stop();
             }
         } finally {
-            ThreadContext.remove( ThreadContext.SESSION_KEY );
-            ThreadContext.remove( ThreadContext.SECURITY_CONTEXT_KEY );
+            ThreadContext.unbindSession();
+            ThreadContext.unbindSecurityContext();
         }
     }
 

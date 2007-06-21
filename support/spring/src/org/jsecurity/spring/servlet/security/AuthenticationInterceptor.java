@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.ThreadLocalSecurityContext;
-import org.jsecurity.web.WebUtils;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.springframework.beans.factory.InitializingBean;
@@ -82,7 +81,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter
 
     private AttemptedPageStorageScheme attemptedPageStorageScheme = AttemptedPageStorageScheme.httpSession;
 
-    private String attemptedPageKeyName = WebUtils.ATTEMPTED_PAGE_KEY;
+    private String attemptedPageKeyName = AuthenticationInterceptor.class.getName() + "_ATTEMPTED_PAGE_SESSION_KEY";
 
     private SecurityContext securityContext = new ThreadLocalSecurityContext();
 
