@@ -61,7 +61,7 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    protected boolean isBase64Encoded() {
+    public boolean isBase64Encoded() {
         return base64Encoded;
     }
 
@@ -108,12 +108,45 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
      * @param passwd the password being converted.
      * @return an array of bytes that match the characters given.
      */
-    private byte[] charsToBytes( char[] passwd ) {
+    protected byte[] charsToBytes( char[] passwd ) {
         byte[] buf = new byte[passwd.length];
         for (int i = 0; i < passwd.length; i++) {
             buf[i] = (byte) passwd[i];
         }
         return buf;
+    }
+
+    protected char[] bytesToChars( byte[] bytes ) {
+        char[] buf = new char[bytes.length];
+        for( int i = 0; i < bytes.length; i++ ) {
+            buf[i] = (char)bytes[i];
+        }
+        return buf;
+    }
+
+    public char[] encodeToChars( String s ) {
+        char[] chars = castToCharArray( s );
+        byte[] digested = doDigest( charsToBytes( chars ) );
+        if ( isBase64Encoded() ) {
+            byte[] encoded = Base64.encodeBase64( digested );
+            return bytesToChars( encoded );
+        } else {
+            return Hex.encodeHex( digested );
+        }
+    }
+
+    public byte[] encodeToBytes( String s ) {
+        char[] chars = castToCharArray( s );
+        byte[] digested = doDigest( charsToBytes( chars ) );
+        if ( isBase64Encoded() ) {
+            return Base64.encodeBase64( digested );
+        } else {
+            return charsToBytes( Hex.encodeHex( digested ) );
+        }
+    }
+
+    public String encode( String s ) {
+        return new String( encodeToChars( s ) );   
     }
 
 
@@ -131,7 +164,7 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
      * @param credential the credential.
      * @return the credential in char[] form.
      */
-    private char[] castToCharArray(Object credential) {
+    protected char[] castToCharArray(Object credential) {
         char[] chars;
 
         if( credential instanceof String ) {
