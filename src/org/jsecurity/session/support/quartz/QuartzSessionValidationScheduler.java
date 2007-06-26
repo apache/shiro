@@ -72,6 +72,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      */
     private Scheduler scheduler;
 
+    private boolean schedulerImplicitlyCreated = false;
+
     /**
      * The session manager used to validate sessions.
      */
@@ -108,10 +110,10 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     protected Scheduler getScheduler() throws SchedulerException {
         if( scheduler == null ) {
-            return StdSchedulerFactory.getDefaultScheduler();
-        } else {
-            return scheduler;
+            scheduler = StdSchedulerFactory.getDefaultScheduler();
+            schedulerImplicitlyCreated = true;
         }
+        return scheduler;
     }
 
     public void setScheduler(Scheduler scheduler) {
@@ -152,9 +154,16 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             JobDetail detail = new JobDetail( JOB_NAME, Scheduler.DEFAULT_GROUP, QuartzSessionValidationJob.class );
             detail.getJobDataMap().put( QuartzSessionValidationJob.SESSION_MANAGER_KEY, sessionManager );
 
-            getScheduler().scheduleJob( detail, trigger );
-            getScheduler().start();
-            
+            Scheduler scheduler = getScheduler();
+
+            scheduler.scheduleJob( detail, trigger );
+            if ( schedulerImplicitlyCreated ) {
+                scheduler.start();
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Successfully started implicitly created Quartz Scheduler instance." );
+                }
+            }
+
             if( log.isDebugEnabled() ) {
                 log.debug( "Session validation job successfully scheduled with Quartz." );
             }
@@ -171,9 +180,13 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             log.debug( "Stopping Quartz session validation job..." );
         }
 
+        Scheduler scheduler = null;
+
         try {
 
-            getScheduler().unscheduleJob( JOB_NAME, Scheduler.DEFAULT_GROUP );
+            scheduler = getScheduler();
+
+            scheduler.unscheduleJob( JOB_NAME, Scheduler.DEFAULT_GROUP );
 
             if( log.isDebugEnabled() ) {
                 log.debug( "Quartz session validation job stopped successfully." );
@@ -182,6 +195,19 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         } catch (SchedulerException e) {
             if( log.isErrorEnabled() ) {
                 log.error( "Error stopping the Quartz session validation job.", e );
+            }
+        }
+
+        if ( schedulerImplicitlyCreated && scheduler != null) {
+            try {
+                scheduler.shutdown();
+            } catch ( SchedulerException e ) {
+                if ( log.isErrorEnabled() ) {
+                    log.error( "Unable to cleanly shutdown implicitly created Quartz Scheduler instance.", e );
+                }
+            } finally {
+                setScheduler( null );
+                schedulerImplicitlyCreated = false;
             }
         }
 
