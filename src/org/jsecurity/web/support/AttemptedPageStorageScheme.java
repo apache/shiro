@@ -22,12 +22,12 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.spring.servlet.security;
+package org.jsecurity.web.support;
 
 /**
  * Represents the method used to store the page that the user was attempting
  * to load, when redirecting to the login page by the
- * {@link AuthenticationInterceptor} (e.g. storing the attempted page in the
+ * {@link org.jsecurity.web.support.AuthenticationWebSupport} (e.g. storing the attempted page in the
  * session)
  *
  * @since 0.2

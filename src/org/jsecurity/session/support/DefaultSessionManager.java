@@ -43,12 +43,12 @@ import java.util.Date;
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
  *
- * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class DefaultSessionManager extends AbstractSessionManager
-        implements ValidatingSessionManager, Destroyable {
+    implements ValidatingSessionManager, Destroyable {
 
     private static final String EHCACHE_VALID_CLASS_NAME = "net.sf.ehcache.CacheManager";
 
@@ -57,13 +57,21 @@ public class DefaultSessionManager extends AbstractSessionManager
      * By default, the session manager will use Quartz to schedule session validation, but this
      * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
-    protected SessionValidationScheduler sessionValidationScheduler = new QuartzSessionValidationScheduler( this );
+    protected SessionValidationScheduler sessionValidationScheduler = null;
 
     private boolean sessionDAOImplicitlyCreated = false;
+    private boolean sessionValidationSchedulerImplicitlyCreated = false;
 
-
-    public DefaultSessionManager(){
+    public DefaultSessionManager() {
         setSessionClass( SimpleSession.class );
+    }
+
+    public void setSessionValidationScheduler( SessionValidationScheduler sessionValidationScheduler ) {
+        this.sessionValidationScheduler = sessionValidationScheduler;
+    }
+
+    public SessionValidationScheduler getSessionValidationScheduler() {
+        return sessionValidationScheduler;
     }
 
     private boolean isEhcacheAvailable() {
@@ -73,11 +81,11 @@ public class DefaultSessionManager extends AbstractSessionManager
     /**
      * Creates a default <tt>SessionDAO</tt> during {@link #init initialization} as a fail-safe mechanism if one has
      * not already been explicitly set via {@link #setSessionDAO}.
-     *
+     * <p/>
      * <p>This default implementation tries to use an {@link EhcacheSessionDAO EhcacheSessionDAO} instance by default if
      * <a href="">Ehcache</a> is in the classpath.  If ehcache is not in the classpath, a
      * {@link org.jsecurity.session.support.eis.support.MemorySessionDAO} will be used instead.
-     *
+     * <p/>
      * <p><b>N.B.</b> The MemorySessionDAO implementation is not production capable, as it maintains all sessions in
      * memory (never removed, eating up memory over time) and loses session after server restarts.  It is really only
      * suitable during testing.  For production environments, please ensure
@@ -101,20 +109,65 @@ public class DefaultSessionManager extends AbstractSessionManager
         } else {
             if ( log.isWarnEnabled() ) {
                 String msg = "Ehcache is not in the classpath.  JSecurity's default production-quality session " +
-                        "DAO is implemented w/ Ehcache.  Defaulting to a simple memory-based DAO, but this should " +
-                        "NOT be used in a production environment.  Please either put ehcache.jar in the classpath " +
-                        "or set a production-quality implementation explicitly via the " + getClass().getName() +
-                        "#setSessionDAO method.";
+                    "DAO is implemented w/ Ehcache.  Defaulting to a simple memory-based DAO, but this should " +
+                    "NOT be used in a production environment.  Please either put ehcache.jar in the classpath " +
+                    "or set a production-quality implementation explicitly via the " + getClass().getName() +
+                    "#setSessionDAO method.";
                 log.warn( msg );
             }
             dao = new MemorySessionDAO();
         }
         this.sessionDAOImplicitlyCreated = true;
+
+        init( dao );
+
         return dao;
     }
 
-    public void init() {
+    protected SessionValidationScheduler createSessionValidationScheduler() {
+        SessionValidationScheduler scheduler = null;
 
+        if ( log.isDebugEnabled() ) {
+            log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );
+        }
+        scheduler = new QuartzSessionValidationScheduler( this );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
+        }
+        this.sessionValidationSchedulerImplicitlyCreated = true;
+        return scheduler;
+    }
+
+    protected void startSessionValidation() {
+        SessionValidationScheduler scheduler = getSessionValidationScheduler();
+        if ( scheduler == null ) {
+            scheduler = createSessionValidationScheduler();
+            setSessionValidationScheduler( scheduler );
+        }
+        if ( log.isInfoEnabled() ) {
+            log.info( "Starting session validation scheduler..." );
+        }
+        scheduler.startSessionValidation();
+    }
+
+    protected void stopSessionValidation() {
+        SessionValidationScheduler scheduler = getSessionValidationScheduler();
+        if ( scheduler != null ) {
+            try {
+                scheduler.stopSessionValidation();
+            } catch ( Exception e ) {
+                if ( log.isDebugEnabled() ) {
+                    String msg = "Unable to stop SessionValidationScheduler.  Ignoring (shutting down)...";
+                    log.debug( msg, e );
+                }
+            }
+            if ( sessionValidationSchedulerImplicitlyCreated ) {
+                destroy( scheduler );
+            }
+        }
+    }
+
+    protected void ensureSessionDAO() {
         SessionDAO sessionDAO = getSessionDAO();
         if ( sessionDAO == null ) {
             if ( log.isDebugEnabled() ) {
@@ -122,65 +175,65 @@ public class DefaultSessionManager extends AbstractSessionManager
             }
             sessionDAO = createSessionDAO();
             setSessionDAO( sessionDAO );
-            if ( sessionDAOImplicitlyCreated && (sessionDAO instanceof Initializable ) ) {
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "Initializing implicitly created instance..." );
-                }
-                try {
-                    ((Initializable)sessionDAO).init();
-                } catch (Exception e) {
-                    String msg = "Unable to initialize sessionDAO [" + sessionDAO + "]";
-                    throw new IllegalStateException( msg, e );
-                }
+        }
+    }
+
+    protected void initSessionDAO() {
+        if ( sessionDAOImplicitlyCreated ) {
+            init( getSessionDAO() );
+        }
+    }
+
+    protected void initSessionValidationScheduler() {
+        if ( sessionValidationSchedulerImplicitlyCreated ) {
+            init( getSessionValidationScheduler() );
+        }
+    }
+
+    public void init() {
+        ensureSessionDAO();
+        super.init();
+        startSessionValidation();
+    }
+
+    protected void destroySessionDAO() {
+        if ( sessionDAOImplicitlyCreated ) {
+            destroy( getSessionDAO() );
+        }
+    }
+
+    protected void init( Object o ) {
+        if ( o instanceof Initializable ) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Initializing object instance of type [" + o.getClass().getName() + "]..." );
+            }
+            try {
+                ((Initializable)o).init();
+            } catch ( Exception e ) {
+                String msg = "Unable to intialize object [" + o + "].";
+                throw new IllegalStateException( msg, e );
             }
         }
+    }
 
-        super.init();
-
-        // Start session validation
-        if ( sessionValidationScheduler != null ) {
-
-            if( log.isInfoEnabled() ) {
-                log.info( "Starting session validation scheduler..." );
-            }
-
-            sessionValidationScheduler.startSessionValidation();
-        } else {
-            if (log.isWarnEnabled()) {
-                log.warn("No session validation scheduler is configured, so sessions may not be validated.");
+    protected void destroy( Object o ) {
+        if ( o instanceof Destroyable ) {
+            try {
+                ((Destroyable)o).destroy();
+            } catch ( Exception e ) {
+                if ( log.isDebugEnabled() ) {
+                    String msg = "Unable to cleanly destroy Destroyable object of type [" + o.getClass().getName() +
+                        "].  Ignoring (shutting down).";
+                    log.debug( msg, e );
+                }
             }
         }
     }
 
     public void destroy() {
-        try {
-            if ( sessionValidationScheduler != null ) {
-                sessionValidationScheduler.stopSessionValidation();
-            }
-        } catch (Exception e) {
-            if ( log.isWarnEnabled() ) {
-                String msg = "Unable to cleanly destroy sessionValidationScheduler [" + sessionValidationScheduler + "].";
-                log.warn( msg, e );
-            }
-        }
-
-        if ( sessionDAOImplicitlyCreated ) {
-            if ( sessionDAO instanceof Destroyable ) {
-                try {
-                    ((Destroyable)sessionDAO).destroy();
-                } catch ( Exception e ) {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Unable to cleanly destroy implicitly created sessionDAO [" + sessionDAO + "]." );
-                    }
-                }
-            }
-        }
+        stopSessionValidation();
+        destroySessionDAO();
     }
-
-    public void setSessionValidationScheduler(SessionValidationScheduler sessionValidationScheduler) {
-        this.sessionValidationScheduler = sessionValidationScheduler;
-    }
-
 
     protected void onStop( Session session ) {
         if ( log.isTraceEnabled() ) {
@@ -197,7 +250,7 @@ public class DefaultSessionManager extends AbstractSessionManager
     protected void onExpire( Session session ) {
         if ( log.isTraceEnabled() ) {
             log.trace( "Updating destroy time and expiration status of session with id " +
-                       session.getSessionId() + "]");
+                session.getSessionId() + "]" );
         }
         SimpleSession ss = (SimpleSession)session;
         ss.setStopTimestamp( new Date() );
@@ -207,9 +260,9 @@ public class DefaultSessionManager extends AbstractSessionManager
     protected void onTouch( Session session ) {
         if ( log.isTraceEnabled() ) {
             log.trace( "Updating last access time of session with id [" +
-                       session.getSessionId() + "]");
+                session.getSessionId() + "]" );
         }
-        ((SimpleSession)session).setLastAccessTime( new Date() );
+        ( (SimpleSession)session ).setLastAccessTime( new Date() );
     }
 
     protected void init( Session newInstance, InetAddress hostAddr ) {
@@ -232,12 +285,12 @@ public class DefaultSessionManager extends AbstractSessionManager
         Collection<Session> activeSessions = getSessionDAO().getActiveSessions();
 
         if ( activeSessions != null && !activeSessions.isEmpty() ) {
-            for( Session s : activeSessions ) {
+            for ( Session s : activeSessions ) {
                 try {
                     validate( s );
                 } catch ( InvalidSessionException e ) {
                     if ( log.isDebugEnabled() ) {
-                        boolean expired = (e instanceof ExpiredSessionException );
+                        boolean expired = ( e instanceof ExpiredSessionException );
                         String msg = "Invalidated session with id [" + s.getSessionId() + "]" +
                             ( expired ? " (expired)" : " (stopped)" );
                         log.debug( msg );

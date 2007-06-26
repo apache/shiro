@@ -30,6 +30,7 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.web.support.AttemptedPageStorageScheme;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.view.RedirectView;
@@ -45,7 +46,7 @@ import java.util.Map;
  * page to be viewd.
  *
  * <p>If the user is not authenticated, they will be redirected to the login page located
- * at the URL {@link #getLoginURL() getLoginURL()}.  Just prior to being redirected, the
+ * at the URL {@link #getLoginURL() getRedirectUrl()}.  Just prior to being redirected, the
  * page URL they attempted to view is first saved in a
  * {@link #setAttemptedPageStorageScheme configurable location} for lookup later.
  *
