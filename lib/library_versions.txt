@@ -75,6 +75,11 @@ Some notes:
 - Quartz 1.5.2 (http://www.opensymphony.com/quartz)
 - required by the RI during build and runtime for scheduling support
 
+* retroweaver/retroweaver.jar,retroweaver-rt.jar
+- Retroweaver 2.0 (http://retroweaver.sourceforge.net)
+- required for retroweaving to support JDK 1.3 and 1.4
+- rt jar is required at runtime if running in 1.3 or 1.4
+
 * spring/spring.jar
 - Spring Application Framework 2.0.2 (http://springframework.org)
 - required to build Spring integration support and sample apps
