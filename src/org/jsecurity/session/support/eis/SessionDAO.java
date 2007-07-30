@@ -48,7 +48,7 @@ public interface SessionDAO {
      * always be true:
      * <br/><br/><code>
      * <pre>Serializable id = create( session );
-id.equals( session.getId() ) == true</pre></code>
+id.equals( session.getSessionId() ) == true</pre></code>
      *
      * <p>Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.

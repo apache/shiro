@@ -63,6 +63,10 @@ Some notes:
 - JBoss AOP jar from the JBoss 4.0.4.GA Application Server release
 - Required at build time for JBoss integration support classes.
 
+* jug/jug.jar, jug/jug-native.zip
+- Java Uuid Genrator (JUG) v. 2.0.0 (LGPL jar) (http://jug.safehaus.org/)
+- used as a fallback UUID generator for memory-based session management if below Java 1.5
+
 * junit/junit.jar
 - JUnit Test Framework 4.1 (http://www.junit.org)
 - Required for building and running test cases

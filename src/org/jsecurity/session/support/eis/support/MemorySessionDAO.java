@@ -27,11 +27,15 @@ package org.jsecurity.session.support.eis.support;
 
 import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.support.SimpleSession;
+import org.jsecurity.util.ClassUtils;
+import org.jsecurity.util.JavaEnvironment;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
@@ -48,14 +52,48 @@ import java.util.Map;
  */
 public class MemorySessionDAO extends AbstractCachingSessionDAO {
 
+    private static final String VALID_JUG_CLASS_NAME = "org.safehaus.uuid.UUIDGenerator";
+    private static final String RANDOM_NUM_GENERATOR_ALGORITHM_NAME = "SHA1PRNG";
+    private Random randomNumberGenerator = null;
+
     public MemorySessionDAO() {
         setCacheProvider( new HashtableCacheProvider() );
         setMaintainStoppedSessions( true );
     }
 
-    protected Serializable doCreate(Session session) {
-        //no need to do anything with the session - parent class persists to in-memory cache already.  Just return id:
-        return session.getSessionId();
+    private Random getRandomNumberGenerator() {
+        if ( randomNumberGenerator == null ) {
+            if ( log.isWarnEnabled() ) {
+                String msg = "On JDK 1.4 platforms and below, please ensure the JUG jar file is in the classpath for " +
+                    "valid Session ID generation.  Defaulting to SecureRandom based id generation for now " +
+                    "(NOT recommended for production systems - please add the JUG jar as soon as convenient).";
+                log.warn( msg );
+            }
+
+            try {
+                randomNumberGenerator = java.security.SecureRandom.getInstance( RANDOM_NUM_GENERATOR_ALGORITHM_NAME );
+            } catch ( java.security.NoSuchAlgorithmException e ) {
+                randomNumberGenerator = new java.security.SecureRandom();
+            }
+        }
+        return randomNumberGenerator;
+    }
+
+    protected Serializable generateNewSessionId() {
+        if ( JavaEnvironment.isAtLeastVersion15() ) {
+            return java.util.UUID.randomUUID().toString();
+        } else if ( ClassUtils.isAvailable( VALID_JUG_CLASS_NAME ) ) {
+            //JUG library is available, lets use it to generate an ID:
+            return org.safehaus.uuid.UUIDGenerator.getInstance().generateRandomBasedUUID().toString();
+        } else {
+            return getRandomNumberGenerator().nextLong();
+        }
+    }
+
+    protected Serializable doCreate( Session session ) {
+        Serializable sessionId = generateNewSessionId();
+        ((SimpleSession)session).setSessionId( sessionId );
+        return sessionId;
     }
 
     protected Session doReadSession( Serializable sessionId ) {
