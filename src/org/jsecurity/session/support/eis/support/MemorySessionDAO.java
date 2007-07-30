@@ -86,7 +86,7 @@ public class MemorySessionDAO extends AbstractCachingSessionDAO {
             //JUG library is available, lets use it to generate an ID:
             return org.safehaus.uuid.UUIDGenerator.getInstance().generateRandomBasedUUID().toString();
         } else {
-            return getRandomNumberGenerator().nextLong();
+            return Long.toString( getRandomNumberGenerator().nextLong() );
         }
     }
 
