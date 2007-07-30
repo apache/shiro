@@ -85,6 +85,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
     private String sessionIdRequestParamName = SESSION_ID_REQUEST_PARAM_NAME; //default;
     private String sessionIdCookieName = SESSION_ID_REQUEST_PARAM_NAME; //default;
+    private String sessionIdCookiePath = null; //null means set it on the request context root
     private String sessionIdHttpSessionKeyName = Session.class.getName() + "_HTTP_SESSION_KEY";
     private int sessionIdCookieMaxAge = SESSION_ID_COOKIE_MAX_AGE;
 
@@ -116,6 +117,14 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
     public void setSessionIdCookieName( String sessionIdCookieName ) {
         this.sessionIdCookieName = sessionIdCookieName;
+    }
+
+    public void setSessionIdCookiePath( String sessionIdCookiePath ) {
+        this.sessionIdCookiePath = sessionIdCookiePath;
+    }
+
+    public String getSessionIdCookiePath() {
+        return sessionIdCookiePath;
     }
 
     public int getSessionIdCookieMaxAge() {
@@ -230,10 +239,10 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
         IdStorageLocation idsl = getIdStorageLocation();
         if ( idsl == IdStorageLocation.Cookie || idsl == IdStorageLocation.Both ) {
-            storeSessionIdInCookie( response, sessionId );
+            storeSessionIdInCookie( request, response, sessionId );
         }
         if ( idsl == IdStorageLocation.HttpSession || idsl == IdStorageLocation.Both ) {
-            storeSessionIdInHttpSession( request, sessionId );
+            storeSessionIdInHttpSession( request, response, sessionId );
         }
         
         return session;
@@ -373,23 +382,26 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
         return sessionIdString;
     }
 
-    protected void storeSessionIdInCookie( HttpServletResponse response, Serializable sessionId ) {
+    protected void storeSessionIdInCookie( HttpServletRequest request, HttpServletResponse response, Serializable sessionId ) {
         String cookieName = getSessionIdCookieName();
+        String cookiePath = getSessionIdCookiePath();
         int maxAge = getSessionIdCookieMaxAge();
 
         Cookie sessionIdCookie = new Cookie( cookieName, sessionId.toString() );
 
         sessionIdCookie.setMaxAge( maxAge );
 
-        // We only want one cookie for the entire application, so set the path
-        // to be "/" - otherwise it will create one cookie for every directory the
-        // user navigates.
-        sessionIdCookie.setPath( "/" );
+        if ( cookiePath == null ) {
+            //default is to set it on the web context's root:
+            cookiePath = request.getContextPath();
+        }
+
+        sessionIdCookie.setPath( cookiePath );
 
         response.addCookie( sessionIdCookie );
         if ( log.isDebugEnabled() ) {
-            log.debug( "Added Cookie [" + cookieName + "] with value [" + sessionId + "] " +
-                       "to HttpServletResponse." );
+            log.debug( "Added Cookie [" + cookieName + "] to path [" + cookiePath + "] with value [" +
+                       sessionId + "] to the HttpServletResponse." );
         }
     }
 
@@ -417,7 +429,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
         return sessionId;
     }
 
-    protected void storeSessionIdInHttpSession( HttpServletRequest request, Serializable sessionId ) {
+    protected void storeSessionIdInHttpSession( HttpServletRequest request, HttpServletResponse response, Serializable sessionId ) {
         String sessionKey = getSessionIdHttpSessionKeyName();
 
         HttpSession session = request.getSession();
