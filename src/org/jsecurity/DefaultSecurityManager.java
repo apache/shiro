@@ -309,6 +309,20 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     }
 
     /**
+     * Convenience method for applications with a single realm that merely wraps the realm in a list and then invokes
+     * the {@link #setRealms} method.
+     *
+     * @param realm the realm to set for a single-realm application.
+     *
+     * @since 0.2
+     */
+    public void setRealm( Realm realm ) {
+        List<Realm> realms = new ArrayList<Realm>( 1 );
+        realms.add( realm );
+        setRealms( realms );
+    }
+
+    /**
      * Sets the realms managed by this <tt>SecurityManager</tt> instance.
      * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
      */
@@ -360,7 +374,6 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     public void checkAuthorization(SecurityContext context, AuthorizedAction action) throws AuthorizationException {
         authorizer.checkAuthorization( context, action );
     }
-
 
     /**
      * Retrieves the realm with the given name from the realm map or throws an exception if one
