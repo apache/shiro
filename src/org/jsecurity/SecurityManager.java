@@ -56,13 +56,6 @@ public interface SecurityManager extends Authenticator, Authorizer, Authorizatio
 
 
     /**
-     * Sets the realms that should be managed by this realm manager.
-     * @param realms the realms that should be managed by this realm manager.
-     */
-    void setRealms( List<Realm> realms );
-
-
-    /**
      * Returns all realms that are managed by this realm manager.
      * @return a list of realms that are managed by this realm manager.
      */
