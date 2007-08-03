@@ -17,7 +17,7 @@
     <!-- Module properties -->
     <property name="module.name" value="api"/>
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
-    <property name="dist.war" value="${root.dist.dir}/${dist.war.name}"/>
+    <property name="dist.war" value="${root.base.dir}/build/${dist.war.name}"/>
 
     <property name="dist.dir" value="${build.dir}/dist"/>
 
@@ -90,7 +90,7 @@
         <mkdir dir="${webstart.lib.dir}"/>
         <copy todir="${webstart.lib.dir}" preservelastmodified="true">
             <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
-            <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
+            <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
             <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
             <fileset dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
         </copy>
@@ -109,7 +109,7 @@
             <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
             <lib dir="${lib.dir}/quartz" includes="*.jar"/>
             <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
-            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
+            <lib dir="${root.base.dir}" includes="**/jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
 
