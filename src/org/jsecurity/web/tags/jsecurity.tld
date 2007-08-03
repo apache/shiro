@@ -14,11 +14,11 @@
     <description>JSecurity JSP Tag Library. Authors: Les Hazlewood, Jeremy Haile</description>
 
     <tag>
-        <name>implies</name>
-        <tag-class>org.jsecurity.web.tags.ImpliesTag</tag-class>
+        <name>hasPermission</name>
+        <tag-class>org.jsecurity.web.tags.HasPermissionTag</tag-class>
         <body-content>JSP</body-content>
         <description>Displays body content only if the current user's security context
-            implies the specified permission (i.e the user has the specified ability).</description>
+            'has' (implies) the specified permission (i.e the user has the specified ability).</description>
         <attribute>
             <name>type</name>
             <required>true</required>
@@ -37,11 +37,11 @@
     </tag>
 
     <tag>
-        <name>notImplies</name>
-        <tag-class>org.jsecurity.web.tags.NotImpliesTag</tag-class>
+        <name>lacksPermission</name>
+        <tag-class>org.jsecurity.web.tags.LacksPermissionTag</tag-class>
         <body-content>JSP</body-content>
         <description>Displays body content only if the current user's security context does
-            NOT imply the specified permission (i.e. the user lacks the specified ability)
+            NOT have (not imply) the specified permission (i.e. the user lacks the specified ability)
         </description>
         <attribute>
             <name>type</name>

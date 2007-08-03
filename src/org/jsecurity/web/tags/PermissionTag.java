@@ -118,6 +118,10 @@ public abstract class PermissionTag extends SecureTag {
         }
     }
 
+    protected boolean implies( Permission p ) {
+        return getSecurityContext() != null && getSecurityContext().implies( p );
+    }
+
     protected abstract boolean showTagBody( Permission p );
 
 }
