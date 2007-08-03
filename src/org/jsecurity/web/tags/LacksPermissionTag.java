@@ -31,13 +31,13 @@ import org.jsecurity.authz.Permission;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class ImpliesTag extends PermissionTag {
+public class LacksPermissionTag extends PermissionTag {
 
-    public ImpliesTag() {
+    public LacksPermissionTag() {
     }
 
     protected boolean showTagBody( Permission p ) {
-        return getSecurityContext() != null && getSecurityContext().implies( p );
+        return !implies( p );
     }
 
 }
