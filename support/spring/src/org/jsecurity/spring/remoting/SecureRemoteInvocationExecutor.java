@@ -31,7 +31,7 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.support.SecurityContextWebSupport;
+import org.jsecurity.web.support.SecurityContextWebInterceptor;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -97,7 +97,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 ThreadContext.bind( session );
 
                 // Get the principals and realm name from the session
-                List<Principal>principals = (List<Principal>) session.getAttribute( SecurityContextWebSupport.PRINCIPALS_SESSION_KEY );
+                List<Principal>principals = (List<Principal>) session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
 
                 // If principals and realm were found in the session, create a delegating authorization context
                 // and bind it to the thread.

@@ -233,7 +233,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
     }
 
     public Session start( HttpServletRequest request, HttpServletResponse response ) {
-        InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
+        InetAddress clientAddress = SecurityWebInterceptor.getInetAddress( request );
         Session session = sessionFactory.start( clientAddress );
         Serializable sessionId = session.getSessionId();
 
@@ -271,7 +271,7 @@ public class DefaultWebSessionFactory implements WebSessionFactory {
 
     protected void validateSessionOrigin( HttpServletRequest request, Session session )
         throws HostUnauthorizedException {
-        InetAddress requestIp = SecurityWebSupport.getInetAddress( request );
+        InetAddress requestIp = SecurityWebInterceptor.getInetAddress( request );
         InetAddress originIp = session.getHostAddress();
         Serializable sessionId = session.getSessionId();
 

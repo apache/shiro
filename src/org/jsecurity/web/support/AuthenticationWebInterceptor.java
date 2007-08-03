@@ -41,13 +41,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * TODO - IN PROGRESS, NOT COMPLETE
- * TODO class JavaDoc
- *
+ * TODO - class JavaDoc
+ * 
  * @since 0.2
  * @author Les Hazlewood
  */
-public class AuthenticationWebSupport extends SecurityWebSupport {
+public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
 
     /**
      * Default encoding scheme used if none is specified (value of UTF-8).
@@ -60,13 +59,13 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
     private boolean http10Compatible = true;
     private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
 
-    private String attemptedPageKeyName = AuthenticationWebSupport.class.getName() + "_ATTEMPTED_PAGE_SESSION_KEY";
+    private String attemptedPageKeyName = AuthenticationWebInterceptor.class.getName() + "_ATTEMPTED_PAGE_SESSION_KEY";
     private AttemptedPageStorageScheme attemptedPageStorageScheme = AttemptedPageStorageScheme.requestParameter;
 
 
     private Set<String> excludedPaths = new HashSet<String>();
 
-    public AuthenticationWebSupport() {
+    public AuthenticationWebInterceptor() {
     }
 
     public String getRedirectUrl() {
@@ -172,7 +171,6 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
         return ThreadLocalSecurityContext.current();
     }
 
-
     protected RedirectView createRedirectView( HttpServletRequest request, HttpServletResponse response ) {
         RedirectView redirect = new RedirectView( getRedirectUrl(), this.contextRelative, this.http10Compatible );
         redirect.setEncodingScheme( this.encodingScheme );
@@ -263,6 +261,19 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
         return false;
     }
 
+    /**
+     * Allows subclass implementations to add and/or override the model that will be encoded in the redirect.  Default
+     * implementation just returns the <tt>redirectModel</tt> argument immediately.
+     *
+     * @param redirectModel the current redirect model, may be <tt>null</tt>
+     * @param request the incoming HttpServletRequest
+     * @param response the outgoing HttpServletResponse
+     * @return the final redirect model that will be encoded in the redirect;
+     */
+    protected Map afterSchemeSet( Map redirectModel, HttpServletRequest request, HttpServletResponse response ) {
+        return redirectModel;
+    }
+
     protected void handleUnauthenticatedRequest( ServletRequest servletRequest, ServletResponse servletResponse ) throws IOException {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
@@ -279,16 +290,29 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
 
         Map redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
 
-        //redirect.render( redirectModel, request, response );
+        redirectModel = afterSchemeSet( redirectModel, request, response );
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "User is not allowed to access page [" + attemptedPage + "] without " +
-                "first being authenticated.  Redirecting to login page [" +
-                getRedirectUrl() + "]" );
-        }
-
-        response.sendRedirect( redirectUrl );
+        redirect.renderMergedOutputModel( redirectModel, request, response );
     }
 
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception {
 
+        String requestedPath = request.getRequestURI();
+        SecurityContext securityContext = getSecurityContext( request, response );
+
+        boolean authenticated = securityContext == null || !securityContext.isAuthenticated();
+
+        if ( !authenticated && !isPathExcluded( requestedPath ) ) {
+            handleUnauthenticatedRequest( request, response );
+            return false;
+        }
+
+        return true;
+    }
+
+    public void postHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    }
+
+    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception ) throws Exception {
+    }
 }

@@ -24,8 +24,8 @@
  */
 package org.jsecurity.spring.servlet.security;
 
-import org.jsecurity.context.SecurityContext;
-import org.jsecurity.web.support.DefaultSecurityContextWebInterceptor;
+import org.jsecurity.web.support.SecurityContextWebInterceptor;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,25 +40,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class SecurityContextInterceptor extends DefaultSecurityContextWebInterceptor implements
-    HandlerInterceptor {
+public class SecurityContextInterceptor extends SecurityContextWebInterceptor implements
+    HandlerInterceptor, InitializingBean {
+
+    public void afterPropertiesSet() throws Exception {
+        init();
+    }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
-        preHandle( request, response );
-        return true;
+        return preHandle( request, response );
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response,
                             Object handler, ModelAndView modelAndView ) throws Exception {
         //3rd null argument forces parent impl to get from thread (what we want):
-        postHandle( request, response, null );
+        postHandle( request, response );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        SecurityContext securityContext = null;
-        afterCompletion( request, response, securityContext, ex );
+        afterCompletion( request, response, ex );
     }
 
 }

@@ -26,7 +26,7 @@
 package org.jsecurity.web.servlet;
 
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.web.support.DefaultSecurityContextWebInterceptor;
+import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -41,14 +41,13 @@ import java.io.IOException;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class SecurityContextFilter extends DefaultSecurityContextWebInterceptor implements Filter {
+public class SecurityContextFilter extends SecurityContextWebInterceptor implements Filter {
 
     /**
      * Implemented for interface - does nothing.
      */
     public void init( FilterConfig filterConfig ) throws ServletException {
     }
-
 
     /**
      * Before the filter continues, any {@link SecurityContext} is bound to the thread local for the
@@ -67,29 +66,29 @@ public class SecurityContextFilter extends DefaultSecurityContextWebInterceptor 
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        SecurityContext securityContext = null;
         Exception exception = null;
 
         try {
 
-            securityContext = preHandle( request, response );
+            boolean continueChain = preHandle( request, response );
 
-            filterChain.doFilter( servletRequest, servletResponse );
-
-            postHandle( request, response, securityContext );
+            if ( continueChain ) {
+                filterChain.doFilter( servletRequest, servletResponse );
+            }
+            
+            postHandle( request, response );
 
         } catch ( Exception e ) {
             exception = e;
         } finally {
             try {
-                afterCompletion( request, response, securityContext, exception );
+                afterCompletion( request, response, exception );
             } catch ( Exception e ) {
                 String message = "afterCompletion method threw exception: ";
                 //noinspection ThrowFromFinallyBlock
                 throw new ServletException( message, e );
             }
         }
-
     }
 
     /**
