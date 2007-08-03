@@ -40,13 +40,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.2
  * @author Les Hazlewood
  */
-public class SessionWebSupport extends SecurityWebSupport implements Initializable {
+public class SessionWebInterceptor extends SecurityWebInterceptor implements Initializable {
 
     /**
      * Key that may be used for a http request or session attribute to alert that a referencing JSecurity Session
      * has expired.
      */
-    public static final String EXPIRED_SESSION_KEY = SessionWebSupport.class.getName() + "_EXPIRED_SESSION_KEY";
+    public static final String EXPIRED_SESSION_KEY = SessionWebInterceptor.class.getName() + "_EXPIRED_SESSION_KEY";
 
     private WebSessionFactory webSessionFactory = null;
     private SessionFactory sessionFactory = null;
@@ -150,4 +150,26 @@ public class SessionWebSupport extends SecurityWebSupport implements Initializab
         return session;
     }
 
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
+        throws Exception {
+        Session session  = acquireSession( request, response );
+        if ( session != null ) {
+            bindToThread( session );
+        }
+        //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
+        bindInetAddressToThread( request );
+        return true;
+    }
+
+    public void postHandle( HttpServletRequest request, HttpServletResponse response )
+        throws Exception {
+        //no need to do anything here.  The WebSessionFactory used by the super class binds the session id to
+        //the response to ensure it is available on subsequent requests to re-construct a Session object.
+    }
+
+    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
+        throws Exception {
+        unbindSessionFromThread();
+        unbindInetAddressFromThread();
+    }
 }

@@ -24,8 +24,7 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.session.Session;
-import org.jsecurity.web.support.DefaultSessionWebInterceptor;
+import org.jsecurity.web.support.SessionWebInterceptor;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +37,7 @@ import java.io.IOException;
  * @since 0.2
  * @author Les Hazlewood
  */
-public class SessionFilter extends DefaultSessionWebInterceptor implements Filter {
+public class SessionFilter extends SessionWebInterceptor implements Filter {
 
     /**
      * Implemented for interface - does nothing.
@@ -57,29 +56,29 @@ public class SessionFilter extends DefaultSessionWebInterceptor implements Filte
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        Session session = null;
         Exception exception = null;
 
         try {
 
-            session = preHandle( request, response );
+            boolean continueChain = preHandle( request, response );
 
-            filterChain.doFilter( servletRequest, servletResponse );
+            if ( continueChain ) {
+                filterChain.doFilter( servletRequest, servletResponse );    
+            }
 
-            postHandle( request, response, session );
+            postHandle( request, response );
 
         } catch ( Exception e ) {
             exception = e;
         } finally {
             try {
-                afterCompletion( request, response, session, exception );
+                afterCompletion( request, response, exception );
             } catch ( Exception e ) {
                 String message = "afterCompletion method threw exception: ";
                 //noinspection ThrowFromFinallyBlock
                 throw new ServletException( message, e );
             }
         }
-
     }
 
     /**
@@ -87,5 +86,4 @@ public class SessionFilter extends DefaultSessionWebInterceptor implements Filte
      */
     public void destroy() {
     }
-
 }

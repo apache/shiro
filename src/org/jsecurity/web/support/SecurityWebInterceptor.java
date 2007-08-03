@@ -28,20 +28,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.WebInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * TODO class JavaDoc
+ * TODO - class JavaDoc
  *
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class SecurityWebSupport implements Initializable {
+public abstract class SecurityWebInterceptor implements WebInterceptor, Initializable {
 
-    private static transient final Log staticLog = LogFactory.getLog( SecurityWebSupport.class );
+    private static transient final Log staticLog = LogFactory.getLog( SecurityWebInterceptor.class );
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     public static InetAddress getInetAddress( HttpServletRequest request ) {

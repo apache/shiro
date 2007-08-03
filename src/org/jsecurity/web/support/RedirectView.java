@@ -57,12 +57,14 @@ import java.util.Map;
  * The original author names and copyright (Apache 2.0) has been left in place.  A special
  * thanks to Rod Johnson, Juergen Hoeller, and Colin Sampaleanu for making this available.</em>
  *
- * @author Rod Johnson
- * @author Juergen Hoeller
- * @author Colin Sampaleanu
  * @see #setContextRelative
  * @see #setHttp10Compatible
  * @see javax.servlet.http.HttpServletResponse#sendRedirect
+ *
+ * @since 0.2
+ * @author Rod Johnson
+ * @author Juergen Hoeller
+ * @author Colin Sampaleanu
  */
 public class RedirectView {
 
@@ -249,7 +251,8 @@ public class RedirectView {
 				log.debug("Only JDK 1.3 URLEncoder available: using platform default encoding " +
 						"instead of the requested scheme '" + encodingScheme + "'");
 			}
-			return URLEncoder.encode(input);
+            //noinspection deprecation
+            return URLEncoder.encode(input);
 		}
 		return URLEncoder.encode(input, encodingScheme);
 	}

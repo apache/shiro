@@ -27,7 +27,7 @@ package org.jsecurity.web.support;
 /**
  * Represents the method used to store the page that the user was attempting
  * to load, when redirecting to the login page by the
- * {@link org.jsecurity.web.support.AuthenticationWebSupport} (e.g. storing the attempted page in the
+ * {@link org.jsecurity.web.support.AuthenticationWebInterceptor} (e.g. storing the attempted page in the
  * session)
  *
  * @since 0.2

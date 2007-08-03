@@ -25,7 +25,7 @@
 package org.jsecurity.spring.servlet.security;
 
 import org.jsecurity.session.Session;
-import org.jsecurity.web.support.DefaultSessionWebInterceptor;
+import org.jsecurity.web.support.SessionWebInterceptor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -47,26 +47,24 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SessionInterceptor extends DefaultSessionWebInterceptor implements HandlerInterceptor, InitializingBean {
+public class SessionInterceptor extends SessionWebInterceptor implements HandlerInterceptor, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
-        super.init();
+        init();
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response,
                               Object handler ) throws Exception {
-        preHandle( request, response );
-        return true;
+        return preHandle( request, response );
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
-        postHandle( request, response, null );
+        postHandle( request, response );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response,
                                  Object handler, Exception ex ) throws Exception {
-        Session session = null; //set to null explicitly + use type safety so the apropriate method is called at runtime
-        afterCompletion( request, response, session, ex );
+        afterCompletion( request, response, ex );
     }
     
 }

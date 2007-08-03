@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,234 +25,56 @@
 
 package org.jsecurity.web.servlet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
+import org.jsecurity.web.support.AuthenticationWebInterceptor;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * Description of class.
- * todo JavaDoc
- *
- * @author Jeremy Haile
+ * TODO - class JavaDoc
+ * 
  * @since 0.1
+ * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public class AuthenticationFilter implements Filter {
+public class AuthenticationFilter extends AuthenticationWebInterceptor implements Filter {
 
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-    private static final String DEFAULT_UNAUTHENTICATED_PATH = "/login";
-    private static final String UNAUTHENTICATED_PATH_PARAM = "unauthenticatedPath";
-    private static final String UNAUTHENTICATED_SCHEME_PARAM = "unauthenticatedScheme";
-    private static final String UNAUTHENTICATED_SERVERPORT_PARAM = "unauthenticatedServerPort";
-    private static final String EXCLUDED_PATHS_PARAM = "excludedPaths";
-
-    /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
-    protected final transient Log logger = LogFactory.getLog( getClass() );
-    private String unauthenticatedPath = DEFAULT_UNAUTHENTICATED_PATH;
-    private String unauthenticatedScheme = null;
-    private int unauthenticatedServerPort = -1;
-    private Set<String> excludedPaths = new HashSet<String>();
-    private SecurityContext securityContext = new ThreadLocalSecurityContext();
-
-    /*--------------------------------------------
-    |         C O N S T R U C T O R S           |
-    ============================================*/
-
-    /*--------------------------------------------
-    |  A C C E S S O R S / M O D I F I E R S    |
-    ============================================*/
-
-    public void setUnauthenticatedPath( String unauthenticatedPath ) {
-        this.unauthenticatedPath = unauthenticatedPath;
-    }
-
-
-    protected String getUnauthenticatedPath() {
-        return unauthenticatedPath;
-    }
-
-
-    protected String getUnauthenticatedScheme() {
-        return unauthenticatedScheme;
-    }
-
-
-    public void setUnauthenticatedScheme( String unauthenticatedScheme ) {
-        this.unauthenticatedScheme = unauthenticatedScheme;
-    }
-
-
-    protected int getUnauthenticatedServerPort() {
-        return unauthenticatedServerPort;
-    }
-
-
-    public void setUnauthenticatedServerPort( int unauthenticatedServerPort ) {
-        this.unauthenticatedServerPort = unauthenticatedServerPort;
-    }
-
-    protected Set<String> getExcludedPaths() {
-        return this.excludedPaths;
-    }
-
-    public void setExcludedPaths( String commaSeparatedExcludedPaths ) {
-        String[] excludedPathArray = commaSeparatedExcludedPaths.split( "," );
-        for ( String path : excludedPathArray ) {
-            addExcludedPath( path );
-        }
-    }
-
-    protected void addExcludedPath( String excludedPath ) {
-
-        if ( logger.isDebugEnabled() ) {
-            logger.debug( "Adding path [" + excludedPath + "] to set of excluded paths." );
-        }
-
-        this.excludedPaths.add( excludedPath );
-    }
-
-
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
     public void init( FilterConfig filterConfig ) throws ServletException {
-        String unauthenticatedScheme = filterConfig.getInitParameter( UNAUTHENTICATED_SCHEME_PARAM );
-        if ( unauthenticatedScheme != null ) {
-            setUnauthenticatedScheme( unauthenticatedScheme );
-        }
+    }
 
-        String unauthenticatedServerPort = filterConfig.getInitParameter( UNAUTHENTICATED_SERVERPORT_PARAM );
-        if ( unauthenticatedServerPort != null ) {
+    public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
+        throws IOException, ServletException {
+
+        HttpServletRequest request = (HttpServletRequest)servletRequest;
+        HttpServletResponse response = (HttpServletResponse)servletResponse;
+
+        Exception exception = null;
+
+        try {
+
+            boolean allowRequest = preHandle( request, response );
+
+            if ( allowRequest ) {
+                filterChain.doFilter( request, response );
+            }
+
+            postHandle( request, response );
+
+        } catch ( Exception e ) {
+            exception = e;
+        } finally {
             try {
-                int serverPort = Integer.parseInt( unauthenticatedServerPort );
-
-                if ( serverPort < 0 ) {
-                    throw new ServletException( "The unauthenticated server port must be an integer " +
-                        "greater than 0, but was [" + serverPort + "]" );
-                }
-
-                setUnauthenticatedServerPort( serverPort );
-
-            } catch ( NumberFormatException e ) {
-                throw new ServletException( "The unauthenticated server port must be a valid integer, " +
-                    "but was [" + unauthenticatedServerPort + "]" );
+                afterCompletion( request, response, exception );
+            } catch ( Exception e ) {
+                String message = "afterCompletion method threw exception: ";
+                //noinspection ThrowFromFinallyBlock
+                throw new ServletException( message, e );
             }
         }
-
-        String unauthenticatedUrlParam = filterConfig.getInitParameter( UNAUTHENTICATED_PATH_PARAM );
-        if ( unauthenticatedUrlParam != null ) {
-            setUnauthenticatedPath( unauthenticatedUrlParam );
-        }
-
-        // Add the unauthenticated path to the set of excluded paths
-        addExcludedPath( getUnauthenticatedPath() );
-
-        String commaSeparatedExcludedPaths = filterConfig.getInitParameter( EXCLUDED_PATHS_PARAM );
-        if ( commaSeparatedExcludedPaths != null ) {
-            setExcludedPaths( commaSeparatedExcludedPaths );
-        }
     }
-
-
-    public void doFilter( ServletRequest request, ServletResponse response, FilterChain filterChain ) throws IOException, ServletException {
-
-        HttpServletRequest httpRequest = (HttpServletRequest)request;
-
-        String requestedPath = httpRequest.getRequestURI();
-
-        boolean authenticated = securityContext.isAuthenticated();
-        if ( !authenticated && !isPathExcluded( requestedPath ) ) {
-            handleUnauthenticatedRequest( request, response );
-        } else {
-            filterChain.doFilter( request, response );
-        }
-
-    }
-
-    private boolean isPathExcluded( String requestedPath ) {
-        for ( String excludedPath : excludedPaths ) {
-            if ( requestedPath.indexOf( excludedPath ) != -1 ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void handleUnauthenticatedRequest( ServletRequest request, ServletResponse response ) throws IOException {
-        HttpServletRequest httpReq = (HttpServletRequest)request;
-        HttpServletResponse httpResp = (HttpServletResponse)response;
-
-        String scheme = getScheme( httpReq );
-        String serverName = httpReq.getServerName();
-        int serverPort = getServerPort( httpReq );
-        String contextPath = httpReq.getContextPath();
-
-        String redirectUrl = buildRedirectUrl( scheme, serverName, serverPort, contextPath );
-
-        httpResp.sendRedirect( redirectUrl );
-    }
-
-
-    private String buildRedirectUrl( String scheme, String serverName, int serverPort, String contextPath ) {
-
-        boolean includePort = true;
-
-        if ( "http".equals( scheme.toLowerCase() ) && ( serverPort == 80 ) ) {
-            includePort = false;
-        }
-
-        if ( "https".equals( scheme.toLowerCase() ) && ( serverPort == 443 ) ) {
-            includePort = false;
-        }
-
-        // Prepend a / to the beginning of the path if it was not specified
-        String path = getUnauthenticatedPath();
-        if ( path.charAt( 0 ) != '/' ) {
-            path = "/" + path;
-        }
-
-        // Build the redirect URL
-        StringBuffer sb = new StringBuffer();
-        sb.append( scheme );
-        sb.append( "://" );
-        sb.append( serverName );
-        sb.append( includePort ? ":" + serverPort : "" );
-        sb.append( contextPath );
-        sb.append( path );
-
-        return sb.toString();
-    }
-
-
-    private String getScheme( HttpServletRequest httpReq ) {
-        if ( getUnauthenticatedScheme() != null ) {
-            return getUnauthenticatedScheme();
-        } else {
-            return httpReq.getScheme();
-        }
-    }
-
-    private int getServerPort( HttpServletRequest httpReq ) {
-        if ( getUnauthenticatedServerPort() != -1 ) {
-            return getUnauthenticatedServerPort();
-        } else {
-            return httpReq.getServerPort();
-        }
-    }
-
 
     public void destroy() {
-        // Nothing to do here for this filter
     }
 }

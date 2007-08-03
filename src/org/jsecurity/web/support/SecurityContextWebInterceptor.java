@@ -44,10 +44,10 @@ import java.util.List;
  * <p>Primarily a parent class to consolidate common behaviors in obtaining a SecurityContext in different
  * web environments (e.g. Servlet Filters, framework specific interceptors, etc).
  *
- * @author Les Hazlewood
  * @since 0.2
+ * @author Les Hazlewood
  */
-public class SecurityContextWebSupport extends SecurityWebSupport {
+public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
 
     protected enum SecurityContextStorageOrder {
         Cookie_HttpSession_JSecuritySession,
@@ -58,7 +58,7 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
      * The key that is used to store subject principals in the session.
      */
     public static final String PRINCIPALS_SESSION_KEY =
-        SecurityContextWebSupport.class.getName() + "_PRINCIPALS_SESSION_KEY";
+        SecurityContextWebInterceptor.class.getName() + "_PRINCIPALS_SESSION_KEY";
 
     protected SecurityManager securityManager = null;
 
@@ -73,7 +73,7 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
      */
     protected boolean preferHttpSessionStorage = false;
 
-    public SecurityContextWebSupport() {
+    public SecurityContextWebInterceptor() {
     }
 
     public SecurityManager getSecurityManager() {
@@ -278,6 +278,31 @@ public class SecurityContextWebSupport extends SecurityWebSupport {
                 saved = bindInHttpSessionForSubsequentRequests( request, response, securityContext );
             }
         }
+    }
+
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
+        throws Exception {
+        SecurityContext securityContext = buildSecurityContext( request, response );
+        if ( securityContext != null ) {
+            bindToThread( securityContext );
+        }
+        //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
+        bindInetAddressToThread( request );
+        return true;
+    }
+
+    public void postHandle( HttpServletRequest request, HttpServletResponse response )
+        throws Exception {
+        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        if ( securityContext != null ) {
+            bindForSubsequentRequests( request, response, securityContext );
+        }
+    }
+
+    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
+        throws Exception {
+        unbindSecurityContextFromThread();
+        unbindInetAddressFromThread();
     }
 
 }
