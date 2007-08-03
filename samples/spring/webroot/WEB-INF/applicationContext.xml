@@ -12,50 +12,27 @@
     <!-- Enable JSecurity post processor that automatically invokes init() and destroy() methods -->
     <bean class="org.jsecurity.spring.SecurityBeanPostProcessor"/>
 
-    <!-- Access authentication and authorization info for a single data source - called a 'Realm': -->
-<!--    <bean id="realm" class="org.jsecurity.realm.support.memory.MemoryRealm">
-        <property name="credentialMatcher">
-            <bean class="org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher">
-                <property name="base64Encoded" value="true"/>
-            </bean>
-        </property>
-        <property name="accounts">
-            <set>
-                <bean class="org.jsecurity.realm.support.memory.AccountEntry">
-                    <property name="username" value="user1"/>
-                    <property name="password" value="s9qne0wEqVUbh4HQMZH+CY8yXmc="/> --><!-- 'user1' SHA-1 Base64 --><!--
-                    <property name="roles" value="role1, role2"/>
-                </bean>
-                <bean class="org.jsecurity.realm.support.memory.AccountEntry">
-                    <property name="username" value="user2"/>
-                    <property name="password" value="oYgcBu7JbbmQHHu/5BxCo/COnLQ="/> --><!-- 'user2' SHA-1 Base64 --><!--
-                    <property name="roles" value="role2"/>
-                </bean>
-            </set>
-        </property>
-    </bean>-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:jsecurity-spring"/>
+        <property name="username" value="sa"/>
+    </bean>
+    <bean id="bootstrapDataPopulator" class="org.jsecurity.samples.spring.BootstrapDataPopulator">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
     <bean id="realm" class="org.jsecurity.realm.support.jdbc.JdbcRealm">
+        <property name="dataSource" ref="dataSource"/>
         <property name="credentialMatcher">
             <bean class="org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher">
                 <property name="base64Encoded" value="true"/>
-            </bean>
-        </property>
-        <property name="dataSource">
-            <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-                <property name="url" value="jdbc:hsqldb:mem:jsecurity-spring"/>
-                <property name="username" value="sa"/>
             </bean>
         </property>
     </bean>
 
     <!-- JSecurity's main business-tier object:  -->
     <bean id="securityManager" class="org.jsecurity.DefaultSecurityManager">
-        <property name="realms">
-            <list>
-                <ref bean="realm"/>
-            </list>
-        </property>
+        <property name="realm" ref="realm"/>
     </bean>
 
 
