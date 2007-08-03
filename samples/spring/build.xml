@@ -19,6 +19,8 @@
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
     <property name="dist.war" value="${root.dist.dir}/${dist.war.name}"/>
 
+    <property name="dist.dir" value="${build.dir}/dist"/>
+
     <!-- Deployment properties for development -->
     <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
 
@@ -41,7 +43,8 @@
       -  compile - compile Java source files
       -  =================================================================== -->
     <target name="compile">
-                <mkdir dir="${classes.dir}"/>
+
+        <mkdir dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}/META-INF"/>
 
 		<javac destdir="${classes.dir}"
@@ -51,7 +54,7 @@
                failonerror="true"
                classpathref="all.libs">
 			<src path="${src.dir}"/>
-            <classpath location="${root.base.dir}/build/dist/jsecurity.jar"/>
+            <classpath location="${root.dist.dir}/jsecurity.jar"/>
         </javac>
 
     </target>
