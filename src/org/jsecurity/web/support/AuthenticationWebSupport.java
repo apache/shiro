@@ -49,6 +49,9 @@ import java.util.Set;
  */
 public class AuthenticationWebSupport extends SecurityWebSupport {
 
+    /**
+     * Default encoding scheme used if none is specified (value of UTF-8).
+     */
     public static final String DEFAULT_ENCODING_SCHEME = "UTF-8";
 
     private String redirectUrl = null;
@@ -82,6 +85,8 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
      * as absolute, i.e. taken as-is. If true, the context path will be
      * prepended to the URL in such a case.
      *
+     * @param contextRelative whether or not to interpret a redirect url as relateive to the current ServletContext, default is false.
+     *
      * @see javax.servlet.http.HttpServletRequest#getContextPath
      */
     public void setContextRelative( boolean contextRelative ) {
@@ -98,6 +103,8 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
      * difference. However, some clients depend on 303 when redirecting
      * after a POST request; turn this flag off in such a scenario.
      *
+     * @param http10Compatible whether a redirect will stay compatible with HTTP 1.0 clients, default is true
+     *
      * @see javax.servlet.http.HttpServletResponse#sendRedirect
      */
     public void setHttp10Compatible( boolean http10Compatible ) {
@@ -106,6 +113,8 @@ public class AuthenticationWebSupport extends SecurityWebSupport {
 
     /**
      * Set the encoding scheme for the redirect.
+     *
+     * @param encodingScheme the encoding scheme for the redirect, default is {@link #DEFAULT_ENCODING_SCHEME};
      */
     public void setEncodingScheme( String encodingScheme ) {
         this.encodingScheme = encodingScheme;
