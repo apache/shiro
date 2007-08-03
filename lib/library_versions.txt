@@ -52,7 +52,7 @@ Some notes:
 
 * jakarta-commons/commons-beanutils-core.jar
 - Commons BeanUtils 1.7.0 (http://jakarta.apache.org/commons/beanutils/index.html)
-- required for building and running JSecurity RI
+- required for building and running JSecurity
 - used for constructing Permissions in the Reference Implementation's PermissionAnnotationAuthorizationModule
 
 * jakarta-commons/commons-codec.jar

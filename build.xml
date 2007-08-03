@@ -17,13 +17,7 @@
     <property name="root.base.dir" value="${basedir}"/>
 
     <!-- Allow override of default build properties from properties file. -->
-    <property file="${user.home}/${project.name}.build.properties"/>
     <property file="build.properties"/>
-    
-    <!-- application-wide config files: (all other config files should be in a respective
-         module or submodule) -->
-    <property name="root.etc.dir" value="${root.base.dir}/etc"/>
-    <property name="root.dist.dir" value="${root.base.dir}/build/dist"/>
 
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
@@ -31,6 +25,11 @@
     <property name="minor.version" value="2"/>
     <property name="patch.version" value="0"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
+    
+    <!-- application-wide config files: (all other config files should be in a respective
+         module or submodule) -->
+    <property name="root.etc.dir" value="${root.base.dir}/etc"/>
+    <property name="root.dist.dir" value="${root.base.dir}/build/${project.name}-${version}"/>
 
     <!-- All 3rd party libraries are in here: -->
     <property name="lib.dir" value="${root.base.dir}/lib"/>
@@ -44,8 +43,8 @@
     <property name="build.dir" value="${base.dir}/build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="test.classes.dir" value="${build.dir}/test-classes"/>
-    <property name="dist.dir" value="${build.dir}/dist"/>
-    <property name="docs.dir" value="${build.dir}/docs"/>
+    <!-- <property name="dist.dir" value="${build.dir}/dist"/> -->
+    <property name="docs.dir" value="${root.dist.dir}/docs"/>
     <property name="api.dir" value="${docs.dir}/api"/>
     <property name="test.docs.dir" value="${docs.dir}/test-reports"/>
 
@@ -55,7 +54,7 @@
     <property name="compile.optimize" value="false"/>
 
     <property name="dist.jarName" value="${project.name}.jar"/>
-    <property name="dist.jar" value="${dist.dir}/${dist.jarName}"/>
+    <property name="dist.jar" value="${root.dist.dir}/${dist.jarName}"/>
 
     <path id="all.libs">
 		<fileset dir="${lib.dir}">
@@ -74,8 +73,8 @@
       -  =================================================================== -->
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <ant dir="samples/spring" target="clean"/>
     </target>
-
 
     <target name="compile.core">
         <mkdir dir="${classes.dir}"/>
@@ -165,7 +164,7 @@
 
     <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
 
-        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${root.dist.dir}"/>
 
         <delete file="${dist.jar}"/>
 
@@ -185,11 +184,16 @@
 			</manifest>
 		</jar>
 
-        <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${dist.dir}/${project.name}-jdk13.jar"/>
-        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${dist.dir}/${project.name}-jdk14.jar"/>
+        <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
+        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
 
     </target>
 
+    <target name="samples.spring" depends="compile.spring">
+        <ant dir="samples/spring"/>
+    </target>
+
+    <target name="samples" depends="samples.spring"/>
 
     <!-- =================================================================== -->
     <!-- Javadoc all main sources                                            -->
@@ -313,25 +317,30 @@
 
 
     <target name="src.zip" description="Create source ZIP (containing Java sources)">
-        <mkdir dir="${dist.dir}"/>
-        <delete file="${dist.dir}/${project.name}.src.zip"/>
-        <zip destfile="${dist.dir}/${project.name}.src.zip">
+        <mkdir dir="${root.dist.dir}"/>
+        <delete file="${root.dist.dir}/${project.name}.src.zip"/>
+        <zip destfile="${root.dist.dir}/${project.name}.src.zip">
             <fileset dir="${src.dir}">
                 <include name="org/jsecurity/**"/>
             </fileset>
         </zip>
     </target>
 
-    <target name="release" depends="jar,src.zip,javadoc">
-
-        <!-- copy over the readme file in the dist directory so people understand
-             what the files do: -->
-        <!-- <copy toDir="${dist.dir}" preservelastmodified="true" file="${root.etc.dir}/README.txt"/> -->
-
-        <property name="release.zip.name" value="${project.name}-${version}-with-dependencies.zip"/>
-        <zip destfile="${dist.dir}/${release.zip.name}"
-             basedir="${basedir}"
-             excludes="**/.svn/*,**/build/**,**/${release.zip.name}"/>
+    <target name="release" depends="jar,samples,src.zip,javadoc">
+        <property name="release.dir.name" value="${project.name}-${version}"/>
+        <property name="release.zip.name" value="${release.dir.name}-with-dependencies.zip"/>
+        <copy todir="${root.dist.dir}">
+            <fileset dir="${root.base.dir}">
+                <type type="file"/>
+                <exclude name="build/**"/>
+                <exclude name="**/.svn/**"/>
+                <exclude name="${release.dir.name}"/>
+            </fileset>
+        </copy>
+        <zip destfile="${build.dir}/${release.zip.name}"
+             basedir="${build.dir}"
+             includes="${release.dir.name}/**"
+             excludes="**/${release.zip.name}"/>
     </target>
 
     <!-- ===================================================================
