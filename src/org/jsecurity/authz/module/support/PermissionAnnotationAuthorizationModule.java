@@ -90,11 +90,11 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         Class<? extends Permission> clazz = prAnnotation.type();
         String target = prAnnotation.target();
         String targetPath = prAnnotation.targetPath();
-        if ( targetPath.equals( "" ) ) {
+        if (targetPath.length() == 0) {
             targetPath = null;
         }
         String actions = prAnnotation.actions();
-        if ( actions.equals( "" ) ) {
+        if (actions.length() == 0) {
             actions = null;
         }
 

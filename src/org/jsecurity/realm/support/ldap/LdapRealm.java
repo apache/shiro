@@ -24,8 +24,6 @@
  */
 package org.jsecurity.realm.support.ldap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.realm.Realm;
@@ -69,11 +67,6 @@ public abstract class LdapRealm extends AbstractCachingRealm {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * Commons-logger.
-     */
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
     protected String authentication = "simple";
 
     protected String principalSuffix = null;

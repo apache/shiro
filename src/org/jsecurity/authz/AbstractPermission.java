@@ -25,6 +25,7 @@
 package org.jsecurity.authz;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -135,7 +136,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
     }
 
     public static Set<String> toSet( String commaDelimited ) {
-        if ( commaDelimited == null || commaDelimited.equals( "" ) ) {
+        if ( commaDelimited == null || commaDelimited.length() == 0) {
             String msg = "actions string parameter cannot be null or empty";
             throw new IllegalArgumentException( msg );
         }
@@ -143,9 +144,7 @@ public abstract class AbstractPermission implements Permission, Serializable {
         String[] actionsArray = DELIMITER_SPLIT_PATTERN.split( commaDelimited, 0 );
 
         Set<String> set = new LinkedHashSet<String>( actionsArray.length );
-        for ( String s : actionsArray ) {
-            set.add( s );
-        }
+        set.addAll(Arrays.asList(actionsArray));
         return set;
     }
 
