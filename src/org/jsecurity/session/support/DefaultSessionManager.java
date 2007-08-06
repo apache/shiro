@@ -95,7 +95,7 @@ public class DefaultSessionManager extends AbstractSessionManager
      * @return a lazily created SessionDAO instance.
      */
     protected SessionDAO createSessionDAO() {
-        SessionDAO dao = null;
+        SessionDAO dao;
 
         if ( log.isDebugEnabled() ) {
             log.debug( "No sessionDAO set.  Attempting to create default instance." );

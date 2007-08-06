@@ -223,7 +223,7 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
                                                                    SecurityContext securityContext ) {
         boolean saved = false;
 
-        Session session = null;
+        Session session;
 
         try {
             session = securityContext.getSession();

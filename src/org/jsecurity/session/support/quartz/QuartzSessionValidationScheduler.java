@@ -178,7 +178,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             log.debug( "Stopping Quartz session validation job..." );
         }
 
-        Scheduler scheduler = null;
+        Scheduler scheduler;
         try {
             scheduler = getScheduler();
             if ( scheduler == null ) {

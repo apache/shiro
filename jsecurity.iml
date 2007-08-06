@@ -9,6 +9,10 @@
         <webroots>
           <root url="file://$MODULE_DIR$/samples/spring/webroot" relative="/" />
         </webroots>
+        <containerElement type="module" name="jsecurity">
+          <attribute name="method" value="1" />
+          <attribute name="URI" value="/WEB-INF/classes" />
+        </containerElement>
         <building>
           <setting name="EXPLODED_URL" value="file://" />
           <setting name="EXPLODED_ENABLED" value="false" />
@@ -19,6 +23,12 @@
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
           <setting name="RUN_JASPER_VALIDATION" value="true" />
         </building>
+        <packaging>
+          <containerElement type="module" name="jsecurity">
+            <attribute name="method" value="1" />
+            <attribute name="URI" value="/WEB-INF/classes" />
+          </containerElement>
+        </packaging>
       </configuration>
     </facet>
   </component>
@@ -53,6 +63,7 @@
     <orderEntry type="library" name="easymock" level="project" />
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="library" name="clover" level="project" />
+    <orderEntry type="library" name="retroweaver" level="project" />
     <orderEntryProperties />
   </component>
 </module>

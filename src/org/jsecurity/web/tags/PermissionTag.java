@@ -88,7 +88,7 @@ public abstract class PermissionTag extends SecureTag {
             setTarget( AbstractPermission.WILDCARD );
         }
 
-        if ( (actions != null ) && actions.trim().equals( "" ) ) {
+        if ( (actions != null ) && actions.trim().length() == 0) {
             String msg = "Empty actions attribute - please remove the attribute or enter " +
                          "one or more meaningful actions.";
             throw new JspException( msg );
@@ -97,7 +97,7 @@ public abstract class PermissionTag extends SecureTag {
 
     public int onDoStartTag() throws JspException {
 
-        Permission p = null;
+        Permission p;
 
         String actions = getActions();
 
