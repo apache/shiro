@@ -27,6 +27,7 @@ package org.jsecurity.spring.servlet.security;
 import org.jsecurity.web.support.AuthenticationWebInterceptor;
 import org.jsecurity.web.support.RedirectView;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jeremy Haile
  */
 public class AuthenticationInterceptor extends AuthenticationWebInterceptor
-    implements InitializingBean {
+    implements HandlerInterceptor, InitializingBean {
                                                     
     public void afterPropertiesSet() throws Exception {
         init();

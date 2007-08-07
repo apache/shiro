@@ -31,6 +31,20 @@
         </packaging>
       </configuration>
     </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset1" name="Spring Sample" removed="false">
+          <file>file://$MODULE_DIR$/samples/spring/webroot/WEB-INF/applicationContext.xml</file>
+          <file>file://$MODULE_DIR$/samples/spring/etc/webstart.spring.xml</file>
+          <file>file://$MODULE_DIR$/samples/spring/webroot/WEB-INF/sample-servlet.xml</file>
+          <file>file://$MODULE_DIR$/samples/spring/webroot/WEB-INF/remoting-servlet.xml</file>
+        </fileset>
+        <options>
+          <option name="enableValidation" value="true" />
+          <option name="reportErrorsAsWarnings" value="true" />
+        </options>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/classes" />

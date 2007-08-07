@@ -56,7 +56,7 @@
 
     <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
         <property name="contextRelative" value="true"/>
-        <property name="loginURL" value="/s/login"/>
+        <property name="redirectUrl" value="/s/login"/>
     </bean>
 
     <bean id="sessionInterceptor" class="org.jsecurity.spring.servlet.security.SessionInterceptor">
