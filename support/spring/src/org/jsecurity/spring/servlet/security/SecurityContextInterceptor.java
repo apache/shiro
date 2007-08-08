@@ -54,8 +54,6 @@ public class SecurityContextInterceptor extends SecurityContextWebInterceptor im
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response,
                             Object handler, ModelAndView modelAndView ) throws Exception {
-        //todo What does the comment on the next line mean? -JCH
-        //3rd null argument forces parent impl to get from thread (what we want):
         postHandle( request, response );
     }
 
