@@ -47,7 +47,7 @@ public class JSecurityTool {
      * Initializes a new <tt>JSecurityTool</tt> for the given security context.
      *
      * The security context may typically be retrieved in server-side environments using
-     * {@link org.jsecurity.context.support.ThreadLocalSecurityContext#current()}
+     * {@link org.jsecurity.SecurityUtils#getSecurityContext()}
      *
      * @param securityContext the current security context.
      */

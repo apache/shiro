@@ -220,7 +220,7 @@ public interface SecurityContext {
 
     /**
      * Invalidates and removes any entities (such as a {@link Session Session} and authorization
-     * context associated with this <tt>SecurityContext</tt>.
+     * data associated with this <tt>SecurityContext</tt>.
      *
      * @see #getSession
      */

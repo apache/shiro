@@ -24,8 +24,8 @@
  */
 package org.jsecurity.samples.spring.web;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -68,7 +68,7 @@ public class IndexController extends SimpleFormController {
 
     protected SecurityContext getSecurityContext( HttpServletRequest request ) {
         //ignore the request - just return the one assigned to the Servlet thread previously by the JSecurity interceptor:
-        return ThreadLocalSecurityContext.current();
+        return SecurityUtils.getSecurityContext();
     }
 
     protected Object formBackingObject(HttpServletRequest request) throws Exception {

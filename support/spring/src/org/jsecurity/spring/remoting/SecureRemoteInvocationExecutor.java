@@ -45,8 +45,8 @@ import java.util.List;
  * that binds the correct {@link Session} and {@link org.jsecurity.context.SecurityContext} to the
  * remote invocation thread during a remote execution.
  *
- * @since 0.1
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecutor {
 
@@ -75,48 +75,55 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setSecurityManager(SecurityManager securityManager) {
+
+    public void setSecurityManager( SecurityManager securityManager ) {
         this.securityManager = securityManager;
     }
-
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
-    @SuppressWarnings({"unchecked"})
-    public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    @SuppressWarnings( { "unchecked" } )
+    public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
 
-            if( invocation instanceof SecureRemoteInvocation ) {
-                SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation) invocation;
+            if ( invocation instanceof SecureRemoteInvocation ) {
+                SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation)invocation;
 
                 Serializable sessionId = secureInvocation.getSessionId();
-                Session session = securityManager.getSession( sessionId );
-                ThreadContext.bind( session );
 
-                // Get the principals and realm name from the session
-                List<Principal>principals = (List<Principal>) session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
-
-                // If principals and realm were found in the session, create a delegating authorization context
-                // and bind it to the thread.
-                if( principals != null && !principals.isEmpty() ) {
-                    SecurityContext securityContext = new DelegatingSecurityContext( principals, securityManager );
-                    ThreadContext.bind( securityContext );
+                if ( sessionId == null ) {
+                    //try remote invocation attributes:
+                    sessionId = (Serializable)secureInvocation.getAttributes().get( "sessionId" );
                 }
 
+                if ( sessionId != null ) {
+                    Session session = securityManager.getSession( sessionId );
+                    ThreadContext.bind( session );
+
+                    // Get the principals and realm name from the session
+                    List<Principal> principals = (List<Principal>)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
+
+                    // If principals and realm were found in the session, create a delegating authorization context
+                    // and bind it to the thread.
+                    if ( principals != null && !principals.isEmpty() ) {
+                        SecurityContext securityContext = new DelegatingSecurityContext( principals, securityManager );
+                        ThreadContext.bind( securityContext );
+                    }
+                }
             } else {
-                if( log.isWarnEnabled() ) {
+                if ( log.isWarnEnabled() ) {
                     log.warn( "Secure remote invocation executor used, but did not receive a " +
-                            "SecureRemoteInvocation from remote call.  Session will not be propogated to the remote invocation.  " +
-                            "Ensure that clients are using a SecureRemoteInvocationFactory to prevent this problem." );
+                        "SecureRemoteInvocation from remote call.  Session will not be propogated to the remote invocation.  " +
+                        "Ensure that clients are using a SecureRemoteInvocationFactory to prevent this problem." );
                 }
             }
 
-            return super.invoke(invocation, targetObject);
+            return super.invoke( invocation, targetObject );
         } finally {
-            ThreadContext.unbindSession();
+            ThreadContext.clear();
         }
     }
 }

@@ -49,12 +49,9 @@ public class ThreadLocalSecurityContext implements SecurityContext {
 
     public ThreadLocalSecurityContext(){}
 
-    public static SecurityContext current() {
-        return ThreadContext.getSecurityContext();
-    }
-
     public boolean isAuthenticated() {
-        return getSecurityContext() != null;
+        SecurityContext sc = getSecurityContext();
+        return sc != null && sc.isAuthenticated();
     }
 
     public Principal getPrincipal() throws NoSuchPrincipalException {
@@ -189,7 +186,12 @@ public class ThreadLocalSecurityContext implements SecurityContext {
     }
 
     public void invalidate() {
-        getSecurityContext().invalidate();
+        try {
+            getSecurityContext().invalidate();
+        } finally {
+            ThreadContext.unbindSession();
+            ThreadContext.unbindSecurityContext();
+        }
     }
 
 }

@@ -34,14 +34,42 @@ import java.io.IOException;
 
 /**
  * TODO - class JavaDoc
- * 
- * @since 0.1
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class AuthenticationFilter extends AuthenticationWebInterceptor implements Filter {
 
+    public static final String EXCLUDED_PATHS_PARAM_NAME = "excludedPaths";
+    public static final String EXCLUDED_PATHS_DELIMITER_PARAM_NAME = "delimiters";
+
+
+    protected void processExcludedPaths( FilterConfig config ) throws Exception {
+        String delimiters = config.getInitParameter( EXCLUDED_PATHS_DELIMITER_PARAM_NAME );
+        if ( delimiters != null ) {
+            setExcludedPathsDelimiters( delimiters );
+        }
+        String excludedPathsString = config.getInitParameter( EXCLUDED_PATHS_PARAM_NAME );
+        if ( excludedPathsString != null ) {
+            excludedPathsString = excludedPathsString.trim();
+            if ( excludedPathsString.length() > 0 ) {
+                setExcludedPaths( excludedPathsString );
+            }
+        }
+    }
+
     public void init( FilterConfig filterConfig ) throws ServletException {
+        try {
+            processExcludedPaths( filterConfig );
+        } catch ( Exception e ) {
+            throw new ServletException( "Unable to set excludedPaths property.", e );
+        }
+        try {
+            init();
+        } catch ( Exception e ) {
+            throw new ServletException( e );
+        }
     }
 
     public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )

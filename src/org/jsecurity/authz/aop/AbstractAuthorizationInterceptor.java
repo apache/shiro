@@ -26,11 +26,11 @@ package org.jsecurity.authz.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.util.Initializable;
 
 /**
@@ -51,7 +51,7 @@ public abstract class AbstractAuthorizationInterceptor implements Initializable 
 
     private Authorizer authorizer;
 
-    private SecurityContext securityContext = new ThreadLocalSecurityContext();
+    private SecurityContext securityContext = SecurityUtils.getSecurityContext();
 
     public AbstractAuthorizationInterceptor(){}
 
@@ -62,7 +62,8 @@ public abstract class AbstractAuthorizationInterceptor implements Initializable 
     /**
      * Sets the SecurityContext that will be used when performing an authorization check.
      *
-     * <p>The default instance internally is an instance of {@link org.jsecurity.context.support.ThreadLocalSecurityContext},
+     * <p>The default instance internally is the instance returned by
+     * {@link org.jsecurity.SecurityUtils#getSecurityContext() SecurityUtils.getSecurityContext()},
      * which should be used in all server environments and not overridden (unless you really know
      * what you're doing).
      *

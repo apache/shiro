@@ -25,13 +25,12 @@
 package org.jsecurity.spring.remoting;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.jsecurity.SecurityUtils;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.ThreadContext;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
-
-import java.io.Serializable;
 
 /**
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
@@ -53,20 +52,8 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @return a remote invocation object containing the current session ID.
      */
     public RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
-        Session session = ThreadContext.getSession();
-
-        Serializable sessionId;
-        if( session != null ) {
-            sessionId = session.getSessionId();
-        } else {
-            sessionId = System.getProperty( "jsecurity.session.id" );
-        }
-
-        if( sessionId != null ) {
-            return new SecureRemoteInvocation( methodInvocation, sessionId );
-        } else {
-            return super.createRemoteInvocation( methodInvocation );
-        }
-
+        SecurityContext securityContext = SecurityUtils.getSecurityContext();
+        Session session = securityContext.getSession();
+        return new SecureRemoteInvocation( methodInvocation, session.getSessionId() );
     }
 }
