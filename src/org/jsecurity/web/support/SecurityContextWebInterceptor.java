@@ -178,7 +178,7 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
         return new DelegatingSecurityContext( principals, securityManager );
     }
 
-    protected SecurityContext buildSecurityContext( ServletRequest servletRequest, ServletResponse servleResponse,
+    protected SecurityContext buildSecurityContext( ServletRequest servletRequest, ServletResponse servletResponse,
                                                     List<Principal> principals ) {
 
         SecurityContext securityContext = null;

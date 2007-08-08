@@ -1,7 +1,7 @@
 package org.jsecurity.samples.spring.web;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.Session;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -47,7 +47,7 @@ public class JnlpController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        SecurityContext securityContext = ThreadLocalSecurityContext.current();
+        SecurityContext securityContext = SecurityUtils.getSecurityContext();
         Session session = null;
 
         if ( securityContext != null ) {

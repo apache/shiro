@@ -24,8 +24,8 @@
 */
 package org.jsecurity.web.support;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
@@ -35,16 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * TODO - class JavaDoc
- * 
- * @since 0.2
+ *
  * @author Les Hazlewood
+ * @since 0.2
  */
 public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
 
@@ -52,6 +49,12 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
      * Default encoding scheme used if none is specified (value of UTF-8).
      */
     public static final String DEFAULT_ENCODING_SCHEME = "UTF-8";
+
+    /**
+     * Because urls can have commas and semicolons, the default delimiters for excludedPaths are whitespace chars
+     * (space, newline, carriage return, and tab).
+     */
+    public static final String DEFAULT_DELIMITERS = " \n\r\t";
 
     private String redirectUrl = null;
 
@@ -64,6 +67,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
 
 
     private Set<String> excludedPaths = new HashSet<String>();
+    private String excludedPathsDelimiters = " \n\r\t";
 
     public AuthenticationWebInterceptor() {
     }
@@ -85,7 +89,6 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
      * prepended to the URL in such a case.
      *
      * @param contextRelative whether or not to interpret a redirect url as relateive to the current ServletContext, default is false.
-     *
      * @see javax.servlet.http.HttpServletRequest#getContextPath
      */
     public void setContextRelative( boolean contextRelative ) {
@@ -103,7 +106,6 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
      * after a POST request; turn this flag off in such a scenario.
      *
      * @param http10Compatible whether a redirect will stay compatible with HTTP 1.0 clients, default is true
-     *
      * @see javax.servlet.http.HttpServletResponse#sendRedirect
      */
     public void setHttp10Compatible( boolean http10Compatible ) {
@@ -136,18 +138,44 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         this.attemptedPageKeyName = attemptedPageKeyName;
     }
 
+    public String getExcludedPathsDelimiters() {
+        return excludedPathsDelimiters;
+    }
+
+    public void setExcludedPathsDelimiters( String excludedPathsDelimiters ) {
+        this.excludedPathsDelimiters = excludedPathsDelimiters;
+    }
+
     protected Set<String> getExcludedPaths() {
         return this.excludedPaths;
     }
 
-    public void setExcludedPaths( String commaSeparatedExcludedPaths ) {
-        String[] excludedPathArray = commaSeparatedExcludedPaths.split( "," );
-        for ( String path : excludedPathArray ) {
-            addExcludedPath( path );
+    public void setExcludedPaths( Set<String> excludedPaths ) {
+        this.excludedPaths = excludedPaths;
+    }
+
+    public void setExcludedPaths( String delimitedPaths ) {
+        if ( delimitedPaths == null || delimitedPaths.trim().length() == 0 ) {
+            throw new IllegalArgumentException( "delimitedPaths argument cannot be null or empty." );
+        }
+        String delimiters = getExcludedPathsDelimiters();
+        if ( delimiters == null ) {
+            delimiters = DEFAULT_DELIMITERS;
+        }
+        StringTokenizer st = new StringTokenizer( delimitedPaths, delimiters );
+        while ( st.hasMoreTokens() ) {
+            String token = st.nextToken();
+            token = token.trim();
+            if ( token.length() > 0 ) {
+                addExcludedPath( token );
+            }
         }
     }
 
     protected void addExcludedPath( String excludedPath ) {
+        if ( excludedPath == null || excludedPath.trim().length() == 0 ) {
+            throw new IllegalArgumentException( "excludedPath argument cannot be null or empty" );
+        }
         if ( log.isDebugEnabled() ) {
             log.debug( "Adding path [" + excludedPath + "] to set of excluded paths." );
         }
@@ -168,7 +196,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
     }
 
     protected SecurityContext getSecurityContext( HttpServletRequest request, HttpServletResponse response ) {
-        return ThreadLocalSecurityContext.current();
+        return SecurityUtils.getSecurityContext();
     }
 
     protected RedirectView createRedirectView( HttpServletRequest request, HttpServletResponse response ) {
@@ -252,6 +280,10 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         return attemptedPage.toString();
     }
 
+    protected String getExcludedPath( HttpServletRequest request ) throws Exception {
+        return request.getRequestURI();
+    }
+
     protected boolean isPathExcluded( String requestedPath ) {
         for ( String excludedPath : excludedPaths ) {
             if ( requestedPath.indexOf( excludedPath ) != -1 ) {
@@ -261,20 +293,25 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         return false;
     }
 
+    protected boolean isExcluded( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+        String path = getExcludedPath( request );
+        return isPathExcluded( path );
+    }
+
     /**
      * Allows subclass implementations to add and/or override the model that will be encoded in the redirect.  Default
      * implementation just returns the <tt>redirectModel</tt> argument immediately.
      *
      * @param redirectModel the current redirect model, may be <tt>null</tt>
-     * @param request the incoming HttpServletRequest
-     * @param response the outgoing HttpServletResponse
+     * @param request       the incoming HttpServletRequest
+     * @param response      the outgoing HttpServletResponse
      * @return the final redirect model that will be encoded in the redirect;
      */
     protected Map afterSchemeSet( Map redirectModel, HttpServletRequest request, HttpServletResponse response ) {
         return redirectModel;
     }
 
-    protected void handleUnauthenticatedRequest( ServletRequest servletRequest, ServletResponse servletResponse ) throws IOException {
+    protected boolean handleUnauthenticatedRequest( ServletRequest servletRequest, ServletResponse servletResponse ) throws IOException {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
@@ -293,18 +330,18 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         redirectModel = afterSchemeSet( redirectModel, request, response );
 
         redirect.renderMergedOutputModel( redirectModel, request, response );
+
+        return false;
+    }
+
+    protected boolean isAuthenticated( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+       SecurityContext securityContext = getSecurityContext( request, response );
+        return securityContext != null && securityContext.isAuthenticated();
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception {
-
-        String requestedPath = request.getRequestURI();
-        SecurityContext securityContext = getSecurityContext( request, response );
-
-        boolean authenticated = securityContext == null || !securityContext.isAuthenticated();
-
-        if ( !authenticated && !isPathExcluded( requestedPath ) ) {
-            handleUnauthenticatedRequest( request, response );
-            return false;
+        if ( !isAuthenticated( request, response ) && !isExcluded( request, response ) ) {
+            return handleUnauthenticatedRequest( request, response );
         }
 
         return true;

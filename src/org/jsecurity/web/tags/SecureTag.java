@@ -26,8 +26,8 @@ package org.jsecurity.web.tags;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -43,7 +43,7 @@ public abstract class SecureTag extends TagSupport {
     public SecureTag(){}
 
     protected SecurityContext getSecurityContext() {
-        return ThreadLocalSecurityContext.current();
+        return SecurityUtils.getSecurityContext();
     }
 
     protected void verifyAttributes() throws JspException {

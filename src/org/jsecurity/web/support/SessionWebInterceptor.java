@@ -163,7 +163,7 @@ public class SessionWebInterceptor extends SecurityWebInterceptor implements Ini
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response )
         throws Exception {
-        //no need to do anything here.  The WebSessionFactory used by the super class binds the session id to
+        //no need to do anything here.  The WebSessionFactory binds the session id to
         //the response to ensure it is available on subsequent requests to re-construct a Session object.
     }
 
