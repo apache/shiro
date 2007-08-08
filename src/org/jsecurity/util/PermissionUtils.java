@@ -99,6 +99,7 @@ public class PermissionUtils {
     }
 
     public static Permission createPermission( String permissionClassName, String nameOrTarget ) {
+        //noinspection unchecked
         Class<? extends Permission> clazz = ClassUtils.forName( permissionClassName );
         return createPermission( clazz, nameOrTarget );
     }
@@ -106,6 +107,7 @@ public class PermissionUtils {
     public static Permission createPermission( String permissionClassName,
                                                String nameOrTarget,
                                                String actions ) {
+        //noinspection unchecked
         Class<? extends Permission> clazz = ClassUtils.forName( permissionClassName );
         return createPermission( clazz, nameOrTarget, actions );
     }
