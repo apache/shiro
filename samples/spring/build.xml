@@ -88,7 +88,7 @@
 
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
         <mkdir dir="${webstart.lib.dir}"/>
-        <copy todir="${webstart.lib.dir}" preservelastmodified="true">
+        <copy todir="${webstart.lib.dir}" preservelastmodified="true" flatten="true">
             <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
             <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
             <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
@@ -121,7 +121,7 @@
     </target>
 
     <target name="deploy" depends="dist" >
-        <copy file="${dist.war}" todir="${deploy.dir}" preservelastmodified="true"/>
+        <copy file="${dist.war}" todir="${deploy.dir}" preservelastmodified="true" overwrite="true"/>
     </target>
 
 </project>

@@ -205,13 +205,13 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         return redirect;
     }
 
-    protected Map createRequestParamMap( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
-        HashMap<String, String> redirectMap = new HashMap<String, String>( 1 );
+    protected Map<String,Object> createRequestParamMap( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+        HashMap<String, Object> redirectMap = new HashMap<String, Object>( 1 );
         redirectMap.put( getAttemptedPageKeyName(), attemptedPage );
         return redirectMap;
     }
 
-    protected Map storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String,Object> storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         boolean boundToSession = false;
 
         SecurityContext securityContext = getSecurityContext( request, response );
@@ -244,13 +244,13 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         }
     }
 
-    protected Map storeInHttpSession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String,Object> storeInHttpSession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute( getAttemptedPageKeyName(), attemptedPage );
         return null;
     }
 
-    protected Map setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String,Object> setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         AttemptedPageStorageScheme scheme = getAttemptedPageStorageScheme();
         if ( scheme == null ) {
             return null; //no attempted page to forward
@@ -307,7 +307,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
      * @param response      the outgoing HttpServletResponse
      * @return the final redirect model that will be encoded in the redirect;
      */
-    protected Map afterSchemeSet( Map redirectModel, HttpServletRequest request, HttpServletResponse response ) {
+    protected Map<String,Object> afterSchemeSet( Map<String,Object> redirectModel, HttpServletRequest request, HttpServletResponse response ) {
         return redirectModel;
     }
 
@@ -325,7 +325,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
 
         RedirectView redirect = createRedirectView( request, response );
 
-        Map redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
+        Map<String,Object> redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
 
         redirectModel = afterSchemeSet( redirectModel, request, response );
 
