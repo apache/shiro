@@ -25,9 +25,6 @@
 package org.jsecurity.spring.remoting;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.SecurityContext;
-import org.jsecurity.session.Session;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
@@ -44,6 +41,8 @@ import org.springframework.remoting.support.RemoteInvocationFactory;
  */
 public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactory {
 
+    private static final String SESSION_ID_SYSTEM_PROPERTY_NAME = "jsecurity.session.id";
+
     /**
      * Creates a {@link SecureRemoteInvocation} based on the current session or session
      * ID.
@@ -52,8 +51,11 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @return a remote invocation object containing the current session ID.
      */
     public RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
-        SecurityContext securityContext = SecurityUtils.getSecurityContext();
-        Session session = securityContext.getSession();
-        return new SecureRemoteInvocation( methodInvocation, session.getSessionId() );
+        String sessionId = System.getProperty(SESSION_ID_SYSTEM_PROPERTY_NAME);
+        if( sessionId == null ) {
+            throw new IllegalStateException( "System property [" + SESSION_ID_SYSTEM_PROPERTY_NAME + "] is not set.  " +
+                    "This property must be set to the JSecurity session ID for remote calls to function." );
+        }
+        return new SecureRemoteInvocation( methodInvocation, sessionId );
     }
 }

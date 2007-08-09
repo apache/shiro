@@ -266,7 +266,7 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
 
     protected boolean bindInCookieForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
                                                          SecurityContext securityContxt ) {
-        //todo This looks wrong.  Does it need to be fixed before 0.2?
+        //todo This looks wrong.  Does it need to be fixed before 0.2?  If not, comment this method as to why it is empty
         return false;
     }
 
@@ -289,12 +289,15 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
 
         try {
             if ( session != null ) {
-                // don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
+                // Don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
                 // initialized session is not allowed.
+                // Only store principals if they exist in the security context
                 Object currentPrincipal = session.getAttribute(PRINCIPALS_SESSION_KEY);
                 if ( currentPrincipal == null && !securityContext.getAllPrincipals().isEmpty()  ) {
                     session.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
                 }
+
+                // Only bind if the current value in the session is null or it doesn't equal the security context value
                 Boolean currentAuthenticated = (Boolean) session.getAttribute( AUTHENTICATED_SESSION_KEY );
                 if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
                     session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
@@ -315,13 +318,19 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
     protected boolean bindInHttpSessionForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
                                                               SecurityContext securityContext ) {
         HttpSession httpSession = request.getSession();
+
+        // Don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
+        // initialized session is not allowed.
+        // Only store principals if they exist in the security context
         Object currentPrincipal = httpSession.getAttribute(PRINCIPALS_SESSION_KEY);
         if ( currentPrincipal == null && !securityContext.getAllPrincipals().isEmpty()  ) {
             httpSession.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
         }
+
+        // Only bind if the current value in the session is null or it doesn't equal the security context value
         Boolean currentAuthenticated = (Boolean) httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
-        if ( !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
-            httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.getAllPrincipals() );
+        if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
+            httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
         }
         return true;
     }
