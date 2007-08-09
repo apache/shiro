@@ -109,7 +109,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                     // If principals and realm were found in the session, create a delegating authorization context
                     // and bind it to the thread.
                     if ( principals != null && !principals.isEmpty() ) {
-                        SecurityContext securityContext = new DelegatingSecurityContext( principals, securityManager );
+                        SecurityContext securityContext = new DelegatingSecurityContext( principals, true, securityManager );
                         ThreadContext.bind( securityContext );
                     }
                 }

@@ -60,6 +60,12 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
     public static final String PRINCIPALS_SESSION_KEY =
         SecurityContextWebInterceptor.class.getName() + "_PRINCIPALS_SESSION_KEY";
 
+    /**
+     * The key that is used to store whether or not the user is authenticated in the session.
+     */
+    public static final String AUTHENTICATED_SESSION_KEY =
+        SecurityContextWebInterceptor.class.getName() + "_AUTHENTICATED_SESSION_KEY";
+
     protected SecurityManager securityManager = null;
 
     /**
@@ -152,6 +158,34 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
         return principals;
     }
 
+    protected boolean isAuthenticatedFromJSecuritySession( HttpServletRequest request ) {
+
+        // Defaults to false unless found in the session
+        boolean authenticated = false;
+        Session session = ThreadContext.getSession();
+        if ( session != null ) {
+            Boolean boolAuthenticated = (Boolean)session.getAttribute( AUTHENTICATED_SESSION_KEY );
+            if( boolAuthenticated != null ) {
+                authenticated = boolAuthenticated;
+            }
+        }
+        return authenticated;
+    }
+
+    protected boolean isAuthenticatedFromHttpSession( HttpServletRequest request ) {
+
+        // Defaults to false unless found in the session
+        boolean authenticated = false;
+        HttpSession httpSession = request.getSession( false );
+        if ( httpSession != null ) {
+            Boolean boolAuthenticated = (Boolean)httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
+            if( boolAuthenticated != null ) {
+                authenticated = boolAuthenticated;
+            }
+        }
+        return authenticated;
+    }
+
     @SuppressWarnings( "unchecked" )
     protected List<Principal> getPrincipals( ServletRequest servletRequest ) {
 
@@ -174,28 +208,43 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
         return principals;
     }
 
-    protected SecurityContext buildSecurityContext( List<Principal> principals, SecurityManager securityManager ) {
-        return new DelegatingSecurityContext( principals, securityManager );
+    protected boolean isAuthenticated( ServletRequest servletRequest ) {
+
+        HttpServletRequest request = (HttpServletRequest)servletRequest;
+
+        boolean authenticated;
+
+        if( !isPreferHttpSessionStorage() ) {
+            authenticated = isAuthenticatedFromJSecuritySession( request );
+        } else {
+            //fall back to HttpSession:
+            authenticated = isAuthenticatedFromHttpSession( request );
+        }
+
+        return authenticated;
     }
 
-    protected SecurityContext buildSecurityContext( ServletRequest servletRequest, ServletResponse servletResponse,
-                                                    List<Principal> principals ) {
+    protected SecurityContext buildSecurityContext( List<Principal> principals, boolean authenticated, SecurityManager securityManager ) {
+        return new DelegatingSecurityContext( principals, authenticated, securityManager);
+    }
 
-        SecurityContext securityContext = null;
+    protected SecurityContext buildSecurityContext( ServletRequest request,
+                                                    ServletResponse response,
+                                                    List<Principal> principals,
+                                                    boolean authenticated ) {
 
-        if ( principals != null && !principals.isEmpty() ) {
-            SecurityManager securityManager = getSecurityManager();
-            if ( securityManager == null ) {
-                final String message = "the SecurityManager attribute must be configured.  This could be " +
-                    "done by calling setSecurityManager() on the " + getClass() + " instance, or by subclassing this " +
-                    "class to retrieve the SecurityManager from an application framework.";
-                if ( log.isErrorEnabled() ) {
-                    log.error( message );
-                }
-                throw new IllegalStateException( message );
+        SecurityContext securityContext;
+
+        if ( securityManager == null ) {
+            final String message = "the SecurityManager attribute must be configured.  This could be " +
+                "done by calling setSecurityManager() on the " + getClass() + " instance, or by subclassing this " +
+                "class to retrieve the SecurityManager from an application framework.";
+            if ( log.isErrorEnabled() ) {
+                log.error( message );
             }
-            securityContext = buildSecurityContext( principals, securityManager );
+            throw new IllegalStateException( message );
         }
+        securityContext = buildSecurityContext( principals, authenticated, securityManager );
 
         return securityContext;
     }
@@ -203,7 +252,8 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
 
     public SecurityContext buildSecurityContext( ServletRequest request, ServletResponse response ) {
         List<Principal> principals = getPrincipals( request );
-        return buildSecurityContext( request, response, principals );
+        boolean authenticated = isAuthenticated( request );
+        return buildSecurityContext( request, response, principals, authenticated );
     }
 
     protected void bindToThread( SecurityContext securityContext ) {
@@ -216,6 +266,7 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
 
     protected boolean bindInCookieForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
                                                          SecurityContext securityContxt ) {
+        //todo This looks wrong.  Does it need to be fixed before 0.2?
         return false;
     }
 
@@ -243,6 +294,10 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
                 if ( session.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
                     session.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
                 }
+                Boolean currentAuthenticated = (Boolean) session.getAttribute( AUTHENTICATED_SESSION_KEY );
+                if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
+                    session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
+                }
                 saved = true;
             }
         } catch ( Throwable t ) {
@@ -261,6 +316,10 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
         HttpSession httpSession = request.getSession();
         if ( httpSession.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
             httpSession.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
+        }
+        Boolean currentAuthenticated = (Boolean) httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
+        if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
+            httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.getAllPrincipals() );
         }
         return true;
     }

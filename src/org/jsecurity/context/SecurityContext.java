@@ -75,7 +75,7 @@ public interface SecurityContext {
      * @throws NoSuchPrincipalException if no principals of this type are associated with this
      * context.
      */
-    Principal getPrincipalByType( Class principalType ) throws NoSuchPrincipalException;
+    Principal getPrincipalByType( Class<Principal> principalType ) throws NoSuchPrincipalException;
 
     /**
      * Returns all principals assignable from the specified type that is associated with
@@ -84,7 +84,7 @@ public interface SecurityContext {
      * @return a collection of principals that are assignable from the specified type, or
      * an empty collection if no principals of this type are associated.
      */
-    Collection<Principal> getAllPrincipalsByType( Class principalType );
+    Collection<Principal> getAllPrincipalsByType( Class<Principal> principalType );
 
     /**
      * Checks if the given role identifier is associated with this context.

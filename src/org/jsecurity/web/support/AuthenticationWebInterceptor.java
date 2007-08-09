@@ -336,7 +336,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
 
     protected boolean isAuthenticated( HttpServletRequest request, HttpServletResponse response ) throws Exception {
        SecurityContext securityContext = getSecurityContext( request, response );
-        return securityContext != null && securityContext.isAuthenticated();
+        return securityContext.isAuthenticated();
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception {

@@ -1,7 +1,8 @@
 package org.jsecurity;
 
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.ThreadLocalSecurityContext;
+import org.jsecurity.context.SecurityContextException;
+import org.jsecurity.util.ThreadContext;
 
 /**
  * Simple utility class to perform common JSecurity operations in an application.
@@ -10,8 +11,6 @@ import org.jsecurity.context.support.ThreadLocalSecurityContext;
  * @author Les Hazlewood
  */
 public abstract class SecurityUtils {
-
-    private static final SecurityContext securityContext = new ThreadLocalSecurityContext();
 
     /**
      * Returns the currently accessible <tt>SecurityContext</tt> available to the calling code.
@@ -27,6 +26,11 @@ public abstract class SecurityUtils {
      * @return the currently accessible <tt>SecurityContext</tt> accessible to the calling code.
      */
     public static SecurityContext getSecurityContext() {
-        return securityContext;
+        SecurityContext secCtx = ThreadContext.getSecurityContext();
+        if( secCtx == null ) {
+            throw new SecurityContextException( "No security context is bound to the current thread.  " +
+                    "Make sure that a SecurityContextInterceptor or Filter is configured." );
+        }
+        return secCtx;
     }
 }

@@ -66,21 +66,16 @@ public class IndexController extends SimpleFormController {
     |               M E T H O D S               |
     ============================================*/
 
-    protected SecurityContext getSecurityContext( HttpServletRequest request ) {
-        //ignore the request - just return the one assigned to the Servlet thread previously by the JSecurity interceptor:
-        return SecurityUtils.getSecurityContext();
-    }
-
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        Session session = getSecurityContext(request).getSession();
+        Session session = SecurityUtils.getSecurityContext().getSession();
         command.setValue( (String) session.getAttribute( "value" ) );
         return command;
     }
 
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        SecurityContext securityContext = getSecurityContext( request );
+    protected Map<String,Object> referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+        SecurityContext securityContext = SecurityUtils.getSecurityContext();
         boolean hasRole1 = securityContext.hasRole( "role1" );
         boolean hasRole2 = securityContext.hasRole( "role2" );
 
@@ -94,7 +89,7 @@ public class IndexController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
         SessionValueCommand command = (SessionValueCommand) obj;
 
-        Session session = getSecurityContext(request).getSession();
+        Session session = SecurityUtils.getSecurityContext().getSession();
         session.setAttribute( "value", command.getValue() );
 
         return showForm( request, response, errors );

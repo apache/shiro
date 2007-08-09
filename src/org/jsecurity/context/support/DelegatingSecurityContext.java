@@ -31,6 +31,7 @@ import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
+import org.springframework.util.Assert;
 
 import java.net.InetAddress;
 import java.security.Principal;
@@ -65,6 +66,8 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected List<Principal> principals;
 
+    protected boolean authenticated;
+
     protected SecurityManager securityManager;
 
     protected boolean invalidated = false;
@@ -73,14 +76,25 @@ public class DelegatingSecurityContext implements SecurityContext {
         principals = new ArrayList<Principal>();
     }
 
-    public DelegatingSecurityContext( Principal subjectIdentifier, SecurityManager securityManager ) {
+    public DelegatingSecurityContext(Principal principal, boolean authenticated, SecurityManager securityManager) {
+        Assert.notNull( securityManager );
+
         this.principals = new ArrayList<Principal>(1);
-        this.principals.add( subjectIdentifier );
+        if( principal != null ) {
+            this.principals.add( principal );
+        }
+        this.authenticated = authenticated;
         this.securityManager = securityManager;
     }
 
-    public DelegatingSecurityContext(List<Principal> principals, SecurityManager securityManager) {
-        this.principals = principals;
+    public DelegatingSecurityContext(List<Principal> principals, boolean authenticated, SecurityManager securityManager) {
+        Assert.notNull( securityManager );
+
+        this.principals = new ArrayList<Principal>(1);
+        if( principals != null ) {
+            this.principals.addAll( principals );
+        }
+        this.authenticated = authenticated;        
         this.securityManager = securityManager;
     }
 
@@ -116,6 +130,7 @@ public class DelegatingSecurityContext implements SecurityContext {
      * If multiple principals are defined, this method will return the first
      * principal in the list of principals.
      * @see org.jsecurity.context.SecurityContext#getPrincipal()
+     * @throws IllegalStateException if no principal is defined.
      */
     public Principal getPrincipal() {
         assertValid();
@@ -123,6 +138,19 @@ public class DelegatingSecurityContext implements SecurityContext {
             throw new IllegalStateException( "No principals are associated with this SecurityContext." );
         }
         return this.principals.get(0);
+    }
+
+    /**
+     * If multiple principals are defined, this method will return the first
+     * principal in the list of principals.  This method is the same as {@link #getPrincipal()} except
+     * that it returns null in the case of no principal being defined, rather than throwing an exception.
+     */
+    public Principal getPrincipalInternal() {
+        if( this.principals.isEmpty() ) {
+            return null;
+        } else {
+            return this.principals.get(0);
+        }
     }
 
     /**
@@ -136,7 +164,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
-    public Principal getPrincipalByType( Class principalType ) throws NoSuchPrincipalException {
+    public Principal getPrincipalByType( Class<Principal> principalType ) throws NoSuchPrincipalException {
         assertValid();
         for( Principal principal : principals ) {
             if( principalType.isAssignableFrom( principal.getClass() ) ) {
@@ -149,7 +177,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
      */
-    public Collection<Principal> getAllPrincipalsByType(Class principalType) {
+    public Collection<Principal> getAllPrincipalsByType(Class<Principal> principalType) {
         assertValid();
         Set<Principal> principalsOfType = new HashSet<Principal>();
 
@@ -163,32 +191,40 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean hasRole( String roleIdentifier ) {
         assertValid();
-        return securityManager.hasRole( getPrincipal(), roleIdentifier );
+        return getPrincipalInternal() != null && securityManager.hasRole( getPrincipal(), roleIdentifier );
     }
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
         assertValid();
-        return securityManager.hasRoles( getPrincipal(), roleIdentifiers );
+        if( getPrincipalInternal() != null ) {
+            return securityManager.hasRoles( getPrincipal(), roleIdentifiers );
+        } else {
+            return new boolean[roleIdentifiers.size()];
+        }
     }
 
     public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
         assertValid();
-        return securityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
+        return getPrincipalInternal() != null && securityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
     public boolean implies( Permission permission ) {
         assertValid();
-        return securityManager.isPermitted( getPrincipal(), permission );
+        return getPrincipalInternal() != null && securityManager.isPermitted( getPrincipal(), permission );
     }
 
     public boolean[] implies( List<Permission> permissions ) {
         assertValid();
-        return securityManager.isPermitted( getPrincipal(), permissions );
+        if( getPrincipalInternal() != null ) {
+            return securityManager.isPermitted( getPrincipal(), permissions );
+        } else{
+            return new boolean[permissions.size()];
+        }
     }
 
     public boolean impliesAll( Collection<Permission> permissions ) {
         assertValid();
-        return securityManager.isPermittedAll( getPrincipal(), permissions );
+        return getPrincipalInternal() != null && securityManager.isPermittedAll( getPrincipal(), permissions );
     }
 
     public void checkPermission( Permission permission ) throws AuthorizationException {
@@ -214,8 +250,7 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean isAuthenticated() {
         assertValid();
-        // The presence of this security context indicates that the user is authenticated
-        return true;
+        return authenticated;
     }
 
     public Session getSession() {
@@ -236,6 +271,9 @@ public class DelegatingSecurityContext implements SecurityContext {
         if ( isInvalidated() ) {
             return;
         }
+
+        this.authenticated = false;
+        this.principals.clear();
 
         Session s = getSession( false );
         if ( s != null ) {
