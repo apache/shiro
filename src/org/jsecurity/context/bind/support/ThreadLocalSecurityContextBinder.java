@@ -43,7 +43,7 @@ import org.jsecurity.util.ThreadContext;
  * for later access, or more commonly, reconstructing the SecurityContext on every request based on some critieria -
  * such as a user's id or sessionId - to maintain a stateless architecture).
  *
- * @see org.jsecurity.context.support.ThreadLocalSecurityContext
+ * @see org.jsecurity.SecurityUtils
  *
  * @since 0.1
  * @author Jeremy Haile

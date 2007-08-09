@@ -46,6 +46,6 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
     }
 
     protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
-        return new DelegatingSecurityContext( info.getPrincipals(), securityManager );
+        return new DelegatingSecurityContext( info.getPrincipals(), true, securityManager);
     }
 }

@@ -51,31 +51,10 @@ public abstract class AbstractAuthorizationInterceptor implements Initializable 
 
     private Authorizer authorizer;
 
-    private SecurityContext securityContext = SecurityUtils.getSecurityContext();
-
     public AbstractAuthorizationInterceptor(){}
 
     public void setAuthorizer( Authorizer authorizer ) {
         this.authorizer = authorizer;
-    }
-
-    /**
-     * Sets the SecurityContext that will be used when performing an authorization check.
-     *
-     * <p>The default instance internally is the instance returned by
-     * {@link org.jsecurity.SecurityUtils#getSecurityContext() SecurityUtils.getSecurityContext()},
-     * which should be used in all server environments and not overridden (unless you really know
-     * what you're doing).
-     *
-     * <p>This method is primarily presented as a
-     * convenient overriding mechanism to allow explicitly setting the <tt>SecurityContext</tt> in
-     * standalone application environments, such as Swing or command-line applications.
-     *
-     * @param securityContext the SecurityContext to use when this interceptor performs an
-     * authorization check.
-     */
-    public void setSecurityContext( SecurityContext securityContext ) {
-        this.securityContext = securityContext;
     }
 
     public void init() throws Exception {
@@ -87,7 +66,7 @@ public abstract class AbstractAuthorizationInterceptor implements Initializable 
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
-        SecurityContext secCtx = this.securityContext;
+        SecurityContext secCtx = SecurityUtils.getSecurityContext();
 
         if ( secCtx != null ) {
             AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
