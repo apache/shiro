@@ -291,7 +291,8 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
             if ( session != null ) {
                 // don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
                 // initialized session is not allowed.
-                if ( session.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
+                Object currentPrincipal = session.getAttribute(PRINCIPALS_SESSION_KEY);
+                if ( currentPrincipal == null && !securityContext.getAllPrincipals().isEmpty()  ) {
                     session.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
                 }
                 Boolean currentAuthenticated = (Boolean) session.getAttribute( AUTHENTICATED_SESSION_KEY );
@@ -314,11 +315,12 @@ public class SecurityContextWebInterceptor extends SecurityWebInterceptor {
     protected boolean bindInHttpSessionForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
                                                               SecurityContext securityContext ) {
         HttpSession httpSession = request.getSession();
-        if ( httpSession.getAttribute( PRINCIPALS_SESSION_KEY ) == null ) {
+        Object currentPrincipal = httpSession.getAttribute(PRINCIPALS_SESSION_KEY);
+        if ( currentPrincipal == null && !securityContext.getAllPrincipals().isEmpty()  ) {
             httpSession.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
         }
         Boolean currentAuthenticated = (Boolean) httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
-        if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
+        if ( !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
             httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.getAllPrincipals() );
         }
         return true;
