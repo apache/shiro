@@ -28,11 +28,7 @@ package org.jsecurity.context;
 import org.jsecurity.JSecurityException;
 
 /**
- * <p>Throw when there is an error loading the {@link SecurityContext}.
- *
- * <p>The most common cause for this exception to be thrown is if the JSecurity
- * implementation is not in the classpath, although it could be thrown when the security context
- * cannot be loaded for any reason.</p>
+ * <p>Throw when there is an error accessing or interacting with a {@link SecurityContext}.
  *
  * @since 0.1
  * @author Jeremy Haile

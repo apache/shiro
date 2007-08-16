@@ -27,6 +27,7 @@ package org.jsecurity.session.support.eis.ehcache;
 import net.sf.ehcache.CacheManager;
 import org.jsecurity.cache.ehcache.EhCacheProvider;
 import org.jsecurity.session.support.eis.support.MemorySessionDAO;
+import org.jsecurity.util.Destroyable;
 
 /**
  * Provides memory caching <em>and</em> disk-based caching for production environments via Ehcache.
@@ -85,6 +86,16 @@ public class EhcacheSessionDAO extends MemorySessionDAO {
         if ( managerSetImplicitly ) {
             setCacheManager( null );
             managerSetImplicitly = false;
+        }
+        if ( this.cacheProvider instanceof Destroyable ) {
+            Destroyable destroyable = (Destroyable)this.cacheProvider;
+            try {
+                destroyable.destroy();
+            } catch ( Exception e ) {
+                if ( log.isWarnEnabled() ) {
+                    log.warn( "Unable to cleanly destroy cacheProvider instance.  Ignoring (shutting down)..." );
+                }
+            }
         }
     }
 }
