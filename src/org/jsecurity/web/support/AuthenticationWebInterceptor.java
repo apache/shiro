@@ -50,6 +50,9 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
      */
     public static final String DEFAULT_ENCODING_SCHEME = "UTF-8";
 
+    public static final String DEFAULT_ATTEMPTED_PAGE_KEY =
+        AuthenticationWebInterceptor.class.getName() + "_ATTEMPTED_PAGE_KEY";
+
     /**
      * Because urls can have commas and semicolons, the default delimiters for excludedPaths are whitespace chars
      * (space, newline, carriage return, and tab).
@@ -62,9 +65,8 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
     private boolean http10Compatible = true;
     private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
 
-    private String attemptedPageKeyName = AuthenticationWebInterceptor.class.getName() + "_ATTEMPTED_PAGE_SESSION_KEY";
     private AttemptedPageStorageScheme attemptedPageStorageScheme = AttemptedPageStorageScheme.requestParameter;
-
+    private String attemptedPageKeyName = DEFAULT_ATTEMPTED_PAGE_KEY;
 
     private Set<String> excludedPaths = new HashSet<String>();
     private String excludedPathsDelimiters = " \n\r\t";
