@@ -149,7 +149,7 @@ public class JdbcRealm extends AbstractCachingRealm {
      * Overrides the default query used to retrieve a user's permissions during authorization.  When using the default
      * implementation, this query must take a role name as the single parameter and return a row
      * per permission with three columns containing the fully qualified name of the permission class, the permission
-     * target, and the permission actions (in that order).  If you require a solution that does not match this query
+     * name, and the permission actions (in that order).  If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthorizationInfo(java.security.Principal)} or just
      * {@link #getPermissions(java.sql.Connection, String, java.util.Collection)}</p>
      *

@@ -135,7 +135,7 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
      *       If a <tt>cacheProvider</tt> has been set, it will be used to create a
      *       <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
      *   <li>If neither the {@link #setAuthorizationInfoCache(org.jsecurity.cache.Cache) cache}
-     *       or {@link # setCacheProvider (org.jsecurity.cache.CacheProvider) cacheProvider}
+     *       or {@link #setCacheProvider (org.jsecurity.cache.CacheProvider) cacheProvider}
      *       properties are set, caching will be disabled.</li>
      * </ol>
      */

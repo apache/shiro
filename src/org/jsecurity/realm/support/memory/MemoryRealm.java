@@ -102,7 +102,7 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
      * <p>The value of the map is a delimited list of all permissions that apply to
      * this role.  Each permission entry is separated by semicolons.  Each
      * permission consists of a fully-qualified permission class-name, a
-     * target name, and a list of actions that apply to the permission.  Each
+     * name name, and a list of actions that apply to the permission.  Each
      * of theses entries is comma-separated.</p>
      *
      * <p>For example,<br>
@@ -210,7 +210,7 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
                     "definition.  Please see the JavaDoc for the " + getClass() + " class." );
             }
 
-            // Parse permission string into class, target, and actions
+            // Parse permission string into class, name, and actions
             String clazz = permissionParts[0];
             String target = permissionParts[1];
             StringBuffer actions = new StringBuffer();
@@ -231,13 +231,13 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
 
 
     /**
-     * Builds a permission object with the given class, target, and actions using reflection.
+     * Builds a permission object with the given class, name, and actions using reflection.
      * The permission class is expected to have a constructor that takes in two String
-     * parameters.  The first parameter is the target of the permission.  The second parameter
+     * parameters.  The first parameter is the name of the permission.  The second parameter
      * is a comma-delimeted list of actions that apply to the permission.
      *
      * @param className the permission class.
-     * @param target the permission target (or name).
+     * @param target the permission name (or name).
      * @param actions the permission actions.
      * @return a new Permission object with the given properties.
      */

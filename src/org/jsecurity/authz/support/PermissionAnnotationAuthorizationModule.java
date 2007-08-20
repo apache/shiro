@@ -49,10 +49,10 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         setAnnotationClass( PermissionsRequired.class );
     }
 
-    protected String inferTargetFromPath( Object[] methodArgs, String targetPath ) throws Exception {
+    protected String inferTargetFromPath( Object[] methodArgs, String namePath ) throws Exception {
         int propertyStartIndex = -1;
 
-        char[] chars = targetPath.toCharArray();
+        char[] chars = namePath.toCharArray();
         StringBuffer buf = new StringBuffer();
         //init iteration at index 1 (instead of 0).  This is because the first
         //character must be the ARRAY_OPEN_CHAR (eliminates unnecessary iteration)
@@ -87,21 +87,21 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
     protected Permission createPermission( AuthorizedAction action ) {
         PermissionsRequired prAnnotation =  (PermissionsRequired)getAnnotation( action );
         Class<? extends Permission> clazz = prAnnotation.type();
-        String target = prAnnotation.target();
-        String targetPath = prAnnotation.targetPath();
-        if (targetPath.length() == 0) {
-            targetPath = null;
+        String name = prAnnotation.name();
+        String namePath = prAnnotation.namePath();
+        if (namePath.length() == 0) {
+            namePath = null;
         }
         String actions = prAnnotation.actions();
         if (actions.length() == 0) {
             actions = null;
         }
 
-        if ( targetPath != null ) {
+        if ( namePath != null ) {
             try {
-                target = inferTargetFromPath( getMethodArguments( action ), targetPath );
+                name = inferTargetFromPath( getMethodArguments( action ), namePath );
             } catch ( Exception e ) {
-                String msg = "Unable to parse targetPath property.  Please see the " +
+                String msg = "Unable to parse namePath property.  Please see the " +
                              "javadoc for expected path syntax. PermissionsRequired check cannot " +
                              "continue.";
                 throw new InvalidTargetPathException( msg, e );
@@ -109,9 +109,9 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         }
 
         if ( actions == null ) {
-            return PermissionUtils.createPermission( clazz, target );
+            return PermissionUtils.createPermission( clazz, name );
         } else {
-            return PermissionUtils.createPermission( clazz, target, actions );
+            return PermissionUtils.createPermission( clazz, name, actions );
         }
     }
 

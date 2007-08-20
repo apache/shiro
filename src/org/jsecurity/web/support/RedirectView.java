@@ -175,7 +175,7 @@ public class RedirectView {
 	protected final void renderMergedOutputModel(
 			Map model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		// Prepare target URL.
+		// Prepare name URL.
 		StringBuffer targetUrl = new StringBuffer();
 		if (this.contextRelative && getUrl().startsWith("/")) {
 			// Do not apply context path to relative URLs.
@@ -271,7 +271,7 @@ public class RedirectView {
 	 * Send a redirect back to the HTTP client
 	 * @param request current HTTP request (allows for reacting to request method)
 	 * @param response current HTTP response (for sending response headers)
-	 * @param targetUrl the target URL to redirect to
+	 * @param targetUrl the name URL to redirect to
 	 * @param http10Compatible whether to stay compatible with HTTP 1.0 clients
 	 * @throws IOException if thrown by response methods
 	 */
