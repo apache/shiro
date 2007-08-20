@@ -24,8 +24,8 @@
  */
 package org.jsecurity.web.tags;
 
-import org.jsecurity.authz.AbstractPermission;
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.support.AbstractPermission;
 import org.jsecurity.util.PermissionUtils;
 
 import javax.servlet.jsp.JspException;
@@ -39,7 +39,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 public abstract class PermissionTag extends SecureTag {
 
     private String type = null;
-    private String target = null;
+    private String name = null;
     private String actions = null;
 
     public PermissionTag() {
@@ -53,12 +53,12 @@ public abstract class PermissionTag extends SecureTag {
         this.type = type;
     }
 
-    public String getTarget() {
-        return target;
+    public String getName() {
+        return name;
     }
 
-    public void setTarget( String target ) {
-        this.target = target;
+    public void setName( String name ) {
+        this.name = name;
     }
 
     public String getActions() {
@@ -71,7 +71,7 @@ public abstract class PermissionTag extends SecureTag {
 
     protected void verifyAttributes() throws JspException {
         String type = getType();
-        String target = getTarget();
+        String name = getName();
         String actions = getActions();
 
         if ( type == null ) {
@@ -79,13 +79,13 @@ public abstract class PermissionTag extends SecureTag {
             throw new JspException( msg );
         }
 
-        if ( target == null ) {
+        if ( name == null ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "'target' tag attribute was not specified.  Assuming default of " +
+                log.trace( "'name' tag attribute was not specified.  Assuming default of " +
                            "\"*\", as all Permission objects must be instantiated with a " +
-                           "name/target." );
+                           "name/name." );
             }
-            setTarget( AbstractPermission.WILDCARD );
+            setName( AbstractPermission.WILDCARD );
         }
 
         if ( (actions != null ) && actions.trim().length() == 0) {
@@ -103,11 +103,11 @@ public abstract class PermissionTag extends SecureTag {
 
         if ( actions == null ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "No actions attribute specified, creating permission with target only." );
+                log.trace( "No actions attribute specified, creating permission with name only." );
             }
-            p = PermissionUtils.createPermission( getType(), getTarget() );
+            p = PermissionUtils.createPermission( getType(), getName() );
         } else {
-            p = PermissionUtils.createPermission( getType(), getTarget(), actions );
+            p = PermissionUtils.createPermission( getType(), getName(), actions );
         }
 
         boolean show = showTagBody( p );

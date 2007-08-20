@@ -29,7 +29,7 @@ import org.jsecurity.authz.AuthorizationException;
 /**
  * Exception thrown when trying to evaluate an
  * {@link org.jsecurity.authz.annotation.PermissionsRequired PermissionsRequired} annotation's
- * {@link org.jsecurity.authz.annotation.PermissionsRequired#targetPath() targetPath} attribute.
+ * {@link org.jsecurity.authz.annotation.PermissionsRequired#namePath() namePath} attribute.
  *
  * @since 0.1
  * @author Les Hazlewood

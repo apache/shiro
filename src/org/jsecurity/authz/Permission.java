@@ -24,8 +24,6 @@
  */
 package org.jsecurity.authz;
 
-import java.util.Set;
-
 /**
  * A Permission represents the ability to perform an action or access to a resource.  A Permission is the most
  * granular, i.e. atomic, unit in a system's security policy and is the cornerstone upon which security models are
@@ -70,44 +68,6 @@ public interface Permission {
      * @return the 'name' of the permission, where the name value usually represents behavior or access to a resource.
      */
     String getName();
-
-    /**
-     * Returns the target's name.  That is, if this Permission and its actions are targed at a specific
-     * resource, this method returns the name of that resource.  For example, this instance:<br/><br/>
-     *
-     * <pre>new FilePermission( "/bin/bash", "execute" );</pre>
-     *
-     * <p>would have a <tt>targetName</tt> of &quot;/bin/bash&quot;, since that is the <em>target</em> of actions
-     * represented by this permission (&quot;execute&quot;).
-     *
-     * @return the name of the target corresponding to the permission's actions, or <tt>null</tt> if no specific
-     * resource is targeted.
-     */
-    String getTargetName();
-
-    /**
-     * Returns all actions represented by the permission instance, or <tt>null</tt> if there are none.
-     *
-     * <p>If the permission is {@link #getTargetName targeted}, these are the actions associated with that target
-     *
-     * @return all actions represented by the permission instance or <tt>null</tt> if there are none.
-     */
-    Set<String> getActionsSet();
-
-    /**
-     * Returns the canonically ordered String containing all actions represented by a permission
-     * instance, or <tt>null</tt> if there are no actions.  The string must be composed of, and match exactly, those
-     * actions in the {@link #getActions actions} set. 
-     *
-     * <p>For example, a FilePermission class might have the possible actions of <tt>read</tt>, <tt>write</tt>, and
-     * <tt>execute</tt> and <tt>delete</tt>.  If there were a FilePermission for a target of
-     * <tt>/home/jsmith</tt>, a FilePermission instance for that file might return an actions string of
-     * &quot;read,write&quot; only.
-     *
-     * @return the canonically ordered string representation of this instance's permission actions, or <tt>null</tt> if
-     * there are none.
-     */
-    String getActions();
 
     boolean implies( Permission p );
 

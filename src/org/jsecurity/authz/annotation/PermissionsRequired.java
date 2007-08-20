@@ -26,6 +26,7 @@
 package org.jsecurity.authz.annotation;
 
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.support.AbstractPermission;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -43,7 +44,7 @@ import java.lang.annotation.Target;
  * <blockquote><pre>
  * &#64;PermissionsRequired(
  *     type=java.io.FilePermssion.class,
- *     target="aFile.txt",
+ *     name="aFile.txt",
  *     actions="read,write"
  * )
  * void someMethod();
@@ -71,13 +72,13 @@ public @interface PermissionsRequired {
     Class<? extends Permission> type();
 
     /**
-     * The target of this permission to or on which {@link #actions()} may be performed.  If
-     * not specified, the default target value of &quot;*&quot; means <em>all</em> instances
+     * The name of this permission to or on which {@link #actions()} may be performed.  If
+     * not specified, the default name value of &quot;*&quot; means <em>all</em> instances
      * of the permission type.
      *
      * <p>For example, the annotation:</br>
      * <blockquote><pre>
-     * &#64;PermissionsRequired(type=java.io.FilePermission.class,target="aFile.txt",actions="read,write")
+     * &#64;PermissionsRequired(type=java.io.FilePermission.class,name="aFile.txt",actions="read,write")
      * void doSomething() { ... }
      * </pre></blockquote>
      * means &quot;the current executor must have permission to read from <em>and</em> write to
@@ -90,15 +91,15 @@ public @interface PermissionsRequired {
      * means &quot;the current executor must have permission to read <em>any/all</em> files in order
      * for the <tt>doSomething()</tt> method to execute&quot;
      *
-     * <p>This property is ignored if the {@link #targetPath} property is specified.
+     * <p>This property is ignored if the {@link #namePath} property is specified.
      *
-     * @see Permission#getTargetName()
+     * @see Permission#getName()
      */
-    String target() default "*";
+    String name() default AbstractPermission.WILDCARD;
 
     /**
      * Uses the {@link Object#toString() toString()} value of the object at the specified
-     * path as the <tt>Permission {@link Permission#getTargetName() targetName}</tt> to use during
+     * path as the <tt>Permission {@link Permission#getName() name}</tt> to use during
      * <tt>Permission</tt> construction.
      *
      * <p>The objects in this path must conform to property getter and setter naming conventions
@@ -133,7 +134,7 @@ public @interface PermissionsRequired {
      *       nested, and indexed references are supported.</li>
      * </ul>
      *
-     * <p>The usefulness of a <tt>targetPath</tt> is best explained via an example:
+     * <p>The usefulness of a <tt>namePath</tt> is best explained via an example:
      *
      * <p>If there was a method:
      *
@@ -143,14 +144,14 @@ public @interface PermissionsRequired {
      *
      * <pre>&#64;PermissionsRequired(
      *     type=my.pkg.security.UserPermission.class,
-     *     targetPath=[0].id
+     *     namePath=[0].id
      *     actions="create,update"
      * )
      * public void saveUser( User aUser ) { ... }</pre>
      *
      * <p>This annotation declares that a <tt>my.pkg.security.UserPermission</tt> instance with
-     * {@link Permission#getTargetName() targetName} <tt>aUser.getId().toString()</tt> and
-     * {@link org.jsecurity.authz.AbstractPermission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
+     * {@link Permission#getName() name} <tt>aUser.getId().toString()</tt> and
+     * {@link org.jsecurity.authz.support.AbstractTargetedPermission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
      * verified by {@link org.jsecurity.context.SecurityContext#checkPermission(Permission)}.
      *
      * <p>Therefore the above annotation could be read as:</p>
@@ -158,15 +159,15 @@ public @interface PermissionsRequired {
      * user with id <tt>aUser.getId()</tt> in order to execute the <tt>saveUser(User u)</tt>
      * method&quot;.
      *
-     * <p>Likewise, another <tt>targetPath</tt> example that could be specified:</p>
+     * <p>Likewise, another <tt>namePath</tt> example that could be specified:</p>
      * <pre>&#64;PermissionsRequired(
      *     type=my.pkg.security.PostalAddressPermission.class,
-     *     targetPath=[2].parent.postalAddress.id
+     *     namePath=[2].parent.postalAddress.id
      *     actions="update,delete"
      * )
      * void foo( String aString, int anInt, Child aChild, Address aBoolean) { ... }</pre>
      *
-     * <p>This example <tt>targetPath</tt> will use the
+     * <p>This example <tt>namePath</tt> will use the
      * <tt>aChild.getParent().getPostalAddress().getId().toString()</tt> as the
      * <tt>my.pkg.security.PostalAddressPermission</tt> instance <tt>name</tt> because
      * 'aChild' is the 3rd method argument (index 2 in the zero-based method argument list).</p>
@@ -181,12 +182,12 @@ public @interface PermissionsRequired {
      * can be checked via the path structure to determine how to construct the <tt>Permission</tt>
      * instance.
      *
-     * <p>If defined, this property overrides any {@link #target} value that may have been specified.
+     * <p>If defined, this property overrides any {@link #name} value that may have been specified.
      */
-    String targetPath() default "";
+    String namePath() default "";
 
     /**
-     * The actions that the user must able to perform on the related target in order for the
+     * The actions that the user must able to perform on the related name in order for the
      * authorization to succeed.
      *
      * <p>This is an optional attribute.  If left unspecified, no actions will be used to construct

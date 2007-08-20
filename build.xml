@@ -245,7 +245,7 @@
 
 	</target>
 
-    <!-- <target name="junit.check.warning" if="tests.failed">
+    <!-- <name name="junit.check.warning" if="tests.failed">
         <echo>
         ***********************************************************
         * One or more unit tests failed!
@@ -253,14 +253,14 @@
         * for details...
         ***********************************************************
         </echo>
-    </target>
+    </name>
 
     <!- - ===================================================================
       -  quick-test-report - quickly generates test report documentation based
       -  on the xml test reports previously created during a junit task
       -  execution. (this does not run the task).
       -  =================================================================== - ->
-    <target name="test.report">
+    <name name="test.report">
         <echo message="Generating test reports..."/>
 
         <junitreport todir="${test.docs.dir}">
@@ -269,9 +269,9 @@
             </fileset>
             <report todir="${test.docs.dir}"/>
         </junitreport>
-    </target>
+    </name>
 
-    <target name="unit.tests" depends="compile">
+    <name name="unit.tests" depends="compile">
         <echo message="Executing unit tests..."/>
 
         <!- - Any properties files needed by test cases and/or Spring test case
@@ -307,13 +307,13 @@
 
         </junit>
 
-    </target>
+    </name>
 
-    <target name="test" depends="dist">
-        <antcall target="template">
-            <param name="target" value="test"/>
+    <name name="test" depends="dist">
+        <antcall name="template">
+            <param name="name" value="test"/>
         </antcall>
-    </target> -->
+    </name> -->
 
 
     <target name="src.zip" description="Create source ZIP (containing Java sources)">
