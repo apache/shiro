@@ -28,10 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.util.Initializable;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -45,24 +43,11 @@ import org.jsecurity.util.Initializable;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AbstractAuthorizationInterceptor implements Initializable {
+public abstract class AbstractAuthorizationInterceptor {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    private Authorizer authorizer;
-
     public AbstractAuthorizationInterceptor(){}
-
-    public void setAuthorizer( Authorizer authorizer ) {
-        this.authorizer = authorizer;
-    }
-
-    public void init() throws Exception {
-        if ( this.authorizer == null ) {
-            String msg = "authorizer property must be set";
-            throw new IllegalStateException( msg );
-        }
-    }
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
@@ -71,10 +56,9 @@ public abstract class AbstractAuthorizationInterceptor implements Initializable 
         if ( secCtx != null ) {
             AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
             //will throw an exception if not authorized to execute the action:
-            this.authorizer.checkAuthorization(secCtx, action );
+            secCtx.checkAuthorization( action );
         } else {
-            String msg = "No SecurityContext available " +
-                         "(User not authenticated?).  Authorization failed.";
+            String msg = "No SecurityContext available (User not authenticated?).  Authorization failed.";
             throw new UnauthorizedException( msg );
         }
 

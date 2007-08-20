@@ -60,9 +60,6 @@
     <!-- ===================================================================================
          Authorization (access control) Configuration
          =================================================================================== -->
-    <!-- AOP Annotations Support-->
-    <bean name="authorizer" class="org.jsecurity.authz.module.support.AnnotationsModularAuthorizer"/>
-
 
     <!-- ===================================================================================
          Session Management Configuration

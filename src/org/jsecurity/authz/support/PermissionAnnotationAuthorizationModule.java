@@ -22,14 +22,13 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.module.support;
+package org.jsecurity.authz.support;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.method.MethodInvocation;
-import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.util.PermissionUtils;
 
@@ -116,9 +115,16 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         }
     }
 
-    public AuthorizationVote isAuthorized( SecurityContext context, AuthorizedAction action ) {
+    public AuthorizationVote isAuthorized( AuthorizedAction action ) {
+
+        SecurityContext securityContext = getSecurityContext();
+
+        if ( securityContext == null ) {
+            return AuthorizationVote.abstain;
+        }
+
         Permission p = createPermission( action );
-        if ( context.implies( p ) ) {
+        if ( securityContext.implies( p ) ) {
             if ( log.isDebugEnabled() ) {
                 log.debug( "SecurityContext implies permission [" + p +
                            "]. Returning grant vote." );

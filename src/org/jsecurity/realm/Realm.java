@@ -27,11 +27,11 @@ package org.jsecurity.realm;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authz.AuthorizationOperations;
+import org.jsecurity.authz.Authorizer;
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
- * such as users, roles, and permissions to determine authentication and authorization data.
+ * such as users, roles, and permissions to determine authentication and authorization operations.
  *
  * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
  * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
@@ -69,7 +69,7 @@ import org.jsecurity.authz.AuthorizationOperations;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public interface Realm extends AuthorizationOperations {
+public interface Realm extends Authorizer {
 
     /**
      * Returns the name of this Realm used to uniquely identify it within the application.

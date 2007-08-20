@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.module.support;
+package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.AuthorizationException;
 

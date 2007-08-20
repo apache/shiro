@@ -22,11 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.module.support;
+package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.annotation.RolesRequired;
-import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.context.SecurityContext;
 
 /**
@@ -44,13 +43,19 @@ public class RoleAnnotationAuthorizationModule extends AnnotationAuthorizationMo
         setAnnotationClass( RolesRequired.class );
     }
 
-    public AuthorizationVote isAuthorized( SecurityContext context, AuthorizedAction action ) {
+    public AuthorizationVote isAuthorized( AuthorizedAction action ) {
+
+        SecurityContext securityContext = getSecurityContext();
+
+        if ( securityContext == null ) {
+            return AuthorizationVote.abstain;
+        }
 
         RolesRequired rrAnnotation = (RolesRequired)getAnnotation( action );
 
         String roleId = rrAnnotation.value();
-
-        if ( context.hasRole( roleId ) ) {
+        
+        if ( securityContext.hasRole( roleId ) ) {
             if ( log.isDebugEnabled() ) {
                 log.debug( "SecurityContext has role [" + roleId +
                            "]. Returning grant vote." );

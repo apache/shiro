@@ -26,6 +26,7 @@ package org.jsecurity.context.support;
 
 import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
@@ -236,6 +237,16 @@ public class DelegatingSecurityContext implements SecurityContext {
     public void checkRoles(Collection<String> roles) throws AuthorizationException {
         assertValid();
         securityManager.checkRoles( getPrincipal(), roles );
+    }
+
+    public boolean isAuthorized( AuthorizedAction action ) {
+        assertValid();
+        return securityManager.isAuthorized( getPrincipal(), action );
+    }
+
+    public void checkAuthorization( AuthorizedAction action ) throws AuthorizationException {
+        assertValid();
+        securityManager.checkAuthorization( getPrincipal(), action );
     }
 
     public boolean isAuthenticated() {

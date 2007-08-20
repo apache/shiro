@@ -23,15 +23,15 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authz.module;
+package org.jsecurity.authz.support;
 
 
 /**
  * Enumeration representing the possible votes that can be returned from an
- * {@link AuthorizationModule} instance to vote on whether or not a user
+ * {@link org.jsecurity.authz.support.AuthorizationModule} instance to vote on whether or not a user
  * should be authorized to perform a particular {@link org.jsecurity.authz.AuthorizedAction}.
  *
- * @see AuthorizationModule
+ * @see org.jsecurity.authz.support.AuthorizationModule
  *
  * @since 0.1
  * @author Jeremy Haile

@@ -35,6 +35,8 @@ import org.jsecurity.session.support.eis.support.AbstractCachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 
+import java.io.InputStream;
+
 /**
  * <p>JSecurity {@link CacheProvider} for ehcache 1.2.</p>
  * <p/>
@@ -49,6 +51,10 @@ import org.jsecurity.util.Initializable;
  */
 public class EhCacheProvider implements CacheProvider, Initializable, Destroyable {
 
+    public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = AbstractCachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
+    public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
+    public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
+
     /**
      * Commons-logging logger
      */
@@ -57,12 +63,12 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
     /**
      * The EhCache cache manager used by this provider to create caches.
      */
-    private CacheManager manager;
-    private boolean cacheManagerImplicitlyAcquired = false;
-
-    public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = AbstractCachingSessionDAO.ACTIVE_SESSIONS_CACHE_NAME;
-    public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
-    public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
+    protected CacheManager manager;
+    private boolean cacheManagerImplicitlyCreated = false;
+    /**
+     * Classpath file location - without a leading slash, it is relative to the current class.
+     */
+    private String cacheManagerConfigFile = "ehcache.xml";
 
     public CacheManager getCacheManager() {
         return manager;
@@ -70,6 +76,19 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
 
     public void setCacheManager( CacheManager manager ) {
         this.manager = manager;
+    }
+
+    public String getCacheManagerConfigFile() {
+        return this.cacheManagerConfigFile;
+    }
+
+    public void setCacheManagerConfigFile( String classpathLocation ) {
+        this.cacheManagerConfigFile = classpathLocation;
+    }
+
+    protected InputStream getCacheManagerConfigFileInputStream() {
+        String classpathLocation = getCacheManagerConfigFile();
+        return getClass().getResourceAsStream( classpathLocation );
     }
 
     /**
@@ -122,7 +141,6 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
             DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS );
     }
 
-
     /**
      * Initializes this cache provider.
      * <p/>
@@ -146,29 +164,34 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
             CacheManager cacheMgr = getCacheManager();
             if ( cacheMgr == null ) {
                 if ( log.isDebugEnabled() ) {
-                    log.debug( "cacheManager property not set.  Acquiring Ehcache's default CacheManager... " );
+                    log.debug( "cacheManager property not set.  Constructing CacheManager instance... " );
                 }
-                cacheMgr = CacheManager.getInstance();
-                cacheManagerImplicitlyAcquired = true;
+                //using the CacheManager constructor, the resulting instance is _not_ a VM singleton
+                //(as would be the case by calling CacheManager.getInstance().  We do not use the getInstance here
+                //because we need to know if we need to destroy the CacheManager instance - using the static call,
+                //we don't know which component is responsible for shutting it down.  By using a single EhCacheProvider,
+                //it will always know to shut down the instance if it was responsible for creating it.
+                cacheMgr = new CacheManager( getCacheManagerConfigFileInputStream() );
+                cacheManagerImplicitlyCreated = true;
                 setCacheManager( cacheMgr );
             }
-        } catch ( net.sf.ehcache.CacheException e ) {
+        } catch ( Exception e ) {
             throw new CacheException( e );
         }
     }
 
     public void destroy() {
-        CacheManager cacheMgr = getCacheManager();
-        if ( cacheManagerImplicitlyAcquired ) {
+        if ( cacheManagerImplicitlyCreated ) {
             try {
+                CacheManager cacheMgr = getCacheManager();
                 cacheMgr.shutdown();
             } catch ( Exception e ) {
                 if ( log.isWarnEnabled() ) {
-                    log.warn( "Unable to cleanly shutdown implicitly acquired CacheManager instance.  " +
+                    log.warn( "Unable to cleanly shutdown implicitly created CacheManager instance.  " +
                         "Ignoring (shutting down)..." );
                 }
             }
-            cacheManagerImplicitlyAcquired = false;
+            cacheManagerImplicitlyCreated = false;
         }
     }
 }

@@ -26,7 +26,6 @@
 package org.jsecurity;
 
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authz.AuthorizationOperations;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.SessionFactory;
@@ -35,16 +34,17 @@ import java.util.List;
 
 /**
  * A <tt>SecurityManager</tt> is a convenience mechanism - it extends the {@link Authenticator},
- * {@link Authorizer}, {@link SessionFactory} and {@link AuthorizationOperations} interfaces, thereby consolidating
+ * {@link Authorizer}, and {@link SessionFactory} interfaces, thereby consolidating
  * these behaviors into a single interface.  This allows applications to interact with a single
  * <tt>SecurityManager</tt> component for most JSecurity operations should they choose to do so.
  *
  * @see DefaultSecurityManager
  *
  * @since 0.2
+ * 
  * @author Jeremy Haile
  */
-public interface SecurityManager extends Authenticator, Authorizer, AuthorizationOperations, SessionFactory {
+public interface SecurityManager extends Authenticator, Authorizer, SessionFactory {
 
     /**
      * Retrieves a realm by its unique name.

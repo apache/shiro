@@ -61,8 +61,8 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
     protected CacheProvider cacheProvider = null;
     protected boolean maintainStoppedSessions = false;
 
-    public static final String ACTIVE_SESSIONS_CACHE_NAME = "jsecurity-activeSessionCache";
-    public static final String STOPPED_SESSIONS_CACHE_NAME = "jsecurity-stoppedSessionsCache";
+    public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
+    public static final String STOPPED_SESSION_CACHE_NAME = "jsecurity-stoppedSessionCache";
 
     /**
      * JavaBeans compatible constructor.  The {@link #setCacheProvider CacheProvider} property must be set and the
@@ -127,9 +127,9 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
             throw new IllegalStateException( "CacheProvider property must be set." );
         }
 
-        this.activeSessions = buildActiveSessionsCache( this.cacheProvider );
+        this.activeSessions = buildActiveSessionCache( this.cacheProvider );
         if ( maintainStoppedSessions ) {
-            this.stoppedSessions = buildStoppedSessionsCache( this.cacheProvider );
+            this.stoppedSessions = buildStoppedSessionCache( this.cacheProvider );
         }
 
         onInit();
@@ -180,8 +180,8 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
      * @param cacheProvider the provider to use to create the </tt>activeSessions</tt> cache.
      * @return the Cache instance to assign to the <tt>activeSessions</tt> class attribute.
      */
-    protected Cache buildActiveSessionsCache( CacheProvider cacheProvider ) {
-        return buildCache( cacheProvider, ACTIVE_SESSIONS_CACHE_NAME );
+    protected Cache buildActiveSessionCache( CacheProvider cacheProvider ) {
+        return buildCache( cacheProvider, ACTIVE_SESSION_CACHE_NAME );
     }
 
     /**
@@ -193,8 +193,8 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
      * @param cacheProvider the provider to use to create the </tt>stoppedSessions</tt> cache.
      * @return the Cache instance to assign to the <tt>stoppedSessions</tt> class attribute.
      */
-    protected Cache buildStoppedSessionsCache( CacheProvider cacheProvider ) {
-        return buildCache( cacheProvider, STOPPED_SESSIONS_CACHE_NAME );   
+    protected Cache buildStoppedSessionCache( CacheProvider cacheProvider ) {
+        return buildCache( cacheProvider, STOPPED_SESSION_CACHE_NAME );
     }
 
     /**
@@ -269,14 +269,14 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
     public Session readSession(Serializable sessionId) throws UnknownSessionException {
         Session s = (Session)activeSessions.get( sessionId );
         if ( s == null ) {
-            if ( maintainStoppedSessions ) {
+            if ( stoppedSessions != null ) {
                 s = (Session)stoppedSessions.get( sessionId );
             }
             if ( s == null ) {
                 s = doReadSession( sessionId );
                 if ( s != null ) {
                     if ( s.getStopTimestamp() != null || s.isExpired() ) {
-                        if ( maintainStoppedSessions ) {
+                        if ( stoppedSessions != null ) {
                             stoppedSessions.put( sessionId, s );
                         }
                     } else {
@@ -319,7 +319,7 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
         Serializable id = session.getSessionId();
         if ( (session.getStopTimestamp() != null) || session.isExpired() ) {
             activeSessions.remove( id );
-            if ( maintainStoppedSessions ) {
+            if ( stoppedSessions != null ) {
                 stoppedSessions.put( id, session );
             }
         } else {
@@ -344,7 +344,9 @@ public abstract class AbstractCachingSessionDAO implements SessionDAO, Initializ
     public void delete(Session session) {
         Serializable id = session.getSessionId();
         activeSessions.remove( id );
-        stoppedSessions.remove( id );
+        if ( stoppedSessions != null ) {
+            stoppedSessions.remove( id );
+        }
         doDelete( session );
     }
 

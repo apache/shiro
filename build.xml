@@ -232,7 +232,7 @@
 			<packageset dir="${root.base.dir}/support/spring/src">
 				<include name="org/jsecurity/**"/>
 			</packageset>
-            <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://java.sun.com/j2se/1.5/docs/api"/>
             <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
 			<!-- Jakarta Commons -->
 			<link href="http://jakarta.apache.org/commons/collections/apidocs/"/>
@@ -240,7 +240,7 @@
             <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
             <link href="http://quartz.sourceforge.net/javadoc/"/>
             <link href="http://www.springframework.org/docs/api/"/>
-            <link href="http://ehcache.sourceforge.net/apidocs/"/>
+            <link href="http://ehcache.sourceforge.net/javadoc/"/>
         </javadoc>
 
 	</target>
