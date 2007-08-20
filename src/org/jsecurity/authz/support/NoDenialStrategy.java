@@ -23,11 +23,9 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authz.module.support;
+package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.module.AuthorizationModule;
-import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.context.SecurityContext;
 
 import java.util.Collection;
@@ -35,11 +33,11 @@ import java.util.Map;
 
 
 /**
- * Instance of {@link org.jsecurity.authz.module.support.ModularAuthorizationStrategy} that authorizes the user
+ * Instance of {@link org.jsecurity.authz.support.ModularAuthorizationStrategy} that authorizes the user
  * if and only if:
  * <ol>
- * <li>At least one {@link org.jsecurity.authz.module.AuthorizationVote#grant grant} vote is given.</li>
- * <li>No {@link org.jsecurity.authz.module.AuthorizationVote#deny deny} votes are given.</li>
+ * <li>At least one {@link AuthorizationVote#grant grant} vote is given.</li>
+ * <li>No {@link AuthorizationVote#deny deny} votes are given.</li>
  * </ol>
  *
  * @since 0.1
@@ -49,7 +47,7 @@ import java.util.Map;
 public class NoDenialStrategy implements ModularAuthorizationStrategy {
 
     /**
-     * @see org.jsecurity.authz.module.support.ModularAuthorizationStrategy#isAuthorized
+     * @see org.jsecurity.authz.support.ModularAuthorizationStrategy#isAuthorized
      */
     public boolean isAuthorized( SecurityContext context,
                                  AuthorizedAction action,

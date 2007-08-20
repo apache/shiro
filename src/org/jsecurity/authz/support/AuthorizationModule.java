@@ -23,10 +23,9 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authz.module;
+package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.context.SecurityContext;
 
 
 /**
@@ -55,18 +54,15 @@ public interface AuthorizationModule {
 
     /**
      * Called when the authorization module needs to vote on whether or not
-     * a particular {@link org.jsecurity.context.SecurityContext} is authorized to perform an
+     * the current {@link org.jsecurity.context.SecurityContext} is authorized to perform an
      * {@link AuthorizedAction}.  This method is only called if this module
      * {@link #supports supports} the specified <tt>action</tt>.
      *
-     * @param context the context that is being grant or denied authorization
-     * for the given action.
      * @param action the action that the user is requesting to perform.
      * @return a vote indicating whether or not this module grants authorization
      * to the user, or abstains from voting.
      */
-    AuthorizationVote isAuthorized( SecurityContext context,
-                                    AuthorizedAction action );
+    AuthorizationVote isAuthorized( AuthorizedAction action );
 
 }
 

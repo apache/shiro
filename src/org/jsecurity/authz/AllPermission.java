@@ -52,6 +52,10 @@ public class AllPermission extends AbstractPermission {
         super( WILDCARD, possibleActions );
     }
 
+    public String getName() {
+        return getTargetName();
+    }
+
     public Set<String> getPossibleActions() {
         return possibleActions;
     }

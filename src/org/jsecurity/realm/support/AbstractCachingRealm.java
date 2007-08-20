@@ -38,10 +38,7 @@ import java.security.Principal;
 
 /**
  * <p>An abstract implementation of the {@link Realm} interface that enables caching of
- * authorization information returned by subclasses.  This implementation can use a
- * {@link #setAuthorizationInfoCache cache} set explicitly or can create one using a specified
- * {@link #setAuthorizationInfoCacheProvider cacheProvider} to cache authorization information by
- * principal.  See the {@link #init init()} method for more information on how this class
+ * information returned by subclasses.  See the {@link #init init()} method for more information on how this class
  * implements caching behavior.
  *
  * <p>In general, caching works best if the principals are {@link java.io.Serializable}.
@@ -82,7 +79,7 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
      * Upon initialization, if the authorizationInfoCache is null and this attribute has been set
      * (i.e. it is not-null), it will be used to create the authorizationInfoCache.
      */
-    private CacheProvider authzInfoCacheProvider = null;
+    private CacheProvider cacheProvider = null;
 
     /**
      * The postfix appended to the realm name used to create the name of the authorization cache.
@@ -109,12 +106,12 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
         return this.authorizationInfoCache;
     }
 
-    public void setAuthorizationInfoCacheProvider(CacheProvider authzInfoCacheProvider) {
-        this.authzInfoCacheProvider = authzInfoCacheProvider;
+    public void setCacheProvider(CacheProvider authzInfoCacheProvider) {
+        this.cacheProvider = authzInfoCacheProvider;
     }
 
-    public CacheProvider getAuthorizationInfoCacheProvider() {
-        return this.authzInfoCacheProvider;
+    public CacheProvider getCacheProvider() {
+        return this.cacheProvider;
     }
 
     /*--------------------------------------------
@@ -133,11 +130,11 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
      *       All future calls to <tt>getAuthorizationInfo</tt> will attempt to use this cache first
      *       to aleviate any potential unnecessary calls to an underlying data store.</li>
      *   <li>If the {@link #setAuthorizationInfoCache cache} property has <b>not</b> been set,
-     *       the {@link #setAuthorizationInfoCacheProvider cacheProvider} property will be checked.
+     *       the {@link #setCacheProvider cacheProvider} property will be checked.
      *       If a <tt>cacheProvider</tt> has been set, it will be used to create a
      *       <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
      *   <li>If neither the {@link #setAuthorizationInfoCache(org.jsecurity.cache.Cache) cache}
-     *       or {@link #setAuthorizationInfoCacheProvider(org.jsecurity.cache.CacheProvider) cacheProvider}
+     *       or {@link # setCacheProvider (org.jsecurity.cache.CacheProvider) cacheProvider}
      *       properties are set, caching will be disabled.</li>
      * </ol>
      */
@@ -153,7 +150,7 @@ public abstract class AbstractCachingRealm extends AbstractRealm implements Real
                 logger.debug( "No cache implementation set.  Checking cacheProvider...");
             }
 
-            CacheProvider cacheProvider = getAuthorizationInfoCacheProvider();
+            CacheProvider cacheProvider = getCacheProvider();
 
             if ( cacheProvider != null ) {
                 String cacheName = getName() + authorizationInfoCachePostfix;

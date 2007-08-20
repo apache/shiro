@@ -26,7 +26,6 @@ package org.jsecurity.spring.security.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.annotation.RolesRequired;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
@@ -43,20 +42,10 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    private Authorizer authorizer;
-
     /**
      * Create a new AuthorizationAttributeSourceAdvisor.
      */
     public AuthorizationAttributeSourceAdvisor() {
-    }
-
-    /**
-     * Sets the authorizer used to configure the default security interceptor with.
-     * This is ignored if a security interceptor is configured.
-     */
-    public void setAuthorizer(Authorizer authorizer) {
-        this.authorizer = authorizer;
     }
 
     /**
@@ -83,14 +72,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
                         "default instance of type [" +
                         AopAllianceAuthorizationInterceptor.class.getName() + "]");
             }
-            if ( authorizer == null ) {
-                String msg = "The 'authorizer' property must be set if you don't " +
-                        "explicitly set authorization advice via the 'advice' property.";
-                throw new IllegalStateException( msg );
-            }
             AopAllianceAuthorizationInterceptor interceptor = new AopAllianceAuthorizationInterceptor();
-            interceptor.setAuthorizer( authorizer );
-            interceptor.init();
 
             setAdvice( interceptor );
         }

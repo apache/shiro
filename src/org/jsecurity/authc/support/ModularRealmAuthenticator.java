@@ -92,7 +92,6 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         new AllSuccessfulModularAuthenticationStrategy(); //default
 
 
-
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -103,6 +102,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     public ModularRealmAuthenticator(SecurityManager securityManager, List<? extends Realm> realms ) {
         setSecurityManager( securityManager );
         this.realms = realms;
+        init();
     }
 
 

@@ -23,11 +23,9 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authz.module.support;
+package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.module.AuthorizationModule;
-import org.jsecurity.authz.module.AuthorizationVote;
 import org.jsecurity.context.SecurityContext;
 
 import java.util.Map;
@@ -35,8 +33,8 @@ import java.util.Map;
 
 /**
  * Strategy that determines whether or not a user is authorized based on the
- * votes of all {@link org.jsecurity.authz.module.AuthorizationModule}s provided by
- * the {@link org.jsecurity.authz.module.support.ModularAuthorizer}.
+ * votes of all {@link AuthorizationModule}s provided by
+ * the {@link ModularRealmAuthorizer}.
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -45,12 +43,12 @@ public interface ModularAuthorizationStrategy {
 
     /**
      * Determines if a user is authorized to perform the given action based
-     * on a set of {@link org.jsecurity.authz.module.AuthorizationVote}s that were returned from a
-     * set of {@link org.jsecurity.authz.module.AuthorizationModule}s.
+     * on a set of {@link AuthorizationVote}s that were returned from a
+     * set of {@link AuthorizationModule}s.
      *
      * @param context the context of the user being authorized.
      * @param action the action that the user is requesting authorization for.
-     * @param votes the votes returned by {@link org.jsecurity.authz.module.AuthorizationModule}s.
+     * @param votes the votes returned by {@link AuthorizationModule}s.
      * @return true if the user should be authorized based on the votes, or
      * false otherwise.
      */

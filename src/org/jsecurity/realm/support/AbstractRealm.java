@@ -31,6 +31,7 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.NoAuthorizationInfoFoundException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.realm.Realm;
@@ -360,5 +361,26 @@ public abstract class AbstractRealm implements Realm {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
         info.checkRoles( roles );
+    }
+
+    /**
+     * Default implementation that always returns false.  Subclasses are expected to override if the default
+     * JSecurity mechanisms are not suitable (e.g. JDK 1.5 annotations).
+     * 
+     * @param action the action to check for authorized execution
+     * @return whether or not the realm supports AuthorizedActions of the given type.
+     */
+    public boolean supports( AuthorizedAction action ) {
+        return false;
+    }
+
+    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+        String msg = "Subclasses must override this implementation as such checks are system-specific.";
+        throw new UnsupportedOperationException( msg );
+    }
+
+    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+        String msg = "Subclasses must override this implementation as such checks are system-specific.";
+        throw new UnsupportedOperationException( msg );
     }
 }

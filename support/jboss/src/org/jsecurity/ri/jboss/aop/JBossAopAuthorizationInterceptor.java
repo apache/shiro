@@ -28,7 +28,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.aop.AbstractAuthorizationInterceptor;
 
 import java.lang.reflect.Method;
@@ -43,10 +42,6 @@ public class JBossAopAuthorizationInterceptor
     private static final String NAME = "JSecurity JBossAopAuthorizationInterceptor";
 
     public JBossAopAuthorizationInterceptor(){}
-
-    public JBossAopAuthorizationInterceptor( Authorizer authorizer ) {
-        setAuthorizer( authorizer );
-    }
 
     public String getName() {
         return NAME;

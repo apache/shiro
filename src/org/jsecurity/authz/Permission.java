@@ -27,20 +27,13 @@ package org.jsecurity.authz;
 import java.util.Set;
 
 /**
- * A Permission represents access to a specific type of resource or ability to perform an action.  It is the most
+ * A Permission represents the ability to perform an action or access to a resource.  A Permission is the most
  * granular, i.e. atomic, unit in a system's security policy and is the cornerstone upon which security models are
  * built.
  *
- * <p>Most Permission instances will have an &quot;actions&quot; <tt>Set</tt> that specifies the behavior
- * allowed on the resource identified by the {@link #getTargetName() targetName}.  For example a <tt>FilePermission</tt>
- * class might have the total actions possible of &quot;read&quot;, &quot;write&quot;, &quot;execute&quot;, and
- * &quot;delete&quot;.  A specific instance of the <tt>FilePermission</tt> might have a targetName of "/bin/bash" with
- * actions of &quot;read&quot; and &quot;execute&quot;, meaning whomever is granted that permission could only read and
- * execute <tt>/bin/bash</tt>, but not write to it or delete it.
- *
- * <p>It is important to understand a Permission instance only represents access or behavior - it does not grant it.
- * Granting access to a particular resource or application behavior is done by the application's security configuration,
- * typically by assigning Permissions to users, roles and/or groups.
+ * <p>It is important to understand a Permission instance only represents behavior or access - it does not grant it.
+ * Granting access to an application behavior or a particular resource is done by the application's security
+ * configuration, typically by assigning Permissions to users, roles and/or groups.
  *
  * <p>Most typical systems are what the JSecurity team calls <em>role-based</em> in nature, where a role represents
  * common behavior for certain user types.  For example, a system might have an <em>Aministrator</em> role, a
@@ -65,6 +58,18 @@ import java.util.Set;
  * @author Les Hazlewood
  */
 public interface Permission {
+
+    /**
+     * Returns the 'name' of this permission. typically whatever value that best represents behavior or access to a
+     * resource.
+     *
+     * <p>Somewhat abstract, the 'name' of a standard permission can mean whatever
+     * the application wishes it to mean.  In many systems it would be something like 'createUsers' or
+     * 'userSearch', or anything else the application feels is meaningful.
+     *
+     * @return the 'name' of the permission, where the name value usually represents behavior or access to a resource.
+     */
+    String getName();
 
     /**
      * Returns the target's name.  That is, if this Permission and its actions are targed at a specific

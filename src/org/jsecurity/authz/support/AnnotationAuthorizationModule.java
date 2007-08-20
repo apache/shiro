@@ -23,28 +23,29 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.authz.module.support;
+package org.jsecurity.authz.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.method.MethodInvocation;
-import org.jsecurity.authz.module.AuthorizationModule;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.util.Initializable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * Abstract class providing common functionality across modules that process metadata (annotations).
- *  Primarily provides automatic support for the {@link org.jsecurity.authz.module.AuthorizationModule#supports
+ * Abstract class providing common functionality across authorizationModules that process metadata (annotations).
+ *  Primarily provides automatic support for the {@link AuthorizationModule#supports
  * supports} method.  This allows support for any arbitrary number of annotations - simply create a
  * subclass of this one and add an instance of that subclass to the {@link
- * org.jsecurity.authz.module.support.ModularAuthorizer ModularAuthorizer}'s set of {@link
- * org.jsecurity.authz.module.support.ModularAuthorizer#setAuthorizationModules authorizationModule}s.
+ * ModularRealmAuthorizer ModularRealmAuthorizer}'s set of {@link
+ * ModularRealmAuthorizer#setAuthorizationModules authorizationModule}s.
  *
  * @author Les Hazlewood
- * @see org.jsecurity.authz.module.support.ModularAuthorizer#setAuthorizationModules
+ * @see ModularRealmAuthorizer#setAuthorizationModules
  * @since 0.1
  */
 public abstract class AnnotationAuthorizationModule implements AuthorizationModule, Initializable {
@@ -68,6 +69,10 @@ public abstract class AnnotationAuthorizationModule implements AuthorizationModu
 
     public Class<? extends Annotation> getAnnotationClass() {
         return this.annotationClass;
+    }
+
+    protected SecurityContext getSecurityContext() {
+        return SecurityUtils.getSecurityContext();
     }
 
     public boolean supports( AuthorizedAction action ) {
