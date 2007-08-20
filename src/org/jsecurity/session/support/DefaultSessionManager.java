@@ -24,16 +24,15 @@
  */
 package org.jsecurity.session.support;
 
+import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.support.eis.SessionDAO;
-import org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO;
 import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
-import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Destroyable;
-import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -43,14 +42,12 @@ import java.util.Date;
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
  *
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @since 0.1
  */
 public class DefaultSessionManager extends AbstractSessionManager
-    implements ValidatingSessionManager, Destroyable {
-
-    private static final String EHCACHE_VALID_CLASS_NAME = "net.sf.ehcache.CacheManager";
+    implements ValidatingSessionManager, CacheProviderAware, Destroyable {
 
     /**
      * Validator used to validate sessions on a regular basis.
@@ -58,9 +55,11 @@ public class DefaultSessionManager extends AbstractSessionManager
      * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
     protected SessionValidationScheduler sessionValidationScheduler = null;
+    private boolean sessionValidationSchedulerImplicitlyCreated = false;
+
+    protected CacheProvider cacheProvider = null;
 
     private boolean sessionDAOImplicitlyCreated = false;
-    private boolean sessionValidationSchedulerImplicitlyCreated = false;
 
     public DefaultSessionManager() {
         setSessionClass( SimpleSession.class );
@@ -74,52 +73,44 @@ public class DefaultSessionManager extends AbstractSessionManager
         return sessionValidationScheduler;
     }
 
-    private boolean isEhcacheAvailable() {
-        return ClassUtils.isAvailable( EHCACHE_VALID_CLASS_NAME );
+    public CacheProvider getCacheProvider() {
+        return cacheProvider;
+    }
+
+    public void setCacheProvider( CacheProvider cacheProvider ) {
+        this.cacheProvider = cacheProvider;
     }
 
     /**
      * Creates a default <tt>SessionDAO</tt> during {@link #init initialization} as a fail-safe mechanism if one has
-     * not already been explicitly set via {@link #setSessionDAO}.
-     * <p/>
-     * <p>This default implementation tries to use an {@link EhcacheSessionDAO EhcacheSessionDAO} instance by default if
-     * <a href="">Ehcache</a> is in the classpath.  If ehcache is not in the classpath, a
-     * {@link org.jsecurity.session.support.eis.support.MemorySessionDAO} will be used instead.
-     * <p/>
-     * <p><b>N.B.</b> The MemorySessionDAO implementation is not production capable, as it maintains all sessions in
-     * memory (never removed, eating up memory over time) and loses session after server restarts.  It is really only
-     * suitable during testing.  For production environments, please ensure
-     * that you either have the <tt>ehcache</tt> jar in the classpath, or explicitly set a SessionDAO via the
-     * {@link #setSessionDAO} method so a sensible default will be used.
+     * not already been explicitly set via {@link #setSessionDAO}, relying upon the configured
+     * {@link #setCacheProvider cacheProvider} to determine caching strategies.
      *
-     * @return a lazily created SessionDAO instance.
+     * <p><b>N.B.</b> This implementation constructs a {@link MemorySessionDAO} instance, relying on a configured
+     * {@link #setCacheProvider cacheProvider} to provide production-quality cache management.  Please ensure that
+     * the <tt>CacheProvider</tt> property is configured for production environments, since the
+     * <tt>MemorySessionDAO</tt> implementation defaults to a
+     * {@link org.jsecurity.cache.support.HashtableCacheProvider HashtableCacheProvider} 
+     * (the <tt>HashtableCacheProvider</tt> is NOT RECOMMENDED for production environments).
+     *
+     * @return a lazily created SessionDAO instance that this SessionManager will use for all Session EIS operations.
      */
     protected SessionDAO createSessionDAO() {
-        SessionDAO dao;
 
         if ( log.isDebugEnabled() ) {
-            log.debug( "No sessionDAO set.  Attempting to create default instance." );
+            log.debug( "No sessionDAO set.  Creating default instance..." );
         }
-        if ( isEhcacheAvailable() ) {
-            if ( log.isDebugEnabled() ) {
-                String msg = "Ehcache found in the classpath.  Using default EhcacheSessionDAO implementation.";
-                log.debug( msg );
-            }
-            dao = new EhcacheSessionDAO();
-        } else {
-            if ( log.isWarnEnabled() ) {
-                String msg = "Ehcache is not in the classpath.  JSecurity's default production-quality session " +
-                    "DAO is implemented w/ Ehcache.  Defaulting to a simple memory-based DAO, but this should " +
-                    "NOT be used in a production environment.  Please either put ehcache.jar in the classpath " +
-                    "or set a production-quality implementation explicitly via the " + getClass().getName() +
-                    "#setSessionDAO method.";
-                log.warn( msg );
-            }
-            dao = new MemorySessionDAO();
-        }
-        this.sessionDAOImplicitlyCreated = true;
 
-        init( dao );
+        MemorySessionDAO dao = new MemorySessionDAO();
+
+        CacheProvider cacheProvider = getCacheProvider();
+        if ( cacheProvider != null ) {
+            dao.setCacheProvider( cacheProvider );
+        }
+
+        dao.init();
+
+        this.sessionDAOImplicitlyCreated = true;
 
         return dao;
     }
@@ -178,18 +169,6 @@ public class DefaultSessionManager extends AbstractSessionManager
         }
     }
 
-    protected void initSessionDAO() {
-        if ( sessionDAOImplicitlyCreated ) {
-            init( getSessionDAO() );
-        }
-    }
-
-    protected void initSessionValidationScheduler() {
-        if ( sessionValidationSchedulerImplicitlyCreated ) {
-            init( getSessionValidationScheduler() );
-        }
-    }
-
     public void init() {
         ensureSessionDAO();
         super.init();
@@ -199,20 +178,6 @@ public class DefaultSessionManager extends AbstractSessionManager
     protected void destroySessionDAO() {
         if ( sessionDAOImplicitlyCreated ) {
             destroy( getSessionDAO() );
-        }
-    }
-
-    protected void init( Object o ) {
-        if ( o instanceof Initializable ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Initializing object instance of type [" + o.getClass().getName() + "]..." );
-            }
-            try {
-                ((Initializable)o).init();
-            } catch ( Exception e ) {
-                String msg = "Unable to intialize object [" + o + "].";
-                throw new IllegalStateException( msg, e );
-            }
         }
     }
 

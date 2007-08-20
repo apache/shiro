@@ -27,7 +27,6 @@ package org.jsecurity.authc.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
@@ -69,9 +68,8 @@ import org.jsecurity.util.Initializable;
  * event logic.
  *
  * <p>During a subject's (a.k.a. user's) successful login attempt, a <tt>SecurityContext</tt> is created for that user
- * by a {@link SecurityContextFactory}.  This factory may also be set as a property of this class if desired, but it 
- * is generally recommended that a SecurityManager is set instead, and the factory be created automatically
- * based on the manager - see the {@link #setSecurityManager} javadoc for more details).
+ * by a {@link SecurityContextFactory}.  This factory must be set as a property of this class.  Most users will
+ * want to use a {@link DelegatingSecurityContextFactory} or roll their own..
  *
  * <p>Once a <tt>SecurityContext</tt> is created for a successfully authenticated subject (a.k.a. 'user'), it is
  * first <em>bound</em> to the application for convenient access before being returned to the {@link #authenticate}
@@ -126,14 +124,9 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     private AuthenticationEventSender authcEventSender = null;
 
     /**
-     * Used to initialize the default SecurityContextFactory.
-     */
-    private SecurityManager securityManager = null;
-
-    /**
      * Whether or not to fail the authentication process when sending an event (via the sender) and the sender
-     * can't send the event (i.e. it throws an exception );  Default is false for system-resiliency so that a user
-     * can still login even if the event subsystem fails.
+     * can't send the event (i.e. it throws an exception );  Default is <tt>false</tt> for system-resiliency so that
+     * a user can still login even if the event subsystem fails.
      */
     private boolean eventSendErrorFailsAuthentication = false;
 
@@ -141,11 +134,6 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     |         C O N S T R U C T O R S           |
     ============================================*/
     public AbstractAuthenticator(){}
-
-    public AbstractAuthenticator( SecurityManager securityManager ) {
-        this.securityManager = securityManager;
-        init();
-    }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -162,16 +150,9 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         return securityContextFactory;
     }
 
-
     /**
      * Sets the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a <tt>SecurityContext</tt>
      * upon a successful authentication attempt.
-     *
-     * <p>It is not usually recommended to override this property, but instead set the
-     * {@link #setSecurityManager securityManager} property.  When a <tt>securityManager</tt> property is set, this
-     * class will use it to construct an internal
-     * {@link DelegatingSecurityContextFactory DelegatingSecurityContextFactory}, which uses the securityManager in a 
-     * more efficient manner.
      *
      * @param securityContextFactory the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a
      * <tt>SecurityContext</tt> upon a successful authentication attempt.
@@ -179,7 +160,6 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     public void setSecurityContextFactory( SecurityContextFactory securityContextFactory ) {
         this.securityContextFactory = securityContextFactory;
     }
-
 
     /**
      * Returns the <tt>SecurityContextBinder</tt> this <tt>Authenticator</tt> will use to <em>bind</em> a subject's
@@ -201,8 +181,8 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * {@link ThreadLocalSecurityContextBinder ThreadLocalSecurityContextBinder} and probably shouldn't be overridden
      * in server-side applications such as Web or EJB apps unless you know what you are doing.
      *
-     * <p>This property probably <b><em>will</em></b> however probably need to be changed if in a standalone
-     * client environment, such as in an Applet or standalone application, where the <tt>SecurityContext</tt> will
+     * <p>This property however will probably need to be changed if in a standalone
+     * client environment, such as in an Applet or standalone application, where the <tt>SecurityContext</tt> might
      * need to be accessible in a well-known location such as in a static memory variable (less desireable), or in
      * a better managed application context (e.g. Spring or Pico - more desireable).
      *
@@ -253,22 +233,6 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         this.authcEventSender = authcEventSender;
     }
 
-    /**
-     * Sets the securityManager that will be used to construct and set this class's default
-     * <tt>SecurityContextFactory</tt> property if one is not explicitly set via the
-     * {@link #setSecurityContextFactory} method.
-     *
-     * <p>It <b>IS</b> recommended that most configurations set this <tt>securityManager</tt> property and
-     * <b><em>NOT</em></b> explicitly set the <tt>SecurityContextFactory</tt> property unless you know what you're
-     * doing and/or need special behavior.
-     * 
-     * @param securityManager the <tt>SecurityManager</tt> that will be used to construct a <tt>SecurityContextFactory</tt>
-     * upon initialization.
-     */
-    public void setSecurityManager(SecurityManager securityManager) {
-        this.securityManager = securityManager;
-    }
-
 
     /**
      * Returns whether or not a problem sending an authentication event causes authentication to fail
@@ -303,18 +267,8 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      */
     public void init() {
         if( getSecurityContextFactory() == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No securityContextFactory set.  Attempting to create the default SecurityContextFactory " +
-                        "based on the SecurityManager attribute..." );
-            }
-            if( securityManager == null ) {
-                throw new IllegalStateException( "If the SecurityContextFactory class attribute is not set, a " +
-                        "SecurityManager must be provided so that the default factory can be created." );
-            }
-            setSecurityContextFactory( new DelegatingSecurityContextFactory( securityManager ) );
-            if ( log.isInfoEnabled() ) {
-                log.info( "Created SecurityContextFactory based on provided SecurityManager class attribute." );
-            }
+            String msg = "SecurityContextFactory property must be set.";
+            throw new IllegalStateException( msg );
         }
         onInit();
     }

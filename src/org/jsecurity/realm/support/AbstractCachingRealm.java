@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
@@ -50,7 +51,7 @@ import java.security.Principal;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class AbstractCachingRealm extends AbstractRealm implements Realm, Initializable, Destroyable {
+public abstract class AbstractCachingRealm extends AbstractRealm implements Realm, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |

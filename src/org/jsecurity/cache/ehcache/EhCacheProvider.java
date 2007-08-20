@@ -31,27 +31,27 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.session.support.eis.support.AbstractCachingSessionDAO;
+import org.jsecurity.session.support.eis.support.CachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 
 import java.io.InputStream;
 
 /**
- * <p>JSecurity {@link CacheProvider} for ehcache 1.2.</p>
- * <p/>
- * <p>This provider requires EhCache 1.2. Make sure EhCache 1.1 or earlier
+ * <p>JSecurity {@link CacheProvider} for ehcache 1.2 and above.</p>
+ *
+ * <p>This provider requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
- * <p/>
+ *
  * <p>See http://ehcache.sf.net for documentation on EhCache</p>
  *
+ * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @since 0.2
  */
 public class EhCacheProvider implements CacheProvider, Initializable, Destroyable {
 
-    public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = AbstractCachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
+    public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
     public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
     public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
 

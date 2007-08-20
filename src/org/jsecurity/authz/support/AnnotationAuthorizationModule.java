@@ -44,9 +44,10 @@ import java.lang.reflect.Method;
  * ModularRealmAuthorizer ModularRealmAuthorizer}'s set of {@link
  * ModularRealmAuthorizer#setAuthorizationModules authorizationModule}s.
  *
- * @author Les Hazlewood
  * @see ModularRealmAuthorizer#setAuthorizationModules
+ *
  * @since 0.1
+ * @author Les Hazlewood
  */
 public abstract class AnnotationAuthorizationModule implements AuthorizationModule, Initializable {
 

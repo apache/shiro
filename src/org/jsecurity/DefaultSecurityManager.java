@@ -34,7 +34,11 @@ import org.jsecurity.authc.support.ModularRealmAuthenticator;
 import org.jsecurity.authz.*;
 import org.jsecurity.authz.support.ModularRealmAuthorizer;
 import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheProviderAware;
+import org.jsecurity.cache.ehcache.EhCacheProvider;
+import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
@@ -44,6 +48,7 @@ import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.JavaEnvironment;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -75,7 +80,7 @@ import java.util.*;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class DefaultSecurityManager implements SecurityManager, Initializable, Destroyable {
+public class DefaultSecurityManager implements SecurityManager, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -86,24 +91,19 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
     ============================================*/
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    /**
-     * The authenticator that is delegated to for authentication purposes.
-     */
     protected Authenticator authenticator;
-    
-    /**
-     * The authorizer that is delegated to for authorization purposes.
-     */
+    private boolean authenticatorImplicitlyCreated = false;
+
     protected Authorizer authorizer = null;
+    private boolean authorizerImplicitlyCreated = false;
+
     protected SessionFactory sessionFactory;
+    private boolean sessionFactoryImplicitlyCreated = false;
+
     protected SessionManager sessionManager;
+    private boolean sessionManagerImplicitlyCreated = false;
 
     protected CacheProvider cacheProvider = null;
-
-    private boolean sessionFactoryImplicitlyCreated = false;
-    private boolean sessionManagerImplicitlyCreated = false;
-    private boolean authenticatorImplicitlyCreated = false;
-    private boolean authorizerImplicitlyCreated = false;
     private boolean cacheProviderImplicitlyCreated = false;
 
     /**
@@ -190,7 +190,11 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
                         log.info( "No SessionManager instance has been set as a property of this class.  " +
                             "Defaulting to the default SessionManager implementation." );
                     }
+                    
+                    initCacheProvider();
+
                     DefaultSessionManager sessionManager = new DefaultSessionManager();
+                    sessionManager.setCacheProvider( getCacheProvider() );
                     setSessionManager( sessionManager );
                     sessionManagerImplicitlyCreated = true;
                     sessionManager.init();
@@ -210,22 +214,61 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
         }
     }
 
-    public void init() {
+    protected void initCacheProvider() {
+        //only create one if one hasn't been explicitly set by the instantiator
+        CacheProvider cacheProvider = getCacheProvider();
+        if ( cacheProvider == null ) {
+            if ( JavaEnvironment.isEhcacheAvailable() ) {
+                if ( log.isDebugEnabled() ) {
+                    String msg = "Initializing default CacheProvider using EhCache.";
+                    log.debug( msg );
+                }
+                EhCacheProvider provider = new EhCacheProvider();
+                provider.init();
+                cacheProvider = provider;
+            } else {
+                if ( log.isWarnEnabled() ) {
+                    String msg = "Constructing default CacheProvider using an in-memory HashTable.  This is " +
+                        "NOT RECOMMENDED for production environments.  Please ensure ehcache.jar is in the classpath " +
+                        "and JSecurity will automatically use a production-quality CacheProvider implementation or " +
+                        "alternatively provide your own via the #setCacheProvider method.";
+                    log.warn( msg );
+                }
+                cacheProvider = new HashtableCacheProvider();
+            }
+            cacheProviderImplicitlyCreated = true;
+            setCacheProvider( cacheProvider );
+        }
+    }
+    protected void initAuthenticator() {
+        if ( this.authenticator == null ) {
+            ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
+            mra.setRealms( getAllRealms() );
 
+            DelegatingSecurityContextFactory scFactory = new DelegatingSecurityContextFactory( this );
+            mra.setSecurityContextFactory( scFactory );
+
+            authenticatorImplicitlyCreated = true;
+            setAuthenticator( mra );
+            mra.init();
+        }
+    }
+    protected void initAuthorizer() {
+        if ( authorizer == null ) {
+            ModularRealmAuthorizer mra = new ModularRealmAuthorizer();
+            mra.setRealms( getAllRealms() );
+            authorizerImplicitlyCreated = true;
+            setAuthorizer( mra );
+            mra.init();
+        }
+    }
+    public void init() {
         if ( realmMap == null || realmMap.isEmpty() ) {
             throw new IllegalStateException( "init() called but no realms have been configured " +
                 "for this manager.  At least one realm needs to be configured on this manager." );
         }
-
-        if ( authenticator == null ) {
-            authenticator = new ModularRealmAuthenticator( this, getAllRealms() );
-            authenticatorImplicitlyCreated = true;
-        }
-
-        if ( authorizer == null ) {
-            authorizer = new ModularRealmAuthorizer( getAllRealms() );
-            authorizerImplicitlyCreated = true;
-        }
+        initAuthenticator();
+        initAuthorizer();
     }
 
     private void destroy( Destroyable d ) {
@@ -244,26 +287,36 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
             if ( sessionManager instanceof Destroyable ) {
                 destroy( (Destroyable)sessionManager );
             }
+            sessionManager = null;
+            sessionManagerImplicitlyCreated = false;
         }
         if ( sessionFactoryImplicitlyCreated ) {
             if ( sessionFactory instanceof Destroyable ) {
                 destroy( (Destroyable)sessionFactory );
             }
+            sessionFactory = null;
+            sessionFactoryImplicitlyCreated = false;
         }
         if ( authorizerImplicitlyCreated ) {
             if ( authorizer instanceof Destroyable ) {
                 destroy( (Destroyable)authorizer );
             }
+            authorizer = null;
+            authorizerImplicitlyCreated = false;
         }
         if ( authenticatorImplicitlyCreated ) {
             if ( authenticator instanceof Destroyable ) {
                 destroy( (Destroyable)authenticator );
             }
+            authenticator = null;
+            authenticatorImplicitlyCreated = false;
         }
         if ( cacheProviderImplicitlyCreated ) {
             if ( cacheProvider instanceof Destroyable ) {
                 destroy( (Destroyable)cacheProvider );
             }
+            cacheProvider = null;
+            cacheProviderImplicitlyCreated = false;
         }
     }
 
@@ -361,6 +414,19 @@ public class DefaultSecurityManager implements SecurityManager, Initializable, D
         } else {
             return Collections.EMPTY_LIST;
         }
+    }
+
+    /**
+     * Returns the default CacheProvider used by this SecurityManager and any of the caching-aware children components
+     * implicitly created
+     * @return the cacheProvider used by this SecurityManager and any of its caching-aware implicitly created children components.
+     */
+    public CacheProvider getCacheProvider() {
+        return cacheProvider;
+    }
+
+    public void setCacheProvider( CacheProvider cacheProvider ) {
+        this.cacheProvider = cacheProvider;
     }
 
     /*--------------------------------------------

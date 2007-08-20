@@ -25,7 +25,6 @@
 
 package org.jsecurity.authc.support;
 
-import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
@@ -98,13 +97,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     public ModularRealmAuthenticator() {
     }
 
-
-    public ModularRealmAuthenticator(SecurityManager securityManager, List<? extends Realm> realms ) {
-        setSecurityManager( securityManager );
-        this.realms = realms;
+    public ModularRealmAuthenticator( List<Realm> realms ) {
+        setRealms( realms );
         init();
     }
-
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |

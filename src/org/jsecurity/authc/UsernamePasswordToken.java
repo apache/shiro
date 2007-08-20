@@ -41,6 +41,7 @@ import java.security.Principal;
  *
  * <p>The contents of this token should always be cleared after using it by calling the
  * {@link #clear()} method.</p>
+ * 
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood

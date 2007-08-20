@@ -32,25 +32,34 @@ import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.JavaEnvironment;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Random;
 
 /**
- * Simple memory-based implementation of the SessionDAO.  It does not save session data to disk, so
- * this implementation is not recommended in production-quality recoverable environments
- * (i.e. those needing session state restored when a server restarts).
+ * Simple memory-based implementation of the SessionDAO that relies on its configured
+ * {@link #setCacheProvider CacheProvider} for Session caching and in-memory persistence.
  *
- * <p>If you need session recovery in the event of a server failure or restart, consider using
- * a file-based or RDBMS-based implementation.
+ * <p><b>PLEASE NOTE</b> the default CacheProvider internal to this implementation is a
+ * {@link HashtableCacheProvider HashtableCacheProvider}, which IS NOT RECOMMENDED for production environments.
  *
- * @see org.jsecurity.session.support.eis.ehcache.EhcacheSessionDAO EhcacheSessionDAO
+ * <p>If you
+ * want to use the MemorySessionDAO in production environments, such as those that require session data to be
+ * recoverable in case of a server restart, you should do one of two things (or both):
+ *
+ * <ul>
+ *   <li>Configure it with a production-quality CacheProvider. The
+ * {@link org.jsecurity.cache.ehcache.EhCacheProvider EhCacheProvider} is one such provider.  It is not used by default
+ * to prevent a forced runtime dependency on ehcache.jar that may not be required in many environments)</li><br/>
+ *   <li>If you need session information beyond their transient start/stop lifetimes, you should subclass this one and
+ * override the <tt>do*</tt> methods to perform CRUD operations using an EIS-tier API (e.g. Hibernate/JPA/JCR/etc).
+ *   This class implementation does not retain sessions after they have been stopped or expired, so you would need to
+ * override these methods to ensure Sessions can be accessed beyond JSecurity's needs.</li>
+ * </ul>
  *
  * @since 0.1
+ *
  * @author Les Hazlewood
  */
-public class MemorySessionDAO extends AbstractCachingSessionDAO {
+public class MemorySessionDAO extends CachingSessionDAO {
 
     private static final String VALID_JUG_CLASS_NAME = "org.safehaus.uuid.UUIDGenerator";
     private static final String RANDOM_NUM_GENERATOR_ALGORITHM_NAME = "SHA1PRNG";
@@ -58,7 +67,6 @@ public class MemorySessionDAO extends AbstractCachingSessionDAO {
 
     public MemorySessionDAO() {
         setCacheProvider( new HashtableCacheProvider() );
-        setMaintainStoppedSessions( true );
     }
 
     private Random getRandomNumberGenerator() {
@@ -92,8 +100,12 @@ public class MemorySessionDAO extends AbstractCachingSessionDAO {
 
     protected Serializable doCreate( Session session ) {
         Serializable sessionId = generateNewSessionId();
-        ((SimpleSession)session).setSessionId( sessionId );
+        assignSessionId( session, sessionId );
         return sessionId;
+    }
+
+    protected void assignSessionId( Session session, Serializable sessionId ) {
+        ((SimpleSession)session).setSessionId( sessionId );
     }
 
     protected Session doReadSession( Serializable sessionId ) {
@@ -107,16 +119,5 @@ public class MemorySessionDAO extends AbstractCachingSessionDAO {
 
     protected void doDelete(Session session) {
         //does nothing - parent class removes from in-memory cache.
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public Collection<Session> getActiveSessions() {
-        if ( activeSessions != null ) {
-            Map sessionsMap = activeSessions.toMap();
-            if ( sessionsMap != null && !sessionsMap.isEmpty() ) {
-                return Collections.unmodifiableCollection( sessionsMap.values() );
-            }
-        }
-        return Collections.EMPTY_LIST;
     }
 }
