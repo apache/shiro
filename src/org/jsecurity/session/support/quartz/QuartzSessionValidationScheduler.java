@@ -39,8 +39,8 @@ import org.quartz.impl.StdSchedulerFactory;
  * job to call {@link org.jsecurity.session.support.ValidatingSessionManager#validateSessions()} on
  * a regular basis.
  *
- * @author Jeremy Haile
  * @since 0.1
+ * @author Jeremy Haile
  */
 public class QuartzSessionValidationScheduler implements SessionValidationScheduler {
 

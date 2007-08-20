@@ -36,7 +36,11 @@ package org.jsecurity.util;
  */
 public abstract class JavaEnvironment {
 
-	/**
+    //utilized in JSecurity environment-specific support checks:
+    private static final String EHCACHE_VALID_CLASS_NAME = "net.sf.ehcache.CacheManager";
+
+
+    /**
 	 * Constant identifying the 1.3.x JVM (JDK 1.3).
 	 */
 	public static final int JAVA_13 = 0;
@@ -137,5 +141,14 @@ public abstract class JavaEnvironment {
 	public static boolean isAtLeastVersion15() {
 		return getMajorVersion() >= JAVA_15;
 	}
+
+    /**
+     * Returns if Ehcache is in the classpath and available to be used (e.g. when creating a
+     * {@link org.jsecurity.cache.CacheProvider CacheProvider}.
+     * @return true if Ehcache is in the classpath and can be used for caching, false otherwise.
+     */
+    public static boolean isEhcacheAvailable() {
+        return ClassUtils.isAvailable( EHCACHE_VALID_CLASS_NAME );
+    }
 
 }

@@ -38,7 +38,6 @@ import java.util.List;
  * TODO class JavaDoc
  *
  * @since 0.2
- *
  * @author Les Hazlewood
  */
 public class ModularRealmAuthorizer implements Authorizer, Initializable {

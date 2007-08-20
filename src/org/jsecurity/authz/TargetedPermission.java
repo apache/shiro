@@ -15,7 +15,6 @@ import java.util.Set;
  * TODO class JavaDoc
  *
  * @since 0.2
- * 
  * @author Les Hazlewood
  */
 public interface TargetedPermission extends Permission {
