@@ -25,75 +25,33 @@
 
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.ServletException;
 
 /**
  * Filter that is used to ensure a {@link org.jsecurity.context.SecurityContext} is made available to the application
- * on every request if it exists.
+ * on every request.  It must be subclassed to retrieve a <tt>SecurityManager</tt> instance in an
+ * application-dependent manner (e.g. from Spring, from the subclass directly, etc).
  *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class SecurityContextFilter extends SecurityContextWebInterceptor implements Filter {
+public abstract class SecurityContextFilter extends WebInterceptorFilter {
 
-    /**
-     * Implemented for interface - does nothing.
-     */
-    public void init( FilterConfig filterConfig ) throws ServletException {
-    }
-
-    /**
-     * Before the filter continues, any {@link SecurityContext} is bound to the thread local for the
-     * duration of the request.  After the filter returns from the request, any thread local
-     * {@link SecurityContext} is set back as an attribute on the session.  After every request,
-     * the thread local is cleared to ensure that the context is not leaked if this thread is reused for another
-     * request.
-     *
-     * @param servletRequest  the servlet request.
-     * @param servletResponse the servlet response.
-     * @param filterChain     the filter chain.
-     */
-    public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
-        throws IOException, ServletException {
-
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
-
-        Exception exception = null;
-
-        try {
-
-            boolean continueChain = preHandle( request, response );
-
-            if ( continueChain ) {
-                filterChain.doFilter( servletRequest, servletResponse );
-            }
-            
-            postHandle( request, response );
-
-        } catch ( Exception e ) {
-            exception = e;
-        } finally {
-            try {
-                afterCompletion( request, response, exception );
-            } catch ( Exception e ) {
-                String message = "afterCompletion method threw exception: ";
-                //noinspection ThrowFromFinallyBlock
-                throw new ServletException( message, e );
-            }
+    protected WebInterceptor createWebInterceptor() throws Exception {
+        SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
+        org.jsecurity.SecurityManager securityManager = getSecurityManager();
+        if ( securityManager == null ) {
+            String msg = "getSecurityManager() subclass implementation must return a non-null SecurityManager";
+            throw new ServletException( msg );
         }
+        interceptor.setSecurityManager( securityManager );
+        interceptor.init();
+        return interceptor;
     }
 
-    /**
-     * Implemented for interface - does nothing.
-     */
-    public void destroy() {
-    }
+    protected abstract org.jsecurity.SecurityManager getSecurityManager();
 }

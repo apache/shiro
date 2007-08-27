@@ -28,6 +28,7 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
+import org.jsecurity.util.ThreadContext;
 
 /**
  * SecurityContextFactory implementation that creates
@@ -46,6 +47,6 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
     }
 
     protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
-        return new DelegatingSecurityContext( info.getPrincipals(), true, securityManager);
+        return new DelegatingSecurityContext( info.getPrincipals(), true, ThreadContext.getInetAddress(), null, securityManager );
     }
 }

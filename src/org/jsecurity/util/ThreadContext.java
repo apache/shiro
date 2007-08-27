@@ -64,7 +64,7 @@ public abstract class ThreadContext {
     public static final String INET_ADDRESS_KEY = InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =
-        new ThreadLocal<Map<Object, Object>>() {
+        new InheritableThreadLocal<Map<Object, Object>>() {
             protected Map<Object, Object> initialValue() {
                 return new HashMap<Object, Object>();
             }

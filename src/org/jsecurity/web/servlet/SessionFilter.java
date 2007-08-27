@@ -24,66 +24,31 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.jsecurity.session.SessionFactory;
+import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.support.SessionWebInterceptor;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 /**
- * TODO class JavaDoc
+ * Filter that is used to ensure a {@link org.jsecurity.session.Session} for the current user exists
+ * on every request.  It should only be used if you always want a session to exist for the urls this Filter
+ * intercepts.
+ *
+ * <p>It must be subclassed to retrieve a {@link SessionFactory} instance in an
+ * application-dependent manner (e.g. from Spring, from the subclass directly, etc).
+ *
+ * <p>Must be configured <em>before</em> a {@link SecurityContextFilter} in the filter chain.
  *
  * @since 0.2
  * @author Les Hazlewood
  */
-public class SessionFilter extends SessionWebInterceptor implements Filter {
+public abstract class SessionFilter extends WebInterceptorFilter {
 
-    /**
-     * Implemented for interface - does nothing.
-     */
-    public void init( FilterConfig filterConfig ) throws ServletException {
+    protected WebInterceptor createWebInterceptor() throws Exception {
+        SessionWebInterceptor interceptor = new SessionWebInterceptor();
+        interceptor.setSessionFactory( getSessionFactory() );
+        interceptor.init();
+        return interceptor;
     }
 
-    /**
-     * @param servletRequest  the servlet request.
-     * @param servletResponse the servlet response.
-     * @param filterChain     the filter chain.
-     */
-    public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
-        throws IOException, ServletException {
-
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
-
-        Exception exception = null;
-
-        try {
-
-            boolean continueChain = preHandle( request, response );
-
-            if ( continueChain ) {
-                filterChain.doFilter( servletRequest, servletResponse );    
-            }
-
-            postHandle( request, response );
-
-        } catch ( Exception e ) {
-            exception = e;
-        } finally {
-            try {
-                afterCompletion( request, response, exception );
-            } catch ( Exception e ) {
-                String message = "afterCompletion method threw exception: ";
-                //noinspection ThrowFromFinallyBlock
-                throw new ServletException( message, e );
-            }
-        }
-    }
-
-    /**
-     * Implemented for interface - does nothing.
-     */
-    public void destroy() {
-    }
+    protected abstract SessionFactory getSessionFactory();
 }

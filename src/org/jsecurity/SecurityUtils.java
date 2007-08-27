@@ -29,7 +29,7 @@ public abstract class SecurityUtils {
         SecurityContext secCtx = ThreadContext.getSecurityContext();
         if( secCtx == null ) {
             throw new SecurityContextException( "No security context is bound to the current thread.  " +
-                    "Make sure that a SecurityContextInterceptor or Filter is configured." );
+                    "Make sure that a SecurityContextWebInterceptor or SecurityContextFilter is configured." );
         }
         return secCtx;
     }
