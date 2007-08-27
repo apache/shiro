@@ -28,6 +28,7 @@ import org.jsecurity.SecurityUtils;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.web.WebInterceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -43,7 +44,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
+public class AuthenticationWebInterceptor extends SecurityWebSupport implements WebInterceptor {
 
     /**
      * Default encoding scheme used if none is specified (value of UTF-8).
@@ -207,13 +208,13 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         return redirect;
     }
 
-    protected Map<String,Object> createRequestParamMap( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> createRequestParamMap( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         HashMap<String, Object> redirectMap = new HashMap<String, Object>( 1 );
         redirectMap.put( getAttemptedPageKeyName(), attemptedPage );
         return redirectMap;
     }
 
-    protected Map<String,Object> storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         boolean boundToSession = false;
 
         SecurityContext securityContext = getSecurityContext( request, response );
@@ -246,13 +247,13 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
         }
     }
 
-    protected Map<String,Object> storeInHttpSession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> storeInHttpSession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute( getAttemptedPageKeyName(), attemptedPage );
         return null;
     }
 
-    protected Map<String,Object> setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
         AttemptedPageStorageScheme scheme = getAttemptedPageStorageScheme();
         if ( scheme == null ) {
             return null; //no attempted page to forward
@@ -309,7 +310,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
      * @param response      the outgoing HttpServletResponse
      * @return the final redirect model that will be encoded in the redirect;
      */
-    protected Map<String,Object> afterSchemeSet( Map<String,Object> redirectModel, HttpServletRequest request, HttpServletResponse response ) {
+    protected Map<String, Object> afterSchemeSet( Map<String, Object> redirectModel, HttpServletRequest request, HttpServletResponse response ) {
         return redirectModel;
     }
 
@@ -327,7 +328,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
 
         RedirectView redirect = createRedirectView( request, response );
 
-        Map<String,Object> redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
+        Map<String, Object> redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
 
         redirectModel = afterSchemeSet( redirectModel, request, response );
 
@@ -337,7 +338,7 @@ public class AuthenticationWebInterceptor extends SecurityWebInterceptor {
     }
 
     protected boolean isAuthenticated( HttpServletRequest request, HttpServletResponse response ) throws Exception {
-       SecurityContext securityContext = getSecurityContext( request, response );
+        SecurityContext securityContext = getSecurityContext( request, response );
         return securityContext.isAuthenticated();
     }
 

@@ -37,6 +37,8 @@ import org.springframework.remoting.support.RemoteInvocation;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.List;
 
@@ -84,10 +86,22 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |               M E T H O D S               |
     ============================================*/
 
+    protected InetAddress getInetAddress( RemoteInvocation invocation, Object targetObject ) {
+        try {
+            return InetAddress.getLocalHost();
+        } catch ( UnknownHostException e ) {
+            return null;
+        }
+    }
+
     @SuppressWarnings( { "unchecked" } )
     public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
+            List<Principal> principals = null;
+            boolean authenticated = false;
+            InetAddress inetAddress = getInetAddress( invocation, targetObject );
+            Session session = null;
 
             if ( invocation instanceof SecureRemoteInvocation ) {
                 SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation)invocation;
@@ -100,19 +114,18 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 }
 
                 if ( sessionId != null ) {
-                    Session session = securityManager.getSession( sessionId );
+                    session = securityManager.getSession( sessionId );
                     ThreadContext.bind( session );
 
                     // Get the principals and realm name from the session
-                    List<Principal> principals = (List<Principal>)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
+                    principals = (List<Principal>)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
 
-                    // If principals and realm were found in the session, create a delegating authorization context
-                    // and bind it to the thread.
+                    // If principals and realm were found in the session, assume authenticated.
                     if ( principals != null && !principals.isEmpty() ) {
-                        SecurityContext securityContext = new DelegatingSecurityContext( principals, true, securityManager );
-                        ThreadContext.bind( securityContext );
+                        authenticated = true;
                     }
                 }
+
             } else {
                 if ( log.isWarnEnabled() ) {
                     log.warn( "Secure remote invocation executor used, but did not receive a " +
@@ -120,6 +133,11 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                         "Ensure that clients are using a SecureRemoteInvocationFactory to prevent this problem." );
                 }
             }
+
+            SecurityContext securityContext =
+                new DelegatingSecurityContext( principals, authenticated, inetAddress, session, securityManager );
+
+            ThreadContext.bind( securityContext );
 
             return super.invoke( invocation, targetObject );
         } finally {

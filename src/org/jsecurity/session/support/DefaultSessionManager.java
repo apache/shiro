@@ -206,34 +206,30 @@ public class DefaultSessionManager extends AbstractSessionManager
         }
         // when properly stopping a session, it makes sense (for most systems) that the stop time and last access time
         // are the same:
-        Date timestamp = new Date();
         SimpleSession simpleSession = (SimpleSession)session;
-        simpleSession.setLastAccessTime( timestamp );
-        simpleSession.setStopTimestamp( timestamp );
+        Date stopTimestamp = simpleSession.getStopTimestamp();
+        if ( stopTimestamp == null ) {
+            stopTimestamp = new Date();
+            simpleSession.setStopTimestamp( stopTimestamp );
+        }
+        simpleSession.setLastAccessTime( stopTimestamp );
     }
 
     protected void onExpire( Session session ) {
         if ( log.isTraceEnabled() ) {
-            log.trace( "Updating destroy time and expiration status of session with id " +
+            log.trace( "Updating expiration status of session with id " +
                 session.getSessionId() + "]" );
         }
         SimpleSession ss = (SimpleSession)session;
-        ss.setStopTimestamp( new Date() );
         ss.setExpired( true );
-    }
-
-    protected void onTouch( Session session ) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Updating last access time of session with id [" +
-                session.getSessionId() + "]" );
-        }
-        ( (SimpleSession)session ).setLastAccessTime( new Date() );
     }
 
     protected void init( Session newInstance, InetAddress hostAddr ) {
         if ( newInstance instanceof SimpleSession ) {
             SimpleSession ss = (SimpleSession)newInstance;
-            ss.setHostAddress( hostAddr );
+            if ( hostAddr != null ) {
+                ss.setHostAddress( hostAddr );
+            }
         }
     }
 

@@ -58,4 +58,15 @@ public class ClassUtils {
         }
     }
 
+    public static Object newInstance( Class clazz ) {
+        if ( clazz == null ) {
+            String msg = "Class method parameter cannot be null.";
+            throw new IllegalArgumentException( msg );
+        }
+        try {
+            return clazz.newInstance();
+        } catch ( Exception e ) {
+            throw new UnsupportedOperationException( "Unable to instantiate class [" + clazz.getName() + "]", e );
+        }
+    }
 }

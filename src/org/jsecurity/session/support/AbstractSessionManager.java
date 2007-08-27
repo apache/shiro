@@ -53,6 +53,8 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     protected Class<? extends Session> sessionClass = null;
     protected int globalSessionTimeout = GLOBAL_SESSION_TIMEOUT;
 
+    protected boolean touchSessionOnRead = false;
+
     public AbstractSessionManager(){}
 
     public void setSessionDAO( SessionDAO sessionDAO ) {
@@ -162,6 +164,36 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         this.globalSessionTimeout = globalSessionTimeout;
     }
 
+    /**
+     * Returns whether or not a read only operation on a persisted session (e.g.
+     * {@link org.jsecurity.session.Session#getHostAddress() getHostAddress},
+     * {@link Session#getAttribute(Object) getAttribute(Object)}, etc. would '{@link Session#touch() touch}' the session
+     * object (i.e. usually updating the last access time stamp at a minimum).  Note that a write operation
+     * ({@link Session#setAttribute(Object, Object)}, etc) will <em>always</tt> touch a session, regardless of this
+     * setting.
+     *
+     * <p>The default is <tt>false</tt> such that read-only operations do _not_ 'touch' the Session.
+     *
+     * <p>It is important to understand what this means for your application, especially as it pertains to
+     * session time/orphan validation: typically orphaned sessions are reaped based on a
+     * <tt>Session</tt>'s {@link org.jsecurity.session.Session#getLastAccessTime() lastAccessTime}stamp, so if a session
+     * is only 'touched' on a write operation (default), then a session must be altered on a regular basis in order for
+     * it to not be reaped.  This is ok in 95% of applications, since Session objects are regularly modified.
+     *
+     * <p>In applications that don't modify the attributes internally very often, the application is of course always
+     * free to explicitcly call the {@link Session#touch() touch} method to avoid session timeout.
+     *  
+     * @return whether or not a read only operation on a persisted session would 'touch' it, thereby likely changing
+     * its internal state and causing an eis update.  Default is <tt>false</tt>.
+     */
+    public boolean isTouchSessionOnRead() {
+        return touchSessionOnRead;
+    }
+
+    public void setTouchSessionOnRead( boolean touchSessionOnRead ) {
+        this.touchSessionOnRead = touchSessionOnRead;
+    }
+
     public void init() {
         if ( sessionDAO == null ) {
             String msg = "sessionDAO property has not been set.  The sessionDAO is required to " +
@@ -179,6 +211,18 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
                 log.info( msg );
             }
         }
+    }
+
+    protected SessionEvent createStartEvent( Session created, Serializable sessionIdFromEIS ) {
+        return new StartedSessionEvent( this, sessionIdFromEIS );
+    }
+
+    protected SessionEvent createStopEvent( Session session ) {
+        return new StoppedSessionEvent( this, session.getSessionId() );
+    }
+
+    protected SessionEvent createExpireEvent( Session session ) {
+        return new ExpiredSessionEvent( this, session.getSessionId() );
     }
 
     protected void send( SessionEvent event ) {
@@ -223,6 +267,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         if ( log.isDebugEnabled() ) {
             log.debug( "Stopping session with id [" + session.getSessionId() + "]" );
         }
+        session.stop();
         onStop( session );
         sessionDAO.update( session );
         send( createStopEvent( session ) );
@@ -239,21 +284,10 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         if ( log.isDebugEnabled() ) {
             log.debug( "Expiring session with id [" + session.getSessionId() + "]" );
         }
+        session.stop();
         onExpire( session );
         sessionDAO.update( session );
         send( createExpireEvent( session ) );
-    }
-
-    protected SessionEvent createStartEvent( Session created, Serializable sessionIdFromEIS ) {
-        return new StartedSessionEvent( this, sessionIdFromEIS );
-    }
-
-    protected SessionEvent createStopEvent( Session session ) {
-        return new StoppedSessionEvent( this, session.getSessionId() );
-    }
-
-    protected SessionEvent createExpireEvent( Session session ) {
-        return new ExpiredSessionEvent( this, session.getSessionId() );
     }
 
     /**
@@ -485,6 +519,27 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         return false;
     }
 
+    protected Session retrieveSessionForUpdate( Serializable sessionId ) throws InvalidSessionException {
+        Session s = retrieveAndValidateSession( sessionId );
+        s.touch();
+        onTouch( s );
+        return s;
+    }
+
+    protected void onTouch( Session session ){}
+
+    protected Session getSession( Serializable sessionId ) throws InvalidSessionException {
+        if ( isTouchSessionOnRead() ) {
+            return retrieveSessionForUpdate( sessionId );
+        } else {
+            return retrieveAndValidateSession( sessionId );
+        }
+    }
+
+
+    /* ================================================
+       Interface implementation / proxy support methods
+       ================================================ */
     public Serializable start( InetAddress originatingHost )
         throws HostUnauthorizedException, IllegalArgumentException {
         Session s = createSession( originatingHost );
@@ -492,7 +547,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     public Date getStartTimestamp( Serializable sessionId ) {
-        return retrieveSession( sessionId ).getStartTimestamp();
+        return getSession( sessionId ).getStartTimestamp();
     }
 
     public Date getStopTimestamp( Serializable sessionId ) {
@@ -500,32 +555,27 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     public Date getLastAccessTime( Serializable sessionId ) {
-        return retrieveSession( sessionId ).getLastAccessTime();
+        return getSession( sessionId ).getLastAccessTime();
     }
 
     public boolean isStopped( Serializable sessionId ) {
-        return retrieveSession( sessionId ).getStopTimestamp() != null;
+        return getStopTimestamp( sessionId ) != null;
     }
 
     public boolean isExpired( Serializable sessionId ) {
-        Session s = retrieveSession( sessionId );
-        boolean expired = isExpired( s );
-        if ( expired ) {
-            //ensure the persistent object reflects this state:
-            if ( !s.isExpired() ) {
-                expire( s );
+        try {
+            Session s = getSession( sessionId );
+            boolean expired = isExpired( s );
+            if ( expired ) {
+                if ( !s.isExpired() ) {
+                    expire( s );
+                }
             }
+            return expired;
+        } catch ( ExpiredSessionException e ) {
+            return true;
         }
-        return expired;
     }
-
-    protected Session retrieveSessionForUpdate( Serializable sessionId ) throws InvalidSessionException {
-        Session s = retrieveAndValidateSession( sessionId );
-        onTouch( s );
-        return s;
-    }
-
-    protected void onTouch( Session session ){}
 
     public void touch( Serializable sessionId ) throws InvalidSessionException {
         Session s = retrieveSessionForUpdate( sessionId );
@@ -533,7 +583,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     public InetAddress getHostAddress( Serializable sessionId ) {
-        return retrieveSession( sessionId ).getHostAddress();
+        return getSession( sessionId ).getHostAddress();
     }
 
     public void stop( Serializable sessionId ) throws InvalidSessionException {
@@ -543,10 +593,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
 
     public Object getAttribute( Serializable sessionId, Object key )
         throws InvalidSessionException {
-        Session s = retrieveSessionForUpdate( sessionId );
-        Object value = s.getAttribute( key );
-        sessionDAO.update( s );
-        return value;
+        return getSession( sessionId ).getAttribute( key );
     }
 
     public void setAttribute( Serializable sessionId, Object key, Object value )

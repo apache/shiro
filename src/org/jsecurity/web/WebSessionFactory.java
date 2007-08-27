@@ -88,7 +88,7 @@ public interface WebSessionFactory {
      * @throws InvalidSessionException if the session attempting to be retrieved based on the current request is
      * invalid.
      * @throws AuthorizationException if the subject or machine associated with the current request is not authorized
-     * to acquire the session associated with the request. 
+     * to acquire the session associated with the request.
      */
     Session getSession( HttpServletRequest request, HttpServletResponse response )
         throws InvalidSessionException, AuthorizationException;

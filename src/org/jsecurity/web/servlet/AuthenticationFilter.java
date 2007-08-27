@@ -25,84 +25,52 @@
 
 package org.jsecurity.web.servlet;
 
+import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.support.AuthenticationWebInterceptor;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.ServletException;
 
 /**
- * TODO - class JavaDoc
+ * Must be configured <em>after</em> a {@link SecurityContextFilter} in the filter chain.
  *
+ * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @since 0.1
  */
-public class AuthenticationFilter extends AuthenticationWebInterceptor implements Filter {
+public class AuthenticationFilter extends WebInterceptorFilter {
 
     public static final String EXCLUDED_PATHS_PARAM_NAME = "excludedPaths";
     public static final String EXCLUDED_PATHS_DELIMITER_PARAM_NAME = "delimiters";
+    public static final String REDIRECT_URL_PARAM_NAME = "redirectUrl";
 
-
-    protected void processExcludedPaths( FilterConfig config ) throws Exception {
-        String delimiters = config.getInitParameter( EXCLUDED_PATHS_DELIMITER_PARAM_NAME );
+    protected void applyExcludedPaths( AuthenticationWebInterceptor interceptor ) {
+        String delimiters = getFilterConfig().getInitParameter( EXCLUDED_PATHS_DELIMITER_PARAM_NAME );
         if ( delimiters != null ) {
-            setExcludedPathsDelimiters( delimiters );
+            interceptor.setExcludedPathsDelimiters( delimiters );
         }
-        String excludedPathsString = config.getInitParameter( EXCLUDED_PATHS_PARAM_NAME );
+        String excludedPathsString = getFilterConfig().getInitParameter( EXCLUDED_PATHS_PARAM_NAME );
         if ( excludedPathsString != null ) {
             excludedPathsString = excludedPathsString.trim();
             if ( excludedPathsString.length() > 0 ) {
-                setExcludedPaths( excludedPathsString );
+                interceptor.setExcludedPaths( excludedPathsString );
             }
         }
     }
 
-    public void init( FilterConfig filterConfig ) throws ServletException {
-        try {
-            processExcludedPaths( filterConfig );
-        } catch ( Exception e ) {
-            throw new ServletException( "Unable to set excludedPaths property.", e );
+    protected void applyRedirectUrl( AuthenticationWebInterceptor interceptor ) throws Exception {
+        String url = getFilterConfig().getInitParameter( REDIRECT_URL_PARAM_NAME );
+        if ( url == null ) {
+            String msg = "redirectUrl init param is required for the Authentication Filter to initialize.";
+            throw new ServletException( msg );
         }
-        try {
-            init();
-        } catch ( Exception e ) {
-            throw new ServletException( e );
-        }
+        interceptor.setRedirectUrl( url );
     }
 
-    public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain )
-        throws IOException, ServletException {
-
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
-
-        Exception exception = null;
-
-        try {
-
-            boolean allowRequest = preHandle( request, response );
-
-            if ( allowRequest ) {
-                filterChain.doFilter( request, response );
-            }
-
-            postHandle( request, response );
-
-        } catch ( Exception e ) {
-            exception = e;
-        } finally {
-            try {
-                afterCompletion( request, response, exception );
-            } catch ( Exception e ) {
-                String message = "afterCompletion method threw exception: ";
-                //noinspection ThrowFromFinallyBlock
-                throw new ServletException( message, e );
-            }
-        }
-    }
-
-    public void destroy() {
+    protected WebInterceptor createWebInterceptor() throws Exception {
+        AuthenticationWebInterceptor interceptor = new AuthenticationWebInterceptor();
+        applyExcludedPaths( interceptor );
+        applyRedirectUrl( interceptor );
+        interceptor.init();
+        return interceptor;
     }
 }

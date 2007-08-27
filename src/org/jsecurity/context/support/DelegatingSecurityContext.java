@@ -31,14 +31,13 @@ import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.ThreadContext;
 
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.*;
 
 /**
- * Simple implementation of the <tt>SecurityContext</tt> interface that delegates all
+ * Simple implementation of the <tt>SecurityContext</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.
  *
@@ -58,47 +57,47 @@ import java.util.*;
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.
  *
- * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class DelegatingSecurityContext implements SecurityContext {
 
     protected List<Principal> principals;
-
     protected boolean authenticated;
-
+    protected InetAddress inetAddress = null;
+    protected Session session = null;
     protected SecurityManager securityManager;
-
     protected boolean invalidated = false;
 
-    public DelegatingSecurityContext() {
-        principals = new ArrayList<Principal>();
+    private static List<Principal> toList( Principal p ) {
+        List<Principal> principals = new ArrayList<Principal>(1);
+        if ( p != null ) {
+            principals.add( p );
+        }
+        return principals;
     }
 
-    public DelegatingSecurityContext(Principal principal, boolean authenticated, SecurityManager securityManager) {
-        if( securityManager == null) {
+    private static List<Principal> toList( List<Principal> ps ) {
+        List<Principal> principals = new ArrayList<Principal>( ps != null ? ps.size() : 1 );
+        principals.addAll( ps );
+        return principals;
+    }
+
+    public DelegatingSecurityContext( Principal principal, boolean authenticated, InetAddress inetAddress,
+                                      Session session, SecurityManager securityManager ) {
+        this( toList( principal ), authenticated, inetAddress, session, securityManager );
+    }
+
+    public DelegatingSecurityContext( List<Principal> principals, boolean authenticated, InetAddress inetAddress,
+                                      Session session, SecurityManager securityManager ) {
+        if ( securityManager == null ) {
             throw new IllegalArgumentException( "SecurityManager cannot be null." );
         }
-
-        this.principals = new ArrayList<Principal>(1);
-        if( principal != null ) {
-            this.principals.add( principal );
-        }
+        this.principals = toList( principals );
         this.authenticated = authenticated;
-        this.securityManager = securityManager;
-    }
-
-    public DelegatingSecurityContext(List<Principal> principals, boolean authenticated, SecurityManager securityManager) {
-        if( securityManager == null) {
-            throw new IllegalArgumentException( "SecurityManager cannot be null." );
-        }
-
-        this.principals = new ArrayList<Principal>(1);
-        if( principals != null ) {
-            this.principals.addAll( principals );
-        }
-        this.authenticated = authenticated;        
+        this.inetAddress = inetAddress;
+        this.session = session;
         this.securityManager = securityManager;
     }
 
@@ -119,28 +118,30 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     /**
      * Returns the InetAddress associated with the client who created/is interacting with this SecurityContext.
-     *
+     * <p/>
      * <p>The default implementation attempts to get the InetAddress from a thread local for use in server-side
      * environments.  Subclasses can override this method to retrieve the InetAddress from somewhere else (for
      * example, as a system property in a standalone application, or an applet parameter for an applet).
+     *
      * @return the InetAddress associated with the client who created/is interacting with this SecurityContext.
      */
     protected InetAddress getInetAddress() {
         assertValid();
-        return ThreadContext.getInetAddress();
+        return this.inetAddress;
     }
 
     /**
      * If multiple principals are defined, this method will return the first
      * principal in the list of principals.
+     *
      * @see org.jsecurity.context.SecurityContext#getPrincipal()
      */
     public Principal getPrincipal() {
         assertValid();
-        if( this.principals.isEmpty() ) {
+        if ( this.principals.isEmpty() ) {
             return null;
         } else {
-            return this.principals.get(0);
+            return this.principals.get( 0 );
         }
     }
 
@@ -157,8 +158,8 @@ public class DelegatingSecurityContext implements SecurityContext {
      */
     public Principal getPrincipalByType( Class<Principal> principalType ) throws NoSuchPrincipalException {
         assertValid();
-        for( Principal principal : principals ) {
-            if( principalType.isAssignableFrom( principal.getClass() ) ) {
+        for ( Principal principal : principals ) {
+            if ( principalType.isAssignableFrom( principal.getClass() ) ) {
                 return principal;
             }
         }
@@ -168,12 +169,12 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
      */
-    public Collection<Principal> getAllPrincipalsByType(Class<Principal> principalType) {
+    public Collection<Principal> getAllPrincipalsByType( Class<Principal> principalType ) {
         assertValid();
         Set<Principal> principalsOfType = new HashSet<Principal>();
 
-        for( Principal principal : principals ) {
-            if( principalType.isAssignableFrom( principal.getClass() ) ) {
+        for ( Principal principal : principals ) {
+            if ( principalType.isAssignableFrom( principal.getClass() ) ) {
                 principalsOfType.add( principal );
             }
         }
@@ -187,7 +188,7 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean[] hasRoles( List<String> roleIdentifiers ) {
         assertValid();
-        if( getPrincipal() != null ) {
+        if ( getPrincipal() != null ) {
             return securityManager.hasRoles( getPrincipal(), roleIdentifiers );
         } else {
             return new boolean[roleIdentifiers.size()];
@@ -206,9 +207,9 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean[] implies( List<Permission> permissions ) {
         assertValid();
-        if( getPrincipal() != null ) {
+        if ( getPrincipal() != null ) {
             return securityManager.isPermitted( getPrincipal(), permissions );
-        } else{
+        } else {
             return new boolean[permissions.size()];
         }
     }
@@ -229,12 +230,12 @@ public class DelegatingSecurityContext implements SecurityContext {
         securityManager.checkPermissions( getPrincipal(), permissions );
     }
 
-    public void checkRole(String role) throws AuthorizationException {
+    public void checkRole( String role ) throws AuthorizationException {
         assertValid();
         securityManager.checkRole( getPrincipal(), role );
     }
 
-    public void checkRoles(Collection<String> roles) throws AuthorizationException {
+    public void checkRoles( Collection<String> roles ) throws AuthorizationException {
         assertValid();
         securityManager.checkRoles( getPrincipal(), roles );
     }
@@ -260,26 +261,26 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public Session getSession( boolean create ) {
         assertValid();
-        Session s = ThreadContext.getSession();
-        if ( s == null && create ) {
-            s = securityManager.start( getInetAddress() );
-            ThreadContext.bind( s );
+        if ( this.session == null && create ) {
+            this.session = securityManager.start( getInetAddress() );
         }
-        return s;
+        return this.session;
     }
 
     public void invalidate() {
         if ( isInvalidated() ) {
             return;
         }
-
-        this.authenticated = false;
-        this.principals.clear();
-
         Session s = getSession( false );
         if ( s != null ) {
             s.stop();
         }
+        this.session = null;
+        this.principals.clear();
+        this.authenticated = false;
+        this.inetAddress = null;
+        this.securityManager = null;
+        setInvalidated( true );
     }
 
 }

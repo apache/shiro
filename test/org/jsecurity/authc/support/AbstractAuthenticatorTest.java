@@ -36,6 +36,7 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.bind.SecurityContextBinder;
 import org.jsecurity.context.factory.SecurityContextFactory;
 import org.jsecurity.context.support.DelegatingSecurityContext;
+import org.jsecurity.session.Session;
 import org.jsecurity.util.UsernamePrincipal;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -188,7 +189,7 @@ public class AbstractAuthenticatorTest {
 
         initAuthc();
 
-        SecurityContext sc = new DelegatingSecurityContext( new UsernamePrincipal( "user1" ), mockSecurityManager );
+        SecurityContext sc = new DelegatingSecurityContext( new UsernamePrincipal( "user1" ), true, null, (Session)null, mockSecurityManager );
 
         expect( mockFactory.createSecurityContext( authInfo ) ).andReturn( sc );
 
