@@ -26,10 +26,12 @@ package org.jsecurity.web.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ThreadContext;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -58,6 +60,10 @@ public abstract class SecurityWebSupport implements Initializable {
         }
 
         return clientAddress;
+    }
+
+    public SecurityContext getSecurityContext( ServletRequest request, ServletResponse response ) {
+        return ThreadContext.getSecurityContext();
     }
 
     protected void bindInetAddressToThread( HttpServletRequest request ) {
