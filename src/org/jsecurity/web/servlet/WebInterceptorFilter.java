@@ -55,7 +55,7 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
         this.webInterceptor = webInterceptor;
     }
 
-    public final void init() throws Exception {
+    public void init() throws Exception {
         WebInterceptor interceptor = createWebInterceptor();
         if ( interceptor == null ) {
             String msg = "WebInterceptor returned by createWebInterceptor() method returned null.";
@@ -79,8 +79,9 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
 
     /**
      * If needed, the FilterConfig is available during this call via the {@link #getFilterConfig()} method.
-     * @return
-     * @throws Exception
+     * @return the WebInterceptor delegate instance to use during the filter execution.
+     * @throws Exception if there is an error during interceptor processing, but in any case the interceptor's 
+     * afterCompletion method will always be called.
      */
     protected abstract WebInterceptor createWebInterceptor() throws Exception;
 

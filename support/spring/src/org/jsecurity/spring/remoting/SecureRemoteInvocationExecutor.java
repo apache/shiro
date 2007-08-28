@@ -115,7 +115,6 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
                 if ( sessionId != null ) {
                     session = securityManager.getSession( sessionId );
-                    ThreadContext.bind( session );
 
                     // Get the principals and realm name from the session
                     principals = (List<Principal>)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
