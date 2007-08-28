@@ -135,6 +135,9 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     protected void ensurePrincipalsStore() {
         if ( getPrincipalsStore() == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Initializing default Principals WebStore..." );
+            }
             AbstractWebStore<List<Principal>> store = null;
             if ( isPreferHttpSessionStorage() ) {
                 store = new HttpSessionStore<List<Principal>>( PRINCIPALS_SESSION_KEY, false );
@@ -143,18 +146,22 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             }
             store.setMutable( false ); //don't allow SecurityContexts to change the principals they were created from (security risk)
             store.init();
-            setPrincipalsStore( principalsStore );
+            setPrincipalsStore( store );
         }
     }
 
     protected void ensureAuthenticatedStore() {
         if ( getAuthenticatedStore() == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Initializing default Authenticated token WebStore..." );
+            }
             AbstractWebStore<Boolean> store = null;
             if ( isPreferHttpSessionStorage() ) {
                 store = new HttpSessionStore<Boolean>( AUTHENTICATED_SESSION_KEY, false );
             } else {
                 store = new SessionStore<Boolean>( AUTHENTICATED_SESSION_KEY, false );
             }
+            store.init();
             setAuthenticatedStore( store );
         }
     }
@@ -166,6 +173,9 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             throw new IllegalStateException( msg );
         }
         if ( getWebSessionFactory() == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Initializing default WebSessionFactory instance..." );
+            }
             DefaultWebSessionFactory factory = new DefaultWebSessionFactory();
             factory.setSessionFactory( securityManager );
 
@@ -192,7 +202,12 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
     protected boolean isAuthenticated( ServletRequest servletRequest, ServletResponse servletResponse ) {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
-        return getAuthenticatedStore().retrieveValue( request, response );
+        Boolean value = getAuthenticatedStore().retrieveValue( request, response );
+        if ( value != null ) {
+            return value;
+        } else {
+            return false;
+        }
     }
 
     protected SecurityContext buildSecurityContext( List<Principal> principals, boolean authenticated,

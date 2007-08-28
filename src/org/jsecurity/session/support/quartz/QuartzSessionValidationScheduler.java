@@ -202,8 +202,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                 log.debug( "Quartz session validation job stopped successfully." );
             }
         } catch ( SchedulerException e ) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "Could not cleanly remove SessionValidationJob from Quartz scheduler.  " +
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Could not cleanly remove SessionValidationJob from Quartz scheduler.  " +
                     "Ignoring and stopping.", e );
             }
         }

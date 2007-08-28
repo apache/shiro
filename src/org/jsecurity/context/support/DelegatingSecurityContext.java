@@ -63,7 +63,7 @@ import java.util.*;
  */
 public class DelegatingSecurityContext implements SecurityContext {
 
-    protected List<Principal> principals;
+    protected List<Principal> principals = new ArrayList<Principal>();
     protected boolean authenticated;
     protected InetAddress inetAddress = null;
     protected Session session = null;
@@ -79,14 +79,21 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     private static List<Principal> toList( List<Principal> ps ) {
-        List<Principal> principals = new ArrayList<Principal>( ps != null ? ps.size() : 1 );
-        principals.addAll( ps );
+        List<Principal> principals = null;
+        if ( ps == null ) {
+            principals = new ArrayList<Principal>();
+        } else if ( ps.isEmpty() ) {
+            principals = ps;
+        } else {
+            principals = new ArrayList<Principal>( ps.size() );
+            principals.addAll( ps );
+        }
         return principals;
     }
 
     public DelegatingSecurityContext( Principal principal, boolean authenticated, InetAddress inetAddress,
                                       Session session, SecurityManager securityManager ) {
-        this( toList( principal ), authenticated, inetAddress, session, securityManager );
+        this( toList( principal), authenticated, inetAddress, session, securityManager );
     }
 
     public DelegatingSecurityContext( List<Principal> principals, boolean authenticated, InetAddress inetAddress,

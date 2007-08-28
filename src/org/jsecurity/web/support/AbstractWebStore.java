@@ -169,7 +169,9 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
         T value = null;
         if ( isCheckRequestParams() ) {
             value = getFromRequestParam( request );
-        } else {
+        }
+        
+        if ( value == null ) {
             value = onRetrieveValue( request, response );
         }
         return value;
