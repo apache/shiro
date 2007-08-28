@@ -165,7 +165,7 @@ public class CookieStore<T> extends AbstractWebStore<T> {
         return value;
     }
 
-    public void storeValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+    public void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
 
         String name = getName();
         String path = getPath();

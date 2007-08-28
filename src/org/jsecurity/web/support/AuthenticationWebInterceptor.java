@@ -24,7 +24,6 @@
 */
 package org.jsecurity.web.support;
 
-import org.jsecurity.SecurityUtils;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
@@ -196,10 +195,6 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
                     "be available after the redirect to the login page." );
             }
         }
-    }
-
-    protected SecurityContext getSecurityContext( HttpServletRequest request, HttpServletResponse response ) {
-        return SecurityUtils.getSecurityContext();
     }
 
     protected RedirectView createRedirectView( HttpServletRequest request, HttpServletResponse response ) {

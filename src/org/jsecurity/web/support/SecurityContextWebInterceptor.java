@@ -33,12 +33,13 @@ import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.WebSessionFactory;
+import org.jsecurity.web.WebStore;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.List;
@@ -77,6 +78,10 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
      */
     protected boolean preferHttpSessionStorage = false;
 
+    protected WebStore<Serializable> sessionIdStore = null;
+    protected WebStore<List<Principal>> principalsStore = null;
+    protected WebStore<Boolean> authenticatedStore = null;
+
     public SecurityContextWebInterceptor() {
     }
 
@@ -104,6 +109,56 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         this.preferHttpSessionStorage = preferHttpSessionStorage;
     }
 
+    public WebStore<Serializable> getSessionIdStore() {
+        return sessionIdStore;
+    }
+
+    public void setSessionIdStore( WebStore<Serializable> sessionIdStore ) {
+        this.sessionIdStore = sessionIdStore;
+    }
+
+    public WebStore<List<Principal>> getPrincipalsStore() {
+        return principalsStore;
+    }
+
+    public void setPrincipalsStore( WebStore<List<Principal>> principalsStore ) {
+        this.principalsStore = principalsStore;
+    }
+
+    public WebStore<Boolean> getAuthenticatedStore() {
+        return authenticatedStore;
+    }
+
+    public void setAuthenticatedStore( WebStore<Boolean> authenticatedStore ) {
+        this.authenticatedStore = authenticatedStore;
+    }
+
+    protected void ensurePrincipalsStore() {
+        if ( getPrincipalsStore() == null ) {
+            AbstractWebStore<List<Principal>> store = null;
+            if ( isPreferHttpSessionStorage() ) {
+                store = new HttpSessionStore<List<Principal>>( PRINCIPALS_SESSION_KEY, false );
+            } else {
+                store = new SessionStore<List<Principal>>( PRINCIPALS_SESSION_KEY, false );
+            }
+            store.setMutable( false ); //don't allow SecurityContexts to change the principals they were created from (security risk)
+            store.init();
+            setPrincipalsStore( principalsStore );
+        }
+    }
+
+    protected void ensureAuthenticatedStore() {
+        if ( getAuthenticatedStore() == null ) {
+            AbstractWebStore<Boolean> store = null;
+            if ( isPreferHttpSessionStorage() ) {
+                store = new HttpSessionStore<Boolean>( AUTHENTICATED_SESSION_KEY, false );
+            } else {
+                store = new SessionStore<Boolean>( AUTHENTICATED_SESSION_KEY, false );
+            }
+            setAuthenticatedStore( store );
+        }
+    }
+
     public void init() {
         SecurityManager securityManager = getSecurityManager();
         if ( securityManager == null ) {
@@ -113,116 +168,31 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         if ( getWebSessionFactory() == null ) {
             DefaultWebSessionFactory factory = new DefaultWebSessionFactory();
             factory.setSessionFactory( securityManager );
+
+            WebStore<Serializable> sessionIdStore = getSessionIdStore();
+            if ( sessionIdStore != null ) {
+                factory.setIdStore( sessionIdStore );
+            }
+
             factory.init();
             setWebSessionFactory( factory );
         }
-    }
 
-    @SuppressWarnings( "unchecked" )
-    protected List<Principal> getPrincipalsFromJSecuritySession( HttpServletRequest request, HttpServletResponse response ) {
-        List<Principal> principals = null;
-        Session session = getWebSessionFactory().getSession( request, response );
-        if ( session != null ) {
-            principals = (List<Principal>)session.getAttribute( PRINCIPALS_SESSION_KEY );
-            if ( principals == null ) {
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "JSecurity Session exists, but does not contain any principals from which a " +
-                        "SecurityContext may be built.  Returning null and moving on..." );
-                }
-            }
-        } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No JSecurity Session associated with the request.  Ignoring as a resource to " +
-                    "construct a SecurityContext instance." );
-            }
-        }
-        return principals;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    protected List<Principal> getPrincipalsFromHttpSession( HttpServletRequest request ) {
-        List<Principal> principals = null;
-        HttpSession httpSession = request.getSession( false );
-        if ( httpSession != null ) {
-            principals = (List<Principal>)httpSession.getAttribute( PRINCIPALS_SESSION_KEY );
-            if ( principals == null ) {
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "HttpSession exists, but does not contain any principals from which a " +
-                        "SecurityContext may be built.  Returning null and moving on..." );
-                }
-            }
-        } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "HttpSession does not exist.  Ignoring as a resource to attempt to construct a " +
-                    "SecurityContext instance." );
-            }
-        }
-        return principals;
+        ensurePrincipalsStore();
+        ensureAuthenticatedStore();
     }
 
     @SuppressWarnings( "unchecked" )
     protected List<Principal> getPrincipals( ServletRequest servletRequest, ServletResponse servletResponse ) {
-
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
-
-        List<Principal> principals = null;
-
-        if ( !isPreferHttpSessionStorage() ) {
-            principals = getPrincipalsFromJSecuritySession( request, response );
-        }
-
-        if ( principals == null || principals.isEmpty() ) {
-            //fall back to HttpSession:
-            principals = getPrincipalsFromHttpSession( request );
-        }
-
-        return principals;
-    }
-
-    protected boolean isAuthenticatedFromJSecuritySession( HttpServletRequest request, HttpServletResponse response ) {
-
-        // Defaults to false unless found in the session
-        boolean authenticated = false;
-        Session session = getWebSessionFactory().getSession( request, response );
-        if ( session != null ) {
-            Boolean boolAuthenticated = (Boolean)session.getAttribute( AUTHENTICATED_SESSION_KEY );
-            if ( boolAuthenticated != null ) {
-                authenticated = boolAuthenticated;
-            }
-        }
-        return authenticated;
-    }
-
-    protected boolean isAuthenticatedFromHttpSession( HttpServletRequest request ) {
-
-        // Defaults to false unless found in the session
-        boolean authenticated = false;
-        HttpSession httpSession = request.getSession( false );
-        if ( httpSession != null ) {
-            Boolean boolAuthenticated = (Boolean)httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
-            if ( boolAuthenticated != null ) {
-                authenticated = boolAuthenticated;
-            }
-        }
-        return authenticated;
+        return getPrincipalsStore().retrieveValue( request, response );
     }
 
     protected boolean isAuthenticated( ServletRequest servletRequest, ServletResponse servletResponse ) {
-
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
-
-        boolean authenticated;
-
-        if ( !isPreferHttpSessionStorage() ) {
-            authenticated = isAuthenticatedFromJSecuritySession( request, response );
-        } else {
-            //fall back to HttpSession:
-            authenticated = isAuthenticatedFromHttpSession( request );
-        }
-
-        return authenticated;
+        return getAuthenticatedStore().retrieveValue( request, response );
     }
 
     protected SecurityContext buildSecurityContext( List<Principal> principals, boolean authenticated,
@@ -235,7 +205,6 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
                                                     ServletResponse response,
                                                     List<Principal> principals,
                                                     boolean authenticated ) {
-
         SecurityContext securityContext;
 
         SecurityManager securityManager = getSecurityManager();
@@ -262,72 +231,9 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         return buildSecurityContext( request, response, principals, authenticated );
     }
 
-    protected boolean bindInJSecuritySessionForSubsequentRequests( HttpServletRequest request,
-                                                                   HttpServletResponse response,
-                                                                   SecurityContext securityContext ) {
-        boolean saved = false;
-
-        try {
-            Session session = securityContext.getSession();
-
-            if ( session != null ) {
-                // Don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
-                // initialized session is not allowed.
-                // Only store principals if they exist in the security context
-                Object currentPrincipal = session.getAttribute( PRINCIPALS_SESSION_KEY );
-                List<Principal> allPrincipals = securityContext.getAllPrincipals();
-                if ( currentPrincipal == null && allPrincipals != null && !allPrincipals.isEmpty() ) {
-                    session.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
-                }
-
-                // Only bind if the current value in the session is null or it doesn't equal the security context value
-                Boolean currentAuthenticated = (Boolean)session.getAttribute( AUTHENTICATED_SESSION_KEY );
-                if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
-                    session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
-                }
-                saved = true;
-            }
-        } catch ( Throwable t ) {
-            if ( log.isWarnEnabled() ) {
-                String msg = "Unable to store SecurityContext Principal(s) collection in JSecurity Session for " +
-                    "reconstruction on subsequent requests: ";
-                log.warn( msg, t );
-            }
-        }
-
-        return saved;
-    }
-
-    protected boolean bindInHttpSessionForSubsequentRequests( HttpServletRequest request, HttpServletResponse response,
-                                                              SecurityContext securityContext ) {
-        HttpSession httpSession = request.getSession();
-
-        // Don't overwrite any previous credentials - i.e. SecurityContext swapping for a previously
-        // initialized session is not allowed.
-        // Only store principals if they exist in the security context
-        Object currentPrincipal = httpSession.getAttribute( PRINCIPALS_SESSION_KEY );
-        if ( currentPrincipal == null && !securityContext.getAllPrincipals().isEmpty() ) {
-            httpSession.setAttribute( PRINCIPALS_SESSION_KEY, securityContext.getAllPrincipals() );
-        }
-
-        // Only bind if the current value in the session is null or it doesn't equal the security context value
-        Boolean currentAuthenticated = (Boolean)httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
-        if ( currentAuthenticated == null || !currentAuthenticated.equals( securityContext.isAuthenticated() ) ) {
-            httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
-        }
-        return true;
-    }
-
     protected void bindForSubsequentRequests( HttpServletRequest request, HttpServletResponse response, SecurityContext securityContext ) {
-        boolean saved = false;
-        if ( !isPreferHttpSessionStorage() ) {
-            saved = bindInJSecuritySessionForSubsequentRequests( request, response, securityContext );
-        }
-
-        if ( !saved ) {
-            //always fall back to HttpSession
-            bindInHttpSessionForSubsequentRequests( request, response, securityContext );
-        }
+        getPrincipalsStore().storeValue( securityContext.getAllPrincipals(), request, response );
+        getAuthenticatedStore().storeValue( securityContext.isAuthenticated(), request, response );
     }
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
@@ -346,7 +252,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response )
         throws Exception {
-        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        SecurityContext securityContext = getSecurityContext( request, response );
 
         if ( securityContext != null ) {
             //make sure it is valid:

@@ -16,7 +16,7 @@ import java.beans.PropertyEditor;
  *
  * @author Les Hazlewood
  */
-public abstract class AbstractWebStore<T> implements WebStore<T>, Initializable {
+public abstract class AbstractWebStore<T> extends SecurityWebSupport implements WebStore<T>, Initializable {
 
     public static final String DEFAULT_NAME = "name";
 
@@ -25,6 +25,8 @@ public abstract class AbstractWebStore<T> implements WebStore<T>, Initializable 
     protected String name = DEFAULT_NAME;
 
     protected boolean checkRequestParams = true;
+
+    protected boolean mutable = true;
 
     /**
      * Property editor class to use to convert IDs to and from strings.
@@ -79,14 +81,28 @@ public abstract class AbstractWebStore<T> implements WebStore<T>, Initializable 
      * reading and populating values in
      * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}s, {@link javax.servlet.http.Cookie Cookie}s or
      * {@link javax.servlet.http.HttpSession HttpSession}s.
-     *
+     * <p/>
      * <p>If not set, the string itself will be used.
      *
      * @param editorClass {@link PropertyEditor PropertyEditor} implementation used to
-     * convert between string values and sessionId objects.
+     *                    convert between string values and sessionId objects.
      */
     public void setEditorClass( Class<? extends PropertyEditor> editorClass ) {
         this.editorClass = editorClass;
+    }
+
+    /**
+     * Returns <tt>true</tt> if the value stored can be changed once it has been set, <tt>false</tt> if it cannot.
+     * <p>Default is <tt>true</tt>.
+     *
+     * @return <tt>true</tt> if the value stored can be changed once it has been set, <tt>false</tt> if it cannot.
+     */
+    public boolean isMutable() {
+        return mutable;
+    }
+
+    public void setMutable( boolean mutable ) {
+        this.mutable = mutable;
     }
 
     public void init() {
@@ -137,7 +153,7 @@ public abstract class AbstractWebStore<T> implements WebStore<T>, Initializable 
         String paramValue = request.getParameter( paramName );
         if ( paramValue != null ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Found string value [" + paramValue + "] from HttpServletRequest parameter [" + paramName + "]");
+                log.trace( "Found string value [" + paramValue + "] from HttpServletRequest parameter [" + paramName + "]" );
             }
             value = fromStringValue( paramValue );
         } else {
@@ -159,5 +175,29 @@ public abstract class AbstractWebStore<T> implements WebStore<T>, Initializable 
         return value;
     }
 
-    public abstract T onRetrieveValue( HttpServletRequest request, HttpServletResponse response );
+    protected abstract T onRetrieveValue( HttpServletRequest request, HttpServletResponse response );
+
+    public void storeValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+        if ( value == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Will not store a null value - returning." );
+                return;
+            }
+        }
+
+        if ( !isMutable() ) {
+            Object existing = onRetrieveValue( request, response );
+            if ( existing != null ) {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Found existing value stored under name [" + getName() + "].  Ignoring new " +
+                        "storage request - this store is immutable after the value has initially been set." );
+                }
+            }
+            return;
+        }
+
+        onStoreValue( value, request, response );
+    }
+
+    protected abstract void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response );
 }

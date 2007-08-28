@@ -13,6 +13,18 @@ import javax.servlet.http.HttpSession;
  */
 public class HttpSessionStore<T> extends AbstractWebStore<T> {
 
+    public HttpSessionStore() {
+        super();
+    }
+
+    public HttpSessionStore( String name ) {
+        super( name );
+    }
+
+    public HttpSessionStore( String name, boolean checkRequestParams ) {
+        super( name, checkRequestParams );
+    }
+
     public T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
         T value = null;
 
@@ -34,7 +46,7 @@ public class HttpSessionStore<T> extends AbstractWebStore<T> {
         return value;
     }
 
-    public void storeValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+    public void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
         HttpSession session = request.getSession();
         if ( session != null ) {
             session.setAttribute( getName(), value );
