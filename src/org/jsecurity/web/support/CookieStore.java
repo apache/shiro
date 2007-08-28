@@ -18,6 +18,7 @@ public class CookieStore<T> extends AbstractWebStore<T> {
 
     private String path = null; //null means set it on the request context root
     private int maxAge = -1;
+    private boolean secure = false;
 
     public CookieStore() {
     }
@@ -124,6 +125,14 @@ public class CookieStore<T> extends AbstractWebStore<T> {
         this.maxAge = maxAge;
     }
 
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure( boolean secure ) {
+        this.secure = secure;
+    }
+
     /**
      * Returns the cookie with the given name from the request or <tt>null</tt> if no cookie
      * with that name could be found.
@@ -136,8 +145,10 @@ public class CookieStore<T> extends AbstractWebStore<T> {
     private static Cookie getCookie( HttpServletRequest request, String cookieName ) {
         Cookie cookies[] = request.getCookies();
         if ( cookies != null ) {
+            System.out.println( "Request has cookies." );
             for ( Cookie cookie : cookies ) {
-                if ( cookieName.equals( cookie.getName() ) ) {
+                System.out.println( "Cookie name: " + cookie.getName() );
+                if ( cookie.getName().equals( cookieName ) ) {
                     return cookie;
                 }
             }
@@ -179,6 +190,9 @@ public class CookieStore<T> extends AbstractWebStore<T> {
         Cookie idCookie = new Cookie( name, stringValue );
         idCookie.setMaxAge( maxAge );
         idCookie.setPath( path );
+        if ( isSecure() ) {
+            idCookie.setSecure( true );
+        }
 
         response.addCookie( idCookie );
         if ( log.isTraceEnabled() ) {

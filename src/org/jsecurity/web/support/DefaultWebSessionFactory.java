@@ -50,7 +50,7 @@ import java.net.InetAddress;
  */
 public class DefaultWebSessionFactory extends SecurityWebSupport implements WebSessionFactory {
 
-    public static final String DEFAULT_SESSION_ID_COOKIE_NAME = "sessionId";
+    public static final String DEFAULT_SESSION_ID_COOKIE_NAME = "jsecSessionId";
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -66,6 +66,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
 
     protected WebStore<Serializable> idStore =
         new CookieStore<Serializable>( DEFAULT_SESSION_ID_COOKIE_NAME, CookieStore.INDEFINITE );
+        //new HttpSessionStore<Serializable>( DEFAULT_SESSION_ID_COOKIE_NAME, true );
 
     protected boolean requireSessionOnRequest = false;
     protected boolean createNewSessionWhenInvalid = true;
@@ -227,10 +228,10 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
             throw new IllegalStateException( msg );
         }
         //ensure that the id has been set in the idStore, or if it already has, that it is not different than the
-        //'real' thread-bound session:
+        //'real' session value:
         Serializable existingId = retrieveSessionId( request, response );
-        if ( existingId == null || !existingId.equals( currentId ) ) {
-            getIdStore().storeValue( existingId, request, response );
+        if ( existingId == null || !currentId.equals( existingId ) ) {
+            getIdStore().storeValue( currentId, request, response );
         }
     }
 

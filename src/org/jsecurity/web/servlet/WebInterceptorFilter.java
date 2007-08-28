@@ -75,6 +75,9 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
      * @throws Exception in the case of an error
      */
     protected void onInit() throws Exception {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "onInit called." );
+        }
     }
 
     /**
@@ -95,18 +98,33 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
         try {
 
             boolean continueChain = interceptor.preHandle( request, response );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Invked interceptor.preHandle method.  Continuing chain?: [" + continueChain + "]" );
+            }
 
             if ( continueChain ) {
                 chain.doFilter( request, response );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Completed chain execution." );
+                }
             }
 
             interceptor.postHandle( request, response );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Successfully invoked interceptor.postHandle method" );
+            }
 
         } catch ( Exception e ) {
             exception = e;
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Encountered exception in interceptor method delegation.", exception );
+            }
         } finally {
             try {
                 interceptor.afterCompletion( request, response, exception );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Successfully invoked interceptor.afterCompletion method." );
+                }
             } catch ( Exception e ) {
                 if ( log.isErrorEnabled() ) {
                     log.error( "WebInterceptor [" + interceptor + "] afterCompletion method threw an exception: ", e );
