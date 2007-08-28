@@ -34,8 +34,8 @@ public class HttpSessionStore<T> extends AbstractWebStore<T> {
         }
 
         if ( value != null ) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "Found value [" + value + "] via HttpSession key [" + getName() + "]" );
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Found value [" + value + "] via HttpSession key [" + getName() + "]" );
             }
         } else {
             if ( log.isDebugEnabled() ) {
@@ -48,7 +48,7 @@ public class HttpSessionStore<T> extends AbstractWebStore<T> {
 
     public void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
         HttpSession session = request.getSession();
-        if ( session != null ) {
+        if ( session != null && value != null) {
             session.setAttribute( getName(), value );
             if ( log.isDebugEnabled() ) {
                 log.debug( "Set HttpSession attribute [" + getName() + "] with value [" + value + "]" );
