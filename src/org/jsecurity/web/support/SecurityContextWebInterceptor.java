@@ -24,9 +24,11 @@
  */
 package org.jsecurity.web.support;
 
+import org.jsecurity.JSecurityException;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
+import org.jsecurity.context.support.InvalidSecurityContextException;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
@@ -248,7 +250,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         Session session = getWebSessionFactory().getSession( (HttpServletRequest)request, (HttpServletResponse)response );
 
         securityContext = buildSecurityContext( principals, authenticated,
-                          getInetAddress( request ), session, securityManager );
+            getInetAddress( request ), session, securityManager );
 
         return securityContext;
     }
@@ -330,27 +332,58 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
         throws Exception {
+
+        //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
+        bindInetAddressToThread( request );
+
         SecurityContext securityContext = buildSecurityContext( request, response );
         if ( securityContext != null ) {
             ThreadContext.bind( securityContext );
         }
-        //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
-        bindInetAddressToThread( request );
+
         return true;
     }
 
     public void postHandle( HttpServletRequest request, HttpServletResponse response )
         throws Exception {
         SecurityContext securityContext = ThreadContext.getSecurityContext();
+
         if ( securityContext != null ) {
+            //make sure it is valid:
+            try {
+                securityContext.getAllPrincipals();
+            } catch ( InvalidSecurityContextException e ) {
+                if  ( log.isTraceEnabled() ) {
+                    log.trace( "SecurityContext was invalidated during the request - returning quietly (a new " +
+                        "one will be created on the next request)." );    
+                }
+                return;
+            }
+
             bindForSubsequentRequests( request, response, securityContext );
+
+            Session session = null;
+            try {
+                session = securityContext.getSession( false );
+                if ( session != null ) {
+                    //TODO this is ugly - think of a way to make it cleaner (add method to WebSessionFactory interface?)
+                    WebSessionFactory wsf = getWebSessionFactory();
+                    if ( wsf instanceof DefaultWebSessionFactory ) {
+                        ( (DefaultWebSessionFactory)wsf ).storeSessionId( session, request, response );
+                    }
+                }
+            } catch ( JSecurityException e ) {
+                if ( log.isWarnEnabled() ) {
+                    log.warn( "Encountered exception while trying to bind JSecurity Session for subsequent requests.  " +
+                        "Ignoring and returning (next request will create a new session if necessary).", e );
+                }
+            }
         }
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
         throws Exception {
         ThreadContext.unbindSecurityContext();
-        ThreadContext.unbindSession();
         unbindInetAddressFromThread();
     }
 

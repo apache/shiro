@@ -24,6 +24,8 @@
  */
 package org.jsecurity.web.support;
 
+import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.support.InvalidSecurityContextException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.Initializable;
@@ -52,13 +54,12 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
         throws Exception {
-
-        Session session = getSession( request, response );
-        if ( session != null ) {
-            ThreadContext.bind( session );
+        //relies on this interceptor being _after_ the SecurityContext interceptor in a chain:
+        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        if ( securityContext != null ) {
+            //force creation of session:
+            securityContext.getSession();
         }
-        //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
-        ThreadContext.bind( SecurityWebSupport.getInetAddress( request ) );
         return true;
     }
 
@@ -66,15 +67,23 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
         throws Exception {
         //check to see if the Session object was created after the request started (this can happen at any point when
         //securityContext.getSession() is called:
-        Session session = ThreadContext.getSession();
-        if ( session != null ) {
-            storeSessionId( session, request, response );
+        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        if ( securityContext != null ) {
+            try {
+                Session session = securityContext.getSession( false );
+                if ( session != null ) {
+                    storeSessionId( session, request, response );
+                }
+            } catch ( InvalidSecurityContextException e ) {
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Unable to acquire a session from an invalidated SecurityContext - ignoring and " +
+                        "continuing (the next request will create a new session)." );
+                }
+            }
         }
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
         throws Exception {
-        ThreadContext.unbindSession();
-        ThreadContext.unbindInetAddress();
     }
 }

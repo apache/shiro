@@ -274,21 +274,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         return session;
     }
 
-    /**
-     * Acquires a session for the given request, and if there isn't one, automatically creates one and makes it
-     * accessible for future requests.
-     * <p/>
-     * <p>This method is marked final to ensure the {@link Session#touch Session.touch()} method is always invoked when
-     * acquiring a session for a request.  This method updates a Session's
-     * {@link org.jsecurity.session.Session#getLastAccessTime() lastAccessTime}, and this is necessary to reap
-     * orphan sessions (i.e. the JSecurity SessionManager will reap all unused sessions older than a certain period,
-     * and if a session's lastAccessTime is never updated, it might be prematurely reaped, hijacking a user's
-     * experience - not desireable).
-     *
-     * @param request
-     * @param response
-     * @return
-     */
+
     protected Session doGetSession( HttpServletRequest request, HttpServletResponse response ) {
 
         Session session = null;
@@ -314,6 +300,14 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
 
     }
 
+    /**
+     * Acquires a session for the given request, and if there isn't one, automatically creates one and makes it
+     * accessible for future requests.
+     * 
+     * @param request incoming servlet request
+     * @param response outgoing servlet response
+     * @return the Session associated with the incoming request, if any.
+     */
     public final Session getSession( HttpServletRequest request, HttpServletResponse response )
         throws InvalidSessionException, AuthorizationException {
 
