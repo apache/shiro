@@ -27,7 +27,7 @@ package org.jsecurity.util;
 /**
  * JSecurity container-agnostic interface that indicates that this object requires initialization.
  *
- * @see org.jsecurity.spring.SecurityBeanPostProcessor
+ * @see org.jsecurity.spring.LifecycleBeanPostProcessor
  * 
  * @since 0.2
  * @author Les Hazlewood
