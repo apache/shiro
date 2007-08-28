@@ -50,7 +50,7 @@ import java.net.InetAddress;
  */
 public class DefaultWebSessionFactory extends SecurityWebSupport implements WebSessionFactory {
 
-    public static final String DEFAULT_SESSION_ID_COOKIE_NAME = "jsecSessionId";
+    public static final String DEFAULT_SESSION_ID_KEY_NAME = "jsecSessionId";
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -64,9 +64,21 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
 
     protected SessionFactory sessionFactory = null;
 
-    protected WebStore<Serializable> idStore =
-        new CookieStore<Serializable>( DEFAULT_SESSION_ID_COOKIE_NAME, CookieStore.INDEFINITE );
-        //new HttpSessionStore<Serializable>( DEFAULT_SESSION_ID_COOKIE_NAME, true );
+    //An HttpSessionStore is required if JSecurity sessions can be lazily created (e.g. SecurityContext.getSession())
+    //after the response has started rendering - i.e. inside of a web controller or business-tier component accessed
+    //after the web request comes in.
+    //
+    // Cookies can only be sent out before the response has started rendering, so saving a cookie
+    //_after_ a response is done (as would happen in a web interceptor implementation's postHandle method) is
+    // worthless, since the cookie would never be sent.
+    //
+    // As such, the only time a CookieStore can be used to store the JSecurity sessionId is if the
+    // requireSessionOnRequest property is true, because a session would be created before the interceptor chain is
+    // continued, where it is still 'legal' to modify the HTTP headers (i.e. set a Cookie).  If this property is set
+    // to true in configuration (it is false by default), this implementation will automatically re-assign the
+    // sessionIdStore attribute to be a CookieStore in the init() method.  If this property is false, the init method
+    // will automatically create the HttpSessionStore.
+    protected WebStore<Serializable> idStore = null;
 
     protected boolean requireSessionOnRequest = false;
     protected boolean createNewSessionWhenInvalid = true;
@@ -182,9 +194,14 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
 
     public void init() {
         assertSessionFactory();
-        if ( idStore == null ) {
-            String msg = "idStore property must be set.";
-            throw new IllegalStateException( msg );
+        WebStore<Serializable> store = getIdStore();
+        if ( store == null ) {
+            if ( isRequireSessionOnRequest() ) {
+                store = new CookieStore<Serializable>( DEFAULT_SESSION_ID_KEY_NAME, CookieStore.INDEFINITE );
+            } else {
+                store = new HttpSessionStore<Serializable>( DEFAULT_SESSION_ID_KEY_NAME );
+            }
+            setIdStore( store );
         }
     }
 

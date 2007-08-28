@@ -145,9 +145,7 @@ public class CookieStore<T> extends AbstractWebStore<T> {
     private static Cookie getCookie( HttpServletRequest request, String cookieName ) {
         Cookie cookies[] = request.getCookies();
         if ( cookies != null ) {
-            System.out.println( "Request has cookies." );
             for ( Cookie cookie : cookies ) {
-                System.out.println( "Cookie name: " + cookie.getName() );
                 if ( cookie.getName().equals( cookieName ) ) {
                     return cookie;
                 }

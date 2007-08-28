@@ -78,9 +78,11 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
      */
     protected boolean preferHttpSessionStorage = false;
 
+    //passthrough attributes to the underlying DefaultWebSessionFactory
     protected WebStore<Serializable> sessionIdStore = null;
     protected WebStore<List<Principal>> principalsStore = null;
     protected WebStore<Boolean> authenticatedStore = null;
+    protected boolean requireSessionOnRequest = false;
 
     public SecurityContextWebInterceptor() {
     }
@@ -133,6 +135,14 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         this.authenticatedStore = authenticatedStore;
     }
 
+    public boolean isRequireSessionOnRequest() {
+        return requireSessionOnRequest;
+    }
+
+    public void setRequireSessionOnRequest( boolean requireSessionOnRequest ) {
+        this.requireSessionOnRequest = requireSessionOnRequest;
+    }
+
     protected void ensurePrincipalsStore() {
         if ( getPrincipalsStore() == null ) {
             if ( log.isDebugEnabled() ) {
@@ -144,7 +154,6 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             } else {
                 store = new SessionStore<List<Principal>>( PRINCIPALS_SESSION_KEY, false );
             }
-            store.setMutable( false ); //don't allow SecurityContexts to change the principals they were created from (security risk)
             store.init();
             setPrincipalsStore( store );
         }
@@ -178,6 +187,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             }
             DefaultWebSessionFactory factory = new DefaultWebSessionFactory();
             factory.setSessionFactory( securityManager );
+            factory.setRequireSessionOnRequest( isRequireSessionOnRequest() );
 
             WebStore<Serializable> sessionIdStore = getSessionIdStore();
             if ( sessionIdStore != null ) {
@@ -203,11 +213,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
         Boolean value = getAuthenticatedStore().retrieveValue( request, response );
-        if ( value != null ) {
-            return value;
-        } else {
-            return false;
-        }
+        return value != null && value;
     }
 
     protected SecurityContext buildSecurityContext( List<Principal> principals, boolean authenticated,
