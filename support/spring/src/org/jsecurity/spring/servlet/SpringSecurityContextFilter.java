@@ -14,8 +14,9 @@ import javax.servlet.ServletContext;
 public class SpringSecurityContextFilter extends SecurityContextFilter {
 
     public static final String SECURITY_MANAGER_BEAN_NAME_PARAM_NAME = "securityManagerBeanName";
+    public static final String DEFAULT_SECURITY_MANAGER_BEAN_NAME = "securityManager";
 
-    protected String securityManagerBeanName = "securityManager";
+    protected String securityManagerBeanName = DEFAULT_SECURITY_MANAGER_BEAN_NAME;
 
     public String getSecurityManagerBeanName() {
         return securityManagerBeanName;
