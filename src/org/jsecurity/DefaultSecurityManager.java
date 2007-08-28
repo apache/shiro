@@ -230,8 +230,8 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
                 if ( log.isWarnEnabled() ) {
                     String msg = "Constructing default CacheProvider using an in-memory HashTable.  This is " +
                         "NOT RECOMMENDED for production environments.  Please ensure ehcache.jar is in the classpath " +
-                        "and JSecurity will automatically use a production-quality CacheProvider implementation or " +
-                        "alternatively provide your own via the #setCacheProvider method.";
+                        "and JSecurity will automatically use a production-quality CacheProvider implementation, or " +
+                        "you may alternatively provide your own via the #setCacheProvider method.";
                     log.warn( msg );
                 }
                 cacheProvider = new HashtableCacheProvider();

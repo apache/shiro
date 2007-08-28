@@ -9,8 +9,11 @@
     <!-- =========================================================
       -  JSecurity configuration
       ============================================================ -->
-    <!-- Enable JSecurity post processor that automatically invokes init() and destroy() methods -->
-    <bean class="org.jsecurity.spring.SecurityBeanPostProcessor"/>
+    <!-- JSecurity post processor that automatically invokes init() and destroy() methods for
+         Spring-configured JSecurity objects so you don't have to 1) specify an init-method and destroy-method 
+         attributes for every bean definition and 2) even know which JSecurity objects require these methods to be
+         called. -->
+    <bean class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
@@ -38,10 +41,7 @@
 
     <!-- Enable JSecurity Annotations for Spring-configured beans: -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
-    <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="authorizer" ref="securityManager"/>
-    </bean>
-
+    <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"/>
 
     <!-- Ensure any Spring-based remote method invocations can be associated with a SecurityContext and a Session -->
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
