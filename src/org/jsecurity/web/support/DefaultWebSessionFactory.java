@@ -76,7 +76,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     // requireSessionOnRequest property is true, because a session would be created before the interceptor chain is
     // continued, where it is still 'legal' to modify the HTTP headers (i.e. set a Cookie).  If this property is set
     // to true in configuration (it is false by default), this implementation will automatically re-assign the
-    // sessionIdStore attribute to be a CookieStore in the init() method.  If this property is false, the init method
+    // idStore attribute to be a CookieStore in the init() method.  If this property is false, the init method
     // will automatically create the HttpSessionStore.
     protected WebStore<Serializable> idStore = null;
 
