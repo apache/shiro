@@ -41,6 +41,44 @@ import javax.servlet.ServletException;
  */
 public abstract class SecurityContextFilter extends WebInterceptorFilter {
 
+    public static final String SESSION_REQUIRED_ON_REQUEST_PARAM_NAME = "sessionRequiredOnRequest"; //default is false
+    public static final String PREFER_HTTP_SESSION_PARAM_NAME = "preferHttpSessionStorage"; //default is false
+
+    protected boolean getBoolean( String paramName, boolean defaultValue ) {
+        boolean value = defaultValue;
+
+        String stringValue = getFilterConfig().getInitParameter( paramName );
+        if ( stringValue != null ) {
+            stringValue = stringValue.trim();
+            if ( "".equals( stringValue ) ) {
+                if (log.isWarnEnabled() ) {
+                    log.warn( "Filter init param [" + paramName + "] does not have a " +
+                        "valid value (empty).  Defaulting to " + defaultValue + "." );
+                }
+            }
+            stringValue = stringValue.trim();
+
+            try {
+                value = Boolean.valueOf( stringValue );
+            } catch ( Exception e ) {
+                if ( log.isWarnEnabled() ) {
+                    log.warn( "Filter init param [" + paramName + "] with value [" + stringValue + "] is not a valid " +
+                        "boolean value (true|false).  Defaulting to " + defaultValue + "." );
+                }
+            }
+        }
+
+        return value;
+    }
+
+    protected boolean isSessionRequiredOnRequest() {
+        return getBoolean( SESSION_REQUIRED_ON_REQUEST_PARAM_NAME, false );
+    }
+
+    protected boolean isPreferHttpSessionStorage() {
+        return getBoolean( PREFER_HTTP_SESSION_PARAM_NAME, false );
+    }
+
     protected WebInterceptor createWebInterceptor() throws Exception {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
         org.jsecurity.SecurityManager securityManager = getSecurityManager();
@@ -49,6 +87,8 @@ public abstract class SecurityContextFilter extends WebInterceptorFilter {
             throw new ServletException( msg );
         }
         interceptor.setSecurityManager( securityManager );
+        interceptor.setRequireSessionOnRequest( isSessionRequiredOnRequest() );
+        interceptor.setPreferHttpSessionStorage( isPreferHttpSessionStorage() );
         interceptor.init();
         return interceptor;
     }
