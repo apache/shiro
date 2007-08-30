@@ -41,7 +41,7 @@ import javax.servlet.ServletException;
  */
 public abstract class SecurityContextFilter extends WebInterceptorFilter {
 
-    public static final String SESSION_REQUIRED_ON_REQUEST_PARAM_NAME = "sessionRequiredOnRequest"; //default is false
+    public static final String REQUIRE_SESSION_ON_REQUEST_PARAM_NAME = "requireSessionOnRequest"; //default is false
     public static final String PREFER_HTTP_SESSION_PARAM_NAME = "preferHttpSessionStorage"; //default is false
 
     protected boolean getBoolean( String paramName, boolean defaultValue ) {
@@ -72,7 +72,7 @@ public abstract class SecurityContextFilter extends WebInterceptorFilter {
     }
 
     protected boolean isSessionRequiredOnRequest() {
-        return getBoolean( SESSION_REQUIRED_ON_REQUEST_PARAM_NAME, false );
+        return getBoolean( REQUIRE_SESSION_ON_REQUEST_PARAM_NAME, false );
     }
 
     protected boolean isPreferHttpSessionStorage() {

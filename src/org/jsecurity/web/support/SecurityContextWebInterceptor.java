@@ -24,7 +24,6 @@
  */
 package org.jsecurity.web.support;
 
-import org.jsecurity.JSecurityException;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
@@ -32,7 +31,6 @@ import org.jsecurity.context.support.InvalidSecurityContextException;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
-import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
 
 import javax.servlet.ServletRequest;
@@ -69,7 +67,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     protected SecurityManager securityManager = null;
 
-    protected WebSessionFactory webSessionFactory = null;
+    protected SessionWebInterceptor sessionWebInterceptor = null;
 
     /**
      * Determines whether or not to use the HttpSession as the storage mechanism for principals or the JSecurity
@@ -93,14 +91,6 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     public void setSecurityManager( SecurityManager securityManager ) {
         this.securityManager = securityManager;
-    }
-
-    public WebSessionFactory getWebSessionFactory() {
-        return webSessionFactory;
-    }
-
-    public void setWebSessionFactory( WebSessionFactory webSessionFactory ) {
-        this.webSessionFactory = webSessionFactory;
     }
 
     public boolean isPreferHttpSessionStorage() {
@@ -143,6 +133,14 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         this.requireSessionOnRequest = requireSessionOnRequest;
     }
 
+    protected SessionWebInterceptor getSessionWebInterceptor() {
+        return sessionWebInterceptor;
+    }
+
+    protected void setSessionWebInterceptor( SessionWebInterceptor sessionWebInterceptor ) {
+        this.sessionWebInterceptor = sessionWebInterceptor;
+    }
+
     protected void ensurePrincipalsStore() {
         if ( getPrincipalsStore() == null ) {
             if ( log.isDebugEnabled() ) {
@@ -181,21 +179,21 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             String msg = "SecurityManager property must be set.";
             throw new IllegalStateException( msg );
         }
-        if ( getWebSessionFactory() == null ) {
+        if ( getSessionWebInterceptor() == null ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing default WebSessionFactory instance..." );
+                log.debug( "Initializing default SessionWebInterceptor instance..." );
             }
-            DefaultWebSessionFactory factory = new DefaultWebSessionFactory();
-            factory.setSessionFactory( securityManager );
-            factory.setRequireSessionOnRequest( isRequireSessionOnRequest() );
+            SessionWebInterceptor swi = new SessionWebInterceptor();
+            swi.setSessionFactory( securityManager );
+            swi.setRequireSessionOnRequest( isRequireSessionOnRequest() );
 
             WebStore<Serializable> sessionIdStore = getSessionIdStore();
             if ( sessionIdStore != null ) {
-                factory.setIdStore( sessionIdStore );
+                swi.setIdStore( sessionIdStore );
             }
 
-            factory.init();
-            setWebSessionFactory( factory );
+            swi.init();
+            setSessionWebInterceptor( swi );
         }
 
         ensurePrincipalsStore();
@@ -216,16 +214,17 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         return value != null && value;
     }
 
-    protected SecurityContext buildSecurityContext( List<Principal> principals, boolean authenticated,
-                                                    InetAddress inetAddress, Session session,
-                                                    SecurityManager securityManager ) {
+    protected SecurityContext createSecurityContext( List<Principal> principals, boolean authenticated,
+                                                     InetAddress inetAddress, Session session,
+                                                     SecurityManager securityManager ) {
         return new DelegatingSecurityContext( principals, authenticated, inetAddress, session, securityManager );
     }
 
-    protected SecurityContext buildSecurityContext( ServletRequest request,
-                                                    ServletResponse response,
-                                                    List<Principal> principals,
-                                                    boolean authenticated ) {
+    protected SecurityContext createSecurityContext( ServletRequest request,
+                                                     ServletResponse response,
+                                                     List<Principal> principals,
+                                                     boolean authenticated,
+                                                     Session existing ) {
         SecurityContext securityContext;
 
         SecurityManager securityManager = getSecurityManager();
@@ -237,19 +236,16 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             throw new IllegalStateException( message );
         }
 
-        Session session = getWebSessionFactory().getSession( (HttpServletRequest)request, (HttpServletResponse)response );
-
-        securityContext = buildSecurityContext( principals, authenticated,
-            getInetAddress( request ), session, securityManager );
+        securityContext = createSecurityContext( principals, authenticated, ThreadContext.getInetAddress(), existing, securityManager );
 
         return securityContext;
     }
 
 
-    public SecurityContext buildSecurityContext( ServletRequest request, ServletResponse response ) {
+    public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response, Session existing ) {
         List<Principal> principals = getPrincipals( request, response );
         boolean authenticated = isAuthenticated( request, response );
-        return buildSecurityContext( request, response, principals, authenticated );
+        return createSecurityContext( request, response, principals, authenticated, existing );
     }
 
     protected void bindForSubsequentRequests( HttpServletRequest request, HttpServletResponse response, SecurityContext securityContext ) {
@@ -263,7 +259,33 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
         bindInetAddressToThread( request );
 
-        SecurityContext securityContext = buildSecurityContext( request, response );
+        //enable the Session if one is associated w/ the request.  This will bind it to the ThreadContext as well.
+        SessionWebInterceptor sessionInterceptor = getSessionWebInterceptor();
+        if ( sessionInterceptor == null ) {
+            String msg = "SessionWebInterceptor property must be set.  This is done by default during the init() " +
+                "method.  Please ensure init() is called before using this instance.";
+            throw new IllegalStateException( msg );
+        }
+        sessionInterceptor.preHandle( request, response );
+
+        //bind a dummy SecurityContext to the thread just to support any components that require it.  This is primarily
+        //only here to make any existing session available to the createSecurityContext methods (and child methods)
+        //via SecurityContext.getSession() in case it is needed.  This isn't very 'clean' per se, but it does prevent
+        //any children components (such as WebStores) from knowing about thread locals, which I think is 'cleaner'
+        //overall - Les.
+        Session session = getSession( request, response );
+        SecurityContext dummy =
+            new DelegatingSecurityContext( (Principal)null, false, ThreadContext.getInetAddress(), session, getSecurityManager() );
+        ThreadContext.bind( dummy );
+
+        //now contstruct the 'real' security context to use during the request's thread:
+        SecurityContext securityContext = null;
+        try {
+            securityContext = createSecurityContext( request, response, session );
+        } finally {
+            //remove the dummy in any case
+            ThreadContext.unbindSecurityContext();
+        }
         if ( securityContext != null ) {
             ThreadContext.bind( securityContext );
         }
@@ -280,36 +302,22 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             try {
                 securityContext.getAllPrincipals();
             } catch ( InvalidSecurityContextException e ) {
-                if  ( log.isTraceEnabled() ) {
+                if ( log.isTraceEnabled() ) {
                     log.trace( "SecurityContext was invalidated during the request - returning quietly (a new " +
-                        "one will be created on the next request)." );    
+                        "one will be created on the next request)." );
                 }
                 return;
             }
 
             bindForSubsequentRequests( request, response, securityContext );
-
-            Session session = null;
-            try {
-                session = securityContext.getSession( false );
-                if ( session != null ) {
-                    //TODO this is ugly - think of a way to make it cleaner (add method to WebSessionFactory interface?)
-                    WebSessionFactory wsf = getWebSessionFactory();
-                    if ( wsf instanceof DefaultWebSessionFactory ) {
-                        ( (DefaultWebSessionFactory)wsf ).storeSessionId( session, request, response );
-                    }
-                }
-            } catch ( JSecurityException e ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Encountered exception while trying to bind JSecurity Session for subsequent requests.  " +
-                        "Ignoring and returning (next request will create a new session if necessary).", e );
-                }
-            }
         }
+
+        getSessionWebInterceptor().postHandle( request, response );
     }
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
         throws Exception {
+        getSessionWebInterceptor().afterCompletion( request, response, exception );
         ThreadContext.unbindSecurityContext();
         unbindInetAddressFromThread();
     }

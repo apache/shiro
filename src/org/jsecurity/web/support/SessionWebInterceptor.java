@@ -54,11 +54,10 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
 
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
         throws Exception {
-        //relies on this interceptor being _after_ the SecurityContext interceptor in a chain:
-        SecurityContext securityContext = ThreadContext.getSecurityContext();
-        if ( securityContext != null ) {
-            //force creation of session:
-            securityContext.getSession();
+        //will force a session to be created if requireSessionOnRequest is true, otherwise does nothing:
+        Session session = getSession( request, response );
+        if ( session != null ) {
+            ThreadContext.bind( session );
         }
         return true;
     }
@@ -67,7 +66,7 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
         throws Exception {
         //check to see if the Session object was created after the request started (this can happen at any point when
         //securityContext.getSession() is called:
-        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        SecurityContext securityContext = getSecurityContext( request, response );
         if ( securityContext != null ) {
             try {
                 Session session = securityContext.getSession( false );
@@ -77,7 +76,7 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
             } catch ( InvalidSecurityContextException e ) {
                 if ( log.isTraceEnabled() ) {
                     log.trace( "Unable to acquire a session from an invalidated SecurityContext - ignoring and " +
-                        "continuing (the next request will create a new session)." );
+                        "continuing (the next request can create a new session if necessary)." );
                 }
             }
         }
@@ -85,5 +84,6 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
 
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
         throws Exception {
+        ThreadContext.unbindSession();
     }
 }

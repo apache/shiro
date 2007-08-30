@@ -27,12 +27,14 @@ package org.jsecurity.web.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.session.Session;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ThreadContext;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -64,6 +66,11 @@ public abstract class SecurityWebSupport implements Initializable {
 
     public SecurityContext getSecurityContext( ServletRequest request, ServletResponse response ) {
         return ThreadContext.getSecurityContext();
+    }
+
+    //Default implementation just returns the Session bound to the thread and ignores the request/response arguments
+    protected Session getSession( HttpServletRequest request, HttpServletResponse response ) {
+        return ThreadContext.getSession();
     }
 
     protected void bindInetAddressToThread( HttpServletRequest request ) {
