@@ -43,9 +43,10 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * Builds a previously initialized {@link org.jsecurity.context.SecurityContext SecurityContext} based on a web request.
- * <p/>
- * <p>Primarily a parent class to consolidate common behaviors in obtaining a SecurityContext in different
+ * Builds a {@link org.jsecurity.context.SecurityContext SecurityContext} based on a web request and makes it
+ * accessible via the {@link ThreadContext}.
+ * 
+ * <p>Consolidates common behaviors in obtaining a SecurityContext in different
  * web environments (e.g. Servlet Filters, framework specific interceptors, etc).
  *
  * @author Les Hazlewood
