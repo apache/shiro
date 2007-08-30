@@ -28,6 +28,7 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
+import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
 /**
@@ -47,6 +48,14 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
     }
 
     protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
-        return new DelegatingSecurityContext( info.getPrincipals(), true, ThreadContext.getInetAddress(), null, securityManager );
+
+        //get any existing session that may exist - we don't want to lose it:
+        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        Session session = null;
+        if ( securityContext != null ) {
+            session = securityContext.getSession( false );
+        }
+
+        return new DelegatingSecurityContext( info.getPrincipals(), true, ThreadContext.getInetAddress(), session, securityManager );
     }
 }

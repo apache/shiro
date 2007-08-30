@@ -245,6 +245,63 @@ public abstract class ThreadContext {
 
 
     /**
+     * Convenience method that simplifies retrieval of a thread-bound Session.  If there is no
+     * Session bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
+     * for the following:
+     * <pre>
+     * return (Session)get( SESSION_KEY );</pre>
+     *
+     * <p>This method only returns the bound value if it exists - it does not remove it
+     * from the thread.  To remove it, one must call {@link #unbindSession() unbindSession} instead.
+     *
+     * @return the Session object bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @since 0.2
+     */
+    public static Session getSession() {
+        return (Session)get( SESSION_KEY );
+    }
+
+    /**
+     * Convenience method that simplifies binding a Session to the ThreadContext.
+     *
+     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
+     * ThreadContext key names.  The implementation is simple in that, if the session is not <tt>null</tt>,
+     * it binds it to the thread, i.e.:
+     *
+     * <pre>
+     * if (session != null) {
+     *     put( SESSION_KEY, session );
+     * }</pre>
+     *
+     * @param session the Session object to bind to the thread.  If the argument is null, nothing will be done.
+     * @since 0.2
+     */
+    public static void bind( Session session ) {
+        if ( session != null ) {
+            put( SESSION_KEY, session );
+        }
+    }
+
+    /**
+     * Convenience method that simplifies removal of a thread-local Session from the thread.
+     *
+     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * merely a conveient wrapper for the following:
+     *
+     * <pre>
+     * return (Session)remove( SESSION_KEY );</pre>
+     *
+     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * thread execution), you should use the {@link #getSession() getSession()} method for that purpose.
+     *
+     * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
+     * @since 0.2
+     */
+    public static Session unbindSession() {
+        return (Session)remove( SESSION_KEY );
+    }
+
+    /**
      * Convenience method that simplifies retrieval of a thread-bound InetAddress.  If there is no
      * InetAddress bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
      * for the following:

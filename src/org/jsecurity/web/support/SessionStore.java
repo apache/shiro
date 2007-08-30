@@ -27,16 +27,25 @@ public class SessionStore<T> extends AbstractWebStore<T> {
         super( name, checkRequestParams );
     }
 
-    public T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
-        T value = null;
+    protected Session getSession( HttpServletRequest request, HttpServletResponse response ) {
+
+        Session session = null;
 
         SecurityContext securityContext = getSecurityContext( request, response );
 
         if ( securityContext != null ) {
-            Session session = securityContext.getSession( false );
-            if ( session != null ) {
-                value = (T)session.getAttribute( getName() );
-            }
+            session = securityContext.getSession( false );
+        }
+
+        return session;
+    }
+
+    public T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
+        T value = null;
+
+        Session session = getSession( request, response );
+        if ( session != null ) {
+            value = (T)session.getAttribute( getName() );
         }
 
         if ( value != null ) {
