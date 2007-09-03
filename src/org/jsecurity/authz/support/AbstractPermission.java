@@ -5,18 +5,13 @@ import org.jsecurity.authz.Permission;
 import java.io.Serializable;
 
 /**
- * TODO class JavaDoc
+ * Simple default/abstract implementation of the core Permission interface.
  *
+ * @since 0.1
  * @author Les Hazlewood
  */
 public abstract class AbstractPermission implements Permission, Serializable {
 
-    /**
-     * Used to specify all possible names when used in the {@link #getName() name} field.
-     */
-    public static final String WILDCARD = "*";
-    public static final char WILDCARD_CHAR = '*';
-    
     protected String name = null;
 
     protected AbstractPermission() {
@@ -51,14 +46,6 @@ public abstract class AbstractPermission implements Permission, Serializable {
         return implies;
     }
 
-    /**
-     * Returns a string describing this Permission.  The convention is to
-     * specify the class name, the permission name, and the actions in
-     * the following format: '("ClassName" "name" "actions")'.
-     * <p/>
-     * <b>N.B.</b> Subclasses should not override this method.  Instead, they should override the
-     * {@link #toStringBuffer()} implementation which is more efficient.
-     */
     public String toString() {
         return toStringBuffer().toString();
     }

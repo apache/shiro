@@ -35,42 +35,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * An AbstractTargetedPermission represents an action or actions that might be performed on a single
- * identifiable object instance or multiple instances of a particular object type.
- *
- * <p>The name of this Permission is an object's <tt>identifier</tt>, or the
- * {@link #WILDCARD WILDCARD} constant.
- *
- * <p>An instance's <tt>identifier</tt> is obtained in a system-specific manner.  For example,
- * in most database-driven applications, this identifier is usally a primary key value that is
- * obtained from an instance's <tt>getId()</tt> (or similar) method.  
- *
- * <p>The {@link #WILDCARD WILDCARD} constant represents <b>all</b> instances of a particular
- * object type, or if used in the actions field, <b>all</b> possible actions.
- *
- * <p>For example, the following instance:
- *
- * <pre>new com.domain.PrinterPermission( WILDCARD, "print" );</pre>
- *
- * means that any <tt>role</tt> assigned that permission would have
- * the ability to "print" documents to any printer available to a system.  Such a permission
- * could be assigned to all users in a system where printers are not considered
- * restricted resources.  Then any user may print to any printer they wish.
- *
- * <p>This instance:
- * <pre>new com.domain.UserPermission( aUser.getId(), "read, write" );</pre>
- *
- * means that any <tt>role</tt> assigned that permission would have
- * the ability to "read" (view) and "write" (change) the user account data for the user with the
- * system id <tt>aUser.getId()</tt>.  Such a permission might be associated with the user
- * account with the same Id, so the user could edit their own account information.
- *
- * <p>Finally, this instance:
- * <pre>new com.domain.UserPermission( WILDCARD, WILDCARD );</pre>
- *
- * means that the <tt>role</tt> assigned that permission would have the
- * ability to do anything (create, read, update, delete) <em>any</em> user account.  Such a
- * permission would generally be assigned to an administrative role.
+ * Simple/default implementation of the TargetedPermission interface.
  *
  * @since 0.2
  * @author Les Hazlewood
@@ -224,32 +189,31 @@ public abstract class AbstractTargetedPermission extends AbstractPermission impl
     /**
      * Returns a "canonically ordered" Set of all actions that this permission
      * class understands.  This set is used to verify instantiation of a new permission.
-     * <p/>
+     *
      * <p>That is, when a permission is being instantiated, the actions given to the constructor
-     * are verified to be either equivalent to or a proper subset of the values found in the
-     * Set returned by this method.
-     * <p/>
+     * are verified to be either equivalent to or a proper subset of the values returned by this method.
+     *
      * <p>Since this Set never changes for any given AbstractTargetedPermission subclass, the returned Set
      * should be constructed via a static initializer that will be executed when the class
      * is loaded by the class loader.  This ensures the Set is only constructed once for
      * <em>all</em> instances, better for performance.
-     * <p/>
+     *
      * <p>E.g.:
-     * <p/>
+     *
      * <pre>public class MyPermission extends AbstractTargetedPermission {
-     * ...
-     * private static final LinkedHashSet&lt;String&gt; possibleActions = initPossibleActionsSet();
-     * ...
-     * private static LinkedHashSet&lt;String&gt; initPossibleActionsSet() {
-     * LinkedHashSet&lt;String&gt; possibleActions = new LinkedHashSet&lt;String&gt;();
-     * //make sure the actions are added in canonical order:
-     * possibleActions.add( "action1" );
-     * possibleActions.add( "action2" );
-     * ...
-     * return possibleActions;
-     * }
-     * ...
-     * }</pre>
+    ...
+    private static final LinkedHashSet&lt;String&gt; possibleActions = initPossibleActionsSet();
+    ...
+    private static LinkedHashSet&lt;String&gt; initPossibleActionsSet() {
+        LinkedHashSet&lt;String&gt; possibleActions = new LinkedHashSet&lt;String&gt;();
+        //make sure the actions are added in canonical order:
+        possibleActions.add( "action1" );
+        possibleActions.add( "action2" );
+        ...
+        return possibleActions;
+    }
+    ...
+}</pre>
      *
      * @return the set of actions that are supported by this permission type.
      */

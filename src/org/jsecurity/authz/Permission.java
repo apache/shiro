@@ -57,23 +57,67 @@ package org.jsecurity.authz;
  */
 public interface Permission {
 
+    public static final String WILDCARD = "*";
+    public static final char WILDCARD_CHAR = '*';
+
     /**
-     * Returns the 'name' of this permission. typically whatever value that best represents behavior or access to a
-     * resource.
+     * Returns the 'name' of this permission, typically whatever value that best represents behavior or access to a
+     * resource.  If the value returned is the {@link #WILDCARD WILDCARD} constant, it means <b>all</b> possible name
+     * values for the <tt>Permission</tt> type.
      *
      * <p>Somewhat abstract, the 'name' of a standard permission can mean whatever
      * the application wishes it to mean.  In many systems it would be something like 'createUsers' or
      * 'userSearch', or anything else the application feels is meaningful.
      *
-     * @return the 'name' of the permission, where the name value usually represents behavior or access to a resource.
+     * <p>The {@link #WILDCARD WILDCARD} constant means it would <em>{@link #implies(Permission) imply}</em> all other
+     * Permission <tt>name</tt>s of the same Permission type.  In other words, the following must always be true:
+     *
+     * <p><code><pre>Permission wildcardPerm = new com.domain.SimpleNamedermission( WILDCARD );
+Permission specificPerm = new com.domain.SimpleNamedPermission( "anyValue" );
+wildcardPerm.implies( specificPerm ) === true</pre></code>
+     *
+     * @return the 'name' of the permission, where the name value usually represents some named behavior or resource
+     * access.
      */
     String getName();
 
+    /**
+     * Returns <tt>true</tt> if this current instance <em>implies</em> all the functionality and/or resource access
+     * described by the specified <tt>Permission</tt> argument, <tt>false</tt> otherwise.
+     *
+     * <p>That is, this current instance must be exactly equal to or a <em>superset</em> of the functionalty
+     * and/or resource access described by the given <tt>Permission</tt> argument.  Yet another way of saying this
+     * would be:
+     *
+     * <p>If &quot;permission1 implies permission2&quot;, then any subject/user granted <tt>permission1</tt> would also
+     * have the ability defined by <tt>permission2</tt>.
+     *
+     * @param p the permission to check for behavior/functionality comparison.
+     * @return <tt>true</tt> if this current instance <em>implies</em> all the functionality and/or resource access
+     * described by the specified <tt>Permission</tt> argument, <tt>false</tt> otherwise.
+     */
     boolean implies( Permission p );
 
+    /**
+     * Returns a string describing this Permission.  The convention is to
+     * specify the class name and permission name in the the following format: <tt>("ClassName" "name")</tt>.
+     * @return the String representation of this <tt>Permission</tt> instance, preferably prescribing to this JavaDoc's
+     * recommended format.
+     */
     String toString();
 
+    /**
+     * Returns whether or not this given <tt>Permission</tt> instance is logically identical to the given
+     * argument.  Note this method implementation should check for actual logical equality and not permission
+     * implication - permission implication is reserved for the {@link #implies implies} method.
+     * @param o the object to test for equality comparison.
+     * @return <tt>true</tt> if the given argument is logically identical to this instance, false otherwise.
+     */
     boolean equals( Object o );
 
+    /**
+     * Returns the hashCode representation of the instance.
+     * @return the hashCode representation of the instance.
+     */
     int hashCode();
 }
