@@ -37,7 +37,7 @@ public class HasPermissionTag extends PermissionTag {
     }
 
     protected boolean showTagBody( Permission p ) {
-        return implies( p );
+        return isPermitted( p );
     }
 
 }

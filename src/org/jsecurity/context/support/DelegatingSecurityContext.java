@@ -27,7 +27,6 @@ package org.jsecurity.context.support;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
@@ -163,7 +162,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
-    public Principal getPrincipalByType( Class<Principal> principalType ) throws NoSuchPrincipalException {
+    public Principal getPrincipalByType( Class<Principal> principalType ) {
         assertValid();
         for ( Principal principal : principals ) {
             if ( principalType.isAssignableFrom( principal.getClass() ) ) {
@@ -207,12 +206,12 @@ public class DelegatingSecurityContext implements SecurityContext {
         return getPrincipal() != null && securityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
     }
 
-    public boolean implies( Permission permission ) {
+    public boolean isPermitted( Permission permission ) {
         assertValid();
         return getPrincipal() != null && securityManager.isPermitted( getPrincipal(), permission );
     }
 
-    public boolean[] implies( List<Permission> permissions ) {
+    public boolean[] isPermitted( List<Permission> permissions ) {
         assertValid();
         if ( getPrincipal() != null ) {
             return securityManager.isPermitted( getPrincipal(), permissions );
@@ -221,7 +220,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         }
     }
 
-    public boolean impliesAll( Collection<Permission> permissions ) {
+    public boolean isPermittedAll( Collection<Permission> permissions ) {
         assertValid();
         return getPrincipal() != null && securityManager.isPermittedAll( getPrincipal(), permissions );
     }
