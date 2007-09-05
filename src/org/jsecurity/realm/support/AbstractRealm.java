@@ -323,19 +323,19 @@ public abstract class AbstractRealm implements Realm {
     public boolean isPermitted(Principal principal, Permission permission) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
-        return info.implies( permission );
+        return info.isPermitted( permission );
     }
 
     public boolean[] isPermitted(Principal principal, List<Permission> permissions) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
-        return info.implies( permissions );
+        return info.isPermitted( permissions );
     }
 
     public boolean isPermittedAll(Principal principal, Collection<Permission> permissions) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
-        return info.impliesAll( permissions );
+        return info.isPermittedAll( permissions );
     }
 
     public void checkPermission(Principal principal, Permission permission) throws AuthorizationException {

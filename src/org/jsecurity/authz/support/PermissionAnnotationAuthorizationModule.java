@@ -124,15 +124,15 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         }
 
         Permission p = createPermission( action );
-        if ( securityContext.implies( p ) ) {
+        if ( securityContext.isPermitted( p ) ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "SecurityContext implies permission [" + p +
+                log.debug( "SecurityContext is permitted [" + p +
                            "]. Returning grant vote." );
             }
             return AuthorizationVote.grant;
         } else {
             if ( log.isDebugEnabled() ) {
-                log.debug( "SecurityContext does not imply permission [" + p +
+                log.debug( "SecurityContext is not permitted [" + p +
                            "].  Returning deny vote." );
             }
             return AuthorizationVote.deny;

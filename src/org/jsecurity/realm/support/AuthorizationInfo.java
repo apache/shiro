@@ -139,9 +139,9 @@ public class AuthorizationInfo implements Serializable {
 
 
     /**
-     * @see SecurityContext#implies(Permission)
+     * @see SecurityContext#isPermitted(Permission)
      */
-    public boolean implies(Permission permission) {
+    public boolean isPermitted(Permission permission) {
 
         if( permissions != null ) {
             for( Permission perm : permissions ) {
@@ -168,26 +168,26 @@ public class AuthorizationInfo implements Serializable {
     }
 
     /**
-     * @see SecurityContext#implies(java.util.List)
+     * @see SecurityContext#isPermitted(java.util.List)
      */
-    public boolean[] implies(List<Permission> permissions) {
+    public boolean[] isPermitted(List<Permission> permissions) {
         boolean[] implies = new boolean[permissions.size()];
 
         for( int i = 0; i < permissions.size(); i++ ) {
-            implies[i] = implies( permissions.get(i) );
+            implies[i] = isPermitted( permissions.get(i) );
         }
         return implies;
     }
 
 
     /**
-     * @see org.jsecurity.context.SecurityContext#impliesAll(java.util.Collection)
+     * @see org.jsecurity.context.SecurityContext#isPermittedAll(java.util.Collection)
      */
-    public boolean impliesAll(Collection<Permission> permissions) {
+    public boolean isPermittedAll(Collection<Permission> permissions) {
 
         if( permissions != null ) {
             for( Permission perm : permissions ) {
-                if( !implies(perm) ) {
+                if( !isPermitted(perm) ) {
                     return false;
                 }
             }
@@ -200,7 +200,7 @@ public class AuthorizationInfo implements Serializable {
      * @see org.jsecurity.context.SecurityContext#checkPermission(Permission)
      */
     public void checkPermission(Permission permission) throws AuthorizationException {
-        if( !implies( permission ) ) {
+        if( !isPermitted( permission ) ) {
             throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
         }
     }
@@ -212,7 +212,7 @@ public class AuthorizationInfo implements Serializable {
     public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
         if( permissions != null ) {
             for( Permission permission : permissions ) {
-                if( !implies( permission ) ) {
+                if( !isPermitted( permission ) ) {
                    throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
                 }
             }

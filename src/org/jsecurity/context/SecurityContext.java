@@ -26,7 +26,6 @@ package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.NoSuchPrincipalException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.session.Session;
 
@@ -48,19 +47,20 @@ public interface SecurityContext {
 
     /**
      * Returns the primary identifier of the subject associated with this
-     * <tt>SecurityContext</tt> (usually a user id or username).  This is a
-     * convenience method for contexts that only use a single principal.  If multiple
+     * <tt>SecurityContext</tt> (usually a user id or username), or <tt>null</tt> if there is no subject/user
+     * yet associated with the security context (e.g. hasn't logged in yet)?.
+     *
+     * <p>This is a convenience method for contexts that only use a single principal.  If multiple
      * principals are associated with the context, the primary principal will be returned.
      * The interpretation of the meaning of &quot;primary principal&quot; is left to the implementation
      * (although most will choose a unique identifier such as a user id or username).
      * @return the primary principal (a.k.a. identifying attribute) of the subject associated with this SecurityContext.
-     * @throws org.jsecurity.authz.NoSuchPrincipalException is thrown if no principals are associated with this
-     * security context.
      */
-    Principal getPrincipal() throws NoSuchPrincipalException;
+    Principal getPrincipal();
 
     /**
-     * Returns all principals associated with this <tt>SecurityContext</tt>.
+     * Returns all principals associated with this <tt>SecurityContext</tt>, or an empty collection if no principals
+     * are yet associated with this security context.
      * @return a collection of principals associated with this context, or an empty collection
      * if no principals are associated with this security context
      */
@@ -68,19 +68,22 @@ public interface SecurityContext {
 
     /**
      * Returns a single principal assignable from the specified type
-     * that is associated with this <tt>SecurityContext</tt>.  If multiple principals of
+     * that is associated with this <tt>SecurityContext</tt>, or <tt>null</tt> if there are none of the specified type.
+     *
+     * <p>If multiple principals of
      * this type are associated with this context, it is up to the specific implementation as
      * to which principal will be returned and may be undefined.
-     * @param principalType the principal type that should be returned.
+     *
+     * @param principalType the type of the principal that should be returned.
      * @return a principal of the specified type.
-     * @throws NoSuchPrincipalException if no principals of this type are associated with this
-     * context.
      */
-    Principal getPrincipalByType( Class<Principal> principalType ) throws NoSuchPrincipalException;
+    Principal getPrincipalByType( Class<Principal> principalType );
 
     /**
      * Returns all principals assignable from the specified type that is associated with
-     * this <tt>SecurityContext<tt>.
+     * this <tt>SecurityContext<tt>, or an empty collection if no principals are yet associated with this security
+     * context.
+     *
      * @param principalType the principal type that should be returned.
      * @return a collection of principals that are assignable from the specified type, or
      * an empty collection if no principals of this type are associated.
@@ -117,36 +120,36 @@ public interface SecurityContext {
     boolean hasAllRoles( Collection<String> roles );
 
     /**
-     * Checks if the given permission is associated with this context.
+     * Returns <tt>true</tt> if this context is
+     * permitted to perform an action or access a resource summarized by the specified permission.
+     *
      * @param permission the permission that is being checked.
-     * @return true if the user associated with this context implies the permission, false otherwise.
+     * @return true if the user associated with this context is permitted, false otherwise.
      */
-    boolean implies( Permission permission );
+    boolean isPermitted( Permission permission );
 
     /**
-     * Checks a set of permissions to see if they are implied by this
-     * context and returns a boolean array indicating which permissions are implied by this context.
-     *
-     * <p>This is primarily a performance-enhancing method to help reduce the number of
-     * {@link #implies} invocations over the wire in client/server systems.
+     * Checks a collection of permissions to see if this context is permitted any of the specified permissions, and
+     * and returns a boolean array indicating which ones are permitted.
      *
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value indicates the permission is implied by the user
-     * associated with this context.  A false value indicates the permission is not implied.
+     * permissions in the given list.  A true value at an index indicates the context is permitted for
+     * for the associated <tt>Permission</tt> object in the list.  A false value at an index
+     * indicates otherwise.
      */
-    boolean[] implies( List<Permission> permissions );
+    boolean[] isPermitted( List<Permission> permissions );
 
     /**
-     * Checks if the user has all of the given permissions.
+     * Returns <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
      * @param permissions the permissions to be checked.
-     * @return true if the user has all permissions, false otherwise.
+     * @return <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
      */
-    boolean impliesAll( Collection<Permission> permissions );
+    boolean isPermittedAll( Collection<Permission> permissions );
 
 
     /**
-     * A convenience method to check if this context implies the specified permission.
+     * A convenience method to check if this context isPermitted the specified permission.
      * If the security context does not imply the given permission, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permission the permission to check.
@@ -156,7 +159,7 @@ public interface SecurityContext {
 
 
     /**
-     * A convenience method for checking if this context implies all of the specified permissions.
+     * A convenience method for checking if this context isPermitted all of the specified permissions.
      * If the security context does not imply all of the given permissions, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permissions the permissions to check.
