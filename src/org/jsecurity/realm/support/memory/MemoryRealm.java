@@ -64,14 +64,11 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * A mapping between a user's principal and the user's authorization information.
-     */
-    private Map<Principal, AuthorizationInfo> authorizationInfoMap;
-
     private Set<AccountEntry> accounts;
-
     private Map<String,String> rolesPermissionsMap = new HashMap<String,String>();
+
+    protected Map<String,SimpleUser> userMap = new HashMap<String, SimpleUser>();
+    protected Map<String,SimpleRole> roleMap = new HashMap<String,SimpleRole>();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -122,22 +119,7 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
     ============================================*/
     public void init()  {
         if( accounts != null && !accounts.isEmpty() ) {
-
-            Map<Principal, AuthorizationInfo> authorizationInfoMap = new HashMap<Principal, AuthorizationInfo>( accounts.size() );
-            for( AccountEntry entry : accounts ) {
-
-                String[] roleArray = entry.getRoles().split( "," );
-                Set<String> roles = new HashSet<String>( roleArray.length );
-                for( String role : roleArray ) {
-                    roles.add( role.trim() );
-                }
-
-                Set<Permission> permissions = getPermissionsForRoles( roles );
-
-                AuthorizationInfo info = new AuthorizationInfo( roles, permissions );
-                authorizationInfoMap.put( new UsernamePrincipal( entry.getUsername() ), info );
-            }
-            this.authorizationInfoMap = authorizationInfoMap;
+            //todo - translate into SimpleUser and SimpleRole objects
         }
 
     }
@@ -188,7 +170,6 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
                 Set<Permission> rolePermissions = parsePermissions( permissionsString );
                 permissions.addAll( rolePermissions );
             }
-
         }
 
         return permissions;
@@ -255,7 +236,8 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
 
 
     protected AuthorizationInfo getAuthorizationInfo(Principal principal) {
-        return authorizationInfoMap.get( principal );
+        //return authorizationInfoMap.get( principal );
+        return null;
     }
 
 }

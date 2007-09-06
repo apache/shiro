@@ -71,12 +71,15 @@ public class AccountEntry {
         this.password = password;
     }
 
-    public AccountEntry(String username, String password, String roles) {
-        this.username = username;
-        this.password = password;
-        this.roles = toSet( roles, "," );
+    public AccountEntry(String username, String password, String rolenames) {
+        this( username, password, toSet( rolenames, "," ) );
     }
 
+    public AccountEntry( String username, String password, Set<String> rolenames ) {
+        this.username = username;
+        this.password = password;
+        this.roles = rolenames;
+    }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -116,7 +119,7 @@ public class AccountEntry {
         }
     }
 
-    protected Set<String> toSet( String delimited, String delimiter ) {
+    protected static Set<String> toSet( String delimited, String delimiter ) {
         Set<String> values = null;
 
         if ( delimited != null && !"".equals( delimited.trim() ) ) {
@@ -133,7 +136,7 @@ public class AccountEntry {
         return values;
     }
 
-    protected String toDelimitedString( Collection<String> values, String delimiter ) {
+    protected static String toDelimitedString( Collection<String> values, String delimiter ) {
         if ( values == null || values.isEmpty() ) {
             return null;
         }
