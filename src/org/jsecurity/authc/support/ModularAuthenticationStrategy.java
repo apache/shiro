@@ -29,6 +29,8 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
+import java.util.List;
+
 /**
  * A <tt>ModularAuthenticationStrategy</tt> implementation assists the {@link ModularRealmAuthenticator} during the
  * log-in process in a pluggable realm (PAM) environment.
@@ -44,6 +46,16 @@ import org.jsecurity.realm.Realm;
  * @author Les Hazlewood
  */
 public interface ModularAuthenticationStrategy {
+
+    /**
+     * Method invoked by the ModularAuthenticator signifying that the authentication process is about to begin for the
+     * specified <tt>token</tt> - called before any <tt>Realm</tt> is actually invoked.
+     *
+     * @param realms the Realms that will be consulted during the authentication process for the specified token.
+     * @param token the Principal/Credential representation to be used during authentication for a corresponding subject.
+     * @throws AuthenticationException if the strategy implementation does not wish the Authentication attempt to start.
+     */
+    void beforeAllAttempts( List<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator just prior to the realm being consulted for authentication info,

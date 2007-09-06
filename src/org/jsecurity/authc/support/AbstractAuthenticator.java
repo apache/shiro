@@ -47,7 +47,7 @@ import org.jsecurity.util.Initializable;
  * attempts.
  *
  * <p>This class delegates the actual authentication attempt to subclasses but will send events based on a
- * successful or failed attempt, create a {@link SecurityContext SecurityContext} in the event of a successful attmept,
+ * successful or failed attempt, create a {@link SecurityContext SecurityContext} in the event of a successful attempt,
  * and bind this <tt>SecurityContext</tt> to the application for further use.
  *
  * <p>In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
@@ -55,24 +55,24 @@ import org.jsecurity.util.Initializable;
  *
  * <p>This implementation employs an event-based architecture so other components may react to both failed and
  * successful authentication attempts.  Failure or success events are triggered based on the
- * subclass's {@link #doAuthenticate} implementation throwing an exception or not, respectively (i.e. a failure event
- * will be created and sent if the authentication attempt fails, and a success event will be created and sent if the
- * authentication event is successful.  The actual events
+ * subclass's {@link #doAuthenticate} implementation throwing an exception or not, respectively.  That is, a failure
+ * event will be created and sent if <tt>doAuthenticate</tt> throws an exception a success event will be created and
+ * sent if it does not.  The actual events
  * themselves are constructed via an {@link AuthenticationEventFactory} and sent to interested components via a
  * {@link AuthenticationEventSender}.
  * 
- * <p>Both the event factory and the event sender may be set as properties of this class
- * (instead of overriding this class for event creation and sending).  A simple default event factory is already
- * provided, but a sender <b>must</b> be set, either by injection or by subclass implementation, if you wish to send 
- * AuthenticationEvents.  By omitting an event sender, you are implicitly directing this implementation to ignore
- * event logic.
+ * <p>Both the event factory and the event sender may be set as properties of this class.  A simple default event
+ * factory is already provided, but a sender <b>must</b> be set, either by injection or by subclass implementation,
+ * if you wish to send AuthenticationEvents.  By omitting an event sender, you are implicitly directing this
+ * implementation to disable events.
  *
  * <p>During a subject's (a.k.a. user's) successful login attempt, a <tt>SecurityContext</tt> is created for that user
- * by a {@link SecurityContextFactory}.  This factory must be set as a property of this class.  Most users will
- * want to use a {@link DelegatingSecurityContextFactory} or roll their own..
+ * by a {@link SecurityContextFactory}.  <b>This factory must be set as a property of this class</b>, either via the
+ * setter method, or provided by subclasses during initialization.  Most implementors will
+ * want to use a {@link DelegatingSecurityContextFactory} or roll their own.
  *
  * <p>Once a <tt>SecurityContext</tt> is created for a successfully authenticated subject (a.k.a. 'user'), it is
- * first <em>bound</em> to the application for convenient access before being returned to the {@link #authenticate}
+ * first <em>bound</em> to the application for convenient access and then returned to the {@link #authenticate}
  * caller.  Because binding is dependent upon runtime environment, the binding logic is delegated to an internal
  * {@link SecurityContextBinder} implementation.  The <tt>AbstractAuthenticator</tt> already provides a default that
  * binds the context to the local thread to cater to the majority of server-side deployments.  If operating outside of
@@ -81,7 +81,8 @@ import org.jsecurity.util.Initializable;
  * {@link #setSecurityContextBinder} method.
  *
  * <p>After all class attributes have been set (event factory, security context binder, etc.), the {@link #init()}
- * method must be called, either by a framework or explicitly in code, before the Authenticator can be used.
+ * method must be called, either by a framework or explicitly in code, before the AbstractAuthenticator
+ * instance can be used.
  *
  * @since 0.1
  * @author Jeremy Haile

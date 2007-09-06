@@ -17,7 +17,7 @@ public class CookieStore<T> extends AbstractWebStore<T> {
     protected static final int INDEFINITE = Integer.MAX_VALUE;
 
     private String path = null; //null means set it on the request context root
-    private int maxAge = -1;
+    private int maxAge = -1; //expire on browser close
     private boolean secure = false;
 
     public CookieStore() {

@@ -241,6 +241,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * consulted realms.
      */
     protected AuthenticationInfo doMultiRealmAuthentication( List<? extends Realm> realms, AuthenticationToken token ) {
+
+        ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
+
+        strategy.beforeAllAttempts( realms, token );
         
         AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( token );
 
@@ -250,7 +254,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         for( Realm realm : realms) {
 
-            modularAuthenticationStrategy.beforeAttempt( realm, token );
+            strategy.beforeAttempt( realm, token );
 
             if( realm.supports( token.getClass() ) ) {
 
@@ -271,7 +275,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     }
                 }
 
-                modularAuthenticationStrategy.afterAttempt( realm, token, realmInfo, t );
+                strategy.afterAttempt( realm, token, realmInfo, t );
 
                 // If non-null info is returned, then the realm was able to authenticate the
                 // user - so merge the info with any accumulated before:
@@ -294,7 +298,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
             }
         }
 
-        modularAuthenticationStrategy.afterAllAttempts( token, aggregatedInfo );
+        strategy.afterAllAttempts( token, aggregatedInfo );
 
         return aggregatedInfo;
     }

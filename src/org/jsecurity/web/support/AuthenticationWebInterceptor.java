@@ -40,6 +40,8 @@ import java.util.*;
 /**
  * TODO - class JavaDoc
  *
+ * TODO - refactor to use WebStore mechanism instead of if-checks
+ *
  * @author Les Hazlewood
  * @since 0.2
  */
