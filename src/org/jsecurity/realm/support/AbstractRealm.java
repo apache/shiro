@@ -72,7 +72,7 @@ public abstract class AbstractRealm implements Realm {
     /**
      * The name of this realm.
      */
-    private String name = getClass().getName() + INSTANCE_COUNT++;
+    private String name = "Realm-" + INSTANCE_COUNT++ + "-[" + getClass().getName() + "]";
 
     /**
      * Password matcher used to determine if the provided password matches
@@ -99,27 +99,17 @@ public abstract class AbstractRealm implements Realm {
      * Returns the name assigned to this realm instance.  Names must be unique across all realms configured in the
      * system.
      *
-     * <p>The default implementation of this method returns the fully-qualified class name of the implementation
-     * class.  Therefore, if more than one realm exists of the same type, this method must be called to set a different
-     * value.
-     *
      * @return the name associated with this realm instance.
      */
     public String getName() {
-        if( this.name == null ) {
-            return getClass().getName();
-        } else {
-            return this.name;
-        }
+        return this.name;
     }
 
     /**
      * Sets the name associated with the realm instance.  Names must be unique across all realms configured in the
      * system.
      *
-     * <p>Unless overridden, the realm's default name is the fully qualified name of the implementation class.
-     * Therefore, if more than one realm exists of the same type, this method needs to be called to set a different
-     * value.
+     * <p>Unless overridden, a default name based on the class name and a static increment attribute is used.
      *
      * @param name the unique name assigned to the realm instance.
      */
