@@ -31,12 +31,16 @@ import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.realm.support.AbstractRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
-import org.jsecurity.realm.support.memory.AccountEntry;
-import org.jsecurity.realm.support.memory.MemoryRealm;
+import org.jsecurity.realm.support.memory.SimpleRole;
+import org.jsecurity.realm.support.memory.SimpleUser;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.PermissionUtils;
+import org.jsecurity.util.UsernamePrincipal;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -106,6 +110,7 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
     private static final String USERNAME_PREFIX = "user.";
     private static final String ROLENAME_PREFIX = "role.";
     private static final String USER_ROLENAME_DELIMITER = ",";
+    
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -125,9 +130,13 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
 
     protected long permissionsFileLastModified;
 
-    protected MemoryRealm memoryRealm;
-
     protected int reloadIntervalSeconds = DEFAULT_RELOAD_INTERVAL_SECONDS;
+
+    protected Map<String,SimpleUser> userMap = new HashMap<String, SimpleUser>();
+    protected Map<String,SimpleRole> roleMap = new HashMap<String,SimpleRole>();
+
+    public PropertyFilesRealm() {
+    }
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -167,7 +176,6 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
         if ( haveFilesBeenModified() ) {
             reloadProperties();
         }
-
     }
 
     private boolean haveFilesBeenModified() {
@@ -192,7 +200,6 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
 
     @SuppressWarnings( "unchecked" )
     private void reloadProperties() {
-        MemoryRealm newRealm = new MemoryRealm();
 
         if ( userFilePath == null || userFilePath.length() == 0 ) {
             throw new IllegalStateException( "The userFilePath property is not set.  " +
@@ -204,29 +211,7 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
         }
 
         Properties userProperties = loadProperties( userFilePath );
-        Set<AccountEntry> entries = buildAccountEntriesFromProperties( userProperties );
-        newRealm.setAccounts( entries );
-
-        // Load permissions if enabled
-        if ( permissionsFilePath != null && permissionsFilePath.length() > 0 ) {
-
-            if ( logger.isDebugEnabled() ) {
-                logger.debug( "Loading permission information from file [" + permissionsFilePath + "]..." );
-            }
-
-            Properties permissionProperties = loadProperties( permissionsFilePath );
-            Map<String, String> rolesPermissionsMap = buildRolesPermissionsMapFromProperties( permissionProperties );
-            newRealm.setRolesPermissionsMap( rolesPermissionsMap );
-
-        } else {
-            if ( logger.isDebugEnabled() ) {
-                logger.debug( "Permissions are not being loaded, because no permissionsFilePath has been configured." );
-            }
-        }
-
-        // Initialize new realm and replace old realm
-        newRealm.init();
-        this.memoryRealm = newRealm;
+        createRealmEntitiesFromProperties( userProperties );
     }
 
 
@@ -250,112 +235,89 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
         return key != null && key.startsWith( ROLENAME_PREFIX );
     }
 
-    protected List<String> toList( String delimited, String delimiter ) {
-        List<String> values = null;
-
-        if ( delimited != null ) {
-            values = new ArrayList<String>();
-            String[] rolenamesArray = delimited.split( delimiter );
-            for( String s : rolenamesArray ) {
-                String trimmed = s.trim();
-                if ( !trimmed.equals( "" ) ) {
-                    values.add( trimmed );
-                }
-            }
-        } else {
-            values = Collections.EMPTY_LIST;
-        }
-
-        return values;
-    }
-
-    protected String toDelimitedString( List<String> values, String delimiter ) {
-        if ( values == null || values.isEmpty() ) {
+    protected static Set<String> toSet( String delimited, String delimiter ) {
+        if ( delimited == null || delimited.trim().equals( "" ) ) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
-        Iterator<String> i = values.iterator();
-        while( i.hasNext() ) {
-            sb.append( i.next() );
-            if ( i.hasNext() ) {
-                sb.append( delimiter );
+
+        Set<String> values = new HashSet<String>();
+        String[] rolenamesArray = delimited.split( delimiter );
+        for( String s : rolenamesArray ) {
+            String trimmed = s.trim();
+            if ( !trimmed.equals( "" ) ) {
+                values.add( trimmed );
             }
-        }
-        return sb.toString();
+       }
+
+       return values;
     }
 
-    protected String getPassword( List<String> userLineValues ) {
-        if ( userLineValues.isEmpty() ) {
-            String msg = "A user-to-role(s) key/value pair must specify the user's password as the first token in the value.";
-            throw new IllegalStateException( msg );
-        }
-        return userLineValues.get( 0 );
-    }
 
     @SuppressWarnings( "unchecked" )
-    private Set<AccountEntry> buildAccountEntriesFromProperties( Properties userProperties ) {
+    private void createRealmEntitiesFromProperties( Properties userProperties ) {
 
-        Set<String> usernames = new HashSet<String>();
-        Map<String,List<String>> userRolesMap = new HashMap<String,List<String>>();
-        Set<String> rolenames = new HashSet<String>();
-        Map<String, Permission> rolePermsMap = new HashMap<String,Permission>();
+        Map<String,SimpleUser> userMap = new HashMap<String,SimpleUser>();
+        Map<String,SimpleRole> roleMap = new HashMap<String,SimpleRole>();
 
         Enumeration<String> propNames = (Enumeration<String>)userProperties.propertyNames();
-        Set<AccountEntry> entries = new HashSet<AccountEntry>( userProperties.size() );
+
         while ( propNames.hasMoreElements() ) {
 
             String key = propNames.nextElement();
+            String value = userProperties.getProperty( key );
 
             if ( isUsername( key ) ) {
                 String username = getUsername( key );
-                usernames.add( username );
-                String passwordAndRoles = userProperties.getProperty( key );
-                String[] passwordAndRolesArray = passwordAndRoles.split( USER_ROLENAME_DELIMITER, 2 );
+
+                String[] passwordAndRolesArray = value.split( USER_ROLENAME_DELIMITER, 2 );
                 String password = passwordAndRolesArray[0];
-                List<String> valueRolenames = null;
+
+                SimpleUser user = userMap.get( username );
+                if ( user == null ) {
+                    user = new SimpleUser( username, password );
+                    userMap.put( username, user );
+                }
+                user.setPassword( password );
+
+                Set<String> valueRolenames = null;
                 if ( passwordAndRolesArray.length > 1 ) {
-                    valueRolenames = toList( passwordAndRolesArray[1], USER_ROLENAME_DELIMITER );
-                    rolenames.addAll( valueRolenames );
-                    userRolesMap.put( username, valueRolenames );
+                    valueRolenames = toSet( passwordAndRolesArray[1], USER_ROLENAME_DELIMITER );
+                    if ( valueRolenames != null && !valueRolenames.isEmpty() ) {
+                        for( String rolename : valueRolenames ) {
+                            SimpleRole role = roleMap.get( rolename );
+                            if ( role == null ) {
+                                role = new SimpleRole( rolename );
+                                roleMap.put( rolename, role );
+                            }
+                            user.add( role );
+                        }
+                    } else {
+                        user.setRoles( null );
+                    }
+                } else {
+                    user.setRoles( null );
+                }
+            } else if ( isRolename( key ) ) {
+
+                String rolename = getRolename( key );
+
+                SimpleRole role = roleMap.get( rolename );
+                if ( role == null ) {
+                    role = new SimpleRole( rolename );
+                    roleMap.put( rolename, role );
                 }
 
-                usernames.add( username );
-                rolenames.addAll( valueRolenames );
-
+                Set<Permission> permissions = PermissionUtils.createPermissions( value );
+                role.setPermissions( permissions );
+            } else {
+                String msg = "Encountered unexpected key/value pair.  All keys must be prefixed with either '" + 
+                    USERNAME_PREFIX + "' or '" + ROLENAME_PREFIX + "'.";
+                throw new IllegalStateException( msg );
             }
-
-            String username = getUsername( key );
-
-
-
-
-
-
-            //todo validate this input
-
-//            String username = propNames.nextElement();
-//            String passwordRoles = userProperties.getProperty( username );
-//
-//            String[] passwordRolesArray = passwordRoles.split( ",", 2 );
-//            String password = passwordRolesArray[0];
-//            String roles = passwordRolesArray[1];
-//
-//            AccountEntry entry = new AccountEntry();
-//            entry.setUsername( username );
-//            entry.setPassword( password );
-//
-//            if ( roles != null && roles.length() > 0 ) {
-//                entry.setRoles( roles );
-//            }
-//
-//            entries.add( entry );
         }
-        return entries;
-    }
 
-    private Map<String, String> buildRolesPermissionsMapFromProperties( Properties permissionProperties ) {
-
-        return null;
+        this.userMap = userMap;
+        this.roleMap = roleMap;
     }
 
     private Properties loadProperties( String fileName ) {
@@ -388,14 +350,107 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
     }
 
     protected AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
-
-        return null;
+        //never used in this subclass implementation
+        throw new UnsupportedOperationException( "Should not be called." );
     }
 
     protected AuthorizationInfo getAuthorizationInfo( Principal principal ) {
-
-        return null;
+        //never used in this subclass implementation
+        throw new UnsupportedOperationException( "Should not be called." );
     }
+
+    protected String getUsername( Principal principal ) {
+        if ( principal instanceof UsernamePrincipal ) {
+            return ((UsernamePrincipal)principal).getUsername();
+        } else {
+            String msg = "The " + getClass().getName() + " implementation expects all Principal arguments to be " +
+                "instances of the [" + UsernamePrincipal.class.getName() + "] class";
+            throw new IllegalArgumentException( msg );
+        }
+    }
+
+    protected SimpleUser getUser( Principal principal ) {
+        return this.userMap.get( getUsername( principal ) );
+    }
+
+    public boolean hasRole(Principal principal, String roleIdentifier ) {
+        SimpleUser user = getUser( principal );
+        return ( user != null && user.hasRole( roleIdentifier ) );
+    }
+
+
+    public boolean[] hasRoles(Principal principal, List<String> roleIdentifiers) {
+        boolean[] hasRoles = new boolean[roleIdentifiers.size()];
+        for( int i = 0; i < roleIdentifiers.size(); i++ ) {
+            hasRoles[i] = hasRole( principal, roleIdentifiers.get(i) );
+        }
+        return hasRoles;
+    }
+
+    public boolean hasAllRoles(Principal principal, Collection<String> roleIdentifiers) {
+        for( String rolename : roleIdentifiers ) {
+            if( !hasRole( principal, rolename ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPermitted(Principal principal, Permission permission) {
+        SimpleUser user = getUser( principal );
+        return user != null && user.isPermitted( permission );
+    }
+
+    public boolean[] isPermitted(Principal principal, List<Permission> permissions) {
+        boolean[] permitted = new boolean[permissions.size()];
+        for( int i = 0; i < permissions.size(); i++ ) {
+            permitted[i] = isPermitted( principal, permissions.get(i) );
+        }
+        return permitted;
+    }
+
+    public boolean isPermittedAll(Principal principal, Collection<Permission> permissions) {
+        for( Permission perm : permissions ) {
+            if ( !isPermitted( principal, perm ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void checkPermission(Principal principal, Permission permission) throws AuthorizationException {
+        if ( !isPermitted( principal, permission ) ) {
+            throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
+        }
+    }
+
+    public void checkPermissions(Principal principal, Collection<Permission> permissions) throws AuthorizationException {
+        if( permissions != null ) {
+            for( Permission permission : permissions ) {
+                if( !isPermitted( principal, permission ) ) {
+                   throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
+                }
+            }
+        }
+    }
+
+    public void checkRole(Principal principal, String role) throws AuthorizationException {
+        if ( !hasRole( principal, role ) ) {
+            throw new UnauthorizedException( "User does not have role [" + role + "]" );
+        }
+    }
+
+    public void checkRoles(Principal principal, Collection<String> roles) throws AuthorizationException {
+        if ( roles != null ) {
+            for( String role : roles ) {
+                if ( !hasRole( principal, role ) ) {
+                    throw new UnauthorizedException( "User does not have role [" + role + "]" );
+                }
+            }
+        }
+    }
+
+
 
 
 }

@@ -69,4 +69,8 @@ public class ClassUtils {
             throw new UnsupportedOperationException( "Unable to instantiate class [" + clazz.getName() + "]", e );
         }
     }
+
+    public static Object newInstance( String fqcn ) {
+        return newInstance( forName( fqcn ) );
+    }
 }

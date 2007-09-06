@@ -29,12 +29,17 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Permission;
 
 import java.lang.reflect.Constructor;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @since 0.1
  * @author Les Hazlewood
  */
 public class PermissionUtils {
+
+    private static final String PERMISSIONS_DELIMITER = ";";
+    private static final String PERMISSION_PART_DELIMITER = ",";
 
     protected static transient final Log log = LogFactory.getLog( PermissionUtils.class );
 
@@ -110,5 +115,72 @@ public class PermissionUtils {
         //noinspection unchecked
         Class<? extends Permission> clazz = ClassUtils.forName( permissionClassName );
         return createPermission( clazz, nameOrTarget, actions );
+    }
+
+    protected static Set<String> toSet( String delimited, String delimiter ) {
+        if ( delimited == null || delimited.trim().equals( "" ) ) {
+            return null;
+        }
+
+        Set<String> values = new LinkedHashSet<String>();
+        String[] rolenamesArray = delimited.split( delimiter );
+        for( String s : rolenamesArray ) {
+            String trimmed = s.trim();
+            if ( !trimmed.equals( "" ) ) {
+                values.add( trimmed );
+            }
+       }
+
+       return values;
+    }
+
+    public static Permission createPermission( String permDef ) {
+        if ( permDef == null || permDef.trim().equals( "" ) ) {
+            return null;
+        }
+
+        //split into respective components:
+        String classname = null;
+        String target = null;
+        String actions = null;
+
+        String[] parts =  permDef.split( PERMISSION_PART_DELIMITER, 3 );
+        classname = parts[0];
+        if ( parts.length >= 2 ) {
+            target = parts[1];
+        }
+        if ( parts.length >= 3 ) {
+            actions = parts[2];
+        }
+        
+        Permission perm = null;
+
+        if ( actions == null ) {
+            if ( target == null ) {
+                perm = (Permission)ClassUtils.newInstance( classname );
+            } else {
+                perm = createPermission( classname, target );
+            }
+        } else {
+            perm = createPermission( classname, target, actions );
+        }
+
+        return perm;
+    }
+
+    public static Set<Permission> createPermissions( String permissionDefinitions ) {
+
+        if ( permissionDefinitions == null || permissionDefinitions.trim().equals( "" ) ) {
+            return null;
+        }
+
+        Set<String> defnSet = toSet( permissionDefinitions, PERMISSIONS_DELIMITER );
+        Set<Permission> perms = new LinkedHashSet<Permission>( defnSet.size() );
+
+        for( String permDef : defnSet ) {
+            perms.add( createPermission( permDef ) );
+        }
+
+        return perms;
     }
 }
