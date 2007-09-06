@@ -25,6 +25,11 @@
 
 package org.jsecurity.realm.support.memory;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * A simple POJO containing account information.
  *
@@ -50,11 +55,8 @@ public class AccountEntry {
      */
     private String password;
 
-    /**
-     * A list of comma-separated role names that are authorized for this account.
-     * For example, <tt>"roleName1, roleName2, roleName3"</tt>
-     */
-    private String roles;
+
+    private Set<String> roles;
 
 
     /*--------------------------------------------
@@ -72,7 +74,7 @@ public class AccountEntry {
     public AccountEntry(String username, String password, String roles) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        this.roles = toSet( roles, "," );
     }
 
 
@@ -99,13 +101,51 @@ public class AccountEntry {
     }
 
 
-    public String getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
 
-    public void setRoles(String roles) {
+    public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public void setRoles( String rolesString ) {
+        if ( rolesString != null && !"".equals( rolesString.trim() ) ) {
+            setRoles( toSet( rolesString, "," ) );
+        }
+    }
+
+    protected Set<String> toSet( String delimited, String delimiter ) {
+        Set<String> values = null;
+
+        if ( delimited != null && !"".equals( delimited.trim() ) ) {
+            values = new HashSet<String>();
+            String[] rolenamesArray = delimited.split( delimiter );
+            for( String s : rolenamesArray ) {
+                String trimmed = s.trim();
+                if ( !trimmed.equals( "" ) ) {
+                    values.add( trimmed );
+                }
+            }
+        }
+
+        return values;
+    }
+
+    protected String toDelimitedString( Collection<String> values, String delimiter ) {
+        if ( values == null || values.isEmpty() ) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        Iterator<String> i = values.iterator();
+        while( i.hasNext() ) {
+            sb.append( i.next() );
+            if ( i.hasNext() ) {
+                sb.append( delimiter );
+            }
+        }
+        return sb.toString();
     }
 
 
