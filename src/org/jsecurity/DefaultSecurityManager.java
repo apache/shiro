@@ -57,23 +57,27 @@ import java.util.*;
 
 
 /**
- * <p>Implementation of the {@link org.jsecurity.SecurityManager} interface that is based around
- * a set of security {@link org.jsecurity.realm.Realm}s.  This implementation delegates its authentication and
- * authorization operations to wrapped {@link Authenticator} and {@link Authorizer} instances.
+ * <p>The JSecurity framework's default implementation of the {@link org.jsecurity.SecurityManager} interface,
+ * based around a set of security {@link org.jsecurity.realm.Realm}s.  This implementation delegates its authentication,
+ * authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
+ * {@link SessionFactory SessionFactory} instances respectively.
  * It also provides some sensible defaults to simplify configuration.</p>
  *
- * <p>This implementation is primarily a convenience mechanism that wraps both instances to consolidate
- * both behaviors into a single point of reference.  For most JSecurity users, this simplifies configuration and
- * tends to be a more convenient approach than referencing the <code>Authenticator</code> and <code>Authorizer</code>
- * instances seperately in their application code;  instead they only need to interact with a single
- * <tt>SecurityManager</tt> instance.</p>
+ * <p>This implementation is primarily a convenience mechanism that wraps these three instances to consolidate
+ * all behaviors into a single point of reference.  For most JSecurity users, this simplifies configuration and
+ * tends to be a more convenient approach than referencing <code>Authenticator</code>, <code>Authorizer</code>, and
+ * <tt>SessionFactory</tt> instances seperately in their application code;  instead they only need to interact with a
+ * single <tt>SecurityManager</tt> instance.</p>
  *
- * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.ModularRealmAuthenticator} is created using
- * the configured realms for the authenticator, (at least one
- * realm must be configured before {@link #init()} is called for this manager to function properly).</p>
+ * <p>If an authenticator is not configured, a {@link org.jsecurity.authc.support.ModularRealmAuthenticator} is created
+ * using the configured realms.  Similarly, if an authorizer is not configured, a {@link ModularRealmAuthorizer}
+ * instance will be created using the configured realms.
  *
- * <p>Also, if an authorizer is not configured, a {@link ModularRealmAuthorizer} instance will be created using the
- * configured realms for convenience.
+ * <p>Finally, if a SessionFactory is not configured, one will be created based on internal {@link SessionManager}
+ * instance.  The SessionManager too will be implicitly created if it also hasn't been injected.
+ *
+ * <p>In fact, the only absolute requirement for a <tt>DefaultSecurityManager</tt> instance to function properly is
+ * that at least one Realm must be injected and then the {@link #init() init} method must be called before it is used.</p>
  *
  * @since 0.2
  *
@@ -334,16 +338,16 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     /**
      * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
      * manager's {@link #start} and {@link #getSession} calls.
-     * <p/>
+     *
      * <p>This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
      * <tt>SessionFactory</tt> interface, but instead delegates these calls to an internal
      * <tt>SessionFactory</tt> instance.
-     * <p/>
+     *
      * <p><b>N.B.</b>: The internal delegate instance can be set by this method, but it is usually a good idea
      * <em>not</em> to set this property and instead set a <tt>SessionManager</tt> instance via the
      * {@link #setSessionManager} method.  Then this class implementation will automatically create a
      * <tt>SessionFactory</tt> during the {@link #init} phase.
-     * <p/>
+     *
      * <p>However, if <em>neither</em> this property or the {@link #setSessionManager sessionManager} properties are
      * set, this implementation will create sensible defaults for both properties automatically during
      * {@link #init()} execution.
@@ -359,10 +363,10 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     /**
      * Used to construct a default internal {@link SessionFactory} delegate instance if one is not explicitly set
      * in configuration via the {@link #setSessionFactory} method.
-     * <p/>
+     *
      * <p>If a <tt>SessionFactory</tt> instance <em>is</em> set via {@link #setSessionFactory}, then this property is
      * ignored.
-     * <p/>
+     *
      * <p><b>N.B.</b>: It is usually a good idea to set this property and <em>not</em> set the <tt>SessionFactory</tt>
      * instance explicitly unless you have a good reason to do so.
      *

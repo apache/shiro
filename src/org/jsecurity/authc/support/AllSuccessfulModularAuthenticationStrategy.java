@@ -30,6 +30,8 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.realm.Realm;
 
+import java.util.List;
+
 /**
  * <tt>ModularAuthenticationStrategy</tt> implementation that requires <em>all</em> configured realms to
  * <b>successfully</b> process the submitted <tt>AuthenticationToken</tt> during the log-in attempt.
@@ -43,6 +45,9 @@ import org.jsecurity.realm.Realm;
  */
 public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthenticationStrategy {
 
+    public void beforeAllAttempts( List<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
+        //does nothing - here to satisfy the interface requirements
+    }
 
     public void beforeAttempt( Realm realm, AuthenticationToken token ) throws AuthenticationException {
         Class tokenClass = token.getClass();

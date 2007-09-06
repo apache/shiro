@@ -64,7 +64,7 @@ public interface TargetedPermission extends Permission {
      *
      * <pre>new FilePermission( "/bin/bash", "execute" );</pre>
      *
-     * <p>would have a <tt>name</tt> of &quot;/bin/bash&quot;, since that is the <em>name</em> of actions
+     * <p>would have a <tt>name</tt> of &quot;/bin/bash&quot;, since that is the <em>target</em> of actions
      * represented by this permission (&quot;execute&quot;).
      *
      * @return the name of the target corresponding to the permission's actions, or <tt>null</tt> if no specific
@@ -75,7 +75,7 @@ public interface TargetedPermission extends Permission {
     /**
      * Returns all actions represented by the permission instance, or <tt>null</tt> if there are none.
      *
-     * <p>If the permission is {@link #getName targeted}, these are the actions associated with that target
+     * <p>If the permission is {@link #getName targeted}, these are the actions associated with that target.
      *
      * @return all actions represented by the permission instance or <tt>null</tt> if there are none.
      */

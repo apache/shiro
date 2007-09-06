@@ -55,6 +55,8 @@ import java.util.List;
  */
 public abstract class AbstractRealm implements Realm {
 
+    private static int INSTANCE_COUNT = 0;
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
@@ -68,10 +70,9 @@ public abstract class AbstractRealm implements Realm {
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     /**
-     * The name of this realm, or null if the fully-qualified class name should be returned
-     * as the realm name.
+     * The name of this realm.
      */
-    private String name;
+    private String name = getClass().getName() + INSTANCE_COUNT++;
 
     /**
      * Password matcher used to determine if the provided password matches

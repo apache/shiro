@@ -242,17 +242,11 @@ public abstract class AbstractTargetedPermission extends AbstractPermission impl
     }
 
     public boolean equals( Object o ) {
-        if ( o == this ) {
-            return true;
-        }
-
         if ( o instanceof AbstractTargetedPermission ) {
-            AbstractTargetedPermission ap = (AbstractTargetedPermission)o;
-            return ( getClass().getName().equals( ap.getClass().getName() ) ) &&
-                   ( getName() != null ? getName().equals( ap.getName() ) : ap.getName() == null ) &&
-                   ( getActions() != null ? getActions().equals( ap.getActions() ) : ap.getActions() == null );
+            AbstractTargetedPermission atp = (AbstractTargetedPermission)o;
+            return super.equals( atp ) &&
+                   ( getActions() != null ? getActions().equals( atp.getActions() ) : atp.getActions() == null );
         }
-
         return false;
     }
 
