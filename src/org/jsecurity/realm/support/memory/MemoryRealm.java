@@ -24,22 +24,27 @@
 */
 package org.jsecurity.realm.support.memory;
 
-import org.jsecurity.JSecurityException;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.realm.support.AbstractRealm;
-import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.authz.UnauthorizedException;
+import org.jsecurity.cache.Cache;
+import org.jsecurity.cache.CacheException;
+import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.support.HashtableCacheProvider;
+import org.jsecurity.realm.support.AuthenticatingRealm;
+import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.UsernamePrincipal;
 
-import java.lang.reflect.Constructor;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,11 +56,11 @@ import java.util.Set;
  * <p>See the <tt>applicationContext.xml</tt> in the Spring sample application for an example
  * of configuring a <tt>MemoryRealm</tt></p>
  *
- * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @since 0.1
  */
-public class MemoryRealm extends AbstractRealm implements Initializable {
+public class MemoryRealm extends AuthenticatingRealm implements Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -64,11 +69,10 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private Set<AccountEntry> accounts;
-    private Map<String,String> rolesPermissionsMap = new HashMap<String,String>();
+    protected Cache userCache = null;
+    protected Cache roleCache = null;
 
-    protected Map<String,SimpleUser> userMap = new HashMap<String, SimpleUser>();
-    protected Map<String,SimpleRole> roleMap = new HashMap<String,SimpleRole>();
+    private boolean cacheProviderImplicitlyCreated = true;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -77,167 +81,192 @@ public class MemoryRealm extends AbstractRealm implements Initializable {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
     /**
      * Sets the account entries that are used to authenticate users and associate them
      * with roles for this realm.
+     *
      * @param accounts the accounts for this realm.
      */
-    public void setAccounts(Set<AccountEntry> accounts) {
-        this.accounts = accounts;
-    }
-
-
-    /**
-     * <p>A mapping of role names to permissions that can be authenticated using this realm.
-     * It is not necessary to define any role entries if you are simply using
-     * role-based authorization.  However if you want to use permission-based
-     * authorization, you must define the permissions that apply to a particular
-     * role.</p>
-     *
-     * <p>The key of the map is the role name.</p>
-     *
-     * <p>The value of the map is a delimited list of all permissions that apply to
-     * this role.  Each permission entry is separated by semicolons.  Each
-     * permission consists of a fully-qualified permission class-name, a
-     * name name, and a list of actions that apply to the permission.  Each
-     * of theses entries is comma-separated.</p>
-     *
-     * <p>For example,<br>
-     * <tt>"com.mycompany.PermissionClass,myTarget,myAction1,myAction2,myAction3;<br>
-     *     java.io.FilePermission,/myDir/myFile,read,write"</tt>
-     * </p>
-     *
-     * @param rolesPermissionsMap the mapping between role names and permissions.
-     */
-    public void setRolesPermissionsMap(Map<String, String> rolesPermissionsMap) {
-        this.rolesPermissionsMap = rolesPermissionsMap;
+    public void setAccounts( Set<AccountEntry> accounts ) {
+        //this.accounts = accounts;
     }
 
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public void init()  {
-        if( accounts != null && !accounts.isEmpty() ) {
+    public void init() {
+        CacheProvider provider = getCacheProvider();
+
+        if ( provider == null ) {
+            provider = new HashtableCacheProvider();
+            setCacheProvider( provider );
+            this.cacheProviderImplicitlyCreated = true;
+        }
+        //if ( accounts != null && !accounts.isEmpty() ) {
             //todo - translate into SimpleUser and SimpleRole objects
-        }
+        //}
 
     }
 
-    /**
-     * Builds a <tt>UserAuthenticationInfo</tt> object for the given username
-     * by examining the set of configured accounts and roles held in the
-     * memory realm.
-     * @param token The authentication token that is being used to authenticate the current user.
-     * @return an <tt>AuthenticationInfo</tt> object that represents the
-     * authentication information for the given username, or null if an
-     * account cannot be found with the given username.
-     *
-     */
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-
-        Principal principal = token.getPrincipal();
-
-        try {
-
-            for( AccountEntry entry : accounts ) {
-                if( entry.getUsername().equals( principal.getName() ) ) {
-                    return new SimpleAuthenticationInfo( new UsernamePrincipal( principal.getName() ),
-                                                  entry.getPassword().toCharArray() );
-
+    protected void destroy( Cache cache ) {
+        if ( cache != null ) {
+            try {
+                cache.clear();
+            } catch ( Throwable t ) {
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Unable to cleanly clear cache [" + cache + "].  Ingoring (shutting down)." );
+                }
+            }
+            try {
+                cache.destroy();
+            } catch ( CacheException e ) {
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Unable to cleanly destroy cache [" + cache + "].  Ignoring (shutting down)." );
                 }
             }
 
-        } catch (Exception e) {
-            throw new AuthenticationException( "Unexpected exception while authenticating user.", e );
         }
-
-        // User could not be found, so return null
-        return null;
     }
 
-
-    private Set<Permission> getPermissionsForRoles(Set<String> roleNames) {
-
-        Set<Permission> permissions = new HashSet<Permission>();
-
-        for( String roleName : roleNames ) {
-            String permissionsString = rolesPermissionsMap.get( roleName );
-
-            // If the permissions String is not null or empty, parse the individual
-            // permissions from it
-            if( permissionsString != null && permissionsString.length() > 0 ) {
-                Set<Permission> rolePermissions = parsePermissions( permissionsString );
-                permissions.addAll( rolePermissions );
-            }
-        }
-
-        return permissions;
-    }
-
-
-    private Set<Permission> parsePermissions(String permissionsString) {
-        Set<Permission> rolePermissions = new HashSet<Permission>();
-
-        // For each semicolon-delimited permission in the string, build
-        // a permission object.
-        String[] permissionsArray = permissionsString.split( ";" );
-        for( String permissionString : permissionsArray ) {
-
-            String[] permissionParts = permissionString.split( "," );
-            if( permissionParts.length < 3 ) {
-                throw new IllegalArgumentException(
-                    "Permission token [" + permissionString + "] is not a valid permission " +
-                    "definition.  Please see the JavaDoc for the " + getClass() + " class." );
-            }
-
-            // Parse permission string into class, name, and actions
-            String clazz = permissionParts[0];
-            String target = permissionParts[1];
-            StringBuffer actions = new StringBuffer();
-            for( int i = 2; i < permissionParts.length; i++ ) {
-                actions.append( permissionParts[i] );
-                if( permissionParts.length > (i+1) ) {
-                    actions.append( "," );
+    public void destroy() throws Exception {
+        destroy( userCache );
+        destroy( roleCache );
+        if ( this.cacheProviderImplicitlyCreated ) {
+            if ( getCacheProvider() instanceof Destroyable ) {
+                try {
+                    ((Destroyable)getCacheProvider()).destroy();
+                } catch ( Exception e ) {
+                    if ( log.isInfoEnabled() ) {
+                        log.info( "Unable to cleanly destroy implicitly created CacheProvider.  Ignoring (shutting down)" );
+                    }
                 }
             }
-
-            Permission permission = createPermission( clazz, target, actions.toString() );
-            rolePermissions.add( permission );
-
         }
-
-        return rolePermissions;
     }
 
+    protected AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
+        UsernamePasswordToken upToken = (UsernamePasswordToken)token;
+
+        SimpleUser user = (SimpleUser)userCache.get( upToken.getUsername() );
+        if ( user == null ) {
+            return null;
+        }
+
+        Principal principal = new UsernamePrincipal( user.getUsername() );
+
+        return new SimpleAuthenticationInfo( principal, user.getPassword() );
+
+    }
+
+    protected String getUsername( Principal principal ) {
+        if ( principal instanceof UsernamePrincipal ) {
+            return ( (UsernamePrincipal)principal ).getUsername();
+        } else {
+            String msg = "The " + getClass().getName() + " implementation expects all Principal arguments to be " +
+                "instances of the [" + UsernamePrincipal.class.getName() + "] class";
+            throw new IllegalArgumentException( msg );
+        }
+    }
+
+    protected SimpleUser getUser( Principal principal ) {
+        return (SimpleUser)userCache.get( getUsername( principal ) );
+    }
+
+    public boolean hasRole( Principal principal, String roleIdentifier ) {
+        SimpleUser user = getUser( principal );
+        return ( user != null && user.hasRole( roleIdentifier ) );
+    }
+
+
+    public boolean[] hasRoles( Principal principal, List<String> roleIdentifiers ) {
+        boolean[] hasRoles = new boolean[roleIdentifiers.size()];
+        for ( int i = 0; i < roleIdentifiers.size(); i++ ) {
+            hasRoles[i] = hasRole( principal, roleIdentifiers.get( i ) );
+        }
+        return hasRoles;
+    }
+
+    public boolean hasAllRoles( Principal principal, Collection<String> roleIdentifiers ) {
+        for ( String rolename : roleIdentifiers ) {
+            if ( !hasRole( principal, rolename ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPermitted( Principal principal, Permission permission ) {
+        SimpleUser user = getUser( principal );
+        return user != null && user.isPermitted( permission );
+    }
+
+    public boolean[] isPermitted( Principal principal, List<Permission> permissions ) {
+        boolean[] permitted = new boolean[permissions.size()];
+        for ( int i = 0; i < permissions.size(); i++ ) {
+            permitted[i] = isPermitted( principal, permissions.get( i ) );
+        }
+        return permitted;
+    }
+
+    public boolean isPermittedAll( Principal principal, Collection<Permission> permissions ) {
+        for ( Permission perm : permissions ) {
+            if ( !isPermitted( principal, perm ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void checkPermission( Principal principal, Permission permission ) throws AuthorizationException {
+        if ( !isPermitted( principal, permission ) ) {
+            throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
+        }
+    }
+
+    public void checkPermissions( Principal principal, Collection<Permission> permissions ) throws AuthorizationException {
+        if ( permissions != null ) {
+            for ( Permission permission : permissions ) {
+                if ( !isPermitted( principal, permission ) ) {
+                    throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
+                }
+            }
+        }
+    }
+
+    public void checkRole( Principal principal, String role ) throws AuthorizationException {
+        if ( !hasRole( principal, role ) ) {
+            throw new UnauthorizedException( "User does not have role [" + role + "]" );
+        }
+    }
+
+    public void checkRoles( Principal principal, Collection<String> roles ) throws AuthorizationException {
+        if ( roles != null ) {
+            for ( String role : roles ) {
+                if ( !hasRole( principal, role ) ) {
+                    throw new UnauthorizedException( "User does not have role [" + role + "]" );
+                }
+            }
+        }
+    }
 
     /**
-     * Builds a permission object with the given class, name, and actions using reflection.
-     * The permission class is expected to have a constructor that takes in two String
-     * parameters.  The first parameter is the name of the permission.  The second parameter
-     * is a comma-delimeted list of actions that apply to the permission.
+     * Default implementation that always returns false (relies on JSecurity 1.5 annotations instead).
      *
-     * @param className the permission class.
-     * @param target the permission name (or name).
-     * @param actions the permission actions.
-     * @return a new Permission object with the given properties.
+     * @param action the action to check for authorized execution
+     * @return whether or not the realm supports AuthorizedActions of the given type.
      */
-    private Permission createPermission(String className, String target, String actions) {
-
-        try {
-            Class clazz = Class.forName( className );
-            Constructor constructor = clazz.getConstructor( String.class, String.class );
-            return (Permission) constructor.newInstance( target, actions );
-        } catch (Exception e) {
-            throw new JSecurityException( "Error instantiating permission specified for realm [" + getName() + "]", e );
-        }
-
+    public boolean supports( AuthorizedAction action ) {
+        return false;
     }
 
+    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+        return true;
+    }
 
-    protected AuthorizationInfo getAuthorizationInfo(Principal principal) {
-        //return authorizationInfoMap.get( principal );
-        return null;
+    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+        //does nothing
     }
 
 }

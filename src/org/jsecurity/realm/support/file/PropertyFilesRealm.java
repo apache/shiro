@@ -32,9 +32,10 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
-import org.jsecurity.realm.support.AbstractRealm;
+import org.jsecurity.realm.support.AuthenticatingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
 import org.jsecurity.realm.support.memory.SimpleRole;
 import org.jsecurity.realm.support.memory.SimpleUser;
@@ -101,7 +102,7 @@ role.contractor = com.domain.IntranetPermission,useTimesheet</pre></code>
  * @author Jeremy Haile
  * @since 0.2
  */
-public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initializable {
+public class PropertyFilesRealm extends AuthenticatingRealm implements Runnable, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -450,7 +451,14 @@ public class PropertyFilesRealm extends AbstractRealm implements Runnable, Initi
         }
     }
 
+    public boolean supports( AuthorizedAction action ) {
+        return true;
+    }
 
+    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+        return true;
+    }
 
-
+    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+    }
 }

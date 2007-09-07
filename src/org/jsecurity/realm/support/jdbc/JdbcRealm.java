@@ -28,8 +28,8 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.realm.support.AbstractCachingRealm;
 import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.realm.support.AuthorizingRealm;
 import org.jsecurity.util.JdbcUtils;
 import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.UsernamePrincipal;
@@ -54,19 +54,17 @@ import java.util.HashSet;
  * If the default implementation
  * of authentication and authorization cannot handle your schema, this class can be subclassed and the
  * appropriate methods overridden. (usually {@link #doGetAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)},
- * {@link #getRoleNamesForUser(java.sql.Connection, String)}, and/or {@link #getPermissions(java.sql.Connection, String, java.util.Collection)}
+ * {@link #getRoleNamesForUser(java.sql.Connection,String)}, and/or {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}
  * </p>
  *
  * <p>
- * This realm supports caching by extending from {@link org.jsecurity.realm.support.AbstractCachingRealm}.
+ * This realm supports caching by extending from {@link org.jsecurity.realm.support.AuthorizingRealm}.
  * </p>
- *
- * @see AbstractCachingRealm
  *
  * @since 0.2
  * @author Jeremy Haile
  */
-public class JdbcRealm extends AbstractCachingRealm {
+public class JdbcRealm extends AuthorizingRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -110,9 +108,10 @@ public class JdbcRealm extends AbstractCachingRealm {
 
     /**
      * Sets the datasource that should be used to retrieve connections used by this realm.
+     *
      * @param dataSource the SQL data source.
      */
-    public void setDataSource(DataSource dataSource) {
+    public void setDataSource( DataSource dataSource ) {
         this.dataSource = dataSource;
     }
 
@@ -121,12 +120,12 @@ public class JdbcRealm extends AbstractCachingRealm {
      * implementation, this query must take the user's username as a single parameter and return a single result
      * with the user's password as the first column.  If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)} or
-     * just {@link #getPasswordForUser(java.sql.Connection, String)}
+     * just {@link #getPasswordForUser(java.sql.Connection,String)}
      *
      * @param authenticationQuery the query to use for authentication.
      * @see #DEFAULT_AUTHENTICATION_QUERY
      */
-    public void setAuthenticationQuery(String authenticationQuery) {
+    public void setAuthenticationQuery( String authenticationQuery ) {
         this.authenticationQuery = authenticationQuery;
     }
 
@@ -135,12 +134,12 @@ public class JdbcRealm extends AbstractCachingRealm {
      * implementation, this query must take the user's username as a single parameter and return a row
      * per role with a single column containing the role name.  If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthorizationInfo(java.security.Principal)} or just
-     * {@link #getRoleNamesForUser(java.sql.Connection, String)}
+     * {@link #getRoleNamesForUser(java.sql.Connection,String)}
      *
      * @param userRolesQuery the query to use for retrieving a user's roles.
      * @see #DEFAULT_USER_ROLES_QUERY
      */
-    public void setUserRolesQuery(String userRolesQuery) {
+    public void setUserRolesQuery( String userRolesQuery ) {
         this.userRolesQuery = userRolesQuery;
     }
 
@@ -151,15 +150,16 @@ public class JdbcRealm extends AbstractCachingRealm {
      * per permission with three columns containing the fully qualified name of the permission class, the permission
      * name, and the permission actions (in that order).  If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthorizationInfo(java.security.Principal)} or just
-     * {@link #getPermissions(java.sql.Connection, String, java.util.Collection)}</p>
+     * {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}</p>
      *
      * <p><b>Permissions are only retrieved if you set {@link #permissionsLookupEnabled} to true.  Otherwise,
      * this query is ignored.</b></p>
+     *
      * @param permissionsQuery the query to use for retrieving permissions for a role.
      * @see #DEFAULT_PERMISSIONS_QUERY
      * @see #setPermissionsLookupEnabled(boolean)
      */
-    public void setPermissionsQuery(String permissionsQuery) {
+    public void setPermissionsQuery( String permissionsQuery ) {
         this.permissionsQuery = permissionsQuery;
     }
 
@@ -168,9 +168,9 @@ public class JdbcRealm extends AbstractCachingRealm {
      * are associated with a user.  Set this to true in order to lookup roles <b>and</b> permissions.
      *
      * @param permissionsLookupEnabled true if permissions should be looked up during authorization, or false if only
-     * roles should be looked up.
+     *                                 roles should be looked up.
      */
-    public void setPermissionsLookupEnabled(boolean permissionsLookupEnabled) {
+    public void setPermissionsLookupEnabled( boolean permissionsLookupEnabled ) {
         this.permissionsLookupEnabled = permissionsLookupEnabled;
     }
 
@@ -182,13 +182,13 @@ public class JdbcRealm extends AbstractCachingRealm {
         setAuthenticationTokenClass( UsernamePasswordToken.class );
     }
 
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
 
-        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+        UsernamePasswordToken upToken = (UsernamePasswordToken)token;
         String username = upToken.getUsername();
 
         // Null username is invalid
-        if( username == null ) {
+        if ( username == null ) {
             throw new AccountException( "Null usernames are not allowed by this realm." );
         }
 
@@ -197,9 +197,9 @@ public class JdbcRealm extends AbstractCachingRealm {
         try {
             conn = dataSource.getConnection();
 
-            String password = getPasswordForUser(conn, username);
+            String password = getPasswordForUser( conn, username );
 
-            if( password == null ) {
+            if ( password == null ) {
                 throw new UnknownAccountException( "No account found for user [" + username + "]" );
             }
 
@@ -209,14 +209,14 @@ public class JdbcRealm extends AbstractCachingRealm {
             info.addPrincipal( new UsernamePrincipal( username ) );
             info.setCredentials( password );
 
-        } catch( SQLException e ) {
+        } catch ( SQLException e ) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
-            if (logger.isErrorEnabled()) {
-                logger.error(message, e);
+            if ( log.isErrorEnabled() ) {
+                log.error( message, e );
             }
 
             // Rethrow any SQL errors as an authentication exception
-            throw new AuthenticationException(message, e );
+            throw new AuthenticationException( message, e );
         } finally {
             JdbcUtils.closeConnection( conn );
         }
@@ -224,7 +224,7 @@ public class JdbcRealm extends AbstractCachingRealm {
         return info;
     }
 
-    private String getPasswordForUser(Connection conn, String username) throws SQLException {
+    private String getPasswordForUser( Connection conn, String username ) throws SQLException {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -238,10 +238,10 @@ public class JdbcRealm extends AbstractCachingRealm {
 
             // Loop over results - although we are only expecting one result, since usernames should be unique
             boolean foundResult = false;
-            while( rs.next() ) {
+            while ( rs.next() ) {
 
                 // Check to ensure only one row is processed
-                if( foundResult ) {
+                if ( foundResult ) {
                     throw new AuthenticationException( "More than one user row found for user [" + username + "]. Usernames must be unique." );
                 }
 
@@ -257,13 +257,13 @@ public class JdbcRealm extends AbstractCachingRealm {
         return password;
     }
 
-    protected AuthorizationInfo doGetAuthorizationInfo(Principal principal) {
+    protected AuthorizationInfo doGetAuthorizationInfo( Principal principal ) {
 
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) principal;
+        UsernamePrincipal usernamePrincipal = (UsernamePrincipal)principal;
         String username = usernamePrincipal.getUsername();
 
         // Null username is invalid
-        if( username == null ) {
+        if ( username == null ) {
             throw new AuthorizationException( "Null usernames are not allowed by this realm." );
         }
 
@@ -274,13 +274,13 @@ public class JdbcRealm extends AbstractCachingRealm {
             conn = dataSource.getConnection();
 
             // Retrieve roles and permissions from database
-            roleNames = getRoleNamesForUser(conn, username);
-            permissions = getPermissions(conn, username, roleNames);
+            roleNames = getRoleNamesForUser( conn, username );
+            permissions = getPermissions( conn, username, roleNames );
 
-        } catch( SQLException e ) {
+        } catch ( SQLException e ) {
             final String message = "There was a SQL error while authorizing user [" + username + "]";
-            if (logger.isErrorEnabled()) {
-                logger.error(message, e);
+            if ( log.isErrorEnabled() ) {
+                log.error( message, e );
             }
 
             // Rethrow any SQL errors as an authorization exception
@@ -292,7 +292,7 @@ public class JdbcRealm extends AbstractCachingRealm {
         return new AuthorizationInfo( roleNames, permissions );
     }
 
-    protected Collection<String> getRoleNamesForUser(Connection conn, String username) throws SQLException {
+    protected Collection<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Collection<String> roleNames = new HashSet<String>();
@@ -304,15 +304,15 @@ public class JdbcRealm extends AbstractCachingRealm {
             rs = ps.executeQuery();
 
             // Loop over results and add each returned role to a set
-            while( rs.next() ) {
+            while ( rs.next() ) {
 
                 String roleName = rs.getString( 1 );
 
                 // Add the role to the list of names if it isn't null
-                if( roleName != null ) {
+                if ( roleName != null ) {
                     roleNames.add( roleName );
                 } else {
-                    if( log.isWarnEnabled() ) {
+                    if ( log.isWarnEnabled() ) {
                         log.warn( "Null role name found while retrieving role names for user [" + username + "]" );
                     }
                 }
@@ -324,21 +324,21 @@ public class JdbcRealm extends AbstractCachingRealm {
         return roleNames;
     }
 
-    protected Collection<Permission> getPermissions(Connection conn, String username, Collection<String> roleNames) throws SQLException {
+    protected Collection<Permission> getPermissions( Connection conn, String username, Collection<String> roleNames ) throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Collection<Permission> permissions = new HashSet<Permission>();
         try {
-            for( String roleName : roleNames ) {
+            for ( String roleName : roleNames ) {
 
                 ps = conn.prepareStatement( permissionsQuery );
-                ps.setString( 1, roleName);
+                ps.setString( 1, roleName );
 
                 // Execute query
                 rs = ps.executeQuery();
 
                 // Loop over results and add each returned role to a set
-                while( rs.next() ) {
+                while ( rs.next() ) {
 
                     String className = rs.getString( 1 );
                     String target = rs.getString( 2 );
