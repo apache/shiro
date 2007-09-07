@@ -40,12 +40,11 @@ import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.realm.support.AuthenticatingRealm;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.UsernamePrincipal;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>A simple implementation of the {@link org.jsecurity.realm.Realm} interface that
@@ -56,6 +55,8 @@ import java.util.Set;
  * <p>See the <tt>applicationContext.xml</tt> in the Spring sample application for an example
  * of configuring a <tt>MemoryRealm</tt></p>
  *
+ * TODO - clean up this JavaDoc to document the text format
+ *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.1
@@ -65,6 +66,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    private static final String USER_ROLENAME_DELIMITER = ",";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -73,6 +75,9 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     protected Cache roleCache = null;
 
     private boolean cacheProviderImplicitlyCreated = true;
+
+    private Properties userProperties = null;
+    private Properties roleProperties = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -83,15 +88,206 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     ============================================*/
 
     /**
-     * Sets the account entries that are used to authenticate users and associate them
-     * with roles for this realm.
+     * Sets the user definitions to be parsed and converted to Properties entries.
      *
-     * @param accounts the accounts for this realm.
+     * <p>Each definition must be a user-to-role(s) key/value mapping with the following format:</p>
+     *
+     * <p><code><em>username1</em> = <em>password1</em>,role1,role2,...</code></p>
+     *
+     * <p>Each value (the text to the right of the equals character) must specify that user's password followed by
+     * zero or more role names of the roles assigned to that user.</p>
+     *
+     * <p>Here are some examples of what these lines might look like:</p>
+     *
+     * <p><code>root = <em>reallyHardToGuessPassword</em>,administrator<br/>
+     * jsmith = <em>jsmithsPassword</em>,manager,engineer,employee<br/>
+     * abrown = <em>dbrownsPassword</em>,qa,employee<br/>
+     * djones = <em>djonesPassword</em>,qa,contractor<br/>
+     * guest = <em>guestPassword</em></code></p>
+     *
+     * @param userDefinitions the user definitions to be parsed at initialization
      */
-    public void setAccounts( Set<AccountEntry> accounts ) {
-        //this.accounts = accounts;
+    public void setUserDefinitions( List<String> userDefinitions ) {
+        if ( userDefinitions == null || userDefinitions.isEmpty() ) {
+            return;
+        }
+        setUserProperties( toProperties( userDefinitions ) );
     }
 
+    /**
+     * Sets the role definitions to be parsed and converted to Properteis entries.
+     *
+     * <p>Each definition must be a role-to-permission(s) key/value mapping with the following format:</p>
+     *
+     * <p><code><em>rolename1</em> = <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
+     *
+     * <p>Each value (the text to the right of the equals character) must specify one or more
+     * <em>permissionDefinition</em>s.  A <em>permissionDefinition</em> is defined as</p>
+     *
+     * <p><code><em>requiredPermissionClassName</em>,<em>requiredPermissionName</em>,<em>optionalActionsString</em></code></p>
+     *
+     * <p>corresponding to the associated class attributes of a
+     * {@link org.jsecurity.authz.Permission Permission} or
+     * {@link org.jsecurity.authz.TargetedPermission TargetedPermission}.</p>
+     *
+     * <p><em>optionalActionsString</em> is optional as implied, but if it exists, it <em>is</em> allowed to contain
+     * commas as well.
+     *
+     * But note that because a single <em>permissionDefinition</em> is internally delimited via commas (,), multiple
+     * <em>permissionDefinition</em>s for a single role must be delimited via semi-colons (;)
+     *
+     * <p><b>Note</b> that if you have roles that don't require permission associations, don't include them in this
+     * list - just defining the role name in a {@link #setUserDefinitions user definition} is enough to create the
+     * role if it does not yet exist.
+     *
+     * @param roleDefinitions the role definitions to be parsed at initialization
+     */
+    public void setRoleDefinitions( List<String> roleDefinitions ) {
+        if ( roleDefinitions == null || roleDefinitions.isEmpty() ) {
+            return;
+        }
+        setRoleProperties( toProperties( roleDefinitions ) );
+    }
+
+    public Properties getUserProperties() {
+        return userProperties;
+    }
+
+    public void setUserProperties( Properties userProperties ) {
+        this.userProperties = userProperties;
+    }
+
+    public Properties getRoleProperties() {
+        return roleProperties;
+    }
+
+    public void setRoleProperties( Properties roleProperties ) {
+        this.roleProperties = roleProperties;
+    }
+
+    protected SimpleUser getUser( String username ) {
+        return (SimpleUser)userCache.get( username );
+    }
+
+    protected void add( SimpleUser user ) {
+        userCache.put( user.getUsername(), user );
+    }
+
+    protected SimpleRole getRole( String rolename ) {
+        return (SimpleRole)roleCache.get( rolename );
+    }
+
+    protected void add( SimpleRole role ) {
+        roleCache.put( role.getName(), role );
+    }
+
+    protected static Set<String> toSet( String delimited, String delimiter ) {
+        if ( delimited == null || delimited.trim().equals( "" ) ) {
+            return null;
+        }
+
+        Set<String> values = new HashSet<String>();
+        String[] rolenamesArray = delimited.split( delimiter );
+        for ( String s : rolenamesArray ) {
+            String trimmed = s.trim();
+            if ( trimmed.length() > 0 ) {
+                values.add( trimmed );
+            }
+        }
+
+        return values;
+    }
+
+    protected void processUserProperties() {
+
+        Properties userProps = getUserProperties();
+        if ( userProps == null || userProps.isEmpty() ) {
+            return;
+        }
+
+        //noinspection unchecked
+        Enumeration<String> propNames = (Enumeration<String>)userProps.propertyNames();
+
+        while ( propNames.hasMoreElements() ) {
+
+            String username = propNames.nextElement();
+            String value = userProps.getProperty( username );
+
+            String[] passwordAndRolesArray = value.split( USER_ROLENAME_DELIMITER, 2 );
+            String password = passwordAndRolesArray[0];
+
+
+            SimpleUser user = getUser( username );
+            if ( user == null ) {
+                user = new SimpleUser( username, password );
+                add( user );
+            }
+            user.setPassword( password );
+
+            Set<String> valueRolenames;
+            if ( passwordAndRolesArray.length > 1 ) {
+                valueRolenames = toSet( passwordAndRolesArray[1], USER_ROLENAME_DELIMITER );
+                if ( valueRolenames != null && !valueRolenames.isEmpty() ) {
+                    for ( String rolename : valueRolenames ) {
+                        SimpleRole role = getRole( rolename );
+                        if ( role == null ) {
+                            role = new SimpleRole( rolename );
+                            add( role );
+                        }
+                        user.add( role );
+                    }
+                } else {
+                    user.setRoles( null );
+                }
+            } else {
+                user.setRoles( null );
+            }
+        }
+    }
+
+    protected void processRoleProperties() {
+        Properties roleProps = getRoleProperties();
+        if ( roleProps == null || roleProps.isEmpty() ) {
+            return;
+        }
+
+        //noinspection unchecked
+        Enumeration<String> propNames = (Enumeration<String>)roleProps.propertyNames();
+
+        while ( propNames.hasMoreElements() ) {
+            String rolename = propNames.nextElement();
+            String value = roleProps.getProperty( rolename );
+
+            SimpleRole role = getRole( rolename );
+            if ( role == null ) {
+                role = new SimpleRole( rolename );
+                add( role );
+            }
+
+            Set<Permission> permissions = PermissionUtils.createPermissions( value );
+            role.setPermissions( permissions );
+        }
+    }
+
+    protected Properties toProperties( List<String> keyValuePairs ) {
+        if ( keyValuePairs == null || keyValuePairs.isEmpty() ) {
+            return null;
+        }
+
+        Properties props = new Properties();
+
+        for( String pairString : keyValuePairs ) {
+            if ( !pairString.contains( "=" ) ) {
+                String msg = "Invalid definition entry [" + pairString + "].  Key/Value pairs must be separated " +
+                    "by an equals character (=)";
+                throw new IllegalArgumentException( msg );
+            }
+            String[] pair = pairString.split( "=", 2 );
+            props.setProperty( pair[0].trim(), pair[1].trim() );
+        }
+        
+        return props;
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -104,10 +300,12 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
             setCacheProvider( provider );
             this.cacheProviderImplicitlyCreated = true;
         }
-        //if ( accounts != null && !accounts.isEmpty() ) {
-            //todo - translate into SimpleUser and SimpleRole objects
-        //}
 
+        this.userCache = provider.buildCache( getClass().getName() + ".users" );
+        this.roleCache = provider.buildCache( getClass().getName() + ".roles" );
+
+        processUserProperties();
+        processRoleProperties();
     }
 
     protected void destroy( Cache cache ) {
@@ -136,7 +334,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         if ( this.cacheProviderImplicitlyCreated ) {
             if ( getCacheProvider() instanceof Destroyable ) {
                 try {
-                    ((Destroyable)getCacheProvider()).destroy();
+                    ( (Destroyable)getCacheProvider() ).destroy();
                 } catch ( Exception e ) {
                     if ( log.isInfoEnabled() ) {
                         log.info( "Unable to cleanly destroy implicitly created CacheProvider.  Ignoring (shutting down)" );
@@ -171,7 +369,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     }
 
     protected SimpleUser getUser( Principal principal ) {
-        return (SimpleUser)userCache.get( getUsername( principal ) );
+        return getUser( getUsername( principal ) );
     }
 
     public boolean hasRole( Principal principal, String roleIdentifier ) {
