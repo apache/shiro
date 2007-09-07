@@ -40,7 +40,8 @@ import java.util.List;
  * implement the {@link org.jsecurity.realm.Realm} interface when all of the authorization information is
  * retrieved at once.</p>
  *
- * <p>Used internally by several realm implementeations, including the {@link org.jsecurity.realm.support.AbstractCachingRealm} which
+ * <p>Used internally by several realm implementeations, including the
+ * {@link org.jsecurity.realm.support.AuthorizingRealm} which
  * uses this object to encapsulate the cached information.</p>
  *
  * @since 0.1

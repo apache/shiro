@@ -1,6 +1,5 @@
 package org.jsecurity.realm.support.memory;
 
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authz.Permission;
 
 import java.io.Serializable;
@@ -10,6 +9,7 @@ import java.util.Set;
 /**
  * TODO class JavaDoc
  *
+ * @since 0.2
  * @author Les Hazlewood
  */
 public class SimpleUser implements Serializable {
@@ -18,8 +18,6 @@ public class SimpleUser implements Serializable {
     protected String password = null;
 
     protected Set<SimpleRole> roles = null;
-
-    private AuthenticationInfo cachedAuthcInfo = null;
 
     public SimpleUser() {
     }

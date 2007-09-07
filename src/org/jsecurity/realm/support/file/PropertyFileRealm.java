@@ -28,14 +28,16 @@ package org.jsecurity.realm.support.file;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
-import org.jsecurity.authc.*;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.NoAuthorizationInfoFoundException;
+import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
-import org.jsecurity.realm.support.AbstractRealm;
-import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.realm.support.AuthenticatingRealm;
 import org.jsecurity.realm.support.memory.SimpleRole;
 import org.jsecurity.realm.support.memory.SimpleUser;
 import org.jsecurity.util.Initializable;
@@ -101,7 +103,7 @@ role.contractor = com.domain.IntranetPermission,useTimesheet</pre></code>
  * @author Jeremy Haile
  * @since 0.2
  */
-public class PropertyFileRealm extends AbstractRealm implements Runnable, Initializable {
+public class PropertyFileRealm extends AuthenticatingRealm implements Runnable, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -375,24 +377,13 @@ public class PropertyFileRealm extends AbstractRealm implements Runnable, Initia
 
         SimpleUser user = userMap.get( upToken.getUsername() );
         if( user == null ) {
-            throw new UnknownAccountException( "User [" + upToken.getUsername() + "] not found in property file." );
+            return null;
         }
 
         Principal principal = new UsernamePrincipal( user.getUsername() );
 
         return new SimpleAuthenticationInfo( principal, user.getPassword() );
 
-    }
-
-    protected AuthorizationInfo getAuthorizationInfo( Principal principal ) {
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) principal;
-
-        SimpleUser user = userMap.get( usernamePrincipal.getUsername() );
-        if( user == null ) {
-            throw new NoAuthorizationInfoFoundException( "User [" + usernamePrincipal.getUsername() + "] not found in property file." );
-        }
-
-        return new AuthorizationInfo( user.getRolenames(), user.getPermissions() );
     }
 
     protected String getUsername( Principal principal ) {
@@ -486,7 +477,23 @@ public class PropertyFileRealm extends AbstractRealm implements Runnable, Initia
         }
     }
 
+    /**
+     * Default implementation that always returns false (relies on JSecurity 1.5 annotations instead).
+     *
+     * @param action the action to check for authorized execution
+     * @return whether or not the realm supports AuthorizedActions of the given type.
+     */
+    public boolean supports( AuthorizedAction action ) {
+        return true;
+    }
 
+    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+        return true;
+    }
+
+    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+        //does nothing
+    }
 
 
 }

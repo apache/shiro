@@ -175,6 +175,7 @@ public class EhCache implements Cache {
             logger.debug( "Cleaning up and removing cache [" + getCacheName() + "]" );
         }
         try {
+            //TODO - may not be the VM cacheManager that created this cache.
             CacheManager.getInstance().removeCache(cache.getName());
         }
         catch ( Throwable t ) {

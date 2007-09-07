@@ -56,14 +56,14 @@ import org.jsecurity.authz.Authorizer;
  * practically any application environment.
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend
- * one of the subclasses, {@link org.jsecurity.realm.support.AbstractRealm} or
- * {@link org.jsecurity.realm.support.AbstractCachingRealm},
+ * one of the subclasses, {@link org.jsecurity.realm.support.AuthenticatingRealm AuthenticatingRealm} or
+ * {@link org.jsecurity.realm.support.AuthorizingRealm},
  * which reduce the tedious methods required to implement a <tt>Realm</tt> from scratch.</p>
  *
- * @see Realm
+ * @see org.jsecurity.realm.support.AbstractRealm AbstractRealm
+ * @see org.jsecurity.realm.support.AuthenticatingRealm AuthenticatingRealm
+ * @see org.jsecurity.realm.support.AuthorizingRealm AuthorizingRealm
  * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
- * @see org.jsecurity.realm.support.AbstractRealm
- * @see org.jsecurity.realm.support.AbstractCachingRealm
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -73,23 +73,22 @@ public interface Realm extends Authorizer {
 
     /**
      * Returns the name of this Realm used to uniquely identify it within the application.
-     * This name must be unique amongst all realms used within this security context.
      * @return the unique identifier for this realm.
      */
     String getName();
 
     /**
-     * Returns true if this realm can authenticate subjects with
+     * Returns <tt>true</tt> if this realm can authenticate subjects with
      * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances of the specified Class,
-     * false otherwise.
+     * <tt>false</tt> otherwise.
      *
      * <p>If the realm does not support the specified type, it will not be used to authenticate any
      * tokens of that type.
      *
      * @param authenticationTokenClass the <tt>AuthenticationToken</tt> Class to check for support.
      *
-     * @return true if this realm can authenticate subjects represented by tokens of the
-     * specified class, false otherwise.
+     * @return <tt>true</tt> if this realm can authenticate subjects represented by tokens of the
+     * specified class, <tt>false</tt> otherwise.
      */
     boolean supports( Class authenticationTokenClass );
 
