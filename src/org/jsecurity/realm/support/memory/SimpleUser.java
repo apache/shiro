@@ -58,6 +58,22 @@ public class SimpleUser implements Serializable {
         this.roles = roles;
     }
 
+    public Set<Permission> getPermissions() {
+        Set<Permission> permissions = new HashSet<Permission>();
+        for( SimpleRole role : roles ) {
+            permissions.addAll( role.getPermissions() );
+        }
+        return permissions;
+    }
+
+    public Set<String> getRolenames() {
+        Set<String> rolenames = new HashSet<String>();
+        for( SimpleRole role : roles ) {
+            rolenames.add( role.getName() );
+        }
+        return rolenames;
+    }
+
     public void add( SimpleRole role ) {
         Set<SimpleRole> roles = getRoles();
         if ( roles == null ) {
@@ -110,4 +126,5 @@ public class SimpleUser implements Serializable {
     public String toString() {
         return getUsername();
     }
+
 }
