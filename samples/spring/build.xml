@@ -71,6 +71,7 @@
                 <include name="*.xml"/>
                 <include name="*.gif"/>
                 <include name="*.jpg"/>                
+                <include name="*.properties"/>                
             </fileset>
             <manifest>
                 <attribute name="Implementation-Title"
