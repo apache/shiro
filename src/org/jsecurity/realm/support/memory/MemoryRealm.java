@@ -47,15 +47,30 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * <p>A simple implementation of the {@link org.jsecurity.realm.Realm} interface that
- * uses a set of configured user accounts to authenticate the user.  Each account entry
+ * <p>A simple implementation of the {@link org.jsecurity.realm.Realm Realm} interface that
+ * uses a set of configured user accounts and roles to support authentication and authorization.  Each account entry
  * specifies the username, password, and roles for a user.  Roles can also be mapped
- * to permissions and will be associated with users.</p>
+ * to permissions and associated with users.</p>
  *
- * <p>See the <tt>applicationContext.xml</tt> in the Spring sample application for an example
- * of configuring a <tt>MemoryRealm</tt></p>
+ * <p>User accounts can be specified in a couple of ways:
  *
- * TODO - clean up this JavaDoc to document the text format
+ * <ul>
+ *   <li>Specifying a Map of username-to-password&amp;rolenames via the
+ *   {@link #setUserDefinitions(Map) setUserDefinitions(Map)} method.</li>
+ *   <li>Specifying a list of strings of username-to-password&amp;rolenames assignments.  The format of each line
+ *   is specified in the {@link #setUserDefinitions( List ) setUserDefinitions( List )} JavaDoc.  This mechanism
+ *   is just a convenience helper for the Map equivalent.</li>
+ * </ul>
+ *
+ * <p>Roles and associated permissions can be specified similarly:
+ *
+ * <ul>
+ *   <li>Specifying a Map of rolename-to-permission(s) via the
+ *   {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} method.</li>
+ *   <li>Specifying a list of strings of rolename-to-password(s) assignments.  The format of each line
+ *   is specified in the {@link #setRoleDefinitions( List ) setRoleDefinitions( List )} JavaDoc.  This mechanism
+ *   is just a convenience helper for the Map equivalent.</li>
+ * </ul>
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -76,8 +91,8 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
 
     private boolean cacheProviderImplicitlyCreated = true;
 
-    private Properties userProperties = null;
-    private Properties roleProperties = null;
+    private Map<String,String> userDefinitions = null;
+    private Map<String,String> roleDefinitions = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -86,16 +101,16 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-
     /**
-     * Sets the user definitions to be parsed and converted to Properties entries.
+     * Convenience method that converts a list of Strings into Map.Entry elements for the
+     * {@link #setUserDefinitions(Map) setUserDefinitions(Map)} method.  This allows one to specify user configuration
+     * with simple strings and pass them directly to this instance if desired.
      *
-     * <p>Each definition must be a user-to-role(s) key/value mapping with the following format:</p>
+     * <p>Each List element must be a String that defines a user-to-password&amp;role(s) key/value mapping according 
+     * to the {@link #setUserDefinitions(Map) setUserDefinitions(Map)} JavaDoc.  The only difference here is that an
+     * equals character signifies the key/value separation, like so:</p>
      *
-     * <p><code><em>username1</em> = <em>password1</em>,role1,role2,...</code></p>
-     *
-     * <p>Each value (the text to the right of the equals character) must specify that user's password followed by
-     * zero or more role names of the roles assigned to that user.</p>
+     * <p><code><em>username</em> = <em>password</em>,role1,role2,...</code></p>
      *
      * <p>Here are some examples of what these lines might look like:</p>
      *
@@ -105,64 +120,101 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
      * djones = <em>djonesPassword</em>,qa,contractor<br/>
      * guest = <em>guestPassword</em></code></p>
      *
-     * @param userDefinitions the user definitions to be parsed at initialization
+     * @param userDefinitions the user definitions to be parsed and converted to Map.Entry elements
      */
     public void setUserDefinitions( List<String> userDefinitions ) {
-        if ( userDefinitions == null || userDefinitions.isEmpty() ) {
-            return;
-        }
-        setUserProperties( toProperties( userDefinitions ) );
+        setUserDefinitions( toMap( userDefinitions ) );
     }
 
     /**
-     * Sets the role definitions to be parsed and converted to Properteis entries.
+     * Convenience method that converts a list of Strings into Map.Entry elements for the
+     * {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} method.  This allows one to specify role configuration
+     * with simple strings and pass them directly to this instance if desired.
      *
-     * <p>Each definition must be a role-to-permission(s) key/value mapping with the following format:</p>
+     * <p>Each List element must be a String that defines a role-to-permission(s) key/value mapping according
+     * to the {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} JavaDoc.  The only difference here is that an
+     * equals character signifies the key/value separation, like so:</p>
      *
-     * <p><code><em>rolename1</em> = <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
+     * <p><code><em>rolename</em> = <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
      *
-     * <p>Each value (the text to the right of the equals character) must specify one or more
-     * <em>permissionDefinition</em>s.  A <em>permissionDefinition</em> is defined as</p>
+     * <p>Please see the {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} JavaDoc for complete reference on
+     * what each of these line elements mean.
+     *
+     * <p><b>PLEASE NOTE</b> that if you have roles that don't require permission associations, don't include them in
+     * this list - just defining the role name in a {@link #setUserDefinitions user definition} is enough to create the
+     * role if it does not yet exist.
+     *
+     * @param roleDefinitions the role definitions to be parsed and converted to Map.Entry elements
+     */
+    public void setRoleDefinitions( List<String> roleDefinitions ) {
+        if ( roleDefinitions == null || roleDefinitions.isEmpty() ) {
+            return;
+        }
+        setRoleDefinitions( toMap( roleDefinitions ) );
+    }
+
+    public Map<String,String> getUserDefinitions() {
+        return userDefinitions;
+    }
+
+    /**
+     * Sets the user definitions to be parsed and converted into internal User accounts.
+     *
+     * <p>Each Map.Entry must be a username (key) to password&amp;role(s) (value) mapping like the following:</p>
+     *
+     * <p><code><em>username</em> : <em>password</em>,role1,role2,...</code></p>
+     *
+     * <p>Each Map.Entry value must specify that user's password followed by
+     * zero or more comma-delimited role names of the roles assigned to that user.</p>
+     *
+     * <p>Here are some examples of what these Map.Entry elements might look like:</p>
+     *
+     * <p><code>root : <em>reallyHardToGuessPassword</em>,administrator<br/>
+     * jsmith : <em>jsmithsPassword</em>,manager,engineer,employee<br/>
+     * abrown : <em>dbrownsPassword</em>,qa,employee<br/>
+     * djones : <em>djonesPassword</em>,qa,contractor<br/>
+     * guest : <em>guestPassword</em></code></p>
+     *
+     * @param userDefinitions the user definitions to be parsed at initialization
+     */
+    public void setUserDefinitions( Map<String,String> userDefinitions ) {
+        this.userDefinitions = userDefinitions;
+    }
+
+    public Map<String,String> getRoleDefinitions() {
+        return roleDefinitions;
+    }
+
+    /**
+     * Sets the role definitions to be parsed and converted to internal Role representations.
+     *
+     * <p>Each Map.Entry must be a rolename (key) to permission(s) (value) mapping like the following:</p>
+     *
+     * <p><code><em>rolename</em> : <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
+     *
+     * <p>Each Map.Entry value must specify one or more <em>permissionDefinition</em>s.  A <em>permissionDefinition</em>
+     * is defined as</p>
      *
      * <p><code><em>requiredPermissionClassName</em>,<em>requiredPermissionName</em>,<em>optionalActionsString</em></code></p>
      *
-     * <p>corresponding to the associated class attributes of a
+     * <p>corresponding to the associated class attributes of
      * {@link org.jsecurity.authz.Permission Permission} or
      * {@link org.jsecurity.authz.TargetedPermission TargetedPermission}.</p>
      *
      * <p><em>optionalActionsString</em> is optional as implied, but if it exists, it <em>is</em> allowed to contain
      * commas as well.
      *
-     * But note that because a single <em>permissionDefinition</em> is internally delimited via commas (,), multiple
+     * <p>But note that because a single <em>permissionDefinition</em> is internally delimited via commas (,), multiple
      * <em>permissionDefinition</em>s for a single role must be delimited via semi-colons (;)
      *
-     * <p><b>Note</b> that if you have roles that don't require permission associations, don't include them in this
-     * list - just defining the role name in a {@link #setUserDefinitions user definition} is enough to create the
+     * <p><b>PLEASE NOTE</b> that if you have roles that don't require permission associations, don't include them in this
+     * list - just defining the role name in a {@link #setUserDefinitions(Map) user definition} is enough to create the
      * role if it does not yet exist.
      *
      * @param roleDefinitions the role definitions to be parsed at initialization
      */
-    public void setRoleDefinitions( List<String> roleDefinitions ) {
-        if ( roleDefinitions == null || roleDefinitions.isEmpty() ) {
-            return;
-        }
-        setRoleProperties( toProperties( roleDefinitions ) );
-    }
-
-    public Properties getUserProperties() {
-        return userProperties;
-    }
-
-    public void setUserProperties( Properties userProperties ) {
-        this.userProperties = userProperties;
-    }
-
-    public Properties getRoleProperties() {
-        return roleProperties;
-    }
-
-    public void setRoleProperties( Properties roleProperties ) {
-        this.roleProperties = roleProperties;
+    public void setRoleDefinitions( Map<String,String> roleDefinitions ) {
+        this.roleDefinitions = roleDefinitions;
     }
 
     protected SimpleUser getUser( String username ) {
@@ -198,20 +250,16 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         return values;
     }
 
-    protected void processUserProperties() {
+    protected void processUserDefinitions() {
 
-        Properties userProps = getUserProperties();
-        if ( userProps == null || userProps.isEmpty() ) {
+        Map<String,String> userDefs = getUserDefinitions();
+        if ( userDefs == null || userDefs.isEmpty() ) {
             return;
         }
 
-        //noinspection unchecked
-        Enumeration<String> propNames = (Enumeration<String>)userProps.propertyNames();
+        for ( String username : userDefs.keySet() ) {
 
-        while ( propNames.hasMoreElements() ) {
-
-            String username = propNames.nextElement();
-            String value = userProps.getProperty( username );
+            String value = userDefs.get( username );
 
             String[] passwordAndRolesArray = value.split( USER_ROLENAME_DELIMITER, 2 );
             String password = passwordAndRolesArray[0];
@@ -245,18 +293,15 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         }
     }
 
-    protected void processRoleProperties() {
-        Properties roleProps = getRoleProperties();
-        if ( roleProps == null || roleProps.isEmpty() ) {
+    protected void processRoleDefinitions() {
+
+        Map<String,String> roleDefs = getRoleDefinitions();
+        if ( roleDefs == null || roleDefs.isEmpty() ) {
             return;
         }
 
-        //noinspection unchecked
-        Enumeration<String> propNames = (Enumeration<String>)roleProps.propertyNames();
-
-        while ( propNames.hasMoreElements() ) {
-            String rolename = propNames.nextElement();
-            String value = roleProps.getProperty( rolename );
+        for ( String rolename : roleDefs.keySet() ) {
+            String value = roleDefs.get( rolename );
 
             SimpleRole role = getRole( rolename );
             if ( role == null ) {
@@ -269,12 +314,12 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         }
     }
 
-    protected Properties toProperties( List<String> keyValuePairs ) {
+    protected Map<String,String> toMap( List<String> keyValuePairs ) {
         if ( keyValuePairs == null || keyValuePairs.isEmpty() ) {
             return null;
         }
 
-        Properties props = new Properties();
+        Map<String,String> pairs = new HashMap<String,String>();
 
         for( String pairString : keyValuePairs ) {
             if ( !pairString.contains( "=" ) ) {
@@ -283,10 +328,10 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
                 throw new IllegalArgumentException( msg );
             }
             String[] pair = pairString.split( "=", 2 );
-            props.setProperty( pair[0].trim(), pair[1].trim() );
+            pairs.put( pair[0].trim(), pair[1].trim() );
         }
         
-        return props;
+        return pairs;
     }
 
     /*--------------------------------------------
@@ -304,8 +349,8 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         this.userCache = provider.buildCache( getClass().getName() + ".users" );
         this.roleCache = provider.buildCache( getClass().getName() + ".roles" );
 
-        processUserProperties();
-        processRoleProperties();
+        processUserDefinitions();
+        processRoleDefinitions();
     }
 
     protected void destroy( Cache cache ) {
@@ -450,19 +495,25 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     }
 
     /**
-     * Default implementation that always returns false (relies on JSecurity 1.5 annotations instead).
+     * Default implementation that always returns <tt>true</tt> (defers on JSecurity's JDK 1.5 annotations).
      *
      * @param action the action to check for authorized execution
      * @return whether or not the realm supports AuthorizedActions of the given type.
      */
     public boolean supports( AuthorizedAction action ) {
-        return false;
+        return true;
     }
 
+    /**
+     * Default implementation always returns <tt>true</tt>.
+     */
     public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
         return true;
     }
 
+    /**
+     * Default implementation always returns quietly (no exception thrown).
+     */
     public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
         //does nothing
     }

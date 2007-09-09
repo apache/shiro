@@ -50,7 +50,7 @@
     <!-- =========================================================
       -  Property File Realm - to use, inject propertyFileRealm into the securityManager
       ============================================================ -->
-    <bean id="propertyFileRealm" class="org.jsecurity.realm.support.file.PropertiesFileRealm">
+    <bean id="propertyFileRealm" class="org.jsecurity.realm.support.file.PropertiesRealm">
         <property name="filePath" value="classpath:sample-users.properties"/>
     </bean>
 

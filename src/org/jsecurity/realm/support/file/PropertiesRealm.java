@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -34,61 +34,58 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A simple file-based <tt>Realm</tt> that can be used to implement role-based and permission-based security with
- * a users, roles, and permissions defined in a properties file.
+ * A subclass of <tt>MemoryRealm</tt> that defers all logic to the parent class, but just enables
+ * {@link java.util.Properties Properties} based configuration in addition to the parent class's String and Map
+ * configuration.
  *
- * <p>The .properties file format understood by this implementation must be written in as follows:
+ * <p>This class allows processing of a single Properties instance (or .properties file) for user, role, and
+ * permission configuration.  The Properties format understood by this implementation must be written in as follows:
  *
  * <p>Each line's key/value pair represents either a user-to-role(s) mapping <em>or</em> a role-to-permission(s)
  * mapping.
  *
  * <p>The user-to-role(s) lines have this format:</p>
  *
- * <p><code><b>user.</b><em>username1</em> = <em>password1</em>,role1,role2,...</code></p>
+ * <p><code><b>user.</b><em>username</em> = <em>password</em>,role1,role2,...</code></p>
  *
- * <p>Note that each key is prefixed with the token <tt><b>user.</b></tt>  Each value must specify that user's
- * password followed by zero or more role names assigned to that user.</p>
+ * <p>Note that each key is prefixed with the token <tt><b>user.</b></tt>  Each value must adhere to the
+ * the {@link #setUserDefinitions(Map) setUserDefinitions(Map)} JavaDoc.</p>
  *
  * <p>The role-to-permission(s) lines have this format:</p>
  *
- * <p><code><b>role.</b><em>rolename1</em> = <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
+ * <p><code><b>role.</b><em>rolename</em> = <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
  *
- * <p>where each key is prefixed with the token <tt><b>role.</b></tt> and the value is one or more
- * <em>permissionDefinition</em>s.  A <em>permissionDefinition</em> is defined as</p>
+ * <p>where each key is prefixed with the token <tt><b>role.</b></tt> and the value adheres to the format specified in
+ * the {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} JavaDoc.
  *
- * <p><code><em>permissionClassName</em>,<em>permissionName</em>,<em>optionalActionsString</em></code></p>
+ * <p>Here is an example of a very simple properties definition that conforms to the above format rules and corresponding
+ * method JavaDocs:
  *
- * <p>corresponding to the associated class attributes of a
- * {@link org.jsecurity.authz.Permission Permission} or
- * {@link org.jsecurity.authz.TargetedPermission TargetedPermission}.
- * <em>optionalActionsString</em> is optional, but if it exists, it <em>is</em> allowed to contain commas as well.
- * But note that because <em>permissionDefinition</em> is internally delimited via commas (,), multiple
- * <em>permissionDefinition</em>s for a single role must be delimited via semi-colons (;)
+ * <code><pre>   user.root = administrator
+ * user.jsmith = manager,engineer,employee
+ * user.abrown = qa,employee
+ * user.djones = qa,contractor
  *
- * <p>Here is an example of a very simple properties file that conforms to the above format rules:
+ * role.administrator = org.jsecurity.authz.support.AllPermission
+ * role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute
+ * role.engineer = com.domain.FilePermission,/usr/local/tomcat/bin/startup.sh,read,execute
+ * role.employee = com.domain.IntranetPermission,useWiki
+ * role.qa = com.domain.QAServerPermission,*,view,start,shutdown,restart;com.domain.ProductionServerPermission,*,view
+ * role.contractor = com.domain.IntranetPermission,useTimesheet</pre></code>
  *
- * <code><pre>user.root = administrator
-user.jsmith = manager,engineer,employee
-user.abrown = qa,employee
-user.djones = qa,contractor
-
-role.administrator = org.jsecurity.authz.support.AllPermission
-role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute
-role.engineer = com.domain.FilePermission,/usr/local/tomcat/bin/startup.sh,read,execute
-role.employee = com.domain.IntranetPermission,useWiki
-role.qa = com.domain.QAServerPermission,*,view,start,shutdown,restart;com.domain.ProductionServerPermission,*,view
-role.contractor = com.domain.IntranetPermission,useTimesheet</pre></code>
- *
- * @author Jeremy Haile
  * @since 0.2
+ * @author Les Hazlewood
+ * @author Jeremy Haile
  */
-public class PropertyFileRealm extends MemoryRealm implements Runnable, Initializable {
+public class PropertiesRealm extends MemoryRealm implements Runnable, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -106,7 +103,7 @@ public class PropertyFileRealm extends MemoryRealm implements Runnable, Initiali
     protected long fileLastModified;
     protected int reloadIntervalSeconds = DEFAULT_RELOAD_INTERVAL_SECONDS;
 
-    public PropertyFileRealm() {
+    public PropertiesRealm() {
     }
 
     /*--------------------------------------------
@@ -197,7 +194,13 @@ public class PropertyFileRealm extends MemoryRealm implements Runnable, Initiali
         }
 
         Properties properties = loadProperties(filePath);
+        try {
+            super.destroy();
+        } catch ( Exception e ) {
+            //ignored
+        }
         createRealmEntitiesFromProperties( properties );
+        super.init();
     }
 
 
@@ -224,8 +227,8 @@ public class PropertyFileRealm extends MemoryRealm implements Runnable, Initiali
     @SuppressWarnings( "unchecked" )
     private void createRealmEntitiesFromProperties( Properties properties ) {
 
-        Properties userProps = new Properties();
-        Properties roleProps = new Properties();
+        Map<String,String> userDefs = new HashMap<String,String>();
+        Map<String,String> roleDefs = new HashMap<String,String>();
 
         //split into respective props for parent class:
 
@@ -238,10 +241,10 @@ public class PropertyFileRealm extends MemoryRealm implements Runnable, Initiali
 
             if ( isUsername( key ) ) {
                 String username = getUsername( key );
-                userProps.put( username, value );
+                userDefs.put( username, value );
             } else if ( isRolename( key ) ) {
                 String rolename = getRolename( key );
-                roleProps.put( rolename, value );
+                roleDefs.put( rolename, value );
             } else {
                 String msg = "Encountered unexpected key/value pair.  All keys must be prefixed with either '" + 
                     USERNAME_PREFIX + "' or '" + ROLENAME_PREFIX + "'.";
@@ -249,12 +252,11 @@ public class PropertyFileRealm extends MemoryRealm implements Runnable, Initiali
             }
         }
 
-        if ( !userProps.isEmpty() ) {
-            setUserProperties( userProps );
-        }
-        if ( !roleProps.isEmpty() ) {
-            setRoleProperties( roleProps );
-        }
+        setUserDefinitions( userDefs );
+        setRoleDefinitions( roleDefs );
+
+        processUserDefinitions();
+        processRoleDefinitions();
     }
 
     private Properties loadProperties( String filePath ) {
