@@ -166,6 +166,11 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
 
     protected void onInit() {
         if( ldapContextFactory == null ) {
+
+            if( log.isDebugEnabled() ) {
+                log.debug( "No LdapContextFactory is specified, so a default instance is being created." );
+            }
+
             DefaultLdapContextFactory defaultFactory = new DefaultLdapContextFactory();
             defaultFactory.setPrincipalSuffix( this.principalSuffix );
             defaultFactory.setSearchBase( this.searchBase );

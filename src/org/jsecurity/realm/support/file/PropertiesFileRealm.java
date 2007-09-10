@@ -252,10 +252,10 @@ public class PropertiesFileRealm extends MemoryRealm implements Runnable, Initia
         }
 
         if ( !userProps.isEmpty() ) {
-            setUserProperties( userProps );
+            //setUserPropertie( userProps );
         }
         if ( !roleProps.isEmpty() ) {
-            setRoleProperties( roleProps );
+            //setRoleProperties( roleProps );
         }
     }
 

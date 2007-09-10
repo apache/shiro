@@ -108,7 +108,14 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
         // Binds using the username and password provided by the user.
-        ldapContextFactory.getLdapContext( upToken.getUsername(), String.valueOf( upToken.getPassword() ) );
+        LdapContext ctx = null;
+        try {
+
+            ctx = ldapContextFactory.getLdapContext( upToken.getUsername(), String.valueOf( upToken.getPassword() ) );
+
+        } finally {
+            LdapUtils.closeContext( ctx );
+        }
 
         UsernamePrincipal principal = new UsernamePrincipal( upToken.getUsername() );
 
@@ -133,20 +140,40 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
         UsernamePrincipal usernamePrincipal = (UsernamePrincipal) principal;
 
+        // Perform context search
+        LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
+
+        List<String> roleNames;
+
+        try {
+
+            roleNames = getRoleNamesForUser(usernamePrincipal, ldapContext);
+
+        } finally {
+
+            LdapUtils.closeContext( ldapContext );
+        }
+
+        return new SimpleAuthorizationInfo( roleNames, null );
+    }
+
+    private List<String> getRoleNamesForUser(UsernamePrincipal usernamePrincipal, LdapContext ldapContext) throws NamingException {
+        List<String> roleNames;
+        roleNames = new ArrayList<String>();
+
         SearchControls searchCtls = new SearchControls();
         searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         String searchFilter = "(&(objectClass=*)(userPrincipalName=" + usernamePrincipal.getUsername() + "))";
 
-        // Perform context search
-        LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
         NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchCtls);
 
-        List<String> roleNames = new ArrayList<String>();
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
 
-            log.debug("Retrieving group names for user [" + sr.getName() + "]");
+            if( log.isDebugEnabled() ) {
+                log.debug("Retrieving group names for user [" + sr.getName() + "]");
+            }
 
             Attributes attrs = sr.getAttributes();
 
@@ -159,13 +186,17 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
                         Collection<String> groupNames = LdapUtils.getAllAttributeValues( attr );
 
-                        roleNames.addAll( getRoleNamesForGroups( groupNames ) );
+                        if (log.isDebugEnabled()) {
+                            log.debug("Groups found for user [" + usernamePrincipal.getUsername() + "]: " + groupNames );
+                        }
+
+                        Collection<String> rolesForGroups = getRoleNamesForGroups(groupNames);
+                        roleNames.addAll(rolesForGroups);
                     }
                 }
             }
         }
-
-        return new SimpleAuthorizationInfo( roleNames, null );
+        return roleNames;
     }
 
     /**
