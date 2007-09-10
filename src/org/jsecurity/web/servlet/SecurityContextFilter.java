@@ -25,10 +25,11 @@
 
 package org.jsecurity.web.servlet;
 
+import org.jsecurity.SecurityManager;
 import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
-import javax.servlet.ServletException;
+import javax.servlet.ServletContext;
 
 /**
  * Filter that is used to ensure a {@link org.jsecurity.context.SecurityContext} is made available to the application
@@ -81,11 +82,7 @@ public abstract class SecurityContextFilter extends WebInterceptorFilter {
 
     protected WebInterceptor createWebInterceptor() throws Exception {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
-        org.jsecurity.SecurityManager securityManager = getSecurityManager();
-        if ( securityManager == null ) {
-            String msg = "getSecurityManager() subclass implementation must return a non-null SecurityManager";
-            throw new ServletException( msg );
-        }
+        SecurityManager securityManager = getSecurityManager();
         interceptor.setSecurityManager( securityManager );
         interceptor.setRequireSessionOnRequest( isSessionRequiredOnRequest() );
         interceptor.setPreferHttpSessionStorage( isPreferHttpSessionStorage() );
@@ -93,5 +90,24 @@ public abstract class SecurityContextFilter extends WebInterceptorFilter {
         return interceptor;
     }
 
-    protected abstract org.jsecurity.SecurityManager getSecurityManager();
+    /**
+     * Default implementation pulls the SecurityContext instance from the ServletContext.  Subclasses can override to
+     * retrieve from a different location.
+     *
+     * @return the application's SecurityManager.
+     */
+    protected SecurityManager getSecurityManager() {
+        ServletContext servletContext = getFilterConfig().getServletContext();
+        SecurityManager securityManager = (SecurityManager)servletContext.getAttribute( SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY );
+        if ( securityManager == null ) {
+            String msg = "no SecurityManager instance bound to the ServletContext under key [" +
+            SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY + "].  Please ensure that either the " +
+                SecurityManagerListener.class.getName() + " listener or the " +
+                SecurityManagerServlet.class.getName() + " servlet are configured in web.xml, or override the " +
+                getClass().getName() + " getSecurityManager() method to retrieve it from a custom location.";
+            throw new IllegalStateException( msg );
+        }
+        return null;
+    }
+
 }
