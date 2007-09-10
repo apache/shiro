@@ -146,7 +146,8 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     }
 
     /**
-     * Determines whether or not LdapContext pooling is enabled.  In the default implementation, this simply
+     * Determines whether or not LdapContext pooling is enabled for connections made using the system
+     * user account.  In the default implementation, this simply
      * sets the <tt>com.sun.jndi.ldap.connect.pool</tt> property in the LDAP context environment.  If you use an
      * LDAP Context Factory that is not Sun's default implementation, you will need to override the
      * default behavior to use this setting in whatever way your underlying LDAP ContextFactory
@@ -170,6 +171,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     ============================================*/
 
     public LdapContext getSystemLdapContext() throws NamingException {
+        //todo Should use anonymous connection if no system username is specified.
         return getLdapContext( systemUsername, systemPassword );
     }
 
@@ -181,16 +183,22 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
             throw new IllegalStateException( "An LDAP URL must be specified of the form ldap://<hostname>:<port>" );
         }
 
+        if( principalSuffix != null ) {
+            username += principalSuffix;
+        }
+
         Hashtable<String, String> env = new Hashtable<String, String>();
 
         env.put( Context.SECURITY_AUTHENTICATION, authentication );
-        env.put( Context.SECURITY_PRINCIPAL, systemUsername );
-        env.put( Context.SECURITY_CREDENTIALS, systemPassword );
+        env.put( Context.SECURITY_PRINCIPAL, username );
+        env.put( Context.SECURITY_CREDENTIALS, password );
         env.put( Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName);
         env.put( Context.PROVIDER_URL, url );
         env.put( Context.REFERRAL, referral );
 
-        if( usePooling ) {
+        // Only pool connections for system contexts
+        //todo Connection pooling only for system or anonymous accounts
+        if( usePooling && username.equals( systemUsername )) {
             // Enable connection pooling
             env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
         }

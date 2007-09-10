@@ -359,7 +359,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
                 cache.clear();
             } catch ( Throwable t ) {
                 if ( log.isInfoEnabled() ) {
-                    log.info( "Unable to cleanly clear cache [" + cache + "].  Ingoring (shutting down)." );
+                    log.info( "Unable to cleanly clear cache [" + cache + "].  Ignoring (shutting down)." );
                 }
             }
             try {
