@@ -47,12 +47,14 @@ import java.util.List;
 public interface SecurityManager extends Authenticator, Authorizer, SessionFactory {
 
     /**
-     * Retrieves a realm by its unique name.
+     * Returns the realm with the specified unique name or <tt>null</tt> if there is no realm managed by the
+     * SecurityManager instance by that name.
+     *
      * @param realmName the unique name of the realm to be retrieved.
-     * @return the realm associated with the given name.
-     * @throws IllegalArgumentException if a realm with the given name is not found.
+     * @return the realm with the specified unique name or <tt>null</tt> if there is no realm managed by the
+     * SecurityManager instance by that name.
      */
-    Realm getRealm( String realmName ) throws IllegalArgumentException;
+    Realm getRealm( String realmName );
 
 
     /**

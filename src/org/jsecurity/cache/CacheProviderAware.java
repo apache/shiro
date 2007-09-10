@@ -7,8 +7,8 @@ package org.jsecurity.cache;
  * <p>This is used so internal security components that use a CacheProvider can be injected with it instead of having
  * to create one on their own.
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
 public interface CacheProviderAware {
 

@@ -497,12 +497,7 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
      * @throws IllegalArgumentException if no realm is found with the given name.
      */
     public Realm getRealm( String realmName ) {
-        Realm realm = realmMap.get( realmName );
-        if ( realm == null ) {
-            throw new IllegalArgumentException( "No realm found with name [" + realmName + "]" );
-        } else {
-            return realm;
-        }
+        return realmMap.get( realmName );
     }
 
 
