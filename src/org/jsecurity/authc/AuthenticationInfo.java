@@ -29,16 +29,21 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
+ * <p>An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
  * in a framework-independent manner.  Instead of forcing a JSecurity user to
  * implement <tt>User</tt> or <tt>Role</tt> interfaces and being invasive on an application's
  * data model, the application must instead only implement this interface to represent such
  * data.  This enables a cleaner pluggable implementation and abstracts an application's
- * core classes away from JSecurity.
+ * core classes away from JSecurity.</p>
+ *
+ * <p>This interface is used by all realms, since it is referenced from the {@link org.jsecurity.realm.Realm} interface.  Most realms
+ * will use the {@link org.jsecurity.authc.support.SimpleAuthenticationInfo} implementation, but are free to create their own
+ * implementation.</p>
  *
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @see org.jsecurity.authc.support.SimpleAuthenticationInfo
  */
 public interface AuthenticationInfo {
 

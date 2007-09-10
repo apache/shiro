@@ -22,33 +22,28 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.realm.support;
+package org.jsecurity.authz.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.context.SecurityContext;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>A value object holding a set of roles and permissions that helps make it easier to
- * implement the {@link org.jsecurity.realm.Realm} interface when all of the authorization information is
- * retrieved at once.</p>
+ * <p>A simple implementation of the {@link AuthorizationInfo} interface that is useful
+ * for most realms.  This implementation uses an internal collection of roles and permissions
+ * in order to determine the authorization information of a particular user.</p>
  *
- * <p>Used internally by several realm implementeations, including the
- * {@link org.jsecurity.realm.support.AuthorizingRealm} which
- * uses this object to encapsulate the cached information.</p>
- *
- * @since 0.1
+ * @since 0.2
  * @author Jeremy Haile
  */
 @SuppressWarnings({"JavaDoc", "SimplifiableIfStatement"})
-public class AuthorizationInfo implements Serializable {
+public class SimpleAuthorizationInfo implements AuthorizationInfo {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -82,7 +77,7 @@ public class AuthorizationInfo implements Serializable {
      * @param permissions the permissions associated with this authorization info.
      */
     @SuppressWarnings( "unchecked" )
-    public AuthorizationInfo(Collection<String> roles, Collection<Permission> permissions) {
+    public SimpleAuthorizationInfo(Collection<String> roles, Collection<Permission> permissions) {
         if( roles != null ) {
             this.roles = roles;
         } else {
@@ -100,9 +95,7 @@ public class AuthorizationInfo implements Serializable {
     |               M E T H O D S               |
     ============================================*/
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#hasRole(String)
-     */
+
     public boolean hasRole(String roleIdentifier) {
         if( roles != null ) {
             return roles.contains( roleIdentifier );
@@ -112,9 +105,7 @@ public class AuthorizationInfo implements Serializable {
 
     }
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#hasRoles(java.util.List)
-     */
+
     public boolean[] hasRoles(List<String> roleIdentifiers) {
         boolean[] hasRoles = new boolean[roleIdentifiers.size()];
 
@@ -126,9 +117,6 @@ public class AuthorizationInfo implements Serializable {
     }
 
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#hasAllRoles(java.util.Collection)
-     */
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
         for( String roleIdentifier : roleIdentifiers ) {
             if( !hasRole( roleIdentifier ) ) {
@@ -139,9 +127,7 @@ public class AuthorizationInfo implements Serializable {
     }
 
 
-    /**
-     * @see SecurityContext#isPermitted(Permission)
-     */
+
     public boolean isPermitted(Permission permission) {
 
         if( permissions != null ) {
@@ -168,9 +154,7 @@ public class AuthorizationInfo implements Serializable {
         return false;
     }
 
-    /**
-     * @see SecurityContext#isPermitted(java.util.List)
-     */
+
     public boolean[] isPermitted(List<Permission> permissions) {
         boolean[] implies = new boolean[permissions.size()];
 
@@ -181,9 +165,6 @@ public class AuthorizationInfo implements Serializable {
     }
 
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#isPermittedAll(java.util.Collection)
-     */
     public boolean isPermittedAll(Collection<Permission> permissions) {
 
         if( permissions != null ) {
@@ -197,9 +178,6 @@ public class AuthorizationInfo implements Serializable {
     }
 
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#checkPermission(Permission)
-     */
     public void checkPermission(Permission permission) throws AuthorizationException {
         if( !isPermitted( permission ) ) {
             throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
@@ -207,9 +185,6 @@ public class AuthorizationInfo implements Serializable {
     }
 
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#checkPermissions(java.util.Collection)
-     */
     public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
         if( permissions != null ) {
             for( Permission permission : permissions ) {
@@ -220,18 +195,12 @@ public class AuthorizationInfo implements Serializable {
         }
     }
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#checkRole(String)
-     */
     public void checkRole(String role) {
         if( !hasRole( role ) ) {
             throw new AuthorizationException( "User does not have role [" + role + "]" );
         }
     }
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#checkRoles
-     */    
     public void checkRoles(Collection<String> roles) {
        if( roles != null ) {
             for( String role : roles ) {

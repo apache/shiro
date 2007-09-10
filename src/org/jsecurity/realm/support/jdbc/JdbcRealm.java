@@ -27,8 +27,9 @@ package org.jsecurity.realm.support.jdbc;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.realm.support.AuthorizationInfo;
+import org.jsecurity.authz.support.SimpleAuthorizationInfo;
 import org.jsecurity.realm.support.AuthorizingRealm;
 import org.jsecurity.util.JdbcUtils;
 import org.jsecurity.util.PermissionUtils;
@@ -289,7 +290,7 @@ public class JdbcRealm extends AuthorizingRealm {
             JdbcUtils.closeConnection( conn );
         }
 
-        return new AuthorizationInfo( roleNames, permissions );
+        return new SimpleAuthorizationInfo( roleNames, permissions );
     }
 
     protected Collection<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {
