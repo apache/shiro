@@ -40,6 +40,7 @@ import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.realm.support.file.PropertiesRealm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
@@ -110,10 +111,14 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     protected CacheProvider cacheProvider = null;
     private boolean cacheProviderImplicitlyCreated = false;
 
+    private Realm realm = null;
+    private boolean realmImplicitlyCreated = false;
+
     /**
      * A map from realm name to realm for all realms managed by this manager.
      */
     private Map<String, Realm> realmMap;
+
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -244,6 +249,23 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
             setCacheProvider( cacheProvider );
         }
     }
+    protected void ensureRealms() {
+        if ( realmMap == null || realmMap.isEmpty() ) {
+
+            if ( log.isInfoEnabled() ) {
+                log.info( "No realms set - creating default PropertiesRealm (not recommended for production)." );
+            }
+
+            PropertiesRealm propsRealm = new PropertiesRealm();
+            propsRealm.init();
+
+            List<Realm> realms = new ArrayList<Realm>(1);
+            realms.add( propsRealm );
+            setRealms( realms );
+            this.realm = propsRealm;
+            this.realmImplicitlyCreated = true;
+        }
+    }
     protected void initAuthenticator() {
         if ( this.authenticator == null ) {
             ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
@@ -267,10 +289,7 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
         }
     }
     public void init() {
-        if ( realmMap == null || realmMap.isEmpty() ) {
-            throw new IllegalStateException( "init() called but no realms have been configured " +
-                "for this manager.  At least one realm needs to be configured on this manager." );
-        }
+        ensureRealms();
         initAuthenticator();
         initAuthorizer();
     }
@@ -321,6 +340,13 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
             }
             cacheProvider = null;
             cacheProviderImplicitlyCreated = false;
+        }
+        if ( realmImplicitlyCreated ) {
+            if ( realm instanceof Destroyable ) {
+                destroy( (Destroyable)realm );
+                realm = null;
+                realmImplicitlyCreated = false;
+            }
         }
     }
 
