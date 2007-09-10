@@ -30,27 +30,27 @@ import org.jsecurity.JSecurityException;
 /**
  * Thrown if there is an error during cache operations.
  *
- * @since 0.2
  * @author Jeremy Haile
+ * @since 0.2
  */
 public class CacheException extends JSecurityException {
 
     public CacheException() {
-        super();    
+        super();
     }
 
 
-    public CacheException(String message) {
-        super(message);
+    public CacheException( String message ) {
+        super( message );
     }
 
 
-    public CacheException(String message, Throwable cause) {
-        super(message, cause);
+    public CacheException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
 
-    public CacheException(Throwable cause) {
-        super(cause);
+    public CacheException( Throwable cause ) {
+        super( cause );
     }
 }

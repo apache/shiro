@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Interface encapsulating logic related to a single cache used for caching
  * JSecurity authentication and authorization information.
- *
+ * 
  * @since 0.2
  * @author Jeremy Haile
  */
@@ -40,36 +40,41 @@ public interface Cache {
      * The name associated with this cache.  This should usually be
      * unique for all caches associated with a particular
      * {@link CacheProvider}
+     *
      * @return the unique name of this cache.
      */
     public String getCacheName();
 
     /**
      * Get an item from the cache.
+     *
      * @param key the key that the item was previous stored with.
      * @return the cached object or <tt>null</tt>
      */
-    public Object get(Object key) throws CacheException;
+    public Object get( Object key ) throws CacheException;
 
     /**
      * Add an item to the cache.
-     * @param key the key used to identify the object being stored.
+     *
+     * @param key   the key used to identify the object being stored.
      * @param value the value to be stored in the cache.
      */
-    public void put(Object key, Object value) throws CacheException;
+    public void put( Object key, Object value ) throws CacheException;
 
     /**
      * Update an existing item in the cache.
-     * @param key the key of the item being updated.
+     *
+     * @param key   the key of the item being updated.
      * @param value the new value of the item being updated.
      */
-    public void update(Object key, Object value) throws CacheException;
+    public void update( Object key, Object value ) throws CacheException;
 
     /**
      * Remove an item from the cache.
+     *
      * @param key the key of the item to be removed.
      */
-    public void remove(Object key) throws CacheException;
+    public void remove( Object key ) throws CacheException;
 
     /**
      * Clear all objects from the cache.
@@ -85,12 +90,13 @@ public interface Cache {
      * The number of bytes that this cache is currently using in memory.
      *
      * @return The number of bytes consumed by this cache, or -1 if unknown or
-     * unsupported.
+     *         unsupported.
      */
     public long getSizeInMemory();
 
     /**
      * Returns the number of cache entries currently contained in the cache (sum of both in-memory and on disk).
+     *
      * @return the number of cache entries currently contained in the cache (sum both in-memory and on disk).
      */
     public long getElementCount();
@@ -113,6 +119,7 @@ public interface Cache {
     /**
      * Converts the contents of this cache to a map for debugging or
      * reporting purposes.
+     *
      * @return the contents of this cache as a map.
      */
     public Map toMap();

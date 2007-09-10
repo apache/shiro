@@ -57,9 +57,10 @@ public class HashtableCache implements Cache {
 
     /**
      * Creates a new cache with the given name.
+     *
      * @param cacheName the name of this cache.
      */
-    public HashtableCache(String cacheName) {
+    public HashtableCache( String cacheName ) {
         this.cacheName = cacheName;
     }
 
@@ -67,24 +68,24 @@ public class HashtableCache implements Cache {
         return cacheName;
     }
 
-    public Object read(Object key) throws CacheException {
-        return hashtable.get(key);
+    public Object read( Object key ) throws CacheException {
+        return hashtable.get( key );
     }
 
-    public Object get(Object key) throws CacheException {
-        return hashtable.get(key);
+    public Object get( Object key ) throws CacheException {
+        return hashtable.get( key );
     }
 
-    public void update(Object key, Object value) throws CacheException {
-        put(key, value);
+    public void update( Object key, Object value ) throws CacheException {
+        put( key, value );
     }
 
-    public void put(Object key, Object value) throws CacheException {
-        hashtable.put(key, value);
+    public void put( Object key, Object value ) throws CacheException {
+        hashtable.put( key, value );
     }
 
-    public void remove(Object key) throws CacheException {
-        hashtable.remove(key);
+    public void remove( Object key ) throws CacheException {
+        hashtable.remove( key );
     }
 
     public void clear() throws CacheException {
@@ -113,7 +114,7 @@ public class HashtableCache implements Cache {
     }
 
     public Map toMap() {
-        return Collections.unmodifiableMap(hashtable);
+        return Collections.unmodifiableMap( hashtable );
     }
 
     public String toString() {

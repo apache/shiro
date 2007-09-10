@@ -36,14 +36,14 @@ import javax.naming.NamingException;
 import java.security.Principal;
 
 /**
- * <p>An {@link Realm} that authenticates with an LDAP
+ * <p>A {@link Realm} that authenticates with an LDAP
  * server to build the SecurityContext for a user.  This implementation only returns roles for a
  * particular user, and not permissions - but it can be subclassed to build a permission
  * list as well.</p>
  *
  * <p>Implementations would need to implement the
- * {@link #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken,LdapContextFactory)} and
- * {@link #queryForLdapAuthorizationInfo(java.security.Principal,LdapContextFactory)} abstract methods.</p>
+ * {@link #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken,LdapContextFactory) queryForLdapAuthenticationInfo} and
+ * {@link #queryForLdapAuthorizationInfo(java.security.Principal,LdapContextFactory) queryForLdapAuthorizationInfo} abstract methods.</p>
  *
  * <p>By default, this implementation will create an instance of {@link DefaultLdapContextFactory} to use for
  * creating LDAP connections using the principalSuffix, searchBase, url, systemUsername, and systemPassword properties
@@ -52,8 +52,8 @@ import java.security.Principal;
  * will cause these properties specified on the realm to be ignored.</p>
  *
  * @author Jeremy Haile
- * @see # queryForLdapAuthenticationInfo (String, javax.naming.ldap.LdapContext)
- * @see # queryForLdapAuthorizationInfo (String, javax.naming.ldap.LdapContext)
+ * @see #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
+ * @see #queryForLdapAuthorizationInfo(java.security.Principal, LdapContextFactory)
  * @since 0.1
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm implements Initializable {

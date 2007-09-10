@@ -39,6 +39,7 @@ public class HashtableCacheProvider implements CacheProvider {
 
     /**
      * Builds a new {@link HashtableCache} with the given name.
+     *
      * @param cacheName the name of the new cache to create.
      * @return a new cache.
      */

@@ -28,19 +28,19 @@ package org.jsecurity.cache;
  * Interface for cache-specific implementations that can provide caches
  * used by JSecurity to cache authentication and/or authorization information.
  *
- * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @since 0.2
  */
 public interface CacheProvider {
 
-        /**
-         * Configure and creates a cache with the given name using the specified
-         * properties for configuration.
-         *
-         * @param cacheName the name of the cache to create.
-         * @return a new cache built using the given name.
-         * @throws CacheException if there is a cache error in the provider implementation.
-         */
-        public Cache buildCache( String cacheName ) throws CacheException;
+    /**
+     * Configure and creates a cache with the given name using the specified
+     * properties for configuration.
+     *
+     * @param cacheName the name of the cache to create.
+     * @return a new cache built using the given name.
+     * @throws CacheException if there is a cache error in the provider implementation.
+     */
+    public Cache buildCache( String cacheName ) throws CacheException;
 }
