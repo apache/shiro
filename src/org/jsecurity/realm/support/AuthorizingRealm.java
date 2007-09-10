@@ -1,10 +1,7 @@
 package org.jsecurity.realm.support;
 
 import org.jsecurity.authc.credential.CredentialMatcher;
-import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.NoAuthorizationInfoFoundException;
-import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.*;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.util.Destroyable;
@@ -17,6 +14,8 @@ import java.util.List;
 /**
  * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding authorization
  * (access control) support.
+ * 
+ * todo Should have a variable such as cacheAuthorization that determines whether or not cache is enabled at all - should be configured in constructor of memory realm to false
  *
  * @author Les Hazlewood
  */

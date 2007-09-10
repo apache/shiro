@@ -24,10 +24,17 @@
  */
 package org.jsecurity.realm.support.activedirectory;
 
+import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.support.SimpleAuthorizationInfo;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.support.ldap.LdapRealm;
-import org.jsecurity.realm.support.ldap.LdapSecurityInfo;
-import org.jsecurity.util.NamePrincipal;
+import org.jsecurity.realm.support.ldap.AbstractLdapRealm;
+import org.jsecurity.realm.support.ldap.LdapContextFactory;
+import org.jsecurity.realm.support.ldap.LdapUtils;
+import org.jsecurity.util.UsernamePrincipal;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -36,10 +43,8 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * <p>An {@link Realm} that authenticates with an active directory LDAP
@@ -47,19 +52,12 @@ import java.util.Set;
  * queries for the user's groups and then maps the group names to roles using the
  * {@link #groupRolesMap}.</p>
  *
- * <p>More advanced implementations would likely want to override the
- * {@link #queryForLdapSecurityInfo(String, javax.naming.ldap.LdapContext)} and
- * {@link #buildAuthenticationInfo(String, char[],org.jsecurity.realm.support.ldap.LdapSecurityInfo)} methods.</p>
- *
- * @see org.jsecurity.realm.support.ldap.LdapSecurityInfo
- * @see #queryForLdapSecurityInfo (String, javax.naming.ldap.LdapContext)
- * @see #buildAuthenticationInfo(String, char[],org.jsecurity.realm.support.ldap.LdapSecurityInfo)
  *
  * @since 0.1
  * @author Tim Veil
  * @author Jeremy Haile
  */
-public class ActiveDirectoryRealm extends LdapRealm {
+public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -90,33 +88,61 @@ public class ActiveDirectoryRealm extends LdapRealm {
     |               M E T H O D S               |
     ============================================*/
 
+
     /**
-     * <p>Builds an {@link LdapSecurityInfo} object by querying the active directory LDAP context for the
-     * specified username.</p>
+     * <p>Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
+     * specified username.  This method binds to the LDAP server using the provided username and password -
+     * which if successful, indicates that the password is correct.</p>
      *
      * <p>This method can be overridden by subclasses to query the LDAP server in a more complex way.</p>
      *
-     * @param username the username whose information should be queried from the LDAP server.
-     * @param ctx the LDAP context that is connected to the LDAP server.
-     *
-     * @return an {@link LdapSecurityInfo} instance containing information retrieved from LDAP
+     * @param token the authentication token provided by the user.
+     * @param ldapContextFactory the factory used to build connections to the LDAP server.
+     * @return an {@link AuthenticationInfo} instance containing information retrieved from LDAP
      * that can be used to build an {@link org.jsecurity.authc.AuthenticationInfo} instance to return.
      *
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected LdapSecurityInfo queryForLdapSecurityInfo(String username, LdapContext ctx) throws NamingException {
+    protected AuthenticationInfo queryForLdapAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
 
-        LdapSecurityInfo info = new LdapSecurityInfo();
+        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
+        // Binds using the username and password provided by the user.
+        ldapContextFactory.getLdapContext( upToken.getUsername(), String.valueOf( upToken.getPassword() ) );
+
+        UsernamePrincipal principal = new UsernamePrincipal( upToken.getUsername() );
+
+        return new SimpleAuthenticationInfo( principal, upToken.getPassword() );
+    }
+
+
+    /**
+     * <p>Builds an {@link AuthorizationInfo} object by querying the active directory LDAP context for the
+     * groups that a user is a member of.  The groups are then translated to role names by using the
+     * configured {@link #groupRolesMap}.</p>
+     *
+     * <p>Subclasses can override this method to determine authorization information in a more complex way.  Note that
+     * this default implementation does not support permissions, only roles.</p>
+     *
+     * @param principal the principal of the user whose authorization information is being retrieved.
+     * @param ldapContextFactory the factory used to create LDAP connections.
+     * @return authorization information for the given principal.
+     * @throws NamingException if an error occurs when searching the LDAP server.
+     */
+    protected AuthorizationInfo queryForLdapAuthorizationInfo(Principal principal, LdapContextFactory ldapContextFactory) throws NamingException {
+
+        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) principal;
 
         SearchControls searchCtls = new SearchControls();
         searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-        String searchFilter = "(&(objectClass=*)(userPrincipalName=" + username + "))";
+        String searchFilter = "(&(objectClass=*)(userPrincipalName=" + usernamePrincipal.getUsername() + "))";
 
         // Perform context search
-        NamingEnumeration answer = ctx.search(searchBase, searchFilter, searchCtls);
+        LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
+        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchCtls);
 
+        List<String> roleNames = new ArrayList<String>();
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
 
@@ -128,39 +154,27 @@ public class ActiveDirectoryRealm extends LdapRealm {
                 NamingEnumeration ae = attrs.getAll();
                 while( ae.hasMore() ) {
                     Attribute attr = (Attribute) ae.next();
-                    processAttribute(info, attr);
+
+                    if( attr.getID().equals( "memberOf" ) ) {
+
+                        Collection<String> groupNames = LdapUtils.getAllAttributeValues( attr );
+
+                        roleNames.addAll( getRoleNamesForGroups( groupNames ) );
+                    }
                 }
             }
         }
 
-        return info;
+        return new SimpleAuthorizationInfo( roleNames, null );
     }
 
-
-    protected void processAttribute(LdapSecurityInfo info, Attribute attr) throws NamingException {
-
-        if( attr.getID().equals( "memberOf" ) ) {
-
-            Collection<String> groupNames = getAllAttributeValues(attr);
-            Collection<String> roleNames = translateRoleNames(groupNames);
-
-            if( log.isDebugEnabled() ) {
-                log.debug( "Adding roles [" + roleNames + "] to LDAP directory info." );
-            }
-
-            info.addAllRoleNames( roleNames );
-
-        } else if( attr.getID().equals( "displayName" ) ) {
-            Collection<String> names = getAllAttributeValues( attr );
-            for( String name : names ) {
-                info.addPrincipal( new NamePrincipal( name ) );
-            }
-
-        }
-
-    }
-
-    protected Collection<String> translateRoleNames(Collection<String> groupNames) {
+    /**
+     * This method is called by the default implementation to translate Active Directory group names
+     * to role names.  This implementation uses the {@link #groupRolesMap} to map group names to role names.
+     * @param groupNames the group names that apply to the current user.
+     * @return a collection of roles that are implied by the given role names.
+     */
+    protected Collection<String> getRoleNamesForGroups(Collection<String> groupNames) {
         Set<String> roleNames = new HashSet<String>( groupNames.size() );
 
         if( groupRolesMap != null ) {

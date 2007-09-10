@@ -27,8 +27,13 @@ package org.jsecurity.realm.support.ldap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.ldap.LdapContext;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Utility class providing static methods to make working with LDAP
@@ -64,6 +69,22 @@ public class LdapUtils {
                 log.error("Exception while closing LDAP context. ", e);
             }
         }
+    }
+
+
+    /**
+     * Helper method used to retrieve all attribute values from a particular context attribute.
+     * @param attr the LDAP attribute.
+     * @return the values of the attribute.
+     * @throws javax.naming.NamingException if there is an LDAP error while reading the values.
+     */
+    public static Collection<String> getAllAttributeValues( Attribute attr ) throws NamingException {
+        Set<String> values = new HashSet<String>();
+        for ( NamingEnumeration e = attr.getAll(); e.hasMore(); ) {
+            String value = (String)e.next();
+            values.add( value );
+        }
+        return values;
     }
 
 
