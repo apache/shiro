@@ -124,7 +124,7 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
                     log.debug( "Started EHCache named [" + name + "]" );
                 }
             }
-            return new EhCache( cache );
+            return new EhCache( cache, getCacheManager() );
         } catch ( net.sf.ehcache.CacheException e ) {
             throw new CacheException( e );
         }
