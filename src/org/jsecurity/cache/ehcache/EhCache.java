@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
+import org.jsecurity.util.AssertUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,11 +59,22 @@ public class EhCache implements Cache {
     private net.sf.ehcache.Cache cache;
 
     /**
+     * The cache manager that created this cache.  This is used to remove the cache
+     * when the cache is destroyed.
+     * @see #destroy()
+     */
+    private CacheManager cacheManager;
+
+    /**
      * Constructs a new EhCache instance with the given cache.
      * @param cache - delegate EhCache instance this JSecurity cache instance will wrap.
+     * @param cacheManager the cache manager that created this cache.
      */
-    public EhCache(net.sf.ehcache.Cache cache) {
+    public EhCache(net.sf.ehcache.Cache cache, CacheManager cacheManager) {
+        AssertUtils.notNull( cache );
+        AssertUtils.notNull( cacheManager );
         this.cache = cache;
+        this.cacheManager = cacheManager;
     }
 
     public String getCacheName() {
@@ -175,8 +187,7 @@ public class EhCache implements Cache {
             logger.debug( "Cleaning up and removing cache [" + getCacheName() + "]" );
         }
         try {
-            //TODO - may not be the VM cacheManager that created this cache.
-            CacheManager.getInstance().removeCache(cache.getName());
+            cacheManager.removeCache(cache.getName());
         }
         catch ( Throwable t ) {
             throw new CacheException(t);
