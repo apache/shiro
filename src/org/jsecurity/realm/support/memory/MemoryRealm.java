@@ -41,9 +41,7 @@ import org.jsecurity.realm.support.AuthenticatingRealm;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.PermissionUtils;
-import org.jsecurity.util.UsernamePrincipal;
 
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -397,33 +395,31 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
             return null;
         }
 
-        Principal principal = new UsernamePrincipal( user.getUsername() );
-
-        return new SimpleAuthenticationInfo( principal, user.getPassword() );
+        return new SimpleAuthenticationInfo( user.getUsername(), user.getPassword() );
 
     }
 
-    protected String getUsername( Principal principal ) {
-        if ( principal instanceof UsernamePrincipal ) {
-            return ( (UsernamePrincipal)principal ).getUsername();
+    protected String getUsername( Object principal ) {
+        if ( principal instanceof String ) {
+            return ((String)principal);
         } else {
-            String msg = "The " + getClass().getName() + " implementation expects all Principal arguments to be " +
-                "instances of the [" + UsernamePrincipal.class.getName() + "] class";
+            String msg = "The " + getClass().getName() + " implementation expects all principal arguments to be " +
+                "Strings";
             throw new IllegalArgumentException( msg );
         }
     }
 
-    protected SimpleUser getUser( Principal principal ) {
+    protected SimpleUser getUser( Object principal ) {
         return getUser( getUsername( principal ) );
     }
 
-    public boolean hasRole( Principal principal, String roleIdentifier ) {
+    public boolean hasRole( Object principal, String roleIdentifier ) {
         SimpleUser user = getUser( principal );
         return ( user != null && user.hasRole( roleIdentifier ) );
     }
 
 
-    public boolean[] hasRoles( Principal principal, List<String> roleIdentifiers ) {
+    public boolean[] hasRoles( Object principal, List<String> roleIdentifiers ) {
         boolean[] hasRoles = new boolean[roleIdentifiers.size()];
         for ( int i = 0; i < roleIdentifiers.size(); i++ ) {
             hasRoles[i] = hasRole( principal, roleIdentifiers.get( i ) );
@@ -431,7 +427,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         return hasRoles;
     }
 
-    public boolean hasAllRoles( Principal principal, Collection<String> roleIdentifiers ) {
+    public boolean hasAllRoles( Object principal, Collection<String> roleIdentifiers ) {
         for ( String rolename : roleIdentifiers ) {
             if ( !hasRole( principal, rolename ) ) {
                 return false;
@@ -440,12 +436,12 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         return true;
     }
 
-    public boolean isPermitted( Principal principal, Permission permission ) {
+    public boolean isPermitted( Object principal, Permission permission ) {
         SimpleUser user = getUser( principal );
         return user != null && user.isPermitted( permission );
     }
 
-    public boolean[] isPermitted( Principal principal, List<Permission> permissions ) {
+    public boolean[] isPermitted( Object principal, List<Permission> permissions ) {
         boolean[] permitted = new boolean[permissions.size()];
         for ( int i = 0; i < permissions.size(); i++ ) {
             permitted[i] = isPermitted( principal, permissions.get( i ) );
@@ -453,7 +449,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         return permitted;
     }
 
-    public boolean isPermittedAll( Principal principal, Collection<Permission> permissions ) {
+    public boolean isPermittedAll( Object principal, Collection<Permission> permissions ) {
         for ( Permission perm : permissions ) {
             if ( !isPermitted( principal, perm ) ) {
                 return false;
@@ -462,13 +458,13 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         return true;
     }
 
-    public void checkPermission( Principal principal, Permission permission ) throws AuthorizationException {
+    public void checkPermission( Object principal, Permission permission ) throws AuthorizationException {
         if ( !isPermitted( principal, permission ) ) {
             throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
         }
     }
 
-    public void checkPermissions( Principal principal, Collection<Permission> permissions ) throws AuthorizationException {
+    public void checkPermissions( Object principal, Collection<Permission> permissions ) throws AuthorizationException {
         if ( permissions != null ) {
             for ( Permission permission : permissions ) {
                 if ( !isPermitted( principal, permission ) ) {
@@ -478,13 +474,13 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         }
     }
 
-    public void checkRole( Principal principal, String role ) throws AuthorizationException {
+    public void checkRole( Object principal, String role ) throws AuthorizationException {
         if ( !hasRole( principal, role ) ) {
             throw new UnauthorizedException( "User does not have role [" + role + "]" );
         }
     }
 
-    public void checkRoles( Principal principal, Collection<String> roles ) throws AuthorizationException {
+    public void checkRoles( Object principal, Collection<String> roles ) throws AuthorizationException {
         if ( roles != null ) {
             for ( String role : roles ) {
                 if ( !hasRole( principal, role ) ) {
@@ -507,14 +503,14 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     /**
      * Default implementation always returns <tt>true</tt>.
      */
-    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+    public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
         return true;
     }
 
     /**
      * Default implementation always returns quietly (no exception thrown).
      */
-    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+    public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
         //does nothing
     }
 

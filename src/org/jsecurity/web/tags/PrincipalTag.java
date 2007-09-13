@@ -34,7 +34,6 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.security.Principal;
 
 /**
  * <p>Tag used to print out the String value of a user's default principal,
@@ -132,7 +131,7 @@ public class PrincipalTag extends SecureTag {
         if( getSecurityContext() != null && getSecurityContext().isAuthenticated() ) {
 
             // Get the principal to print out
-            Principal principal;
+            Object principal;
             if( type == null ) {
                 principal = getSecurityContext().getPrincipal();
             } else {
@@ -163,7 +162,7 @@ public class PrincipalTag extends SecureTag {
     }
 
 
-    private String getPrincipalProperty(Principal principal, String property) throws JspTagException {
+    private String getPrincipalProperty(Object principal, String property) throws JspTagException {
         String strValue = null;
 
         try {

@@ -25,7 +25,6 @@
 
 package org.jsecurity.authz;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,22 +41,22 @@ public interface Authorizer {
      * Returns <tt>true</tt> if the subject with the id of <tt>subjectIdentifier</tt> has the role
      * with the id of <tt>roleIdentifier</tt>, <tt>false</tt> otherwise.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
-     * representing a <tt>User</tt> database primary
-     * key or a String username, and the <tt>roleIdentifier</tt> is usually a <tt>Role</tt> entity's
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a
+     * User database primary key or string username, and the
+     * <tt>roleIdentifier</tt> is usually a <tt>Role</tt> entity's
      * primary key or a String role name.
      *
-     * <p>The runtime values of the method arguments are specific to the application and
-     * determined by the application's JSecurity configuration.
+     * <p>The runtime values of the method arguments are specific to the
+     * application and determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
-     * for the subject to check for role association (usually a user id or username).
+     * @param subjectIdentifier the application-specific identifier for the subject to check for role association
+     * (usually a user id or username).
      * @param roleIdentifier the application-specific identifier of the role to check for
      * association with a subject (usually a role id or role name ).
      * @return <tt>true</tt> if the subject with the id of <tt>subjectIdentifier</tt> has the role
      * with the id of <tt>roleIdentifier</tt>, <tt>false</tt> otherwise.
      */
-    boolean hasRole( Principal subjectIdentifier, String roleIdentifier );
+    boolean hasRole( Object subjectIdentifier, String roleIdentifier );
 
     /**
      * Checks to see if the roles with the given identifiers are associated with the subject (user)
@@ -67,7 +66,7 @@ public interface Authorizer {
      * <p>This is primarily a performance-enhancing method to help reduce the number of
      * {@link #hasRole} invocations over the wire in client/server systems.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username, and <tt>roleIdentifiers</tt> is usually a List of <tt>Role</tt>
      * entity primary keys or String role names.
@@ -75,20 +74,20 @@ public interface Authorizer {
      * <p>The runtime values of the method arguments are specific to the application and
      * determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
      * @param roleIdentifiers the identifiers of the roles to check for.
      * @return an array of booleans whose indices correspond to the index of the
      * roles in the given identifiers.  A true value indicates the user has the
      * role at that index.  False indicates the user does not have the role.
      */
-    boolean[] hasRoles( Principal subjectIdentifier, List<String> roleIdentifiers );
+    boolean[] hasRoles( Object subjectIdentifier, List<String> roleIdentifiers );
 
     /**
      * Returns <tt>true</tt> if the subject with the given <tt>subjectIdentifier</tt> has all the
      * roles with the given identifiers, <tt>false</tt> otherwise.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username, and <tt>roleIdentifiers</tt> is usually a List of <tt>Role</tt>
      * entity primary keys or a String role names.
@@ -96,12 +95,12 @@ public interface Authorizer {
      * <p>The runtime values of the method arguments are specific to the application and
      * determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check for role association (usually a user id or username).
      * @param roleIdentifiers the roles to be checked.
      * @return true if the user has all roles, false otherwise.
      */
-    boolean hasAllRoles( Principal subjectIdentifier, Collection<String> roleIdentifiers );
+    boolean hasAllRoles( Object subjectIdentifier, Collection<String> roleIdentifiers );
 
     /**
      * Returns <tt>true</tt> if the subject with the given <tt>subjectIdentifier</tt> is
@@ -111,18 +110,18 @@ public interface Authorizer {
      * with the subject {@link Permission#implies(Permission) imply} the
      * specified permission.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
      * determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permission the permission that is being checked.
      * @return true if the user associated with this context is permitted, false otherwise.
      */
-    boolean isPermitted( Principal subjectIdentifier, Permission permission );
+    boolean isPermitted( Object subjectIdentifier, Permission permission );
 
     /**
      * Checks a collection of permissions to see if they are associated with the subject with
@@ -136,13 +135,13 @@ public interface Authorizer {
      * <p>This is primarily a performance-enhancing method to help reduce the number of
      * {@link #isPermitted} invocations over the wire in client/server systems.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
      * determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
@@ -150,7 +149,7 @@ public interface Authorizer {
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
-    boolean[] isPermitted( Principal subjectIdentifier, List<Permission> permissions );
+    boolean[] isPermitted( Object subjectIdentifier, List<Permission> permissions );
 
     /**
      * Checks if the the subject with the given <tt>subjectIdentifier</tt> implies all the
@@ -160,17 +159,17 @@ public interface Authorizer {
      * <tt>Permission</tt>s are {@link Permission#implies(Permission) implied by}
      * permissions already associated with the subject.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object 
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
      * determined by the application's JSecurity configuration.
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to be checked.
      * @return true if the user has all permissions, false otherwise.
      */
-    boolean isPermittedAll( Principal subjectIdentifier, Collection<Permission> permissions );
+    boolean isPermittedAll( Object subjectIdentifier, Collection<Permission> permissions );
 
 
     /**
@@ -180,18 +179,18 @@ public interface Authorizer {
      * {@link Permission#implies(Permission)} imply} the given permission,
      * an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and
      * determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
      */
-    void checkPermission( Principal subjectIdentifier, Permission permission ) throws AuthorizationException;
+    void checkPermission( Object subjectIdentifier, Permission permission ) throws AuthorizationException;
 
 
     /**
@@ -201,45 +200,45 @@ public interface Authorizer {
      * If the subject's exisiting associated permissions do not
      * {@link Permission#implies(Permission) imply} <em>all</em> of the given permissions,
      * an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to check.
      * @throws AuthorizationException if the user does not have all of the given
      * permissions.
      */
-    void checkPermissions( Principal subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException;
+    void checkPermissions( Object subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException;
 
     /**
      * A convenience method to ensure a subject (and/or user) has the specified <tt>Role</tt>.
      * If not, an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
      * is specific to the application and  determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param role the role to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the role.
      */
-    void checkRole( Principal subjectIdentifier, String role ) throws AuthorizationException;
+    void checkRole( Object subjectIdentifier, String role ) throws AuthorizationException;
 
     /**
      * A convenience method to ensure a subject (and/or user) has all of the specified <tt>Roles</tt>.
      * If not, an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      *
-     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually a <tt>Principal</tt>
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
      * representing a <tt>User</tt> database primary
      * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
-     * is specific to the application and  determined by the application's JSecurity configuration.
+     * is specific to the application and determined by the application's JSecurity configuration.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param roles the roles to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have all of the specified roles.
      */
-    void checkRoles( Principal subjectIdentifier, Collection<String> roles ) throws AuthorizationException;
+    void checkRoles( Object subjectIdentifier, Collection<String> roles ) throws AuthorizationException;
 
     /**
      * Determines whether or not this Authorizer supports processing/checking of the given action.  Returning
@@ -254,25 +253,25 @@ public interface Authorizer {
     /**
      * Returns whether or not the specified subject is authorized to
      * execute the given <tt>AuthorizedAction</tt>.
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param action the action to check for authorization
      * @return true if the subject can execute the specified <tt>action</tt>, false
      *         otherwise.
      */
-    boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action );
+    boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action );
 
     /**
      * Checks whether the specified subject is authorized to perform the given {@link AuthorizedAction}.  If
      * the subject (user) is not authorized to perform the action, an
      * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
      *
-     * @param subjectIdentifier a <tt>Principal</tt> representing the application-specific identifier
+     * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param action the action that the user is requesting authorization for.
      * @throws AuthorizationException if the subject is not authorized to perform the action
      */
-    void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action )
+    void checkAuthorization( Object subjectIdentifier, AuthorizedAction action )
         throws AuthorizationException;
 
 }

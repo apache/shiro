@@ -25,7 +25,6 @@
 
 package org.jsecurity.authc;
 
-import java.security.Principal;
 import java.io.Serializable;
 
 /**
@@ -67,18 +66,18 @@ public interface AuthenticationToken extends Serializable {
      * Returns the account identity submitted during the authentication process.
      *
      * <p>Most application authentications are username/password based and have this
-     * <tt>Principal</tt> represent a username.  If this is the case for your application,
+     * object represent a username.  If this is the case for your application,
      * take a look at the {@link UsernamePasswordToken UsernamePasswordToken}, as it is probably
      * sufficient for your use.
      *
-     * <p>Ultimately, the <tt>Principal</tt> returned is application specific and can represent
+     * <p>Ultimately, the object returned is application specific and can represent
      * any account identity (user id, X.509 certificate, etc).
      *
      * @return the account identity submitted during the authentication process.
      *
      * @see UsernamePasswordToken
      */
-    Principal getPrincipal();
+    Object getPrincipal();
 
     /**
      * Returns the credentials submitted by the user during the authentication process that verifies

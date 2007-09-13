@@ -5,8 +5,6 @@ import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
 import org.jsecurity.cache.CacheProvider;
 
-import java.security.Principal;
-
 /**
  * A top-level abstract implementation of the <tt>Realm</tt> interface that only implements authentication support
  * (log-in) operations and leaves authorization (access control) behavior to subclasses.
@@ -169,7 +167,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * @return string representation of the given info that can be used in exceptions and logging.
      */
     protected String displayName( AuthenticationInfo info ) {
-        Principal p = info.getPrincipal();
+        Object  p = info.getPrincipal();
         if ( p != null ) {
             return p.toString();
         } else {

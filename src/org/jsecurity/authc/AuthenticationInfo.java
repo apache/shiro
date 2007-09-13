@@ -25,7 +25,6 @@
 
 package org.jsecurity.authc;
 
-import java.security.Principal;
 import java.util.List;
 
 /**
@@ -35,23 +34,27 @@ import java.util.List;
  * data model, the application must instead only implement this interface to represent such
  * data.  This enables a cleaner pluggable implementation and abstracts an application's
  * core classes away from JSecurity.</p>
- *
+ * <p/>
  * <p>This interface is used by all realms, since it is referenced from the {@link org.jsecurity.realm.Realm} interface.  Most realms
  * will use the {@link org.jsecurity.authc.support.SimpleAuthenticationInfo} implementation, but are free to create their own
  * implementation.</p>
  *
- * @since 0.1
+ * @see org.jsecurity.authc.support.SimpleAuthenticationInfo
+ *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see org.jsecurity.authc.support.SimpleAuthenticationInfo
+ * @since 0.1
  */
 public interface AuthenticationInfo {
 
     /**
-     * Returns the primary principal associated with this authentication info.
-     * @return the primary principal associated with this authentication info.
+     * Returns the primary principal of the subject associated with this
+     * authentication info (for example, a user id, username, or public key)
+     *
+     * @return the primary principal of the subject associated with this
+     * authentication info.
      */
-    Principal getPrincipal();
+    Object getPrincipal();
 
     /**
      * Returns the principals that identify the authenticated subject, such as a user's primary key
@@ -62,13 +65,13 @@ public interface AuthenticationInfo {
      *
      * @return the identifying principal of the authenticated subject.
      */
-    List<Principal> getPrincipals();
+    List getPrincipals();
 
     /**
      * The subject's credential as stored in the system associated with the
      * {@link #getPrincipals() subject identifier}, such as a password char array or
      * public key.
-     *
+     * <p/>
      * <p>It could be encrypted in which case an
      * {@link org.jsecurity.realm.Realm Realm}
      * must be aware of the fact (e.g. via configuration) in order to interpret and compare
@@ -81,8 +84,9 @@ public interface AuthenticationInfo {
     /**
      * Determines if the user's account is locked, meaning that the user is
      * not allowed to log in due to a manual or automatic lockout.
+     *
      * @return true if the user's account is locked and the user should be
-     * denied authorization, false otherwise.
+     *         denied authorization, false otherwise.
      */
     boolean isAccountLocked();
 
@@ -90,8 +94,9 @@ public interface AuthenticationInfo {
     /**
      * Determines if the user's credentials (password) has expired and must be
      * changed before login is allowed.
+     *
      * @return true if the user's credentials are expired and the user should
-     * be denied authentication, false otherwise.
+     *         be denied authentication, false otherwise.
      */
     boolean isCredentialsExpired();
 
@@ -103,8 +108,9 @@ public interface AuthenticationInfo {
      * concurrent logins should be enabled.  This feature is mainly intended
      * to prevent account sharing where a user distributes his password to
      * others who log in concurrently.
+     *
      * @return true if the user should be allowed to login concurrently,
-     * false otherwise.
+     *         false otherwise.
      */
     boolean isConcurrentLoginsAllowed();
 

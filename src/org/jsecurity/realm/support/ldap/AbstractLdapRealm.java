@@ -33,7 +33,6 @@ import org.jsecurity.realm.support.AuthorizingRealm;
 import org.jsecurity.util.Initializable;
 
 import javax.naming.NamingException;
-import java.security.Principal;
 
 /**
  * <p>A {@link Realm} that authenticates with an LDAP
@@ -43,7 +42,7 @@ import java.security.Principal;
  *
  * <p>Implementations would need to implement the
  * {@link #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken,LdapContextFactory) queryForLdapAuthenticationInfo} and
- * {@link #queryForLdapAuthorizationInfo(java.security.Principal,LdapContextFactory) queryForLdapAuthorizationInfo} abstract methods.</p>
+ * {@link #queryForLdapAuthorizationInfo(Object,LdapContextFactory) queryForLdapAuthorizationInfo} abstract methods.</p>
  *
  * <p>By default, this implementation will create an instance of {@link DefaultLdapContextFactory} to use for
  * creating LDAP connections using the principalSuffix, searchBase, url, systemUsername, and systemPassword properties
@@ -53,7 +52,7 @@ import java.security.Principal;
  *
  * @author Jeremy Haile
  * @see #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
- * @see #queryForLdapAuthorizationInfo(java.security.Principal, LdapContextFactory)
+ * @see #queryForLdapAuthorizationInfo(Object, LdapContextFactory)
  * @since 0.1
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm implements Initializable {
@@ -203,7 +202,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
 
 
 
-    protected AuthorizationInfo doGetAuthorizationInfo( Principal principal ) {
+    protected AuthorizationInfo doGetAuthorizationInfo( Object principal ) {
 
         AuthorizationInfo authorizationInfo = null;
         try {
@@ -244,6 +243,6 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
      * @return an {@link org.jsecurity.authz.support.SimpleAuthorizationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected abstract AuthorizationInfo queryForLdapAuthorizationInfo( Principal principal, LdapContextFactory ldapContextFactory) throws NamingException;
+    protected abstract AuthorizationInfo queryForLdapAuthorizationInfo( Object principal, LdapContextFactory ldapContextFactory) throws NamingException;
 
 }

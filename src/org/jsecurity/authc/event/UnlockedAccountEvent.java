@@ -24,8 +24,6 @@
  */
 package org.jsecurity.authc.event;
 
-import java.security.Principal;
-
 /**
  * Event triggered when a previously-locked user account has become unlocked.
  *
@@ -37,11 +35,11 @@ import java.security.Principal;
  */
 public class UnlockedAccountEvent extends AuthenticationEvent {
 
-    public UnlockedAccountEvent( Principal principal ) {
+    public UnlockedAccountEvent( Object principal ) {
         super( principal );
     }
 
-    public UnlockedAccountEvent( Object source, Principal principal ) {
+    public UnlockedAccountEvent( Object source, Object principal ) {
         super( source, principal );
     }
 

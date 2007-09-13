@@ -25,10 +25,6 @@
 
 package org.jsecurity.authc;
 
-import org.jsecurity.util.UsernamePrincipal;
-
-import java.security.Principal;
-
 /**
  * <p>A simple username/password authentication token.  This class is included in the API
  * since it is a very widely used authentication mechanism.</p>
@@ -138,8 +134,8 @@ public class UsernamePasswordToken implements AuthenticationToken, java.io.Seria
      * @see org.jsecurity.authc.AuthenticationToken#getPrincipal()
      * @return the {@link #getUsername() username} as a Principal.
      */
-    public Principal getPrincipal() {
-        return new UsernamePrincipal( getUsername() );
+    public Object getPrincipal() {
+        return getUsername();
     }
 
     /**

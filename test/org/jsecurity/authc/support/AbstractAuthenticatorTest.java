@@ -37,7 +37,6 @@ import org.jsecurity.context.bind.SecurityContextBinder;
 import org.jsecurity.context.factory.SecurityContextFactory;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.UsernamePrincipal;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class AbstractAuthenticatorTest {
     SecurityManager mockSecurityManager;
 
     private final SimpleAuthenticationInfo authInfo =
-            new SimpleAuthenticationInfo( new UsernamePrincipal( "user1" ), "secret" );
+            new SimpleAuthenticationInfo( "user1", "secret" );
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {
