@@ -26,8 +26,6 @@ package org.jsecurity.authc.event;
 
 import org.jsecurity.authc.AuthenticationException;
 
-import java.security.Principal;
-
 /**
  * Event triggered when an authentication attempt fails.  If an exception is thrown indicating
  * the attempt failure, it will be accessible via the {@link #getCause()} method so one
@@ -40,20 +38,20 @@ public class FailedAuthenticationEvent extends AuthenticationEvent {
 
     private AuthenticationException cause = null;
 
-    public FailedAuthenticationEvent( Principal principal ) {
+    public FailedAuthenticationEvent( Object principal ) {
         super( principal );
     }
 
-    public FailedAuthenticationEvent( Object source, Principal principal ) {
+    public FailedAuthenticationEvent( Object source, Object principal ) {
         super( source, principal );
     }
 
-    public FailedAuthenticationEvent( Principal principal, AuthenticationException cause ) {
+    public FailedAuthenticationEvent( Object principal, AuthenticationException cause ) {
         this( principal );
         setCause( cause );
     }
 
-    public FailedAuthenticationEvent( Object source, Principal principal, AuthenticationException cause ) {
+    public FailedAuthenticationEvent( Object source, Object principal, AuthenticationException cause ) {
         super( source, principal );
         setCause( cause );
     }

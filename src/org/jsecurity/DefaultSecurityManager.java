@@ -53,7 +53,6 @@ import org.jsecurity.util.JavaEnvironment;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.security.Principal;
 import java.util.*;
 
 
@@ -477,14 +476,14 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     /**
      * Delegates to the authorizer for autorization.
      */
-    public boolean isAuthorized( Principal subjectIdentity, AuthorizedAction action ) {
+    public boolean isAuthorized( Object subjectIdentity, AuthorizedAction action ) {
         return authorizer.isAuthorized( subjectIdentity, action );
     }
 
     /**
      * Delegates to the authorizer for authorization.
      */
-    public void checkAuthorization( Principal subjectIdentity, AuthorizedAction action ) throws AuthorizationException {
+    public void checkAuthorization( Object subjectIdentity, AuthorizedAction action ) throws AuthorizationException {
         authorizer.checkAuthorization( subjectIdentity, action );
     }
 
@@ -501,49 +500,49 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     }
 
 
-    public boolean hasRole( Principal subjectIdentifier, String roleIdentifier ) {
+    public boolean hasRole( Object subjectIdentifier, String roleIdentifier ) {
         return authorizer.hasRole( subjectIdentifier, roleIdentifier );
     }
 
-    public boolean[] hasRoles( Principal subjectIdentifier, List<String> roleIdentifiers ) {
+    public boolean[] hasRoles( Object subjectIdentifier, List<String> roleIdentifiers ) {
         return authorizer.hasRoles( subjectIdentifier, roleIdentifiers );
     }
 
 
-    public boolean hasAllRoles( Principal subjectIdentifier, Collection<String> roleIdentifiers ) {
+    public boolean hasAllRoles( Object subjectIdentifier, Collection<String> roleIdentifiers ) {
         return authorizer.hasAllRoles( subjectIdentifier, roleIdentifiers );
     }
 
 
-    public boolean isPermitted( Principal subjectIdentifier, Permission permission ) {
+    public boolean isPermitted( Object subjectIdentifier, Permission permission ) {
         return authorizer.isPermitted( subjectIdentifier, permission );
     }
 
 
-    public boolean[] isPermitted( Principal subjectIdentifier, List<Permission> permissions ) {
+    public boolean[] isPermitted( Object subjectIdentifier, List<Permission> permissions ) {
         return authorizer.isPermitted( subjectIdentifier, permissions );
     }
 
 
-    public boolean isPermittedAll( Principal subjectIdentifier, Collection<Permission> permissions ) {
+    public boolean isPermittedAll( Object subjectIdentifier, Collection<Permission> permissions ) {
         return authorizer.isPermittedAll( subjectIdentifier, permissions );
     }
 
 
-    public void checkPermission( Principal subjectIdentifier, Permission permission ) throws AuthorizationException {
+    public void checkPermission( Object subjectIdentifier, Permission permission ) throws AuthorizationException {
         authorizer.checkPermission( subjectIdentifier, permission );
     }
 
 
-    public void checkPermissions( Principal subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException {
+    public void checkPermissions( Object subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException {
         authorizer.checkPermissions( subjectIdentifier, permissions );
     }
 
-    public void checkRole( Principal subjectIdentifier, String role ) throws AuthorizationException {
+    public void checkRole( Object subjectIdentifier, String role ) throws AuthorizationException {
         authorizer.checkRole( subjectIdentifier, role );
     }
 
-    public void checkRoles( Principal subjectIdentifier, Collection<String> roles ) throws AuthorizationException {
+    public void checkRoles( Object subjectIdentifier, Collection<String> roles ) throws AuthorizationException {
         authorizer.checkRoles( subjectIdentifier, roles );
     }
 

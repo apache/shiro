@@ -7,7 +7,6 @@ import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
@@ -170,21 +169,21 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @param principal the principal whose authorization information should be retrieved.
      * @return the authorization information associated with this principal.
      */
-    protected abstract AuthorizationInfo doGetAuthorizationInfo(Principal principal);
+    protected abstract AuthorizationInfo doGetAuthorizationInfo(Object principal);
 
     /**
      * <p>Implements the template pattern to retrieve cached authorization information if configured to do so.
-     * Subclasses should implement the {@link #doGetAuthorizationInfo(java.security.Principal)} method
+     * Subclasses should implement the {@link #doGetAuthorizationInfo(Object)} method
      * to return the authorization informatino for the given principal.</p>
      *
      * <p>If caching is enabled, the authorization information is retrieved from a cache if it is cached, otherwise the
-     * {@link #doGetAuthorizationInfo(java.security.Principal)} method is called to retrieve the authorization
+     * {@link #doGetAuthorizationInfo(Object)} method is called to retrieve the authorization
      * information and the result is cached.</p>
      *
      * @param principal the principal whose authorization information is being retrieved.
      * @return the authorization information associated with this princpal.
      */
-    protected final AuthorizationInfo getAuthorizationInfo( Principal principal) {
+    protected final AuthorizationInfo getAuthorizationInfo( Object principal) {
         AuthorizationInfo info = null;
 
         if (log.isDebugEnabled()) {
@@ -233,12 +232,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
 
-    public boolean hasRole(Principal principal, String roleIdentifier) {
+    public boolean hasRole(Object principal, String roleIdentifier) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         return info != null && info.hasRole( roleIdentifier );
     }
 
-    public boolean[] hasRoles(Principal principal, List<String> roleIdentifiers) {
+    public boolean[] hasRoles(Object principal, List<String> roleIdentifiers) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         boolean[] result = new boolean[ roleIdentifiers != null ? roleIdentifiers.size() : 0 ];
         if ( info != null ) {
@@ -247,17 +246,17 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return result;
     }
 
-    public boolean hasAllRoles(Principal principal, Collection<String> roleIdentifiers) {
+    public boolean hasAllRoles(Object principal, Collection<String> roleIdentifiers) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         return info != null && info.hasAllRoles( roleIdentifiers );
     }
 
-    public boolean isPermitted(Principal principal, Permission permission) {
+    public boolean isPermitted(Object principal, Permission permission) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         return info != null && info.isPermitted( permission );
     }
 
-    public boolean[] isPermitted(Principal principal, List<Permission> permissions) {
+    public boolean[] isPermitted(Object principal, List<Permission> permissions) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         boolean[] result = new boolean[ permissions != null ? permissions.size() : 0 ];
         if ( info != null ) {
@@ -266,7 +265,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return result;
     }
 
-    public boolean isPermittedAll(Principal principal, Collection<Permission> permissions) {
+    public boolean isPermittedAll(Object principal, Collection<Permission> permissions) {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         return info != null && info.isPermittedAll( permissions );
     }
@@ -277,32 +276,32 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @param info the info being checked.
      * @param principal the principal that info was retrieved for.
      */
-    protected void checkAuthorizationInfo(AuthorizationInfo info, Principal principal) {
+    protected void checkAuthorizationInfo(AuthorizationInfo info, Object principal) {
         if( info == null ) {
             throw new NoAuthorizationInfoFoundException( "No authorization info found for principal [" + principal + "] in realm [" + getName() + "]" );
         }
     }
 
-    public void checkPermission(Principal principal, Permission permission) throws AuthorizationException {
+    public void checkPermission(Object principal, Permission permission) throws AuthorizationException {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
         info.checkPermission( permission );
     }
 
-    public void checkPermissions(Principal principal, Collection<Permission> permissions) throws AuthorizationException {
+    public void checkPermissions(Object principal, Collection<Permission> permissions) throws AuthorizationException {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
         info.checkPermissions( permissions );
     }
 
 
-    public void checkRole(Principal principal, String role) throws AuthorizationException {
+    public void checkRole(Object principal, String role) throws AuthorizationException {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
         info.checkRole( role );
     }
 
-    public void checkRoles(Principal principal, Collection<String> roles) throws AuthorizationException {
+    public void checkRoles(Object principal, Collection<String> roles) throws AuthorizationException {
         AuthorizationInfo info = getAuthorizationInfo( principal );
         checkAuthorizationInfo( info, principal );
         info.checkRoles( roles );
@@ -319,12 +318,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return false;
     }
 
-    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+    public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
         String msg = "Subclasses must override this implementation as such checks are system-specific.";
         throw new UnsupportedOperationException( msg );
     }
 
-    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+    public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
         String msg = "Subclasses must override this implementation as such checks are system-specific.";
         throw new UnsupportedOperationException( msg );
     }

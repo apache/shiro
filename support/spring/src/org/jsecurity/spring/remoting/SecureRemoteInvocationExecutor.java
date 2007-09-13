@@ -39,7 +39,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.Principal;
 import java.util.List;
 
 /**
@@ -98,7 +97,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
-            List<Principal> principals = null;
+            List principals = null;
             boolean authenticated = false;
             InetAddress inetAddress = getInetAddress( invocation, targetObject );
             Session session = null;
@@ -117,7 +116,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                     session = securityManager.getSession( sessionId );
 
                     // Get the principals and realm name from the session
-                    principals = (List<Principal>)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
+                    principals = (List)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
 
                     // If principals and realm were found in the session, assume authenticated.
                     if ( principals != null && !principals.isEmpty() ) {

@@ -24,8 +24,6 @@
  */
 package org.jsecurity.authc.event;
 
-import java.security.Principal;
-
 /**
  * Event triggered when an authenticated subject (user, account, etc) logs out of the system.
  *
@@ -34,11 +32,11 @@ import java.security.Principal;
  */
 public class LogoutEvent extends AuthenticationEvent {
 
-    public LogoutEvent( Principal principal ) {
+    public LogoutEvent( Object principal ) {
         super( principal );
     }
 
-    public LogoutEvent( Object source, Principal principal ) {
+    public LogoutEvent( Object source, Object principal ) {
         super( source, principal );
     }
 

@@ -24,8 +24,6 @@
  */
 package org.jsecurity.authc.event;
 
-import java.security.Principal;
-
 /**
  * Event triggered when the {@link #getPrincipal() associated subject} authenticates
  * successfully.
@@ -35,11 +33,11 @@ import java.security.Principal;
  */
 public class SuccessfulAuthenticationEvent extends AuthenticationEvent {
 
-    public SuccessfulAuthenticationEvent( Principal principal ) {
+    public SuccessfulAuthenticationEvent( Object principal ) {
         super( principal );
     }
 
-    public SuccessfulAuthenticationEvent( Object source, Principal principal ) {
+    public SuccessfulAuthenticationEvent( Object source, Object principal ) {
         super( source, principal );
     }
 

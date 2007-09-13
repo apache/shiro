@@ -28,7 +28,6 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.factory.SecurityContextFactory;
 
-import java.security.Principal;
 import java.util.Collection;
 
 /**
@@ -45,7 +44,7 @@ public abstract class AbstractSecurityContextFactory
     public AbstractSecurityContextFactory(){}
 
     public SecurityContext createSecurityContext( AuthenticationInfo info ) {
-        Collection<Principal> principals = info.getPrincipals();
+        Collection principals = info.getPrincipals();
         if ( principals == null || principals.size() < 1 ) {
             String msg = "AuthenticationInfo parameter must return at least one, non-null principal.";
             throw new IllegalArgumentException( msg );

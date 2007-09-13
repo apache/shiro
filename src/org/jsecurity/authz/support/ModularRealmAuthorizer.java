@@ -29,7 +29,6 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -90,7 +89,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
 
-    public boolean hasRole(Principal subjectIdentifier, String roleIdentifier) {
+    public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
         boolean hasRole = false;
         for( Realm realm : getRealms() ) {
             if( realm.hasRole( subjectIdentifier, roleIdentifier ) ) {
@@ -101,7 +100,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         return hasRole;
     }
 
-    public boolean[] hasRoles(Principal subjectIdentifier, List<String> roleIdentifiers) {
+    public boolean[] hasRoles(Object subjectIdentifier, List<String> roleIdentifiers) {
         boolean[] hasRoles = new boolean[roleIdentifiers.size()];
 
         for( Realm realm : getRealms() ) {
@@ -117,7 +116,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
 
-    public boolean hasAllRoles(Principal subjectIdentifier, Collection<String> roleIdentifiers) {
+    public boolean hasAllRoles(Object subjectIdentifier, Collection<String> roleIdentifiers) {
         for( String roleIdentifier : roleIdentifiers ) {
             if( !hasRole( subjectIdentifier, roleIdentifier ) ) {
                 return false;
@@ -127,7 +126,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
 
-    public boolean isPermitted(Principal subjectIdentifier, Permission permission) {
+    public boolean isPermitted(Object subjectIdentifier, Permission permission) {
         for( Realm realm : getRealms() ) {
             if( realm.isPermitted( subjectIdentifier,  permission ) ) {
                 return true;
@@ -137,7 +136,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
 
-    public boolean[] isPermitted(Principal subjectIdentifier, List<Permission> permissions) {
+    public boolean[] isPermitted(Object subjectIdentifier, List<Permission> permissions) {
         boolean[] isPermitted = new boolean[permissions.size()];
         for( Realm realm : getRealms() ) {
             boolean realmIsPermitted[] = realm.isPermitted( subjectIdentifier, permissions );
@@ -152,7 +151,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
 
-    public boolean isPermittedAll(Principal subjectIdentifier, Collection<Permission> permissions) {
+    public boolean isPermittedAll(Object subjectIdentifier, Collection<Permission> permissions) {
         for( Permission permission : permissions ) {
             if( !isPermitted( subjectIdentifier, permission ) ) {
                 return false;
@@ -162,14 +161,14 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
 
-    public void checkPermission(Principal subjectIdentifier, Permission permission) throws AuthorizationException {
+    public void checkPermission(Object subjectIdentifier, Permission permission) throws AuthorizationException {
         if( !isPermitted( subjectIdentifier, permission ) ) {
             throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
         }
     }
 
 
-    public void checkPermissions(Principal subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
+    public void checkPermissions(Object subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
         if( permissions != null ) {
             for( Permission permission : permissions ) {
                 checkPermission( subjectIdentifier, permission );
@@ -177,13 +176,13 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         }
     }
 
-    public void checkRole(Principal subjectIdentifier, String role) throws AuthorizationException {
+    public void checkRole(Object subjectIdentifier, String role) throws AuthorizationException {
         if( !hasRole( subjectIdentifier, role ) ) {
             throw new AuthorizationException( "User does not have role [" + role + "]" );
         }
     }
 
-    public void checkRoles(Principal subjectIdentifier, Collection<String> roles) throws AuthorizationException {
+    public void checkRoles(Object subjectIdentifier, Collection<String> roles) throws AuthorizationException {
         if( roles != null ) {
             for( String role : roles ) {
                 checkRole( subjectIdentifier, role );
@@ -204,7 +203,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         return JavaEnvironment.isAtLeastVersion15();
     }
 
-    public boolean isAuthorized( Principal subjectIdentifier, AuthorizedAction action ) {
+    public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
 
         if ( supports( action ) ) {
             for( Realm realm : getRealms() ) {
@@ -231,7 +230,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         return false;
     }
 
-    public void checkAuthorization( Principal subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
+    public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
         if ( !isAuthorized( subjectIdentifier, action ) ) {
             String msg = "No configured realm(s) authorized subject [" + subjectIdentifier + "] for " +
                 "action [" + action + "].";

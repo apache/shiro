@@ -29,7 +29,6 @@ import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.session.Session;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public interface SecurityContext {
     /**
      * Returns the primary identifier of the subject associated with this
      * <tt>SecurityContext</tt> (usually a user id or username), or <tt>null</tt> if there is no subject/user
-     * yet associated with the security context (e.g. hasn't logged in yet)?.
+     * yet associated with the security context (e.g. hasn't logged in yet).
      *
      * <p>This is a convenience method for contexts that only use a single principal.  If multiple
      * principals are associated with the context, the primary principal will be returned.
@@ -56,7 +55,7 @@ public interface SecurityContext {
      * (although most will choose a unique identifier such as a user id or username).
      * @return the primary principal (a.k.a. identifying attribute) of the subject associated with this SecurityContext.
      */
-    Principal getPrincipal();
+    Object getPrincipal();
 
     /**
      * Returns all principals associated with this <tt>SecurityContext</tt>, or an empty collection if no principals
@@ -64,7 +63,7 @@ public interface SecurityContext {
      * @return a collection of principals associated with this context, or an empty collection
      * if no principals are associated with this security context
      */
-    List<Principal> getAllPrincipals();
+    List getAllPrincipals();
 
     /**
      * Returns a single principal assignable from the specified type
@@ -77,7 +76,7 @@ public interface SecurityContext {
      * @param principalType the type of the principal that should be returned.
      * @return a principal of the specified type.
      */
-    Principal getPrincipalByType( Class<Principal> principalType );
+    Object getPrincipalByType( Class principalType );
 
     /**
      * Returns all principals assignable from the specified type that is associated with
@@ -88,7 +87,7 @@ public interface SecurityContext {
      * @return a collection of principals that are assignable from the specified type, or
      * an empty collection if no principals of this type are associated.
      */
-    Collection<Principal> getAllPrincipalsByType( Class<Principal> principalType );
+    Collection getAllPrincipalsByType( Class principalType );
 
     /**
      * Checks if the given role identifier is associated with this context.
