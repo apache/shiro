@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -37,6 +37,7 @@ import java.util.Arrays;
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public abstract class DigestCredentialMatcher implements CredentialMatcher {
 
@@ -61,11 +62,26 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
+    /**
+     * Returns <tt>true</tt> if digested values will be Base64 encoded, <tt>false</tt> if they will be
+     * Hex encoded.
+     *
+     * <p>Default value is <tt>false</tt> such that Hex encoding is enabled by default.
+     *
+     * @return <tt>true</tt> if digested values will be Base64 encoded, <tt>false</tt> otherwise.
+     */
     public boolean isBase64Encoded() {
         return base64Encoded;
     }
 
 
+    /**
+     * Sets if digested values will be Base 64 encoded.
+     * 
+     * <p>The implementation's default value is <tt>false</tt>, meaning Hex encoding is used by default.
+     *
+     * @param base64Encoded whether or not to Base 64 encode digested values.
+     */
     public void setBase64Encoded(boolean base64Encoded) {
         this.base64Encoded = base64Encoded;
     }
@@ -74,15 +90,16 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
-
     /**
-     * Calls the abstract {@link #doDigest(byte[])} method to digest the provided password
-     * and compares it with the stored password after encoding the passwords using hex
-     * or base64 encodings.
-     * @param providedPassword the unhashed password char array (char[]) provided by the user.
-     * @param storedPassword the hashed password char array (char[]) stored in the system.
-     * @return true if the hashes match, false otherwise.
+     * Calls the abstract {@link #doDigest(byte[])} method to digest the provided password, then encodes this
+     * digested value to to Hex or Base64 (depending on the {@link #isBase64Encoded() isBase64Encoded()} value), and
+     * then returns the equals comparison result of this digested/encoded value with the given <tt>storedPassword</tt>
+     * argument.
+     * 
+     * @param providedPassword the unhashed password char array (char[]) provided by the user.  This will be digested
+     * and encoded before comparison with the <tt>storedPassword</tt> argument.
+     * @param storedPassword the already digested and encoded password char array (char[]) stored in the system.
+     * @return true if the hashes are equal, false otherwise.
      */
     public boolean doCredentialsMatch( Object providedPassword,
                                        Object storedPassword ) {
@@ -104,9 +121,10 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
 
 
     /**
-     * Converts an array of characters to bytes.
-     * @param passwd the password being converted.
-     * @return an array of bytes that match the characters given.
+     * Utility method that converts the given char array to a byte array.
+     *
+     * @param passwd the char array to converted.
+     * @return the input array as an array of bytes.
      */
     protected byte[] charsToBytes( char[] passwd ) {
         byte[] buf = new byte[passwd.length];
@@ -116,6 +134,12 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
         return buf;
     }
 
+    /**
+     * Utility method that converts the given byte array to a char array.
+     *
+     * @param bytes the byte array to be converted
+     * @return the input array as a char array
+     */
     protected char[] bytesToChars( byte[] bytes ) {
         char[] buf = new char[bytes.length];
         for( int i = 0; i < bytes.length; i++ ) {
@@ -124,6 +148,11 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
         return buf;
     }
 
+    /**
+     * Encodes the given String via the digest algorithm and returns the result as a char array.
+     * @param s the String to encode.
+     * @return the encoded result as a char array.
+     */
     public char[] encodeToChars( String s ) {
         char[] chars = castToCharArray( s );
         byte[] digested = doDigest( charsToBytes( chars ) );
@@ -135,6 +164,12 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
         }
     }
 
+    /**
+     * Encodes the given String via the digest algorithm and returns the result as a byte array.
+     * 
+     * @param s the String to encode.
+     * @return the encoded result as a byte array.
+     */
     public byte[] encodeToBytes( String s ) {
         char[] chars = castToCharArray( s );
         byte[] digested = doDigest( charsToBytes( chars ) );
@@ -145,14 +180,20 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
         }
     }
 
+    /**
+     * Encodes the given String via the digest algorithm and returns the result as a byte array.
+     * This can also be used as a utility method to see what the resulting encoded value of an input would be.
+     *
+     * @param s the String to encode
+     * @return the encoded value as transformed by the underlying digest algorithm.
+     */
     public String encode( String s ) {
         return new String( encodeToChars( s ) );   
     }
 
 
     /**
-     * Performs the actual digest of the provided password - to be implemented
-     * by subclasses.
+     * Performs the actual digest of the provided password.
      * @param providedPassword the bytes of the provided password.
      * @return a hash of the given password bytes.
      */
@@ -163,16 +204,15 @@ public abstract class DigestCredentialMatcher implements CredentialMatcher {
      * Converts given credentials into a char[] if they are of type String or char[].
      * @param credential the credential.
      * @return the credential in char[] form.
+     * @throws IllegalArgumentException if the method argument is not of type <tt>char[]</tt> or <tt>String</tt>.
      */
-    protected char[] castToCharArray(Object credential) {
+    protected char[] castToCharArray(Object credential) throws IllegalArgumentException {
         char[] chars;
 
         if( credential instanceof String ) {
             chars = ((String)credential).toCharArray();
-
         } else if( credential instanceof char[] ) {
             chars = (char[])credential;
-
         } else {
             throw new IllegalArgumentException( "This credential matcher only supports credentials of type String or char[]." );
         }

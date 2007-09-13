@@ -34,7 +34,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
- * Simple implementation of the AuthenticationEventListener interface that only logs the events received.
+ * Simple implementation of the AuthenticationEventListener interface that only logs the events received to an
+ * internal Jakarta Commons Logging <tt>Log</tt> attribute.
  *
  * <p>This class should serve as an example to people writing listener implementations to handle events in a
  * custom application.

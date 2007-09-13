@@ -58,8 +58,8 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
 
 
     /**
-     * Returns all realms that are managed by this realm manager.
-     * @return a list of realms that are managed by this realm manager.
+     * Returns all realms that are managed by this SecurityManager.
+     * @return a list of realms that are managed by this SecurityManager.
      */
     List<Realm> getAllRealms();
 

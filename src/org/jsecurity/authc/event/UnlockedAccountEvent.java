@@ -35,10 +35,20 @@ package org.jsecurity.authc.event;
  */
 public class UnlockedAccountEvent extends AuthenticationEvent {
 
+    /**
+     * Creates an UnlockedAccountEvent based on the specified subject whose account was unlocked.
+     * @param principal the subject identifier of the subject whose account was unlocked.
+     */
     public UnlockedAccountEvent( Object principal ) {
         super( principal );
     }
 
+    /**
+     * Creates an UnlockedAccountEvent based on the specified subject whose account was unlocked,
+     * generated or caused by the specified <tt>source</tt> argument.
+     * @param source the component that generated or caused the event.
+     * @param principal the subject identifier of the subject whos account was unlocked.
+     */
     public UnlockedAccountEvent( Object source, Object principal ) {
         super( source, principal );
     }

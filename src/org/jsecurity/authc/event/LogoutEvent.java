@@ -32,10 +32,20 @@ package org.jsecurity.authc.event;
  */
 public class LogoutEvent extends AuthenticationEvent {
 
+    /**
+     * Creates a LogoutEvent for the specified subject logging out of the system.
+     * @param principal the subject identifier of the subject logging out.
+     */
     public LogoutEvent( Object principal ) {
         super( principal );
     }
 
+    /**
+     * Creates a LogoutEvent for the specified subject logging out of the system, generated or caused by the
+     * specified <tt>source</tt> argument.
+     * @param source the component that generated or caused the event.
+     * @param principal the subject identifier of the subject logging out.
+     */
     public LogoutEvent( Object source, Object principal ) {
         super( source, principal );
     }

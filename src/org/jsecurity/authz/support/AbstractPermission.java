@@ -5,7 +5,7 @@ import org.jsecurity.authz.Permission;
 import java.io.Serializable;
 
 /**
- * Simple default/abstract implementation of the core Permission interface.
+ * Simple default/abstract implementation of the JSecurity's core Permission interface.
  *
  * @since 0.1
  * @author Les Hazlewood

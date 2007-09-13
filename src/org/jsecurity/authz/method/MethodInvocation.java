@@ -31,8 +31,8 @@ import java.lang.reflect.Method;
 
 
 /**
- * Representation of a method invocation that provides information required
- * for authorization.
+ * 3rd-party API independent representation of a method invocation.  This is needed so JSecurity can support other
+ * MethodInvocation instances from other AOP frameworks/APIs.
  *
  * @since 0.1
  * @author Jeremy Haile

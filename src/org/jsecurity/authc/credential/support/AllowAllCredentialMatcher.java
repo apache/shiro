@@ -37,7 +37,8 @@ import org.jsecurity.authc.credential.CredentialMatcher;
 public class AllowAllCredentialMatcher implements CredentialMatcher {
 
     /**
-     * Always returns true for any credentials.
+     * Always returns true, regardless of the arguments.
+     * 
      * @param providedCredential provided credential, ignored.
      * @param storedCredential stored credential, ignored.
      * @return true always.

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple implementation that synchronously calls any registered 
+ * Simple implementation that 'sends' an event by synchronously calling any registered
  * {@link org.jsecurity.authc.event.AuthenticationEventListener}s.
  *
  * @see AuthenticationEventListener#onEvent
@@ -49,6 +49,10 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
     protected List<AuthenticationEventListener> listeners =
         new ArrayList<AuthenticationEventListener>();
 
+    /**
+     * Sets the <tt>AuthenticationEventListener</tt> collection that will be called when an event is triggered.
+     * @param listeners the AuthenticationEventListener collection that will be called when an event is triggered.
+     */
     public void setListeners( List<AuthenticationEventListener> listeners ) {
         if ( listeners == null ) {
             String msg = "listeners argument cannot be null";
@@ -58,7 +62,9 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
     }
 
     /**
-     * Sends the specified <tt>event</tt> to all registered {@link AuthenticationEventListener}s.
+     * Sends the specified <tt>event</tt> to all registered {@link AuthenticationEventListener}s by
+     * synchronously calling <tt>listener.onEvent(Event)</tt> for each listener configured in this sender's
+     * internal listener list.
      */
     public void send( AuthenticationEvent event ) {
         if ( listeners != null && !listeners.isEmpty() ) {
@@ -75,6 +81,11 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
         }
     }
 
+    /**
+     * Adds the given <tt>AuthenticationEventListener</tt> to the internal collection of listeners that will be
+     * synchronously called when an event is triggered.
+     * @param listener the listener to receive AuthenticationEvents
+     */
     public void addListener( AuthenticationEventListener listener ) {
         if ( listener == null ) {
             String msg = "Attempting to add a null authentication event listener";
@@ -85,6 +96,11 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
         }
     }
 
+    /**
+     * Removes the specified <tt>AuthenticationEventListener</tt> from the internal collection of
+     * <tt>AuthenticationEvent</tt> listeners.
+     * @param listener the listener to remove from receiving AuthenticationEvents.
+     */
     public void removeListener( AuthenticationEventListener listener ) {
         if ( listener != null ) {
             listeners.remove( listener );
