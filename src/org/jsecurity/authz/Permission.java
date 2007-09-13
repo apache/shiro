@@ -72,8 +72,8 @@ public interface Permission {
      * <p>The {@link #WILDCARD WILDCARD} constant means it would <em>{@link #implies(Permission) imply}</em> all other
      * Permission <tt>name</tt>s of the same Permission type.  In other words, the following must always be true:
      *
-     * <p><code><pre>Permission wildcardPerm = new com.domain.SimpleNamedermission( WILDCARD );
-Permission specificPerm = new com.domain.SimpleNamedPermission( "anyValue" );
+     * <p><code><pre>Permission wildcardPerm = new com.domain.SomeNamedPermission( WILDCARD );
+Permission specificPerm = new com.domain.SomeNamedPermission( "anyValue" );
 wildcardPerm.implies( specificPerm ) === true</pre></code>
      *
      * @return the 'name' of the permission, where the name value usually represents some named behavior or resource
@@ -89,8 +89,8 @@ wildcardPerm.implies( specificPerm ) === true</pre></code>
      * and/or resource access described by the given <tt>Permission</tt> argument.  Yet another way of saying this
      * would be:
      *
-     * <p>If &quot;permission1 implies permission2&quot;, then any subject/user granted <tt>permission1</tt> would also
-     * have the ability defined by <tt>permission2</tt>.
+     * <p>If &quot;permission1 implies permission2&quot;, (i.e. permission1.implies( permission2 ) ), then any
+     * subject/user granted <tt>permission1</tt> would also have the ability defined by <tt>permission2</tt>.
      *
      * @param p the permission to check for behavior/functionality comparison.
      * @return <tt>true</tt> if this current instance <em>implies</em> all the functionality and/or resource access

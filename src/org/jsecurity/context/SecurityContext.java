@@ -80,7 +80,7 @@ public interface SecurityContext {
 
     /**
      * Returns all principals assignable from the specified type that is associated with
-     * this <tt>SecurityContext<tt>, or an empty collection if no principals are yet associated with this security
+     * this <tt>SecurityContext</tt>, or an empty collection if no principals are yet associated with this security
      * context.
      *
      * @param principalType the principal type that should be returned.
