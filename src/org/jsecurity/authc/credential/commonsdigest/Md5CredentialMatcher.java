@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile
+* Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -23,20 +23,25 @@
 * http://www.opensource.org/licenses/lgpl-license.php
 */
 
-
 package org.jsecurity.authc.credential.commonsdigest;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
- * Digest password matcher that uses the MD5 hashing algorithm
- * to hash the provided password.
+ * Digest password matcher that uses the MD5 hashing algorithm to hash the provided password.
  *
  * @since 0.1
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class Md5CredentialMatcher extends DigestCredentialMatcher {
 
+    /**
+     * Returns an MD5 hash of the given argument.
+     *
+     * @param providedPassword the value to hash
+     * @return an MD5 hash of the given argument.
+     */
     protected byte[] doDigest(byte[] providedPassword) {
         return DigestUtils.md5( providedPassword );
     }

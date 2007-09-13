@@ -49,7 +49,8 @@ package org.jsecurity.authz.annotation;
  * <p>If you require such dynamic functionality, only the
  * {@link org.jsecurity.authz.annotation.PermissionsRequired PermissionsRequired} annotation makes sense - Permission
  * capabilities will not change for an application since permissions directly correspond to how
- * the application's functionality is programmed.
+ * the application's functionality is programmed (that is they reflect the application's functionality only, not
+ * <em>who</em> is executing the the functionality).
  *
  * @see org.jsecurity.context.SecurityContext#hasRole(String)
  *
@@ -62,7 +63,8 @@ package org.jsecurity.authz.annotation;
 public @interface RolesRequired {
 
     /**
-     * The name of the role required to be granted this authorization.
+     * A single String role name or comma delimited multiple role names of the role(s) required to be granted
+     * in order for a method invocation to be allowed.
      */
     String value();
 

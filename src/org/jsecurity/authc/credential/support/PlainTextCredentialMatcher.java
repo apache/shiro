@@ -40,11 +40,11 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
 
 
     /**
-     * Compares two plain text passwords.
+     * Compares two plain text passwords.  Both arguments are expected to be either a char array or a String.
      * 
      * @param providedPassword the user-provided password as a String or char array (char[])
      * @param storedPassword the password stored in the system as a String or char array (char[]).
-     * @return true if the passwords match, false otherwise.
+     * @return true if the passwords are equal, false otherwise.
      */
     public boolean doCredentialsMatch( Object providedPassword,
                                        Object storedPassword ) {
@@ -59,8 +59,9 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
      * Converts given credentials into a char[] if they are of type String or char[].
      * @param credential the credential.
      * @return the credential in char[] form.
+     * @throws IllegalArgumentException if the argument is not a String or char array (char[])
      */
-    private char[] castToCharArray(Object credential) {
+    private char[] castToCharArray(Object credential) throws IllegalArgumentException {
         char[] chars;
 
         if( credential instanceof String ) {

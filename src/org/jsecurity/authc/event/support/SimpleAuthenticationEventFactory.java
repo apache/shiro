@@ -41,7 +41,7 @@ import org.jsecurity.authc.event.SuccessfulAuthenticationEvent;
 public class SimpleAuthenticationEventFactory implements AuthenticationEventFactory {
 
     /**
-     * Uses the Principal found in the token to construct a {@link org.jsecurity.authc.event.FailedAuthenticationEvent}
+     * Uses the principal found in the token to construct a {@link org.jsecurity.authc.event.FailedAuthenticationEvent}
      * @param token the authentication token submitted during the authentication attempt
      * @param cause the cause of the failed authentication attempt
      * @return a {@link org.jsecurity.authc.event.FailedAuthenticationEvent} to send due to the failed attempt.
@@ -51,7 +51,7 @@ public class SimpleAuthenticationEventFactory implements AuthenticationEventFact
     }
 
     /**
-     * Uses the Principal found in the <em>AuthenticationInfo</em> parameter (not the authentication token) to
+     * Uses the principal found in the <em>AuthenticationInfo</em> parameter (not the authentication token) to
      * construct a {@link org.jsecurity.authc.event.SuccessfulAuthenticationEvent}
      * @param token the authentication token submitted during the authentication attempt.
      * @param info the authentication info constructed due to the successful attempt.

@@ -33,8 +33,8 @@ import org.springframework.remoting.support.RemoteInvocationFactory;
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
  * {@link SecureRemoteInvocation} instance.  This factory is the client-side part of
  * the JSecurity Spring remoting invocation.  A {@link SecureRemoteInvocationExecutor} should
- * be used to export the server-side remote services to ensure that the appropriate session
- * and authorization context is bound to the remote thread during execution.
+ * be used to export the server-side remote services to ensure that the appropriate
+ * SecurityContext and Session are bound to the remote thread during execution.
  *
  * @since 0.1
  * @author Jeremy Haile

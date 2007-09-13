@@ -44,7 +44,7 @@ import java.util.List;
  * <tt>Realm</tt>s as you see fit.  Common realms are those based on accessing
  * LDAP, relational databases, file systems, etc.
  *
- * <p>If only one realm is configured (this is the case for most applications), authentication success is naturally
+ * <p>If only one realm is configured (this is often the case for most applications), authentication success is naturally
  * only dependent upon invoking this one Realm's
  * {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken) getAuthenticationInfo} method (i.e.
  * a null return value means no account could be found, or an AuthenticationException could be thrown, which would be

@@ -177,12 +177,14 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
     public String toString() {
         return "Authentication information for user [" + getPrincipals() + "]";
     }
 
-
+    /**
+     * Merges the specified argument into this instance.
+     * @param info the info to merge into this instance.
+     */
     public void merge(AuthenticationInfo info) {
         if( this.principals == null ) {
             this.principals = new ArrayList<Object>();

@@ -33,10 +33,20 @@ package org.jsecurity.authc.event;
  */
 public class SuccessfulAuthenticationEvent extends AuthenticationEvent {
 
+    /**
+     * Creates a SuccessfulAuthenticationEvent for the specified subject who successfully logged-in to the system.
+     * @param principal the subject identifier of the subject that successfully logged-in.
+     */
     public SuccessfulAuthenticationEvent( Object principal ) {
         super( principal );
     }
 
+    /**
+     * Creates a SuccessfulAuthenticationEvent for the specified subject who successfully logged-in to the system,
+     * generated or caused by the specified <tt>source</tt> argument.
+     * @param source the component that generated or caused the event.
+     * @param principal the subject identifier of the subject that succesfully logged-in.
+     */
     public SuccessfulAuthenticationEvent( Object source, Object principal ) {
         super( source, principal );
     }

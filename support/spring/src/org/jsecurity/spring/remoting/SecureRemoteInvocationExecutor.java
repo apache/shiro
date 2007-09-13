@@ -64,8 +64,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     /**
-     * The realm manager used to retrieve realms that should be associated with the
-     * created authorization contexts upon remote invocation.
+     * The SecurityManager used to retrieve realms that should be associated with the
+     * created <tt>SecurityContext</tt>s upon remote invocation.
      */
     private SecurityManager securityManager;
 
