@@ -8,7 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 /**
- * TODO class JavaDoc
+ * A data populator that creates a set of security tables and test data that can be used by the
+ * JSecurity Spring sample application to demonstrate the use of the {@link org.jsecurity.realm.support.jdbc.JdbcRealm}
+ * The tables created by this class follow the default table and column names that {@link org.jsecurity.realm.support.jdbc.JdbcRealm} uses.
+ *  
  *
  * @author Les Hazlewood
  */

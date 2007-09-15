@@ -7,7 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO class JavaDoc
+ * A simple representation of a user that encapsulates the user's name, password, and security roles.  This object
+ * can be used internally by Realms to maintain cached authentication and authorization information.  This class
+ * also implements several userful methods that can be used by Realms to check authorization based on roles
+ * and permissions.
  *
  * @since 0.2
  * @author Les Hazlewood

@@ -12,7 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditor;
 
 /**
- * TODO class JavaDoc
+ * Convenient superclass for implementations of the {@link WebStore} interface.  This class encapsulates
+ * converting values from a String form to Object form and vice versa through the use of a <tt>PropertyEditor</tt>
+ * configured using {@link #setEditorClass(Class)}.  Subclasses are expected to implement the
+ * {@link #onStoreValue(Object, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
+ * and {@link #onRetrieveValue(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
+ * methods that perform the actual storing and retrieving of a String value.  This class also contains convenience
+ * methods for retrieving the value of a request parameter to be stored.
  *
  * @author Les Hazlewood
  */

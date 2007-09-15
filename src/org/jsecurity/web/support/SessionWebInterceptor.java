@@ -36,7 +36,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * TODO class JavaDoc
+ * A Spring web interceptor that can be used with Spring MVC to ensure that sessions are created and managed
+ * for each request.  This class extends from {@link DefaultWebSessionFactory} which does most of the
+ * work involved in creating and managing the sessions.  This class retrieves a session on each
+ * request by calling {@link #getSession(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
+ * and if the returned session is non-null, binds the session to the thread.  After the request is complete, this
+ * interceptor unbinds the session from the thread.
  *
  * @author Les Hazlewood
  * @since 0.2

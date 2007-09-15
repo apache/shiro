@@ -137,24 +137,32 @@ public class PropertiesRealm extends MemoryRealm implements Runnable, Initializa
     ============================================*/
 
     /**
-     * todo javadoc
-     * @param useXmlFormat
+     * Determines whether or not the properties XML format should be used.  For more information, see
+     * {@link Properties#loadFromXML(java.io.InputStream)}
+     * @param useXmlFormat true to use XML or false to use the normal format.  Defaults to false.
      */
     public void setUseXmlFormat(boolean useXmlFormat) {
         this.useXmlFormat = useXmlFormat;
     }
 
     /**
-     * todo Document file path conventions (classpath:, file:, url:, etc.)
-     * @param filePath
+     * Sets the path of the properties file to load user, role, and permission information from.  The properties
+     * file will be loaded using {@link ResourceUtils#getInputStreamForPath(String)} so any convention recongized
+     * by that method is accepted here.  For example, to load a file from the classpath use
+     * <tt>classpath:myfile.properties</tt>; to load a file from disk simply specify the full path; to load
+     * a file from a URL use <tt>url:www.mysite.com/myfile.properties</tt>.
+     * @param filePath the path to load the properties file from.  This is a required property.
      */
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
 
     /**
-     * todo javadoc
-     * @param reloadIntervalSeconds
+     * Sets the interval in seconds at which the property file will be checked for changes and reloaded.  If this is
+     * set to zero or less, property file reloading will be disabled.  If it is set to 1 or greater, then a
+     * separate thread will be created to monitor the propery file for changes and reload the file if it is updated.
+     * @param reloadIntervalSeconds the interval in seconds at which the property file should be examined for changes.
+     * If set to zero or less, reloading is disabled.
      */
     public void setReloadIntervalSeconds(int reloadIntervalSeconds) {
         this.reloadIntervalSeconds = reloadIntervalSeconds;

@@ -171,7 +171,6 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     ============================================*/
 
     public LdapContext getSystemLdapContext() throws NamingException {
-        //todo Should use anonymous connection if no system username is specified.
         return getLdapContext( systemUsername, systemPassword );
     }
 
@@ -197,7 +196,6 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
         env.put( Context.REFERRAL, referral );
 
         // Only pool connections for system contexts
-        //todo Connection pooling only for system or anonymous accounts
         if( usePooling && username.equals( systemUsername )) {
             // Enable connection pooling
             env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
