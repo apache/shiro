@@ -31,7 +31,13 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContext;
 
 /**
- * TODO class JavaDoc
+ * <p>Extension of the {@link SecurityContextFilter} that retrieves the {@link SecurityManager} for the current request
+ * from a Spring application context and ensures that the {@link SecurityManager} is available throughout the
+ * request.</p>
+ *
+ * <p>In Spring MVC environments, the {@link org.jsecurity.spring.servlet.security.SecurityContextInterceptor} may
+ * be used instead of this filter.  This class offers a Servlet filter based alternative to using Spring interceptors.
+ * It is useful in Spring enviroments that do not use Spring MVC.</p>
  *
  * @since 0.2
  * @author Les Hazlewood

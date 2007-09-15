@@ -13,10 +13,9 @@ import java.util.List;
 /**
  * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding authorization
  * (access control) support.
- * 
- * todo Should have a variable such as cacheAuthorization that determines whether or not cache is enabled at all - should be configured in constructor of memory realm to false
  *
  * @author Les Hazlewood
+ * @authoer Jeremy Haile
  */
 public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, Destroyable {
 
@@ -32,16 +31,28 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
+     * Determines whether or not caching is enabled for authorization info.  Caching is enabled by default, but
+     * realms that access authorization info in memory may wish to disable caching.
+     */
+    private boolean authorizationInfoCacheEnabled = true;
+
+    /**
      * The cache used by this realm to store authorization information associated with individual
      * principals.
      */
     private Cache authorizationInfoCache = null;
+
+    /**
+     * Internally tracks whether or not the authorization cache was created implicitly, so that the realm knows
+     * whether or not to destroy the cache when the realm is destroyed.
+     */
     private boolean authzInfoCacheCreatedImplicitly = false;
 
     /**
      * The postfix appended to the realm name used to create the name of the authorization cache.
      */
     private String authorizationInfoCachePostfix = DEFAULT_AUTHORIZATION_INFO_CACHE_POSTFIX ;
+
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -68,6 +79,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
+    public void setAuthorizationInfoCacheEnabled(boolean authorizationInfoCacheEnabled) {
+        this.authorizationInfoCacheEnabled = authorizationInfoCacheEnabled;
+    }
+
     public void setAuthorizationInfoCachePostfix(String authorizationInfoCachePostfix) {
         this.authorizationInfoCachePostfix = authorizationInfoCachePostfix;
     }
@@ -109,35 +125,40 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             log.trace("Initializing caches for realm [" + getName() + "]");
         }
 
-        Cache cache = getAuthorizationInfoCache();
-        if ( cache == null ) {
+        if( authorizationInfoCacheEnabled ) {
 
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No cache implementation set.  Checking cacheProvider...");
-            }
+            Cache cache = getAuthorizationInfoCache();
 
-            CacheProvider cacheProvider = getCacheProvider();
+            if ( cache == null ) {
 
-            if ( cacheProvider != null ) {
-                String cacheName = getName() + authorizationInfoCachePostfix;
                 if ( log.isDebugEnabled() ) {
-                    log.debug( "CacheProvider [" + cacheProvider + "] set.  Building " +
-                                  "authorizationInfo cache named [" + cacheName + "]");
+                    log.debug( "No cache implementation set.  Checking cacheProvider...");
                 }
-                cache = cacheProvider.buildCache( cacheName );
-                setAuthorizationInfoCache( cache );
-                authzInfoCacheCreatedImplicitly = true;
+
+                CacheProvider cacheProvider = getCacheProvider();
+
+                if ( cacheProvider != null ) {
+                    String cacheName = getName() + authorizationInfoCachePostfix;
+                    if ( log.isDebugEnabled() ) {
+                        log.debug( "CacheProvider [" + cacheProvider + "] set.  Building " +
+                                      "authorizationInfo cache named [" + cacheName + "]");
+                    }
+                    cache = cacheProvider.buildCache( cacheName );
+                    setAuthorizationInfoCache( cache );
+                    authzInfoCacheCreatedImplicitly = true;
+                } else {
+                    if ( log.isInfoEnabled() ) {
+                        log.info( "No cache or cacheProvider properties have been set.  AuthorizationInfo caching is " +
+                                "disabled for realm [" + getName() + "]" );
+                    }
+                }
             } else {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "No cache or cacheProvider properties have been set.  AuthorizationInfo caching is " +
-                            "disabled for realm [" + getName() + "]" );
+                if (log.isDebugEnabled()) {
+                    log.debug( "AuthorizationInfo for realm [" + getName() + "] will be cached " +
+                            "using cache [" + cache + "]" );
                 }
             }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug( "AuthorizationInfo for realm [" + getName() + "] will be cached " +
-                        "using cache [" + cache + "]" );
-            }
+
         }
 
         onInit();

@@ -28,10 +28,13 @@ import java.beans.PropertyEditorSupport;
 import java.util.UUID;
 
 /**
- * TODO JavaDoc
+ * A JavaBean property editor for converting between Strings and UUIDs.
  *
  * @since 0.1
  * @author Les Hazlewood
+ *
+ * @see java.beans.PropertyEditor
+ * @see UUID
  */
 public class UUIDEditor extends PropertyEditorSupport {
 

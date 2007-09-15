@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO class JavaDoc
+ * A simple representation of a security role that has a name and a set of permissions.  This object can be
+ * used internally by Realms to maintain cached authorization information.
  *
  * @since 0.2
  * @author Les Hazlewood
