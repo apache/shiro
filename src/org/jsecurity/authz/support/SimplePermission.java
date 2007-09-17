@@ -24,75 +24,65 @@
  */
 package org.jsecurity.authz.support;
 
-import org.jsecurity.authz.NamedPermission;
 import org.jsecurity.authz.Permission;
 
 import java.io.Serializable;
 
 /**
- * Abstract implementation of the JSecurity's core Permission interface.
+ * Simple implementation of the Permission interface, primarily used as a convenient base for subclassing more
+ * meaningful Permission classes.
  *
- * @deprecated Subclass {@link SimplePermission} or {@link SimpleNamedPermission} as a base for implementation instead -
- * this implementation has itself been updated to use an internally wrapped SimpleNamedPermission only to maintain
- * this class's API.  This class will be removed before 1.0 final.
- *
- * @since 0.1
+ * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AbstractPermission implements NamedPermission, Serializable {
+public class SimplePermission implements Permission, Serializable {
 
-    private SimpleNamedPermission wrapped = null;
-
-    protected AbstractPermission() {
-        wrapped = new SimpleNamedPermission();
+    public SimplePermission() {
     }
 
-    public AbstractPermission( String name ) {
-        wrapped = new SimpleNamedPermission( name );
-    }
-
-    public String getName() {
-        return wrapped.getName();
-    }
-
-    protected void setName( String name ) {
-        wrapped.setName( name );
-    }
-
+    /**
+     * Very simple implementation that only returns true if the argument is not null and the argument's class name
+     * is equal to this instances's class name.  That is, it merely returns:
+     * <code>getClass().getName().equals( argument.getClass().getName() );</code>.
+     *
+     * <p>Most will subclass this and override this method to implement something more meaningful to the application.
+     *
+     * @param p the Permission instance to check
+     * @return <tt>true</tt> if this instance's class and the argument's class names are equal, <tt>false</tt> otherwise.
+     */
     public boolean implies( Permission p ) {
-        return wrapped.implies( p );
+        return p != null && getClass().getName().equals( p.getClass().getName() );
     }
 
     public String toString() {
-        return wrapped.toString();
+        return toStringBuffer().toString();
     }
 
     protected StringBuffer toStringBuffer() {
-        return wrapped.toStringBuffer();
+        return new StringBuffer( getClass().getName() );
     }
 
-    @SuppressWarnings( { "EqualsWhichDoesntCheckParameterClass" } )
     public boolean equals( Object o ) {
-        return wrapped.equals( o );
+        return o == this || o != null && getClass().getName().equals( o.getClass().getName() );
+
     }
 
     public int hashCode() {
-        return wrapped.hashCode();
+        return getClass().getName().hashCode();
     }
 
     @Override
     @SuppressWarnings( { "CloneDoesntDeclareCloneNotSupportedException" } )
     public Object clone() {
-        AbstractPermission ap;
+        SimplePermission sp;
         try {
-            ap = (AbstractPermission)super.clone();
+            sp = (SimplePermission)super.clone();
         } catch ( CloneNotSupportedException e ) {
-            String msg = "Unable to clone AbstractTargetedPermission of type [" +
+            String msg = "Unable to clone SimplePermission of type [" +
                     getClass().getName() + "].  Check implementation (this should never " +
                     "happen).";
             throw new InternalError( msg );
         }
-        ap.wrapped = (SimpleNamedPermission)this.wrapped.clone();
-        return ap;
+        return sp;
     }
 }

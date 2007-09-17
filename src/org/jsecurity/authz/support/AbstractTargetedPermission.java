@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AbstractTargetedPermission extends AbstractPermission implements TargetedPermission {
+public abstract class AbstractTargetedPermission extends SimpleNamedPermission implements TargetedPermission {
 
     /**
      * Used to delimit mutli-value action strings.
@@ -61,17 +61,17 @@ public abstract class AbstractTargetedPermission extends AbstractPermission impl
     protected AbstractTargetedPermission() {
     }
 
-    public AbstractTargetedPermission( String targetName ) {
-        setName( targetName );
+    protected AbstractTargetedPermission( String targetName ) {
+        super( targetName );
     }
 
-    public AbstractTargetedPermission( Set<String> actionsSet ) {
+    protected AbstractTargetedPermission( Set<String> actionsSet ) {
         setActionsSet( canonicalize( actionsSet ) );
     }
 
     public AbstractTargetedPermission( String targetName, Set<String> actionsSet ) {
-        setName( targetName );
-        setActionsSet( actionsSet );
+        this( targetName );
+        setActionsSet( canonicalize( actionsSet ) );
     }
 
     public AbstractTargetedPermission( String targetName, String actions ) {
@@ -225,7 +225,7 @@ public abstract class AbstractTargetedPermission extends AbstractPermission impl
         boolean implies = super.implies( p );
         
         if ( implies ) {
-            if ( !getActions().contains( WILDCARD ) ) {
+            if ( !getActions().contains( TargetedPermission.WILDCARD ) ) {
                 implies = getActionsSet().containsAll( ((AbstractTargetedPermission)p).getActionsSet() );
             }
         }
@@ -236,7 +236,7 @@ public abstract class AbstractTargetedPermission extends AbstractPermission impl
     protected StringBuffer toStringBuffer() {
         StringBuffer sb = new StringBuffer();
         sb.append( "(\"" ).append( getClass().getName() ).append( "\" " );
-        sb.append( "\"" ).append( getName() ).append( "\" " );
+        sb.append( "\"" ).append( getTarget() ).append( "\" " );
         sb.append( "\"" ).append( getActions() ).append( "\")" );
         return sb;
     }
@@ -251,8 +251,7 @@ public abstract class AbstractTargetedPermission extends AbstractPermission impl
     }
 
     public int hashCode() {
-        int result = getClass().getName().hashCode();
-        result = 29 * result + ( getName() != null ? getName().hashCode() : 0 );
+        int result = super.hashCode();
         result = 29 * result + ( getActions() != null ? getActions().hashCode() : 0 );
         return result;
     }

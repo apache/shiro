@@ -1,13 +1,37 @@
+/*
+ * Copyright (C) 2005-2007 Les Hazlewood
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the
+ *
+ * Free Software Foundation, Inc.
+ * 59 Temple Place, Suite 330
+ * Boston, MA 02111-1307
+ * USA
+ *
+ * Or, you may view it online at
+ * http://www.opensource.org/licenses/lgpl-license.php
+ */
 package org.jsecurity.authz;
 
 import java.util.Set;
 
 /**
- * An <tt>TargetedPermission</tt> represents an action or actions that might be performed on a single
+ * An <tt>TargetedPermission</tt> represents actions or access that might be performed on a single
  * identifiable resource instance or on multiple resources/instances of a particular type.  That is, the permission's
  * actions are <em>targeted</em> at a particular resource or all resources of a particular type.
  *
- * <p>The {@link #getName() name} of a <tt>TargetedPermission</tt> is a resource's 
+ * <p>The {@link #getTarget() target} of a <tt>TargetedPermission</tt> is a resource's 
  * <tt>identifier</tt>, or the {@link #WILDCARD WILDCARD} constant if the <tt>TargetedPermission</tt> is to represent
  * all resources of a particular type.
  *
@@ -16,14 +40,14 @@ import java.util.Set;
  * obtained from an entity instance's <tt>getId()</tt> (or similar) method.  For a file-based resource, the identifier
  * could be the fully qualified path of the file.  A network-based resource could be a fully-qualified URL.
  *
- * <p>Most <tt>TargetedPermission</tt> instances will have an &quot;actions&quot; <tt>Set</tt> that specifies the
- * behavior allowed on the resource(s) identified by the target's {@link #getName() name}.  For example a
+ * <tt>TargetedPermission</tt> instances will have an &quot;actions&quot; <tt>Set</tt> that specifies the
+ * behavior allowed on the resource(s) identified by the {@link #getTarget target}.  For example a
  * <tt>FilePermission</tt> class might have the total possible actions of &quot;read&quot;, &quot;write&quot;,
  * &quot;execute&quot;, and &quot;delete&quot;.  A specific instance of the <tt>FilePermission</tt> might have a
- * target name of "/bin/bash" with actions of &quot;read&quot; and &quot;execute&quot;, meaning whomever is granted
+ * target of "/bin/bash" with actions of &quot;read&quot; and &quot;execute&quot;, meaning whomever is granted
  * that permission could only read and execute <tt>/bin/bash</tt>, but not write to it or delete it.
  *
- * <p>The {@link #WILDCARD WILDCARD} constant when used in the {@link #getName name} attribute represents <b>all</b>
+ * <p>The {@link #WILDCARD WILDCARD} constant when used in the {@link #getTarget target} attribute represents <b>all</b>
  * instances and/or resources of a particular type.  When used in the {@link #getActionsSet() actions} attribute, it
  * represents <b>all</b> possible actions.
  *
@@ -58,41 +82,41 @@ import java.util.Set;
  */
 public interface TargetedPermission extends Permission {
 
+    public static final String WILDCARD = NamedPermission.WILDCARD;
+    public static final char WILDCARD_CHAR = NamedPermission.WILDCARD_CHAR;
+
     /**
-     * Returns the resource and/or target's name.  That is, if this Permission and its actions are targed at a specific
-     * resource, this method returns the name of that resource.  For example, this instance:<br/><br/>
+     * Returns the resource and/or target's identifier or name.  That is, if this Permission and its actions are
+     * targed at a specific resource, this method returns the identifier or name of that resource.  For example, this
+     * instance:<br/><br/>
      *
      * <pre>new FilePermission( "/bin/bash", "execute" );</pre>
      *
-     * <p>would have a <tt>name</tt> of &quot;/bin/bash&quot;, since that is the <em>target</em> of actions
+     * <p>would have a <tt>target</tt> of &quot;/bin/bash&quot;, since that is the target of actions
      * represented by this permission (&quot;execute&quot;).
      *
-     * @return the name of the target corresponding to the permission's actions, or <tt>null</tt> if no specific
-     * resource is targeted.
+     * @return the target identifier or name corresponding to the permission's actions.
      */
-    String getName();
+    String getTarget();
 
     /**
-     * Returns all actions represented by the permission instance, or <tt>null</tt> if there are none.
+     * Returns all actions corresponding to the associated {@link #getTarget target}.
      *
-     * <p>If the permission is {@link #getName targeted}, these are the actions associated with that target.
-     *
-     * @return all actions represented by the permission instance or <tt>null</tt> if there are none.
+     * @return all actions corresponding to the associated {@link #getTarget target}.
      */
     Set<String> getActionsSet();
 
     /**
-     * Returns the canonically ordered String containing all actions represented by this permission
-     * instance, or <tt>null</tt> if there are no actions.  The string must be composed of, and match exactly, those
-     * actions in the {@link #getActions actions} set.
+     * Returns the canonically ordered String containing all actions corresponding to the associated
+     * {@link #getTarget target}.  The string must be composed of, and match exactly, those
+     * actions in the {@link #getActionsSet actionsSet}.
      *
      * <p>For example, a FilePermission class might have the total possible actions of <tt>read</tt>, <tt>write</tt>,
      * <tt>execute</tt> and <tt>delete</tt>.  If there were a FilePermission for a name of
      * <tt>/home/jsmith</tt>, a FilePermission instance for that file might return an actions string of
      * &quot;read,write&quot; only.
      *
-     * @return the canonically ordered string representation of this instance's permission actions, or <tt>null</tt> if
-     * there are none.
+     * @return the canonically ordered string representation of this instance's permission actions.
      */
     String getActions();
 

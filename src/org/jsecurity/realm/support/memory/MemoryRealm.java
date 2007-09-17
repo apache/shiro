@@ -54,9 +54,9 @@ import java.util.*;
  *
  * <ul>
  *   <li>Specifying a Map of username-to-password&amp;rolenames via the
- *   {@link #setUserDefinitions(Map) setUserDefinitions(Map)} method.</li>
+ *   {@link #setUserDefinitions(java.util.Map) setUserDefinitions(Map)} method.</li>
  *   <li>Specifying a list of strings of username-to-password&amp;rolenames assignments.  The format of each line
- *   is specified in the {@link #setUserDefinitions( List ) setUserDefinitions( List )} JavaDoc.  This mechanism
+ *   is specified in the {@link #setUserDefinitions(java.util.List) setUserDefinitions(List)} JavaDoc.  This mechanism
  *   is just a convenience helper for the Map equivalent.</li>
  * </ul>
  *
@@ -64,9 +64,9 @@ import java.util.*;
  *
  * <ul>
  *   <li>Specifying a Map of rolename-to-permission(s) via the
- *   {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} method.</li>
+ *   {@link #setRoleDefinitions(java.util.Map) setRoleDefinitions(Map)} method.</li>
  *   <li>Specifying a list of strings of rolename-to-password(s) assignments.  The format of each line
- *   is specified in the {@link #setRoleDefinitions( List ) setRoleDefinitions( List )} JavaDoc.  This mechanism
+ *   is specified in the {@link #setRoleDefinitions(java.util.List) setRoleDefinitions(List)} JavaDoc.  This mechanism
  *   is just a convenience helper for the Map equivalent.</li>
  * </ul>
  *
@@ -114,7 +114,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
      *
      * <p><code>root = <em>reallyHardToGuessPassword</em>,administrator<br/>
      * jsmith = <em>jsmithsPassword</em>,manager,engineer,employee<br/>
-     * abrown = <em>dbrownsPassword</em>,qa,employee<br/>
+     * abrown = <em>abrownsPassword</em>,qa,employee<br/>
      * djones = <em>djonesPassword</em>,qa,contractor<br/>
      * guest = <em>guestPassword</em></code></p>
      *
@@ -169,7 +169,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
      *
      * <p><code>root : <em>reallyHardToGuessPassword</em>,administrator<br/>
      * jsmith : <em>jsmithsPassword</em>,manager,engineer,employee<br/>
-     * abrown : <em>dbrownsPassword</em>,qa,employee<br/>
+     * abrown : <em>abrownsPassword</em>,qa,employee<br/>
      * djones : <em>djonesPassword</em>,qa,contractor<br/>
      * guest : <em>guestPassword</em></code></p>
      *
@@ -206,7 +206,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
      * <em>permissionDefinition</em>s for a single role must be delimited via semi-colons (;)
      *
      * <p><b>PLEASE NOTE</b> that if you have roles that don't require permission associations, don't include them in this
-     * list - just defining the role name in a {@link #setUserDefinitions(Map) user definition} is enough to create the
+     * list - just defining the role name in a {@link #setUserDefinitions(java.util.Map) user definition} is enough to create the
      * role if it does not yet exist.
      *
      * @param roleDefinitions the role definitions to be parsed at initialization
