@@ -24,8 +24,8 @@
  */
 package org.jsecurity.web.tags;
 
+import org.jsecurity.authz.NamedPermission;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.support.AbstractPermission;
 import org.jsecurity.util.PermissionUtils;
 
 import javax.servlet.jsp.JspException;
@@ -85,7 +85,7 @@ public abstract class PermissionTag extends SecureTag {
                            "\"*\", as all Permission objects must be instantiated with a " +
                            "name/name." );
             }
-            setName( AbstractPermission.WILDCARD );
+            setName( NamedPermission.WILDCARD );
         }
 
         if ( (actions != null ) && actions.trim().length() == 0) {

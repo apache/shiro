@@ -15,7 +15,7 @@ import java.util.List;
  * (access control) support.
  *
  * @author Les Hazlewood
- * @authoer Jeremy Haile
+ * @author Jeremy Haile
  */
 public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, Destroyable {
 

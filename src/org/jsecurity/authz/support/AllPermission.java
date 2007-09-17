@@ -25,6 +25,7 @@
 package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.TargetedPermission;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -46,12 +47,12 @@ public class AllPermission extends AbstractTargetedPermission {
 
     private static LinkedHashSet<String> initPossibleActionsSet() {
         LinkedHashSet<String> possibleActions = new LinkedHashSet<String>(1);
-        possibleActions.add( WILDCARD );
+        possibleActions.add( TargetedPermission.WILDCARD );
         return possibleActions;
     }
 
     public AllPermission() {
-        super( WILDCARD, possibleActions );
+        super( TargetedPermission.WILDCARD, possibleActions );
     }
 
     public Set<String> getPossibleActions() {

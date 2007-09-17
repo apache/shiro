@@ -25,8 +25,8 @@
 
 package org.jsecurity.authz.annotation;
 
+import org.jsecurity.authz.NamedPermission;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.support.AbstractPermission;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -93,13 +93,13 @@ public @interface PermissionsRequired {
      *
      * <p>This property is ignored if the {@link #namePath} property is specified.
      *
-     * @see Permission#getName()
+     * @see NamedPermission#getName()
      */
-    String name() default AbstractPermission.WILDCARD;
+    String name() default NamedPermission.WILDCARD;
 
     /**
      * Uses the {@link Object#toString() toString()} value of the object at the specified
-     * path as the <tt>Permission {@link Permission#getName() name}</tt> to use during
+     * path as the <tt>Permission {@link NamedPermission#getName() name}</tt> to use during
      * <tt>Permission</tt> construction.
      *
      * <p>The objects in this path must conform to property getter and setter naming conventions
@@ -150,7 +150,7 @@ public @interface PermissionsRequired {
      * public void saveUser( User aUser ) { ... }</pre>
      *
      * <p>This annotation declares that a <tt>my.pkg.security.UserPermission</tt> instance with
-     * {@link Permission#getName() name} <tt>aUser.getId().toString()</tt> and
+     * {@link NamedPermission#getName() name} <tt>aUser.getId().toString()</tt> and
      * {@link org.jsecurity.authz.support.AbstractTargetedPermission#getActions actions} &quot;create&quot;,&quot;update&quot; will be created and
      * verified by {@link org.jsecurity.context.SecurityContext#checkPermission(Permission)}.
      *
