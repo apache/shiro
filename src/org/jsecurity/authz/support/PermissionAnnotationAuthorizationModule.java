@@ -89,11 +89,11 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
         Class<? extends Permission> clazz = prAnnotation.type();
         String name = prAnnotation.name();
         String namePath = prAnnotation.namePath();
-        if (namePath.length() == 0) {
+        if (namePath != null && namePath.length() == 0) {
             namePath = null;
         }
         String actions = prAnnotation.actions();
-        if (actions.length() == 0) {
+        if (actions != null && actions.length() == 0) {
             actions = null;
         }
 
@@ -108,11 +108,7 @@ public class PermissionAnnotationAuthorizationModule extends AnnotationAuthoriza
             }
         }
 
-        if ( actions == null ) {
-            return PermissionUtils.createPermission( clazz, name );
-        } else {
-            return PermissionUtils.createPermission( clazz, name, actions );
-        }
+        return PermissionUtils.createPermission( clazz, name, actions );
     }
 
     public AuthorizationVote isAuthorized( AuthorizedAction action ) {

@@ -43,70 +43,50 @@ public class PermissionUtils {
 
     protected static transient final Log log = LogFactory.getLog( PermissionUtils.class );
 
-    private static void assertTarget( String nameOrTarget ) {
-        if ( nameOrTarget == null ) {
-            String msg = "name (a.k.a. target) String argument cannot be null";
-            throw new IllegalArgumentException( msg );
-        }
-    }
-
-    private static Permission instantiate( Constructor<? extends Permission> c, Object[] args ) {
-        Permission p;
-        try {
-            p = c.newInstance( args );
-        } catch ( Exception e ) {
-            String msg = "Unable to instantiate Permission instance with constructor [" + c + "]";
-            throw new PermissionInstantiationException( msg, e );
-        }
-        return p;
-    }
-
-    public static Permission createPermission( Class<? extends Permission> clazz, String nameOrTarget ) {
-
-        assertTarget( nameOrTarget );
-
-        Class[] argTypes = new Class[]{ String.class };
-        Constructor<? extends Permission> constructor;
-        try {
-            constructor = clazz.getDeclaredConstructor( argTypes );
-        } catch ( NoSuchMethodException nsme ) {
-            String msg = "Unable to find single argument String constructor for class [" + clazz.getName() + "].";
-            throw new ConstructorAcquisitionException( msg, nsme );
-        }
-
-        Object[] args = new Object[]{ nameOrTarget };
-        return instantiate( constructor, args );
-    }
-
-    public static Permission createPermission( Class<? extends Permission> clazz,
-                                               String nameOrTarget,
-                                               String actions ) throws ConstructorAcquisitionException {
-        if ( actions != null ) {
-            Class[] argTypes = new Class[]{ String.class, String.class };
-            Constructor<? extends Permission> constructor;
-
-            try {
-                constructor = clazz.getDeclaredConstructor( argTypes );
-            } catch ( NoSuchMethodException nsme ) {
-                String msg = "Unable to find double String argument constructor on class [" + clazz.getName() + "].";
-                throw new ConstructorAcquisitionException( msg );
+    private static String strip( String in ) {
+        String out = null;
+        if ( in != null ) {
+            out = in.trim();
+            if ( out.equals( "" ) ) {
+                out = null;
             }
+        }
+        return out;
+    }
 
-            // Instantiate permission with name and actions specified as attributes
-            Object[] args = new Object[]{ nameOrTarget, actions };
-            return instantiate( constructor, args );
+    private static Class[] getTypes( Object[] args ) {
+        if ( args == null || args.length == 0 ) {
+            return null;
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "actions method parameter was null.  Trying single String argument constructor..." );
+            Class[] types = new Class[args.length];
+            for( int i = 0; i < args.length; i++ ) {
+                Object arg = args[i];
+                types[i] = ( arg != null ? arg.getClass() : null );
             }
-            return createPermission( clazz, nameOrTarget );
+            return types;
         }
     }
 
+    private static Object[] toArray( String arg1, String arg2 ) {
+        Object[] array = null;
+        if ( arg2 != null ) {
+            array = new Object[]{ arg1, arg2 };
+        } else {
+            if ( arg1 != null ) {
+                array = new Object[]{ arg1 };
+            } else {
+                array = null;
+            }
+        }
+        return array;
+    }
+
+    public static Permission createPermissino( String permissionFullyQualifiedClassName ) {
+        return createPermission( permissionFullyQualifiedClassName, null, null );
+    }
+    
     public static Permission createPermission( String permissionClassName, String nameOrTarget ) {
-        //noinspection unchecked
-        Class<? extends Permission> clazz = ClassUtils.forName( permissionClassName );
-        return createPermission( clazz, nameOrTarget );
+        return createPermission( permissionClassName, nameOrTarget, null );
     }
 
     public static Permission createPermission( String permissionClassName,
@@ -115,6 +95,50 @@ public class PermissionUtils {
         //noinspection unchecked
         Class<? extends Permission> clazz = ClassUtils.forName( permissionClassName );
         return createPermission( clazz, nameOrTarget, actions );
+    }
+
+    /**
+     * Creates a <tt>Permission</tt> instance using the default no-argument constructor.
+     * @param clazz the <tt>Permission</tt> class.
+     * @return the newly instantiated <tt>Permission</tt> instance.
+     */
+    public static Permission createPermission( Class<? extends Permission> clazz ) {
+        return createPermission( clazz, null, null );
+    }
+
+    public static Permission createPermission( Class<? extends Permission> clazz, String nameOrTarget )
+        throws UnavailableConstructorException {
+        return createPermission( clazz, nameOrTarget, null );
+    }
+
+    public static Permission createPermission( Class<? extends Permission> clazz,
+                                               String nameOrTarget,
+                                               String commaDelimitedActions ) throws UnavailableConstructorException {
+
+        Permission instance = null;
+
+        String value = strip( nameOrTarget );
+        String actions = strip( commaDelimitedActions );
+
+        Object[] ctorArgs = toArray( value, actions );
+
+        if ( ctorArgs == null ) {
+            instance = (Permission)ClassUtils.newInstance( clazz );
+        } else {
+            Constructor<? extends Permission> constructor;
+            Class[] argTypes = getTypes( ctorArgs );
+            try {
+                constructor = clazz.getDeclaredConstructor( argTypes );
+            } catch ( NoSuchMethodException nsme ) {
+                String msg = "Unable to find " + ( argTypes.length == 2 ? "double" : "single" ) + 
+                    " String argument constructor on class [" + clazz.getName() + "].";
+                throw new UnavailableConstructorException( msg );
+            }
+
+            instance = (Permission)ClassUtils.instantiate( constructor, ctorArgs );
+        }
+
+        return instance;
     }
 
     protected static Set<String> toSet( String delimited, String delimiter ) {
@@ -134,8 +158,10 @@ public class PermissionUtils {
        return values;
     }
 
-    public static Permission createPermission( String permDef ) {
-        if ( permDef == null || permDef.trim().equals( "" ) ) {
+    public static Permission fromDefinition( String permDef ) {
+
+        String def = strip( permDef );
+        if ( def == null ) {
             return null;
         }
 
@@ -144,33 +170,25 @@ public class PermissionUtils {
         String target = null;
         String actions = null;
 
-        String[] parts =  permDef.split( PERMISSION_PART_DELIMITER, 3 );
-        classname = parts[0];
-        if ( parts.length >= 2 ) {
-            target = parts[1];
-        }
+        String[] parts =  def.split( PERMISSION_PART_DELIMITER, 3 );
         if ( parts.length >= 3 ) {
-            actions = parts[2];
+            actions = strip( parts[2] );
         }
-        
-        Permission perm = null;
-
-        if ( actions == null ) {
-            if ( target == null ) {
-                perm = (Permission)ClassUtils.newInstance( classname );
-            } else {
-                perm = createPermission( classname, target );
-            }
-        } else {
-            perm = createPermission( classname, target, actions );
+        if ( parts.length >= 2 ) {
+            target = strip( parts[1] );
+        }
+        if ( parts.length >= 1 ) {
+            classname = strip( parts[0] );
         }
 
-        return perm;
+        return createPermission( classname, target, actions );
     }
 
-    public static Set<Permission> createPermissions( String permissionDefinitions ) {
+    public static Set<Permission> fromDefinitions( String permissionDefinitions ) {
 
-        if ( permissionDefinitions == null || permissionDefinitions.trim().equals( "" ) ) {
+        String defs = strip( permissionDefinitions );
+
+        if ( defs == null ) {
             return null;
         }
 
@@ -178,7 +196,7 @@ public class PermissionUtils {
         Set<Permission> perms = new LinkedHashSet<Permission>( defnSet.size() );
 
         for( String permDef : defnSet ) {
-            perms.add( createPermission( permDef ) );
+            perms.add( fromDefinition( permDef ) );
         }
 
         return perms;

@@ -27,28 +27,27 @@ package org.jsecurity.util;
 import org.jsecurity.JSecurityException;
 
 /**
- * Exception thrown when trying to construct a {@link org.jsecurity.authz.Permission Permission} via reflection, and
- * JSecurity can't find a suitable constructor with which to instantiate the Permission class.
+ * Exception thrown when attempting to instantiate a Class via reflection, but a suitable constructor (depending
+ * on the number of expected arguments) doesn't exist or cannot be obtained.
  *
- * @since 0.1
+ * @since 0.2
  * @author Les Hazlewood
  */
-public class ConstructorAcquisitionException extends JSecurityException {
+public class UnavailableConstructorException extends JSecurityException {
 
-    public ConstructorAcquisitionException() {
+    public UnavailableConstructorException() {
         super();
     }
 
-    public ConstructorAcquisitionException( String message ) {
+    public UnavailableConstructorException( String message ) {
         super( message );
     }
 
-    public ConstructorAcquisitionException( Throwable cause ) {
+    public UnavailableConstructorException( Throwable cause ) {
         super( cause );
     }
 
-    public ConstructorAcquisitionException( String message, Throwable cause ) {
+    public UnavailableConstructorException( String message, Throwable cause ) {
         super( message, cause );
     }
-
 }
