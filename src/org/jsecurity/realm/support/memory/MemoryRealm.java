@@ -307,7 +307,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
                 add( role );
             }
 
-            Set<Permission> permissions = PermissionUtils.createPermissions( value );
+            Set<Permission> permissions = PermissionUtils.fromDefinitions( value );
             role.setPermissions( permissions );
         }
     }

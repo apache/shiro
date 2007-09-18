@@ -24,6 +24,8 @@
  */
 package org.jsecurity.util;
 
+import java.lang.reflect.Constructor;
+
 /**
  * @since 0.1
  * @author Les Hazlewood
@@ -58,6 +60,10 @@ public class ClassUtils {
         }
     }
 
+    public static Object newInstance( String fqcn ) {
+        return newInstance( forName( fqcn ) );
+    }
+
     public static Object newInstance( Class clazz ) {
         if ( clazz == null ) {
             String msg = "Class method parameter cannot be null.";
@@ -66,11 +72,18 @@ public class ClassUtils {
         try {
             return clazz.newInstance();
         } catch ( Exception e ) {
-            throw new UnsupportedOperationException( "Unable to instantiate class [" + clazz.getName() + "]", e );
+            throw new org.jsecurity.util.InstantiationException( "Unable to instantiate class [" + clazz.getName() + "]", e );
         }
     }
 
-    public static Object newInstance( String fqcn ) {
-        return newInstance( forName( fqcn ) );
+    public static Object instantiate( Constructor ctor, Object[] args ) {
+        try {
+            return ctor.newInstance( args );
+        } catch ( Exception e ) {
+            String msg = "Unable to instantiate Permission instance with constructor [" + ctor + "]";
+            throw new org.jsecurity.util.InstantiationException( msg, e );
+        }
     }
+
+
 }
