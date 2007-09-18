@@ -53,12 +53,12 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     /**
      * The principals that apply to the subject/user who has been authenticated.
      */
-    private List principals;
+    private List<Object> principals = null;
 
     /**
      * Credentials that were used to authenticate the user.
      */
-    private Object credentials;
+    private Object credentials = null;
 
     /**
      * True if the user's account is locked, false otherwise.
@@ -80,13 +80,10 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     |         C O N S T R U C T O R S           |
     ============================================*/
     public SimpleAuthenticationInfo() {
-        this.principals = new ArrayList<Object>();
     }
 
     public SimpleAuthenticationInfo( Object principal, Object credentials) {
-        this();
-        //noinspection unchecked
-        this.principals.add( principal );
+        addPrincipal( principal );
         this.credentials = credentials;
     }
 
@@ -115,7 +112,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     ============================================*/
 
     public Object getPrincipal() {
-        if( this.principals == null ) {
+        if( this.principals == null || this.principals.isEmpty()) {
             return null;
         } else {
             return this.principals.get(0);
@@ -131,7 +128,9 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     }
 
     public void addPrincipal( Object principal ) {
-        //noinspection unchecked
+        if ( this.principals == null ) {
+            this.principals = new ArrayList<Object>();
+        }
         this.principals.add( principal );
     }
 
@@ -143,36 +142,29 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
         this.credentials = credentials;
     }
 
-
     public boolean isAccountLocked() {
         return accountLocked;
     }
-
 
     public void setAccountLocked(boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
 
-
     public boolean isCredentialsExpired() {
         return credentialsExpired;
     }
-
 
     public void setCredentialsExpired(boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
     }
 
-
     public boolean isConcurrentLoginsAllowed() {
         return concurrentLoginsAllowed;
     }
 
-
     public void setConcurrentLoginsAllowed(boolean concurrentLoginsAllowed) {
         this.concurrentLoginsAllowed = concurrentLoginsAllowed;
     }
-
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -186,11 +178,19 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
      * @param info the info to merge into this instance.
      */
     public void merge(AuthenticationInfo info) {
-        if( this.principals == null ) {
-            this.principals = new ArrayList<Object>();
+        if ( info == null ) {
+            return;
         }
+
         //noinspection unchecked
-        this.principals.addAll( info.getPrincipals() );
+        List<Object> infoPrincipals = info.getPrincipals();
+
+        if ( infoPrincipals != null && !infoPrincipals.isEmpty() ) {
+            if ( this.principals == null ) {
+                this.principals = new ArrayList<Object>( infoPrincipals.size() );
+            }
+            this.principals.addAll( infoPrincipals );
+        }
 
         if( this.credentials == null ) {
             setCredentials( info );
