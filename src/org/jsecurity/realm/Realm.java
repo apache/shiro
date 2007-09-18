@@ -35,7 +35,8 @@ import org.jsecurity.authz.Authorizer;
  *
  * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
  * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
- * determine authorization information, such as JDBC, File IO, Hibernate or JPA, or any other Data Access API.
+ * determine authorization information, such as JDBC, File IO, Hibernate or JPA, or any other Data Access API.  They
+ * are essentially security-specific <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
  *
  * <p>Because most of these datasources usually contain subject (user) information such as usernames and passwords,
  * a Realm can act
