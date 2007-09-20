@@ -22,10 +22,9 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.authc;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * <p>An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
@@ -65,7 +64,7 @@ public interface AuthenticationInfo {
      *
      * @return the identifying principal of the authenticated subject.
      */
-    List getPrincipals();
+    Collection getPrincipals();
 
     /**
      * The subject's credential as stored in the system associated with the

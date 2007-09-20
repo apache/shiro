@@ -29,7 +29,6 @@ import org.jsecurity.context.SecurityContext;
 
 import java.util.Map;
 
-
 /**
  * Strategy that determines whether or not a user is authorized based on the
  * votes of all {@link AuthorizationModule}s provided by

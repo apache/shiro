@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class ModularRealmAuthorizer implements Authorizer, Initializable {
 
-    protected List<Realm> realms = null;
+    protected Collection<Realm> realms = null;
 
     //TODO - refactor name (ambiguous)
     protected List<AuthorizationModule> authorizationModules = null;
@@ -53,11 +53,11 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         init();
     }
 
-    public List<Realm> getRealms() {
+    public Collection<Realm> getRealms() {
         return this.realms;
     }
 
-    public void setRealms( List<Realm> realms ) {
+    public void setRealms( Collection<Realm> realms ) {
         this.realms = realms;
     }
 
@@ -70,7 +70,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     }
 
     public void init() {
-        List<Realm> realms = getRealms();
+        Collection<Realm> realms = getRealms();
         if ( realms == null || realms.isEmpty() ) {
             String msg = "One or more realms must be configured.";
             throw new IllegalStateException( msg );

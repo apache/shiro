@@ -24,7 +24,6 @@
  */
 package org.jsecurity.authz.support;
 
-
 /**
  * Enumeration representing the possible votes that can be returned from an
  * {@link org.jsecurity.authz.support.AuthorizationModule} instance to vote on whether or not a user

@@ -24,7 +24,6 @@
  */
 package org.jsecurity.session;
 
-
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Date;

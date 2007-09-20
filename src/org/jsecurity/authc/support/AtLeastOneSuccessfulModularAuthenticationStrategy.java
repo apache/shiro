@@ -31,7 +31,7 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * <tt>ModularAuthenticationStrategy</tt> implementation that requires <em>at least one</em> configured realm to
@@ -48,7 +48,7 @@ public class AtLeastOneSuccessfulModularAuthenticationStrategy implements Modula
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    public void beforeAllAttempts( List<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
+    public void beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
         //nothing necessary
     }
 

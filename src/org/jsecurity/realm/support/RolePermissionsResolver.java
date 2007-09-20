@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.realm.support;
 
 import org.jsecurity.authz.Permission;

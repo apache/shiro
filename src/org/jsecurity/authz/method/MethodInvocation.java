@@ -22,13 +22,11 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.authz.method;
 
 import org.jsecurity.authz.AuthorizedAction;
 
 import java.lang.reflect.Method;
-
 
 /**
  * 3rd-party API independent representation of a method invocation.  This is needed so JSecurity can support other

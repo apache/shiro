@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Builds a {@link org.jsecurity.context.SecurityContext SecurityContext} based on a web request and makes it
@@ -78,7 +78,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     //passthrough attributes to the underlying DefaultWebSessionFactory
     protected WebStore<Serializable> sessionIdStore = null;
-    protected WebStore<List> principalsStore = null;
+    protected WebStore<Collection> principalsStore = null;
     protected WebStore<Boolean> authenticatedStore = null;
     protected boolean requireSessionOnRequest = false;
 
@@ -109,11 +109,11 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         this.sessionIdStore = sessionIdStore;
     }
 
-    public WebStore<List> getPrincipalsStore() {
+    public WebStore<Collection> getPrincipalsStore() {
         return principalsStore;
     }
 
-    public void setPrincipalsStore( WebStore<List> principalsStore ) {
+    public void setPrincipalsStore( WebStore<Collection> principalsStore ) {
         this.principalsStore = principalsStore;
     }
 
@@ -146,11 +146,11 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
             if ( log.isDebugEnabled() ) {
                 log.debug( "Initializing default Principals WebStore..." );
             }
-            AbstractWebStore<List> store = null;
+            AbstractWebStore<Collection> store = null;
             if ( isPreferHttpSessionStorage() ) {
-                store = new HttpSessionStore<List>( PRINCIPALS_SESSION_KEY, false );
+                store = new HttpSessionStore<Collection>( PRINCIPALS_SESSION_KEY, false );
             } else {
-                store = new SessionStore<List>( PRINCIPALS_SESSION_KEY, false );
+                store = new SessionStore<Collection>( PRINCIPALS_SESSION_KEY, false );
             }
             store.init();
             setPrincipalsStore( store );
@@ -201,7 +201,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
     }
 
     @SuppressWarnings( "unchecked" )
-    protected List getPrincipals( ServletRequest servletRequest, ServletResponse servletResponse ) {
+    protected Collection getPrincipals( ServletRequest servletRequest, ServletResponse servletResponse ) {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
         return getPrincipalsStore().retrieveValue( request, response );
@@ -214,7 +214,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
         return value != null && value;
     }
 
-    protected SecurityContext createSecurityContext( List principals, boolean authenticated,
+    protected SecurityContext createSecurityContext( Collection principals, boolean authenticated,
                                                      InetAddress inetAddress, Session session,
                                                      SecurityManager securityManager ) {
         return new DelegatingSecurityContext( principals, authenticated, inetAddress, session, securityManager );
@@ -222,7 +222,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     protected SecurityContext createSecurityContext( ServletRequest request,
                                                      ServletResponse response,
-                                                     List principals,
+                                                     Collection principals,
                                                      boolean authenticated,
                                                      Session existing ) {
         SecurityContext securityContext;
@@ -243,7 +243,7 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
 
     public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response, Session existing ) {
-        List principals = getPrincipals( request, response );
+        Collection principals = getPrincipals( request, response );
         boolean authenticated = isAuthenticated( request, response );
         return createSecurityContext( request, response, principals, authenticated, existing );
     }

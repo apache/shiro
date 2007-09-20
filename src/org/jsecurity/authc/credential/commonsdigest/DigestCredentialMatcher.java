@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.authc.credential.commonsdigest;
 
 import org.apache.commons.codec.binary.Base64;

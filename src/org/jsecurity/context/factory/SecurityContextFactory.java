@@ -22,12 +22,10 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-
 package org.jsecurity.context.factory;
 
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.context.SecurityContext;
-
 
 /**
  * <p>Factory used to create the SecurityContext that is returned from the

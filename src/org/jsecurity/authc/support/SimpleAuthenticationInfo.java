@@ -22,13 +22,13 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.authc.support;
 
 import org.jsecurity.authc.AuthenticationInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -183,7 +183,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
         }
 
         //noinspection unchecked
-        List<Object> infoPrincipals = info.getPrincipals();
+        Collection<Object> infoPrincipals = info.getPrincipals();
 
         if ( infoPrincipals != null && !infoPrincipals.isEmpty() ) {
             if ( this.principals == null ) {
