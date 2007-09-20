@@ -29,7 +29,7 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * A <tt>ModularAuthenticationStrategy</tt> implementation assists the {@link ModularRealmAuthenticator} during the
@@ -55,7 +55,7 @@ public interface ModularAuthenticationStrategy {
      * @param token the Principal/Credential representation to be used during authentication for a corresponding subject.
      * @throws AuthenticationException if the strategy implementation does not wish the Authentication attempt to start.
      */
-    void beforeAllAttempts( List<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException;
+    void beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator just prior to the realm being consulted for authentication info,

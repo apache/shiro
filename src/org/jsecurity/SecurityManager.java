@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity;
 
 import org.jsecurity.authc.Authenticator;
@@ -30,7 +29,7 @@ import org.jsecurity.authz.Authorizer;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.SessionFactory;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * A <tt>SecurityManager</tt> is a convenience mechanism - it extends the {@link Authenticator},
@@ -61,6 +60,6 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      * Returns all realms that are managed by this SecurityManager.
      * @return a list of realms that are managed by this SecurityManager.
      */
-    List<Realm> getAllRealms();
+    Collection<Realm> getAllRealms();
 
 }

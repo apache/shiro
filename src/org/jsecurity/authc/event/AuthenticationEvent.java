@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.authc.event;
 
 import java.util.Date;

@@ -26,7 +26,6 @@ package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.AuthorizedAction;
 
-
 /**
  * An authorization module is asked to vote on whether or not a user is
  * authorized to perform a particular action, typically by an

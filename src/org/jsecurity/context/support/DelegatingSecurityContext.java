@@ -77,16 +77,13 @@ public class DelegatingSecurityContext implements SecurityContext {
         return principals;
     }
 
-    private static List toList( List ps ) {
+    private static List toList( Collection ps ) {
         List principals = null;
-        if ( ps == null ) {
+        if ( ps == null || ps.isEmpty() ) {
             principals = new ArrayList();
-        } else if ( ps.isEmpty() ) {
-            principals = ps;
         } else {
-            principals = new ArrayList( ps.size() );
             //noinspection unchecked
-            principals.addAll( ps );
+            principals = new ArrayList( ps );
         }
         return principals;
     }
@@ -96,7 +93,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         this( toList( principal), authenticated, inetAddress, session, securityManager );
     }
 
-    public DelegatingSecurityContext( List principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSecurityContext( Collection principals, boolean authenticated, InetAddress inetAddress,
                                       Session session, SecurityManager securityManager ) {
         if ( securityManager == null ) {
             throw new IllegalArgumentException( "SecurityManager cannot be null." );
@@ -155,7 +152,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipals()
      */
-    public List getAllPrincipals() {
+    public Collection getAllPrincipals() {
         assertValid();
         return principals;
     }

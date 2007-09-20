@@ -30,7 +30,7 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.realm.Realm;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * <tt>ModularAuthenticationStrategy</tt> implementation that requires <em>all</em> configured realms to
@@ -45,7 +45,7 @@ import java.util.List;
  */
 public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthenticationStrategy {
 
-    public void beforeAllAttempts( List<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
+    public void beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
         //does nothing - here to satisfy the interface requirements
     }
 

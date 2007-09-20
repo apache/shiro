@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity;
 
 import org.apache.commons.logging.Log;
@@ -437,7 +436,7 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     }
 
     @SuppressWarnings( "unchecked" )
-    public List<Realm> getAllRealms() {
+    public Collection<Realm> getAllRealms() {
         if ( realmMap != null ) {
             return new ArrayList<Realm>( realmMap.values() );
         } else {

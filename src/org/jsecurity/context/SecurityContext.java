@@ -63,7 +63,7 @@ public interface SecurityContext {
      * @return a collection of principals associated with this context, or an empty collection
      * if no principals are associated with this security context
      */
-    List getAllPrincipals();
+    Collection getAllPrincipals();
 
     /**
      * Returns a single principal assignable from the specified type

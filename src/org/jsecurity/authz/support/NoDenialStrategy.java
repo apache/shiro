@@ -30,7 +30,6 @@ import org.jsecurity.context.SecurityContext;
 import java.util.Collection;
 import java.util.Map;
 
-
 /**
  * Instance of {@link org.jsecurity.authz.support.ModularAuthorizationStrategy} that authorizes the user
  * if and only if:

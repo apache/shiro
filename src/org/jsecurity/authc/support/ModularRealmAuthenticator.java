@@ -22,7 +22,6 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-
 package org.jsecurity.authc.support;
 
 import org.jsecurity.authc.AuthenticationException;
@@ -32,6 +31,7 @@ import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.realm.Realm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -85,7 +85,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /**
      * List of realms that will be iterated through when a user authenticates.
      */
-    private List<? extends Realm> realms;
+    private Collection<? extends Realm> realms;
 
     protected ModularAuthenticationStrategy modularAuthenticationStrategy =
         new AllSuccessfulModularAuthenticationStrategy(); //default
@@ -120,7 +120,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * Sets all realms used by this Authenticator, providing PAM (Pluggable Authentication Module) configuration.
      * @param realms the realms to consult during authentication attempts.
      */
-    public void setRealms( List<Realm> realms ) {
+    public void setRealms( Collection<Realm> realms ) {
         this.realms = realms;
     }
 
@@ -240,7 +240,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @return an aggregated AuthenticationInfo instance representing authentication info across all the successfully
      * consulted realms.
      */
-    protected AuthenticationInfo doMultiRealmAuthentication( List<? extends Realm> realms, AuthenticationToken token ) {
+    protected AuthenticationInfo doMultiRealmAuthentication( Collection<? extends Realm> realms, AuthenticationToken token ) {
 
         ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
 
@@ -330,7 +330,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         assertRealmsConfigured();
 
         if ( realms.size() == 1 ) {
-            return doSingleRealmAuthentication( realms.get( 0 ), authenticationToken );
+            return doSingleRealmAuthentication( realms.iterator().next(), authenticationToken );
         } else {
             return doMultiRealmAuthentication( realms, authenticationToken );
         }
