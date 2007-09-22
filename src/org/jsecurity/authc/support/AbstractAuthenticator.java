@@ -423,11 +423,12 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      *
      * <p>The default implementation delegates to the internal {@link SecurityContextFactory} property.
      *
+     * @param token the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
      * @param info the <tt>AuthenticationInfo</tt> of a newly authenticated subject/user.
      * @return the <tt>SecurityContext</tt> that represents the authorization and session data for the newly
      * authenticated subject/user.
      */
-    protected SecurityContext createSecurityContext( AuthenticationInfo info ) {
+    protected SecurityContext createSecurityContext( AuthenticationToken token, AuthenticationInfo info ) {
         SecurityContextFactory factory = getSecurityContextFactory();
         if( factory == null ) {
             throw new IllegalStateException(
@@ -436,7 +437,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
                     "Authenticator before it is used." );
         }
 
-        return factory.createSecurityContext( info );
+        return factory.createSecurityContext( token, info );
     }
 
     /**
@@ -542,7 +543,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
                       "Returned authentication info: [" + info + "]" );
         }
 
-        SecurityContext secCtx = createSecurityContext( info );
+        SecurityContext secCtx = createSecurityContext( token, info );
 
         assertCreation( secCtx );
 

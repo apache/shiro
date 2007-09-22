@@ -26,13 +26,12 @@ package org.jsecurity.session.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Simple {@link org.jsecurity.session.Session} implementation, intended to be used on the business/server tier.
@@ -48,6 +47,7 @@ public class SimpleSession implements Session, Serializable {
     private Date startTimestamp = null;
     private Date stopTimestamp = null;
     private Date lastAccessTime = null;
+    private long timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
     private boolean expired = false;
     private InetAddress hostAddress = null;
 
@@ -107,6 +107,14 @@ public class SimpleSession implements Session, Serializable {
         this.expired = expired;
     }
 
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout( long timeout ) {
+        this.timeout = timeout;
+    }
+
     public InetAddress getHostAddress() {
         return hostAddress;
     }
@@ -138,6 +146,15 @@ public class SimpleSession implements Session, Serializable {
             setAttributes( attributes );
         }
         return attributes;
+    }
+
+    public Collection<Object> getAttributeKeys() throws InvalidSessionException {
+        Map<Object,Object> attributes = getAttributes();
+        if ( attributes == null ) {
+            //noinspection unchecked
+            return Collections.EMPTY_SET;
+        }
+        return attributes.keySet();
     }
 
     public Object getAttribute( Object key ) {

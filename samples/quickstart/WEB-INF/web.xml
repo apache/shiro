@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
+
+    <listener>
+        <description>Creates a JSecurity SecurityManager instance and binds it to the ServletContext for
+                     application use.</description>
+        <listener-class>org.jsecurity.web.servlet.SecurityManagerListener</listener-class>
+    </listener>
+
+    <!-- ===================================================================
+	 -  Servlets
+	 -  =================================================================== -->
+    <servlet>
+        <servlet-name>sample</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <filter>
+        <description>Ensures a SecurityContext exists for each request, utilizing the SecurityManager
+                     bound to the webapp by the above SecurityManagerListener</description>
+        <filter-name>SecurityContextFilter</filter-name>
+        <filter-class>org.jsecurity.web.servlet.SecurityContextFilter</filter-class>
+        <!-- If you wanted to ensure a JSecurity Session always existed for each request (useful for explicit
+             request/user tracking), you can uncomment the following init-param, otherwise sessions are 
+             created only based on SecurityContext#getSession calls
+        <init-param>
+            <param-name>requireSessionOnRequest</param-name>
+            <param-value>true</param-value>
+        </init-param> -->
+    </filter>
+
+    <filter-mapping>
+        <filter-name>SecurityContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+	<!-- ===================================================================
+	 -  Welcome file list
+	 -  =================================================================== -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+</web-app>

@@ -30,6 +30,7 @@ import org.jsecurity.session.SessionManager;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -155,6 +156,14 @@ public class DelegatingSession implements Session {
         return sessionManager.isExpired( sessionId );
     }
 
+    public long getTimeout() throws InvalidSessionException {
+        return sessionManager.getTimeout( sessionId );
+    }
+
+    public void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException {
+        sessionManager.setTimeout( sessionId, maxIdleTimeInMillis );
+    }
+
     /**
      * @see org.jsecurity.session.Session#getHostAddress()
      */
@@ -177,6 +186,13 @@ public class DelegatingSession implements Session {
      */
     public void stop() throws InvalidSessionException {
         sessionManager.stop( sessionId );
+    }
+
+    /**
+     * @see org.jsecurity.session.Session#getAttributeKeys();
+     */
+    public Collection<Object> getAttributeKeys() throws InvalidSessionException {
+        return sessionManager.getAttributeKeys( sessionId );
     }
 
     /**

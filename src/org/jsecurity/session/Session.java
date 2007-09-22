@@ -26,6 +26,7 @@ package org.jsecurity.session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -117,6 +118,34 @@ public interface Session {
      */
     boolean isExpired();
 
+    /**
+     * Returns the time in milliseconds that the session session may remain idle before expiring.
+     *
+     * <ul>
+     *     <li>A negative return value means the session will never expire.</li>
+     *     <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * length of time.</li>
+     * </ul>
+     *
+     * @return the time in milliseconds the session may remain idle before expiring.
+     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     */
+    long getTimeout() throws InvalidSessionException;
+
+    /**
+     * Sets the time in milliseconds that the session may remain idle before expiring.
+     *
+     * <ul>
+     *     <li>A negative return value means the session will never expire.</li>
+     *     <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * length of time.</li>
+     * </ul>
+     *
+     * @param maxIdleTimeInMillis the time in milliseconds that the session may remain idle before expiring.
+     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     */
+    void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException;
+
 
     /**
      * Returns the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
@@ -183,6 +212,16 @@ public interface Session {
      * @see #getStopTimestamp
      */
     void stop() throws InvalidSessionException;
+
+    /**
+     * Returns the keys of all the attributes stored under this session.  If there are no
+     * attributes, this returns an empty collection.
+     * @return the keys of all attributes stored under this session, or an empty collection if
+     * there are no session attributes.
+     * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
+     * @since 0.2
+     */
+    Collection<Object> getAttributeKeys() throws InvalidSessionException;
 
     /**
      * Returns the object bound to this session identified by the specified key.  If there is no

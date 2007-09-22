@@ -88,6 +88,7 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    private static final String DEFAULT_PROPERTIES_REALM_FILE_PATH = "classpath:org/jsecurity/default-jsecurity-users.properties";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -128,21 +129,17 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     public DefaultSecurityManager() {
     }
 
+    /**
+     * Supporting constructor for a single-realm application (automatically calls {@link #init()} before returning).
+     * @param singleRealm the single realm used by this SecurityManager.
+     */
     public DefaultSecurityManager( Realm singleRealm ) {
-        List<Realm> realms = new ArrayList<Realm>( 1 );
-        realms.add( singleRealm );
-        setRealms( realms );
+        setRealm( singleRealm );
         init();
     }
 
     /**
-     * Supporting constructor that sets the required realms property.
-     * <p/>
-     * <p>Because this constructor does not accept a
-     * <tt>SessionFactory</tt> or <tt>SessionManager</tt> argument (like others in this class), and therefore uses
-     * the default <tt>init()</tt> logic to create a memory-based <tt>SessionFactory</tt>, it is not recommended that
-     * this constructor is used in production environments, where file-based or RDBMS-based solutions are better
-     * utilized.
+     * Supporting constructor that sets the required realms property and then automatically calls {@link #init()}.
      *
      * @param realms the realm instances backing this SecurityManager.
      */
@@ -152,8 +149,7 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     }
 
     /**
-     * Supporting constructor that sets common properties and then automatically calls {@link #init()}.  Can be
-     * used both inside and outside of IoC environments.
+     * Supporting constructor that sets common properties and then automatically calls {@link #init()}.
      *
      * @param realms         the Realm instances backing this SecurityManager
      * @param sessionFactory sessionFactory delegate instance - see {@link #setSessionFactory} for more info.
@@ -165,12 +161,11 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
     }
 
     /**
-     * Supporting constructor that sets common properties and then automatically calls {@link #init()}.  Can be
-     * used both inside and outside of IoC environments.
+     * Supporting constructor that sets common properties and then automatically calls {@link #init()}.
      *
      * @param realms         the Realm instances backing this SecurityManager
      * @param sessionManager the sessionManager instance that will be used to construct an internal <tt>SessionFactory</tt>
-     *                       instance - this is the recommended approach for most applications - see {@link #setSessionManager} for more info.
+     *                       instance - see {@link #setSessionManager} for more info.
      */
     public DefaultSecurityManager( List<Realm> realms, SessionManager sessionManager ) {
         setRealms( realms );
@@ -254,12 +249,23 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
                 log.info( "No realms set - creating default PropertiesRealm (not recommended for production)." );
             }
 
-            PropertiesRealm propsRealm = new PropertiesRealm();
-            propsRealm.init();
+            PropertiesRealm propsRealm = null;
 
-            List<Realm> realms = new ArrayList<Realm>(1);
-            realms.add( propsRealm );
-            setRealms( realms );
+            try {
+                propsRealm = new PropertiesRealm();
+                propsRealm.init();
+            } catch ( Exception e ) {
+                destroy( propsRealm );
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Unable to find users.properties in the root of the classpath.  Defaulting to a " +
+                        "PropertiesRealm based on JSecurity's default users.properties file (Guest user only)" );
+                }
+                propsRealm = new PropertiesRealm();
+                propsRealm.setFilePath( DEFAULT_PROPERTIES_REALM_FILE_PATH );
+                propsRealm.init();
+            }
+
+            setRealm( propsRealm );
             this.realm = propsRealm;
             this.realmImplicitlyCreated = true;
         }

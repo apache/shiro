@@ -35,6 +35,7 @@ import org.jsecurity.util.Initializable;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -43,15 +44,15 @@ import java.util.Date;
  */
 public abstract class AbstractSessionManager implements SessionManager, Initializable {
 
-    protected static final int GLOBAL_SESSION_TIMEOUT = 60 * 30; //30 minutes by default;
+    protected static final long MILLIS_PER_SECOND = 1000;
+    protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected SessionDAO sessionDAO = null;
     protected SessionEventSender sessionEventSender = null;
-    protected boolean validateHost = true;
+    protected boolean validateHost = false;
     protected Class<? extends Session> sessionClass = null;
-    protected int globalSessionTimeout = GLOBAL_SESSION_TIMEOUT;
 
     protected boolean touchSessionOnRead = false;
 
@@ -107,7 +108,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
      * {@link #validate(InetAddress)} method.  Subclasses should override that method for
      * application-specific validation.
      *
-     * <p>The default implementation always returns <tt>true</tt>
+     * <p>The default value is <tt>false</tt>, to account for localhost and proxy environments.
      *
      * @return true if the originating host address will be validated prior to creating a session,
      * false otherwise.
@@ -130,38 +131,6 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
      */
     public void setValidateHost( boolean validateHost ) {
         this.validateHost = validateHost;
-    }
-
-    /**
-     * Returns the time in seconds that any session may remain idle before expiring.  This
-     * value is just a global default for all sessions and may be overridden by subclasses on a
-     * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
-     * so desired.
-     *
-     * <ul>
-     *     <li>A negative return value means sessions never expire.</li>
-     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
-     * </ul>
-     *
-     * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
-     * 60 * 30 (30 minutes).
-     *
-     * @return the time in seconds that any session may remain idle before expiring.
-     */
-    public int getGlobalSessionTimeout() {
-        return globalSessionTimeout;
-    }
-
-    /**
-     * Sets the time in seconds that any session may remain idle before expiring.  This
-     * value is just a global default for all sessions.  Subclasses may override the
-     * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
-     *
-     * @param globalSessionTimeout the time in seconds any session may remain idle before
-     * expiring.
-     */
-    public void setGlobalSessionTimeout( int globalSessionTimeout ) {
-        this.globalSessionTimeout = globalSessionTimeout;
     }
 
     /**
@@ -309,7 +278,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
 
             //throw an exception explaining details of why it expired:
             Date lastAccessTime = session.getLastAccessTime();
-            int timeout = getTimeout( session );
+            long timeout = getTimeout( session );
 
             Serializable sessionId = session.getSessionId();
 
@@ -317,8 +286,8 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
             String msg = "Session with id [" + sessionId + "] has expired. " +
                          "Last access time: " + df.format( lastAccessTime ) +
                          ".  Current time: " + df.format( new Date() ) +
-                         ".  Session timeout is set to " + timeout + " seconds (" +
-                         timeout / 60 + " minutes)";
+                         ".  Session timeout is set to " + timeout/MILLIS_PER_SECOND + " seconds (" +
+                         timeout / MILLIS_PER_MINUTE + " minutes)";
             if ( log.isTraceEnabled() ) {
                 log.trace( msg );
             }
@@ -441,24 +410,16 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     }
 
     /**
-     * Returns the time in seconds the specified session may remain idle before expiring.
+     * Subclass template hook in case per-session timeout is not based on
+     * {@link org.jsecurity.session.Session#getTimeout()}.
      *
-     * <p>Most overriding implementations usually infer a user or user id from the specified
-     * <tt>Session</tt> and determine per-user timeout values in a specific manner.
-     *
-     * <ul>
-     *     <li>A negative return value means the session does not time-out/expire.</li>
-     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li> 
-     * </ul>
-     *
-     * <p>Default implementation returns the
-     * {@link #getGlobalSessionTimeout() global session timeout} for all sessions.
+     * <p>This implementation merely returns {@link org.jsecurity.session.Session#getTimeout()}</p>
      *
      * @param session the session for which to determine session timeout.
-     * @return the time in seconds the specified session may remain idle before expiring.
+     * @return the time in milliseconds the specified session may remain idle before expiring.
      */
-    protected int getTimeout( Session session ) {
-        return getGlobalSessionTimeout();
+    protected long getTimeout( Session session ) {
+        return session.getTimeout();
     }
 
     /**
@@ -480,9 +441,9 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
 
         if ( isExpirationEnabled( session ) ) {
 
-            int timeout = getTimeout( session );
+            long timeout = getTimeout( session );
 
-            if ( timeout >= 0 ) {
+            if ( timeout >= 0l ) {
 
                 Date lastAccessTime = session.getLastAccessTime();
 
@@ -499,8 +460,8 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
                 // for it to be expired at this point.  In other words, subtract
                 // from the current time the amount of time that a session can
                 // be inactive before expiring.  If the session was last accessed
-                // before this time it is expired.
-                long expireTimeMillis = System.currentTimeMillis() - ( 1000 * timeout );
+                // before this time, it is expired.
+                long expireTimeMillis = System.currentTimeMillis() - timeout;
                 Date expireTime = new Date( expireTimeMillis );
                 return lastAccessTime.before( expireTime );
             } else {
@@ -577,6 +538,19 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         }
     }
 
+    public long getTimeout( Serializable sessionId ) throws InvalidSessionException {
+        return getTimeout( getSession( sessionId ) );
+    }
+
+    public void setTimeout( Serializable sessionId, long maxIdleTimeInMillis ) throws InvalidSessionException {
+        Session s = retrieveSessionForUpdate( sessionId );
+        s.setTimeout( maxIdleTimeInMillis );
+        onSetTimeout( s );
+        sessionDAO.update( s );
+    }
+
+    protected void onSetTimeout( Session session ) {}
+
     public void touch( Serializable sessionId ) throws InvalidSessionException {
         Session s = retrieveSessionForUpdate( sessionId );
         sessionDAO.update( s );
@@ -589,6 +563,10 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     public void stop( Serializable sessionId ) throws InvalidSessionException {
         Session s = retrieveSessionForUpdate( sessionId );
         stop( s );
+    }
+
+    public Collection<Object> getAttributeKeys( Serializable sessionId ) {
+        return getSession( sessionId ).getAttributeKeys();
     }
 
     public Object getAttribute( Serializable sessionId, Object key )

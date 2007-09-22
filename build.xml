@@ -323,6 +323,12 @@
             <fileset dir="${src.dir}">
                 <include name="org/jsecurity/**"/>
             </fileset>
+            <fileset dir="${root.base.dir}/support/spring/src">
+                <include name="org/jsecurity/**"/>
+            </fileset>
+            <fileset dir="${root.base.dir}/support/jboss/src">
+                <include name="org/jsecurity/**"/>
+            </fileset>
         </zip>
     </target>
 

@@ -109,14 +109,15 @@ public class MemorySessionDAO extends CachingSessionDAO {
 
     protected Session doReadSession( Serializable sessionId ) {
         return null; //should never execute because this implementation relies on parent class to access cache, which
-                     //is where all in-memory sessions reside.
+                     //is where all sessions reside - it is the cache implementation that determines if the 
+                     //cache is memory only or disk-persistent, etc.
     }
 
     protected void doUpdate(Session session) {
-        //does nothing - parent class persists to in-memory cache.
+        //does nothing - parent class persists to cache.
     }
 
     protected void doDelete(Session session) {
-        //does nothing - parent class removes from in-memory cache.
+        //does nothing - parent class removes from cache.
     }
 }

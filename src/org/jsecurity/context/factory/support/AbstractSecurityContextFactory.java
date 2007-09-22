@@ -25,6 +25,7 @@
 package org.jsecurity.context.factory.support;
 
 import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.factory.SecurityContextFactory;
 
@@ -43,15 +44,15 @@ public abstract class AbstractSecurityContextFactory
 
     public AbstractSecurityContextFactory(){}
 
-    public SecurityContext createSecurityContext( AuthenticationInfo info ) {
+    public SecurityContext createSecurityContext( AuthenticationToken token, AuthenticationInfo info ) {
         Collection principals = info.getPrincipals();
         if ( principals == null || principals.size() < 1 ) {
             String msg = "AuthenticationInfo parameter must return at least one, non-null principal.";
             throw new IllegalArgumentException( msg );
         }
-        return onCreateSecurityContext( info );
+        return onCreateSecurityContext( token, info );
     }
 
-    protected abstract SecurityContext onCreateSecurityContext( AuthenticationInfo info );
+    protected abstract SecurityContext onCreateSecurityContext( AuthenticationToken token, AuthenticationInfo info );
 
 }
