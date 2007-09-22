@@ -26,7 +26,6 @@ package org.jsecurity.realm.support.file;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.realm.support.memory.MemoryRealm;
-import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ResourceUtils;
 
 import java.io.File;
@@ -36,6 +35,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,8 +45,18 @@ import java.util.concurrent.TimeUnit;
  * {@link java.util.Properties Properties} based configuration in addition to the parent class's String and Map
  * configuration.
  *
- * <p>This class allows processing of a single Properties instance (or .properties file) for user, role, and
- * permission configuration.  The Properties format understood by this implementation must be written in as follows:
+ * <p>This class allows processing of a single .properties file for user, role, and
+ * permission configuration.
+ *
+ * <p>For convenience, if the {@link #setFilePath filePath} attribute is not set, this class defaults to lookup
+ * the properties file definition from <tt>classpath:jsecurity-users.properties</tt> (root of the classpath).
+ * This allows you to use this implementation by simply defining this file at the classpath root, instantiating this
+ * class, and then calling {@link #init init()}.
+ *
+ * <p>Or, you may of course specify any other file path using the <tt>url:</tt>, <tt>file:</tt>, or <tt>classpath:</tt>
+ * prefixes.</p>
+ *
+ * <p>The Properties format understood by this implementation must be written in as follows:
  *
  * <p>Each line's key/value pair represents either a user-to-role(s) mapping <em>or</em> a role-to-permission(s)
  * mapping.
@@ -68,10 +78,10 @@ import java.util.concurrent.TimeUnit;
  * <p>Here is an example of a very simple properties definition that conforms to the above format rules and corresponding
  * method JavaDocs:
  *
- * <code><pre>   user.root = administrator
- * user.jsmith = manager,engineer,employee
- * user.abrown = qa,employee
- * user.djones = qa,contractor
+ * <code><pre>   user.root = <em>rootPassword</em>,administrator
+ * user.jsmith = <em>jsmithPassword</em>,manager,engineer,employee
+ * user.abrown = <em>abrownPassword</em>,qa,employee
+ * user.djones = <em>djonesPassword</em>,qa,contractor
  *
  * role.administrator = org.jsecurity.authz.support.AllPermission
  * role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute
@@ -84,7 +94,7 @@ import java.util.concurrent.TimeUnit;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class PropertiesRealm extends MemoryRealm implements Runnable, Initializable {
+public class PropertiesRealm extends MemoryRealm implements Runnable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -92,11 +102,12 @@ public class PropertiesRealm extends MemoryRealm implements Runnable, Initializa
     private static final int DEFAULT_RELOAD_INTERVAL_SECONDS = 10;
     private static final String USERNAME_PREFIX = "user.";
     private static final String ROLENAME_PREFIX = "role.";
-    private static final String DEFAULT_FILE_PATH = "users.properties";
+    private static final String DEFAULT_FILE_PATH = "classpath:jsecurity-users.properties";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    protected ExecutorService scheduler = null;
     protected boolean useXmlFormat = false;
     protected String filePath = DEFAULT_FILE_PATH;
     protected long fileLastModified;
@@ -109,15 +120,28 @@ public class PropertiesRealm extends MemoryRealm implements Runnable, Initializa
     |         C O N S T R U C T O R S           |
     ============================================*/
     public void init() {
-        reloadProperties();
         super.init();
+        reloadProperties();
         startReloadThread();
+    }
+
+    public void destroy() throws Exception {
+        try {
+            if ( scheduler != null ) {
+                scheduler.shutdown();
+            }
+        } catch ( Exception e ) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Unable to cleanly shutdown Scheduler.  Ignoring (shutting down)...", e );
+            }
+        }
+        super.destroy();
     }
 
     protected void startReloadThread() {
         if ( this.reloadIntervalSeconds > 0 ) {
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate( this, reloadIntervalSeconds, reloadIntervalSeconds, TimeUnit.SECONDS );
+            this.scheduler = Executors.newSingleThreadScheduledExecutor();
+            ((ScheduledExecutorService)this.scheduler).scheduleAtFixedRate( this, reloadIntervalSeconds, reloadIntervalSeconds, TimeUnit.SECONDS );
         }
     }
 
@@ -206,8 +230,8 @@ public class PropertiesRealm extends MemoryRealm implements Runnable, Initializa
         } catch ( Exception e ) {
             //ignored
         }
-        createRealmEntitiesFromProperties( properties );
         super.init();
+        createRealmEntitiesFromProperties( properties );
     }
 
 
@@ -245,6 +269,9 @@ public class PropertiesRealm extends MemoryRealm implements Runnable, Initializa
 
             String key = propNames.nextElement();
             String value = properties.getProperty( key );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Processing properties line - key: [" + key + "], value: [" + value + "]." );
+            }
 
             if ( isUsername( key ) ) {
                 String username = getUsername( key );

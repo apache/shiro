@@ -49,8 +49,21 @@ import java.util.Date;
 public class DefaultSessionManager extends AbstractSessionManager
     implements ValidatingSessionManager, CacheProviderAware, Destroyable {
 
+    private static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
+
     /**
-     * Validator used to validate sessions on a regular basis.
+     * Default global session timeout value (30 * 60 * 1000 milliseconds = 30 minutes).
+     */
+    public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
+
+    /**
+     * The default interval at which sessions will be validated (1 hour);
+     * This can be overridden by calling {@link #setSessionValidationInterval(long)}
+     */
+    public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = MILLIS_PER_HOUR;
+
+    /**
+     * Scheduler used to validate sessions on a regular basis.
      * By default, the session manager will use Quartz to schedule session validation, but this
      * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
@@ -60,6 +73,9 @@ public class DefaultSessionManager extends AbstractSessionManager
     protected CacheProvider cacheProvider = null;
 
     private boolean sessionDAOImplicitlyCreated = false;
+
+    protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
+    protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
 
     public DefaultSessionManager() {
         setSessionClass( SimpleSession.class );
@@ -79,6 +95,59 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     public void setCacheProvider( CacheProvider cacheProvider ) {
         this.cacheProvider = cacheProvider;
+    }
+
+    /**
+     * Returns the time in milliseconds that any session may remain idle before expiring.  This
+     * value is just a global default for all sessions and may be overridden by subclasses on a
+     * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
+     * so desired.
+     *
+     * <ul>
+     *     <li>A negative return value means sessions never expire.</li>
+     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
+     * </ul>
+     *
+     * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
+     * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
+     *
+     * @return the time in milliseconds that any session may remain idle before expiring.
+     */
+    public long getGlobalSessionTimeout() {
+        return globalSessionTimeout;
+    }
+
+    /**
+     * Sets the time in milliseconds that any session may remain idle before expiring.  This
+     * value is just a global default for all sessions.  Subclasses may override the
+     * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
+     *
+     * @param globalSessionTimeout the time in milliseconds any session may remain idle before
+     * expiring.
+     */
+    public void setGlobalSessionTimeout( int globalSessionTimeout ) {
+        this.globalSessionTimeout = globalSessionTimeout;
+    }
+
+    /**
+     * If using the underlying default <tt>SessionValidationScheduler</tt> (that is, the
+     * {@link #setSessionValidationScheduler(SessionValidationScheduler) setSessionValidationScheduler} method is
+     * never called) , this method allows one to specify how
+     * frequently session should be validated (to check for orphans).  The default value is 
+     * {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
+     *
+     * <p>If you override the default scheduler, it is assumed that overriding instance 'knows' how often to
+     * validate sessions, and this attribute will be ignored.
+     *
+     * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
+     * @param sessionValidationInterval
+     */
+    public void setSessionValidationInterval( long sessionValidationInterval ) {
+        this.sessionValidationInterval = sessionValidationInterval;
+    }
+
+    public long getSessionValidationInterval() {
+        return sessionValidationInterval;
     }
 
     /**
@@ -122,6 +191,7 @@ public class DefaultSessionManager extends AbstractSessionManager
             log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );
         }
         scheduler = new QuartzSessionValidationScheduler( this );
+        (( QuartzSessionValidationScheduler )scheduler).setSessionValidationInterval( getSessionValidationInterval() );
         if ( log.isTraceEnabled() ) {
             log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
         }
@@ -217,7 +287,7 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     protected void onExpire( Session session ) {
         if ( log.isTraceEnabled() ) {
-            log.trace( "Updating expiration status of session with id " +
+            log.trace( "Updating expiration status of session with id [" +
                 session.getSessionId() + "]" );
         }
         SimpleSession ss = (SimpleSession)session;
@@ -230,6 +300,7 @@ public class DefaultSessionManager extends AbstractSessionManager
             if ( hostAddr != null ) {
                 ss.setHostAddress( hostAddr );
             }
+            ss.setTimeout( getGlobalSessionTimeout() );
         }
     }
 

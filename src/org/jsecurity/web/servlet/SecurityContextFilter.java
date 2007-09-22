@@ -39,7 +39,7 @@ import javax.servlet.ServletContext;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public abstract class SecurityContextFilter extends WebInterceptorFilter {
+public class SecurityContextFilter extends WebInterceptorFilter {
 
     public static final String REQUIRE_SESSION_ON_REQUEST_PARAM_NAME = "requireSessionOnRequest"; //default is false
     public static final String PREFER_HTTP_SESSION_PARAM_NAME = "preferHttpSessionStorage"; //default is false

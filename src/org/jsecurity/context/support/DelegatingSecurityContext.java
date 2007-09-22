@@ -24,11 +24,14 @@
  */
 package org.jsecurity.context.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import java.net.InetAddress;
@@ -60,6 +63,8 @@ import java.util.*;
  * @since 0.1
  */
 public class DelegatingSecurityContext implements SecurityContext {
+
+    protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected List principals = new ArrayList();
     protected boolean authenticated;
@@ -278,7 +283,15 @@ public class DelegatingSecurityContext implements SecurityContext {
         }
         Session s = getSession( false );
         if ( s != null ) {
-            s.stop();
+            try {
+                s.stop();
+            } catch ( InvalidSessionException ise ) {
+                //ignored - we're invalidating, and have no further need of the session anyway
+                //log in case someone wants to know:
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Session has already been invalidated.  Ignoring and continuing ...", ise );
+                }
+            }
         }
         this.session = null;
         this.principals.clear();

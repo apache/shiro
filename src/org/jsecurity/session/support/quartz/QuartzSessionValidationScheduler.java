@@ -26,6 +26,7 @@ package org.jsecurity.session.support.quartz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.session.support.SessionValidationScheduler;
 import org.jsecurity.session.support.ValidatingSessionManager;
 import org.quartz.JobDetail;
@@ -48,10 +49,10 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     |             C O N S T A N T S             |
     ============================================*/
     /**
-     * The default interval at which sessions will be validated.(5 minutes)
+     * The default interval at which sessions will be validated (1 hour);
      * This can be overridden by calling {@link #setSessionValidationInterval(long)}
      */
-    private static final long DEFAULT_SESSION_VALIDATION_INTERVAL = 300000;
+    public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
 
     /**
      * The name assigned to the quartz job.
@@ -124,6 +125,13 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     }
 
 
+    /**
+     * Specifies how frequently (in milliseconds) this Scheduler will call the
+     * {@link org.jsecurity.session.support.ValidatingSessionManager#validateSessions() ValidatingSessionManager#validateSessions()} method.
+     *
+     * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
+     * @param sessionValidationInterval
+     */
     public void setSessionValidationInterval( long sessionValidationInterval ) {
         this.sessionValidationInterval = sessionValidationInterval;
     }

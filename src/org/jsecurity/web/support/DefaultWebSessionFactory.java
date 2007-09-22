@@ -31,6 +31,7 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
+import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
 
@@ -49,6 +50,14 @@ import java.net.InetAddress;
  * @since 0.1
  */
 public class DefaultWebSessionFactory extends SecurityWebSupport implements WebSessionFactory {
+
+    public static final String COOKIE_ID_SOURCE = "cookie";
+    public static final String URL_ID_SOURCE = "url";
+
+    public static final String REQUEST_REFERENCED_SESSION_ID_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID";
+    public static final String REQUEST_REFERENCED_SESSION_ID_VALID_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID_VALID";
+    public static final String REQUEST_REFERENCED_SESSION_IS_NEW_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "_REFERENCED_SESSION_IS_NEW";
+    public static final String REQUEST_REFERENCED_SESSION_ID_SOURCE_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
 
     public static final String DEFAULT_SESSION_ID_KEY_NAME = "jsecSessionId";
 
@@ -253,7 +262,14 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     }
 
     protected Serializable retrieveSessionId( HttpServletRequest request, HttpServletResponse response ) {
-        return getIdStore().retrieveValue( request, response );
+        WebStore<Serializable> idStore = getIdStore();
+        Serializable id = idStore.retrieveValue( request, response );
+        if ( id != null ) {
+            if ( idStore instanceof CookieStore ) {
+                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_SOURCE_THREAD_CONTEXT_KEY, COOKIE_ID_SOURCE );
+            }
+        }
+        return id;
     }
 
     public Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException {
@@ -267,6 +283,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         if ( log.isTraceEnabled() ) {
             log.trace( "Handling invalid session associated with the request." );
         }
+
         Session session = null;
 
         if ( isRequireSessionOnRequest() || isCreateNewSessionWhenInvalid() ) {
@@ -299,6 +316,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         Serializable sessionId = retrieveSessionId( request, response );
 
         if ( sessionId != null ) {
+            ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_THREAD_CONTEXT_KEY, sessionId.toString() );
             assertSessionFactory();
             session = sessionFactory.getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
@@ -348,6 +366,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
                     }
                 }
             } else {
+                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_VALID_THREAD_CONTEXT_KEY, Boolean.TRUE );
                 if ( isTouchSessionOnRequest() ) {
                     session.touch();
                 }
@@ -367,6 +386,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         Session session = getSessionFactory().start( clientAddress );
         //ensure it is available for future requests:
         storeSessionId( session, request, response );
+        ThreadContext.put( REQUEST_REFERENCED_SESSION_IS_NEW_THREAD_CONTEXT_KEY, Boolean.TRUE );
         return session;
     }
 }

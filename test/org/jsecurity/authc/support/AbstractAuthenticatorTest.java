@@ -36,7 +36,6 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.bind.SecurityContextBinder;
 import org.jsecurity.context.factory.SecurityContextFactory;
 import org.jsecurity.context.support.DelegatingSecurityContext;
-import org.jsecurity.session.Session;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +45,7 @@ public class AbstractAuthenticatorTest {
     AbstractAuthenticator abstractAuthenticator;
     SecurityManager mockSecurityManager;
 
-    private final SimpleAuthenticationInfo authInfo =
-            new SimpleAuthenticationInfo( "user1", "secret" );
+    private final SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo( "user1", "secret" );
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {
@@ -70,7 +68,6 @@ public class AbstractAuthenticatorTest {
     }
 
     protected void initAuthc() {
-        abstractAuthenticator.setSecurityManager( mockSecurityManager );
         abstractAuthenticator.init();
     }
 
@@ -83,7 +80,7 @@ public class AbstractAuthenticatorTest {
     @Test
     public void newAbstractAuthenticatorSecurityManagerConstructor() {
         mockSecurityManager = createMock( SecurityManager.class );
-        abstractAuthenticator = new AbstractAuthenticator( mockSecurityManager ) {
+        abstractAuthenticator = new AbstractAuthenticator() {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return authInfo;
             }
@@ -97,7 +94,6 @@ public class AbstractAuthenticatorTest {
      */
     @Test
     public void initWithoutSessionFactory() {
-        abstractAuthenticator.setSecurityManager( mockSecurityManager );
         abstractAuthenticator.init();
         assertNotNull( abstractAuthenticator.getSecurityContextBinder() ); //default impl set when instance created
         assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
@@ -166,10 +162,11 @@ public class AbstractAuthenticatorTest {
     public void securityContextFactoryReturnsNullAfterSuccessfulAuthentication() {
         SecurityContextFactory mockSCF = createMock( SecurityContextFactory.class );
         abstractAuthenticator.setSecurityContextFactory( mockSCF );
-        expect( mockSCF.createSecurityContext( authInfo ) ).andReturn( null );
+        AuthenticationToken token = newToken();
+        expect( mockSCF.createSecurityContext( token, authInfo ) ).andReturn( null );
         replay( mockSCF );
         initAuthc();
-        abstractAuthenticator.authenticate( newToken() );
+        abstractAuthenticator.authenticate( token );
 
         verify( mockSCF );
     }
@@ -188,9 +185,11 @@ public class AbstractAuthenticatorTest {
 
         initAuthc();
 
-        SecurityContext sc = new DelegatingSecurityContext( new UsernamePrincipal( "user1" ), true, null, (Session)null, mockSecurityManager );
+        SecurityContext sc = new DelegatingSecurityContext( "user1", true, null, null, mockSecurityManager );
 
-        expect( mockFactory.createSecurityContext( authInfo ) ).andReturn( sc );
+        AuthenticationToken token = newToken();
+
+        expect( mockFactory.createSecurityContext( token, authInfo ) ).andReturn( sc );
 
         //this is the test method's purpose: to ensure the following call on the binder is made by the authenticator:
         mockBinder.bindSecurityContext( sc );
@@ -198,7 +197,7 @@ public class AbstractAuthenticatorTest {
         replay( mockFactory );
         replay( mockBinder );
 
-        abstractAuthenticator.authenticate( newToken() );
+        abstractAuthenticator.authenticate( token );
 
         verify( mockFactory );
         verify( mockBinder );
@@ -214,7 +213,6 @@ public class AbstractAuthenticatorTest {
                 return null;
             }
         };
-        abstractAuthenticator.setSecurityManager( mockSecurityManager );
         abstractAuthenticator.setAuthenticationEventSender( new SimpleAuthenticationEventSender() );
         initAuthc();
         abstractAuthenticator.authenticate( newToken() );
@@ -230,7 +228,6 @@ public class AbstractAuthenticatorTest {
                 return null;
             }
         };
-        abstractAuthenticator.setSecurityManager( mockSecurityManager );
         abstractAuthenticator.setAuthenticationEventSender( new SimpleAuthenticationEventSender() );
         initAuthc();
         abstractAuthenticator.authenticate( newToken() );

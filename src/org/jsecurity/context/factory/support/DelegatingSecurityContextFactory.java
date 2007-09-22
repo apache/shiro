@@ -26,10 +26,14 @@ package org.jsecurity.context.factory.support;
 
 import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.InetAuthenticationToken;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
+
+import java.net.InetAddress;
 
 /**
  * SecurityContextFactory implementation that creates
@@ -47,7 +51,7 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
         this.securityManager = securityManager;
     }
 
-    protected SecurityContext onCreateSecurityContext( AuthenticationInfo info ) {
+    protected SecurityContext onCreateSecurityContext( AuthenticationToken token, AuthenticationInfo info ) {
 
         //get any existing session that may exist - we don't want to lose it:
         SecurityContext securityContext = ThreadContext.getSecurityContext();
@@ -56,6 +60,15 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
             session = securityContext.getSession( false );
         }
 
-        return new DelegatingSecurityContext( info.getPrincipals(), true, ThreadContext.getInetAddress(), session, securityManager );
+        InetAddress authcSourceIP = null;
+        if( token instanceof InetAuthenticationToken ) {
+            authcSourceIP = ((InetAuthenticationToken)token).getInetAddress();
+        }
+        if ( authcSourceIP == null ) {
+            //try the thread local:
+            authcSourceIP = ThreadContext.getInetAddress();
+        }
+
+        return new DelegatingSecurityContext( info.getPrincipals(), true, authcSourceIP, session, securityManager );
     }
 }

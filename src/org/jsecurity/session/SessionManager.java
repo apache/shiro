@@ -28,10 +28,11 @@ import org.jsecurity.authz.HostUnauthorizedException;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.Date;
 
 /**
- * A SessionManager manages the creation, maintenance, and clean-up of {@link org.jsecurity.session.Session sessions}.
+ * A SessionManager manages the creation, maintenance, and clean-up of {@link org.jsecurity.session.Session Session}s.
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -117,13 +118,43 @@ public interface SessionManager {
     boolean isExpired( Serializable sessionId );
 
     /**
+     * Returns the time in milliseconds that the specified session may remain idle before expiring.
+     *
+     * <ul>
+     *     <li>A negative return value means the session will never expire.</li>
+     *     <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * length of time.</li>
+     * </ul>
+     *
+     * @param sessionId the system identifier of the session of interest.
+     * @return the time in milliseconds that the specified session may remain idle before expiring.
+     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     */
+    long getTimeout( Serializable sessionId ) throws InvalidSessionException;
+
+    /**
+     * Sets the time in milliseconds that the specified session may remain idle before expiring.
+     *
+     * <ul>
+     *     <li>A negative return value means the session will never expire.</li>
+     *     <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * length of time.</li>
+     * </ul>
+     *
+     * @param sessionId the system identifier of the session of interest.
+     * @param maxIdleTimeInMillis the time in milliseconds that the specified session may remain idle before expiring.
+     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     */
+    void setTimeout( Serializable sessionId, long maxIdleTimeInMillis ) throws InvalidSessionException;
+
+    /**
      * Updates the last accessed time of the session identified by <code>sessionId</code>.  This
      * can be used to explicitly ensure that a session does not time out.
      *
      * @see org.jsecurity.session.Session#touch
      *
      * @param sessionId the id of the session to update.
-     * @throws org.jsecurity.session.InvalidSessionException if the session has expired prior to calling this method.
+     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
      */
     void touch( Serializable sessionId ) throws InvalidSessionException;
 
@@ -149,6 +180,17 @@ public interface SessionManager {
      * @see org.jsecurity.session.Session#stop
      */
     void stop( Serializable sessionId ) throws InvalidSessionException;
+
+    /**
+     * Returns the keys of all the attributes stored under the session identified by <tt>sessionId</tt>.
+     * If there are no attributes, this returns an empty collection.
+     * @param sessionId the system identifier of the system to access.
+     * @return the keys of all attributes stored under the specified session, or an empty collection if
+     * there are no session attributes.
+     * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
+     * @see org.jsecurity.session.Session#getAttributeKeys()
+     */
+    Collection<Object> getAttributeKeys( Serializable sessionId );
 
     /**
      * Returns the object bound to the specified session identified by the specified key.  If there
@@ -188,6 +230,4 @@ public interface SessionManager {
      * @see org.jsecurity.session.Session#removeAttribute(Object key)
      */
     Object removeAttribute( Serializable sessionId, Object key ) throws InvalidSessionException;
-
-
 }
