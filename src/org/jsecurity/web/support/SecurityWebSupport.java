@@ -75,7 +75,7 @@ public abstract class SecurityWebSupport implements Initializable {
         return ThreadContext.getSession();
     }
 
-    protected void bindInetAddressToThread( HttpServletRequest request ) {
+    protected void bindInetAddressToThread( ServletRequest request ) {
         InetAddress ip = getInetAddress( request );
         if ( ip != null ) {
             ThreadContext.bind( ip );

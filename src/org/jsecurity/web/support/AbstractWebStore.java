@@ -56,6 +56,7 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
     protected String name = DEFAULT_NAME;
 
     protected boolean checkRequestParams = true;
+    protected boolean checkRequestParamsFirst = true;
 
     protected boolean mutable = true;
 
@@ -101,6 +102,14 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
 
     public void setCheckRequestParams( boolean checkRequestParams ) {
         this.checkRequestParams = checkRequestParams;
+    }
+
+    public boolean isCheckRequestParamsFirst() {
+        return checkRequestParamsFirst;
+    }
+
+    public void setCheckRequestParamsFirst( boolean checkRequestParamsFirst ) {
+        this.checkRequestParamsFirst = checkRequestParamsFirst;
     }
 
     public Class<? extends PropertyEditor> getEditorClass() {
@@ -198,13 +207,20 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
 
     public final T retrieveValue( HttpServletRequest request, HttpServletResponse response ) {
         T value = null;
-        if ( isCheckRequestParams() ) {
+        if ( isCheckRequestParams() && isCheckRequestParamsFirst() ) {
             value = getFromRequestParam( request );
         }
         
         if ( value == null ) {
             value = onRetrieveValue( request, response );
         }
+
+        if ( value == null ) {
+            if ( isCheckRequestParams() && !isCheckRequestParamsFirst() ) {
+                value = getFromRequestParam( request ); 
+            }
+        }
+
         return value;
     }
 

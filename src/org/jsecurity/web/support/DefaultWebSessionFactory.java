@@ -34,6 +34,7 @@ import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
+import org.jsecurity.web.servlet.JSecurityHttpSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +45,7 @@ import java.net.InetAddress;
  * Default JSecurity implementation of the {@link WebSessionFactory} interface.
  * <p/>
  * <p>This SessionFactory implementation handles web-specific APIs and delegates session creation/acquisition
- * behavior to an underlying wrapped {@link SessionFactory SessionFactory} instance.
+ * behavior to an underlying {@link SessionFactory SessionFactory} instance.
  *
  * @author Les Hazlewood
  * @since 0.1
@@ -54,12 +55,12 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     public static final String COOKIE_ID_SOURCE = "cookie";
     public static final String URL_ID_SOURCE = "url";
 
-    public static final String REQUEST_REFERENCED_SESSION_ID_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID";
-    public static final String REQUEST_REFERENCED_SESSION_ID_VALID_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID_VALID";
-    public static final String REQUEST_REFERENCED_SESSION_IS_NEW_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "_REFERENCED_SESSION_IS_NEW";
-    public static final String REQUEST_REFERENCED_SESSION_ID_SOURCE_THREAD_CONTEXT_KEY = DefaultWebSessionFactory.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
+    public static final String REQUEST_REFERENCED_SESSION_ID = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID";
+    public static final String REQUEST_REFERENCED_SESSION_ID_IS_VALID = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID_VALID";
+    public static final String REQUEST_REFERENCED_SESSION_IS_NEW = DefaultWebSessionFactory.class.getName() + "_REFERENCED_SESSION_IS_NEW";
+    public static final String REQUEST_REFERENCED_SESSION_ID_SOURCE = DefaultWebSessionFactory.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
 
-    public static final String DEFAULT_SESSION_ID_KEY_NAME = "jsecSessionId";
+    public static final String DEFAULT_SESSION_ID_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -87,7 +88,12 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     // to true in configuration (it is false by default), this implementation will automatically re-assign the
     // idStore attribute to be a CookieStore in the init() method.  If this property is false, the init method
     // will automatically create the HttpSessionStore.
-    protected WebStore<Serializable> idStore = null;
+
+    //TODO - remove w/ SessionEvent listening in place to account for in-thread session acquisition
+    //protected WebStore<Serializable> idStore = null;
+
+    protected CookieStore<Serializable> cookieSessionIdStore = null;
+    protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
     protected boolean requireSessionOnRequest = false;
     protected boolean createNewSessionWhenInvalid = true;
@@ -107,12 +113,20 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         return sessionFactory;
     }
 
-    public WebStore<Serializable> getIdStore() {
-        return idStore;
+    public CookieStore<Serializable> getCookieSessionIdStore() {
+        return cookieSessionIdStore;
     }
 
-    public void setIdStore( WebStore<Serializable> idStore ) {
-        this.idStore = idStore;
+    public void setCookieSessionIdStore( CookieStore<Serializable> cookieSessionIdStore ) {
+        this.cookieSessionIdStore = cookieSessionIdStore;
+    }
+
+    public RequestParamStore<Serializable> getReqParamSessionIdStore() {
+        return reqParamSessionIdStore;
+    }
+
+    public void setReqParamSessionIdStore( RequestParamStore<Serializable> reqParamSessionIdStore ) {
+        this.reqParamSessionIdStore = reqParamSessionIdStore;
     }
 
     /**
@@ -201,17 +215,27 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         }
     }
 
+    protected void ensureCookieSessionIdStore() {
+        CookieStore<Serializable> cookieStore = getCookieSessionIdStore();
+        if( cookieStore == null ) {
+            cookieStore = new CookieStore<Serializable>( DEFAULT_SESSION_ID_NAME, CookieStore.INDEFINITE );
+            cookieStore.setCheckRequestParams( false );
+            setCookieSessionIdStore( cookieStore );
+        }
+    }
+
+    protected void ensureRequestParamSessionIdStore() {
+        RequestParamStore<Serializable> reqParamStore = getReqParamSessionIdStore();
+        if ( reqParamStore == null ) {
+            reqParamStore = new RequestParamStore<Serializable>( DEFAULT_SESSION_ID_NAME );
+            setReqParamSessionIdStore( reqParamStore );
+        }
+    }
+
     public void init() {
         assertSessionFactory();
-        WebStore<Serializable> store = getIdStore();
-        if ( store == null ) {
-            if ( isRequireSessionOnRequest() ) {
-                store = new CookieStore<Serializable>( DEFAULT_SESSION_ID_KEY_NAME, CookieStore.INDEFINITE );
-            } else {
-                store = new HttpSessionStore<Serializable>( DEFAULT_SESSION_ID_KEY_NAME );
-            }
-            setIdStore( store );
-        }
+        ensureCookieSessionIdStore();
+        ensureRequestParamSessionIdStore();
     }
 
     protected void validateSessionOrigin( HttpServletRequest request, Session session )
@@ -257,16 +281,19 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         //'real' session value:
         Serializable existingId = retrieveSessionId( request, response );
         if ( existingId == null || !currentId.equals( existingId ) ) {
-            getIdStore().storeValue( currentId, request, response );
+            getCookieSessionIdStore().storeValue( currentId, request, response );
         }
     }
 
     protected Serializable retrieveSessionId( HttpServletRequest request, HttpServletResponse response ) {
-        WebStore<Serializable> idStore = getIdStore();
-        Serializable id = idStore.retrieveValue( request, response );
+        WebStore<Serializable> cookieSessionIdStore = getCookieSessionIdStore();
+        Serializable id = cookieSessionIdStore.retrieveValue( request, response );
         if ( id != null ) {
-            if ( idStore instanceof CookieStore ) {
-                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_SOURCE_THREAD_CONTEXT_KEY, COOKIE_ID_SOURCE );
+            ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_SOURCE, COOKIE_ID_SOURCE );
+        } else {
+            id = getReqParamSessionIdStore().retrieveValue( request, response );
+            if ( id != null ) {
+                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_SOURCE, URL_ID_SOURCE );
             }
         }
         return id;
@@ -316,7 +343,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         Serializable sessionId = retrieveSessionId( request, response );
 
         if ( sessionId != null ) {
-            ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_THREAD_CONTEXT_KEY, sessionId.toString() );
+            ThreadContext.put( REQUEST_REFERENCED_SESSION_ID, sessionId.toString() );
             assertSessionFactory();
             session = sessionFactory.getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
@@ -366,10 +393,10 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
                     }
                 }
             } else {
-                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_VALID_THREAD_CONTEXT_KEY, Boolean.TRUE );
                 if ( isTouchSessionOnRequest() ) {
                     session.touch();
                 }
+                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE );
             }
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
@@ -382,11 +409,11 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     }
 
     public Session start( HttpServletRequest request, HttpServletResponse response ) {
-        InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
+        InetAddress clientAddress = getInetAddress( request );
         Session session = getSessionFactory().start( clientAddress );
         //ensure it is available for future requests:
         storeSessionId( session, request, response );
-        ThreadContext.put( REQUEST_REFERENCED_SESSION_IS_NEW_THREAD_CONTEXT_KEY, Boolean.TRUE );
+        ThreadContext.put( REQUEST_REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
         return session;
     }
 }

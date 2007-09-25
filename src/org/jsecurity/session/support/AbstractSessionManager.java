@@ -182,8 +182,8 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         }
     }
 
-    protected SessionEvent createStartEvent( Session created, Serializable sessionIdFromEIS ) {
-        return new StartedSessionEvent( this, sessionIdFromEIS );
+    protected SessionEvent createStartEvent( Session session ) {
+        return new StartedSessionEvent( this, session.getSessionId() );
     }
 
     protected SessionEvent createStopEvent( Session session ) {
@@ -361,9 +361,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         if ( log.isDebugEnabled() ) {
             log.debug( "Creating new EIS record for new session instance [" + s + "]" );
         }
-        Serializable sessionId = sessionDAO.create( s );
-
-        send( createStartEvent( s, sessionId ) );
+        sessionDAO.create( s );
 
         return s;
     }
@@ -504,6 +502,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     public Serializable start( InetAddress originatingHost )
         throws HostUnauthorizedException, IllegalArgumentException {
         Session s = createSession( originatingHost );
+        send( createStartEvent( s ) );
         return s.getSessionId();
     }
 
@@ -525,15 +524,10 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
 
     public boolean isExpired( Serializable sessionId ) {
         try {
-            Session s = getSession( sessionId );
-            boolean expired = isExpired( s );
-            if ( expired ) {
-                if ( !s.isExpired() ) {
-                    expire( s );
-                }
-            }
-            return expired;
-        } catch ( ExpiredSessionException e ) {
+            getSession( sessionId );
+            //no exception thrown, return false;
+            return false;
+        } catch ( SessionException e ) {
             return true;
         }
     }

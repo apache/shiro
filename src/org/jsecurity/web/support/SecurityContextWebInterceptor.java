@@ -37,7 +37,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
 
@@ -77,7 +76,6 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
     protected boolean preferHttpSessionStorage = false;
 
     //passthrough attributes to the underlying DefaultWebSessionFactory
-    protected WebStore<Serializable> sessionIdStore = null;
     protected WebStore<Collection> principalsStore = null;
     protected WebStore<Boolean> authenticatedStore = null;
     protected boolean requireSessionOnRequest = false;
@@ -99,14 +97,6 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     public void setPreferHttpSessionStorage( boolean preferHttpSessionStorage ) {
         this.preferHttpSessionStorage = preferHttpSessionStorage;
-    }
-
-    public WebStore<Serializable> getSessionIdStore() {
-        return sessionIdStore;
-    }
-
-    public void setSessionIdStore( WebStore<Serializable> sessionIdStore ) {
-        this.sessionIdStore = sessionIdStore;
     }
 
     public WebStore<Collection> getPrincipalsStore() {
@@ -139,6 +129,27 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
 
     protected void setSessionWebInterceptor( SessionWebInterceptor sessionWebInterceptor ) {
         this.sessionWebInterceptor = sessionWebInterceptor;
+    }
+
+    void assertSecurityManager() {
+        SecurityManager securityManager = getSecurityManager();
+        if ( securityManager == null ) {
+            String msg = "SecurityManager property must be set.";
+            throw new IllegalStateException( msg );
+        }
+    }
+
+    void ensureSessionWebInterceptor() {
+        if ( getSessionWebInterceptor() == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Initializing default SessionWebInterceptor instance..." );
+            }
+            SessionWebInterceptor swi = new SessionWebInterceptor();
+            swi.setSessionFactory( getSecurityManager() );
+            swi.setRequireSessionOnRequest( isRequireSessionOnRequest() );
+            swi.init();
+            setSessionWebInterceptor( swi );
+        }
     }
 
     protected void ensurePrincipalsStore() {
@@ -174,28 +185,8 @@ public class SecurityContextWebInterceptor extends SecurityWebSupport implements
     }
 
     public void init() {
-        SecurityManager securityManager = getSecurityManager();
-        if ( securityManager == null ) {
-            String msg = "SecurityManager property must be set.";
-            throw new IllegalStateException( msg );
-        }
-        if ( getSessionWebInterceptor() == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing default SessionWebInterceptor instance..." );
-            }
-            SessionWebInterceptor swi = new SessionWebInterceptor();
-            swi.setSessionFactory( securityManager );
-            swi.setRequireSessionOnRequest( isRequireSessionOnRequest() );
-
-            WebStore<Serializable> sessionIdStore = getSessionIdStore();
-            if ( sessionIdStore != null ) {
-                swi.setIdStore( sessionIdStore );
-            }
-
-            swi.init();
-            setSessionWebInterceptor( swi );
-        }
-
+        assertSecurityManager();
+        ensureSessionWebInterceptor();
         ensurePrincipalsStore();
         ensureAuthenticatedStore();
     }

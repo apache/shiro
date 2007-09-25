@@ -129,6 +129,7 @@ public interface Session {
      *
      * @return the time in milliseconds the session may remain idle before expiring.
      * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     * @since 0.2
      */
     long getTimeout() throws InvalidSessionException;
 
@@ -143,6 +144,7 @@ public interface Session {
      *
      * @param maxIdleTimeInMillis the time in milliseconds that the session may remain idle before expiring.
      * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     * @since 0.2
      */
     void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException;
 

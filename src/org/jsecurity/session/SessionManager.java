@@ -129,6 +129,7 @@ public interface SessionManager {
      * @param sessionId the system identifier of the session of interest.
      * @return the time in milliseconds that the specified session may remain idle before expiring.
      * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     * @since 0.2
      */
     long getTimeout( Serializable sessionId ) throws InvalidSessionException;
 
@@ -144,6 +145,7 @@ public interface SessionManager {
      * @param sessionId the system identifier of the session of interest.
      * @param maxIdleTimeInMillis the time in milliseconds that the specified session may remain idle before expiring.
      * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     * @since 0.2
      */
     void setTimeout( Serializable sessionId, long maxIdleTimeInMillis ) throws InvalidSessionException;
 
@@ -189,6 +191,7 @@ public interface SessionManager {
      * there are no session attributes.
      * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see org.jsecurity.session.Session#getAttributeKeys()
+     * @since 0.2
      */
     Collection<Object> getAttributeKeys( Serializable sessionId );
 
