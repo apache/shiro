@@ -110,6 +110,13 @@ public class DelegatingSecurityContext implements SecurityContext {
         this.securityManager = securityManager;
     }
 
+    protected void assertValid() throws InvalidSecurityContextException {
+        if ( isInvalidated() ) {
+            String msg = "The SecurityContext has been invalidated.  It can no longer be used.";
+            throw new InvalidSecurityContextException( msg );
+        }
+    }
+
     protected boolean isInvalidated() {
         return invalidated;
     }
@@ -118,11 +125,8 @@ public class DelegatingSecurityContext implements SecurityContext {
         this.invalidated = invalidated;
     }
 
-    protected void assertValid() throws InvalidSecurityContextException {
-        if ( isInvalidated() ) {
-            String msg = "The SecurityContext has been invalidated.  It can no longer be used.";
-            throw new InvalidSecurityContextException( msg );
-        }
+    public SecurityManager getSecurityManager() {
+        return securityManager;
     }
 
     /**
@@ -134,7 +138,7 @@ public class DelegatingSecurityContext implements SecurityContext {
      *
      * @return the InetAddress associated with the client who created/is interacting with this SecurityContext.
      */
-    protected InetAddress getInetAddress() {
+    public InetAddress getInetAddress() {
         assertValid();
         return this.inetAddress;
     }

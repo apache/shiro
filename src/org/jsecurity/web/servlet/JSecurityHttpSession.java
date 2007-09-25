@@ -18,10 +18,12 @@ import java.util.*;
  * Servlet Container's session mechanism.  This is preferred in heterogeneous client environments where the Session
  * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc).
  *
- * @author Les Hazlewood
  * @since 0.2
+ * @author Les Hazlewood
  */
 public class JSecurityHttpSession implements HttpSession {
+
+    public static final String DEFAULT_SESSION_ID_NAME = "JSECSESSIONID";
 
     private static final Enumeration EMPTY_ENUMERATION = new Enumeration() {
         public boolean hasMoreElements() {
@@ -50,8 +52,12 @@ public class JSecurityHttpSession implements HttpSession {
     }
 
     protected Session getSession() {
-        SecurityContext securityContext = ThreadContext.getSecurityContext();
-        return securityContext.getSession();
+        return getSession( true );
+    }
+
+    protected Session getSession( boolean create ) {
+        SecurityContext sc = ThreadContext.getSecurityContext();
+        return ( sc != null ? sc.getSession( create ) : null );
     }
 
     public long getCreationTime() {
@@ -76,7 +82,7 @@ public class JSecurityHttpSession implements HttpSession {
 
     public void setMaxInactiveInterval( int i ) {
         try {
-            getSession().setTimeout( i );
+            getSession().setTimeout( i * 1000 );
         } catch ( InvalidSessionException e ) {
             throw new IllegalStateException( e );
         }
@@ -84,7 +90,7 @@ public class JSecurityHttpSession implements HttpSession {
 
     public int getMaxInactiveInterval() {
         try {
-            return ( new Long( getSession().getTimeout() ) ).intValue();
+            return ( new Long( getSession().getTimeout() / 1000 ) ).intValue();
         } catch ( InvalidSessionException e ) {
             throw new IllegalStateException( e );
         }
@@ -200,7 +206,7 @@ public class JSecurityHttpSession implements HttpSession {
     }
 
     public boolean isNew() {
-        Boolean value = (Boolean)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_IS_NEW_THREAD_CONTEXT_KEY );
+        Boolean value = (Boolean)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_IS_NEW );
         return value != null && value.equals( Boolean.TRUE );
     }
 }

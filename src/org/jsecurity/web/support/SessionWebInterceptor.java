@@ -90,9 +90,9 @@ public class SessionWebInterceptor extends DefaultWebSessionFactory implements W
     public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
         throws Exception {
         ThreadContext.unbindSession();
-        ThreadContext.remove( REQUEST_REFERENCED_SESSION_ID_THREAD_CONTEXT_KEY );
-        ThreadContext.remove( REQUEST_REFERENCED_SESSION_ID_VALID_THREAD_CONTEXT_KEY );
-        ThreadContext.remove( REQUEST_REFERENCED_SESSION_IS_NEW_THREAD_CONTEXT_KEY );
-        ThreadContext.remove( REQUEST_REFERENCED_SESSION_ID_SOURCE_THREAD_CONTEXT_KEY );
+        ThreadContext.remove( REQUEST_REFERENCED_SESSION_ID );
+        ThreadContext.remove( REQUEST_REFERENCED_SESSION_ID_IS_VALID );
+        ThreadContext.remove( REQUEST_REFERENCED_SESSION_IS_NEW );
+        ThreadContext.remove( REQUEST_REFERENCED_SESSION_ID_SOURCE );
     }
 }
