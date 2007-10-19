@@ -7,7 +7,6 @@ Required jars
 -------------
 Put jsecurity.jar and Jakarta commons-logging.jar in your application's classpath.
 
-
 Feature-based dependencies
 --------------------------
 - If you want to use JSecurity's enterprise session management,
