@@ -74,12 +74,24 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
     protected boolean invalidated = false;
 
     private static <T> List<T> toList(T principal) {
+
         List<T> principals = null;
+        
         if (principal != null) {
+
+            if (principal instanceof Collection) {
+                throw new IllegalArgumentException("principal my not be a collection.  principal is instance of [" + principal.getClass().getName() + "]");
+            }
+
             principals = new ArrayList<T>();
             principals.add(principal);
         }
+        
         return principals;
+    }
+
+    public DelegatingSecurityContext(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
+        this((List<T>) null, authenticated, inetAddress, session, securityManager);
     }
 
     public DelegatingSecurityContext(T principal, boolean authenticated, InetAddress inetAddress,
