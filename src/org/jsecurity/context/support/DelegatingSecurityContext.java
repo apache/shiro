@@ -80,7 +80,7 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
         if (principal != null) {
 
             if (principal instanceof Collection) {
-                throw new IllegalArgumentException("principal my not be a collection.  principal is instance of [" + principal.getClass().getName() + "]");
+                throw new IllegalArgumentException("Principal is an instance of [" + principal.getClass().getName() + "]. Principal must not be an instance of java.util.Collection.");
             }
 
             principals = new ArrayList<T>();
