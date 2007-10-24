@@ -58,9 +58,9 @@ public interface SecurityContext<T> {
     T getPrincipal();
 
     /**
-     * Returns all principals associated with this <tt>SecurityContext</tt>, or an empty collection if no principals
+     * Returns all principals associated with this <tt>SecurityContext</tt>, or an empty List if no principals
      * are yet associated with this security context.
-     * @return a collection of principals associated with this context, or an empty collection
+     * @return a List of principals associated with this context, or an empty collection
      * if no principals are associated with this security context
      */
     List<T> getAllPrincipals();
@@ -80,12 +80,12 @@ public interface SecurityContext<T> {
 
     /**
      * Returns all principals assignable from the specified type that is associated with
-     * this <tt>SecurityContext</tt>, or an empty collection if no principals are yet associated with this security
+     * this <tt>SecurityContext</tt>, or an empty List if no principals are yet associated with this security
      * context.
      *
      * @param principalType the principal type that should be returned.
-     * @return a collection of principals that are assignable from the specified type, or
-     * an empty collection if no principals of this type are associated.
+     * @return a List of principals that are assignable from the specified type, or
+     * an empty List if no principals of this type are associated.
      */
     List<T> getAllPrincipalsByType( Class principalType );
 
