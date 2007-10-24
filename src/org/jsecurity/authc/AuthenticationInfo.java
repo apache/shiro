@@ -24,7 +24,7 @@
  */
 package org.jsecurity.authc;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * <p>An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
@@ -44,7 +44,7 @@ import java.util.Collection;
  * @author Les Hazlewood
  * @since 0.1
  */
-public interface AuthenticationInfo {
+public interface AuthenticationInfo<T> {
 
     /**
      * Returns the primary principal of the subject associated with this
@@ -53,7 +53,7 @@ public interface AuthenticationInfo {
      * @return the primary principal of the subject associated with this
      * authentication info.
      */
-    Object getPrincipal();
+    T getPrincipal();
 
     /**
      * Returns the principals that identify the authenticated subject, such as a user's primary key
@@ -64,7 +64,7 @@ public interface AuthenticationInfo {
      *
      * @return the identifying principal of the authenticated subject.
      */
-    Collection getPrincipals();
+    List<T> getPrincipals();
 
     /**
      * The subject's credential as stored in the system associated with the
