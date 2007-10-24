@@ -265,7 +265,7 @@ public class SecurityContextWebInterceptor<T> extends SecurityWebSupport impleme
         //overall - Les.
         Session session = getSession( request, response );
         SecurityContext dummy =
-            new DelegatingSecurityContext( (T)null, false, ThreadContext.getInetAddress(), session, getSecurityManager() );
+            new DelegatingSecurityContext( false, ThreadContext.getInetAddress(), session, getSecurityManager() );
         ThreadContext.bind( dummy );
 
         //now contstruct the 'real' security context to use during the request's thread:

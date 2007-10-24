@@ -84,7 +84,7 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
                 dsc = new DelegatingSecurityContext( existing.getAllPrincipals(), existing.isAuthenticated(),
                     ThreadContext.getInetAddress(), jsecSession, this.securityManager );
             } else {
-                dsc = new DelegatingSecurityContext( null, false, ThreadContext.getInetAddress(),
+                dsc = new DelegatingSecurityContext( false, ThreadContext.getInetAddress(),
                     jsecSession, this.securityManager );
 
             }
