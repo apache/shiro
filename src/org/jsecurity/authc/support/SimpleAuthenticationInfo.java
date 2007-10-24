@@ -28,7 +28,6 @@ import org.jsecurity.authc.AuthenticationInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,7 +40,7 @@ import java.util.List;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializable {
+public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -53,7 +52,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     /**
      * The principals that apply to the subject/user who has been authenticated.
      */
-    private List<Object> principals = null;
+    private List<T> principals = null;
 
     /**
      * Credentials that were used to authenticate the user.
@@ -82,24 +81,24 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     public SimpleAuthenticationInfo() {
     }
 
-    public SimpleAuthenticationInfo( Object principal, Object credentials) {
+    public SimpleAuthenticationInfo( T principal, Object credentials) {
         addPrincipal( principal );
         this.credentials = credentials;
     }
 
-    public SimpleAuthenticationInfo(List<Object> principals, Object credentials) {
+    public SimpleAuthenticationInfo(List<T> principals, Object credentials) {
         this.principals = principals;
         this.credentials = credentials;
     }
 
-    public SimpleAuthenticationInfo(List<Object> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
+    public SimpleAuthenticationInfo(List<T> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
         this.principals = principals;
         this.credentials = credentials;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
     }
 
-    public SimpleAuthenticationInfo(List<Object> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+    public SimpleAuthenticationInfo(List<T> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.principals = principals;
         this.credentials = credentials;
         this.accountLocked = accountLocked;
@@ -111,7 +110,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public Object getPrincipal() {
+    public T getPrincipal() {
         if( this.principals == null || this.principals.isEmpty()) {
             return null;
         } else {
@@ -119,17 +118,17 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
         }
     }
 
-    public List getPrincipals() {
+    public List<T> getPrincipals() {
         return principals;
     }
 
-    public void setPrincipals(List<Object> principals) {
+    public void setPrincipals(List<T> principals) {
         this.principals = principals;
     }
 
-    public void addPrincipal( Object principal ) {
+    public void addPrincipal( T principal ) {
         if ( this.principals == null ) {
-            this.principals = new ArrayList<Object>();
+            this.principals = new ArrayList<T>();
         }
         this.principals.add( principal );
     }
@@ -183,11 +182,11 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
         }
 
         //noinspection unchecked
-        Collection<Object> infoPrincipals = info.getPrincipals();
+        List<T> infoPrincipals = info.getPrincipals();
 
         if ( infoPrincipals != null && !infoPrincipals.isEmpty() ) {
             if ( this.principals == null ) {
-                this.principals = new ArrayList<Object>( infoPrincipals.size() );
+                this.principals = new ArrayList<T>( infoPrincipals.size() );
             }
             this.principals.addAll( infoPrincipals );
         }

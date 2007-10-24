@@ -41,19 +41,19 @@ import java.util.*;
  * Simple implementation of the <tt>SecurityContext</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.
- *
+ * <p/>
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
  * architecture.  It instead asks the underlying <tt>SecurityManager</tt> every time to perform
  * the authorization check.
- *
+ * <p/>
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
  * context data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
  * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.
- *
+ * <p/>
  * <p>Applications from large and clustered to simple and vm local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.
@@ -62,48 +62,42 @@ import java.util.*;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class DelegatingSecurityContext implements SecurityContext {
+public class DelegatingSecurityContext<T> implements SecurityContext<T> {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected List principals = new ArrayList();
+    protected List<T> principals = new ArrayList<T>();
     protected boolean authenticated;
     protected InetAddress inetAddress = null;
     protected Session session = null;
     protected SecurityManager securityManager;
     protected boolean invalidated = false;
 
-    private static List toList( Object o ) {
-        List principals = new ArrayList(1);
-        if ( o != null ) {
-            //noinspection unchecked
-            principals.add( o );
+    private static <T> List<T> toList(T principal) {
+        List<T> principals = null;
+        if (principal != null) {
+            principals = new ArrayList<T>();
+            principals.add(principal);
         }
         return principals;
     }
 
-    private static List toList( Collection ps ) {
-        List principals = null;
-        if ( ps == null || ps.isEmpty() ) {
-            principals = new ArrayList();
-        } else {
-            //noinspection unchecked
-            principals = new ArrayList( ps );
-        }
-        return principals;
+    public DelegatingSecurityContext(T principal, boolean authenticated, InetAddress inetAddress,
+                                     Session session, SecurityManager securityManager) {
+        this(toList(principal), authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext( Object principal, boolean authenticated, InetAddress inetAddress,
-                                      Session session, SecurityManager securityManager ) {
-        this( toList( principal), authenticated, inetAddress, session, securityManager );
-    }
-
-    public DelegatingSecurityContext( Collection principals, boolean authenticated, InetAddress inetAddress,
-                                      Session session, SecurityManager securityManager ) {
-        if ( securityManager == null ) {
-            throw new IllegalArgumentException( "SecurityManager cannot be null." );
+    public DelegatingSecurityContext(List<T> principals, boolean authenticated, InetAddress inetAddress,
+                                     Session session, SecurityManager securityManager) {
+        if (securityManager == null) {
+            throw new IllegalArgumentException("SecurityManager cannot be null.");
         }
-        this.principals = toList( principals );
+
+        if (principals == null) {
+            principals = new ArrayList<T>();
+        }
+
+        this.principals = principals;
         this.authenticated = authenticated;
         this.inetAddress = inetAddress;
         this.session = session;
@@ -111,9 +105,9 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     protected void assertValid() throws InvalidSecurityContextException {
-        if ( isInvalidated() ) {
+        if (isInvalidated()) {
             String msg = "The SecurityContext has been invalidated.  It can no longer be used.";
-            throw new InvalidSecurityContextException( msg );
+            throw new InvalidSecurityContextException(msg);
         }
     }
 
@@ -121,7 +115,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         return invalidated;
     }
 
-    protected void setInvalidated( boolean invalidated ) {
+    protected void setInvalidated(boolean invalidated) {
         this.invalidated = invalidated;
     }
 
@@ -149,19 +143,19 @@ public class DelegatingSecurityContext implements SecurityContext {
      *
      * @see org.jsecurity.context.SecurityContext#getPrincipal()
      */
-    public Object getPrincipal() {
+    public T getPrincipal() {
         assertValid();
-        if ( this.principals.isEmpty() ) {
+        if (this.principals.isEmpty()) {
             return null;
         } else {
-            return this.principals.get( 0 );
+            return this.principals.get(0);
         }
     }
 
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipals()
      */
-    public Collection getAllPrincipals() {
+    public List<T> getAllPrincipals() {
         assertValid();
         return principals;
     }
@@ -169,10 +163,10 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
-    public Object getPrincipalByType( Class principalType ) {
+    public T getPrincipalByType(Class principalType) {
         assertValid();
-        for ( Object o : principals ) {
-            if ( principalType.isAssignableFrom( o.getClass() ) ) {
+        for (T o : principals) {
+            if (principalType.isAssignableFrom(o.getClass())) {
                 return o;
             }
         }
@@ -182,86 +176,88 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
      */
-    public Collection getAllPrincipalsByType( Class principalType ) {
+    public List<T> getAllPrincipalsByType(Class principalType) {
         assertValid();
-        Set principalsOfType = new HashSet();
+        List<T> principalsOfType = new ArrayList<T>();
 
-        for ( Object o : principals ) {
-            if ( principalType.isAssignableFrom( o.getClass() ) ) {
-                //noinspection unchecked
-                principalsOfType.add( o );
+        if (principals != null) {
+            for (T o : principals) {
+                if (principalType.isAssignableFrom(o.getClass())) {
+                    //noinspection unchecked
+                    principalsOfType.add(o);
+                }
             }
         }
         return principalsOfType;
     }
 
-    public boolean hasRole( String roleIdentifier ) {
+    public boolean hasRole(String roleIdentifier) {
         assertValid();
-        return getPrincipal() != null && securityManager.hasRole( getPrincipal(), roleIdentifier );
+        return getPrincipal() != null && securityManager.hasRole(getPrincipal(), roleIdentifier);
     }
 
-    public boolean[] hasRoles( List<String> roleIdentifiers ) {
+    public boolean[] hasRoles(List<String> roleIdentifiers) {
         assertValid();
-        if ( getPrincipal() != null ) {
-            return securityManager.hasRoles( getPrincipal(), roleIdentifiers );
+        if (getPrincipal() != null) {
+            return securityManager.hasRoles(getPrincipal(), roleIdentifiers);
         } else {
             return new boolean[roleIdentifiers.size()];
         }
     }
 
-    public boolean hasAllRoles( Collection<String> roleIdentifiers ) {
+    public boolean hasAllRoles(Collection<String> roleIdentifiers) {
         assertValid();
-        return getPrincipal() != null && securityManager.hasAllRoles( getPrincipal(), roleIdentifiers );
+        return getPrincipal() != null && securityManager.hasAllRoles(getPrincipal(), roleIdentifiers);
     }
 
-    public boolean isPermitted( Permission permission ) {
+    public boolean isPermitted(Permission permission) {
         assertValid();
-        return getPrincipal() != null && securityManager.isPermitted( getPrincipal(), permission );
+        return getPrincipal() != null && securityManager.isPermitted(getPrincipal(), permission);
     }
 
-    public boolean[] isPermitted( List<Permission> permissions ) {
+    public boolean[] isPermitted(List<Permission> permissions) {
         assertValid();
-        if ( getPrincipal() != null ) {
-            return securityManager.isPermitted( getPrincipal(), permissions );
+        if (getPrincipal() != null) {
+            return securityManager.isPermitted(getPrincipal(), permissions);
         } else {
             return new boolean[permissions.size()];
         }
     }
 
-    public boolean isPermittedAll( Collection<Permission> permissions ) {
+    public boolean isPermittedAll(Collection<Permission> permissions) {
         assertValid();
-        return getPrincipal() != null && securityManager.isPermittedAll( getPrincipal(), permissions );
+        return getPrincipal() != null && securityManager.isPermittedAll(getPrincipal(), permissions);
     }
 
-    public void checkPermission( Permission permission ) throws AuthorizationException {
+    public void checkPermission(Permission permission) throws AuthorizationException {
         assertValid();
-        securityManager.checkPermission( getPrincipal(), permission );
+        securityManager.checkPermission(getPrincipal(), permission);
     }
 
-    public void checkPermissions( Collection<Permission> permissions )
-        throws AuthorizationException {
+    public void checkPermissions(Collection<Permission> permissions)
+            throws AuthorizationException {
         assertValid();
-        securityManager.checkPermissions( getPrincipal(), permissions );
+        securityManager.checkPermissions(getPrincipal(), permissions);
     }
 
-    public void checkRole( String role ) throws AuthorizationException {
+    public void checkRole(String role) throws AuthorizationException {
         assertValid();
-        securityManager.checkRole( getPrincipal(), role );
+        securityManager.checkRole(getPrincipal(), role);
     }
 
-    public void checkRoles( Collection<String> roles ) throws AuthorizationException {
+    public void checkRoles(Collection<String> roles) throws AuthorizationException {
         assertValid();
-        securityManager.checkRoles( getPrincipal(), roles );
+        securityManager.checkRoles(getPrincipal(), roles);
     }
 
-    public boolean isAuthorized( AuthorizedAction action ) {
+    public boolean isAuthorized(AuthorizedAction action) {
         assertValid();
-        return securityManager.isAuthorized( getPrincipal(), action );
+        return securityManager.isAuthorized(getPrincipal(), action);
     }
 
-    public void checkAuthorization( AuthorizedAction action ) throws AuthorizationException {
+    public void checkAuthorization(AuthorizedAction action) throws AuthorizationException {
         assertValid();
-        securityManager.checkAuthorization( getPrincipal(), action );
+        securityManager.checkAuthorization(getPrincipal(), action);
     }
 
     public boolean isAuthenticated() {
@@ -270,30 +266,30 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public Session getSession() {
-        return getSession( true );
+        return getSession(true);
     }
 
-    public Session getSession( boolean create ) {
+    public Session getSession(boolean create) {
         assertValid();
-        if ( this.session == null && create ) {
-            this.session = securityManager.start( getInetAddress() );
+        if (this.session == null && create) {
+            this.session = securityManager.start(getInetAddress());
         }
         return this.session;
     }
 
     public void invalidate() {
-        if ( isInvalidated() ) {
+        if (isInvalidated()) {
             return;
         }
-        Session s = getSession( false );
-        if ( s != null ) {
+        Session s = getSession(false);
+        if (s != null) {
             try {
                 s.stop();
-            } catch ( InvalidSessionException ise ) {
+            } catch (InvalidSessionException ise) {
                 //ignored - we're invalidating, and have no further need of the session anyway
                 //log in case someone wants to know:
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "Session has already been invalidated.  Ignoring and continuing ...", ise );
+                if (log.isTraceEnabled()) {
+                    log.trace("Session has already been invalidated.  Ignoring and continuing ...", ise);
                 }
             }
         }
@@ -302,7 +298,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         this.authenticated = false;
         this.inetAddress = null;
         this.securityManager = null;
-        setInvalidated( true );
+        setInvalidated(true);
     }
 
 }
