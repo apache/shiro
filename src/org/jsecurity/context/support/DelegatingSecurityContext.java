@@ -37,6 +37,7 @@ import org.jsecurity.session.Session;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -171,7 +172,7 @@ public class DelegatingSecurityContext implements SecurityContext {
      */
     public List<?> getAllPrincipals() {
         assertValid();
-        return principals;
+        return Collections.unmodifiableList( principals );
     }
 
     /**
@@ -202,7 +203,7 @@ public class DelegatingSecurityContext implements SecurityContext {
                 }
             }
         }
-        return principalsOfType;
+        return Collections.unmodifiableList( principalsOfType );
     }
 
     public boolean hasRole(String roleIdentifier) {
