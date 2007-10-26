@@ -65,6 +65,7 @@ public class AuthorizingRealmTest {
         SecurityContext secCtx = securityManager.authenticate(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
+        assertTrue(secCtx.getAllPrincipals().size() == 3);
 
         UsernamePrincipal usernamePrincipal = (UsernamePrincipal) secCtx.getPrincipalByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
@@ -72,7 +73,9 @@ public class AuthorizingRealmTest {
         UserIdPrincipal userIdPrincipal = (UserIdPrincipal) secCtx.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
-        assertTrue(secCtx.getAllPrincipals().size() == 3);
+        String stringPrincipal = (String)secCtx.getPrincipalByType(String.class);
+        assertTrue(stringPrincipal.equals(USER_ID + USERNAME));
+
 
         secCtx.invalidate();
     }
