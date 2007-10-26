@@ -141,7 +141,7 @@ public class ActiveDirectoryRealmTest {
         // override ldap query because i don't care about testing that piece in this case
         protected AuthenticationInfo queryForLdapAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
             UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-            return new SimpleAuthenticationInfo(upToken.getUsername(), upToken.getPassword());
+            return createAuthenticationInfo(token.getPrincipal(), token.getPrincipal());
         }
 
     }

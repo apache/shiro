@@ -28,7 +28,6 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
@@ -395,7 +394,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
             return null;
         }
 
-        return new SimpleAuthenticationInfo( user.getUsername(), user.getPassword() );
+        return createAuthenticationInfo( user.getUsername(), user.getPassword() );
 
     }
 

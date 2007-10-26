@@ -25,7 +25,6 @@
 package org.jsecurity.realm.support.jdbc;
 
 import org.jsecurity.authc.*;
-import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
@@ -192,7 +191,7 @@ public class JdbcRealm extends AuthorizingRealm {
         }
 
         Connection conn = null;
-        SimpleAuthenticationInfo info = null;
+        AuthenticationInfo info = null;
         try {
             conn = dataSource.getConnection();
 
@@ -202,11 +201,7 @@ public class JdbcRealm extends AuthorizingRealm {
                 throw new UnknownAccountException( "No account found for user [" + username + "]" );
             }
 
-            info = new SimpleAuthenticationInfo();
-
-            // Populate the authentication info
-            info.addPrincipal( username );
-            info.setCredentials( password );
+            info = createAuthenticationInfo( username, password );
 
         } catch ( SQLException e ) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";

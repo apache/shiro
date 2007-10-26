@@ -27,7 +27,6 @@ package org.jsecurity.realm.support.activedirectory;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.support.SimpleAuthorizationInfo;
 import org.jsecurity.realm.Realm;
@@ -113,7 +112,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext( ctx );
         }
 
-        return new SimpleAuthenticationInfo( upToken.getUsername(), upToken.getPassword() );
+        return createAuthenticationInfo( upToken.getUsername(), upToken.getPassword() );
     }
 
 
