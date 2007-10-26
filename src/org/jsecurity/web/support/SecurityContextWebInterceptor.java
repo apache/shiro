@@ -239,7 +239,7 @@ public class SecurityContextWebInterceptor<T> extends SecurityWebSupport impleme
     }
 
     protected void bindForSubsequentRequests( HttpServletRequest request, HttpServletResponse response, SecurityContext securityContext ) {
-        getPrincipalsStore().storeValue( securityContext.getAllPrincipals(), request, response );
+        getPrincipalsStore().storeValue( (List<T>) securityContext.getAllPrincipals(), request, response );
         getAuthenticatedStore().storeValue( securityContext.isAuthenticated(), request, response );
     }
 

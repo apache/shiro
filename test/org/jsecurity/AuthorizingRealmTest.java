@@ -1,7 +1,5 @@
 package org.jsecurity;
 
-import static org.junit.Assert.*;
-
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
@@ -14,6 +12,7 @@ import org.jsecurity.authz.support.SimpleAuthorizationInfo;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.support.AuthorizingRealm;
 import org.junit.After;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -102,7 +101,7 @@ public class AuthorizingRealmTest {
 
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-            List principals = new ArrayList();
+            List<Object> principals = new ArrayList<Object>();
             principals.add(new UserIdPrincipal(USER_ID));
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);

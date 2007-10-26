@@ -261,6 +261,7 @@ public class JdbcRealm extends AuthorizingRealm {
      *
      * @see AuthorizingRealm#getAuthorizationInfo(Object)
      */
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo( Object principal ) {
 
         //null usernames are invalid

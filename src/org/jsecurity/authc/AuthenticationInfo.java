@@ -44,7 +44,7 @@ import java.util.List;
  * @author Les Hazlewood
  * @since 0.1
  */
-public interface AuthenticationInfo<T> {
+public interface AuthenticationInfo {
 
     /**
      * Returns the primary principal of the subject associated with this
@@ -53,7 +53,7 @@ public interface AuthenticationInfo<T> {
      * @return the primary principal of the subject associated with this
      * authentication info.
      */
-    T getPrincipal();
+    Object getPrincipal();
 
     /**
      * Returns the principals that identify the authenticated subject, such as a user's primary key
@@ -64,7 +64,7 @@ public interface AuthenticationInfo<T> {
      *
      * @return the identifying principal of the authenticated subject.
      */
-    List<T> getPrincipals();
+    List<Object> getPrincipals();
 
     /**
      * The subject's credential as stored in the system associated with the

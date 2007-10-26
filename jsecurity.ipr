@@ -408,14 +408,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="jug">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jug/jug.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
-  <component name="uidesigner-configuration">
-    <option name="INSTRUMENT_CLASSES" value="true" />
-    <option name="COPY_FORMS_RUNTIME_TO_OUTPUT" value="true" />
-    <option name="DEFAULT_LAYOUT_MANAGER" value="GridLayoutManager" />
-  </component>
-  <UsedPathMacros>
-    <macro name="JAVA_LIB_HOME" />
-  </UsedPathMacros>
 </project>
 
