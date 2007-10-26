@@ -48,6 +48,7 @@
     <orderEntry type="library" name="junit" level="project" />
     <orderEntry type="library" name="clover" level="project" />
     <orderEntry type="library" name="retroweaver" level="project" />
+    <orderEntry type="library" name="jug" level="project" />
     <orderEntryProperties />
   </component>
 </module>

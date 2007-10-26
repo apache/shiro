@@ -42,7 +42,7 @@ import java.util.List;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public interface SecurityContext<T> {
+public interface SecurityContext {
 
     /**
      * Returns the primary identifier of the subject associated with this
@@ -55,7 +55,7 @@ public interface SecurityContext<T> {
      * (although most will choose a unique identifier such as a user id or username).
      * @return the primary principal (a.k.a. identifying attribute) of the subject associated with this SecurityContext.
      */
-    T getPrincipal();
+    Object getPrincipal();
 
     /**
      * Returns all principals associated with this <tt>SecurityContext</tt>, or an empty List if no principals
@@ -63,7 +63,7 @@ public interface SecurityContext<T> {
      * @return a List of principals associated with this context, or an empty collection
      * if no principals are associated with this security context
      */
-    List<T> getAllPrincipals();
+    List<?> getAllPrincipals();
 
     /**
      * Returns a single principal assignable from the specified type
@@ -76,7 +76,7 @@ public interface SecurityContext<T> {
      * @param principalType the type of the principal that should be returned.
      * @return a principal of the specified type.
      */
-    T getPrincipalByType( Class principalType );
+    Object getPrincipalByType( Class principalType );
 
     /**
      * Returns all principals assignable from the specified type that is associated with
@@ -87,7 +87,7 @@ public interface SecurityContext<T> {
      * @return a List of principals that are assignable from the specified type, or
      * an empty List if no principals of this type are associated.
      */
-    List<T> getAllPrincipalsByType( Class principalType );
+    List<?> getAllPrincipalsByType( Class principalType );
 
     /**
      * Checks if the given role identifier is associated with this context.

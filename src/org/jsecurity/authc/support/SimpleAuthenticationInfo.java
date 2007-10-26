@@ -28,6 +28,7 @@ import org.jsecurity.authc.AuthenticationInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ import java.util.List;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Serializable {
+public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -52,7 +53,7 @@ public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Seria
     /**
      * The principals that apply to the subject/user who has been authenticated.
      */
-    private List<T> principals = null;
+    private List<Object> principals = null;
 
     /**
      * Credentials that were used to authenticate the user.
@@ -81,25 +82,28 @@ public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Seria
     public SimpleAuthenticationInfo() {
     }
 
-    public SimpleAuthenticationInfo( T principal, Object credentials) {
+    public SimpleAuthenticationInfo( Object principal, Object credentials) {
         addPrincipal( principal );
         this.credentials = credentials;
     }
 
-    public SimpleAuthenticationInfo(List<T> principals, Object credentials) {
-        this.principals = principals;
+    public SimpleAuthenticationInfo(List<?> principals, Object credentials) {
+        this.principals = new ArrayList<Object>( principals.size() );
+        this.principals.addAll( principals );
         this.credentials = credentials;
     }
 
-    public SimpleAuthenticationInfo(List<T> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
-        this.principals = principals;
+    public SimpleAuthenticationInfo(List<?> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
+        this.principals = new ArrayList<Object>( principals.size() );
+        this.principals.addAll( principals );
         this.credentials = credentials;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
     }
 
-    public SimpleAuthenticationInfo(List<T> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principals = principals;
+    public SimpleAuthenticationInfo(List<?> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.principals = new ArrayList<Object>( principals.size() );        
+        this.principals.addAll( principals );
         this.credentials = credentials;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
@@ -110,7 +114,7 @@ public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Seria
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public T getPrincipal() {
+    public Object getPrincipal() {
         if( this.principals == null || this.principals.isEmpty()) {
             return null;
         } else {
@@ -118,17 +122,17 @@ public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Seria
         }
     }
 
-    public List<T> getPrincipals() {
-        return principals;
+    public List<Object> getPrincipals() {
+        return Collections.unmodifiableList( principals );
     }
 
-    public void setPrincipals(List<T> principals) {
-        this.principals = principals;
+    public void setPrincipals(List<?> principals) {
+        this.principals.addAll( principals );
     }
 
-    public void addPrincipal( T principal ) {
+    public void addPrincipal( Object principal ) {
         if ( this.principals == null ) {
-            this.principals = new ArrayList<T>();
+            this.principals = new ArrayList<Object>();
         }
         this.principals.add( principal );
     }
@@ -182,11 +186,11 @@ public class SimpleAuthenticationInfo<T> implements AuthenticationInfo<T>, Seria
         }
 
         //noinspection unchecked
-        List<T> infoPrincipals = info.getPrincipals();
+        List<?> infoPrincipals = info.getPrincipals();
 
         if ( infoPrincipals != null && !infoPrincipals.isEmpty() ) {
             if ( this.principals == null ) {
-                this.principals = new ArrayList<T>( infoPrincipals.size() );
+                this.principals = new ArrayList<Object>( infoPrincipals.size() );
             }
             this.principals.addAll( infoPrincipals );
         }

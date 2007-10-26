@@ -108,12 +108,14 @@ public class ActiveDirectoryRealmTest {
 
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-            AuthenticationInfo authInfo = super.doGetAuthenticationInfo(token);
+            SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo) super.doGetAuthenticationInfo(token);
 
             if (authInfo != null) {
 
-                authInfo.getPrincipals().add(0, new UserIdPrincipal(USER_ID));
-                authInfo.getPrincipals().add(1, new UsernamePrincipal(USERNAME));
+                List<Object> principals = new ArrayList<Object>();
+                principals.add(new UserIdPrincipal(USER_ID));
+                principals.add(1, new UsernamePrincipal(USERNAME));
+                authInfo.setPrincipals( principals );
 
             }
 

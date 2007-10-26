@@ -3,6 +3,7 @@ package org.jsecurity.realm.support;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
+import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.cache.CacheProvider;
 
 /**
@@ -210,5 +211,16 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
         }
 
         return info;
+    }
+
+    /**
+     * This is a convenience method that is used by many of the JSecurity built-in realms.  It can be overridden
+     * by subclasses to build the {@link AuthenticationInfo} 
+     * @param principal
+     * @param credentials
+     * @return
+     */
+    protected AuthenticationInfo createAuthenticationInfo( Object principal, Object credentials ) {
+        return new SimpleAuthenticationInfo(principal, credentials);
     }
 }

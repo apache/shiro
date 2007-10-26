@@ -35,7 +35,9 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import java.net.InetAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Simple implementation of the <tt>SecurityContext</tt> interface that delegates
@@ -62,20 +64,20 @@ import java.util.*;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class DelegatingSecurityContext<T> implements SecurityContext<T> {
+public class DelegatingSecurityContext implements SecurityContext {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected List<T> principals = new ArrayList<T>();
+    protected List<Object> principals = new ArrayList<Object>();
     protected boolean authenticated;
     protected InetAddress inetAddress = null;
     protected Session session = null;
     protected SecurityManager securityManager;
     protected boolean invalidated = false;
 
-    private static <T> List<T> toList(T principal) {
+    private static List<Object> toList(Object principal) {
 
-        List<T> principals = null;
+        List<Object> principals = null;
         
         if (principal != null) {
 
@@ -83,7 +85,7 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
                 throw new IllegalArgumentException("Principal is an instance of [" + principal.getClass().getName() + "]. Principal must not be an instance of java.util.Collection.");
             }
 
-            principals = new ArrayList<T>();
+            principals = new ArrayList<Object>();
             principals.add(principal);
         }
         
@@ -91,25 +93,25 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
     }
 
     public DelegatingSecurityContext(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
-        this((List<T>) null, authenticated, inetAddress, session, securityManager);
+        this((List<?>) null, authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext(T principal, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSecurityContext(Object principal, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
         this(toList(principal), authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext(List<T> principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSecurityContext(List<?> principals, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager cannot be null.");
         }
 
         if (principals == null) {
-            principals = new ArrayList<T>();
+            principals = new ArrayList<Object>();
         }
 
-        this.principals = principals;
+        this.principals.addAll( principals );
         this.authenticated = authenticated;
         this.inetAddress = inetAddress;
         this.session = session;
@@ -155,7 +157,7 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
      *
      * @see org.jsecurity.context.SecurityContext#getPrincipal()
      */
-    public T getPrincipal() {
+    public Object getPrincipal() {
         assertValid();
         if (this.principals.isEmpty()) {
             return null;
@@ -167,7 +169,7 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipals()
      */
-    public List<T> getAllPrincipals() {
+    public List<?> getAllPrincipals() {
         assertValid();
         return principals;
     }
@@ -175,9 +177,9 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
     /**
      * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
-    public T getPrincipalByType(Class principalType) {
+    public Object getPrincipalByType(Class principalType) {
         assertValid();
-        for (T o : principals) {
+        for (Object o : principals) {
             if (principalType.isAssignableFrom(o.getClass())) {
                 return o;
             }
@@ -188,12 +190,12 @@ public class DelegatingSecurityContext<T> implements SecurityContext<T> {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
      */
-    public List<T> getAllPrincipalsByType(Class principalType) {
+    public List<?> getAllPrincipalsByType(Class principalType) {
         assertValid();
-        List<T> principalsOfType = new ArrayList<T>();
+        List<Object> principalsOfType = new ArrayList<Object>();
 
         if (principals != null) {
-            for (T o : principals) {
+            for (Object o : principals) {
                 if (principalType.isAssignableFrom(o.getClass())) {
                     //noinspection unchecked
                     principalsOfType.add(o);
