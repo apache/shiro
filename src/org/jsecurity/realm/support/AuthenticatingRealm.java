@@ -214,11 +214,14 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     }
 
     /**
-     * This is a convenience method that is used by many of the JSecurity built-in realms.  It can be overridden
-     * by subclasses to build the {@link AuthenticationInfo} 
-     * @param principal
-     * @param credentials
-     * @return
+     * <p>This is a convenience method that is used by many of the JSecurity built-in realms.  It can be overridden
+     * by subclasses to build the {@link AuthenticationInfo} in a different way.</p>
+     *
+     * <p>Overriding this method is the prefered way of building a custom {@link AuthenticationInfo} object
+     * for realms that make use of this helper method.</p>
+     * @param principal the principal of the authenticated user.
+     * @param credentials the credentials of the authenticated user.
+     * @return an {@link AuthenticationInfo} instance that should be used to "log in" the user.
      */
     protected AuthenticationInfo createAuthenticationInfo( Object principal, Object credentials ) {
         return new SimpleAuthenticationInfo(principal, credentials);
