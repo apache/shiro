@@ -5,6 +5,7 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialMatcher;
+import org.jsecurity.authc.support.SimpleAuthenticationInfo;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.support.SimpleAuthorizationInfo;
@@ -105,7 +106,7 @@ public class AuthorizingRealmTest {
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);
 
-            return createAuthenticationInfo(principals, null);
+            return new SimpleAuthenticationInfo(principals, null);
         }
 
         protected AuthorizationInfo doGetAuthorizationInfo(Object principal) {
