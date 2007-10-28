@@ -189,7 +189,7 @@ public class DelegatingSession implements Session {
     }
 
     /**
-     * @see org.jsecurity.session.Session#getAttributeKeys();
+     * @see org.jsecurity.session.Session#getAttributeKeys
      */
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         return sessionManager.getAttributeKeys( sessionId );
