@@ -60,7 +60,7 @@ public class SpringSecurityContextFilter extends SecurityContextFilter {
     public void init() throws Exception {
         String beanName = getFilterConfig().getInitParameter( SECURITY_MANAGER_BEAN_NAME_PARAM_NAME );
         if ( beanName != null ) {
-            setSecurityManagerBeanName( beanName.trim() );
+            setSecurityManagerBeanName( beanName );
         }
         super.init();
     }

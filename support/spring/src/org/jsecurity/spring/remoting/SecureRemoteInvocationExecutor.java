@@ -47,6 +47,7 @@ import java.util.List;
  * remote invocation thread during a remote execution.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @since 0.1
  */
 public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecutor {
@@ -93,6 +94,14 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
         }
     }
 
+    protected List getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
+        return (List)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
+    }
+
+    protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, List principals ) {
+        return principals != null && !principals.isEmpty();
+    }
+
     @SuppressWarnings( { "unchecked" } )
     public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
@@ -102,33 +111,18 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
             InetAddress inetAddress = getInetAddress( invocation, targetObject );
             Session session = null;
 
-            if ( invocation instanceof SecureRemoteInvocation ) {
-                SecureRemoteInvocation secureInvocation = (SecureRemoteInvocation)invocation;
+            Serializable sessionId = invocation.getAttribute( SecureRemoteInvocationFactory.SESSION_ID_KEY );
 
-                Serializable sessionId = secureInvocation.getSessionId();
-
-                if ( sessionId == null ) {
-                    //try remote invocation attributes:
-                    sessionId = (Serializable)secureInvocation.getAttributes().get( "sessionId" );
-                }
-
-                if ( sessionId != null ) {
-                    session = securityManager.getSession( sessionId );
-
-                    // Get the principals and realm name from the session
-                    principals = (List)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
-
-                    // If principals and realm were found in the session, assume authenticated.
-                    if ( principals != null && !principals.isEmpty() ) {
-                        authenticated = true;
-                    }
-                }
-
+            if ( sessionId != null ) {
+                session = securityManager.getSession( sessionId );
+                principals = getPrincipals( invocation, targetObject, session );
+                authenticated = isAuthenticated( invocation, targetObject, session, principals );
             } else {
                 if ( log.isWarnEnabled() ) {
-                    log.warn( "Secure remote invocation executor used, but did not receive a " +
-                        "SecureRemoteInvocation from remote call.  Session will not be propogated to the remote invocation.  " +
-                        "Ensure that clients are using a SecureRemoteInvocationFactory to prevent this problem." );
+                    log.warn( "RemoteInvocation object did not contain a JSecurity Session id under " +
+                        "attribute name [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Session will not " +
+                        "be available to the method.  Ensure that clients are using a " +
+                        "SecureRemoteInvocationFactory to prevent this problem." );
                 }
             }
 
@@ -138,6 +132,15 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
             ThreadContext.bind( securityContext );
 
             return super.invoke( invocation, targetObject );
+            
+        } catch ( NoSuchMethodException nsme ) {
+            throw nsme;
+        } catch ( IllegalAccessException iae ) {
+            throw iae;
+        } catch ( InvocationTargetException ite ) {
+            throw ite;
+        } catch ( Throwable t ) {
+            throw new InvocationTargetException( t );
         } finally {
             ThreadContext.clear();
         }

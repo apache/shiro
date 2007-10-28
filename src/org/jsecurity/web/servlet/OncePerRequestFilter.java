@@ -95,6 +95,14 @@ public abstract class OncePerRequestFilter implements Filter {
     protected void init() throws Exception {
     }
 
+    protected HttpServletRequest toHttpServletRequest( ServletRequest servletRequest ) {
+        return (HttpServletRequest)servletRequest;
+    }
+
+    protected HttpServletResponse toHttpServletResponse( ServletResponse servletResponse ) {
+        return (HttpServletResponse)servletResponse;
+    }
+
 
     /**
 	 * This <code>doFilter</code> implementation stores a request attribute for
@@ -110,8 +118,8 @@ public abstract class OncePerRequestFilter implements Filter {
 		if (!(request instanceof HttpServletRequest ) || !(response instanceof HttpServletResponse )) {
 			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
 		}
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		HttpServletRequest httpRequest = toHttpServletRequest( request );
+		HttpServletResponse httpResponse = toHttpServletResponse( response );
 
 		String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
 		if (request.getAttribute(alreadyFilteredAttributeName) != null || shouldNotFilter(httpRequest)) {

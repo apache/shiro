@@ -113,7 +113,6 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     public boolean isRequestedSessionIdFromURL() {
         String value = (String)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_ID_SOURCE );
         return value != null && value.equals( DefaultWebSessionFactory.URL_ID_SOURCE );
-
     }
 
     public boolean isRequestedSessionIdFromUrl() {
