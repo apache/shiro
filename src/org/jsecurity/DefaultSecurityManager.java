@@ -257,8 +257,9 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
             } catch ( Exception e ) {
                 destroy( propsRealm );
                 if ( log.isInfoEnabled() ) {
-                    log.info( "Unable to find users.properties in the root of the classpath.  Defaulting to a " +
-                        "PropertiesRealm based on JSecurity's default users.properties file (Guest user only)" );
+                    log.info( "Unable to find jsecurity-users.properties in the root of the classpath.  Defaulting " +
+                        "to a PropertiesRealm based on JSecurity's failsafe properties file " +
+                        "(Guest user only)" );
                 }
                 propsRealm = new PropertiesRealm();
                 propsRealm.setFilePath( DEFAULT_PROPERTIES_REALM_FILE_PATH );
