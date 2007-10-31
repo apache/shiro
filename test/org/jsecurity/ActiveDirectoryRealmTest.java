@@ -78,7 +78,7 @@ public class ActiveDirectoryRealmTest {
         UserIdPrincipal userIdPrincipal = (UserIdPrincipal) secCtx.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
-        assertTrue(secCtx.getAllPrincipals().size() == 3);
+        assertTrue(secCtx.getAllPrincipals().size() == 2);
 
         assertTrue(realm.hasRole(userIdPrincipal, ROLE));
 
@@ -114,7 +114,7 @@ public class ActiveDirectoryRealmTest {
 
                 List<Object> principals = new ArrayList<Object>();
                 principals.add(new UserIdPrincipal(USER_ID));
-                principals.add(1, new UsernamePrincipal(USERNAME));
+                principals.add(new UsernamePrincipal(USERNAME));
                 authInfo.setPrincipals( principals );
 
             }
