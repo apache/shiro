@@ -88,22 +88,19 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     }
 
     public SimpleAuthenticationInfo(List<?> principals, Object credentials) {
-        this.principals = new ArrayList<Object>( principals.size() );
-        this.principals.addAll( principals );
+        setPrincipals( principals );
         this.credentials = credentials;
     }
 
     public SimpleAuthenticationInfo(List<?> principals, Object credentials, boolean accountLocked, boolean credentialsExpired) {
-        this.principals = new ArrayList<Object>( principals.size() );
-        this.principals.addAll( principals );
+        setPrincipals( principals );
         this.credentials = credentials;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
     }
 
     public SimpleAuthenticationInfo(List<?> principals, Object credentials, boolean accountLocked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        this.principals = new ArrayList<Object>( principals.size() );        
-        this.principals.addAll( principals );
+        setPrincipals( principals );
         this.credentials = credentials;
         this.accountLocked = accountLocked;
         this.credentialsExpired = credentialsExpired;
@@ -127,6 +124,7 @@ public class SimpleAuthenticationInfo implements AuthenticationInfo, Serializabl
     }
 
     public void setPrincipals(List<?> principals) {
+        this.principals = new ArrayList<Object>( principals.size() );
         this.principals.addAll( principals );
     }
 

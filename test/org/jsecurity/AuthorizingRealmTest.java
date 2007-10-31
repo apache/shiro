@@ -10,9 +10,10 @@ import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.support.SimpleAuthorizationInfo;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.support.AuthorizingRealm;
 import org.junit.After;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,17 +40,32 @@ public class AuthorizingRealmTest {
     private static final String PASSWORD = "password";
     private static final int USER_ID = 12345;
     private static final String ROLE = "admin";
+    private InetAddress localhost;
+
+    {
+        try {
+            localhost = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            fail( "Error creating localhost" );
+        }
+    }
 
     @Before
     public void setup() {
         realm = new AllowAllRealm();
-        securityManager = new DefaultSecurityManager(realm);
+        securityManager = new DefaultSecurityManager();
+        // Not using constructor to prevent init() from running automatically (so tests can alter SM before init())
+        // Tests must call init() on SM before using.
+        securityManager.setRealm( realm );
 
     }
 
     @After
     public void tearDown() {
         securityManager.destroy();
+        securityManager = null;
+        realm.destroy();
+        realm = null;
     }
 
     @Test
@@ -79,6 +95,31 @@ public class AuthorizingRealmTest {
         secCtx.invalidate();
     }
 
+    @Test
+    public void testCreateAuthenticationInfoOverride() {
+
+        Realm realm = new AllowAllRealm() {
+            protected AuthenticationInfo createAuthenticationInfo(Object principal, Object credentials) {
+                String username = (String) principal;
+                CustomUsernamePrincipal customPrincipal = new CustomUsernamePrincipal( username );
+                return new SimpleAuthenticationInfo( customPrincipal, credentials );
+            }
+        };
+
+        securityManager.setRealm( realm );
+        securityManager.init();
+
+        // Do login
+        SecurityContext secCtx = securityManager.authenticate(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        assertTrue(secCtx.isAuthenticated());
+        assertTrue(secCtx.hasRole(ROLE));
+        assertTrue(secCtx.getAllPrincipals().size() == 1);
+        assertTrue( (secCtx.getPrincipal() instanceof CustomUsernamePrincipal) );
+        assertEquals( USERNAME, ((CustomUsernamePrincipal) secCtx.getPrincipal()).getUsername() );
+
+
+    }
+
     public class AllowAllRealm extends AuthorizingRealm {
 
         /*--------------------------------------------
@@ -99,14 +140,9 @@ public class AuthorizingRealmTest {
             setCredentialMatcher(credentialMatcher);
         }
 
-        protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-
-            List<Object> principals = new ArrayList<Object>();
-            principals.add(new UserIdPrincipal(USER_ID));
-            principals.add(new UsernamePrincipal(USERNAME));
-            principals.add(USER_ID + USERNAME);
-
-            return new SimpleAuthenticationInfo(principals, null);
+        protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+            UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+            return createAuthenticationInfo(token.getPrincipal(), token.getPrincipal());
         }
 
         protected AuthorizationInfo doGetAuthorizationInfo(Object principal) {
@@ -114,7 +150,28 @@ public class AuthorizingRealmTest {
             roles.add(ROLE);
             return new SimpleAuthorizationInfo(roles, new ArrayList<Permission>());
         }
+
+        protected AuthenticationInfo createAuthenticationInfo(Object principal, Object credentials) {
+
+            List<Object> principals = new ArrayList<Object>();
+            principals.add(new UserIdPrincipal(USER_ID));
+            principals.add(new UsernamePrincipal(USERNAME));
+            principals.add(USER_ID + USERNAME);
+
+            return createAuthenticationInfo(principals, null);
+        }
     }
 
+    public class CustomUsernamePrincipal {
+        private String username;
+
+        public CustomUsernamePrincipal(String username) {
+            this.username = username;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+    }
 
 }
