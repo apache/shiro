@@ -1,12 +1,8 @@
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.WebSessionFactory;
-import org.jsecurity.web.support.DefaultWebSessionFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,27 +18,37 @@ import java.security.Principal;
  */
 public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
+    //The following 7 constants support the JSecurity's implementation of the Servlet Specification
+    public static final String COOKIE_SESSION_ID_SOURCE = "cookie";
+    public static final String URL_SESSION_ID_SOURCE = "url";
+    public static final String REFERENCED_SESSION_ID = JSecurityHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID";
+    public static final String REFERENCED_SESSION_ID_IS_VALID = JSecurityHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID_VALID";
+    public static final String REFERENCED_SESSION_IS_NEW = JSecurityHttpServletRequest.class.getName() + "_REFERENCED_SESSION_IS_NEW";
+    public static final String REFERENCED_SESSION_ID_SOURCE = JSecurityHttpServletRequest.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
+    public static final String SESSION_ID_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;
+    /**
+     * Key that may be used to alert that the request's  referenced JSecurity Session has expired prior to
+     * request processing.
+     */
+    public static final String EXPIRED_SESSION_KEY = JSecurityHttpServletRequest.class.getName() + "_EXPIRED_SESSION_KEY";
+    
     protected ServletContext servletContext = null;
-    protected SecurityManager securityManager = null;
-    protected WebSessionFactory webSessionFactory = null;
 
     protected HttpSession session = null;
 
-    public JSecurityHttpServletRequest( HttpServletRequest wrapped, ServletContext servletContext,
-                                        SecurityManager securityManager, WebSessionFactory webSessionFactory ) {
+    public JSecurityHttpServletRequest( HttpServletRequest wrapped, ServletContext servletContext ) {
         super( wrapped );
         this.servletContext = servletContext;
-        this.securityManager = securityManager;
-        this.webSessionFactory = webSessionFactory;
     }
 
     public String getRemoteUser() {
         String remoteUser = null;
-        SecurityContext sc = getSecurityContext();
-        if ( sc != null ) {
-            Object userPrincipal = sc.getPrincipal();
-            if ( userPrincipal != null ) {
-                remoteUser = userPrincipal.toString();
+        Object scPrincipal = getSecurityContextPrincipal();
+        if ( scPrincipal != null ) {
+            if ( scPrincipal instanceof Principal ) {
+                remoteUser = ((Principal)scPrincipal).getName();
+            } else {
+                remoteUser = scPrincipal.toString();
             }
         }
         return remoteUser;
@@ -52,46 +58,54 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
         return ThreadContext.getSecurityContext();
     }
 
+    protected Object getSecurityContextPrincipal() {
+        Object userPrincipal = null;
+        SecurityContext sc = getSecurityContext();
+        if ( sc != null ) {
+            userPrincipal = sc.getPrincipal();
+        }
+        return userPrincipal;
+    }
+
     public boolean isUserInRole( String s ) {
         SecurityContext sc = getSecurityContext();
         return ( sc != null && sc.hasRole( s ) );
     }
 
     public Principal getUserPrincipal() {
-        Principal principal = null;
-        String remoteUser = getRemoteUser();
-        if ( remoteUser != null ) {
-            principal = new StringPrincipal( remoteUser );
+        Principal userPrincipal = null;
+        Object scPrincipal = getSecurityContextPrincipal();
+        if ( scPrincipal != null ) {
+            if ( scPrincipal instanceof Principal ) {
+                userPrincipal = (Principal)scPrincipal;
+            } else {
+                userPrincipal = new ObjectPrincipal( scPrincipal );
+            }
         }
-        return principal;
+        return userPrincipal;
     }
 
     public String getRequestedSessionId() {
-        return (String)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_ID );
+        Object sessionId = getAttribute( REFERENCED_SESSION_ID );
+        if ( sessionId != null ) {
+            return sessionId.toString();
+        } else {
+            return null;
+        }
     }
 
     public HttpSession getSession( boolean create ) {
         if ( this.session == null ) {
-            Session jsecSession = webSessionFactory.getSession( this, null );
-            if ( jsecSession == null && create ) {
-                jsecSession = webSessionFactory.start( this, null );
+
+            boolean existing = getSecurityContext().getSession( false ) != null;
+
+            Session jsecSession = getSecurityContext().getSession( create );
+            if ( jsecSession != null ) {
+                this.session = new JSecurityHttpSession( jsecSession, this, this.servletContext );
+                if ( !existing ) {
+                    setAttribute( REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+                }
             }
-            ThreadContext.bind( jsecSession );
-
-            SecurityContext existing = getSecurityContext();
-            DelegatingSecurityContext dsc = null;
-            if ( existing != null ) {
-                dsc = new DelegatingSecurityContext( existing.getAllPrincipals(), existing.isAuthenticated(),
-                    ThreadContext.getInetAddress(), jsecSession, this.securityManager );
-            } else {
-                dsc = new DelegatingSecurityContext( false, ThreadContext.getInetAddress(),
-                    jsecSession, this.securityManager );
-
-            }
-            ThreadContext.bind( dsc );
-
-            this.session = new JSecurityHttpSession( this.servletContext );
-
         }
         return this.session;
     }
@@ -101,45 +115,53 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     public boolean isRequestedSessionIdValid() {
-        Boolean value = (Boolean)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_ID_IS_VALID );
+        Boolean value = (Boolean)getAttribute( REFERENCED_SESSION_ID_IS_VALID );
         return ( value != null && value.equals( Boolean.TRUE ) );
     }
 
     public boolean isRequestedSessionIdFromCookie() {
-        String value = (String)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_ID_SOURCE );
-        return value != null && value.equals( DefaultWebSessionFactory.COOKIE_ID_SOURCE );
+        String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
+        return value != null && value.equals( COOKIE_SESSION_ID_SOURCE );
     }
 
     public boolean isRequestedSessionIdFromURL() {
-        String value = (String)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_ID_SOURCE );
-        return value != null && value.equals( DefaultWebSessionFactory.URL_ID_SOURCE );
+        String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
+        return value != null && value.equals( URL_SESSION_ID_SOURCE );
     }
 
     public boolean isRequestedSessionIdFromUrl() {
         return isRequestedSessionIdFromURL();
     }
 
-    private class StringPrincipal implements java.security.Principal {
-        private String name = null;
+    private class ObjectPrincipal implements java.security.Principal {
+        private Object object = null;
 
-        public StringPrincipal( String name ) {
-            this.name = name;
+        public ObjectPrincipal( Object object ) {
+            this.object = object;
+        }
+
+        public Object getObject() {
+            return object;
         }
 
         public String getName() {
-            return name;
+            return getObject().toString();
         }
 
         public int hashCode() {
-            return name.hashCode();
+            return object.hashCode();
         }
 
         public boolean equals( Object o ) {
-            return name.equals( o );
+            if ( o instanceof ObjectPrincipal ) {
+                ObjectPrincipal op = (ObjectPrincipal)o;
+                return getObject().equals( op.getObject() );
+            }
+            return false;
         }
 
         public String toString() {
-            return name;
+            return object.toString();
         }
     }
 }

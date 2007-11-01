@@ -70,19 +70,35 @@ public abstract class SecurityWebSupport implements Initializable {
         return ThreadContext.getSecurityContext();
     }
 
-    //Default implementation just returns the Session bound to the thread and ignores the request/response arguments
-    protected Session getSession( HttpServletRequest request, HttpServletResponse response ) {
-        return ThreadContext.getSession();
+    protected Session getSession( ServletRequest request, ServletResponse response ) {
+
+        Session session = null;
+
+        SecurityContext securityContext = getSecurityContext( request, response );
+
+        if ( securityContext != null ) {
+            session = securityContext.getSession( false );
+        }
+
+        return session;
     }
 
-    protected void bindInetAddressToThread( ServletRequest request ) {
+    protected HttpServletRequest toHttp( ServletRequest request ) {
+        return (HttpServletRequest)request;
+    }
+
+    protected HttpServletResponse toHttp( ServletResponse response ) {
+        return (HttpServletResponse)response;
+    }
+
+    protected static void bindInetAddressToThread( ServletRequest request ) {
         InetAddress ip = getInetAddress( request );
         if ( ip != null ) {
             ThreadContext.bind( ip );
         }
     }
 
-    protected void unbindInetAddressFromThread() {
+    protected static void unbindInetAddressFromThread() {
         ThreadContext.unbindInetAddress();
     }
 

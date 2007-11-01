@@ -24,8 +24,8 @@
  */
 package org.jsecurity.web.support;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -49,10 +49,10 @@ public class HttpSessionStore<T> extends AbstractWebStore<T> {
         super( name, checkRequestParams );
     }
 
-    public T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
+    public T onRetrieveValue( ServletRequest request, ServletResponse response ) {
         T value = null;
 
-        HttpSession session = request.getSession( false );
+        HttpSession session = toHttp(request).getSession( false );
         if ( session != null ) {
             value = (T)session.getAttribute( getName() );
         }
@@ -70,8 +70,8 @@ public class HttpSessionStore<T> extends AbstractWebStore<T> {
         return value;
     }
 
-    public void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
-        HttpSession session = request.getSession();
+    public void onStoreValue( T value, ServletRequest request, ServletResponse response ) {
+        HttpSession session = toHttp(request).getSession();
         if ( session != null && value != null) {
             session.setAttribute( getName(), value );
             if ( log.isDebugEnabled() ) {

@@ -24,8 +24,8 @@
  */
 package org.jsecurity.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * @since 0.2
@@ -33,9 +33,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface WebInterceptor {
 
-    boolean preHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception;
+    boolean preHandle( ServletRequest request, ServletResponse response ) throws Exception;
 
-    void postHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception;
+    void postHandle( ServletRequest request, ServletResponse response ) throws Exception;
 
-    void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception ) throws Exception;
+    void afterCompletion( ServletRequest request, ServletResponse response, Exception exception ) throws Exception;
 }

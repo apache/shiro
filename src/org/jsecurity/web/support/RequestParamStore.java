@@ -1,7 +1,7 @@
 package org.jsecurity.web.support;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * TODO class JavaDoc
@@ -20,11 +20,11 @@ public class RequestParamStore<T> extends AbstractWebStore<T> {
         setCheckRequestParams( false );
     }
 
-    protected T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
+    protected T onRetrieveValue( ServletRequest request, ServletResponse response ) {
         return getFromRequestParam( request );
     }
 
-    protected void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+    protected void onStoreValue( T value, ServletRequest request, ServletResponse response ) {
         throw new UnsupportedOperationException( "RequestParamStores are read-only." );
     }
 }

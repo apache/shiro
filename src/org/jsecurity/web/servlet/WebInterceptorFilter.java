@@ -28,8 +28,8 @@ import org.jsecurity.web.WebInterceptor;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
@@ -88,7 +88,7 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
      */
     protected abstract WebInterceptor createWebInterceptor() throws Exception;
 
-    public void doFilterInternal( HttpServletRequest request, HttpServletResponse response, FilterChain chain )
+    public void doFilterInternal( ServletRequest request, ServletResponse response, FilterChain chain )
         throws IOException, ServletException {
 
         Exception exception = null;

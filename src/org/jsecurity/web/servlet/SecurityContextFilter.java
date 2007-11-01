@@ -28,7 +28,10 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
-import javax.servlet.ServletContext;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Filter that is used to ensure a {@link org.jsecurity.context.SecurityContext} is made available to the application
@@ -41,8 +44,9 @@ import javax.servlet.ServletContext;
  */
 public class SecurityContextFilter extends WebInterceptorFilter {
 
-    public static final String REQUIRE_SESSION_ON_REQUEST_PARAM_NAME = "requireSessionOnRequest"; //default is false
     public static final String PREFER_HTTP_SESSION_PARAM_NAME = "preferHttpSessionStorage"; //default is false
+
+    protected boolean preferHttpSessionStorage = false;
 
     protected boolean getBoolean( String paramName, boolean defaultValue ) {
         boolean value = defaultValue;
@@ -71,22 +75,25 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         return value;
     }
 
-    protected boolean isSessionRequiredOnRequest() {
-        return getBoolean( REQUIRE_SESSION_ON_REQUEST_PARAM_NAME, false );
-    }
-
     protected boolean isPreferHttpSessionStorage() {
-        return getBoolean( PREFER_HTTP_SESSION_PARAM_NAME, false );
+        return preferHttpSessionStorage;
     }
 
-    protected WebInterceptor createWebInterceptor() throws Exception {
-        SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
-        SecurityManager securityManager = getSecurityManager();
-        interceptor.setSecurityManager( securityManager );
-        interceptor.setRequireSessionOnRequest( isSessionRequiredOnRequest() );
-        interceptor.setPreferHttpSessionStorage( isPreferHttpSessionStorage() );
-        interceptor.init();
-        return interceptor;
+    protected void onInit() throws Exception {
+        this.preferHttpSessionStorage = getBoolean( PREFER_HTTP_SESSION_PARAM_NAME, false );
+    }
+
+    public void doFilterInternal( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain )
+        throws IOException, ServletException {
+        HttpServletRequest request = toHttp(servletRequest);
+        HttpServletResponse response = toHttp(servletResponse);
+        if ( !isPreferHttpSessionStorage() ) {
+            ServletContext servletContext = getFilterConfig().getServletContext();
+            request = new JSecurityHttpServletRequest( request, servletContext );
+            response = new JSecurityHttpServletResponse( response, servletContext, (JSecurityHttpServletRequest)request );
+        }
+
+        super.doFilterInternal( request, response, chain );    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     /**
@@ -108,5 +115,15 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         }
         return null;
     }
+
+    protected WebInterceptor createWebInterceptor() throws Exception {
+        SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
+        SecurityManager securityManager = getSecurityManager();
+        interceptor.setSecurityManager( securityManager );
+        interceptor.init();
+        return interceptor;
+    }
+
+
 
 }

@@ -44,11 +44,11 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.SessionManager;
-import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
+import org.jsecurity.web.support.DefaultWebSessionFactory;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -208,9 +208,9 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
                 }
             }
 
-            DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
-            setSessionFactory( sessionFactory );
+            DefaultWebSessionFactory sessionFactory = new DefaultWebSessionFactory();
             sessionFactory.setSessionManager( sessionManager );
+            setSessionFactory( sessionFactory );
             sessionFactoryImplicitlyCreated = true;
             sessionFactory.init();
         }

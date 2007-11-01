@@ -27,8 +27,8 @@ package org.jsecurity.web.support;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * Uses the JSecurity <tt>Session</tt> object as the underlying storage mechanism, using the {@link #getName() name}
@@ -51,23 +51,10 @@ public class SessionStore<T> extends AbstractWebStore<T> {
         super( name, checkRequestParams );
     }
 
-    protected Session getSession( HttpServletRequest request, HttpServletResponse response ) {
-
-        Session session = null;
-
-        SecurityContext securityContext = getSecurityContext( request, response );
-
-        if ( securityContext != null ) {
-            session = securityContext.getSession( false );
-        }
-
-        return session;
-    }
-
-    public T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
+    public T onRetrieveValue( ServletRequest request, ServletResponse response ) {
         T value = null;
 
-        Session session = getSession( request, response );
+        Session session = getSession( toHttp(request), toHttp(response) );
         if ( session != null ) {
             value = (T)session.getAttribute( getName() );
         }
@@ -85,7 +72,7 @@ public class SessionStore<T> extends AbstractWebStore<T> {
         return value;
     }
 
-    public void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+    public void onStoreValue( T value, ServletRequest request, ServletResponse response ) {
         SecurityContext securityContext = getSecurityContext( request, response );
         if ( securityContext != null ) {
             Session session = securityContext.getSession();

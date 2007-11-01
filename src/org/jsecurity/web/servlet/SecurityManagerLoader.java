@@ -35,17 +35,24 @@ import javax.servlet.ServletContext;
 import java.util.List;
 
 /**
- * Utility superclass for a web application that consolidates SecurityManager creation and/or acquisition logic during
+ * Utility superclass for a web application that consolidates SecurityManager acquisition and/or creation logic during
  * application startup.  Subclasses are expected to utilize startup mechanisms/APIs supported by the Servlet Container
  * (for example, <tt>ServletContextListener</tt>, <tt>Servlet</tt>, etc), and call the methods in this class to
  * reduce the amount of code required.
  *
- * <p><b>Clean Architecture Note</b> - concrete instances of subclasses should only <em>create</em> (instantiate) the
- * SecurityManager instance in a a pure web-application.  A <tt>SecurityManager</tt> is considered a business tier
- * component and should be created in the application's business-tier configuration (e.g. Spring, Pico, Guice, etc) if
- * such a configuration exists.  If this does exist, subclasses of this one should acquire and return that 
- * instance (via the {@link #getSecurityManager getSecurityManager} method) as opposed to instantiating a new one in
- * the web tier.
+ * <p><b>Clean Architecture Note:</b> A JSecurity <tt>SecurityManager</tt> is really considered a business-tier
+ * component and should be created in the application's business-tier configuration (e.g. Spring, Pico, Guice, JBoss, 
+ * etc) if such a configuration exists.  If this business-tier does exist, subclasses of this one should acquire and
+ * return that instance by overriding the {@link #getSecurityManager() getSecurityManager()} method.</P>
+ *
+ * <p>If there is no business-tier, i.e. this is a 'pure' web application, then a <tt>SecurityManager</tt> instance
+ * needs to be created (instantiated) explicitly.  This implementation will do that automatically by default, but if
+ * you wish to change the default logic, you'll need to override the
+ * {@link #createSecurityManager() createSecurityManager()} method.  Subclasses with a proper business tier as
+ * described above do not need to worry about doing this.
+ *
+ * @see #getSecurityManager
+ * @see #createSecurityManager
  *
  * @since 0.2
  * @author Les Hazlewood
@@ -59,7 +66,7 @@ public class SecurityManagerLoader {
     private SecurityManager securityManager = null;
     private boolean securityManagerImplicitlyCreated = false;
 
-    protected void ensureSecurityManager( ServletContext servletContext ) {
+    public void ensureSecurityManager( ServletContext servletContext ) {
         SecurityManager securityManager = getSecurityManager();
         if ( securityManager == null ) {
             this.securityManager = createSecurityManager();
@@ -79,6 +86,7 @@ public class SecurityManagerLoader {
 
     protected SecurityManager createSecurityManager() {
         DefaultSecurityManager defaultSecMgr = new DefaultSecurityManager();
+        this.securityManagerImplicitlyCreated = true;
 
         List<Realm> realms = getRealms();
 

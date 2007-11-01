@@ -31,16 +31,16 @@ import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.web.WebStore;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.beans.PropertyEditor;
 
 /**
  * Convenient superclass for implementations of the {@link WebStore} interface.  This class encapsulates
  * converting values from a String form to Object form and vice versa through the use of a <tt>PropertyEditor</tt>
  * configured using {@link #setEditorClass(Class)}.  Subclasses are expected to implement the
- * {@link #onStoreValue(Object, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
- * and {@link #onRetrieveValue(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
+ * {@link #onStoreValue(Object, javax.servlet.ServletRequest, javax.servlet.ServletResponse)} and
+ * {@link #onRetrieveValue(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
  * methods that perform the actual storing and retrieving of a String value.  This class also contains convenience
  * methods for retrieving the value of a request parameter to be stored.
  *
@@ -186,7 +186,7 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
         }
     }
 
-    protected T getFromRequestParam( HttpServletRequest request ) {
+    protected T getFromRequestParam( ServletRequest request ) {
         T value = null;
 
         String paramName = getName();
@@ -205,7 +205,7 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
         return value;
     }
 
-    public final T retrieveValue( HttpServletRequest request, HttpServletResponse response ) {
+    public final T retrieveValue( ServletRequest request, ServletResponse response ) {
         T value = null;
         if ( isCheckRequestParams() && isCheckRequestParamsFirst() ) {
             value = getFromRequestParam( request );
@@ -224,9 +224,9 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
         return value;
     }
 
-    protected abstract T onRetrieveValue( HttpServletRequest request, HttpServletResponse response );
+    protected abstract T onRetrieveValue( ServletRequest request, ServletResponse response );
 
-    public void storeValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+    public void storeValue( T value, ServletRequest request, ServletResponse response ) {
         if ( value == null ) {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Will not store a null value - returning." );
@@ -248,5 +248,5 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
         onStoreValue( value, request, response );
     }
 
-    protected abstract void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response );
+    protected abstract void onStoreValue( T value, ServletRequest request, ServletResponse response );
 }

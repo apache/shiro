@@ -32,7 +32,6 @@ import org.jsecurity.web.WebInterceptor;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
@@ -199,19 +198,19 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         }
     }
 
-    protected RedirectView createRedirectView( HttpServletRequest request, HttpServletResponse response ) {
+    protected RedirectView createRedirectView( ServletRequest request, ServletResponse response ) {
         RedirectView redirect = new RedirectView( getRedirectUrl(), this.contextRelative, this.http10Compatible );
         redirect.setEncodingScheme( this.encodingScheme );
         return redirect;
     }
 
-    protected Map<String, Object> createRequestParamMap( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> createRequestParamMap( ServletRequest request, ServletResponse response, String attemptedPage ) {
         HashMap<String, Object> redirectMap = new HashMap<String, Object>( 1 );
         redirectMap.put( getAttemptedPageKeyName(), attemptedPage );
         return redirectMap;
     }
 
-    protected Map<String, Object> storeInJSecuritySession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> storeInJSecuritySession( ServletRequest request, ServletResponse response, String attemptedPage ) {
         boolean boundToSession = false;
 
         SecurityContext securityContext = getSecurityContext( request, response );
@@ -244,13 +243,13 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         }
     }
 
-    protected Map<String, Object> storeInHttpSession( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
-        HttpSession httpSession = request.getSession();
+    protected Map<String, Object> storeInHttpSession( ServletRequest request, ServletResponse response, String attemptedPage ) {
+        HttpSession httpSession = toHttp(request).getSession();
         httpSession.setAttribute( getAttemptedPageKeyName(), attemptedPage );
         return null;
     }
 
-    protected Map<String, Object> setSchemeAttemptedPage( HttpServletRequest request, HttpServletResponse response, String attemptedPage ) {
+    protected Map<String, Object> setSchemeAttemptedPage( ServletRequest request, ServletResponse response, String attemptedPage ) {
         AttemptedPageStorageScheme scheme = getAttemptedPageStorageScheme();
         if ( scheme == null ) {
             return null; //no attempted page to forward
@@ -270,7 +269,8 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         }
     }
 
-    protected String getAttemptedPage( HttpServletRequest request, HttpServletResponse response ) {
+    protected String getAttemptedPage( ServletRequest servletRequest, ServletResponse response ) {
+        HttpServletRequest request = toHttp( servletRequest );
         StringBuffer attemptedPage = request.getRequestURL();
         String queryString = request.getQueryString();
         if ( queryString != null ) {
@@ -280,8 +280,8 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         return attemptedPage.toString();
     }
 
-    protected String getExcludedPath( HttpServletRequest request ) throws Exception {
-        return request.getRequestURI();
+    protected String getExcludedPath( ServletRequest request ) throws Exception {
+        return toHttp(request).getRequestURI();
     }
 
     protected boolean isPathExcluded( String requestedPath ) {
@@ -293,7 +293,7 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         return false;
     }
 
-    protected boolean isExcluded( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    protected boolean isExcluded( ServletRequest request, ServletResponse response ) throws Exception {
         String path = getExcludedPath( request );
         return isPathExcluded( path );
     }
@@ -307,15 +307,13 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
      * @param response      the outgoing HttpServletResponse
      * @return the final redirect model that will be encoded in the redirect;
      */
-    protected Map<String, Object> afterSchemeSet( Map<String, Object> redirectModel, HttpServletRequest request, HttpServletResponse response ) {
+    protected Map<String, Object> afterSchemeSet( Map<String, Object> redirectModel, ServletRequest request, ServletResponse response ) {
         return redirectModel;
     }
 
     protected boolean handleUnauthenticatedRequest( ServletRequest servletRequest, ServletResponse servletResponse ) throws IOException {
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        String attemptedPage = getAttemptedPage( request, response );
+        String attemptedPage = getAttemptedPage( servletRequest, servletResponse );
 
         if ( log.isDebugEnabled() ) {
             log.debug( "User is not allowed to access page [" + attemptedPage + "] without " +
@@ -323,23 +321,23 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
                 getRedirectUrl() + "]" );
         }
 
-        RedirectView redirect = createRedirectView( request, response );
+        RedirectView redirect = createRedirectView( servletRequest, servletResponse );
 
-        Map<String, Object> redirectModel = setSchemeAttemptedPage( request, response, attemptedPage );
+        Map<String, Object> redirectModel = setSchemeAttemptedPage( servletRequest, servletResponse, attemptedPage );
 
-        redirectModel = afterSchemeSet( redirectModel, request, response );
+        redirectModel = afterSchemeSet( redirectModel, servletRequest, servletResponse );
 
-        redirect.renderMergedOutputModel( redirectModel, request, response );
+        redirect.renderMergedOutputModel( redirectModel, toHttp(servletRequest), toHttp(servletResponse) );
 
         return false;
     }
 
-    protected boolean isAuthenticated( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    protected boolean isAuthenticated( ServletRequest request, ServletResponse response ) throws Exception {
         SecurityContext securityContext = getSecurityContext( request, response );
         return securityContext.isAuthenticated();
     }
 
-    public boolean preHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public boolean preHandle( ServletRequest request, ServletResponse response ) throws Exception {
         if ( !isAuthenticated( request, response ) && !isExcluded( request, response ) ) {
             return handleUnauthenticatedRequest( request, response );
         }
@@ -347,9 +345,9 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         return true;
     }
 
-    public void postHandle( HttpServletRequest request, HttpServletResponse response ) throws Exception {
+    public void postHandle( ServletRequest request, ServletResponse response ) throws Exception {
     }
 
-    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception ) throws Exception {
+    public void afterCompletion( ServletRequest request, ServletResponse response, Exception exception ) throws Exception {
     }
 }

@@ -1,16 +1,10 @@
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.support.DefaultWebSessionFactory;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionContext;
+import javax.servlet.http.*;
 import java.util.*;
 
 /**
@@ -23,7 +17,7 @@ import java.util.*;
  */
 public class JSecurityHttpSession implements HttpSession {
 
-    public static final String DEFAULT_SESSION_ID_NAME = "JSECSESSIONID";
+    public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
 
     private static final Enumeration EMPTY_ENUMERATION = new Enumeration() {
         public boolean hasMoreElements() {
@@ -46,18 +40,17 @@ public class JSecurityHttpSession implements HttpSession {
     };
 
     protected ServletContext servletContext = null;
+    protected HttpServletRequest currentRequest = null;
+    protected Session session = null; //'real' JSecurity Session
 
-    public JSecurityHttpSession( ServletContext servletContext ) {
+    public JSecurityHttpSession( Session session, HttpServletRequest currentRequest, ServletContext servletContext ) {
+        this.session = session;
+        this.currentRequest = currentRequest;
         this.servletContext = servletContext;
     }
 
-    protected Session getSession() {
-        return getSession( true );
-    }
-
-    protected Session getSession( boolean create ) {
-        SecurityContext sc = ThreadContext.getSecurityContext();
-        return ( sc != null ? sc.getSession( create ) : null );
+    public Session getSession() {
+        return this.session;
     }
 
     public long getCreationTime() {
@@ -163,7 +156,7 @@ public class JSecurityHttpSession implements HttpSession {
     }
 
     protected void afterUnbound( String s, Object o ) {
-        if ( o != null && o instanceof HttpSessionBindingListener ) {
+        if ( o instanceof HttpSessionBindingListener ) {
             HttpSessionBindingListener listener = (HttpSessionBindingListener)o;
             HttpSessionBindingEvent event = new HttpSessionBindingEvent( this, s, o );
             listener.valueUnbound( event );
@@ -206,7 +199,7 @@ public class JSecurityHttpSession implements HttpSession {
     }
 
     public boolean isNew() {
-        Boolean value = (Boolean)ThreadContext.get( DefaultWebSessionFactory.REQUEST_REFERENCED_SESSION_IS_NEW );
+        Boolean value = (Boolean)currentRequest.getAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW );
         return value != null && value.equals( Boolean.TRUE );
     }
 }
