@@ -363,9 +363,9 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
      * Starts a brand new Session, associates it with the specified request, and makes that session available for
      * future requests via a Cookie or URL rewriting as specified by the Servlet Specification.
      *
-     * @param request
-     * @param response
-     * @return
+     * @param request incoming ServletRequest
+     * @param response outgoing ServletResponse
+     * @return a new Session for the specified request/response pair.
      */
     public Session start( ServletRequest request, ServletResponse response ) {
         InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
