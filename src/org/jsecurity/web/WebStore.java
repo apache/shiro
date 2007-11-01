@@ -24,8 +24,8 @@
  */
 package org.jsecurity.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * A <tt>WebStore</tt> is a storage mechanism for a single object accessible during a web request.
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface WebStore<T> {
 
-    T retrieveValue( HttpServletRequest request, HttpServletResponse response );
+    T retrieveValue( ServletRequest request, ServletResponse response );
 
-    void storeValue( T value, HttpServletRequest request, HttpServletResponse response );   
+    void storeValue( T value, ServletRequest request, ServletResponse response );   
 }

@@ -24,20 +24,14 @@
  */
 package org.jsecurity.web.support;
 
-import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.context.support.InvalidSecurityContextException;
-import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
-import org.jsecurity.web.WebStore;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.InetAddress;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -50,266 +44,59 @@ import java.util.List;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class SecurityContextWebInterceptor<T> extends SecurityWebSupport implements WebInterceptor {
+public class SecurityContextWebInterceptor extends DefaultWebSecurityContextFactory implements WebInterceptor {
 
-    /**
-     * The key that is used to store subject principals in the session.
-     */
-    public static final String PRINCIPALS_SESSION_KEY =
-        SecurityContextWebInterceptor.class.getName() + "_PRINCIPALS_SESSION_KEY";
-
-    /**
-     * The key that is used to store whether or not the user is authenticated in the session.
-     */
-    public static final String AUTHENTICATED_SESSION_KEY =
-        SecurityContextWebInterceptor.class.getName() + "_AUTHENTICATED_SESSION_KEY";
-
-    protected SecurityManager securityManager = null;
-
-    protected SessionWebInterceptor sessionWebInterceptor = null;
-
-    /**
-     * Determines whether or not to use the HttpSession as the storage mechanism for principals or the JSecurity
-     * Session.  The default is <tt>false</tt>, since JSecurity sessions can be accessed across multiple client
-     * mediums (more flexible) and HttpSessions cannot.
-     */
-    protected boolean preferHttpSessionStorage = false;
-
-    //passthrough attributes to the underlying DefaultWebSessionFactory
-    protected WebStore<List<T>> principalsStore = null;
-    protected WebStore<Boolean> authenticatedStore = null;
-    protected boolean requireSessionOnRequest = false;
-
-    public SecurityContextWebInterceptor() {
-    }
-
-    public SecurityManager getSecurityManager() {
-        return securityManager;
-    }
-
-    public void setSecurityManager( SecurityManager securityManager ) {
-        this.securityManager = securityManager;
-    }
-
-    public boolean isPreferHttpSessionStorage() {
-        return preferHttpSessionStorage;
-    }
-
-    public void setPreferHttpSessionStorage( boolean preferHttpSessionStorage ) {
-        this.preferHttpSessionStorage = preferHttpSessionStorage;
-    }
-
-    public WebStore<List<T>> getPrincipalsStore() {
-        return principalsStore;
-    }
-
-    public void setPrincipalsStore( WebStore<List<T>> principalsStore ) {
-        this.principalsStore = principalsStore;
-    }
-
-    public WebStore<Boolean> getAuthenticatedStore() {
-        return authenticatedStore;
-    }
-
-    public void setAuthenticatedStore( WebStore<Boolean> authenticatedStore ) {
-        this.authenticatedStore = authenticatedStore;
-    }
-
-    public boolean isRequireSessionOnRequest() {
-        return requireSessionOnRequest;
-    }
-
-    public void setRequireSessionOnRequest( boolean requireSessionOnRequest ) {
-        this.requireSessionOnRequest = requireSessionOnRequest;
-    }
-
-    protected SessionWebInterceptor getSessionWebInterceptor() {
-        return sessionWebInterceptor;
-    }
-
-    protected void setSessionWebInterceptor( SessionWebInterceptor sessionWebInterceptor ) {
-        this.sessionWebInterceptor = sessionWebInterceptor;
-    }
-
-    void assertSecurityManager() {
-        SecurityManager securityManager = getSecurityManager();
-        if ( securityManager == null ) {
-            String msg = "SecurityManager property must be set.";
-            throw new IllegalStateException( msg );
-        }
-    }
-
-    void ensureSessionWebInterceptor() {
-        if ( getSessionWebInterceptor() == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing default SessionWebInterceptor instance..." );
-            }
-            SessionWebInterceptor swi = new SessionWebInterceptor();
-            swi.setSessionFactory( getSecurityManager() );
-            swi.setRequireSessionOnRequest( isRequireSessionOnRequest() );
-            swi.init();
-            setSessionWebInterceptor( swi );
-        }
-    }
-
-    protected void ensurePrincipalsStore() {
-        if ( getPrincipalsStore() == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing default Principals WebStore..." );
-            }
-            AbstractWebStore<List<T>> store;
-            if ( isPreferHttpSessionStorage() ) {
-                store = new HttpSessionStore<List<T>>( PRINCIPALS_SESSION_KEY, false );
-            } else {
-                store = new SessionStore<List<T>>( PRINCIPALS_SESSION_KEY, false );
-            }
-            store.init();
-            setPrincipalsStore( store );
-        }
-    }
-
-    protected void ensureAuthenticatedStore() {
-        if ( getAuthenticatedStore() == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing default Authenticated token WebStore..." );
-            }
-            AbstractWebStore<Boolean> store;
-            if ( isPreferHttpSessionStorage() ) {
-                store = new HttpSessionStore<Boolean>( AUTHENTICATED_SESSION_KEY, false );
-            } else {
-                store = new SessionStore<Boolean>( AUTHENTICATED_SESSION_KEY, false );
-            }
-            store.init();
-            setAuthenticatedStore( store );
-        }
-    }
-
-    public void init() {
-        assertSecurityManager();
-        ensureSessionWebInterceptor();
-        ensurePrincipalsStore();
-        ensureAuthenticatedStore();
-    }
-
-    protected List<T> getPrincipals( ServletRequest servletRequest, ServletResponse servletResponse ) {
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
-        return getPrincipalsStore().retrieveValue( request, response );
-    }
-
-    protected boolean isAuthenticated( ServletRequest servletRequest, ServletResponse servletResponse ) {
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
-        Boolean value = getAuthenticatedStore().retrieveValue( request, response );
-        return value != null && value;
-    }
-
-    protected SecurityContext createSecurityContext( List<T> principals, boolean authenticated,
-                                                     InetAddress inetAddress, Session session,
-                                                     SecurityManager securityManager ) {
-        return new DelegatingSecurityContext( principals, authenticated, inetAddress, session, securityManager );
-    }
-
-    protected SecurityContext createSecurityContext( ServletRequest request,
-                                                     ServletResponse response,
-                                                     List<T> principals,
-                                                     boolean authenticated,
-                                                     Session existing ) {
-        SecurityContext securityContext;
-
-        SecurityManager securityManager = getSecurityManager();
-
-        if ( securityManager == null ) {
-            final String message = "the SecurityManager attribute must be configured.  This could be " +
-                "done by calling setSecurityManager() on the " + getClass().getName() + " instance, or by subclassing " +
-                "to retrieve the SecurityManager from an application framework.";
-            throw new IllegalStateException( message );
-        }
-
-        securityContext = createSecurityContext( principals, authenticated, ThreadContext.getInetAddress(), existing, securityManager );
-
-        return securityContext;
-    }
-
-
-    public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response, Session existing ) {
-        List<T> principals = getPrincipals( request, response );
-        boolean authenticated = isAuthenticated( request, response );
-        return createSecurityContext( request, response, principals, authenticated, existing );
-    }
-
-    protected void bindForSubsequentRequests( HttpServletRequest request, HttpServletResponse response, SecurityContext securityContext ) {
-        getPrincipalsStore().storeValue( (List<T>) securityContext.getAllPrincipals(), request, response );
-        getAuthenticatedStore().storeValue( securityContext.isAuthenticated(), request, response );
-    }
-
-    public boolean preHandle( HttpServletRequest request, HttpServletResponse response )
-        throws Exception {
-
+    public boolean preHandle( ServletRequest request, ServletResponse response ) throws Exception {
         //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:
         bindInetAddressToThread( request );
 
-        //enable the Session if one is associated w/ the request.  This will bind it to the ThreadContext as well.
-        SessionWebInterceptor sessionInterceptor = getSessionWebInterceptor();
-        if ( sessionInterceptor == null ) {
-            String msg = "SessionWebInterceptor property must be set.  This is done by default during the init() " +
-                "method.  Please ensure init() is called before using this instance.";
-            throw new IllegalStateException( msg );
+        SecurityContext sc = createSecurityContext( request, response );
+        //make available during the thread that processes request:
+        if ( sc != null ) {
+            ThreadContext.bind( sc );
         }
-        sessionInterceptor.preHandle( request, response );
-
-        //bind a dummy SecurityContext to the thread just to support any components that require it.  This is primarily
-        //only here to make any existing session available to the createSecurityContext methods (and child methods)
-        //via SecurityContext.getSession() in case it is needed.  This isn't very 'clean' per se, but it does prevent
-        //any children components (such as WebStores) from knowing about thread locals, which I think is 'cleaner'
-        //overall - Les.
-        Session session = getSession( request, response );
-        SecurityContext dummy =
-            new DelegatingSecurityContext( false, ThreadContext.getInetAddress(), session, getSecurityManager() );
-        ThreadContext.bind( dummy );
-
-        //now contstruct the 'real' security context to use during the request's thread:
-        SecurityContext securityContext = null;
-        try {
-            securityContext = createSecurityContext( request, response, session );
-        } finally {
-            //remove the dummy in any case
-            ThreadContext.unbindSecurityContext();
-        }
-        if ( securityContext != null ) {
-            ThreadContext.bind( securityContext );
-        }
-
-        return true;
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void postHandle( HttpServletRequest request, HttpServletResponse response )
+    protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
+        HttpSession httpSession = toHttp(request).getSession();
+        List allPrincipals = securityContext.getAllPrincipals();
+        if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
+            httpSession.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
+        }
+        httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
+    }
+
+    public void postHandle( ServletRequest request, ServletResponse response )
         throws Exception {
         SecurityContext securityContext = getSecurityContext( request, response );
 
         if ( securityContext != null ) {
-            //make sure it is valid:
             try {
-                securityContext.getAllPrincipals();
+                bindForSubsequentRequests( request, response, securityContext );
             } catch ( InvalidSecurityContextException e ) {
+                HttpSession httpSession = toHttp(request).getSession(false);
+                if ( httpSession != null ) {
+                    try {
+                        httpSession.removeAttribute( PRINCIPALS_SESSION_KEY );
+                        httpSession.removeAttribute( AUTHENTICATED_SESSION_KEY );
+                    } catch ( Exception e1 ) {
+                        if ( log.isTraceEnabled() ) {
+                            log.trace( "Unable to successfully clean http session for invalid security context.", e1); 
+                        }
+                    }
+                }
                 if ( log.isTraceEnabled() ) {
                     log.trace( "SecurityContext was invalidated during the request - returning quietly (a new " +
                         "one will be created on the next request)." );
                 }
-                return;
             }
-
-            bindForSubsequentRequests( request, response, securityContext );
         }
-
-        getSessionWebInterceptor().postHandle( request, response );
     }
 
-    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Exception exception )
+    public void afterCompletion( ServletRequest request, ServletResponse response, Exception exception )
         throws Exception {
-        getSessionWebInterceptor().afterCompletion( request, response, exception );
         ThreadContext.unbindSecurityContext();
         unbindInetAddressFromThread();
     }
-
 }

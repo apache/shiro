@@ -17,10 +17,9 @@ package org.jsecurity.web.servlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.web.support.SecurityWebSupport;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -38,7 +37,7 @@ import java.io.IOException;
  * @author Juergen Hoeller
  * @since 06.12.2003
  */
-public abstract class OncePerRequestFilter implements Filter {
+public abstract class OncePerRequestFilter extends SecurityWebSupport implements Filter {
 
     /**
 	 * Suffix that gets appended to the filter name for the
@@ -86,25 +85,6 @@ public abstract class OncePerRequestFilter implements Filter {
     }
 
     /**
-     * Provides any other initialization behavior beyond creating/initializing the WebInterceptor instance.
-     *
-     * <p>If needed, the FilterConfig is available during this call via the {@link #getFilterConfig()} method.
-     *
-     * @throws Exception in the case of an error
-     */
-    protected void init() throws Exception {
-    }
-
-    protected HttpServletRequest toHttpServletRequest( ServletRequest servletRequest ) {
-        return (HttpServletRequest)servletRequest;
-    }
-
-    protected HttpServletResponse toHttpServletResponse( ServletResponse servletResponse ) {
-        return (HttpServletResponse)servletResponse;
-    }
-
-
-    /**
 	 * This <code>doFilter</code> implementation stores a request attribute for
 	 * "already filtered", proceeding without filtering again if the
 	 * attribute is already there.
@@ -115,21 +95,15 @@ public abstract class OncePerRequestFilter implements Filter {
 	public final void doFilter( ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		if (!(request instanceof HttpServletRequest ) || !(response instanceof HttpServletResponse )) {
-			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
-		}
-		HttpServletRequest httpRequest = toHttpServletRequest( request );
-		HttpServletResponse httpResponse = toHttpServletResponse( response );
-
 		String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
-		if (request.getAttribute(alreadyFilteredAttributeName) != null || shouldNotFilter(httpRequest)) {
+		if (request.getAttribute(alreadyFilteredAttributeName) != null || shouldNotFilter(request)) {
 			// Proceed without invoking this filter...
 			filterChain.doFilter(request, response);
 		}
 		else {
 			// Do invoke this filter...
 			request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);
-			doFilterInternal(httpRequest, httpResponse, filterChain);
+			doFilterInternal(request, response, filterChain);
 		}
 	}
 
@@ -158,7 +132,7 @@ public abstract class OncePerRequestFilter implements Filter {
 	 * @return whether the given request should <i>not</i> be filtered
 	 * @throws ServletException in case of errors
 	 */
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+	protected boolean shouldNotFilter(ServletRequest request) throws ServletException {
 		return false;
 	}
 
@@ -170,7 +144,7 @@ public abstract class OncePerRequestFilter implements Filter {
 	 * and ServletResponse ones.
 	 */
 	protected abstract void doFilterInternal(
-			HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException;
     
     public void destroy(){}

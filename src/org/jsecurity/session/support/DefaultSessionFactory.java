@@ -24,6 +24,8 @@
 */
 package org.jsecurity.session.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
@@ -49,23 +51,21 @@ import java.net.InetAddress;
  * business/server tier (e.g. in an <tt>HttpSession</tt> or in some
  * private class {@link java.util.Map Map} attribute).
  *
- * <p>For best performance, an instance acquired from this factory should be created at the
- * beginning of a thread's execution (or lazily when first needed), such as at the beginning of a
- * remote method invocation or at the begginning of an HTTP request.  After acquisition, it should
- * then bound to the executing thread via a {@link ThreadLocal ThreadLocal}, and then finally
- * removed/discarded from the thread when execution is complete.  This is exactly how J2EE,
- * Hibernate, Spring and other enterprise-level  projects perform optimization, and is also the
- * way JSecurity utility classes behave (such as our
- * {@link org.jsecurity.spring.servlet.security.SessionInterceptor SessionInterceptor}).
- *
  * @since 0.1
  * @author Les Hazlewood
  */
 public class DefaultSessionFactory implements SessionFactory, Initializable {
 
+    protected final transient Log log = LogFactory.getLog( getClass() );
+
     private SessionManager sessionManager = null;
 
     public DefaultSessionFactory(){}
+
+    public DefaultSessionFactory( SessionManager sessionManager ) {
+        setSessionManager( sessionManager );
+        init();
+    }
 
     public void setSessionManager( SessionManager sessionManager ) {
         this.sessionManager = sessionManager;

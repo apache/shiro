@@ -28,18 +28,18 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
- * A <tt>WebSessionFactory</tt> can init or acquire
- * {@link org.jsecurity.session.Session session}s in the Web tier of an application via
- * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}s.
+ * A <tt>WebSessionFactory</tt> can acquire application {@link org.jsecurity.session.Session session}s in the
+ * Web tier via
+ * {@link javax.servlet.ServletRequest ServletRequest}s.
  *
  * <p>Most implementations of this interface will act as a wrapper, delegating
- * session creation and acquisition duties to an underlying JSecurity
- * {@link org.jsecurity.session.SessionFactory SessionFactory}, obtaining any information required
- * to do so from the <tt>HttpServletRequest</tt>.   This allows a unified
+ * actual session acquisition duties to an underlying JSecurity
+ * {@link org.jsecurity.session.SessionFactory SessionFactory}, but obtaining any information required
+ * to do so from the <tt>ServletRequest</tt>.   This allows a unified
  * Session management layer in the business tier (where we think it belongs) accessible by
  * any client technology, not just web-based ones.
  *
@@ -60,7 +60,7 @@ public interface WebSessionFactory {
      * @param response the current response being generated.
      * @return a new <tt>Session</tt> based on the specified <tt>request</tt>
      */
-    Session start( HttpServletRequest request, HttpServletResponse response );
+    Session start( ServletRequest request, ServletResponse response );
 
     /**
      * Returns the <tt>Session</tt> associated with the given <tt>HttpServletRequest</tt>, or
@@ -90,6 +90,6 @@ public interface WebSessionFactory {
      * @throws AuthorizationException if the subject or machine associated with the current request is not authorized
      * to acquire the session associated with the request.
      */
-    Session getSession( HttpServletRequest request, HttpServletResponse response )
+    Session getSession( ServletRequest request, ServletResponse response )
         throws InvalidSessionException, AuthorizationException;
 }

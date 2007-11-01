@@ -24,6 +24,8 @@
  */
 package org.jsecurity.web.support;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +47,17 @@ public class CookieStore<T> extends AbstractWebStore<T> {
     private boolean secure = false;
 
     public CookieStore() {
+    }
+
+    /**
+     * Constructs a <tt>CookieStore</tt> using a {@link Cookie Cookie} with the specified {@link Cookie#getName() name}
+     * using the request context's path and with a {@link Cookie#setMaxAge(int) maxAge} of <tt>-1</tt>, indicating the
+     * Cookie will persist until browser shutdown.
+     *
+     * @param name the Cookie {@link Cookie#getName() name}
+     */
+    public CookieStore( String name ) {
+        super( name );
     }
 
     /**
@@ -178,11 +191,11 @@ public class CookieStore<T> extends AbstractWebStore<T> {
         return null;
     }
 
-    public T onRetrieveValue( HttpServletRequest request, HttpServletResponse response ) {
+    public T onRetrieveValue( ServletRequest request, ServletResponse response ) {
         T value = null;
 
         String stringValue = null;
-        Cookie cookie = getCookie( request, getName() );
+        Cookie cookie = getCookie( toHttp(request), getName() );
         if ( cookie != null ) {
             stringValue = cookie.getValue();
             if ( log.isInfoEnabled() ) {
@@ -198,7 +211,10 @@ public class CookieStore<T> extends AbstractWebStore<T> {
         return value;
     }
 
-    public void onStoreValue( T value, HttpServletRequest request, HttpServletResponse response ) {
+    public void onStoreValue( T value, ServletRequest servletRequest, ServletResponse servletResponse ) {
+
+        HttpServletRequest request = toHttp( servletRequest );
+        HttpServletResponse response = toHttp( servletResponse );
 
         String name = getName();
         String path = getPath();

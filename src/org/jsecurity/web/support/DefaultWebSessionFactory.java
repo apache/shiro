@@ -24,93 +24,50 @@
  */
 package org.jsecurity.web.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
+import org.jsecurity.session.SessionManager;
+import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
+import org.jsecurity.web.servlet.JSecurityHttpServletRequest;
 import org.jsecurity.web.servlet.JSecurityHttpSession;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
  * Default JSecurity implementation of the {@link WebSessionFactory} interface.
- * <p/>
- * <p>This SessionFactory implementation handles web-specific APIs and delegates session creation/acquisition
- * behavior to an underlying {@link SessionFactory SessionFactory} instance.
+ *
+ * <p>This SessionFactory implementation handles web-specific APIs and delegates actual session creation/acquisition
+ * behavior to the parent class.
  *
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultWebSessionFactory extends SecurityWebSupport implements WebSessionFactory {
+public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
 
-    public static final String COOKIE_ID_SOURCE = "cookie";
-    public static final String URL_ID_SOURCE = "url";
-
-    public static final String REQUEST_REFERENCED_SESSION_ID = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID";
-    public static final String REQUEST_REFERENCED_SESSION_ID_IS_VALID = DefaultWebSessionFactory.class.getName() + "_REQUESTED_SESSION_ID_VALID";
-    public static final String REQUEST_REFERENCED_SESSION_IS_NEW = DefaultWebSessionFactory.class.getName() + "_REFERENCED_SESSION_IS_NEW";
-    public static final String REQUEST_REFERENCED_SESSION_ID_SOURCE = DefaultWebSessionFactory.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
-
-    public static final String DEFAULT_SESSION_ID_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;
-
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    private boolean enforceSessionOnGet = true;
 
     /**
-     * Key that may be used for a http request or session attribute to alert that a referencing JSecurity Session
-     * has expired.
+     * Property specifying if, after a session object is acquired from the request, if that session should be
+     * validated to ensure the starting origin of the session is the same as the incoming request.
      */
-    public static final String EXPIRED_SESSION_KEY = SessionWebInterceptor.class.getName() + "_EXPIRED_SESSION_KEY";
-
     private boolean validateRequestOrigin = false; //default
-
-    protected SessionFactory sessionFactory = null;
-
-    //An HttpSessionStore is required if JSecurity sessions can be lazily created (e.g. SecurityContext.getSession())
-    //after the response has started rendering - i.e. inside of a web controller or business-tier component accessed
-    //after the web request comes in.
-    //
-    // Cookies can only be sent out before the response has started rendering, so saving a cookie
-    //_after_ a response is done (as would happen in a web interceptor implementation's postHandle method) is
-    // worthless, since the cookie would never be sent.
-    //
-    // As such, the only time a CookieStore can be used to store the JSecurity sessionId is if the
-    // requireSessionOnRequest property is true, because a session would be created before the interceptor chain is
-    // continued, where it is still 'legal' to modify the HTTP headers (i.e. set a Cookie).  If this property is set
-    // to true in configuration (it is false by default), this implementation will automatically re-assign the
-    // idStore attribute to be a CookieStore in the init() method.  If this property is false, the init method
-    // will automatically create the HttpSessionStore.
-
-    //TODO - remove w/ SessionEvent listening in place to account for in-thread session acquisition
-    //protected WebStore<Serializable> idStore = null;
 
     protected CookieStore<Serializable> cookieSessionIdStore = null;
     protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
-    protected boolean requireSessionOnRequest = false;
-    protected boolean createNewSessionWhenInvalid = true;
-    protected boolean touchSessionOnRequest = false; //proactively touch the session on each request to ensure it is valid and timestamp has been updated.
-
-    public DefaultWebSessionFactory(){}
-
-    public DefaultWebSessionFactory( SessionFactory sessionFactory ) {
-        setSessionFactory( sessionFactory );
+    public DefaultWebSessionFactory() {
     }
 
-    public void setSessionFactory( SessionFactory sessionFactory ) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
+    public DefaultWebSessionFactory( SessionManager sessionManager ) {
+        super( sessionManager );
     }
 
     public CookieStore<Serializable> getCookieSessionIdStore() {
@@ -130,7 +87,35 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     }
 
     /**
-     * If set to <tt>true</tt>, this <tt>SessionWebInterceptor</tt> will ensure that any
+     * Returns the current session enforcement policy for the
+     * {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+     * method - please see that method's JavaDoc for usage information.
+     *
+     * <p>The default value is <tt>true</tt> to guarantee a Session for an
+     * HttpRequest if one is desired.
+     *
+     * @return the current session enforcement policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
+     *
+     */
+    public boolean isEnforceSessionOnGet() {
+        return enforceSessionOnGet;
+    }
+
+    /**
+     * Specifies session enforcemnt policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+     * method - please see that method's JavaDoc for usage information.
+     *
+     * <p>The default value is <tt>true</tt> to guarantee a Session for an
+     * HttpRequest if one is desired.
+     *
+     * @param enforceSessionOnGet the session enforcement policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
+     */
+    public void setEnforceSessionOnGet( boolean enforceSessionOnGet ) {
+        this.enforceSessionOnGet = enforceSessionOnGet;
+    }
+
+    /**
+     * If set to <tt>true</tt>, this <tt>WebSessionFactory</tt> will ensure that any
      * <tt>HttpRequest</tt> attempting
      * to join a session (i.e. via {@link #getSession getSession} must have the same
      * IP Address of the <tt>HttpRequest</tt> that started the session.
@@ -170,55 +155,10 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         this.validateRequestOrigin = validateRequestOrigin;
     }
 
-    public boolean isRequireSessionOnRequest() {
-        return requireSessionOnRequest;
-    }
-
-    public void setRequireSessionOnRequest( boolean requireSessionOnRequest ) {
-        this.requireSessionOnRequest = requireSessionOnRequest;
-    }
-
-    public boolean isCreateNewSessionWhenInvalid() {
-        return createNewSessionWhenInvalid;
-    }
-
-    public void setCreateNewSessionWhenInvalid( boolean createNewSessionWhenInvalid ) {
-        this.createNewSessionWhenInvalid = createNewSessionWhenInvalid;
-    }
-
-    /**
-     * Returns if this WebSessionFactory will proactively {@link Session#touch() touch} a session on every
-     * request to ensure it is valid and its access timestamp has been updated.
-     * <p/>
-     * <p>The default value is <tt>false</tt>, since most appliacations actively update their session objects enough
-     * such that the session does not time out.
-     * <p/>
-     * <p>However, if you want to ensure that a session is valid on every request
-     * such that the Session's last access timestamp shows the last time they interacted with the web application,
-     * you will probably want to set this attribute to <tt>true</tt>.
-     *
-     * @return if this WebSessionFactory will proactively {@link Session#touch() touch} a session on every
-     *         request to ensure it is valid and its access timestamp has been updated.
-     */
-    public boolean isTouchSessionOnRequest() {
-        return touchSessionOnRequest;
-    }
-
-    public void setTouchSessionOnRequest( boolean touchSessionOnRequest ) {
-        this.touchSessionOnRequest = touchSessionOnRequest;
-    }
-
-    protected void assertSessionFactory() {
-        if ( getSessionFactory() == null ) {
-            String msg = "sessionFactory property must be set.";
-            throw new IllegalStateException( msg );
-        }
-    }
-
     protected void ensureCookieSessionIdStore() {
         CookieStore<Serializable> cookieStore = getCookieSessionIdStore();
-        if( cookieStore == null ) {
-            cookieStore = new CookieStore<Serializable>( DEFAULT_SESSION_ID_NAME, CookieStore.INDEFINITE );
+        if ( cookieStore == null ) {
+            cookieStore = new CookieStore<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
             cookieStore.setCheckRequestParams( false );
             setCookieSessionIdStore( cookieStore );
         }
@@ -227,18 +167,18 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     protected void ensureRequestParamSessionIdStore() {
         RequestParamStore<Serializable> reqParamStore = getReqParamSessionIdStore();
         if ( reqParamStore == null ) {
-            reqParamStore = new RequestParamStore<Serializable>( DEFAULT_SESSION_ID_NAME );
+            reqParamStore = new RequestParamStore<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
             setReqParamSessionIdStore( reqParamStore );
         }
     }
 
     public void init() {
-        assertSessionFactory();
+        super.init();
         ensureCookieSessionIdStore();
         ensureRequestParamSessionIdStore();
     }
 
-    protected void validateSessionOrigin( HttpServletRequest request, Session session )
+    protected void validateSessionOrigin( ServletRequest request, Session session )
         throws HostUnauthorizedException {
         InetAddress requestIp = SecurityWebSupport.getInetAddress( request );
         InetAddress originIp = session.getHostAddress();
@@ -271,7 +211,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         }
     }
 
-    protected void storeSessionId( Session session, HttpServletRequest request, HttpServletResponse response ) {
+    protected void storeSessionId( Session session, ServletRequest request, ServletResponse response ) {
         Serializable currentId = session.getSessionId();
         if ( currentId == null ) {
             String msg = "Session#getSessionId() cannot return null when storing sessions for subsequent requests.";
@@ -285,67 +225,30 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         }
     }
 
-    protected Serializable retrieveSessionId( HttpServletRequest request, HttpServletResponse response ) {
+    protected Serializable retrieveSessionId( ServletRequest request, ServletResponse response ) {
         WebStore<Serializable> cookieSessionIdStore = getCookieSessionIdStore();
         Serializable id = cookieSessionIdStore.retrieveValue( request, response );
         if ( id != null ) {
-            ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_SOURCE, COOKIE_ID_SOURCE );
+            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
+                JSecurityHttpServletRequest.COOKIE_SESSION_ID_SOURCE );
         } else {
             id = getReqParamSessionIdStore().retrieveValue( request, response );
             if ( id != null ) {
-                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_SOURCE, URL_ID_SOURCE );
+                request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
+                    JSecurityHttpServletRequest.URL_SESSION_ID_SOURCE );
             }
         }
         return id;
     }
 
-    public Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException {
-        assertSessionFactory();
-        return sessionFactory.getSession( sessionId );
-    }
-
-    protected Session handleInvalidSession( HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            InvalidSessionException ise ) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Handling invalid session associated with the request." );
-        }
-
-        Session session = null;
-
-        if ( isRequireSessionOnRequest() || isCreateNewSessionWhenInvalid() ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Configured to create a new session on invalid session - attempting to start a new session..." );
-            }
-            session = start( request, response );
-            if ( log.isTraceEnabled() ) {
-                log.trace( "New session started successfully." );
-            }
-        } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Configured to _not_ start a new session after an invalid session - returning a null session." );
-            }
-        }
-
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Adding EXPIRED_SESSION_KEY as a request attribute to alert that the request's incoming " +
-                "referenced session had expired." );
-        }
-        request.setAttribute( EXPIRED_SESSION_KEY, Boolean.TRUE );
-
-        return session;
-    }
-
-
-    protected Session doGetSession( HttpServletRequest request, HttpServletResponse response ) {
+    protected Session doGetSession( ServletRequest request, ServletResponse response ) {
 
         Session session = null;
         Serializable sessionId = retrieveSessionId( request, response );
 
         if ( sessionId != null ) {
-            ThreadContext.put( REQUEST_REFERENCED_SESSION_ID, sessionId.toString() );
-            assertSessionFactory();
-            session = sessionFactory.getSession( sessionId );
+            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
+            session = getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Validating request origin against session origin" );
@@ -353,8 +256,8 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
                 validateSessionOrigin( request, session );
             }
         } else {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "No JSecurity session id associated with the given " +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No JSecurity session id associated with the given " +
                     "HttpServletRequest.  A Session will not be returned." );
             }
         }
@@ -363,40 +266,70 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
 
     }
 
+    protected Session handleInvalidSession( ServletRequest request,
+                                            ServletResponse response,
+                                            InvalidSessionException ise ) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Handling invalid session associated with the request." );
+        }
+
+        Session session = null;
+
+        if ( isEnforceSessionOnGet() ) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Configured to create a new session on invalid session - attempting to start a new session..." );
+            }
+            session = start( request, response );
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Configured to _not_ start a new session after an invalid session - returning null." );
+            }
+        }
+
+
+        return session;
+    }
+
+
     /**
-     * Acquires a session for the given request, and if there isn't one, automatically creates one and makes it
-     * accessible for future requests.
-     * 
-     * @param request incoming servlet request
+     * Returns the Session associated with the specified request, <tt>null</tt>, or a new Session, depending on the
+     * enforcement policy in effect as specified by the {@link #setEnforceSessionOnGet(boolean) enforceSessionOnGet}
+     * property.
+     *
+     * <p>This method implementation functions as follows:</p>
+     *
+     * <ol>
+     *   <li>If the the incoming <tt>request</tt> references a valid, non-expired session, it will be returned
+     *       immediately</li>
+     *   <li>If the incoming <tt>request</tt> references an invalid, expired, or non-existent Session, and the
+     *       <tt>enforceSessionOnGet</tt> property is <tt>true</tt>, then a new Session will be created via the
+     *       {@link #start(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method and returned.</li>
+     *   <li>If the incoming <tt>request</tt> references an invalid, expired or non-existent Session, and the
+     *       <tt>enforceSessionOnGet</tt> property is <tt>false</tt>, then <tt>null</tt> is returned.</li>
+     * </ol>
+     *
+     * <p>The default value of <tt>enforceSessionOnGet</tt> is <tt>true</tt> to guarantee a Session for an
+     * HttpRequest if one is desired.
+     *
+     * @param request  incoming servlet request
      * @param response outgoing servlet response
-     * @return the Session associated with the incoming request, if any.
+     * @return the Session associated with the incoming request, <tt>null</tt> or a new Session, depending on the
+     * {@link #setEnforceSessionOnGet(boolean) enforceSessionOnGet} policy in effect. 
+     * @throws InvalidSessionException if the associated Session has expired prior to invoking this method.
+     * @throws AuthorizationException  if the caller is not authorized to access the session associated with the request.
      */
-    public final Session getSession( HttpServletRequest request, HttpServletResponse response )
+    public final Session getSession( ServletRequest request, ServletResponse response )
         throws InvalidSessionException, AuthorizationException {
 
-        Session session;
-
+        Session session = null;
         try {
             session = doGetSession( request, response );
-            if ( session == null ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "No JSecurity Session associated with the HttpServletRequest." );
-                }
-                if ( isRequireSessionOnRequest() ) {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "JSecurity Sessions are required for each request (per the " +
-                            "isRequireSessionOnRequest() attribute) - Attempting to start a new session..." );
-                    }
-                    session = start( request, response );
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Created new JSecurity Session with id [" + session.getSessionId() + "]" );
-                    }
-                }
+            if ( session != null ) {
+                request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE );
             } else {
-                if ( isTouchSessionOnRequest() ) {
-                    session.touch();
+                if ( isEnforceSessionOnGet() ) {
+                    session = start( request, response );
                 }
-                ThreadContext.put( REQUEST_REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE );
             }
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
@@ -408,12 +341,49 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
         return session;
     }
 
-    public Session start( HttpServletRequest request, HttpServletResponse response ) {
-        InetAddress clientAddress = getInetAddress( request );
-        Session session = getSessionFactory().start( clientAddress );
-        //ensure it is available for future requests:
-        storeSessionId( session, request, response );
-        ThreadContext.put( REQUEST_REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+    protected Session start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
+        Session session = super.start( inetAddress );
+
+        if ( request != null && response != null ) {
+            //we're in a web environment, so ensure the session is accessible for later requests.
+            //
+            //We do this now, i.e. immediately after the session is started by the SessionManager, rather than later
+            //(say, in an interceptor's postHandle method), to ensure that a cookie is created at the earliest possible
+            // time, before the response is rendered.  If we didn't do this, there is the chance that a cookie wouldn't
+            //be written to the request since the request might have started rendering, at which point cookies cannot
+            //be sent.
+            storeSessionId( session, request, response );
+            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+        }
+
         return session;
+    }
+
+    /**
+     * Starts a brand new Session, associates it with the specified request, and makes that session available for
+     * future requests via a Cookie or URL rewriting as specified by the Servlet Specification.
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    public Session start( ServletRequest request, ServletResponse response ) {
+        InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
+        Session s = start( request, response, clientAddress );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Started new JSecurity Session with id [" + s.getSessionId() );
+        }
+        return s;
+    }
+
+    public Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException {
+
+        ServletRequest request = ThreadContext.getServletRequest();
+        ServletResponse response = ThreadContext.getServletResponse();
+
+        //if there is a request and response on the thread, that means we're operating in a web environment.
+        //As such, we'll need to make the session that is started accessible via a Cookie and ULR rewriting, so
+        //call the web-based start method (will check for nulls automatically):
+        return start( request, response, hostAddress );
     }
 }
