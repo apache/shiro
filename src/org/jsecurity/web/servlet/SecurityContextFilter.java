@@ -25,6 +25,7 @@
 package org.jsecurity.web.servlet;
 
 import org.jsecurity.SecurityManager;
+import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
@@ -92,6 +93,8 @@ public class SecurityContextFilter extends WebInterceptorFilter {
             request = new JSecurityHttpServletRequest( request, servletContext );
             response = new JSecurityHttpServletResponse( response, servletContext, (JSecurityHttpServletRequest)request );
         }
+        ThreadContext.bind( request );
+        ThreadContext.bind( response );
 
         super.doFilterInternal( request, response, chain );    //To change body of overridden methods use File | Settings | File Templates.
     }
