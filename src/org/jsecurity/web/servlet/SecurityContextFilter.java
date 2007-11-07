@@ -96,7 +96,12 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         ThreadContext.bind( request );
         ThreadContext.bind( response );
 
-        super.doFilterInternal( request, response, chain );    //To change body of overridden methods use File | Settings | File Templates.
+        try {
+            super.doFilterInternal( request, response, chain );    //To change body of overridden methods use File | Settings | File Templates.
+        } finally {
+            ThreadContext.unbindServletRequest();
+            ThreadContext.unbindServletResponse();
+        }
     }
 
     /**
@@ -113,7 +118,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
             SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY + "].  Please ensure that either the " +
                 SecurityManagerListener.class.getName() + " listener or the " +
                 SecurityManagerServlet.class.getName() + " servlet are configured in web.xml, or override the " +
-                getClass().getName() + " getSecurityManager() method to retrieve it from a custom location.";
+                getClass().getName() + ".getSecurityManager() method to retrieve it from a custom location.";
             throw new IllegalStateException( msg );
         }
         return null;
@@ -123,6 +128,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
         SecurityManager securityManager = getSecurityManager();
         interceptor.setSecurityManager( securityManager );
+        interceptor.setPreferHttpSessionStorage( isPreferHttpSessionStorage() );
         interceptor.init();
         return interceptor;
     }

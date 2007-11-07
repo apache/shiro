@@ -44,11 +44,13 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.SessionManager;
+import org.jsecurity.session.event.SessionEventListener;
+import org.jsecurity.session.event.SessionEventListenerRegistry;
+import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
-import org.jsecurity.web.support.DefaultWebSessionFactory;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -83,7 +85,7 @@ import java.util.*;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class DefaultSecurityManager implements SecurityManager, CacheProviderAware, Initializable, Destroyable {
+public class DefaultSecurityManager implements SecurityManager, SessionEventListenerRegistry, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -195,11 +197,9 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
                     
                     initCacheProvider();
 
-                    DefaultSessionManager sessionManager = new DefaultSessionManager();
-                    sessionManager.setCacheProvider( getCacheProvider() );
+                    DefaultSessionManager sessionManager = new DefaultSessionManager( getCacheProvider() );
                     setSessionManager( sessionManager );
                     sessionManagerImplicitlyCreated = true;
-                    sessionManager.init();
                 } else {
                     if ( log.isDebugEnabled() ) {
                         log.debug( "Using configured SessionManager [" + sessionManager + "] to construct the default " +
@@ -208,12 +208,13 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
                 }
             }
 
-            DefaultWebSessionFactory sessionFactory = new DefaultWebSessionFactory();
-            sessionFactory.setSessionManager( sessionManager );
+            DefaultSessionFactory sessionFactory = new DefaultSessionFactory( sessionManager );
             setSessionFactory( sessionFactory );
             sessionFactoryImplicitlyCreated = true;
-            sessionFactory.init();
         }
+
+        //verify it can support session event listeners:
+        assertSessionFactoryEventListenerSupport( this.sessionFactory );
     }
 
     protected void initCacheProvider() {
@@ -366,6 +367,15 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
         this.authorizer = authorizer;
     }
 
+    private void assertSessionFactoryEventListenerSupport( SessionFactory factory ) {
+        if ( !(factory instanceof SessionEventListenerRegistry ) ) {
+            String msg = "The " + getClass().getName() + " implementation requires its underlying SessionFactory " +
+                "instance to implement the " + SessionEventListenerRegistry.class.getName() + " interface for " +
+                "session event listener support during runtime.";
+            throw new IllegalArgumentException( msg );
+        }
+    }
+
     /**
      * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
      * manager's {@link #start} and {@link #getSession} calls.
@@ -388,6 +398,7 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
      * @see #setSessionManager
      */
     public void setSessionFactory( SessionFactory sessionFactory ) {
+        assertSessionFactoryEventListenerSupport( sessionFactory );
         this.sessionFactory = sessionFactory;
     }
 
@@ -407,6 +418,20 @@ public class DefaultSecurityManager implements SecurityManager, CacheProviderAwa
      */
     public void setSessionManager( SessionManager sessionManager ) {
         this.sessionManager = sessionManager;
+    }
+    
+    public SessionManager getSessionManager() {
+        return this.sessionManager;
+    }
+
+    public void add( SessionEventListener listener ) {
+        ensureSessionFactory();
+        ((SessionEventListenerRegistry)this.sessionFactory).add( listener );
+    }
+
+    public boolean remove( SessionEventListener listener ) {
+        ensureSessionFactory();
+        return ((SessionEventListenerRegistry)this.sessionFactory).remove( listener );
     }
 
     /**

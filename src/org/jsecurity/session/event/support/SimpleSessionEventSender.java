@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.event.SessionEvent;
 import org.jsecurity.session.event.SessionEventListener;
+import org.jsecurity.session.event.SessionEventListenerRegistry;
 import org.jsecurity.session.event.SessionEventSender;
 
 import java.util.ArrayList;
@@ -42,15 +43,32 @@ import java.util.List;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SimpleSessionEventSender implements SessionEventSender {
+public class SimpleSessionEventSender implements SessionEventListenerRegistry, SessionEventSender {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
-
 
     protected List<SessionEventListener> listeners = new ArrayList<SessionEventListener>();
 
     public void setListeners( List<SessionEventListener> listeners ) {
         this.listeners = listeners;
+    }
+
+    public void add( SessionEventListener listener ) {
+        if ( listener == null ) {
+            String msg = "Attempting to add a null session event listener";
+            throw new IllegalArgumentException( msg );
+        }
+        if ( !listeners.contains( listener ) ) {
+            listeners.add( listener );
+        }
+    }
+
+    public boolean remove( SessionEventListener listener ) {
+        boolean removed = false;
+        if ( listener != null ) {
+            removed = listeners.remove( listener );
+        }
+        return removed;
     }
 
     /**
@@ -65,21 +83,4 @@ public class SimpleSessionEventSender implements SessionEventSender {
             }
         }
     }
-
-    public void addSessionEventListener( SessionEventListener listener ) {
-        if ( listener == null ) {
-            String msg = "Attempting to add a null session event listener";
-            throw new IllegalArgumentException( msg );
-        }
-        if ( !listeners.contains( listener ) ) {
-            listeners.add( listener );
-        }
-    }
-
-    public void removeSessionEventListener( SessionEventListener listener ) {
-        if ( listener != null ) {
-            listeners.remove( listener );
-        }
-    }
-
 }

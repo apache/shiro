@@ -81,6 +81,12 @@ public class DefaultSessionManager extends AbstractSessionManager
         setSessionClass( SimpleSession.class );
     }
 
+    public DefaultSessionManager( CacheProvider cacheProvider ) {
+        this();
+        setCacheProvider( cacheProvider );
+        init();
+    }
+
     public void setSessionValidationScheduler( SessionValidationScheduler sessionValidationScheduler ) {
         this.sessionValidationScheduler = sessionValidationScheduler;
     }

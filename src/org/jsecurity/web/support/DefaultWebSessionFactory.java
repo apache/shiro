@@ -28,8 +28,11 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionManager;
-import org.jsecurity.session.support.DefaultSessionFactory;
+import org.jsecurity.session.SessionFactory;
+import org.jsecurity.session.event.SessionEvent;
+import org.jsecurity.session.event.SessionEventListener;
+import org.jsecurity.session.event.SessionEventListenerRegistry;
+import org.jsecurity.session.event.StartedSessionEvent;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
@@ -50,7 +53,7 @@ import java.net.InetAddress;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
+public class DefaultWebSessionFactory extends SecurityWebSupport implements WebSessionFactory, SessionEventListener {
 
     private boolean enforceSessionOnGet = true;
 
@@ -63,11 +66,23 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     protected CookieStore<Serializable> cookieSessionIdStore = null;
     protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
-    public DefaultWebSessionFactory() {
+    protected SessionFactory sessionFactory = null; //'real' underlying session factory for accessing/starting sessions
+
+    public DefaultWebSessionFactory( SessionFactory sessionFactory ) {
+        setSessionFactory( sessionFactory );
+        init();
     }
 
-    public DefaultWebSessionFactory( SessionManager sessionManager ) {
-        super( sessionManager );
+    public void setSessionFactory( SessionFactory sessionFactory ) {
+        if ( !(sessionFactory instanceof SessionEventListenerRegistry ) ) {
+            String msg = "The " + getClass().getName() + " implementation expects its underlying SessionFactory " +
+                "instance to implement the " + SessionEventListenerRegistry.class.getName() + " class for " +
+                "event listener support.  This is required to ensure Session ID cookies can be created and sent to " +
+                "the browser instantly after a session is created.";
+            throw new IllegalArgumentException( msg );
+        }
+        this.sessionFactory = sessionFactory;
+        ((SessionEventListenerRegistry)this.sessionFactory).add( this );
     }
 
     public CookieStore<Serializable> getCookieSessionIdStore() {
@@ -173,9 +188,35 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     }
 
     public void init() {
-        super.init();
         ensureCookieSessionIdStore();
         ensureRequestParamSessionIdStore();
+    }
+
+    public void onEvent( SessionEvent event ) {
+        if ( event instanceof StartedSessionEvent ) {
+            //ensure the cookie is created and sent back to the browser:
+            StartedSessionEvent startedEvent = (StartedSessionEvent)event;
+
+            Serializable sessionId = startedEvent.getSessionId();
+            ServletRequest request = ThreadContext.getServletRequest();
+            ServletResponse response = ThreadContext.getServletResponse();
+
+            if ( request == null ) {
+                String msg = "A ServletRequest must be bound to the current thread for session id's to be bound " +
+                    "for subsequent requests.  Please ensure a JSecurity filter exists prior to the request being " +
+                    "processed to ensure the request/response pair are bound to the request-processing thread.";
+                throw new IllegalStateException( msg );
+            }
+            if ( response == null ) {
+                String msg = "A ServletResponse must be bound to the current thread for session id's to be bound " +
+                    "for subsequent requests.  Please ensure a JSecurity filter exists prior to the request being " +
+                    "processed to ensure the request/response pair are bound to the request-processing thread.";
+                throw new IllegalStateException( msg );
+            }
+
+            storeSessionId( sessionId, request, response );
+            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+        }
     }
 
     protected void validateSessionOrigin( ServletRequest request, Session session )
@@ -211,11 +252,10 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         }
     }
 
-    protected void storeSessionId( Session session, ServletRequest request, ServletResponse response ) {
-        Serializable currentId = session.getSessionId();
+    protected void storeSessionId( Serializable currentId, ServletRequest request, ServletResponse response ) {
         if ( currentId == null ) {
-            String msg = "Session#getSessionId() cannot return null when storing sessions for subsequent requests.";
-            throw new IllegalStateException( msg );
+            String msg = "sessionId cannot be null when persisting for subsequent requests.";
+            throw new IllegalArgumentException( msg );
         }
         //ensure that the id has been set in the idStore, or if it already has, that it is not different than the
         //'real' session value:
@@ -248,7 +288,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
 
         if ( sessionId != null ) {
             request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
-            session = getSession( sessionId );
+            session = this.sessionFactory.getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Validating request origin against session origin" );
@@ -342,21 +382,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     }
 
     protected Session start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
-        Session session = super.start( inetAddress );
-
-        if ( request != null && response != null ) {
-            //we're in a web environment, so ensure the session is accessible for later requests.
-            //
-            //We do this now, i.e. immediately after the session is started by the SessionManager, rather than later
-            //(say, in an interceptor's postHandle method), to ensure that a cookie is created at the earliest possible
-            // time, before the response is rendered.  If we didn't do this, there is the chance that a cookie wouldn't
-            //be written to the request since the request might have started rendering, at which point cookies cannot
-            //be sent.
-            storeSessionId( session, request, response );
-            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
-        }
-
-        return session;
+        return this.sessionFactory.start( inetAddress );
     }
 
     /**
@@ -374,16 +400,5 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
             log.trace( "Started new JSecurity Session with id [" + s.getSessionId() );
         }
         return s;
-    }
-
-    public Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException {
-
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
-
-        //if there is a request and response on the thread, that means we're operating in a web environment.
-        //As such, we'll need to make the session that is started accessible via a Cookie and ULR rewriting, so
-        //call the web-based start method (will check for nulls automatically):
-        return start( request, response, hostAddress );
     }
 }

@@ -79,6 +79,9 @@ public abstract class OncePerRequestFilter extends SecurityWebSupport implements
             if ( e instanceof ServletException ) {
                 throw (ServletException)e;
             } else {
+                if ( log.isErrorEnabled() ) {
+                    log.error( "Unable to start Filter: [" + e.getMessage() + "].", e );
+                }
                 throw new ServletException( e );
             }
         }

@@ -55,7 +55,7 @@ public class SecurityContextWebInterceptor extends DefaultWebSecurityContextFact
         if ( sc != null ) {
             ThreadContext.bind( sc );
         }
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return true;
     }
 
     protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
