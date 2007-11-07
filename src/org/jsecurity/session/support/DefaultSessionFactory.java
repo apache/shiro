@@ -29,6 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
+import org.jsecurity.session.event.SessionEventListener;
+import org.jsecurity.session.event.SessionEventListenerRegistry;
 import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
@@ -54,7 +56,7 @@ import java.net.InetAddress;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class DefaultSessionFactory implements SessionFactory, Initializable {
+public class DefaultSessionFactory implements SessionFactory, SessionEventListenerRegistry, Initializable {
 
     protected final transient Log log = LogFactory.getLog( getClass() );
 
@@ -68,7 +70,21 @@ public class DefaultSessionFactory implements SessionFactory, Initializable {
     }
 
     public void setSessionManager( SessionManager sessionManager ) {
+        if ( !(sessionManager instanceof SessionEventListenerRegistry ) ) {
+            String msg = "The " + getClass().getName() + " implementation requires its underlying SessionManager " +
+                "instance to implement the SessionEventListenerRegistry interface for listener registration " +
+                "propagation.";
+            throw new IllegalArgumentException( msg );
+        }
         this.sessionManager = sessionManager;
+    }
+
+    public void add( SessionEventListener listener ) {
+        ((SessionEventListenerRegistry)this.sessionManager).add( listener );
+    }
+
+    public boolean remove( SessionEventListener listener ) {
+        return ((SessionEventListenerRegistry)this.sessionManager).remove( listener );
     }
 
     public void init() {

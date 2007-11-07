@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.*;
+import org.jsecurity.session.event.support.SimpleSessionEventSender;
 import org.jsecurity.session.support.eis.SessionDAO;
 import org.jsecurity.util.Initializable;
 
@@ -42,7 +43,7 @@ import java.util.Date;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class AbstractSessionManager implements SessionManager, Initializable {
+public abstract class AbstractSessionManager implements SessionManager, SessionEventListenerRegistry, Initializable {
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
@@ -50,7 +51,7 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected SessionDAO sessionDAO = null;
-    protected SessionEventSender sessionEventSender = null;
+    protected SimpleSessionEventSender sessionEventSender = null; //will only be created if session event listeners are registered.
     protected boolean validateHost = false;
     protected Class<? extends Session> sessionClass = null;
 
@@ -66,19 +67,19 @@ public abstract class AbstractSessionManager implements SessionManager, Initiali
         return this.sessionDAO;
     }
 
-    /**
-     * Sets the {@link org.jsecurity.session.event.SessionEventSender} this Manager will use to send/publish events when
-     * a meaningful session event occurs.
-     * <p>The instance given can do anything from traditional-style synchronous listener
-     * notification to more sophisticated publishing of JMS messages or anything else.
-     * @param sessionEventSender the sender to use to propagate session events.
-     */
-    public void setSessionEventSender( SessionEventSender sessionEventSender ) {
-        this.sessionEventSender = sessionEventSender;
+    protected SimpleSessionEventSender ensureSessionEventSender() {
+        if ( this.sessionEventSender == null ) {
+            this.sessionEventSender = new SimpleSessionEventSender();
+        }
+        return this.sessionEventSender;
     }
 
-    public SessionEventSender getSessionEventSender() {
-        return this.sessionEventSender;
+    public void add( SessionEventListener listener ) {
+        ensureSessionEventSender().add( listener );
+    }
+
+    public boolean remove( SessionEventListener listener ) {
+        return ensureSessionEventSender().remove( listener );
     }
 
     /**
