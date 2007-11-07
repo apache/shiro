@@ -61,6 +61,8 @@ import java.net.URLEncoder;
  */
 public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
 
+    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME.toLowerCase();
+
     private ServletContext context = null;
     //the associated request
     private JSecurityHttpServletRequest request = null;
@@ -199,7 +201,7 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
             String file = url.getFile();
             if ( ( file == null ) || !file.startsWith( contextPath ) )
                 return ( false );
-            String tok = ";" + JSecurityHttpSession.DEFAULT_SESSION_ID_NAME + "=" + session.getId();
+            String tok = ";" + DEFAULT_SESSION_ID_PARAMETER_NAME + "=" + session.getId();
             if ( file.indexOf( tok, contextPath.length() ) >= 0 )
                 return ( false );
         }
@@ -316,7 +318,7 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
         StringBuffer sb = new StringBuffer( path );
         if ( sb.length() > 0 ) { // jsessionid can't be first.
             sb.append( ";" );
-            sb.append( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
+            sb.append( DEFAULT_SESSION_ID_PARAMETER_NAME );
             sb.append( "=" );
             sb.append( sessionId );
         }
