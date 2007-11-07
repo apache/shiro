@@ -117,7 +117,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
             String msg = "no SecurityManager instance bound to the ServletContext under key [" +
             SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY + "].  Please ensure that either the " +
                 SecurityManagerListener.class.getName() + " listener or the " +
-                SecurityManagerServlet.class.getName() + " servlet are configured in web.xml, or override the " +
+                SecurityManagerServlet.class.getName() + " servlet are configured in web.xml (easiest), or override the " +
                 getClass().getName() + ".getSecurityManager() method to retrieve it from a custom location.";
             throw new IllegalStateException( msg );
         }
