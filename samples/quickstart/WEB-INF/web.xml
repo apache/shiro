@@ -7,7 +7,7 @@
 
     <listener>
         <description>Creates a JSecurity SecurityManager instance and binds it to the ServletContext for
-                     application use.</description>
+                     framework access and application use.</description>
         <listener-class>org.jsecurity.web.servlet.SecurityManagerListener</listener-class>
     </listener>
 
@@ -25,12 +25,22 @@
                      bound to the webapp by the above SecurityManagerListener</description>
         <filter-name>SecurityContextFilter</filter-name>
         <filter-class>org.jsecurity.web.servlet.SecurityContextFilter</filter-class>
-        <!-- If you wanted to ensure a JSecurity Session always existed for each request (useful for explicit
-             request/user tracking), you can uncomment the following init-param, otherwise sessions are 
-             created only based on SecurityContext#getSession calls
+        <!-- Because JSecurity's Session management support is portable across
+             servlet containers and can be used across
+             client mediums (web app, swing app, etc), JSecurity provides its own implementation of the
+             Servlet Specification for Sessions (Spec 2.4, Chapter 7) for transparent session management.
+             As such, this Filter uses JSecurity Sessions by default instead of the Servlet container's session 
+             implementation.  This is usually a good thing in enterprise applications that rely on JSecurity
+             for shared session state.
+
+             But if you require the servlet container's specific
+             Session implementation for some reason, you should 1) Ask yourself why you've purposefully tied yourself
+             to the servlet container and see if you can get away from that, or leverage JSecurity Sessions stated above
+             to release you from this dependency, and 2) disable JSecurity sessions on the web-tier by uncommenting
+             the following init-param.
         <init-param>
-            <param-name>requireSessionOnRequest</param-name>
-            <param-value>true</param-value>
+            <param-name>useJSecuritySessions</param-name>
+            <param-value>false</param-value>
         </init-param> -->
     </filter>
 
