@@ -82,7 +82,6 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
             throw new IllegalArgumentException( msg );
         }
         this.sessionFactory = sessionFactory;
-        ((SessionEventListenerRegistry)this.sessionFactory).add( this );
     }
 
     public CookieStore<Serializable> getCookieSessionIdStore() {
@@ -190,6 +189,7 @@ public class DefaultWebSessionFactory extends SecurityWebSupport implements WebS
     public void init() {
         ensureCookieSessionIdStore();
         ensureRequestParamSessionIdStore();
+        ((SessionEventListenerRegistry)this.sessionFactory).add( this );
     }
 
     public void onEvent( SessionEvent event ) {

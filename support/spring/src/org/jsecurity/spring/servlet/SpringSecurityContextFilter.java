@@ -39,6 +39,11 @@ import javax.servlet.ServletContext;
  * be used instead of this filter.  This class offers a Servlet filter based alternative to using Spring interceptors.
  * It is useful in Spring enviroments that do not use Spring MVC.</p>
  *
+ * @deprecated in Spring environments, configure the {@link SpringSecurityManagerListener} instead, and then define the
+ * standard {@link SecurityContextFilter SecurityContextFilter}.  This class will be removed before the next final
+ * release.
+ *
+ *
  * @since 0.2
  * @author Les Hazlewood
  */

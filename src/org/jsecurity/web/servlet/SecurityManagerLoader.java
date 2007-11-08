@@ -63,19 +63,34 @@ public class SecurityManagerLoader {
 
     protected final transient Log log = LogFactory.getLog( getClass() );
 
+    private ServletContext servletContext = null;
+
     private SecurityManager securityManager = null;
     private boolean securityManagerImplicitlyCreated = false;
 
-    public void ensureSecurityManager( ServletContext servletContext ) {
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    public void setServletContext( ServletContext servletContext ) {
+        this.servletContext = servletContext;
+    }
+
+    public void ensureSecurityManager() {
         SecurityManager securityManager = getSecurityManager();
         if ( securityManager == null ) {
             this.securityManager = createSecurityManager();
             this.securityManagerImplicitlyCreated = true;
         }
-        bindToServletContext( securityManager, servletContext );
+        bindToServletContext( securityManager );
     }
 
-    protected void bindToServletContext( SecurityManager securityManager, ServletContext servletContext ) {
+    protected void bindToServletContext( SecurityManager securityManager ) {
+        ServletContext servletContext = getServletContext();
+        if ( servletContext == null ) {
+            String msg = "ServletContext property must be set via the setServletContext method.";
+            throw new IllegalStateException( msg );
+        }
         if ( servletContext.getAttribute( SECURITY_MANAGER_CONTEXT_KEY ) != null ) {
             String msg = "SecurityManager already bound to ServletContext.  Please check your configuration to ensure " +
                 "you don't have mutliple SecurityManager Loaders configured (listener, servlet, etc).";
@@ -116,7 +131,9 @@ public class SecurityManagerLoader {
         return null;
     }
 
-    protected void destroySecurityManager( ServletContext servletContext ) {
+    protected void destroySecurityManager() {
+        ServletContext servletContext = getServletContext();
+        
         if ( this.securityManagerImplicitlyCreated && this.securityManager != null )  {
             if ( this.securityManager instanceof Destroyable ) {
                 try {

@@ -41,10 +41,15 @@ import javax.servlet.ServletContextListener;
 public class SecurityManagerListener extends SecurityManagerLoader implements ServletContextListener {
 
     public void contextInitialized( ServletContextEvent event ) {
-        ensureSecurityManager( event.getServletContext() );
+        setServletContext( event.getServletContext() );
+        onServletContextAvailable();
+        ensureSecurityManager();
     }
 
     public void contextDestroyed( ServletContextEvent event ) {
-        destroySecurityManager( event.getServletContext() );
+        destroySecurityManager();
+        setServletContext( null );
     }
+
+    protected void onServletContextAvailable(){}
 }

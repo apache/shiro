@@ -45,9 +45,9 @@ import java.io.IOException;
  */
 public class SecurityContextFilter extends WebInterceptorFilter {
 
-    public static final String PREFER_HTTP_SESSION_PARAM_NAME = "preferHttpSessionStorage"; //default is false
+    public static final String USE_JSECURITY_SESSIONS_PARAM_NAME = "useJSecuritySessions"; //default is true
 
-    protected boolean preferHttpSessionStorage = false;
+    protected boolean useJSecuritySessions = true;
 
     protected boolean getBoolean( String paramName, boolean defaultValue ) {
         boolean value = defaultValue;
@@ -76,19 +76,19 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         return value;
     }
 
-    protected boolean isPreferHttpSessionStorage() {
-        return preferHttpSessionStorage;
+    protected boolean isUseJSecuritySessions() {
+        return useJSecuritySessions;
     }
 
     protected void onInit() throws Exception {
-        this.preferHttpSessionStorage = getBoolean( PREFER_HTTP_SESSION_PARAM_NAME, false );
+        this.useJSecuritySessions = getBoolean( USE_JSECURITY_SESSIONS_PARAM_NAME, false );
     }
 
     public void doFilterInternal( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain )
         throws IOException, ServletException {
         HttpServletRequest request = toHttp(servletRequest);
         HttpServletResponse response = toHttp(servletResponse);
-        if ( !isPreferHttpSessionStorage() ) {
+        if ( isUseJSecuritySessions() ) {
             ServletContext servletContext = getFilterConfig().getServletContext();
             request = new JSecurityHttpServletRequest( request, servletContext );
             response = new JSecurityHttpServletResponse( response, servletContext, (JSecurityHttpServletRequest)request );
@@ -128,7 +128,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
         SecurityManager securityManager = getSecurityManager();
         interceptor.setSecurityManager( securityManager );
-        interceptor.setPreferHttpSessionStorage( isPreferHttpSessionStorage() );
+        interceptor.setUseJSecuritySessions( isUseJSecuritySessions() );
         interceptor.init();
         return interceptor;
     }
