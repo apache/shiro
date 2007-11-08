@@ -37,7 +37,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     protected WebSessionFactory webSessionFactory = null;
 
-    private boolean preferHttpSessionStorage = false;
+    private boolean useJSecuritySessions = true;
 
     public DefaultWebSecurityContextFactory() {
     }
@@ -58,12 +58,12 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         this.webSessionFactory = webSessionFactory;
     }
 
-    public boolean isPreferHttpSessionStorage() {
-        return preferHttpSessionStorage;
+    public boolean isUseJSecuritySessions() {
+        return useJSecuritySessions;
     }
 
-    public void setPreferHttpSessionStorage( boolean preferHttpSessionStorage ) {
-        this.preferHttpSessionStorage = preferHttpSessionStorage;
+    public void setUseJSecuritySessions( boolean useJSecuritySessions ) {
+        this.useJSecuritySessions = useJSecuritySessions;
     }
 
     void assertSecurityManager() {
@@ -88,7 +88,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     public void init() {
         assertSecurityManager();
-        if ( !isPreferHttpSessionStorage() ) {
+        if ( isUseJSecuritySessions() ) {
             ensureWebSessionFactory();
         }
     }
@@ -171,19 +171,16 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
      */
     protected Session getSession( ServletRequest request, ServletResponse response ) {
 
-        if ( !isPreferHttpSessionStorage() ) {
-            WebSessionFactory webSessionFactory = getWebSessionFactory();
+        WebSessionFactory webSessionFactory = getWebSessionFactory();
 
-            if ( webSessionFactory == null ) {
-                String msg = "webSessionFactory property must be set when using JSecurity sessions.  This is done by " +
-                    "default during the init() method.  Please ensure init() is called before using this instance.";
-                throw new IllegalStateException( msg );
-            }
-
-            return webSessionFactory.getSession( request, response );
-        } else {
-            return null;
+        if ( webSessionFactory == null ) {
+            String msg = "webSessionFactory property must be set when using JSecurity sessions.  This is done by " +
+                "default during the init() method.  Please ensure init() is called before using this instance.";
+            throw new IllegalStateException( msg );
         }
+
+        return webSessionFactory.getSession( request, response );
+
     }
 
     public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response ) {
@@ -192,12 +189,16 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         //underlying SecurityContext so it can be used (instead of the SecurityContext implementation creating a brand
         //new one the first time it is requested):
 
-        Session session = getSession( request, response );
+        Session session = null;
+
+        if ( isUseJSecuritySessions() ) {
+            session = getSession( request, response );
+        }
 
         SecurityContext sc = null;
 
         try {
-            //Create a dummy context with the acquired session and bind it to the thread.  The next method call uses
+            //Create a dummy context with any acquired session and bind it to the thread.  The next method call uses
             //code that expects an SC to be bound to the thread.
             sc = createSecurityContext( request, response, null, false, session );
             ThreadContext.bind( sc );
@@ -210,6 +211,19 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         }
 
         return sc;
+    }
+
+    protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
+        List allPrincipals = securityContext.getAllPrincipals();
+        if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
+            HttpSession httpSession = toHttp(request).getSession();
+            httpSession.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
+            if ( securityContext.isAuthenticated() ) {
+                httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
+            } else {
+                httpSession.removeAttribute( AUTHENTICATED_SESSION_KEY );
+            }
+        }
     }
 
 }

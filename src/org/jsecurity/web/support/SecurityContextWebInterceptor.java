@@ -32,7 +32,6 @@ import org.jsecurity.web.WebInterceptor;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * Builds a {@link org.jsecurity.context.SecurityContext SecurityContext} based on a web request and makes it
@@ -56,15 +55,6 @@ public class SecurityContextWebInterceptor extends DefaultWebSecurityContextFact
             ThreadContext.bind( sc );
         }
         return true;
-    }
-
-    protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
-        HttpSession httpSession = toHttp(request).getSession();
-        List allPrincipals = securityContext.getAllPrincipals();
-        if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
-            httpSession.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
-        }
-        httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
     }
 
     public void postHandle( ServletRequest request, ServletResponse response )
