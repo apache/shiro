@@ -121,7 +121,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
                 getClass().getName() + ".getSecurityManager() method to retrieve it from a custom location.";
             throw new IllegalStateException( msg );
         }
-        return null;
+        return securityManager;
     }
 
     protected WebInterceptor createWebInterceptor() throws Exception {
