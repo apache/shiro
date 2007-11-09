@@ -23,7 +23,7 @@
          for details on this convention -->
     <property name="major.version" value="0"/>
     <property name="minor.version" value="2"/>
-    <property name="patch.version" value="0-PR1"/>
+    <property name="patch.version" value="0-RC1"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
     
     <!-- application-wide config files: (all other config files should be in a respective
@@ -239,7 +239,7 @@
 			<link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
             <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
             <link href="http://quartz.sourceforge.net/javadoc/"/>
-            <link href="http://www.springframework.org/docs/api/"/>
+            <link href="http://static.springframework.org/spring/docs/2.0.x/api/"/>
             <link href="http://ehcache.sourceforge.net/javadoc/"/>
         </javadoc>
 
