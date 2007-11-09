@@ -24,14 +24,13 @@
  */
 package org.jsecurity.web.support;
 
+import org.jsecurity.JSecurityException;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.InvalidSecurityContextException;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * Builds a {@link org.jsecurity.context.SecurityContext SecurityContext} based on a web request and makes it
@@ -64,18 +63,7 @@ public class SecurityContextWebInterceptor extends DefaultWebSecurityContextFact
         if ( securityContext != null ) {
             try {
                 bindForSubsequentRequests( request, response, securityContext );
-            } catch ( InvalidSecurityContextException e ) {
-                HttpSession httpSession = toHttp(request).getSession(false);
-                if ( httpSession != null ) {
-                    try {
-                        httpSession.removeAttribute( PRINCIPALS_SESSION_KEY );
-                        httpSession.removeAttribute( AUTHENTICATED_SESSION_KEY );
-                    } catch ( Exception e1 ) {
-                        if ( log.isTraceEnabled() ) {
-                            log.trace( "Unable to successfully clean http session for invalid security context.", e1); 
-                        }
-                    }
-                }
+            } catch ( JSecurityException e ) {
                 if ( log.isTraceEnabled() ) {
                     log.trace( "SecurityContext was invalidated during the request - returning quietly (a new " +
                         "one will be created on the next request)." );

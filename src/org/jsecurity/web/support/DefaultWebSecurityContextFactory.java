@@ -2,15 +2,12 @@ package org.jsecurity.web.support;
 
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSecurityContextFactory;
 import org.jsecurity.web.WebSessionFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -37,7 +34,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     protected WebSessionFactory webSessionFactory = null;
 
-    private boolean useJSecuritySessions = true;
+    private boolean useJSecuritySessions = false;
 
     public DefaultWebSecurityContextFactory() {
     }
@@ -75,67 +72,66 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
     }
 
     void ensureWebSessionFactory() {
-        if ( getWebSessionFactory() == null ) {
+
+        WebSessionFactory factory = getWebSessionFactory();
+
+        if ( factory == null ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Initializing default WebSessionFactory instance..." );
+                log.debug( "No WebSessionFactory configured.  Initializing default WebSessionFactory instance..." );
             }
 
-            SecurityManager securityManager = getSecurityManager();
-            DefaultWebSessionFactory dwsf = new DefaultWebSessionFactory( securityManager );
-            setWebSessionFactory( dwsf );
+            if ( isUseJSecuritySessions() ) {
+                SecurityManager securityManager = getSecurityManager();
+                if ( securityManager == null ) {
+                    String msg = "The SessionManager property must be set when using JSecurity Sessions.";
+                    throw new IllegalStateException( msg );
+                }
+                factory = new DefaultWebSessionFactory( securityManager );
+            } else {
+                factory = new HttpContainerWebSessionFactory();
+            }
+            setWebSessionFactory( factory );
         }
     }
 
     public void init() {
         assertSecurityManager();
-        if ( isUseJSecuritySessions() ) {
-            ensureWebSessionFactory();
-        }
+        ensureWebSessionFactory();
     }
 
-    protected List getPrincipals( ServletRequest servletRequest ) {
+    protected List getPrincipals( Session session ) {
         List principals = null;
 
-        HttpSession httpSession = toHttp( servletRequest ).getSession( false );
-        if ( httpSession != null ) {
-            principals = (List)httpSession.getAttribute( PRINCIPALS_SESSION_KEY );
+        if ( session != null ) {
+            principals = (List)session.getAttribute( PRINCIPALS_SESSION_KEY );
         }
 
         return principals;
     }
 
-    protected List getPrincipals( ServletRequest servletRequest, ServletResponse servletResponse ) {
-        return getPrincipals( servletRequest );
+    protected List getPrincipals( ServletRequest servletRequest, ServletResponse servletResponse, Session existing ) {
+        return getPrincipals( existing );
     }
 
-    protected boolean isAuthenticated( ServletRequest servletRequest ) {
+    protected boolean isAuthenticated( Session session ) {
         Boolean value = null;
 
-        HttpSession httpSession = toHttp( servletRequest ).getSession( false );
-        if ( httpSession != null ) {
-            value = (Boolean)httpSession.getAttribute( AUTHENTICATED_SESSION_KEY );
+        if ( session != null ) {
+            value = (Boolean)session.getAttribute( AUTHENTICATED_SESSION_KEY );
         }
 
         return value != null && value;
     }
 
-    protected boolean isAuthenticated( ServletRequest servletRequest, ServletResponse servletResponse ) {
-        return isAuthenticated( servletRequest );
+    protected boolean isAuthenticated( ServletRequest servletRequest, ServletResponse servletResponse, Session existing ) {
+        return isAuthenticated( existing );
     }
-
-    protected SecurityContext createSecurityContext( List principals, boolean authenticated,
-                                                     InetAddress inetAddress, Session session,
-                                                     SecurityManager securityManager ) {
-        return new DelegatingSecurityContext( principals, authenticated, inetAddress, session, securityManager );
-    }
-
+    
     protected SecurityContext createSecurityContext( ServletRequest request,
                                                      ServletResponse response,
                                                      List principals,
                                                      boolean authenticated,
                                                      Session existing ) {
-        SecurityContext securityContext;
-
         SecurityManager securityManager = getSecurityManager();
 
         if ( securityManager == null ) {
@@ -148,14 +144,15 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
         InetAddress inetAddress = getInetAddress( request );
 
-        securityContext = createSecurityContext( principals, authenticated, inetAddress, existing, securityManager );
-
-        return securityContext;
+        WebSecurityContext sc = new WebSecurityContext( principals, authenticated, inetAddress,
+                                                        existing, securityManager, request );
+        sc.setUseJSecuritySessions( isUseJSecuritySessions() );
+        return sc;
     }
 
     public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response, Session existing ) {
-        List principals = getPrincipals( request, response );
-        boolean authenticated = isAuthenticated( request, response );
+        List principals = getPrincipals( request, response, existing );
+        boolean authenticated = isAuthenticated( request, response, existing );
         return createSecurityContext( request, response, principals, authenticated, existing );
     }
 
@@ -170,58 +167,29 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
      * @return the raw {@link Session session} associated with the request, or <tt>null</tt> if there isn't one.
      */
     protected Session getSession( ServletRequest request, ServletResponse response ) {
-
         WebSessionFactory webSessionFactory = getWebSessionFactory();
-
         if ( webSessionFactory == null ) {
-            String msg = "webSessionFactory property must be set when using JSecurity sessions.  This is done by " +
-                "default during the init() method.  Please ensure init() is called before using this instance.";
+            String msg = "The webSessionFactory property must be set.  This is done by " +
+                       "default during the init() method.  Please ensure init() is called before using this instance.";
             throw new IllegalStateException( msg );
         }
-
         return webSessionFactory.getSession( request, response );
-
     }
 
     public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response ) {
-
-        //if there is a raw JSecurity Session already associated with the request, ensure it is passed along to the 
-        //underlying SecurityContext so it can be used (instead of the SecurityContext implementation creating a brand
-        //new one the first time it is requested):
-
-        Session session = null;
-
-        if ( isUseJSecuritySessions() ) {
-            session = getSession( request, response );
-        }
-
-        SecurityContext sc = null;
-
-        try {
-            //Create a dummy context with any acquired session and bind it to the thread.  The next method call uses
-            //code that expects an SC to be bound to the thread.
-            sc = createSecurityContext( request, response, null, false, session );
-            ThreadContext.bind( sc );
-
-            //this is the call the requires a thread-bound SC:
-            sc = createSecurityContext( request, response, session );
-        } finally {
-            //remove the dummy in any case:
-            ThreadContext.unbindSecurityContext();
-        }
-
-        return sc;
+        Session session = getSession( request, response );
+        return createSecurityContext( request, response, session );
     }
 
     protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
         List allPrincipals = securityContext.getAllPrincipals();
         if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
-            HttpSession httpSession = toHttp(request).getSession();
-            httpSession.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
+            Session session = securityContext.getSession();
+            session.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
             if ( securityContext.isAuthenticated() ) {
-                httpSession.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
+                session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
             } else {
-                httpSession.removeAttribute( AUTHENTICATED_SESSION_KEY );
+                session.removeAttribute( AUTHENTICATED_SESSION_KEY );
             }
         }
     }

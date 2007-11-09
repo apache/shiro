@@ -31,14 +31,22 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
      * request processing.
      */
     public static final String EXPIRED_SESSION_KEY = JSecurityHttpServletRequest.class.getName() + "_EXPIRED_SESSION_KEY";
-    
+
     protected ServletContext servletContext = null;
 
     protected HttpSession session = null;
 
-    public JSecurityHttpServletRequest( HttpServletRequest wrapped, ServletContext servletContext ) {
+    protected boolean useJSecuritySessions = true;
+
+    public JSecurityHttpServletRequest( HttpServletRequest wrapped, ServletContext servletContext,
+                                        boolean useJSecuritySessions ) {
         super( wrapped );
         this.servletContext = servletContext;
+        this.useJSecuritySessions = useJSecuritySessions;
+    }
+
+    public boolean isUseJSecuritySessions() {
+        return useJSecuritySessions;
     }
 
     public String getRemoteUser() {
@@ -46,10 +54,12 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
         Object scPrincipal = getSecurityContextPrincipal();
         if ( scPrincipal != null ) {
             if ( scPrincipal instanceof Principal ) {
-                remoteUser = ((Principal)scPrincipal).getName();
+                remoteUser = ( (Principal)scPrincipal ).getName();
             } else {
                 remoteUser = scPrincipal.toString();
             }
+        } else {
+            remoteUser = super.getRemoteUser();
         }
         return remoteUser;
     }
@@ -69,7 +79,11 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     public boolean isUserInRole( String s ) {
         SecurityContext sc = getSecurityContext();
-        return ( sc != null && sc.hasRole( s ) );
+        boolean inRole = ( sc != null && sc.hasRole( s ) );
+        if ( !inRole ) {
+            inRole = super.isUserInRole( s );
+        }
+        return inRole;
     }
 
     public Principal getUserPrincipal() {
@@ -81,52 +95,83 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
             } else {
                 userPrincipal = new ObjectPrincipal( scPrincipal );
             }
+        } else {
+            userPrincipal = super.getUserPrincipal();
         }
         return userPrincipal;
     }
 
     public String getRequestedSessionId() {
-        Object sessionId = getAttribute( REFERENCED_SESSION_ID );
-        if ( sessionId != null ) {
-            return sessionId.toString();
+        String requestedSessionId = null;
+
+        if ( isUseJSecuritySessions() ) {
+            Object sessionId = getAttribute( REFERENCED_SESSION_ID );
+            if ( sessionId != null ) {
+                requestedSessionId = sessionId.toString();
+            }
         } else {
-            return null;
+            requestedSessionId = super.getRequestedSessionId();
         }
+
+        return requestedSessionId;
     }
 
     public HttpSession getSession( boolean create ) {
-        if ( this.session == null ) {
 
-            boolean existing = getSecurityContext().getSession( false ) != null;
+        HttpSession httpSession = null;
 
-            Session jsecSession = getSecurityContext().getSession( create );
-            if ( jsecSession != null ) {
-                this.session = new JSecurityHttpSession( jsecSession, this, this.servletContext );
-                if ( !existing ) {
-                    setAttribute( REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+        if ( isUseJSecuritySessions() ) {
+
+            if ( this.session == null ) {
+
+                boolean existing = getSecurityContext().getSession( false ) != null;
+
+                Session jsecSession = getSecurityContext().getSession( create );
+                if ( jsecSession != null ) {
+                    this.session = new JSecurityHttpSession( jsecSession, this, this.servletContext );
+                    if ( !existing ) {
+                        setAttribute( REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+                    }
                 }
             }
+            httpSession = this.session;
+        } else {
+            httpSession = super.getSession( create );
         }
-        return this.session;
+
+        return httpSession;
     }
+
 
     public HttpSession getSession() {
         return getSession( true );
     }
 
     public boolean isRequestedSessionIdValid() {
-        Boolean value = (Boolean)getAttribute( REFERENCED_SESSION_ID_IS_VALID );
-        return ( value != null && value.equals( Boolean.TRUE ) );
+        if ( isUseJSecuritySessions() ) {
+            Boolean value = (Boolean)getAttribute( REFERENCED_SESSION_ID_IS_VALID );
+            return ( value != null && value.equals( Boolean.TRUE ) );
+        } else {
+            return super.isRequestedSessionIdValid();
+        }
     }
 
     public boolean isRequestedSessionIdFromCookie() {
-        String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
-        return value != null && value.equals( COOKIE_SESSION_ID_SOURCE );
+        if ( isUseJSecuritySessions() ) {
+            String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
+            return value != null && value.equals( COOKIE_SESSION_ID_SOURCE );
+        } else {
+            return super.isRequestedSessionIdFromCookie();
+        }
     }
 
     public boolean isRequestedSessionIdFromURL() {
-        String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
-        return value != null && value.equals( URL_SESSION_ID_SOURCE );
+        if ( isUseJSecuritySessions() ) {
+            String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
+            return value != null && value.equals( URL_SESSION_ID_SOURCE );
+        } else {
+            return super.isRequestedSessionIdFromURL();
+        }
     }
 
     public boolean isRequestedSessionIdFromUrl() {

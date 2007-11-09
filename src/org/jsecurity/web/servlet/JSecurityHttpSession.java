@@ -2,6 +2,7 @@ package org.jsecurity.web.servlet;
 
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.web.support.WebSession;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
@@ -44,6 +45,11 @@ public class JSecurityHttpSession implements HttpSession {
     protected Session session = null; //'real' JSecurity Session
 
     public JSecurityHttpSession( Session session, HttpServletRequest currentRequest, ServletContext servletContext ) {
+        if ( session instanceof WebSession ) {
+            String msg = "Session constructor argument cannot be an instance of WebSession.  This is enforced to " +
+                "prevent circular dependencies and infinite loops.";
+            throw new IllegalArgumentException( msg );
+        }
         this.session = session;
         this.currentRequest = currentRequest;
         this.servletContext = servletContext;
