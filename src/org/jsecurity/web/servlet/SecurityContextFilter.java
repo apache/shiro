@@ -45,9 +45,9 @@ import java.io.IOException;
  */
 public class SecurityContextFilter extends WebInterceptorFilter {
 
-    public static final String USE_JSECURITY_SESSIONS_PARAM_NAME = "useJSecuritySessions"; //default is true
+    public static final String USE_JSECURITY_SESSIONS_PARAM_NAME = "useJSecuritySessions";
 
-    protected boolean useJSecuritySessions = true;
+    protected boolean useJSecuritySessions = false;
 
     protected boolean getBoolean( String paramName, boolean defaultValue ) {
         boolean value = defaultValue;
@@ -88,11 +88,17 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         throws IOException, ServletException {
         HttpServletRequest request = toHttp(servletRequest);
         HttpServletResponse response = toHttp(servletResponse);
-        if ( isUseJSecuritySessions() ) {
-            ServletContext servletContext = getFilterConfig().getServletContext();
-            request = new JSecurityHttpServletRequest( request, servletContext );
+
+        ServletContext servletContext = getFilterConfig().getServletContext();
+
+        boolean useJSecuritySessions = isUseJSecuritySessions();
+        request = new JSecurityHttpServletRequest( request, servletContext, useJSecuritySessions );
+        //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  If not using
+        //JSecurity sessions, there is no need for this to be wrapped:
+        if ( useJSecuritySessions ) {
             response = new JSecurityHttpServletResponse( response, servletContext, (JSecurityHttpServletRequest)request );
         }
+
         ThreadContext.bind( request );
         ThreadContext.bind( response );
 
