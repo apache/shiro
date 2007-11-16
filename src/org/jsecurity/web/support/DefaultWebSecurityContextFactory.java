@@ -87,8 +87,14 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
                     throw new IllegalStateException( msg );
                 }
                 factory = new DefaultWebSessionFactory( securityManager );
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "JSecurity Sessions are enabled.  Using a DefaultWebSessionFactory." );
+                }
             } else {
                 factory = new HttpContainerWebSessionFactory();
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "JSecurity Sessions are not enabled.  Using a HttpContainerWebSessionFactory." );
+                }
             }
             setWebSessionFactory( factory );
         }
@@ -173,7 +179,15 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
                        "default during the init() method.  Please ensure init() is called before using this instance.";
             throw new IllegalStateException( msg );
         }
-        return webSessionFactory.getSession( request, response );
+        Session session = webSessionFactory.getSession( request, response );
+        if ( log.isTraceEnabled() ) {
+            if ( session != null ) {
+                log.trace( "webSessionFactory returned a Session instance of type [" + session.getClass().getName() + "]");
+            } else {
+                log.trace( "webSessionFactory did not return a Session instance." );
+            }
+        }
+        return session;
     }
 
     public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response ) {
