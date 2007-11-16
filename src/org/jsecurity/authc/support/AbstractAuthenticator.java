@@ -38,7 +38,6 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.bind.SecurityContextBinder;
 import org.jsecurity.context.bind.support.ThreadLocalSecurityContextBinder;
 import org.jsecurity.context.factory.SecurityContextFactory;
-import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
 import org.jsecurity.util.Initializable;
 
 /**
@@ -68,7 +67,7 @@ import org.jsecurity.util.Initializable;
  * <p>During a subject's (a.k.a. user's) successful login attempt, a <tt>SecurityContext</tt> is created for that user
  * by a {@link SecurityContextFactory}.  <b>This factory must be set as a property of this class</b>, either via the
  * setter method, or provided by subclasses during initialization.  Most implementors will
- * want to use a {@link DelegatingSecurityContextFactory} or roll their own.
+ * want to use a {@link org.jsecurity.context.factory.support.DelegatingSecurityContextFactory} or roll their own.
  *
  * <p>Once a <tt>SecurityContext</tt> is created for a successfully authenticated subject (a.k.a. 'user'), it is
  * first <em>bound</em> to the application for convenient access and then returned to the {@link #authenticate}
