@@ -35,18 +35,17 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     protected ServletContext servletContext = null;
 
     protected HttpSession session = null;
-
-    protected boolean useJSecuritySessions = true;
+    protected boolean webSessions = true;
 
     public JSecurityHttpServletRequest( HttpServletRequest wrapped, ServletContext servletContext,
-                                        boolean useJSecuritySessions ) {
+                                        boolean webSessions ) {
         super( wrapped );
         this.servletContext = servletContext;
-        this.useJSecuritySessions = useJSecuritySessions;
+        this.webSessions = webSessions;
     }
 
-    public boolean isUseJSecuritySessions() {
-        return useJSecuritySessions;
+    public boolean isWebSessions() {
+        return webSessions;
     }
 
     public String getRemoteUser() {
@@ -103,14 +102,13 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     public String getRequestedSessionId() {
         String requestedSessionId = null;
-
-        if ( isUseJSecuritySessions() ) {
+        if ( isWebSessions() ) {
+            requestedSessionId = super.getRequestedSessionId();
+        } else {
             Object sessionId = getAttribute( REFERENCED_SESSION_ID );
             if ( sessionId != null ) {
                 requestedSessionId = sessionId.toString();
             }
-        } else {
-            requestedSessionId = super.getRequestedSessionId();
         }
 
         return requestedSessionId;
@@ -120,8 +118,9 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
         HttpSession httpSession = null;
 
-        if ( isUseJSecuritySessions() ) {
-
+        if ( isWebSessions() ) {
+            httpSession = super.getSession( create );
+        } else {
             if ( this.session == null ) {
 
                 boolean existing = getSecurityContext().getSession( false ) != null;
@@ -135,8 +134,6 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
                 }
             }
             httpSession = this.session;
-        } else {
-            httpSession = super.getSession( create );
         }
 
         return httpSession;
@@ -148,29 +145,29 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     public boolean isRequestedSessionIdValid() {
-        if ( isUseJSecuritySessions() ) {
+        if ( isWebSessions() ) {
+            return super.isRequestedSessionIdValid();
+        } else {
             Boolean value = (Boolean)getAttribute( REFERENCED_SESSION_ID_IS_VALID );
             return ( value != null && value.equals( Boolean.TRUE ) );
-        } else {
-            return super.isRequestedSessionIdValid();
         }
     }
 
     public boolean isRequestedSessionIdFromCookie() {
-        if ( isUseJSecuritySessions() ) {
+        if ( isWebSessions() ) {
+            return super.isRequestedSessionIdFromCookie();
+        } else {
             String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
             return value != null && value.equals( COOKIE_SESSION_ID_SOURCE );
-        } else {
-            return super.isRequestedSessionIdFromCookie();
         }
     }
 
     public boolean isRequestedSessionIdFromURL() {
-        if ( isUseJSecuritySessions() ) {
+        if ( isWebSessions() ) {
+            return super.isRequestedSessionIdFromURL();
+        } else {
             String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
             return value != null && value.equals( URL_SESSION_ID_SOURCE );
-        } else {
-            return super.isRequestedSessionIdFromURL();
         }
     }
 
