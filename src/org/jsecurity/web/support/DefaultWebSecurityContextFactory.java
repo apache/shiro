@@ -34,7 +34,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     protected WebSessionFactory webSessionFactory = null;
 
-    private boolean useJSecuritySessions = false;
+    private boolean webSessions = true;
 
     public DefaultWebSecurityContextFactory() {
     }
@@ -55,12 +55,12 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         this.webSessionFactory = webSessionFactory;
     }
 
-    public boolean isUseJSecuritySessions() {
-        return useJSecuritySessions;
+    public boolean isWebSessions() {
+        return this.webSessions;
     }
 
-    public void setUseJSecuritySessions( boolean useJSecuritySessions ) {
-        this.useJSecuritySessions = useJSecuritySessions;
+    public void setWebSessions( boolean webSessions ) {
+        this.webSessions = webSessions;
     }
 
     void assertSecurityManager() {
@@ -80,7 +80,12 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
                 log.debug( "No WebSessionFactory configured.  Initializing default WebSessionFactory instance..." );
             }
 
-            if ( isUseJSecuritySessions() ) {
+            if ( isWebSessions() ) {
+                factory = new HttpContainerWebSessionFactory();
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "JSecurity Sessions are not enabled.  Using a HttpContainerWebSessionFactory." );
+                }
+            } else {
                 SecurityManager securityManager = getSecurityManager();
                 if ( securityManager == null ) {
                     String msg = "The SessionManager property must be set when using JSecurity Sessions.";
@@ -89,11 +94,6 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
                 factory = new DefaultWebSessionFactory( securityManager );
                 if ( log.isDebugEnabled() ) {
                     log.debug( "JSecurity Sessions are enabled.  Using a DefaultWebSessionFactory." );
-                }
-            } else {
-                factory = new HttpContainerWebSessionFactory();
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "JSecurity Sessions are not enabled.  Using a HttpContainerWebSessionFactory." );
                 }
             }
             setWebSessionFactory( factory );
@@ -152,7 +152,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
         WebSecurityContext sc = new WebSecurityContext( principals, authenticated, inetAddress,
                                                         existing, securityManager, request );
-        sc.setUseJSecuritySessions( isUseJSecuritySessions() );
+        sc.setWebSessions( isWebSessions() );
         return sc;
     }
 

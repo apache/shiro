@@ -55,7 +55,7 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
         this.webInterceptor = webInterceptor;
     }
 
-    public void init() throws Exception {
+    public void onFilterConfigSet() throws Exception {
         WebInterceptor interceptor = createWebInterceptor();
         if ( interceptor == null ) {
             String msg = "WebInterceptor returned by createWebInterceptor() method returned null.";
@@ -63,7 +63,7 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
         }
         setWebInterceptor( interceptor );
 
-        onInit();
+        onWebInterceptorSet();
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class WebInterceptorFilter extends OncePerRequestFilter {
      *
      * @throws Exception in the case of an error
      */
-    protected void onInit() throws Exception {
+    protected void onWebInterceptorSet() throws Exception {
         if ( log.isTraceEnabled() ) {
             log.trace( "onInit called." );
         }

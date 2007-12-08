@@ -57,23 +57,21 @@ import java.util.List;
  * @since 0.2
  * @author Les Hazlewood
  */
-public class SecurityManagerLoader {
+public class SecurityManagerLoader extends ServletContextSupport {
 
     public static final String SECURITY_MANAGER_CONTEXT_KEY = SecurityManagerLoader.class.getName() + "_SECURITY_MANAGER";
 
     protected final transient Log log = LogFactory.getLog( getClass() );
 
-    private ServletContext servletContext = null;
-
     private SecurityManager securityManager = null;
     private boolean securityManagerImplicitlyCreated = false;
 
-    public ServletContext getServletContext() {
-        return servletContext;
-    }
-
-    public void setServletContext( ServletContext servletContext ) {
-        this.servletContext = servletContext;
+    public void init() {
+        if ( getServletContext() == null ) {
+            throw new IllegalStateException( "servletContext property must be set." );
+        }
+        applySessionMode();
+        ensureSecurityManager();
     }
 
     public void ensureSecurityManager() {
@@ -86,6 +84,9 @@ public class SecurityManagerLoader {
     }
 
     protected void bindToServletContext( SecurityManager securityManager ) {
+        if ( securityManager == null ) {
+            throw new IllegalArgumentException( "securityManager argument cannot be null." );
+        }
         ServletContext servletContext = getServletContext();
         if ( servletContext == null ) {
             String msg = "ServletContext property must be set via the setServletContext method.";
@@ -102,6 +103,13 @@ public class SecurityManagerLoader {
     protected SecurityManager createSecurityManager() {
         DefaultSecurityManager defaultSecMgr = new DefaultSecurityManager();
         this.securityManagerImplicitlyCreated = true;
+
+        if ( !getSessionMode().equals(WEB_SESSION_MODE) ) {
+            // not using web-only sessions - need JSecurity's more robust Session support,
+            // so make sure the SessionManagement infrastructure is eagerly initialized w/ the 
+            // SecurityManager to catch errors early:
+            defaultSecMgr.setLazySessions( false );
+        }
 
         List<Realm> realms = getRealms();
 

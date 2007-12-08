@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class WebSecurityContext extends DelegatingSecurityContext {
 
-    private boolean useJSecuritySessions = false;
+    private boolean webSessions = true;
     private ServletRequest servletRequest = null;
 
     public WebSecurityContext( boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager, ServletRequest request ) {
@@ -35,18 +35,16 @@ public class WebSecurityContext extends DelegatingSecurityContext {
         this.servletRequest = request;
     }
 
-    public boolean isUseJSecuritySessions() {
-        return useJSecuritySessions;
+    public boolean isWebSessions() {
+        return this.webSessions;
     }
 
-    public void setUseJSecuritySessions( boolean useJSecuritySessions ) {
-        this.useJSecuritySessions = useJSecuritySessions;
+    public void setWebSessions(boolean webSessions) {
+        this.webSessions = webSessions;
     }
 
     public Session getSession( boolean create ) {
-        if ( isUseJSecuritySessions() ) {
-            return super.getSession( create );
-        } else {
+        if ( isWebSessions() ) {
             assertValid();
             if ( this.session == null ) {
                 if ( !( this.servletRequest instanceof HttpServletRequest ) ) {
@@ -59,6 +57,8 @@ public class WebSecurityContext extends DelegatingSecurityContext {
                 }
             }
             return this.session;
+        } else {
+            return super.getSession( create );
         }
     }
 }

@@ -17,7 +17,6 @@ package org.jsecurity.web.servlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.web.support.SecurityWebSupport;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -37,7 +36,7 @@ import java.io.IOException;
  * @author Juergen Hoeller
  * @since 06.12.2003
  */
-public abstract class OncePerRequestFilter extends SecurityWebSupport implements Filter {
+public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter {
 
     /**
 	 * Suffix that gets appended to the filter name for the
@@ -56,6 +55,7 @@ public abstract class OncePerRequestFilter extends SecurityWebSupport implements
 
     public void setFilterConfig( FilterConfig filterConfig ) {
         this.filterConfig = filterConfig;
+        setServletContext( filterConfig.getServletContext() );
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class OncePerRequestFilter extends SecurityWebSupport implements
     public final void init( FilterConfig filterConfig ) throws ServletException {
         setFilterConfig( filterConfig );
         try {
-            init();
+            onFilterConfigSet();
         } catch ( Exception e ) {
             if ( e instanceof ServletException ) {
                 throw (ServletException)e;
@@ -86,6 +86,8 @@ public abstract class OncePerRequestFilter extends SecurityWebSupport implements
             }
         }
     }
+
+    protected abstract void onFilterConfigSet() throws Exception;
 
     /**
 	 * This <code>doFilter</code> implementation stores a request attribute for

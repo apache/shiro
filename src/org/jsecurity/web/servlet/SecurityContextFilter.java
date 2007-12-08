@@ -36,18 +36,13 @@ import java.io.IOException;
 
 /**
  * Filter that is used to ensure a {@link org.jsecurity.context.SecurityContext} is made available to the application
- * on every request.  It must be subclassed to retrieve a <tt>SecurityManager</tt> instance in an
- * application-dependent manner (e.g. from Spring, from the subclass directly, etc).
+ * on every request.
  *
  * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
 public class SecurityContextFilter extends WebInterceptorFilter {
-
-    public static final String USE_JSECURITY_SESSIONS_PARAM_NAME = "useJSecuritySessions";
-
-    protected boolean useJSecuritySessions = false;
 
     protected boolean getBoolean( String paramName, boolean defaultValue ) {
         boolean value = defaultValue;
@@ -76,26 +71,18 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         return value;
     }
 
-    protected boolean isUseJSecuritySessions() {
-        return useJSecuritySessions;
-    }
-
-    protected void onInit() throws Exception {
-        this.useJSecuritySessions = getBoolean( USE_JSECURITY_SESSIONS_PARAM_NAME, false );
-    }
-
     public void doFilterInternal( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain )
         throws IOException, ServletException {
-        HttpServletRequest request = toHttp(servletRequest);
-        HttpServletResponse response = toHttp(servletResponse);
+        HttpServletRequest request = (HttpServletRequest)servletRequest;
+        HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        ServletContext servletContext = getFilterConfig().getServletContext();
+        ServletContext servletContext = getServletContext();
 
-        boolean useJSecuritySessions = isUseJSecuritySessions();
-        request = new JSecurityHttpServletRequest( request, servletContext, useJSecuritySessions );
-        //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  If not using
-        //JSecurity sessions, there is no need for this to be wrapped:
-        if ( useJSecuritySessions ) {
+        boolean webSessions = isUseWebSessions();
+        request = new JSecurityHttpServletRequest( request, servletContext, webSessions );
+        //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
+        //using JSecurity sessions (i.e. not simple HttpSession based sessions):
+        if ( !webSessions ) {
             response = new JSecurityHttpServletResponse( response, servletContext, (JSecurityHttpServletRequest)request );
         }
 
@@ -134,7 +121,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
         SecurityManager securityManager = getSecurityManager();
         interceptor.setSecurityManager( securityManager );
-        interceptor.setUseJSecuritySessions( isUseJSecuritySessions() );
+        interceptor.setUseJSecuritySessions( !isUseWebSessions() );
         interceptor.init();
         return interceptor;
     }

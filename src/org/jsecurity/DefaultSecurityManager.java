@@ -109,6 +109,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     protected SessionManager sessionManager;
     private boolean sessionManagerImplicitlyCreated = false;
 
+    private boolean lazySessions = true;
+
     protected CacheProvider cacheProvider = null;
     private boolean cacheProviderImplicitlyCreated = false;
 
@@ -175,6 +177,43 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         init();
     }
 
+    /**
+     * Returns whether or not the SessionManagement infrastructure will be lazily initialized upon the first session
+     * request.  If this returns <tt>true</tt>, the SessionManagement infrastructure will not be initialized until the
+     * first request for a session occurs.  If <tt>false</tt>, the SessionManagement infrastructure will be
+     * eagerly initialized when this SecurityManager instance is initialized.
+     *
+     * <p>The default value is <strong><tt>true</tt></strong> to slightly increase application startup times.
+     * If you require JSecurity Sessions in your app (as would be the case when not a pure web-app or Session
+     * state must be accessible by many clients) it is usually better to set this value to <tt>false</tt> to eagerly
+     * initialize, ensuring initial session access will be fast and any configuration settings will be verified on
+     * application startup instead of being discovered at a later point.
+     *
+     * @return <tt>true</tt> if the SessionManagement infrastructure will be lazily initialized based on the first
+     * request for a session, <tt>false</tt> if it will be eagerly initialized at the same time as this SecurityManager.
+     */
+    public boolean isLazySessions() {
+        return lazySessions;
+    }
+
+    /**
+     * Sets whether or not the SessionManagement infrastructure will be lazily initialized upon the first session
+     * request.  If <tt>true</tt>, the SessionManagement infrastructure will not be initialized until the
+     * first request for a session occurs.  If <tt>false</tt>, the SessionManagement infrastructure will be
+     * eagerly initialized when this SecurityManager instance is initialized.
+     *
+     * <p>The default value is <strong><tt>true</tt></strong> to slightly increase application startup times.
+     * If you require JSecurity Sessions in your app (as would be the case when not a pure web-app or Session
+     * state must be accessible by many clients) it is usually better to set this value to <tt>false</tt> to eagerly
+     * initialize, ensuring initial session access will be fast and any configuration settings will be verified on 
+     * application startup instead of being discovered at a later point.
+     *
+     * @param lazySessions value indicating if the SessionManagement infrastructure will be lazily initialized
+     * (value of true) or eagerly initialized (value of false)
+     */
+    public void setLazySessions(boolean lazySessions) {
+        this.lazySessions = lazySessions;
+    }
 
     protected void ensureSessionFactory() {
         if ( this.sessionFactory == null ) {
@@ -195,7 +234,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
                             "Defaulting to the default SessionManager implementation." );
                     }
                     
-                    initCacheProvider();
+                    ensureCacheProvider();
 
                     DefaultSessionManager sessionManager = new DefaultSessionManager( getCacheProvider() );
                     setSessionManager( sessionManager );
@@ -217,7 +256,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         assertSessionFactoryEventListenerSupport( this.sessionFactory );
     }
 
-    protected void initCacheProvider() {
+    protected synchronized void ensureCacheProvider() {
         //only create one if one hasn't been explicitly set by the instantiator
         CacheProvider cacheProvider = getCacheProvider();
         if ( cacheProvider == null ) {
@@ -252,8 +291,11 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
 
             PropertiesRealm propsRealm = null;
 
+            ensureCacheProvider();
+
             try {
                 propsRealm = new PropertiesRealm();
+                propsRealm.setCacheProvider( getCacheProvider() );
                 propsRealm.init();
             } catch ( Exception e ) {
                 destroy( propsRealm );
@@ -298,6 +340,10 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         ensureRealms();
         initAuthenticator();
         initAuthorizer();
+        if ( !isLazySessions() ) {
+            //start SessionManagement infrastructure now:
+            ensureSessionFactory();
+        }
     }
 
     private void destroy( Destroyable d ) {
@@ -430,8 +476,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     }
 
     public boolean remove( SessionEventListener listener ) {
-        ensureSessionFactory();
-        return ((SessionEventListenerRegistry)this.sessionFactory).remove( listener );
+        return this.sessionFactory != null && ((SessionEventListenerRegistry) this.sessionFactory).remove(listener);
     }
 
     /**
@@ -442,6 +487,9 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
      * @since 0.2
      */
     public void setRealm( Realm realm ) {
+        if ( realm == null ) {
+            throw new IllegalArgumentException( "Realm argument cannot be null" );
+        }
         List<Realm> realms = new ArrayList<Realm>( 1 );
         realms.add( realm );
         setRealms( realms );
@@ -453,6 +501,12 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
      * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
      */
     public void setRealms( List<Realm> realms ) {
+        if ( realms == null ) {
+            throw new IllegalArgumentException( "Realms collection argument cannot be null." );
+        }
+        if ( realms.isEmpty() ) {
+            throw new IllegalArgumentException( "Realms collection argument cannot be empty." );
+        }
         this.realmMap = new LinkedHashMap<String, Realm>( realms.size() );
 
         for ( Realm realm : realms ) {
@@ -578,12 +632,16 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     }
 
     public Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException {
-        ensureSessionFactory();
+        if ( sessionFactory == null ) {
+            ensureSessionFactory();
+        }
         return sessionFactory.start( hostAddress );
     }
 
     public Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException {
-        ensureSessionFactory();
+        if ( sessionFactory == null ) {
+            ensureSessionFactory();
+        }
         return sessionFactory.getSession( sessionId );
     }
 }
