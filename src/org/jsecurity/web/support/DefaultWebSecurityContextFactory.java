@@ -8,6 +8,8 @@ import org.jsecurity.web.WebSessionFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -152,7 +154,6 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
         WebSecurityContext sc = new WebSecurityContext( principals, authenticated, inetAddress,
                                                         existing, securityManager, request );
-        sc.setWebSessions( isWebSessions() );
         return sc;
     }
 
@@ -198,7 +199,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
     protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
         List allPrincipals = securityContext.getAllPrincipals();
         if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
-            Session session = securityContext.getSession();
+            HttpSession session = ((HttpServletRequest)request).getSession();
             session.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
             if ( securityContext.isAuthenticated() ) {
                 session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );

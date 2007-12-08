@@ -55,7 +55,7 @@ public class ServletContextSupport {
         }
     }
 
-    protected boolean isUseWebSessions() {
+    protected boolean isWebSessions() {
         return getSessionMode().equals( WEB_SESSION_MODE );
     }
 }

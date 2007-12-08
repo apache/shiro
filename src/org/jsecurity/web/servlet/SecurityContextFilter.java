@@ -78,7 +78,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
 
         ServletContext servletContext = getServletContext();
 
-        boolean webSessions = isUseWebSessions();
+        boolean webSessions = isWebSessions();
         request = new JSecurityHttpServletRequest( request, servletContext, webSessions );
         //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
         //using JSecurity sessions (i.e. not simple HttpSession based sessions):
@@ -121,7 +121,7 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
         SecurityManager securityManager = getSecurityManager();
         interceptor.setSecurityManager( securityManager );
-        interceptor.setUseJSecuritySessions( !isUseWebSessions() );
+        interceptor.setWebSessions( isWebSessions() );
         interceptor.init();
         return interceptor;
     }
