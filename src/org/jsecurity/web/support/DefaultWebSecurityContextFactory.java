@@ -2,14 +2,13 @@ package org.jsecurity.web.support;
 
 import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.web.WebSecurityContextFactory;
 import org.jsecurity.web.WebSessionFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -149,12 +148,9 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
             throw new IllegalStateException( message );
         }
 
-
         InetAddress inetAddress = getInetAddress( request );
 
-        WebSecurityContext sc = new WebSecurityContext( principals, authenticated, inetAddress,
-                                                        existing, securityManager, request );
-        return sc;
+        return new DelegatingSecurityContext( principals, authenticated, inetAddress, existing, securityManager );
     }
 
     public SecurityContext createSecurityContext( ServletRequest request, ServletResponse response, Session existing ) {
@@ -199,7 +195,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
     protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
         List allPrincipals = securityContext.getAllPrincipals();
         if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
-            HttpSession session = ((HttpServletRequest)request).getSession();
+            Session session = securityContext.getSession();
             session.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
             if ( securityContext.isAuthenticated() ) {
                 session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );

@@ -111,7 +111,7 @@ public abstract class AbstractWebSessionFactory extends SecurityWebSupport imple
             }
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Request JSecurity Session is invalid, message: [" + ise.getMessage() + "]." );
+                log.trace( "Request Session is invalid, message: [" + ise.getMessage() + "]." );
             }
             session = handleInvalidSession( request, response, ise );
         }
@@ -133,7 +133,7 @@ public abstract class AbstractWebSessionFactory extends SecurityWebSupport imple
         InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
         Session s = start( request, response, clientAddress );
         if ( log.isTraceEnabled() ) {
-            log.trace( "Started new JSecurity Session with id [" + s.getSessionId() );
+            log.trace( "Started new Session with id [" + s.getSessionId() );
         }
         return s;
     }

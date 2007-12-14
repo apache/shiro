@@ -47,7 +47,7 @@ public class WebSession implements Session {
     }
 
     public Date getStopTimestamp() {
-        return null; //TODO - anything to return here?
+        return null;
     }
 
     public Date getLastAccessTime() {
