@@ -60,7 +60,8 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
 
     protected final transient Log log = LogFactory.getLog( getClass() );
 
-    private SessionManager sessionManager = null;
+    protected SessionManager sessionManager = null;
+    private boolean sessionManagerImplicitlyCreated = false;
 
     public DefaultSessionFactory(){}
 
@@ -69,13 +70,17 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
         init();
     }
 
-    public void setSessionManager( SessionManager sessionManager ) {
-        if ( !(sessionManager instanceof SessionEventListenerRegistry ) ) {
+    private void assertSessionManagerEventListenerRegistry() {
+        if ( !(this.sessionManager instanceof SessionEventListenerRegistry ) ) {
             String msg = "The " + getClass().getName() + " implementation requires its underlying SessionManager " +
                 "instance to implement the SessionEventListenerRegistry interface for listener registration " +
                 "propagation.";
             throw new IllegalArgumentException( msg );
         }
+    }
+
+    public void setSessionManager( SessionManager sessionManager ) {
+        assertSessionManagerEventListenerRegistry();
         this.sessionManager = sessionManager;
     }
 
@@ -92,11 +97,12 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
             String msg = "sessionManager property must be set";
             throw new IllegalStateException( msg );
         }
+        assertSessionManagerEventListenerRegistry();
     }
 
     public Session start( InetAddress hostAddress )
         throws HostUnauthorizedException, IllegalArgumentException {
-
+        
         Serializable sessionId = sessionManager.start( hostAddress );
         return new DelegatingSession( sessionManager, sessionId );
     }

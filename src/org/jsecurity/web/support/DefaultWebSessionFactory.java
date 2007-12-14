@@ -24,13 +24,12 @@
  */
 package org.jsecurity.web.support;
 
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
+import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.session.event.SessionEvent;
-import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistry;
-import org.jsecurity.session.event.StartedSessionEvent;
+import org.jsecurity.session.SessionManager;
+import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
@@ -48,7 +47,9 @@ import java.net.InetAddress;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultWebSessionFactory extends AbstractWebSessionFactory implements SessionEventListener {
+public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
+
+    private boolean enforceSessionOnGet = false;
 
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be
@@ -59,15 +60,37 @@ public class DefaultWebSessionFactory extends AbstractWebSessionFactory implemen
     protected CookieStore<Serializable> cookieSessionIdStore = null;
     protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
-    protected SessionFactory sessionFactory = null; //'real' underlying session factory for accessing/starting sessions
-
-    public DefaultWebSessionFactory( SessionFactory sessionFactory ) {
-        setSessionFactory( sessionFactory );
-        init();
+    public DefaultWebSessionFactory() {
     }
 
-    public void setSessionFactory( SessionFactory sessionFactory ) {
-        this.sessionFactory = sessionFactory;
+    public DefaultWebSessionFactory( SessionManager sessionManager ) {
+        super( sessionManager );
+    }
+
+    /**
+     * Returns the current session enforcement policy for the
+     * {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+     * method - please see that method's JavaDoc for usage information.
+     *
+     * <p>The default value is <tt>false</tt>.
+     *
+     * @return the current session enforcement policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
+     *
+     */
+    public boolean isEnforceSessionOnGet() {
+        return enforceSessionOnGet;
+    }
+
+    /**
+     * Specifies session enforcemnt policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+     * method - please see that method's JavaDoc for usage information.
+     *
+     * <p>The default value is <tt>false</tt>.
+     *
+     * @param enforceSessionOnGet the session enforcement policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
+     */
+    public void setEnforceSessionOnGet( boolean enforceSessionOnGet ) {
+        this.enforceSessionOnGet = enforceSessionOnGet;
     }
 
     public CookieStore<Serializable> getCookieSessionIdStore() {
@@ -127,6 +150,12 @@ public class DefaultWebSessionFactory extends AbstractWebSessionFactory implemen
         this.validateRequestOrigin = validateRequestOrigin;
     }
 
+    public void init() {
+        super.init();
+        ensureCookieSessionIdStore();
+        ensureRequestParamSessionIdStore();
+    }
+
     protected void ensureCookieSessionIdStore() {
         CookieStore<Serializable> cookieStore = getCookieSessionIdStore();
         if ( cookieStore == null ) {
@@ -141,50 +170,6 @@ public class DefaultWebSessionFactory extends AbstractWebSessionFactory implemen
         if ( reqParamStore == null ) {
             reqParamStore = new RequestParamStore<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
             setReqParamSessionIdStore( reqParamStore );
-        }
-    }
-
-    public void init() {
-        ensureCookieSessionIdStore();
-        ensureRequestParamSessionIdStore();
-        if ( this.sessionFactory == null ) {
-            String msg = "The sessionFactory property must be set.";
-            throw new IllegalStateException( msg );
-        }
-        if ( !( this.sessionFactory instanceof SessionEventListenerRegistry ) ) {
-            String msg = "The " + getClass().getName() + " implementation expects its underlying SessionFactory " +
-                "instance to implement the " + SessionEventListenerRegistry.class.getName() + " class for " +
-                "event listener support.  This is required to ensure Session ID cookies can be created and sent to " +
-                "the browser instantly after a session is created.";
-            throw new IllegalArgumentException( msg );
-        }
-        ( (SessionEventListenerRegistry)this.sessionFactory ).add( this );
-    }
-
-    public void onEvent( SessionEvent event ) {
-        if ( event instanceof StartedSessionEvent ) {
-            //ensure the cookie is created and sent back to the browser:
-            StartedSessionEvent startedEvent = (StartedSessionEvent)event;
-
-            Serializable sessionId = startedEvent.getSessionId();
-            ServletRequest request = ThreadContext.getServletRequest();
-            ServletResponse response = ThreadContext.getServletResponse();
-
-            if ( request == null ) {
-                String msg = "A ServletRequest must be bound to the current thread for session id's to be bound " +
-                    "for subsequent requests.  Please ensure a JSecurity filter exists prior to the request being " +
-                    "processed to ensure the request/response pair are bound to the request-processing thread.";
-                throw new IllegalStateException( msg );
-            }
-            if ( response == null ) {
-                String msg = "A ServletResponse must be bound to the current thread for session id's to be bound " +
-                    "for subsequent requests.  Please ensure a JSecurity filter exists prior to the request being " +
-                    "processed to ensure the request/response pair are bound to the request-processing thread.";
-                throw new IllegalStateException( msg );
-            }
-
-            storeSessionId( sessionId, request, response );
-            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
         }
     }
 
@@ -257,7 +242,7 @@ public class DefaultWebSessionFactory extends AbstractWebSessionFactory implemen
 
         if ( sessionId != null ) {
             request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
-            session = this.sessionFactory.getSession( sessionId );
+            session = getSession( sessionId );
             if ( isValidateRequestOrigin() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Validating request origin against session origin" );
@@ -278,7 +263,101 @@ public class DefaultWebSessionFactory extends AbstractWebSessionFactory implemen
 
     }
 
+    public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
+        return start( ThreadContext.getServletRequest(), ThreadContext.getServletResponse(), hostAddress );
+    }
+
+    /**
+     * Starts a brand new Session, associates it with the specified request, and makes that session available for
+     * future requests via a Cookie or URL rewriting as specified by the Servlet Specification.
+     *
+     * @param request incoming ServletRequest
+     * @param response outgoing ServletResponse
+     * @return a new Session for the specified request/response pair.
+     */
+    public Session start( ServletRequest request, ServletResponse response ) {
+        InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
+        Session s = start( request, response, clientAddress );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Started new Session with id [" + s.getSessionId() );
+        }
+        return s;
+    }
+
     protected Session start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
-        return this.sessionFactory.start( inetAddress );
+        Session s = super.start( inetAddress );
+        storeSessionId( s.getSessionId(), request, response );
+        request.removeAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE );
+        request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+        return s;
+    }
+
+    /**
+     * Returns the Session associated with the specified request, <tt>null</tt>, or a new Session, depending on the
+     * enforcement policy in effect as specified by the {@link #setEnforceSessionOnGet(boolean) enforceSessionOnGet}
+     * property.
+     *
+     * <p>This method implementation functions as follows:</p>
+     *
+     * <ol>
+     *   <li>If the the incoming <tt>request</tt> references a valid, non-expired session, it will be returned
+     *       immediately</li>
+     *   <li>If the incoming <tt>request</tt> references an invalid, expired, or non-existent Session, and the
+     *       <tt>enforceSessionOnGet</tt> property is <tt>true</tt>, then a new Session will be created via the
+     *       {@link #start(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method and returned.</li>
+     *   <li>If the incoming <tt>request</tt> references an invalid, expired or non-existent Session, and the
+     *       <tt>enforceSessionOnGet</tt> property is <tt>false</tt>, then <tt>null</tt> is returned.</li>
+     * </ol>
+     *
+     * <p>The default value of <tt>enforceSessionOnGet</tt> is <tt>true</tt> to guarantee a Session for an
+     * HttpRequest if one is desired.
+     *
+     * @param request  incoming servlet request
+     * @param response outgoing servlet response
+     * @return the Session associated with the incoming request, <tt>null</tt> or a new Session, depending on the
+     * {@link #setEnforceSessionOnGet(boolean) enforceSessionOnGet} policy in effect.
+     * @throws org.jsecurity.session.InvalidSessionException if the associated Session has expired prior to invoking this method.
+     * @throws org.jsecurity.authz.AuthorizationException  if the caller is not authorized to access the session associated with the request.
+     */
+    public final Session getSession( ServletRequest request, ServletResponse response )
+        throws InvalidSessionException, AuthorizationException {
+
+        Session session = null;
+        try {
+            session = doGetSession( request, response );
+            if ( session == null && isEnforceSessionOnGet() ) {
+                session = start( request, response );
+            }
+        } catch ( InvalidSessionException ise ) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Request Session is invalid, message: [" + ise.getMessage() + "]." );
+            }
+            session = handleInvalidSession( request, response, ise );
+        }
+
+        return session;
+    }
+
+    protected Session handleInvalidSession( ServletRequest request,
+                                            ServletResponse response,
+                                            InvalidSessionException ise ) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Handling invalid session associated with the request." );
+        }
+
+        Session session = null;
+
+        if ( isEnforceSessionOnGet() ) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Configured to create a new session on invalid session - attempting to start a new session..." );
+            }
+            session = start( request, response );
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Configured to _not_ start a new session after an invalid session - returning null." );
+            }
+        }
+
+        return session;
     }
 }
