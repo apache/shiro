@@ -42,7 +42,6 @@ public class SecurityManagerListener extends SecurityManagerLoader implements Se
 
     public void contextInitialized( ServletContextEvent event ) {
         setServletContext( event.getServletContext() );
-        onServletContextAvailable();
         init();
     }
 
@@ -50,6 +49,4 @@ public class SecurityManagerListener extends SecurityManagerLoader implements Se
         destroySecurityManager();
         setServletContext( null );
     }
-
-    protected void onServletContextAvailable(){}
 }

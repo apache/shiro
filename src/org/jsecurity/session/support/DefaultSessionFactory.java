@@ -30,7 +30,7 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistry;
+import org.jsecurity.session.event.SessionEventNotifier;
 import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
@@ -56,7 +56,7 @@ import java.net.InetAddress;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class DefaultSessionFactory implements SessionFactory, SessionEventListenerRegistry, Initializable {
+public class DefaultSessionFactory implements SessionFactory, SessionEventNotifier, Initializable {
 
     protected final transient Log log = LogFactory.getLog( getClass() );
 
@@ -71,9 +71,9 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
     }
 
     private void assertSessionManagerEventListenerRegistry() {
-        if ( !(this.sessionManager instanceof SessionEventListenerRegistry ) ) {
+        if ( !(this.sessionManager instanceof SessionEventNotifier) ) {
             String msg = "The " + getClass().getName() + " implementation requires its underlying SessionManager " +
-                "instance to implement the SessionEventListenerRegistry interface for listener registration " +
+                "instance to implement the SessionEventNotifier interface for listener registration " +
                 "propagation.";
             throw new IllegalArgumentException( msg );
         }
@@ -85,11 +85,11 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
     }
 
     public void add( SessionEventListener listener ) {
-        ((SessionEventListenerRegistry)this.sessionManager).add( listener );
+        ((SessionEventNotifier)this.sessionManager).add( listener );
     }
 
     public boolean remove( SessionEventListener listener ) {
-        return ((SessionEventListenerRegistry)this.sessionManager).remove( listener );
+        return ((SessionEventNotifier)this.sessionManager).remove( listener );
     }
 
     public void init() {

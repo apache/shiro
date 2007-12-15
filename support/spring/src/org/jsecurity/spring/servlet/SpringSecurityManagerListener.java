@@ -5,8 +5,6 @@ import org.jsecurity.web.servlet.SecurityManagerListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.ServletContext;
-
 /**
  * TODO class JavaDoc
  *
@@ -27,16 +25,16 @@ public class SpringSecurityManagerListener extends SecurityManagerListener {
         this.securityManagerBeanName = securityManagerBeanName;
     }
 
-    public void onServletContextAvailable() {
+    public void init() {
         String beanName = getServletContext().getInitParameter( SECURITY_MANAGER_BEAN_NAME_PARAM_NAME );
         if ( beanName != null ) {
             setSecurityManagerBeanName( beanName );
         }
+        super.init();
     }
 
     public SecurityManager getSecurityManager() {
-        ServletContext sc = getServletContext();
-        ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext( sc );
+        ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext( getServletContext() );
         return (SecurityManager)appCtx.getBean( getSecurityManagerBeanName() );
     }
 }

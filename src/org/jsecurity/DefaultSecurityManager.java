@@ -40,12 +40,9 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.support.file.PropertiesRealm;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
-import org.jsecurity.session.SessionManager;
+import org.jsecurity.session.*;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistry;
+import org.jsecurity.session.event.SessionEventNotifier;
 import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.session.support.DefaultSessionManager;
 import org.jsecurity.util.Destroyable;
@@ -85,7 +82,7 @@ import java.util.*;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class DefaultSecurityManager implements SecurityManager, SessionEventListenerRegistry, CacheProviderAware, Initializable, Destroyable {
+public class DefaultSecurityManager implements SecurityManager, SessionEventNotifier, SessionFactoryAware, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -414,10 +411,11 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     }
 
     private void assertSessionFactoryEventListenerSupport( SessionFactory factory ) {
-        if ( !(factory instanceof SessionEventListenerRegistry ) ) {
+        if ( !(factory instanceof SessionEventNotifier) ) {
             String msg = "The " + getClass().getName() + " implementation requires its underlying SessionFactory " +
-                "instance to implement the " + SessionEventListenerRegistry.class.getName() + " interface for " +
-                "session event listener support during runtime.";
+                "instance to implement the " + SessionEventNotifier.class.getName() + " interface so any " +
+                "of its registered SessionEventListeners can be passed to the Notifier for runtime SessionEvent " +
+                "support.";
             throw new IllegalArgumentException( msg );
         }
     }
@@ -448,6 +446,10 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         this.sessionFactory = sessionFactory;
     }
 
+    public SessionFactory getSessionFactory() {
+        return this.sessionFactory;
+    }
+
     /**
      * Used to construct a default internal {@link SessionFactory} delegate instance if one is not explicitly set
      * in configuration via the {@link #setSessionFactory} method.
@@ -455,11 +457,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
      * <p>If a <tt>SessionFactory</tt> instance <em>is</em> set via {@link #setSessionFactory}, then this property is
      * ignored.
      *
-     * <p><b>N.B.</b>: It is usually a good idea to set this property and <em>not</em> set the <tt>SessionFactory</tt>
-     * instance explicitly unless you have a good reason to do so.
-     *
-     * @param sessionManager the <tt>SessionManager</tt> used to create an internal <tt>SessionFactory</tt> if one is
-     *                       not already provided via configuration.
+     * @param sessionManager the <tt>SessionManager</tt> used to create an internal default <tt>SessionFactory</tt> if
+     *                       one is not already provided via configuration.
      * @see #setSessionFactory
      */
     public void setSessionManager( SessionManager sessionManager ) {
@@ -472,11 +471,11 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
 
     public void add( SessionEventListener listener ) {
         ensureSessionFactory();
-        ((SessionEventListenerRegistry)this.sessionFactory).add( listener );
+        ((SessionEventNotifier)this.sessionFactory).add( listener );
     }
 
     public boolean remove( SessionEventListener listener ) {
-        return this.sessionFactory != null && ((SessionEventListenerRegistry) this.sessionFactory).remove(listener);
+        return this.sessionFactory != null && ((SessionEventNotifier) this.sessionFactory).remove(listener);
     }
 
     /**

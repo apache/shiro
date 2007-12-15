@@ -4,6 +4,7 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.SessionFactoryAware;
 import org.jsecurity.web.WebSecurityContextFactory;
 import org.jsecurity.web.WebSessionFactory;
 
@@ -32,10 +33,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         DefaultWebSecurityContextFactory.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
     protected SecurityManager securityManager = null;
-
     protected WebSessionFactory webSessionFactory = null;
-
-    private boolean webSessions = true;
 
     public DefaultWebSecurityContextFactory() {
     }
@@ -56,54 +54,41 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         this.webSessionFactory = webSessionFactory;
     }
 
-    public boolean isWebSessions() {
-        return this.webSessions;
-    }
-
-    public void setWebSessions( boolean webSessions ) {
-        this.webSessions = webSessions;
-    }
-
-    void assertSecurityManager() {
-        SecurityManager securityManager = getSecurityManager();
-        if ( securityManager == null ) {
+    protected void assertSecurityManager() {
+        if ( getSecurityManager() == null ) {
             String msg = "SecurityManager property must be set.";
             throw new IllegalStateException( msg );
         }
     }
 
-    void ensureWebSessionFactory() {
+    protected void assertWebSessionFactory() {
+        if ( getWebSessionFactory() == null ) {
 
-        WebSessionFactory factory = getWebSessionFactory();
+            SecurityManager securityManager = getSecurityManager();
 
-        if ( factory == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No WebSessionFactory configured.  Initializing default WebSessionFactory instance..." );
-            }
-
-            if ( isWebSessions() ) {
-                factory = new HttpContainerWebSessionFactory();
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "JSecurity Sessions are not enabled.  Using a HttpContainerWebSessionFactory." );
-                }
-            } else {
-                SecurityManager securityManager = getSecurityManager();
-                if ( securityManager == null ) {
-                    String msg = "The SessionManager property must be set when using JSecurity Sessions.";
+            if ( securityManager instanceof SessionFactoryAware) {
+                Object sf = ((SessionFactoryAware)securityManager).getSessionFactory();
+                if ( !(sf instanceof WebSessionFactory ) ) {
+                    String msg = "The SessionFactory returned from SecurityManager.getSessionFactory() does " +
+                        "not implement the " + WebSessionFactory.class.getName() + " interface.  This is " +
+                        "required when running JSecurity in web environments.";
                     throw new IllegalStateException( msg );
                 }
-                factory = new DefaultWebSessionFactory( securityManager );
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "JSecurity Sessions are enabled.  Using a DefaultWebSessionFactory." );
-                }
+                setWebSessionFactory( (WebSessionFactory)sf );
+            } else {
+                String msg = "WebSessionFactory property is not set.  Because the SecurityManager does not " +
+                    "implement the " + SessionFactoryAware.class.getName() + " interface, JSecurity cannot try to " +
+                    "acquire the SessionFactory from the SecurityManager.";
+                throw new IllegalStateException( msg );
             }
-            setWebSessionFactory( factory );
+
+            throw new IllegalStateException( "WebSessionFactory property m ust be set." );
         }
     }
 
     public void init() {
         assertSecurityManager();
-        ensureWebSessionFactory();
+        assertWebSessionFactory();
     }
 
     protected List getPrincipals( Session session ) {

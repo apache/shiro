@@ -91,7 +91,7 @@ public interface AuthenticationInfo {
 
 
     /**
-     * Determines if the user's credentials (password) has expired and must be
+     * Determines if the user's credentials (e.g. password) has expired and must be
      * changed before login is allowed.
      *
      * @return true if the user's credentials are expired and the user should
