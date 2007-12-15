@@ -44,7 +44,7 @@ import java.net.InetAddress;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class UsernamePasswordToken implements InetAuthenticationToken, java.io.Serializable {
+public class UsernamePasswordToken implements InetAuthenticationToken {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
