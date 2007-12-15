@@ -264,7 +264,9 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     }
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        return start( ThreadContext.getServletRequest(), ThreadContext.getServletResponse(), hostAddress );
+        ServletRequest request = ThreadContext.getServletRequest();
+        ServletResponse response = ThreadContext.getServletResponse();
+        return start( request, response, hostAddress );
     }
 
     /**
@@ -322,7 +324,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     public final Session getSession( ServletRequest request, ServletResponse response )
         throws InvalidSessionException, AuthorizationException {
 
-        Session session = null;
+        Session session;
         try {
             session = doGetSession( request, response );
             if ( session == null && isEnforceSessionOnGet() ) {

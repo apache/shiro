@@ -43,7 +43,7 @@ import java.util.Date;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class AbstractSessionManager implements SessionManager, SessionEventListenerRegistry, Initializable {
+public abstract class AbstractSessionManager implements SessionManager, SessionEventNotifier, Initializable {
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;

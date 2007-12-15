@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.event.SessionEvent;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistry;
+import org.jsecurity.session.event.SessionEventNotifier;
 import org.jsecurity.session.event.SessionEventSender;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import java.util.List;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SimpleSessionEventSender implements SessionEventListenerRegistry, SessionEventSender {
+public class SimpleSessionEventSender implements SessionEventNotifier, SessionEventSender {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 

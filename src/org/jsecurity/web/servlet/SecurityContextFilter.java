@@ -27,6 +27,7 @@ package org.jsecurity.web.servlet;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
+import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
 import javax.servlet.*;
@@ -76,14 +77,12 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        ServletContext servletContext = getServletContext();
-
         boolean webSessions = isWebSessions();
-        request = new JSecurityHttpServletRequest( request, servletContext, webSessions );
+        request = new JSecurityHttpServletRequest( request, getServletContext(), webSessions );
         //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
         //using JSecurity sessions (i.e. not simple HttpSession based sessions):
         if ( !webSessions ) {
-            response = new JSecurityHttpServletResponse( response, servletContext, (JSecurityHttpServletRequest)request );
+            response = new JSecurityHttpServletResponse( response, getServletContext(), (JSecurityHttpServletRequest)request );
         }
 
         ThreadContext.bind( request );
@@ -121,8 +120,15 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
         SecurityManager securityManager = getSecurityManager();
         interceptor.setSecurityManager( securityManager );
-        interceptor.setWebSessions( isWebSessions() );
+        
+        ServletContext servletContext = getFilterConfig().getServletContext();
+        WebSessionFactory webSessionFactory = (WebSessionFactory)servletContext.getAttribute( SecurityManagerLoader.WEB_SESSION_FACTORY_CONTEXT_KEY );
+        if ( webSessionFactory != null ) {
+            interceptor.setWebSessionFactory( webSessionFactory );
+        }
+
         interceptor.init();
+
         return interceptor;
     }
 

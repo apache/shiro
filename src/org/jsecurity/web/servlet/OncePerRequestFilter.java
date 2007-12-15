@@ -15,9 +15,6 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.servlet.*;
 import java.io.IOException;
 
@@ -44,8 +41,6 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
 	 * @see #getAlreadyFilteredAttributeName
 	 */
 	public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
-
-    protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected FilterConfig filterConfig = null;
 
