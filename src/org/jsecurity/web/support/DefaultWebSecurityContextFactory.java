@@ -81,8 +81,8 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
                     "acquire the SessionFactory from the SecurityManager.";
                 throw new IllegalStateException( msg );
             }
-
-            throw new IllegalStateException( "WebSessionFactory property m ust be set." );
+        } else {
+            throw new IllegalStateException( "WebSessionFactory property must be set." );
         }
     }
 
