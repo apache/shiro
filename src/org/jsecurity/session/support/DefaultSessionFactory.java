@@ -80,8 +80,8 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventNotifi
     }
 
     public void setSessionManager( SessionManager sessionManager ) {
-        assertSessionManagerEventListenerRegistry();
         this.sessionManager = sessionManager;
+        assertSessionManagerEventListenerRegistry();
     }
 
     public void add( SessionEventListener listener ) {
