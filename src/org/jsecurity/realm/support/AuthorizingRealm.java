@@ -365,12 +365,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
-        String msg = "Subclasses must override this implementation as such checks are system-specific.";
+        String msg = "Subclasses must override this implementation as such checks are application-specific.";
         throw new UnsupportedOperationException( msg );
     }
 
     public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
-        String msg = "Subclasses must override this implementation as such checks are system-specific.";
+        String msg = "Subclasses must override this implementation as such checks are application-specific.";
         throw new UnsupportedOperationException( msg );
     }
 
