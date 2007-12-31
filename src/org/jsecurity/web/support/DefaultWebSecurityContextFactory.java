@@ -81,7 +81,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
                     "acquire the SessionFactory from the SecurityManager.";
                 throw new IllegalStateException( msg );
             }
-        } else {
+
             throw new IllegalStateException( "WebSessionFactory property must be set." );
         }
     }
@@ -93,11 +93,9 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     protected List getPrincipals( Session session ) {
         List principals = null;
-
         if ( session != null ) {
             principals = (List)session.getAttribute( PRINCIPALS_SESSION_KEY );
         }
-
         return principals;
     }
 
@@ -107,11 +105,9 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     protected boolean isAuthenticated( Session session ) {
         Boolean value = null;
-
         if ( session != null ) {
             value = (Boolean)session.getAttribute( AUTHENTICATED_SESSION_KEY );
         }
-
         return value != null && value;
     }
 
@@ -177,7 +173,7 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         return createSecurityContext( request, response, session );
     }
 
-    protected void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
+    public void bindForSubsequentRequests( ServletRequest request, ServletResponse response, SecurityContext securityContext ) {
         List allPrincipals = securityContext.getAllPrincipals();
         if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
             Session session = securityContext.getSession();

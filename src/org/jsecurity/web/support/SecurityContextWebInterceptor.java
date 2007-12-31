@@ -26,6 +26,7 @@ package org.jsecurity.web.support;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
 
@@ -42,7 +43,7 @@ import javax.servlet.ServletResponse;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class SecurityContextWebInterceptor extends DefaultWebSecurityContextFactory implements WebInterceptor {
+public class SecurityContextWebInterceptor extends DefaultWebSecurityContextFactory implements WebInterceptor, Initializable {
 
     public boolean preHandle( ServletRequest request, ServletResponse response ) throws Exception {
         //useful for a number of JSecurity components - do it in case this interceptor is the only one configured:

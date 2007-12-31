@@ -24,6 +24,8 @@
  */
 package org.jsecurity.spring.servlet;
 
+import org.jsecurity.SecurityManager;
+import org.jsecurity.web.WebSecurityManager;
 import org.jsecurity.web.servlet.SecurityContextFilter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -70,9 +72,9 @@ public class SpringSecurityContextFilter extends SecurityContextFilter {
         super.onFilterConfigSet();
     }
 
-    protected org.jsecurity.SecurityManager getSecurityManager() {
+    protected WebSecurityManager getSecurityManager() {
         ServletContext sc = getFilterConfig().getServletContext();
         ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext( sc );
-        return (org.jsecurity.SecurityManager)appCtx.getBean( getSecurityManagerBeanName() );
+        return (WebSecurityManager)appCtx.getBean( getSecurityManagerBeanName() );
     }
 }

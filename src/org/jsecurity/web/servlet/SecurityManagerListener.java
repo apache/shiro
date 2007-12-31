@@ -46,7 +46,7 @@ public class SecurityManagerListener extends SecurityManagerLoader implements Se
     }
 
     public void contextDestroyed( ServletContextEvent event ) {
-        destroySecurityManager();
+        destroy();
         setServletContext( null );
     }
 }

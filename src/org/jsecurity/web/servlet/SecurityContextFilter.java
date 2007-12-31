@@ -24,10 +24,9 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.SecurityManager;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
-import org.jsecurity.web.WebSessionFactory;
+import org.jsecurity.web.WebSecurityManager;
 import org.jsecurity.web.support.SecurityContextWebInterceptor;
 
 import javax.servlet.*;
@@ -45,31 +44,33 @@ import java.io.IOException;
  */
 public class SecurityContextFilter extends WebInterceptorFilter {
 
-    protected boolean getBoolean( String paramName, boolean defaultValue ) {
-        boolean value = defaultValue;
-
-        String stringValue = getFilterConfig().getInitParameter( paramName );
-        if ( stringValue != null ) {
-            stringValue = stringValue.trim();
-            if ( "".equals( stringValue ) ) {
-                if (log.isWarnEnabled() ) {
-                    log.warn( "Filter init param [" + paramName + "] does not have a " +
-                        "valid value (empty).  Defaulting to " + defaultValue + "." );
-                }
-            }
-            stringValue = stringValue.trim();
-
-            try {
-                value = Boolean.valueOf( stringValue );
-            } catch ( Exception e ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Filter init param [" + paramName + "] with value [" + stringValue + "] is not a valid " +
-                        "boolean value (true|false).  Defaulting to " + defaultValue + "." );
-                }
-            }
+    /**
+     * Default implementation pulls the WebSecurityContext instance from the ServletContext.  Subclasses can override to
+     * retrieve from a different location.
+     *
+     * @return the web application's WebSecurityManager.
+     */
+    protected WebSecurityManager getSecurityManager() {
+        ServletContext servletContext = getFilterConfig().getServletContext();
+        WebSecurityManager securityManager = (WebSecurityManager)servletContext.getAttribute( SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY);
+        if ( securityManager == null ) {
+            String msg = "no WebSecurityManager instance bound to the ServletContext under key [" +
+            SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY + "].  Please ensure that either the " +
+                SecurityManagerListener.class.getName() + " listener or the " +
+                SecurityManagerServlet.class.getName() + " servlet are configured in web.xml (easiest), or override the " +
+                getClass().getName() + ".getSecurityManager() method to retrieve it from a custom location.";
+            throw new IllegalStateException( msg );
         }
+        return securityManager;
+    }
 
-        return value;
+    protected WebInterceptor createWebInterceptor() throws Exception {
+        SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
+        WebSecurityManager webSecurityManager = getSecurityManager();
+        interceptor.setSecurityManager( webSecurityManager );
+        interceptor.setWebSessionFactory( webSecurityManager );
+        interceptor.init();
+        return interceptor;
     }
 
     public void doFilterInternal( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain )
@@ -77,11 +78,11 @@ public class SecurityContextFilter extends WebInterceptorFilter {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        boolean webSessions = isWebSessions();
-        request = new JSecurityHttpServletRequest( request, getServletContext(), webSessions );
+        boolean httpSessions = isHttpSessions();
+        request = new JSecurityHttpServletRequest( request, getServletContext(), httpSessions );
         //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
         //using JSecurity sessions (i.e. not simple HttpSession based sessions):
-        if ( !webSessions ) {
+        if ( !httpSessions ) {
             response = new JSecurityHttpServletResponse( response, getServletContext(), (JSecurityHttpServletRequest)request );
         }
 
@@ -95,43 +96,5 @@ public class SecurityContextFilter extends WebInterceptorFilter {
             ThreadContext.unbindServletResponse();
         }
     }
-
-    /**
-     * Default implementation pulls the SecurityContext instance from the ServletContext.  Subclasses can override to
-     * retrieve from a different location.
-     *
-     * @return the application's SecurityManager.
-     */
-    protected SecurityManager getSecurityManager() {
-        ServletContext servletContext = getFilterConfig().getServletContext();
-        SecurityManager securityManager = (SecurityManager)servletContext.getAttribute( SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY );
-        if ( securityManager == null ) {
-            String msg = "no SecurityManager instance bound to the ServletContext under key [" +
-            SecurityManagerLoader.SECURITY_MANAGER_CONTEXT_KEY + "].  Please ensure that either the " +
-                SecurityManagerListener.class.getName() + " listener or the " +
-                SecurityManagerServlet.class.getName() + " servlet are configured in web.xml (easiest), or override the " +
-                getClass().getName() + ".getSecurityManager() method to retrieve it from a custom location.";
-            throw new IllegalStateException( msg );
-        }
-        return securityManager;
-    }
-
-    protected WebInterceptor createWebInterceptor() throws Exception {
-        SecurityContextWebInterceptor interceptor = new SecurityContextWebInterceptor();
-        SecurityManager securityManager = getSecurityManager();
-        interceptor.setSecurityManager( securityManager );
-        
-        ServletContext servletContext = getFilterConfig().getServletContext();
-        WebSessionFactory webSessionFactory = (WebSessionFactory)servletContext.getAttribute( SecurityManagerLoader.WEB_SESSION_FACTORY_CONTEXT_KEY );
-        if ( webSessionFactory != null ) {
-            interceptor.setWebSessionFactory( webSessionFactory );
-        }
-
-        interceptor.init();
-
-        return interceptor;
-    }
-
-
 
 }

@@ -56,6 +56,10 @@ import java.util.concurrent.TimeUnit;
  * <p>Or, you may of course specify any other file path using the <tt>url:</tt>, <tt>file:</tt>, or <tt>classpath:</tt>
  * prefixes.</p>
  *
+ * <p>If none of these are specified, and the jsecurity-users.properties is not included at the root of the classpath,
+ * a default failsafe configuration will be used.  This is not recommended as it only contains a 'guest' user and role,
+ * which are probably of little value to most production applications.</p>
+ *
  * <p>The Properties format understood by this implementation must be written in as follows:
  *
  * <p>Each line's key/value pair represents either a user-to-role(s) mapping <em>or</em> a role-to-permission(s)
@@ -103,6 +107,7 @@ public class PropertiesRealm extends MemoryRealm implements Runnable {
     private static final String USERNAME_PREFIX = "user.";
     private static final String ROLENAME_PREFIX = "role.";
     private static final String DEFAULT_FILE_PATH = "classpath:jsecurity-users.properties";
+    private static final String FAILSAFE_FILE_PATH = "classpath:org/jsecurity/default-jsecurity-users.properties";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -121,7 +126,16 @@ public class PropertiesRealm extends MemoryRealm implements Runnable {
     ============================================*/
     public void init() {
         super.init();
-        reloadProperties();
+        try {
+            reloadProperties();
+        } catch (Exception e) {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Unable to find a jsecurity-users.properties file at location [" + this.filePath + "].  " +
+                        "Defaulting to JSecurity's failsafe properties file (Guest user only)." );
+            }
+            this.filePath = FAILSAFE_FILE_PATH;
+            reloadProperties();
+        }
         startReloadThread();
     }
 
