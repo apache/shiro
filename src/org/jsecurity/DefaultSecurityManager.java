@@ -82,7 +82,7 @@ import java.util.*;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class DefaultSecurityManager implements SecurityManager, SessionEventNotifier, SessionFactoryAware, CacheProviderAware, Initializable, Destroyable {
+public class DefaultSecurityManager implements SecurityManager, SessionEventNotifier, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -295,12 +295,19 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     ============================================*/
     private void assertSessionFactoryEventListenerSupport( SessionFactory factory ) {
         if ( !(factory instanceof SessionEventNotifier) ) {
-            String msg = "The " + getClass().getName() + " implementation requires its underlying SessionFactory " +
-                "instance to implement the " + SessionEventNotifier.class.getName() + " interface so any " +
-                "of its registered SessionEventListeners can be passed to the Notifier for runtime SessionEvent " +
-                "support.";
-            throw new IllegalArgumentException( msg );
+            String msg = "SessionEventListener registration failed:  The underlying SessionFactory instance of " +
+                    "type [" + factory.getClass().getName() + "] does not implement the " +
+                    SessionEventNotifier.class.getName() + " interface and therefore cannot support " +
+                    "runtime SessionEvent propagation.";
+            throw new IllegalStateException( msg );
         }
+    }
+
+    protected SessionFactory createSessionFactory() {
+        DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
+        sessionFactory.setCacheProvider( getCacheProvider() );
+        sessionFactory.init();
+        return sessionFactory;
     }
 
     protected void ensureSessionFactory() {
@@ -309,11 +316,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
                 log.info( "No delegate SessionFactory instance has been set as a property of this class.  Creating a " +
                         "default SessionFactory implementation..." );
             }
-
-            DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
-            sessionFactory.setCacheProvider( getCacheProvider() );
-            sessionFactory.init();
-
+            SessionFactory sessionFactory = createSessionFactory();
             setSessionFactory( sessionFactory );
             sessionFactoryImplicitlyCreated = true;
         }

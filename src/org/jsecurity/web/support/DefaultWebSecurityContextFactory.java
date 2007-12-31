@@ -4,7 +4,6 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactoryAware;
 import org.jsecurity.web.WebSecurityContextFactory;
 import org.jsecurity.web.WebSessionFactory;
 
@@ -63,26 +62,8 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
 
     protected void assertWebSessionFactory() {
         if ( getWebSessionFactory() == null ) {
-
-            SecurityManager securityManager = getSecurityManager();
-
-            if ( securityManager instanceof SessionFactoryAware) {
-                Object sf = ((SessionFactoryAware)securityManager).getSessionFactory();
-                if ( !(sf instanceof WebSessionFactory ) ) {
-                    String msg = "The SessionFactory returned from SecurityManager.getSessionFactory() does " +
-                        "not implement the " + WebSessionFactory.class.getName() + " interface.  This is " +
-                        "required when running JSecurity in web environments.";
-                    throw new IllegalStateException( msg );
-                }
-                setWebSessionFactory( (WebSessionFactory)sf );
-            } else {
-                String msg = "WebSessionFactory property is not set.  Because the SecurityManager does not " +
-                    "implement the " + SessionFactoryAware.class.getName() + " interface, JSecurity cannot try to " +
-                    "acquire the SessionFactory from the SecurityManager.";
-                throw new IllegalStateException( msg );
-            }
-
-            throw new IllegalStateException( "WebSessionFactory property must be set." );
+            String msg = "WebSessionFactory property must be set.";
+            throw new IllegalStateException( msg );
         }
     }
 

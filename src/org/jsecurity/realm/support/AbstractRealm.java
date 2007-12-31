@@ -57,7 +57,7 @@ public abstract class AbstractRealm implements Realm, CacheProviderAware {
     /**
      * The name of this realm.
      */
-    private String name = "Realm-" + INSTANCE_COUNT++ + "-[" + getClass().getName() + "]";
+    private String name = getClass().getName() + "-" + INSTANCE_COUNT++;
     
     private CacheProvider cacheProvider = null;
 
