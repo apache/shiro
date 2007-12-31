@@ -28,10 +28,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
+import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.SessionEventListener;
 import org.jsecurity.session.event.SessionEventNotifier;
+import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -42,85 +46,120 @@ import java.net.InetAddress;
  * {@link org.jsecurity.session.SessionManager SessionManager} method call.  That is, the
  * objects returned act as transparent proxies to the SessionManager responsible for all Sessions
  * in a system.
- *
+ * <p/>
  * <p>This transparent proxy/delegate technique allows the JSecurity support classes to
  * maintain a stateless architecture (i.e. similar to accessing a EJB Stateless Session Bean),
  * which is extremely efficient.  Any state to be maintained is the responsibility of the
  * SessionManager, not your application, thereby making your code much cleaner and more efficient.
- *
+ * <p/>
  * <p><tt>Sessions</tt> returned from this factory implementation are extremely lightweight and are
  * designed to be created as needed.  They should not be cached long-term in the
  * business/server tier (e.g. in an <tt>HttpSession</tt> or in some
  * private class {@link java.util.Map Map} attribute).
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
-public class DefaultSessionFactory implements SessionFactory, SessionEventNotifier, Initializable {
+public class DefaultSessionFactory implements SessionFactory, SessionEventNotifier, CacheProviderAware, Initializable, Destroyable {
 
-    protected final transient Log log = LogFactory.getLog( getClass() );
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     protected SessionManager sessionManager = null;
     private boolean sessionManagerImplicitlyCreated = false;
 
-    public DefaultSessionFactory(){}
+    protected CacheProvider cacheProvider;
 
-    public DefaultSessionFactory( SessionManager sessionManager ) {
-        setSessionManager( sessionManager );
-        init();
+    public DefaultSessionFactory() {
     }
 
-    private void assertSessionManagerEventListenerRegistry() {
-        if ( !(this.sessionManager instanceof SessionEventNotifier) ) {
-            String msg = "The " + getClass().getName() + " implementation requires its underlying SessionManager " +
-                "instance to implement the SessionEventNotifier interface for listener registration " +
-                "propagation.";
-            throw new IllegalArgumentException( msg );
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
+    public CacheProvider getCacheProvider() {
+        return cacheProvider;
+    }
+
+    public void setCacheProvider(CacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
+    }
+
+    private void assertSessionManagerEventNotifier() {
+        if (!(this.sessionManager instanceof SessionEventNotifier)) {
+            String msg = "The underlying SessionManager implementation [" +
+                    this.sessionManager.getClass().getName() + "] does not implement the " +
+                    SessionEventNotifier.class.getName() + " interface and therefore session events cannot " +
+                    "be propagated to registered listeners.  Please ensure this SessionnFactory instance is " +
+                    "injected with a SessionManager that supports this interface if you wish to register " +
+                    "for SessionEvents.";
+            throw new IllegalStateException(msg);
         }
     }
 
-    public void setSessionManager( SessionManager sessionManager ) {
-        this.sessionManager = sessionManager;
-        assertSessionManagerEventListenerRegistry();
+    public void add(SessionEventListener listener) {
+        assertSessionManagerEventNotifier();
+        ((SessionEventNotifier)this.sessionManager).add(listener);
     }
 
-    public void add( SessionEventListener listener ) {
-        ((SessionEventNotifier)this.sessionManager).add( listener );
+    public boolean remove(SessionEventListener listener) {
+        return this.sessionManager instanceof SessionEventNotifier &&
+               ((SessionEventNotifier) this.sessionManager).remove(listener);
     }
 
-    public boolean remove( SessionEventListener listener ) {
-        return ((SessionEventNotifier)this.sessionManager).remove( listener );
+    protected void ensureSessionManager() {
+        if (this.sessionManager == null) {
+            if (log.isInfoEnabled()) {
+                log.info("No SessionManager instance has been set as a property of this class.  " +
+                        "Defaulting to the default SessionManager implementation.");
+            }
+
+            DefaultSessionManager sessionManager = new DefaultSessionManager();
+            if ( getCacheProvider() != null ) {
+                sessionManager.setCacheProvider( getCacheProvider() );
+            }
+            sessionManager.init();
+            setSessionManager(sessionManager);
+            sessionManagerImplicitlyCreated = true;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Using configured SessionManager [" + sessionManager + "] for SessionFactory support.");
+            }
+        }
     }
 
     public void init() {
-        if ( this.sessionManager == null ) {
-            String msg = "sessionManager property must be set";
-            throw new IllegalStateException( msg );
-        }
-        assertSessionManagerEventListenerRegistry();
+        ensureSessionManager();
     }
 
-    public Session start( InetAddress hostAddress )
-        throws HostUnauthorizedException, IllegalArgumentException {
+    public void destroy() {
+        if ( this.sessionManagerImplicitlyCreated ) {
+            LifecycleUtils.destroy( this.sessionManager );
+            this.sessionManager = null;
+            this.sessionManagerImplicitlyCreated = false;
+        }
+    }
+
+    public Session start(InetAddress hostAddress)
+            throws HostUnauthorizedException, IllegalArgumentException {
         
-        Serializable sessionId = sessionManager.start( hostAddress );
-        return new DelegatingSession( sessionManager, sessionId );
+        Serializable sessionId = sessionManager.start(hostAddress);
+        return new DelegatingSession(sessionManager, sessionId);
     }
 
-    public Session getSession( Serializable sessionId )
-        throws InvalidSessionException, AuthorizationException {
+    public Session getSession(Serializable sessionId)
+            throws InvalidSessionException, AuthorizationException {
 
-        if ( sessionManager.isExpired( sessionId ) ) {
+        if (sessionManager.isExpired(sessionId)) {
             String msg = "Session with id [" + sessionId + "] has expired and may not " +
-                         "be used.";
-            throw new ExpiredSessionException( msg );
-        } else if ( sessionManager.isStopped( sessionId ) ) {
+                    "be used.";
+            throw new ExpiredSessionException(msg);
+        } else if (sessionManager.isStopped(sessionId)) {
             String msg = "Session with id [" + sessionId + "] has been stopped and may not " +
-                         "be used.";
-            throw new StoppedSessionException( msg );
+                    "be used.";
+            throw new StoppedSessionException(msg);
         }
 
-        return new DelegatingSession( sessionManager, sessionId );
+        return new DelegatingSession(sessionManager, sessionId);
     }
 
 }

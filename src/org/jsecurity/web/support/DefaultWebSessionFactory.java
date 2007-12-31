@@ -28,7 +28,6 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionManager;
 import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSessionFactory;
@@ -61,10 +60,6 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
     public DefaultWebSessionFactory() {
-    }
-
-    public DefaultWebSessionFactory( SessionManager sessionManager ) {
-        super( sessionManager );
     }
 
     /**

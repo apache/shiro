@@ -381,7 +381,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             } else {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "No AuthenticationEvent instance returned from " +
-                            "'createSuccessEvent' method call.  No successful authentication " +
+                            "'createSuccessEvent' method call.  No success " +
                             "event will be sent." );
                 }
             }

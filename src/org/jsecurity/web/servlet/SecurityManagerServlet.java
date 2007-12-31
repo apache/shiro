@@ -42,11 +42,11 @@ public class SecurityManagerServlet extends HttpServlet {
 
     public void init() throws ServletException {
         securityManagerLoader.setServletContext( getServletContext() );
-        securityManagerLoader.ensureSecurityManager();
+        securityManagerLoader.init();
     }
 
     public void destroy() {
-        this.securityManagerLoader.destroySecurityManager();
+        this.securityManagerLoader.destroy();
 
     }
 }

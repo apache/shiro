@@ -33,8 +33,7 @@ import javax.servlet.ServletResponse;
 
 /**
  * A <tt>WebSessionFactory</tt> can acquire application {@link org.jsecurity.session.Session session}s in the
- * Web tier via
- * {@link javax.servlet.ServletRequest ServletRequest}s.
+ * Web tier via {@link javax.servlet.ServletRequest ServletRequest}s.
  *
  * <p>Most implementations of this interface will act as a wrapper, delegating
  * actual session acquisition duties to an underlying JSecurity

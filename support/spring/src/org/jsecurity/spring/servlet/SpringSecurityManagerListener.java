@@ -1,6 +1,6 @@
 package org.jsecurity.spring.servlet;
 
-import org.jsecurity.SecurityManager;
+import org.jsecurity.web.WebSecurityManager;
 import org.jsecurity.web.servlet.SecurityManagerListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -33,8 +33,8 @@ public class SpringSecurityManagerListener extends SecurityManagerListener {
         super.init();
     }
 
-    public SecurityManager getSecurityManager() {
+    public WebSecurityManager getSecurityManager() {
         ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext( getServletContext() );
-        return (SecurityManager)appCtx.getBean( getSecurityManagerBeanName() );
+        return (WebSecurityManager)appCtx.getBean( getSecurityManagerBeanName() );
     }
 }
