@@ -123,6 +123,7 @@ public class SecurityManagerLoader extends ServletContextSupport {
     }
 
     public void destroy() {
+        removeAttribute( SECURITY_MANAGER_CONTEXT_KEY );
         if ( this.securityManagerImplicitlyCreated) {
             LifecycleUtils.destroy( this.securityManager);
             this.securityManager = null;
