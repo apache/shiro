@@ -72,9 +72,26 @@ public class SpringSecurityContextFilter extends SecurityContextFilter {
         super.onFilterConfigSet();
     }
 
+    private void assertWebSecurityManager( Object secMgrBean ) {
+        if ( secMgrBean == null ) {
+            String msg = "There is no " + WebSecurityManager.class.getName() + " instance bound in in the " +
+                    "Spring WebApplicationContext under the name of '" + getSecurityManagerBeanName() + "'."  +
+                    "  Please ensure that such a bean exists, or you can change which bean is accessed by " +
+                    "setting the " + getClass().getName() + "#SecurityManagerBeanName attribute.";
+            throw new IllegalStateException( msg );
+        }
+        if ( !(secMgrBean instanceof WebSecurityManager)) {
+            String msg = "The " + getClass().getName() + " class requires the web application's " +
+                    "SecurityManager instance to be of type [" + WebSecurityManager.class.getName() + " ].";
+            throw new IllegalStateException( msg );
+        }
+    }
+
     protected WebSecurityManager getSecurityManager() {
         ServletContext sc = getFilterConfig().getServletContext();
         ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext( sc );
-        return (WebSecurityManager)appCtx.getBean( getSecurityManagerBeanName() );
+        Object secMgrBean = appCtx.getBean( getSecurityManagerBeanName() );
+        assertWebSecurityManager( secMgrBean );
+        return (WebSecurityManager)secMgrBean;
     }
 }
