@@ -140,10 +140,6 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     /**
      * Returns the InetAddress associated with the client who created/is interacting with this SecurityContext.
-     * <p/>
-     * <p>The default implementation attempts to get the InetAddress from a thread local for use in server-side
-     * environments.  Subclasses can override this method to retrieve the InetAddress from somewhere else (for
-     * example, as a system property in a standalone application, or an applet parameter for an applet).
      *
      * @return the InetAddress associated with the client who created/is interacting with this SecurityContext.
      */
