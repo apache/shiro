@@ -174,13 +174,6 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
             String msg = "sessionClass property has not been set";
             throw new IllegalStateException( msg );
         }
-        if ( sessionEventSender == null ) {
-            if ( log.isInfoEnabled() ) {
-                String msg = "sessionEventSender property has not been set.  SessionEvents will " +
-                             "not be propagated.";
-                log.info( msg );
-            }
-        }
     }
 
     protected SessionEvent createStartEvent( Session session ) {
