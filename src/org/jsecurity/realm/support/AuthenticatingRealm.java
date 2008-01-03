@@ -44,8 +44,6 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
-    ============================================*//*--------------------------------------------
-    |         C O N S T R U C T O R S           |
     ============================================*/
     public AuthenticatingRealm() {
         super();
