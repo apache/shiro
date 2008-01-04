@@ -70,8 +70,8 @@ public class AtLeastOneSuccessfulModularAuthenticationStrategy implements Modula
 
         if ( !oneOrMoreSuccessful ) {
             throw new AuthenticationException( "Authentication token of type [" + token.getClass() + "] " +
-                "could not be authenticated by any configured realms.  Check that the authenticator is configured " +
-                "with appropriate realm(s)." );
+                "could not be authenticated by any configured realms.  Please ensure that at least one realm can " +
+                "authenticate these tokens." );
         }
     }
 }
