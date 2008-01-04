@@ -24,8 +24,6 @@
  */
 package org.jsecurity.authc;
 
-import org.jsecurity.context.SecurityContext;
-
 /**
  * An Authenticator is responsible for authenticating accounts in an application.  It
  * is one of the primary entry points into the JSecurity API.
@@ -48,14 +46,15 @@ public interface Authenticator {
     /**
      * Authenticates a user based on the submitted <tt>authenticationToken</tt>.
      *
-     * <p>If the authentication is successful, a {@link org.jsecurity.context.SecurityContext SecurityContext}
-     * is returned that represents that user's access rights and enables access to
-     * {@link SecurityContext#getSession() Session}</tt>s.
+     * <p>If the authentication is successful, an {@link org.jsecurity.authc.AuthenticationInfo AuthenticationInfo}
+     * object is returned that represents the user's account data relevant to JSecurity.  This returned object is
+     * generally used in turn to construct a <tt>SecurityContext</tt> representing that user's access rights and
+     * access to a <tt>Session</tt>
      *
      * @param authenticationToken any representation of a user's principals and credentials
      * submitted during an authentication attempt.
      *
-     * @return the SecurityContext referencing the authenticated user's access rights.
+     * @return the AuthenticationInfo representing the authenticated user's account data.
      *
      * @throws AuthenticationException if there is any problem during the authentication process.
      * See the specific exceptions listed below to as examples of what could happen in order
@@ -71,6 +70,6 @@ public interface Authenticator {
      * @see ConcurrentAccessException
      * @see UnknownAccountException
      */
-    public SecurityContext authenticate( AuthenticationToken authenticationToken )
+    public AuthenticationInfo authenticate( AuthenticationToken authenticationToken )
         throws AuthenticationException;
 }

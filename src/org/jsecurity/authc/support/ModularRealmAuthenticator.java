@@ -88,7 +88,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     private Collection<? extends Realm> realms;
 
     protected ModularAuthenticationStrategy modularAuthenticationStrategy =
-        new AllSuccessfulModularAuthenticationStrategy(); //default
+        new AllSuccessfulModularAuthenticationStrategy(); //default, only used w/ 2 or more realms.
 
 
     /*--------------------------------------------
@@ -201,7 +201,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @throws IllegalStateException if the <tt>realms</tt> property is configured incorrectly.
      */
     protected void assertRealmsConfigured() throws IllegalStateException {
-        if ( realms == null || realms.size() <= 0 ) {
+        if ( realms == null || realms.isEmpty() ) {
             String msg = "No realms configured for this ModularRealmAuthenticator.  Configuration error.";
             throw new IllegalStateException( msg );
         }

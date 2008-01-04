@@ -32,10 +32,6 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.event.*;
 import org.jsecurity.authc.event.support.SimpleAuthenticationEventSender;
-import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.bind.SecurityContextBinder;
-import org.jsecurity.context.factory.SecurityContextFactory;
-import org.jsecurity.context.support.DelegatingSecurityContext;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,11 +91,7 @@ public class AbstractAuthenticatorTest {
     @Test
     public void initWithoutSessionFactory() {
         abstractAuthenticator.init();
-        assertNotNull( abstractAuthenticator.getSecurityContextBinder() ); //default impl set when instance created
         assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
-        assertNotNull( "After setting a SecurityManager and calling init() on AbstractAuthenticator, a " +
-                "SecurityContextFactory instance should be implicitly created.",
-                abstractAuthenticator.getSecurityContextFactory() );
     }
 
     /**
@@ -108,7 +100,6 @@ public class AbstractAuthenticatorTest {
      */
     @Test(expected=IllegalStateException.class)
     public void initWithoutSessionFactoryOrSecurityManager() {
-        assertNotNull( abstractAuthenticator.getSecurityContextBinder() ); //default impl set when instance created
         assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
         abstractAuthenticator.init();
     }
@@ -148,59 +139,10 @@ public class AbstractAuthenticatorTest {
      * AuthenticationInfo object).
      */
     @Test
-    public void nonNullSecurityContextAfterAuthenticate() {
+    public void nonNullAuthenticationInfoAfterAuthenticate() {
         initAuthc();
-        SecurityContext securityContext = abstractAuthenticator.authenticate( newToken() );
-        assertNotNull( securityContext );
-    }
-
-    /**
-     * Asserts that the internal <tt>SecurityContextFactory</tt> (either the default or
-     * explicitly injected) does not return a null SecurityContext during the authentication phase.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void securityContextFactoryReturnsNullAfterSuccessfulAuthentication() {
-        SecurityContextFactory mockSCF = createMock( SecurityContextFactory.class );
-        abstractAuthenticator.setSecurityContextFactory( mockSCF );
-        AuthenticationToken token = newToken();
-        expect( mockSCF.createSecurityContext( token, authInfo ) ).andReturn( null );
-        replay( mockSCF );
-        initAuthc();
-        abstractAuthenticator.authenticate( token );
-
-        verify( mockSCF );
-    }
-
-    /**
-     * Asserts that the AbstractAuthenticator properly calls the <tt>SecurityContextBinder</tt> during a successful
-     * authentication attempt.
-     */
-    @Test
-    public void bindSecurityContextAfterDoAuthenticate() {
-        SecurityContextBinder mockBinder = createMock( SecurityContextBinder.class );
-        SecurityContextFactory mockFactory = createMock( SecurityContextFactory.class );
-
-        abstractAuthenticator.setSecurityContextBinder( mockBinder );
-        abstractAuthenticator.setSecurityContextFactory( mockFactory );
-
-        initAuthc();
-
-        SecurityContext sc = new DelegatingSecurityContext( "user1", true, null, null, mockSecurityManager );
-
-        AuthenticationToken token = newToken();
-
-        expect( mockFactory.createSecurityContext( token, authInfo ) ).andReturn( sc );
-
-        //this is the test method's purpose: to ensure the following call on the binder is made by the authenticator:
-        mockBinder.bindSecurityContext( sc );
-
-        replay( mockFactory );
-        replay( mockBinder );
-
-        abstractAuthenticator.authenticate( token );
-
-        verify( mockFactory );
-        verify( mockBinder );
+        AuthenticationInfo authcInfo = abstractAuthenticator.authenticate( newToken() );
+        assertNotNull( authcInfo );
     }
 
     @Test(expected=AuthenticationException.class)
