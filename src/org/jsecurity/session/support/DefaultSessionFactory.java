@@ -106,20 +106,24 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventNotifi
                ((SessionEventNotifier) this.sessionManager).remove(listener);
     }
 
+    protected SessionManager createSessionManager() {
+        DefaultSessionManager sessionManager = new DefaultSessionManager();
+        if ( getCacheProvider() != null ) {
+            sessionManager.setCacheProvider( getCacheProvider() );
+        }
+        sessionManager.init();
+        return sessionManager;
+    }
+
     protected void ensureSessionManager() {
         if (this.sessionManager == null) {
             if (log.isInfoEnabled()) {
                 log.info("No SessionManager instance has been set as a property of this class.  " +
                         "Defaulting to the default SessionManager implementation.");
             }
-
-            DefaultSessionManager sessionManager = new DefaultSessionManager();
-            if ( getCacheProvider() != null ) {
-                sessionManager.setCacheProvider( getCacheProvider() );
-            }
-            sessionManager.init();
-            setSessionManager(sessionManager);
+            SessionManager sessionManager = createSessionManager();
             sessionManagerImplicitlyCreated = true;
+            setSessionManager(sessionManager);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Using configured SessionManager [" + sessionManager + "] for SessionFactory support.");
@@ -141,7 +145,6 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventNotifi
 
     public Session start(InetAddress hostAddress)
             throws HostUnauthorizedException, IllegalArgumentException {
-        
         Serializable sessionId = sessionManager.start(hostAddress);
         return new DelegatingSession(sessionManager, sessionId);
     }

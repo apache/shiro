@@ -24,8 +24,11 @@
  */
 package org.jsecurity;
 
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.SessionFactory;
 
@@ -55,11 +58,17 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      */
     Realm getRealm( String realmName );
 
-
     /**
      * Returns all realms that are managed by this SecurityManager.
      * @return a list of realms that are managed by this SecurityManager.
      */
     Collection<Realm> getAllRealms();
 
+    SecurityContext login( AuthenticationToken authenticationToken ) throws AuthenticationException;
+
+    /**
+     * Returns the calling context's <tt>SecurityContext</tt>.
+     * @return the calling context's <tt>SecurityContext</tt>.
+     */
+    SecurityContext getSecurityContext();
 }

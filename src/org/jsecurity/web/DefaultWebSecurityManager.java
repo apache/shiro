@@ -18,7 +18,7 @@ import javax.servlet.ServletResponse;
  */
 public class DefaultWebSecurityManager extends DefaultSecurityManager implements WebSecurityManager {
 
-    public static final String HTTP_SESSION_MODE = "web";
+    public static final String HTTP_SESSION_MODE = "http";
     public static final String JSECURITY_SESSION_MODE = "jsecurity";
 
     private String sessionMode = HTTP_SESSION_MODE; //default

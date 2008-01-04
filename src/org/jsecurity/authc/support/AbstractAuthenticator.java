@@ -34,10 +34,6 @@ import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventFactory;
 import org.jsecurity.authc.event.AuthenticationEventSender;
 import org.jsecurity.authc.event.support.SimpleAuthenticationEventFactory;
-import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.bind.SecurityContextBinder;
-import org.jsecurity.context.bind.support.ThreadLocalSecurityContextBinder;
-import org.jsecurity.context.factory.SecurityContextFactory;
 import org.jsecurity.util.Initializable;
 
 /**
@@ -45,8 +41,7 @@ import org.jsecurity.util.Initializable;
  * attempts.
  *
  * <p>This class delegates the actual authentication attempt to subclasses but will send events based on a
- * successful or failed attempt, create a {@link SecurityContext SecurityContext} in the event of a successful attempt,
- * and bind this <tt>SecurityContext</tt> to the application for further use.
+ * successful or failed attempt.
  *
  * <p>In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
  * is perform the actual principal/credential verification process for the submitted <tt>AuthenticationToken</tt>.
@@ -64,21 +59,7 @@ import org.jsecurity.util.Initializable;
  * if you wish to send AuthenticationEvents.  By omitting an event sender, you are implicitly directing this
  * implementation to disable events.
  *
- * <p>During a subject's (a.k.a. user's) successful login attempt, a <tt>SecurityContext</tt> is created for that user
- * by a {@link SecurityContextFactory}.  <b>This factory must be set as a property of this class</b>, either via the
- * setter method, or provided by subclasses during initialization.  Most implementors will
- * want to use a {@link org.jsecurity.context.factory.support.DelegatingSecurityContextFactory} or roll their own.
- *
- * <p>Once a <tt>SecurityContext</tt> is created for a successfully authenticated subject (a.k.a. 'user'), it is
- * first <em>bound</em> to the application for convenient access and then returned to the {@link #authenticate}
- * caller.  Because binding is dependent upon runtime environment, the binding logic is delegated to an internal
- * {@link SecurityContextBinder} implementation.  The <tt>AbstractAuthenticator</tt> already provides a default that
- * binds the context to the local thread to cater to the majority of server-side deployments.  If operating outside of
- * a server-side environment (e.g. in an applet or standalone application), you might wish to bind the
- * <tt>SecurityContext</tt> in another way by setting a different implementation with the
- * {@link #setSecurityContextBinder} method.
- *
- * <p>After all class attributes have been set (event factory, security context binder, etc.), the {@link #init()}
+ * <p>After all class attributes have been set, the {@link #init()}
  * method must be called, either by a framework or explicitly in code, before the AbstractAuthenticator
  * instance can be used.
  *
@@ -91,26 +72,14 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-
-    /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
     /**
      * Commons-logging logger
      */
     protected final transient Log log = LogFactory.getLog(getClass());
 
-    /**
-     * The factory used to create a SecurityContext after a successful authentication.
-     */
-    private SecurityContextFactory securityContextFactory = null;
-
-    /**
-     * The binder used to bind the SecurityContext so that it is accessible on subsequent
-     * requests.
-     */
-    private SecurityContextBinder securityContextBinder = new ThreadLocalSecurityContextBinder();
-
+    /*--------------------------------------------
+    |    I N S T A N C E   V A R I A B L E S    |
+    ============================================*/
     /**
      * Factory used to create authentication events for publishing.
      */
@@ -137,61 +106,6 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    /**
-     * Returns the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a <tt>SecurityContext</tt>
-     * upon a successful authentication attempt.
-     * @return the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a <tt>SecurityContext</tt>
-     * upon a successful authentication attempt.
-     *
-     * @see #setSecurityContextFactory #setSecurityContextFactory for more explanation.
-     */
-    protected SecurityContextFactory getSecurityContextFactory() {
-        return securityContextFactory;
-    }
-
-    /**
-     * Sets the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a <tt>SecurityContext</tt>
-     * upon a successful authentication attempt.
-     *
-     * @param securityContextFactory the <tt>SecurityContextFactory</tt> that this Authenticator will use to create a
-     * <tt>SecurityContext</tt> upon a successful authentication attempt.
-     */
-    public void setSecurityContextFactory( SecurityContextFactory securityContextFactory ) {
-        this.securityContextFactory = securityContextFactory;
-    }
-
-    /**
-     * Returns the <tt>SecurityContextBinder</tt> this <tt>Authenticator</tt> will use to <em>bind</em> a subject's
-     * <tt>SecurityContext</tt> to the application for later use.
-     * @return the <tt>SecurityContextBinder</tt> this <tt>Authenticator</tt> will use to <em>bind</em> a subject's
-     * <tt>SecurityContext</tt> to the application for later use.
-     *
-     * @see #setSecurityContextBinder #setSecurityContextBinder for more explanation.
-     */
-    public SecurityContextBinder getSecurityContextBinder() {
-        return securityContextBinder;
-    }
-
-    /**
-     * Sets the <tt>SecurityContextBinder</tt> this <tt>Authenticator</tt> will use to <em>bind</em> a subject's
-     * <tt>SecurityContext</tt> to the application for later use.
-     *
-     * <p>The default implementation used by this class is a
-     * {@link ThreadLocalSecurityContextBinder ThreadLocalSecurityContextBinder} and probably shouldn't be overridden
-     * in server-side applications such as Web or EJB apps unless you know what you are doing.
-     *
-     * <p>This property however will probably need to be changed if in a standalone
-     * client environment, such as in an Applet or standalone application, where the <tt>SecurityContext</tt> might
-     * need to be accessible in a well-known location such as in a static memory variable (less desireable), or in
-     * a better managed application context (e.g. Spring or Pico - more desireable).
-     *
-     * @param securityContextBinder the <tt>SecurityContextBinder</tt> this <tt>Authenticator</tt> will use to
-     * <em>bind</em> a subject's <tt>SecurityContext</tt> to the application for later use.
-     */
-    public void setSecurityContextBinder( SecurityContextBinder securityContextBinder ) {
-        this.securityContextBinder = securityContextBinder;
-    }
-
     /**
      * Returns the <tt>AuthenticationEventFactory</tt> this <tt>Authenticator</tt> will use to create
      * <tt>AuthenticationEvents</tt> during successful or failed authentication attempts.
@@ -232,7 +146,6 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         this.authcEventSender = authcEventSender;
     }
 
-
     /**
      * Returns whether or not a problem sending an authentication event causes authentication to fail
      * for the attempting subject.
@@ -261,22 +174,11 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     |               M E T H O D S               |
     ============================================*/
     /**
-     * Public initializer that should be called after all class properties have been set, but before the instance
-     * is used to process authentications.
+     * Provided for subclass overriding.  Default implementation does nothing..
      */
     public void init() {
-        if( getSecurityContextFactory() == null ) {
-            String msg = "SecurityContextFactory property must be set.";
-            throw new IllegalStateException( msg );
-        }
-        onInit();
+        //no-op
     }
-        
-    /**
-     * Subclass template hook to allow subclasses additional initialization behavior without having to override the
-     * {@link #init init()} method.
-     */
-    protected void onInit(){}
 
     /**
      * Creates an <tt>AuthenticationEvent</tt> in the event of a failed authentication attempt, based on the given
@@ -417,50 +319,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
         }
     }
 
-    /**
-     * Creates a <tt>SecurityContext</tt> instance for the user represented by the given method argument.
-     *
-     * <p>The default implementation delegates to the internal {@link SecurityContextFactory} property.
-     *
-     * @param token the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param info the <tt>AuthenticationInfo</tt> of a newly authenticated subject/user.
-     * @return the <tt>SecurityContext</tt> that represents the authorization and session data for the newly
-     * authenticated subject/user.
-     */
-    protected SecurityContext createSecurityContext( AuthenticationToken token, AuthenticationInfo info ) {
-        SecurityContextFactory factory = getSecurityContextFactory();
-        if( factory == null ) {
-            throw new IllegalStateException(
-                    "No SecurityContextFactory class attribute has been set, so authentication cannot " +
-                    "be completed.  Make sure the init() method is being called on this " +
-                    "Authenticator before it is used." );
-        }
-
-        return factory.createSecurityContext( token, info );
-    }
-
-    /**
-     * Binds a <tt>SecurityContext</tt> instance created after authentication to the application for later use.
-     *
-     * <p>The default implementation merely delegates to the internal {@link SecurityContextBinder} property.
-     *
-     * @param secCtx the <tt>SecurityContext</tt> instance created after authentication to be bound to the application
-     * for later use.
-     */
-    protected void bind( SecurityContext secCtx ) {
-        getSecurityContextBinder().bindSecurityContext( secCtx );
-    }
-
-    private void assertCreation( SecurityContext secCtx ) throws IllegalStateException {
-        if ( secCtx == null ) {
-            String msg = "Programming or configuration error - No SecurityContext was created after successful " +
-                    "authentication.  Verify that you have either configured the " + getClass().getName() +
-                    " instance with a proper SecurityContextFactory or SecurityManager (easier) or " +
-                    "that you have overridden the " + AbstractAuthenticator.class.getName() +
-                    ".createSecurityContext( AuthenticationInfo info ) method.";
-            throw new IllegalStateException( msg );
-        }
-    }
+    
 
     /**
      * Implementation of the {@link Authenticator} interface that functions in the following manner:
@@ -471,25 +330,18 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * <li>If an <tt>AuthenticationException</tt> is thrown during <tt>doAuthenticate</tt>, create and send a
      * failure <tt>AuthenticationEvent</tt> that represents this failure, and then propogate this exception
      * for the caller to handle.</li>
-     * <li>If no exception is thrown (indicating a successful login), perform the following:
-     *     <ol>
-     *         <li>{@link #createSecurityContext Create a <tt>SecurityContext</tt>} instance that represents the
-     *             <tt>AuthenticationInfo</tt> returned by <tt>doAuthenticate</tt></li>
-     *         <li>{@link #bind Bind this newly created SecurityContext} to the application such that it can be
-     *             referenced by the application later.</li>
-     *         <li>Create and send a success <tt>AuthenticationEvent</tt> noting the successful authentication.</li>
-     *         <li>Return the newly created <tt>SecurityContext</tt> to the caller should they wish to use it
-     *             immediately.</li>
-     *     </ol>
-     * </li>
+     * <li>If no exception is thrown (indicating a successful login), send a success <tt>AuthenticationEvent</tt>
+     * noting the successful authentication.</li>
+     * <li>Return the <tt>AuthenticationInfo</tt></li>
      * </ol>
+     * 
      * @param token the submitted token representing the subject's (user's) login principals and credentials.
-     * @return the SecurityContext referencing the authenticated user's access rights.
+     * @return the AuthenticationInfo referencing the authenticated user's account data.
      *
      * @throws AuthenticationException if there is any problem during the authentication process - see the
      * interface's JavaDoc for a more detailed explanation.
      */
-    public final SecurityContext authenticate( AuthenticationToken token )
+    public final AuthenticationInfo authenticate( AuthenticationToken token )
             throws AuthenticationException {
 
         if ( token == null ) {
@@ -542,21 +394,15 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
                       "Returned authentication info: [" + info + "]" );
         }
 
-        SecurityContext secCtx = createSecurityContext( token, info );
-
-        assertCreation( secCtx );
-
-        bind( secCtx );
-
         sendSuccessEvent( token, info );
 
-        return secCtx;
+        return info;
     }
 
     /**
      * Template design pattern hook for subclasses to implement specific authentication behavior.
      *
-     * <p>Common behavior for most all common authentication attempts is encapsulated in the 
+     * <p>Common behavior for most authentication attempts is encapsulated in the
      * {@link #authenticate} method and that method invokes this one for custom behavior.
      *
      * <p><b>N.B.</b> Subclasses <em>should</em> throw some kind of
@@ -567,8 +413,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      *
      * @param token the authentication token encapsulating the user's login information.
      * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
-     * important to JSecurity.  <tt>null</tt> should <em>not</em> be returned - throw a proper AuthenticationException
-     * instead (like {@link org.jsecurity.authc.UnknownAccountException} if the account can't be found, etc).
+     * important to JSecurity.
      * @throws AuthenticationException if there is a problem logging in the user.
      */
     protected abstract AuthenticationInfo doAuthenticate( AuthenticationToken token )

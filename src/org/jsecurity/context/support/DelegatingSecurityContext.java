@@ -30,11 +30,13 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -93,8 +95,20 @@ public class DelegatingSecurityContext implements SecurityContext {
         return principals;
     }
 
+    protected static InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            return null;
+        }
+    }
+
+    public DelegatingSecurityContext( SecurityManager securityManager ) {
+        this( false, getLocalHost(), null, securityManager );
+    }
+
     public DelegatingSecurityContext(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
-        this((List)null, authenticated, inetAddress, session, securityManager);
+        this(null, authenticated, inetAddress, session, securityManager);
     }
 
     public DelegatingSecurityContext(Object principal, boolean authenticated, InetAddress inetAddress,
@@ -138,6 +152,10 @@ public class DelegatingSecurityContext implements SecurityContext {
         return securityManager;
     }
 
+    protected boolean hasPrincipal() {
+        return getPrincipal() != null;
+    }
+
     /**
      * Returns the InetAddress associated with the client who created/is interacting with this SecurityContext.
      *
@@ -156,7 +174,7 @@ public class DelegatingSecurityContext implements SecurityContext {
      */
     public Object getPrincipal() {
         assertValid();
-        if (this.principals.isEmpty()) {
+        if (this.principals == null || this.principals.isEmpty()) {
             return null;
         } else {
             return this.principals.get(0);
@@ -204,12 +222,12 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean hasRole(String roleIdentifier) {
         assertValid();
-        return getPrincipal() != null && securityManager.hasRole(getPrincipal(), roleIdentifier);
+        return hasPrincipal() && securityManager.hasRole(getPrincipal(), roleIdentifier);
     }
 
     public boolean[] hasRoles(List<String> roleIdentifiers) {
         assertValid();
-        if (getPrincipal() != null) {
+        if (hasPrincipal()) {
             return securityManager.hasRoles(getPrincipal(), roleIdentifiers);
         } else {
             return new boolean[roleIdentifiers.size()];
@@ -218,17 +236,17 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
         assertValid();
-        return getPrincipal() != null && securityManager.hasAllRoles(getPrincipal(), roleIdentifiers);
+        return hasPrincipal() && securityManager.hasAllRoles(getPrincipal(), roleIdentifiers);
     }
 
     public boolean isPermitted(Permission permission) {
         assertValid();
-        return getPrincipal() != null && securityManager.isPermitted(getPrincipal(), permission);
+        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
     }
 
     public boolean[] isPermitted(List<Permission> permissions) {
         assertValid();
-        if (getPrincipal() != null) {
+        if (hasPrincipal()) {
             return securityManager.isPermitted(getPrincipal(), permissions);
         } else {
             return new boolean[permissions.size()];
@@ -237,37 +255,52 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public boolean isPermittedAll(Collection<Permission> permissions) {
         assertValid();
-        return getPrincipal() != null && securityManager.isPermittedAll(getPrincipal(), permissions);
+        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+    }
+
+    protected void assertAuthzCheckPossible() throws AuthorizationException {
+        if ( !hasPrincipal() ) {
+            String msg = "User/account data has not yet been associated with this SecurityContext " +
+                "(this can be done by executing " + SecurityContext.class.getName() + ".login(AuthenticationToken) )." +
+                "Therefore, authorization operations are not possible (a user identity is required first).  " +
+                "Denying authorization.";
+            throw new UnauthenticatedException( msg );
+        }
     }
 
     public void checkPermission(Permission permission) throws AuthorizationException {
         assertValid();
+        assertAuthzCheckPossible();
         securityManager.checkPermission(getPrincipal(), permission);
     }
 
     public void checkPermissions(Collection<Permission> permissions)
             throws AuthorizationException {
         assertValid();
+        assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipal(), permissions);
     }
 
     public void checkRole(String role) throws AuthorizationException {
         assertValid();
+        assertAuthzCheckPossible();
         securityManager.checkRole(getPrincipal(), role);
     }
 
     public void checkRoles(Collection<String> roles) throws AuthorizationException {
         assertValid();
+        assertAuthzCheckPossible();
         securityManager.checkRoles(getPrincipal(), roles);
     }
 
     public boolean isAuthorized(AuthorizedAction action) {
         assertValid();
-        return securityManager.isAuthorized(getPrincipal(), action);
+        return hasPrincipal() && securityManager.isAuthorized(getPrincipal(), action);
     }
 
     public void checkAuthorization(AuthorizedAction action) throws AuthorizationException {
         assertValid();
+        assertAuthzCheckPossible();
         securityManager.checkAuthorization(getPrincipal(), action);
     }
 
