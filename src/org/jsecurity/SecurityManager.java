@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -38,31 +38,15 @@ import java.util.Collection;
  * A <tt>SecurityManager</tt> is a convenience mechanism - it extends the {@link Authenticator},
  * {@link Authorizer}, and {@link SessionFactory} interfaces, thereby consolidating
  * these behaviors into a single interface.  This allows applications to interact with a single
- * <tt>SecurityManager</tt> component for most JSecurity operations should they choose to do so.
+ * <tt>SecurityManager</tt> component for all JSecurity operations.
  *
  * @see DefaultSecurityManager
  *
  * @since 0.2
  * 
- * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface SecurityManager extends Authenticator, Authorizer, SessionFactory {
-
-    /**
-     * Returns the realm with the specified unique name or <tt>null</tt> if there is no realm managed by the
-     * SecurityManager instance by that name.
-     *
-     * @param realmName the unique name of the realm to be retrieved.
-     * @return the realm with the specified unique name or <tt>null</tt> if there is no realm managed by the
-     * SecurityManager instance by that name.
-     */
-    Realm getRealm( String realmName );
-
-    /**
-     * Returns all realms that are managed by this SecurityManager.
-     * @return a list of realms that are managed by this SecurityManager.
-     */
-    Collection<Realm> getAllRealms();
 
     SecurityContext login( AuthenticationToken authenticationToken ) throws AuthenticationException;
 
