@@ -73,12 +73,6 @@ import org.jsecurity.authz.Authorizer;
 public interface Realm extends Authorizer {
 
     /**
-     * Returns the name of this Realm used to uniquely identify it within the application.
-     * @return the unique identifier for this realm.
-     */
-    String getName();
-
-    /**
      * Returns <tt>true</tt> if this realm can authenticate subjects with
      * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances of the specified Class,
      * <tt>false</tt> otherwise.

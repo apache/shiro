@@ -58,10 +58,10 @@ import java.util.*;
 
 /**
  * <p>The JSecurity framework's default implementation of the {@link org.jsecurity.SecurityManager} interface,
- * based around a set of security {@link org.jsecurity.realm.Realm}s.  This implementation delegates its authentication,
- * authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
- * {@link SessionFactory SessionFactory} instances respectively.
- * It also provides some sensible defaults to simplify configuration.</p>
+ * based around a collection of security {@link org.jsecurity.realm.Realm}s.  This implementation delegates its
+ * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
+ * {@link SessionFactory SessionFactory} instances respectively. It also provides sensible defaults to simplify
+ * configuration.</p>
  *
  * <p>This implementation is primarily a convenience mechanism that wraps these three instances to consolidate
  * all behaviors into a single point of reference.  For most JSecurity users, this simplifies configuration and
@@ -73,10 +73,10 @@ import java.util.*;
  * dependencies.  Therefore, you only need to override the attributes suitable for your application, but please
  * note the following:</p>
  *
- * <p>Unless you're happy with the default simple {@link PropertiesRealm properties file}-based realm, which may not
- * be suitable for enterprise applications, you might want to specify at the very least one custom <tt>Realm</tt>
- * implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.  All other
- * attributes have suitable defaults for most production applications.</p>
+ * <p>Unless you're happy with the default simple {@link PropertiesRealm properties file}-based realm, which may or
+ * may not be flexible enough for enterprise applications, you might want to specify at the very least one custom
+ * <tt>Realm</tt> implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.
+ * All other attributes have suitable defaults for most enterprise applications.</p>
  *
  * <p>Finally, the only absolute requirement for a <tt>DefaultSecurityManager</tt> instance to function properly is
  * that its {@link #init() init()} method must be called before it is used.</p>
@@ -89,12 +89,11 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
-
     protected CacheProvider cacheProvider = null;
     private boolean cacheProviderImplicitlyCreated = false;
 
@@ -108,18 +107,13 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     private boolean sessionFactoryImplicitlyCreated = false;
     private boolean lazySessions = true;
 
-    private Realm realm = null;
+    private Collection<Realm> realms = null;
     private boolean realmImplicitlyCreated = false;
 
     /**
      * The factory used to create a SecurityContext after a successful authentication.
      */
     protected SecurityContextFactory securityContextFactory = null;
-
-    /**
-     * A map from realm name to realm for all realms managed by this manager.
-     */
-    private Map<String, Realm> realmMap;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -273,34 +267,14 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
      *
      * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
      */
-    public void setRealms(List<Realm> realms) {
+    public void setRealms(Collection<Realm> realms) {
         if (realms == null) {
             throw new IllegalArgumentException("Realms collection argument cannot be null.");
         }
         if (realms.isEmpty()) {
             throw new IllegalArgumentException("Realms collection argument cannot be empty.");
         }
-        this.realmMap = new LinkedHashMap<String, Realm>(realms.size());
-
-        for (Realm realm : realms) {
-
-            if (realmMap.containsKey(realm.getName())) {
-                throw new IllegalArgumentException("Two or more realms have a non-unique name ["
-                    + realm.getName() + "].  All realms must have unique names.  Please configure these realms " +
-                    "with unique names.");
-            }
-
-            realmMap.put(realm.getName(), realm);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public Collection<Realm> getAllRealms() {
-        if (realmMap != null) {
-            return new ArrayList<Realm>(realmMap.values());
-        } else {
-            return Collections.EMPTY_LIST;
-        }
+        this.realms = realms;
     }
 
     /**
@@ -402,20 +376,19 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     protected void ensureRealms() {
-        if (realmMap == null || realmMap.isEmpty()) {
+        if ( realms == null || realms.isEmpty() ) {
             if (log.isInfoEnabled()) {
-                log.info("No realms set - creating default PropertiesRealm (not recommended for production).");
+                log.info("No realms set - creating default PropertiesRealm.");
             }
             Realm realm = createDefaultRealm();
             this.realmImplicitlyCreated = true;
-            this.realm = realm;
             setRealm( realm );
         }
     }
 
     protected Authenticator createAuthenticator() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
-        mra.setRealms(getAllRealms());
+        mra.setRealms( this.realms );
         mra.init();
         authenticatorImplicitlyCreated = true;
         return mra;
@@ -441,7 +414,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
 
     protected Authorizer createAuthorizer() {
         ModularRealmAuthorizer mra = new ModularRealmAuthorizer();
-        mra.setRealms(getAllRealms());
+        mra.setRealms( this.realms );
         mra.init();
         authorizerImplicitlyCreated = true;
         return mra;
@@ -512,9 +485,11 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
             authenticatorImplicitlyCreated = false;
         }
         if (realmImplicitlyCreated) {
-            LifecycleUtils.destroy(realm);
-            realm = null;
+            if( realms != null && !realms.isEmpty() ) {
+                LifecycleUtils.destroy( realms.iterator().next() );    
+            }
             realmImplicitlyCreated = false;
+            realms = null;
         }
         if (cacheProviderImplicitlyCreated) {
             LifecycleUtils.destroy(cacheProvider);
@@ -626,18 +601,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
      */
     public void checkAuthorization(Object subjectIdentity, AuthorizedAction action) throws AuthorizationException {
         getRequiredAuthorizer().checkAuthorization( subjectIdentity, action );
-    }
-
-    /**
-     * Retrieves the realm with the given name from the realm map or throws an exception if one
-     * is not found.
-     *
-     * @param realmName the name of the realm to be retrieved.
-     * @return the realm to be retrieved.
-     * @throws IllegalArgumentException if no realm is found with the given name.
-     */
-    public Realm getRealm(String realmName) {
-        return realmMap.get(realmName);
     }
 
     public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
