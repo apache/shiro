@@ -239,39 +239,5 @@ public interface Authorizer {
      */
     void checkRoles( Object subjectIdentifier, Collection<String> roles ) throws AuthorizationException;
 
-    /**
-     * Determines whether or not this Authorizer supports processing/checking of the given action.  Returning
-     * false indicates this Authorizer will not be called during the checking process (i.e. the
-     * {@link #isAuthorized} and {@link #checkAuthorization} methods will not be called on this Authorizer).
-     *
-     * @param action the action which this Authorizer must decide if it supports.
-     * @return true if this module supports the given action, false otherwise.
-     */
-    boolean supports( AuthorizedAction action );
-
-    /**
-     * Returns whether or not the specified subject is authorized to
-     * execute the given <tt>AuthorizedAction</tt>.
-     * @param subjectIdentifier the application-specific identifier
-     * for the subject to check (usually a user id or username).
-     * @param action the action to check for authorization
-     * @return true if the subject can execute the specified <tt>action</tt>, false
-     *         otherwise.
-     */
-    boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action );
-
-    /**
-     * Checks whether the specified subject is authorized to perform the given {@link AuthorizedAction}.  If
-     * the subject (user) is not authorized to perform the action, an
-     * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
-     *
-     * @param subjectIdentifier the application-specific identifier
-     * for the subject to check (usually a user id or username).
-     * @param action the action that the user is requesting authorization for.
-     * @throws AuthorizationException if the subject is not authorized to perform the action
-     */
-    void checkAuthorization( Object subjectIdentifier, AuthorizedAction action )
-        throws AuthorizationException;
-
 }
 

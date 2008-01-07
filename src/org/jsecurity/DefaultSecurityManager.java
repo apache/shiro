@@ -585,24 +585,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         return sc;
     }
 
-    public boolean supports(AuthorizedAction action) {
-        return getRequiredAuthorizer().supports(action);
-    }
-
-    /**
-     * Delegates to the authorizer for autorization.
-     */
-    public boolean isAuthorized(Object subjectIdentity, AuthorizedAction action) {
-        return getRequiredAuthorizer().isAuthorized( subjectIdentity, action );
-    }
-
-    /**
-     * Delegates to the authorizer for authorization.
-     */
-    public void checkAuthorization(Object subjectIdentity, AuthorizedAction action) throws AuthorizationException {
-        getRequiredAuthorizer().checkAuthorization( subjectIdentity, action );
-    }
-
     public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
         return getRequiredAuthorizer().hasRole(subjectIdentifier, roleIdentifier);
     }

@@ -353,27 +353,4 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         info.checkRoles( roles );
     }
 
-    /**
-     * Default implementation that always returns false.  Subclasses are expected to override if the default
-     * JSecurity mechanisms are not suitable (e.g. JDK 1.5 annotations).
-     *
-     * @param action the action to check for authorized execution
-     * @return whether or not the realm supports AuthorizedActions of the given type.
-     */
-    public boolean supports( AuthorizedAction action ) {
-        return false;
-    }
-
-    public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
-        String msg = "Subclasses must override this implementation as such checks are application-specific.";
-        throw new UnsupportedOperationException( msg );
-    }
-
-    public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
-        String msg = "Subclasses must override this implementation as such checks are application-specific.";
-        throw new UnsupportedOperationException( msg );
-    }
-
-
-
 }

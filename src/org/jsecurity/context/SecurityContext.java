@@ -186,23 +186,6 @@ public interface SecurityContext {
     void checkRoles( Collection<String> roles ) throws AuthorizationException;
 
     /**
-     * Returns whether or not the user is authorized to execute the given <tt>AuthorizedAction</tt>.
-     * @param action the action to check for authorization
-     * @return true if the user can execute the specified <tt>action</tt>, false otherwise.
-     */
-    boolean isAuthorized( AuthorizedAction action );
-
-    /**
-     * Checks if the user is authorized to perform the given {@link AuthorizedAction}.  If
-     * the user is not authorized to perform the action, an
-     * {@link AuthorizationException} is thrown, otherwise the method returns quietly.
-     *
-     * @param action the action that the user is requesting authorization for.
-     * @throws AuthorizationException if the subject is not authorized to perform the action
-     */
-    void checkAuthorization( AuthorizedAction action ) throws AuthorizationException;
-
-    /**
      * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
      * logged-in to the system, <tt>false</tt> otherwise.
      * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently

@@ -25,6 +25,7 @@
 package org.jsecurity.authz.support;
 
 import org.jsecurity.authz.*;
+import org.jsecurity.authz.method.MethodAuthorizer;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
@@ -44,7 +45,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
     protected Collection<Realm> realms = null;
 
     //TODO - refactor name (ambiguous)
-    protected List<AuthorizationModule> authorizationModules = null;
+    protected List<MethodAuthorizer> methodAuthorizers = null;
 
     public ModularRealmAuthorizer(){}
 
@@ -61,12 +62,12 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         this.realms = realms;
     }
 
-    public List<AuthorizationModule> getAuthorizationModules() {
-        return authorizationModules;
+    public List<MethodAuthorizer> getAuthorizationModules() {
+        return methodAuthorizers;
     }
 
-    public void setAuthorizationModules( List<AuthorizationModule> authorizationModules ) {
-        this.authorizationModules = authorizationModules;
+    public void setAuthorizationModules( List<MethodAuthorizer> methodAuthorizers) {
+        this.methodAuthorizers = methodAuthorizers;
     }
 
     public void init() {
@@ -76,15 +77,15 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
             throw new IllegalStateException( msg );
         }
         if ( JavaEnvironment.isAtLeastVersion15() ) {
-            authorizationModules = new ArrayList<AuthorizationModule>(2);
+            methodAuthorizers = new ArrayList<MethodAuthorizer>(2);
 
-            PermissionAnnotationAuthorizationModule permModule = new PermissionAnnotationAuthorizationModule();
+            PermissionAnnotationMethodAuthorizer permModule = new PermissionAnnotationMethodAuthorizer();
             permModule.init();
-            authorizationModules.add( permModule );
+            methodAuthorizers.add( permModule );
 
-            RoleAnnotationAuthorizationModule roleModule = new RoleAnnotationAuthorizationModule();
+            RoleAnnotationMethodAuthorizer roleModule = new RoleAnnotationMethodAuthorizer();
             roleModule.init();
-            authorizationModules.add( roleModule );
+            methodAuthorizers.add( roleModule );
         }
     }
 
@@ -190,51 +191,4 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         }
     }
 
-    public boolean supports( AuthorizedAction action ) {
-        for( Realm realm : getRealms() ) {
-            if ( realm.supports( action ) ) {
-                return true;
-            }
-        }
-
-        //the ModularRealmAuthorizer also supports JDK 1.5 Annotations by default as well, configured in the
-        //init() method if on JDK 1.5+.  These checks happen independently of Realm access since
-        //they use the SecurityContext directly.
-        return JavaEnvironment.isAtLeastVersion15();
-    }
-
-    public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
-
-        if ( supports( action ) ) {
-            for( Realm realm : getRealms() ) {
-                if ( realm.supports( action ) ) {
-                    if ( !realm.isAuthorized( subjectIdentifier, action ) ) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        if ( authorizationModules != null && !authorizationModules.isEmpty() ) {
-            for( AuthorizationModule module : authorizationModules ) {
-                if ( module.supports( action ) ) {
-                    if ( module.isAuthorized( action ).equals( AuthorizationVote.deny ) ) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
-        if ( !isAuthorized( subjectIdentifier, action ) ) {
-            String msg = "No configured realm(s) authorized subject [" + subjectIdentifier + "] for " +
-                "action [" + action + "].";
-            throw new UnauthorizedException( msg );
-        }
-    }
 }
