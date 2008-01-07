@@ -27,7 +27,8 @@ package org.jsecurity.spring.security.interceptor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.aop.AbstractAuthorizationInterceptor;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.aop.MethodInterceptorSupport;
 
 import java.lang.reflect.Method;
 
@@ -36,7 +37,7 @@ import java.lang.reflect.Method;
  * @author Les Hazlewood
  */
 public class AopAllianceAuthorizationInterceptor
-        extends AbstractAuthorizationInterceptor implements MethodInterceptor {
+        extends MethodInterceptorSupport implements MethodInterceptor {
 
     protected AuthorizedAction createAuthzAction(final Object aopAllianceMethodInvocation) {
         final MethodInvocation mi = (MethodInvocation) aopAllianceMethodInvocation;
@@ -57,6 +58,14 @@ public class AopAllianceAuthorizationInterceptor
                 };
 
         return jsecurityMI;
+    }
+
+    protected org.jsecurity.authz.method.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    protected void assertAuthorized(org.jsecurity.authz.method.MethodInvocation methodInvocation) throws AuthorizationException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected Object continueInvocation( Object aopAllianceMethodInvocation ) throws Throwable {

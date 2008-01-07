@@ -29,7 +29,6 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.cache.Cache;
@@ -487,30 +486,6 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
                 }
             }
         }
-    }
-
-    /**
-     * Default implementation that always returns <tt>true</tt> (defers on JSecurity's JDK 1.5 annotations).
-     *
-     * @param action the action to check for authorized execution
-     * @return whether or not the realm supports AuthorizedActions of the given type.
-     */
-    public boolean supports( AuthorizedAction action ) {
-        return true;
-    }
-
-    /**
-     * Default implementation always returns <tt>true</tt>.
-     */
-    public boolean isAuthorized( Object subjectIdentifier, AuthorizedAction action ) {
-        return true;
-    }
-
-    /**
-     * Default implementation always returns quietly (no exception thrown).
-     */
-    public void checkAuthorization( Object subjectIdentifier, AuthorizedAction action ) throws AuthorizationException {
-        //does nothing
     }
 
 }

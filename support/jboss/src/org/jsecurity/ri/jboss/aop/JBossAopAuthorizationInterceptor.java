@@ -28,7 +28,8 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jsecurity.authz.AuthorizedAction;
-import org.jsecurity.authz.aop.AbstractAuthorizationInterceptor;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.aop.MethodInterceptorSupport;
 
 import java.lang.reflect.Method;
 
@@ -37,7 +38,7 @@ import java.lang.reflect.Method;
  * @author Les Hazlewood
  */
 public class JBossAopAuthorizationInterceptor
-        extends AbstractAuthorizationInterceptor implements Interceptor {
+        extends MethodInterceptorSupport implements Interceptor {
 
     private static final String NAME = "JSecurity JBossAopAuthorizationInterceptor";
 
@@ -66,6 +67,14 @@ public class JBossAopAuthorizationInterceptor
                 };
 
         return jsecurityMI;
+    }
+
+    protected org.jsecurity.authz.method.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    protected void assertAuthorized(org.jsecurity.authz.method.MethodInvocation methodInvocation) throws AuthorizationException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected Object continueInvocation( Object jbossAopInvocation ) throws Throwable {

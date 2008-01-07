@@ -26,10 +26,11 @@ package org.jsecurity.authz.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.UnauthorizedException;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.SecurityManager;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -43,22 +44,36 @@ import org.jsecurity.context.SecurityContext;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AbstractAuthorizationInterceptor {
+public abstract class MethodInterceptorSupport {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    public AbstractAuthorizationInterceptor(){}
+    protected SecurityManager securityManager = null;
+
+    public MethodInterceptorSupport(){}
+
+    public SecurityManager getSecurityManager() {
+        return securityManager;
+    }
+
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
+    }
+
+    protected SecurityContext getSecurityContext() {
+        return getSecurityManager().getSecurityContext();
+    }
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
 
-        SecurityContext secCtx = SecurityUtils.getSecurityContext();
+        SecurityContext secCtx = getSecurityContext();
 
         if ( secCtx != null ) {
-            AuthorizedAction action = createAuthzAction( implSpecificMethodInvocation );
-            //will throw an exception if not authorized to execute the action:
-            secCtx.checkAuthorization( action );
+            MethodInvocation methodInvocation = createMethodInvocation( implSpecificMethodInvocation );
+            assertAuthorized( methodInvocation );
         } else {
-            String msg = "No SecurityContext available (User not authenticated?).  Authorization failed.";
+            String msg = "Unable to perform authorization check: no SecurityContext available from " +
+                    "getSecurityContext() implementation.  Authorization failed.";
             throw new UnauthorizedException( msg );
         }
 
@@ -66,7 +81,9 @@ public abstract class AbstractAuthorizationInterceptor {
         return continueInvocation( implSpecificMethodInvocation );
     }
 
-    protected abstract AuthorizedAction createAuthzAction( Object implSpecificMethodInvocation );
+    protected abstract MethodInvocation createMethodInvocation( Object implSpecificMethodInvocation );
+
+    protected abstract void assertAuthorized( MethodInvocation methodInvocation ) throws AuthorizationException;
 
     protected abstract Object continueInvocation( Object implSpecificMethodInvocation ) throws Throwable;
 }

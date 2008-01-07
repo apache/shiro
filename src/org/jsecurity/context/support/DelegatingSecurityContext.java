@@ -293,17 +293,6 @@ public class DelegatingSecurityContext implements SecurityContext {
         securityManager.checkRoles(getPrincipal(), roles);
     }
 
-    public boolean isAuthorized(AuthorizedAction action) {
-        assertValid();
-        return hasPrincipal() && securityManager.isAuthorized(getPrincipal(), action);
-    }
-
-    public void checkAuthorization(AuthorizedAction action) throws AuthorizationException {
-        assertValid();
-        assertAuthzCheckPossible();
-        securityManager.checkAuthorization(getPrincipal(), action);
-    }
-
     public boolean isAuthenticated() {
         assertValid();
         return authenticated;
