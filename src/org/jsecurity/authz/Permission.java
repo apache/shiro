@@ -43,7 +43,7 @@ package org.jsecurity.authz;
  * <em>permissions</em> are assigned to these roles.
  *
  * <p>Under this paradigm, permissions are immutable and reflect an
- * application's raw functionality (opening files, creating users, etc).  This is what allows a
+ * application's raw functionality (opening files, accessing a web URL, creating users, etc).  This is what allows a
  * system's security policy to be dynamic: because Permission classes represent raw functionality and only change
  * when the application's source code changes, they are immutable at runtime - they represent 'what' the system can
  * do.  Roles, users, and groups are the 'who' of the application.  Determining 'who' can do 'what' then becomes
