@@ -41,8 +41,8 @@ public interface SecurityContextFactory {
     /**
      * Returns an implementation of the SecurityContext instance for the
      * given authentication info after a successful authentication.
-     * @param token the authentication token submitted for the successful authentication
-     * @param info authentication info created after successfully authenticating the token
+     * @param token the authentication token submitted for authentication attempt
+     * @param info AuthenticationInfo created as a result of the successful authentication
      * @return a SecurityContext for the corresponding subject that will be used by the application.
      */
     SecurityContext createSecurityContext( AuthenticationToken token, AuthenticationInfo info );

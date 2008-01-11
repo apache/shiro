@@ -26,6 +26,7 @@ package org.jsecurity.spring.security.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.annotation.RolesRequired;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
@@ -42,10 +43,20 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
+    protected SecurityManager securityManager = null;
+
     /**
      * Create a new AuthorizationAttributeSourceAdvisor.
      */
     public AuthorizationAttributeSourceAdvisor() {
+    }
+
+    public SecurityManager getSecurityManager() {
+        return securityManager;
+    }
+
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
     /**
@@ -65,14 +76,20 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     public void afterPropertiesSet() throws Exception {
+        if ( getSecurityManager() == null ) {
+            String msg = "SecurityManager property must be set";
+            throw new IllegalStateException( msg );
+        }
         if( getAdvice() == null ) {
             if ( log.isTraceEnabled() ) {
                 log.trace( "No authorization advice explicitly configured via the 'advice' " +
                         "property.  Attempting to set " +
                         "default instance of type [" +
-                        AopAllianceAuthorizationInterceptor.class.getName() + "]");
+                        AopAllianceAnnotationsMethodInterceptor.class.getName() + "]");
             }
-            AopAllianceAuthorizationInterceptor interceptor = new AopAllianceAuthorizationInterceptor();
+            AopAllianceAnnotationsMethodInterceptor interceptor = new AopAllianceAnnotationsMethodInterceptor();
+            interceptor.setSecurityManager( getSecurityManager() );
+            interceptor.init();
 
             setAdvice( interceptor );
         }

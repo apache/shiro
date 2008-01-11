@@ -24,10 +24,11 @@
  */
 package org.jsecurity.authz.support;
 
-import org.jsecurity.authz.method.AuthorizationVote;
-import org.jsecurity.authz.method.MethodInvocation;
+import org.jsecurity.SecurityManager;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RolesRequired;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.authz.method.MethodInvocation;
 
 /**
  * MethodAuthorizer that votes on authorization based on any {@link
@@ -39,35 +40,25 @@ import org.jsecurity.context.SecurityContext;
  */
 public class RoleAnnotationMethodAuthorizer extends AnnotationMethodAuthorizer {
 
-    @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public RoleAnnotationMethodAuthorizer() {
         setAnnotationClass( RolesRequired.class );
     }
 
-    public AuthorizationVote isAuthorized( MethodInvocation invocation ) {
+    public RoleAnnotationMethodAuthorizer( SecurityManager securityManager ) {
+        this();
+        setSecurityManager( securityManager );
+        init();
+    }
 
-        SecurityContext securityContext = getSecurityContext();
-
-        if ( securityContext == null ) {
-            return AuthorizationVote.abstain;
-        }
-
-        RolesRequired rrAnnotation = (RolesRequired)getAnnotation( invocation );
+    protected void doAssertAuthorized(MethodInvocation mi) throws AuthorizationException {
+        RolesRequired rrAnnotation = (RolesRequired)getAnnotation( mi );
 
         String roleId = rrAnnotation.value();
-        
-        if ( securityContext.hasRole( roleId ) ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "SecurityContext has role [" + roleId +
-                           "]. Returning grant vote." );
-            }
-            return AuthorizationVote.grant;
-        } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "SecurityContext does not have role [" +  roleId +
-                           "].  Returning deny vote." );
-            }
-            return AuthorizationVote.deny;
+
+        if ( !getSecurityContext().hasRole( roleId ) ) {
+            String msg = "Calling SecurityContext does not have required role [" + roleId + "].  " +
+                         "MethodInvocation denied.";
+            throw new UnauthorizedException( msg );
         }
     }
 

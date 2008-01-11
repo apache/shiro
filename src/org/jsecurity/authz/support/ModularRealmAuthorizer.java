@@ -24,13 +24,12 @@
  */
 package org.jsecurity.authz.support;
 
-import org.jsecurity.authz.*;
-import org.jsecurity.authz.method.MethodAuthorizer;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.Authorizer;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Initializable;
-import org.jsecurity.util.JavaEnvironment;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,9 +42,6 @@ import java.util.List;
 public class ModularRealmAuthorizer implements Authorizer, Initializable {
 
     protected Collection<Realm> realms = null;
-
-    //TODO - refactor name (ambiguous)
-    protected List<MethodAuthorizer> methodAuthorizers = null;
 
     public ModularRealmAuthorizer(){}
 
@@ -62,30 +58,11 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         this.realms = realms;
     }
 
-    public List<MethodAuthorizer> getAuthorizationModules() {
-        return methodAuthorizers;
-    }
-
-    public void setAuthorizationModules( List<MethodAuthorizer> methodAuthorizers) {
-        this.methodAuthorizers = methodAuthorizers;
-    }
-
     public void init() {
         Collection<Realm> realms = getRealms();
         if ( realms == null || realms.isEmpty() ) {
             String msg = "One or more realms must be configured.";
             throw new IllegalStateException( msg );
-        }
-        if ( JavaEnvironment.isAtLeastVersion15() ) {
-            methodAuthorizers = new ArrayList<MethodAuthorizer>(2);
-
-            PermissionAnnotationMethodAuthorizer permModule = new PermissionAnnotationMethodAuthorizer();
-            permModule.init();
-            methodAuthorizers.add( permModule );
-
-            RoleAnnotationMethodAuthorizer roleModule = new RoleAnnotationMethodAuthorizer();
-            roleModule.init();
-            methodAuthorizers.add( roleModule );
         }
     }
 

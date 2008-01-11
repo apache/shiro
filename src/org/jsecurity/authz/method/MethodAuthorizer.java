@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,40 +24,25 @@
  */
 package org.jsecurity.authz.method;
 
+import org.jsecurity.authz.AuthorizationException;
+
 /**
- * A MethodAuthorizer is asked to vote on whether or not a user/subject is
- * authorized to execute a given Method.
- * Based on the votes from a set of {@link MethodAuthorizer}s, the
- * {@link org.jsecurity.authz.Authorizer Authorizer} will decide
- * whether or not to authorize the user to perform the action.
+ * A MethodAuthorizer verifies that a given MethodInvocation is allowed to execute based on the calling context's
+ * security settings..
  *
- * @since 0.1
- * @author Jeremy Haile
+ * @since 0.2
  * @author Les Hazlewood
  */
 public interface MethodAuthorizer {
 
     /**
-     * Determines whether or not this MethodAuthorizer supports voting on
-     * the given MethodInvocation.  Returning false indicates that this module will not
-     * be called to vote on authorizing the MethodInvocation.
+     * Ensures the specified MethodInvocation is allowed to execute by returninq quietly if it is allowed, or
+     * throwing an <tt>AuthorizationException</tt> if it is not allowed.
      *
-     * @param invocation the method invocation which this module must decide if it supports.
-     * @return true if this module supports the given invocation, false otherwise.
+     * @param mi the MethodInvocation to check if allowed to continue
+     * @throws AuthorizationException if the MethodInvocation is not authorized to execute.
      */
-    boolean supports( MethodInvocation invocation );
-
-    /**
-     * Called when this MethodAuthorizer needs to vote on whether or not
-     * the current {@link org.jsecurity.context.SecurityContext} is authorized to
-     * execute the specified MethodInvocation.  This method is only called if this
-     * MethodAuthorizer {@link #supports supports} the specified invocation.
-     *
-     * @param invocation the MethodInvocation about to be executed.
-     * @return a vote indicating whether or not this MethodAuthorizer grants or denies
-     * authorization to the caller, or abstains from voting.
-     */
-    AuthorizationVote isAuthorized( MethodInvocation invocation );
+    void assertAuthorized( MethodInvocation mi ) throws AuthorizationException;
 
 }
 

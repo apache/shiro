@@ -31,7 +31,10 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.support.ModularRealmAuthenticator;
-import org.jsecurity.authz.*;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.Authorizer;
+import org.jsecurity.authz.HostUnauthorizedException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.support.ModularRealmAuthorizer;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.CacheProviderAware;
@@ -53,7 +56,9 @@ import org.jsecurity.util.*;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -74,7 +79,7 @@ import java.util.*;
  * note the following:</p>
  *
  * <p>Unless you're happy with the default simple {@link PropertiesRealm properties file}-based realm, which may or
- * may not be flexible enough for enterprise applications, you might want to specify at the very least one custom
+ * may not be flexible enough for enterprise applications, you might want to specify at least one custom
  * <tt>Realm</tt> implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.
  * All other attributes have suitable defaults for most enterprise applications.</p>
  *
