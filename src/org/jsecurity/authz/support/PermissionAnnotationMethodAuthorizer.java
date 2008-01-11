@@ -25,11 +25,12 @@
 package org.jsecurity.authz.support;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.jsecurity.SecurityManager;
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 import org.jsecurity.authz.method.MethodInvocation;
-import org.jsecurity.authz.method.AuthorizationVote;
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.util.PermissionUtils;
 
 /**
@@ -44,9 +45,14 @@ public class PermissionAnnotationMethodAuthorizer extends AnnotationMethodAuthor
 
     private static final char ARRAY_CLOSE_CHAR = ']';
 
-    @SuppressWarnings({"OverridableMethodCallInConstructor"})
     public PermissionAnnotationMethodAuthorizer() {
         setAnnotationClass( PermissionsRequired.class );
+    }
+
+    public PermissionAnnotationMethodAuthorizer( SecurityManager securityManager ) {
+        this();
+        setSecurityManager( securityManager );
+        init();
     }
 
     protected String inferTargetFromPath( Object[] methodArgs, String namePath ) throws Exception {
@@ -110,27 +116,12 @@ public class PermissionAnnotationMethodAuthorizer extends AnnotationMethodAuthor
         return PermissionUtils.createPermission( clazz, name, actions );
     }
 
-    public AuthorizationVote isAuthorized( MethodInvocation invocation ) {
-
-        SecurityContext securityContext = getSecurityContext();
-
-        if ( securityContext == null ) {
-            return AuthorizationVote.abstain;
-        }
-
-        Permission p = createPermission( invocation );
-        if ( securityContext.isPermitted( p ) ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "SecurityContext is permitted [" + p +
-                           "]. Returning grant vote." );
-            }
-            return AuthorizationVote.grant;
-        } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "SecurityContext is not permitted [" + p +
-                           "].  Returning deny vote." );
-            }
-            return AuthorizationVote.deny;
+    protected void doAssertAuthorized(MethodInvocation mi) throws AuthorizationException {
+        Permission p = createPermission( mi );
+        if ( getSecurityContext().isPermitted( p ) ) {
+            String msg = "Calling SecurityContext does not have required permission [" + p + "].  " +
+                    "MethodInvocation denied.";
+            throw new UnauthorizedException( msg );
         }
     }
 }

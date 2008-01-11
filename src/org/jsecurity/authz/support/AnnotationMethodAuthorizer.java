@@ -26,8 +26,9 @@ package org.jsecurity.authz.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.authz.AuthorizedAction;
+import org.jsecurity.SecurityManager;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.method.MethodAuthorizer;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.context.SecurityContext;
@@ -38,30 +39,40 @@ import java.lang.reflect.Method;
 
 /**
  * Abstract class providing common functionality across methodAuthorizers that process metadata (annotations).
- *  Primarily provides automatic support for the {@link MethodAuthorizer#supports
- * supports} method.  This allows support for any arbitrary number of annotations - simply create a
- * subclass of this one and add an instance of that subclass to the {@link
- * ModularRealmAuthorizer ModularRealmAuthorizer}'s set of {@link
- * ModularRealmAuthorizer#setAuthorizationModules authorizationModule}s.
+ * Subclass implementations of this operate with a single Annnotation type.  Any arbitrary number of annotations
+ * can be supported by subclassing this one and then plugging the implementations in to an
+ * {@link org.jsecurity.authz.aop.AnnotationsMethodInterceptor}.
  *
- * @see ModularRealmAuthorizer#setAuthorizationModules
- *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.2
  */
 public abstract class AnnotationMethodAuthorizer implements MethodAuthorizer, Initializable {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    Class<? extends Annotation> annotationClass;
+    protected SecurityManager securityManager;
+    protected Class<? extends Annotation> annotationClass;
 
-    public AnnotationMethodAuthorizer() {}
+    public AnnotationMethodAuthorizer() {
+    }
 
     public void init() {
+        if ( securityManager == null ) {
+            String msg = "SecurityManager property must be set.";
+            throw new IllegalStateException( msg );
+        }
         if (annotationClass == null) {
             String msg = "annotationClass property must be set";
             throw new IllegalStateException(msg);
         }
+    }
+
+    public SecurityManager getSecurityManager() {
+        return securityManager;
+    }
+
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
     public void setAnnotationClass(Class<? extends Annotation> annotationClass) {
@@ -73,48 +84,46 @@ public abstract class AnnotationMethodAuthorizer implements MethodAuthorizer, In
     }
 
     protected SecurityContext getSecurityContext() {
-        return SecurityUtils.getSecurityContext();
+        return getSecurityManager().getSecurityContext();
     }
 
-    public boolean supports( MethodInvocation methodInvocation ) {
+    protected boolean supports(MethodInvocation mi) {
+        return getAnnotation( mi ) != null;
+    }
 
-        if ( methodInvocation != null ) {
-            return supports( methodInvocation.getMethod() );
-        } else {
-            if ( log.isInfoEnabled() ) {
-                log.info( "AuthorizationAction argument is null.  Returning false." );
+    protected Annotation getAnnotation(MethodInvocation mi) {
+        if (mi == null) {
+            throw new IllegalArgumentException("method argument cannot be null");
+        }
+        Method m = mi.getMethod();
+        if (m == null) {
+            String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
+                    "constructed.  getMethod() returned null";
+            throw new IllegalArgumentException(msg);
+
+        }
+        return m.getAnnotation(getAnnotationClass());
+
+    }
+
+    public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
+        if ( supports( mi ) ) {
+            if ( getSecurityContext() == null ) {
+                String msg = "No SecurityContext available to the calling code.  Authorization check " +
+                        "cannot occur.";
+                throw new UnauthorizedException( msg );
             }
-        }
-
-        return false;
-    }
-
-    protected boolean supports( Method m ) {
-        return ( m != null && ( m.getAnnotation( getAnnotationClass() ) != null ) );
-    }
-
-    protected Annotation getAnnotation( AuthorizedAction action ) {
-        if ( action == null ) {
-            throw new IllegalArgumentException( "method argument cannot be null" );
-        }
-        if ( action instanceof MethodInvocation ) {
-            MethodInvocation mi = (MethodInvocation) action;
-
-            Method m = mi.getMethod();
-            if (m == null) {
-                String msg = MethodInvocation.class.getName() + " parameter incorrectly " +
-                        "constructed.  getMethod() returned null";
-                throw new NullPointerException(msg);
-
-            }
-            return m.getAnnotation( getAnnotationClass() );
-        } else {
-            String msg = "AuthorizedAction argument of type [" + action.getClass().getName() +
-                    "] is not an instance of [" + MethodInvocation.class.getName() + "] and " +
-                    "cannot be processed directly.  Please subclass the [" +
-                    AnnotationMethodAuthorizer.class.getName() + ".getAnnotation(...) method " +
-                    "to obtain an Annotation based on the given method argument.";
-            throw new IllegalArgumentException( msg );
+            doAssertAuthorized( mi );
         }
     }
+
+    /**
+     * Template hook for subclasses.  When this method is called, the MethodInvocation argument is guaranteed
+     * to contain an annotation of type {@link #getAnnotationClass() annotationClass} and a
+     * calling SecurityContext will be present (via #getSecurityContext() getSecurityContext()}.
+     *
+     * @param mi the MethodInvocation to assert authorization
+     * @throws AuthorizationException if the caller is not authorized to perform the specified MethodInvocation.
+     */
+    protected abstract void doAssertAuthorized( MethodInvocation mi ) throws AuthorizationException;
 }

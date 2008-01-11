@@ -26,11 +26,11 @@ package org.jsecurity.authz.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.UnauthorizedException;
+import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.method.MethodInvocation;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.SecurityManager;
+import org.jsecurity.util.Initializable;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -44,13 +44,19 @@ import org.jsecurity.SecurityManager;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class MethodInterceptorSupport {
+public abstract class MethodInterceptorSupport implements Initializable {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected SecurityManager securityManager = null;
 
     public MethodInterceptorSupport(){}
+
+    public void init() {
+        if ( securityManager == null ) {
+            throw new IllegalStateException( "SecurityManager property must be set." );
+        }
+    }
 
     public SecurityManager getSecurityManager() {
         return securityManager;
@@ -65,19 +71,8 @@ public abstract class MethodInterceptorSupport {
     }
 
     protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
-
-        SecurityContext secCtx = getSecurityContext();
-
-        if ( secCtx != null ) {
-            MethodInvocation methodInvocation = createMethodInvocation( implSpecificMethodInvocation );
-            assertAuthorized( methodInvocation );
-        } else {
-            String msg = "Unable to perform authorization check: no SecurityContext available from " +
-                    "getSecurityContext() implementation.  Authorization failed.";
-            throw new UnauthorizedException( msg );
-        }
-
-        //secCtx was found, and it determined the AOP invocation chain should proceed:
+        MethodInvocation methodInvocation = createMethodInvocation( implSpecificMethodInvocation );
+        assertAuthorized( methodInvocation );
         return continueInvocation( implSpecificMethodInvocation );
     }
 
