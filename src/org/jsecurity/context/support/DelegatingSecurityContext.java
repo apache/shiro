@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.context.SecurityContext;

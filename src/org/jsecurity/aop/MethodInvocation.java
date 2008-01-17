@@ -22,19 +22,40 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz;
+package org.jsecurity.aop;
+
+import java.lang.reflect.Method;
 
 /**
- * Represents an action that requires authorization in order to perform.
- *
- * <p>Although this interface does not define any behavior for implementing classes, it does
- * provide type-safety for JSecurity components expecting them.
+ * 3rd-party API independent representation of a method invocation.  This is needed so JSecurity can support other
+ * MethodInvocation instances from other AOP frameworks/APIs.
  *
  * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public interface AuthorizedAction {
+public interface MethodInvocation {
+
+    /**
+     * Continues the method invocation chain, or if the last in the chain, the method itself.
+     * @return the result of the Method invocation.
+     * @throws Throwable if the method or chain throws a Throwable
+     */
+    Object proceed() throws Throwable;
+
+    /**
+     * The method that is being invoked.
+     * @return a {@link Method} object representing the invoked method.
+     */
+    Method getMethod();
+
+    /**
+     * The arguments given to the method invocation.
+     * @return the arguments passed to the method invocation.
+     */
+    Object[] getArguments();
+
+
 
 }
 

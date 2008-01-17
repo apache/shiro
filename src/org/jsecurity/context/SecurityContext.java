@@ -25,7 +25,6 @@
 package org.jsecurity.context;
 
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizedAction;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.session.Session;
 
@@ -186,10 +185,10 @@ public interface SecurityContext {
     void checkRoles( Collection<String> roles ) throws AuthorizationException;
 
     /**
-     * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
-     * logged-in to the system, <tt>false</tt> otherwise.
-     * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> is currently
-     * logged-in to the system, <tt>false</tt> otherwise.
+     * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
+     * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
+     * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
+     * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      */
     boolean isAuthenticated();
 

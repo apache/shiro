@@ -38,11 +38,17 @@ import javax.servlet.http.HttpServlet;
  */
 public class SecurityManagerServlet extends HttpServlet {
 
-    private SecurityManagerLoader securityManagerLoader = new SecurityManagerLoader();
+    protected SecurityManagerLoader securityManagerLoader = null;
+
+    protected SecurityManagerLoader newLoaderInstance() {
+        return new SecurityManagerLoader();
+    }
 
     public void init() throws ServletException {
-        securityManagerLoader.setServletContext( getServletContext() );
-        securityManagerLoader.init();
+        SecurityManagerLoader loader = newLoaderInstance();
+        loader.setServletContext( getServletContext() );
+        loader.init();
+        this.securityManagerLoader = loader;
     }
 
     public void destroy() {

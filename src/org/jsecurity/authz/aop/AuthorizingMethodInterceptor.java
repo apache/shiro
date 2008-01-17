@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,27 +22,23 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.method;
+package org.jsecurity.authz.aop;
 
+import org.jsecurity.aop.MethodInvocation;
+import org.jsecurity.aop.support.MethodInterceptorSupport;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
- * A MethodAuthorizer verifies that a given MethodInvocation is allowed to execute based on the calling context's
- * security settings..
- *
- * @since 0.2
+ * @since 1.0
  * @author Les Hazlewood
  */
-public interface MethodAuthorizer {
+public abstract class AuthorizingMethodInterceptor extends MethodInterceptorSupport {
 
-    /**
-     * Ensures the specified MethodInvocation is allowed to execute by returninq quietly if it is allowed, or
-     * throwing an <tt>AuthorizationException</tt> if it is not allowed.
-     *
-     * @param mi the MethodInvocation to check if allowed to continue
-     * @throws AuthorizationException if the MethodInvocation is not authorized to execute.
-     */
-    void assertAuthorized( MethodInvocation mi ) throws AuthorizationException;
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        assertAuthorized( methodInvocation );
+        return methodInvocation.proceed();
+    }
+
+    protected abstract void assertAuthorized( MethodInvocation methodInvocation ) throws AuthorizationException;
 
 }
-

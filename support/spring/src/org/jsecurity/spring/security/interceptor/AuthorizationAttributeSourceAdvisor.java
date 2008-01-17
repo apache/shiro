@@ -85,9 +85,9 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
                 log.trace( "No authorization advice explicitly configured via the 'advice' " +
                         "property.  Attempting to set " +
                         "default instance of type [" +
-                        AopAllianceAnnotationsMethodInterceptor.class.getName() + "]");
+                        AopAllianceAnnotationsAuthorizingMethodInterceptor.class.getName() + "]");
             }
-            AopAllianceAnnotationsMethodInterceptor interceptor = new AopAllianceAnnotationsMethodInterceptor();
+            AopAllianceAnnotationsAuthorizingMethodInterceptor interceptor = new AopAllianceAnnotationsAuthorizingMethodInterceptor();
             interceptor.setSecurityManager( getSecurityManager() );
             interceptor.init();
 
