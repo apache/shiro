@@ -21,9 +21,9 @@
 
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
-    <property name="major.version" value="0"/>
-    <property name="minor.version" value="2"/>
-    <property name="patch.version" value="0-RC1"/>
+    <property name="major.version" value="1"/>
+    <property name="minor.version" value="0"/>
+    <property name="patch.version" value="0-alpha"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
     
     <!-- application-wide config files: (all other config files should be in a respective
