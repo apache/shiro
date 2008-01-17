@@ -85,7 +85,7 @@ public interface AuthenticationInfo {
      * not allowed to log in due to a manual or automatic lockout.
      *
      * @return true if the user's account is locked and the user should be
-     *         denied authorization, false otherwise.
+     *         denied authentication, false otherwise.
      */
     boolean isAccountLocked();
 
