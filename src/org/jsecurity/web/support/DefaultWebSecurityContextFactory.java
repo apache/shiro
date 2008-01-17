@@ -159,9 +159,19 @@ public class DefaultWebSecurityContextFactory extends SecurityWebSupport impleme
         if ( allPrincipals != null && !allPrincipals.isEmpty() ) {
             Session session = securityContext.getSession();
             session.setAttribute( PRINCIPALS_SESSION_KEY, allPrincipals );
-            if ( securityContext.isAuthenticated() ) {
-                session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
-            } else {
+        } else {
+            Session session = securityContext.getSession( false );
+            if ( session != null ) {
+                session.removeAttribute( PRINCIPALS_SESSION_KEY );
+            }
+        }
+        
+        if ( securityContext.isAuthenticated() ) {
+            Session session = securityContext.getSession();
+            session.setAttribute( AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated() );
+        } else {
+            Session session = securityContext.getSession( false );
+            if ( session != null ) {
                 session.removeAttribute( AUTHENTICATED_SESSION_KEY );
             }
         }
