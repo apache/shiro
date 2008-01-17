@@ -5,10 +5,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
 
+    <!-- By default, JSecurity's Session infrastructure in a web environment will use the Servlet container's
+         HttpSession.  But if you need to share session state across client mediums (e.g. web mvc and Swing),
+         or are doing distributed/shared Sessions for Single Sign On, HttpSessions aren't good enough.  
+         You'll need to use JSecurity's more powerful (and client-agnostic) session management.  You can do this
+         by uncommenting the following:
     <context-param>
         <param-name>sessionMode</param-name>
         <param-value>jsecurity</param-value>
-    </context-param>
+    </context-param> -->
 
     <listener>
         <description>Creates a JSecurity SecurityManager instance and binds it to the ServletContext for
@@ -16,37 +21,11 @@
         <listener-class>org.jsecurity.web.servlet.SecurityManagerListener</listener-class>
     </listener>
 
-    <!-- ===================================================================
-	 -  Servlets
-	 -  =================================================================== -->
-    <servlet>
-        <servlet-name>sample</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
     <filter>
         <description>Ensures a SecurityContext exists for each request, utilizing the SecurityManager
                      bound to the webapp by the above SecurityManagerListener</description>
         <filter-name>SecurityContextFilter</filter-name>
         <filter-class>org.jsecurity.web.servlet.SecurityContextFilter</filter-class>
-        <!-- Because JSecurity's Session management support is portable across
-             servlet containers and can be used across
-             client mediums (web app, swing app, etc), JSecurity provides its own implementation of the
-             Servlet Specification for Sessions (Spec 2.4, Chapter 7) for transparent session management.
-             As such, this Filter uses JSecurity Sessions by default instead of the Servlet container's session 
-             implementation.  This is usually a good thing in enterprise applications that rely on JSecurity
-             for shared session state.
-
-             But if you require the servlet container's specific
-             Session implementation for some reason, you should 1) Ask yourself why you've purposefully tied yourself
-             to the servlet container and see if you can get away from that, or leverage JSecurity Sessions stated above
-             to release you from this dependency, and 2) disable JSecurity sessions on the web-tier by uncommenting
-             the following init-param.
-        <init-param>
-            <param-name>useJSecuritySessions</param-name>
-            <param-value>false</param-value>
-        </init-param> -->
     </filter>
 
     <filter-mapping>

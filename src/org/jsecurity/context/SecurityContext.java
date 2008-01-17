@@ -24,6 +24,8 @@
  */
 package org.jsecurity.context;
 
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.session.Session;
@@ -32,10 +34,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Provides all access control behavior and session access for a subject (aka a 'user' account).  This is the primary
- * JSecurity interaction point for a single subject (user).
- *
- * @see org.jsecurity.authc.Authenticator
+ * Provides all authentication (login), authorization (access control), and session operations for a single
+ * application <em>Subject</em> (aka 'user').  This is the primary JSecurity interaction point for single-user
+ * operations.
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -62,7 +63,7 @@ public interface SecurityContext {
      * @return a List of principals associated with this context, or an empty collection
      * if no principals are associated with this security context
      */
-    List<?> getAllPrincipals();
+    List getAllPrincipals();
 
     /**
      * Returns a single principal assignable from the specified type
@@ -75,7 +76,7 @@ public interface SecurityContext {
      * @param principalType the type of the principal that should be returned.
      * @return a principal of the specified type.
      */
-    Object getPrincipalByType( Class principalType );
+    <T> T getPrincipalByType(Class<T> principalType);
 
     /**
      * Returns all principals assignable from the specified type that is associated with
@@ -86,7 +87,7 @@ public interface SecurityContext {
      * @return a List of principals that are assignable from the specified type, or
      * an empty List if no principals of this type are associated.
      */
-    List<?> getAllPrincipalsByType( Class principalType );
+    <T> List<T> getAllPrincipalsByType(Class<T> principalType);
 
     /**
      * Checks if the given role identifier is associated with this context.
@@ -185,10 +186,30 @@ public interface SecurityContext {
     void checkRoles( Collection<String> roles ) throws AuthorizationException;
 
     /**
+     * Performs a login attempt for the Subject associated with the calling code.  If unsuccessful,
+     * an {@link AuthenticationException} is thrown, the subclass of which identifies why the attempt failed.
+     * If successful, the Subject/account data associated with the submitted principals/credentials will be
+     * associated with this <tt>SecurityContext</tt> and the method will return quietly.
+     *
+     * <p>Upon returninq quietly, this <tt>SecurityContext</tt> instance can be considered
+     * authenticated and {@link #getPrincipal() getPrincipal()} will be non-null and
+     * {@link #isAuthenticated() isAuthenticated()} will be <tt>true</tt>.
+     *
+     * @param token the token encapsulating the subject's principals and credentials to be passed to the
+     * Authentication subsystem for verification.
+     * @throws AuthenticationException if the authentication attempt fails.
+     *
+     * @since 1.0
+     */
+    void login( AuthenticationToken token ) throws AuthenticationException;
+
+    /**
      * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
+     *
+     * @since 1.0
      */
     boolean isAuthenticated();
 
@@ -199,6 +220,8 @@ public interface SecurityContext {
      * @see #getSession(boolean)
      *
      * @return the application <tt>Session</tt> associated with this context.
+     *
+     * @since 0.2
      */
     Session getSession();
 
@@ -217,6 +240,8 @@ public interface SecurityContext {
      * @param create boolean argument determining if a new session should be created or not if there is no existing session.
      * @return the application <tt>Session</tt> associated with this <tt>SecurityContext</tt> or <tt>null</tt> based
      * on the above described logic.
+     *
+     * @since 0.2
      */
     Session getSession( boolean create );
 

@@ -29,16 +29,19 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.realm.Realm;
 import org.jsecurity.session.SessionFactory;
-
-import java.util.Collection;
 
 /**
  * A <tt>SecurityManager</tt> is a convenience mechanism - it extends the {@link Authenticator},
  * {@link Authorizer}, and {@link SessionFactory} interfaces, thereby consolidating
  * these behaviors into a single interface.  This allows applications to interact with a single
  * <tt>SecurityManager</tt> component for all JSecurity operations.
+ *
+ * <p>In addition to the above the interfaces, two unique methods are provided by this interface,
+ * {@link #login} and {@link #getSecurityContext}.  A SecurityContext is an encompassing component that utilizes
+ * authentication, authorization, and session operations for a single Subject, and as such can only be managed by
+ * <tt>A SecurityManager</tt> which is aware of all three operations (the 3 parent interfaces on the other hand
+ * do not know of all operations to ensure a clean separation of concerns).
  *
  * @see DefaultSecurityManager
  *

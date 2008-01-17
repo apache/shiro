@@ -27,6 +27,9 @@ package org.jsecurity.context.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.InetAuthenticationToken;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
@@ -70,7 +73,7 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected List<Object> principals = new ArrayList<Object>();
+    protected List principals = new ArrayList();
     protected boolean authenticated;
     protected InetAddress inetAddress = null;
     protected Session session = null;
@@ -115,7 +118,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         this(toList(principal), authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext(List<?> principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSecurityContext(List principals, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager cannot be null.");
@@ -125,6 +128,7 @@ public class DelegatingSecurityContext implements SecurityContext {
             principals = new ArrayList<Object>();
         }
 
+        //noinspection unchecked
         this.principals.addAll( principals );
         this.authenticated = authenticated;
         this.inetAddress = inetAddress;
@@ -183,19 +187,21 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipals()
      */
-    public List<?> getAllPrincipals() {
+    public List getAllPrincipals() {
         assertValid();
+        //noinspection unchecked
         return Collections.unmodifiableList( principals );
     }
 
     /**
      * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
      */
-    public Object getPrincipalByType(Class principalType) {
+    public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
         for (Object o : principals) {
             if (principalType.isAssignableFrom(o.getClass())) {
-                return o;
+                //noinspection unchecked
+                return (T)o;
             }
         }
         return null;
@@ -204,15 +210,15 @@ public class DelegatingSecurityContext implements SecurityContext {
     /**
      * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
      */
-    public List<?> getAllPrincipalsByType(Class principalType) {
+    public <T> List<T> getAllPrincipalsByType(Class<T> principalType) {
         assertValid();
-        List<Object> principalsOfType = new ArrayList<Object>();
+        List<T> principalsOfType = new ArrayList<T>();
 
         if (principals != null) {
             for (Object o : principals) {
                 if (principalType.isAssignableFrom(o.getClass())) {
                     //noinspection unchecked
-                    principalsOfType.add(o);
+                    principalsOfType.add((T)o);
                 }
             }
         }
@@ -259,9 +265,9 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
         if ( !hasPrincipal() ) {
-            String msg = "User/account data has not yet been associated with this SecurityContext " +
+            String msg = "Subject/User data has not yet been associated with this SecurityContext " +
                 "(this can be done by executing " + SecurityContext.class.getName() + ".login(AuthenticationToken) )." +
-                "Therefore, authorization operations are not possible (a user identity is required first).  " +
+                "Therefore, authorization operations are not possible (a Subject/User identity is required first).  " +
                 "Denying authorization.";
             throw new UnauthenticatedException( msg );
         }
@@ -290,6 +296,26 @@ public class DelegatingSecurityContext implements SecurityContext {
         assertValid();
         assertAuthzCheckPossible();
         securityManager.checkRoles(getPrincipal(), roles);
+    }
+
+    public void login(AuthenticationToken token) throws AuthenticationException {
+        assertValid();
+        SecurityContext authcSecCtx = securityManager.login( token );
+        List principals = authcSecCtx.getAllPrincipals();
+        if ( principals == null || principals.isEmpty() ) {
+            String msg = "Principals collection returned from securityManager.login( token ) returned " +
+                "is null or empty.  This collection must be populated - please check the SecurityManager " +
+                "implementation to ensure this happens after a successful login attempt.";
+            throw new IllegalStateException( msg );
+        }
+        this.principals = principals;
+        this.authenticated = true;
+        if ( token instanceof InetAuthenticationToken) {
+            InetAddress addy = ((InetAuthenticationToken)token).getInetAddress();
+            if ( addy != null ) {
+                this.inetAddress = addy;
+            }
+        }
     }
 
     public boolean isAuthenticated() {
@@ -326,7 +352,7 @@ public class DelegatingSecurityContext implements SecurityContext {
             }
         }
         this.session = null;
-        this.principals.clear();
+        this.principals = new ArrayList();
         this.authenticated = false;
         this.inetAddress = null;
         this.securityManager = null;
