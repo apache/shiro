@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,34 +22,31 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.support;
+package org.jsecurity.authz.aop;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.SecurityManager;
+import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.PermissionsRequired;
-import org.jsecurity.authz.method.MethodInvocation;
+import org.jsecurity.authz.support.InvalidTargetPathException;
 import org.jsecurity.util.PermissionUtils;
 
 /**
- * MethodAuthorizer that votes on authorization based on any {@link
- * org.jsecurity.authz.annotation.PermissionsRequired PermissionsRequired} annotation found on the method being
- * executed.
- *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
-public class PermissionAnnotationMethodAuthorizer extends AnnotationMethodAuthorizer {
+public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
     private static final char ARRAY_CLOSE_CHAR = ']';
 
-    public PermissionAnnotationMethodAuthorizer() {
+    public PermissionAnnotationMethodInterceptor() {
         setAnnotationClass( PermissionsRequired.class );
     }
 
-    public PermissionAnnotationMethodAuthorizer( SecurityManager securityManager ) {
+    public PermissionAnnotationMethodInterceptor( SecurityManager securityManager ) {
         this();
         setSecurityManager( securityManager );
         init();
@@ -116,7 +113,7 @@ public class PermissionAnnotationMethodAuthorizer extends AnnotationMethodAuthor
         return PermissionUtils.createPermission( clazz, name, actions );
     }
 
-    protected void doAssertAuthorized(MethodInvocation mi) throws AuthorizationException {
+    public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         Permission p = createPermission( mi );
         if ( getSecurityContext().isPermitted( p ) ) {
             String msg = "Calling SecurityContext does not have required permission [" + p + "].  " +
@@ -124,4 +121,6 @@ public class PermissionAnnotationMethodAuthorizer extends AnnotationMethodAuthor
             throw new UnauthorizedException( msg );
         }
     }
+
+
 }

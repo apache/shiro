@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,32 +22,14 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.method;
-
-import org.jsecurity.authz.AuthorizedAction;
-
-import java.lang.reflect.Method;
+package org.jsecurity.aop;
 
 /**
- * 3rd-party API independent representation of a method invocation.  This is needed so JSecurity can support other
- * MethodInvocation instances from other AOP frameworks/APIs.
- *
- * @since 0.1
- * @author Jeremy Haile
+ * @since 0.2
+ * @author Les Hazlewood
  */
-public interface MethodInvocation extends AuthorizedAction {
-
-    /**
-     * The method that is being invoked.
-     * @return a {@link Method} object representing the invoked method.
-     */
-    Method getMethod();
-
-    /**
-     * The arguments given to the method invocation.
-     * @return the arguments passed to the method invocation.
-     */
-    Object[] getArguments();
+public interface MethodInterceptor {
+    
+    Object invoke( MethodInvocation methodInvocation ) throws Throwable;
 
 }
-

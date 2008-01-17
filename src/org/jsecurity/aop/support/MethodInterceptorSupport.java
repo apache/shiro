@@ -22,13 +22,12 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.aop;
+package org.jsecurity.aop.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
-import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.method.MethodInvocation;
+import org.jsecurity.aop.MethodInterceptor;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.util.Initializable;
 
@@ -37,14 +36,10 @@ import org.jsecurity.util.Initializable;
  * leaves AOP implementation specifics to be handled by subclass implementations.  Shared behavior
  * is defined in this class.
  *
- * <p>Different frameworks represent Method Invocations (MI) in different ways, so this class
- * aggregates as much JSecurity interceptor behavior as possible, leaving framework MI details to
- * subclasses via template methods.
- *
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class MethodInterceptorSupport implements Initializable {
+public abstract class MethodInterceptorSupport implements MethodInterceptor, Initializable {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -69,16 +64,4 @@ public abstract class MethodInterceptorSupport implements Initializable {
     protected SecurityContext getSecurityContext() {
         return getSecurityManager().getSecurityContext();
     }
-
-    protected Object invoke( final Object implSpecificMethodInvocation ) throws Throwable {
-        MethodInvocation methodInvocation = createMethodInvocation( implSpecificMethodInvocation );
-        assertAuthorized( methodInvocation );
-        return continueInvocation( implSpecificMethodInvocation );
-    }
-
-    protected abstract MethodInvocation createMethodInvocation( Object implSpecificMethodInvocation );
-
-    protected abstract void assertAuthorized( MethodInvocation methodInvocation ) throws AuthorizationException;
-
-    protected abstract Object continueInvocation( Object implSpecificMethodInvocation ) throws Throwable;
 }

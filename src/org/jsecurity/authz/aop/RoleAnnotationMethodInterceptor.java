@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,35 +22,31 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.support;
+package org.jsecurity.authz.aop;
 
 import org.jsecurity.SecurityManager;
+import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RolesRequired;
-import org.jsecurity.authz.method.MethodInvocation;
 
 /**
- * MethodAuthorizer that votes on authorization based on any {@link
- * org.jsecurity.authz.annotation.RolesRequired RolesRequired} annotation found on the method
- * being executed.
- *
- * @since 0.1
+ * @since 1.0
  * @author Les Hazlewood
  */
-public class RoleAnnotationMethodAuthorizer extends AnnotationMethodAuthorizer {
+public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
-    public RoleAnnotationMethodAuthorizer() {
+    public RoleAnnotationMethodInterceptor() {
         setAnnotationClass( RolesRequired.class );
     }
 
-    public RoleAnnotationMethodAuthorizer( SecurityManager securityManager ) {
+    public RoleAnnotationMethodInterceptor( SecurityManager securityManager ) {
         this();
         setSecurityManager( securityManager );
         init();
     }
 
-    protected void doAssertAuthorized(MethodInvocation mi) throws AuthorizationException {
+    public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         RolesRequired rrAnnotation = (RolesRequired)getAnnotation( mi );
 
         String roleId = rrAnnotation.value();
@@ -61,5 +57,4 @@ public class RoleAnnotationMethodAuthorizer extends AnnotationMethodAuthorizer {
             throw new UnauthorizedException( msg );
         }
     }
-
 }

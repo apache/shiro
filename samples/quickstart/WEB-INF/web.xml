@@ -5,6 +5,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
 
+    <context-param>
+        <param-name>sessionMode</param-name>
+        <param-value>jsecurity</param-value>
+    </context-param>
+
     <listener>
         <description>Creates a JSecurity SecurityManager instance and binds it to the ServletContext for
                      framework access and application use.</description>
