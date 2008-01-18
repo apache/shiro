@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
-import org.jsecurity.util.AssertUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,8 +69,12 @@ public class EhCache implements Cache {
      * @param cacheManager the cache manager that created this cache.
      */
     public EhCache(net.sf.ehcache.Cache cache, CacheManager cacheManager) {
-        AssertUtils.notNull( cache );
-        AssertUtils.notNull( cacheManager );
+        if ( cache == null ) {
+            throw new IllegalArgumentException( "Cache argument cannot be null." );
+        }
+        if ( cacheManager == null ) {
+            throw new IllegalArgumentException( "CacheManager argument cannot be null. " );
+        }
         this.cache = cache;
         this.cacheManager = cacheManager;
     }

@@ -68,7 +68,7 @@ public class PermissionUtils {
     }
 
     private static Object[] toArray( String arg1, String arg2 ) {
-        Object[] array = null;
+        Object[] array;
         if ( arg2 != null ) {
             array = new Object[]{ arg1, arg2 };
         } else {
@@ -115,7 +115,7 @@ public class PermissionUtils {
                                                String nameOrTarget,
                                                String commaDelimitedActions ) throws UnavailableConstructorException {
 
-        Permission instance = null;
+        Permission instance;
 
         String value = strip( nameOrTarget );
         String actions = strip( commaDelimitedActions );
