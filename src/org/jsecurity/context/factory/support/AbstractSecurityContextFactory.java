@@ -24,7 +24,7 @@
 */
 package org.jsecurity.context.factory.support;
 
-import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.factory.SecurityContextFactory;
@@ -33,7 +33,7 @@ import java.util.Collection;
 
 /**
  * Abstract implementation of the <tt>SecurityContextFactory</tt> interface that
- * ensures the given <tt>AuthenticationInfo</tt> is valid.
+ * ensures the given <tt>Account</tt> is valid.
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -44,15 +44,15 @@ public abstract class AbstractSecurityContextFactory
 
     public AbstractSecurityContextFactory(){}
 
-    public SecurityContext createSecurityContext( AuthenticationToken token, AuthenticationInfo info ) {
-        Collection principals = info.getPrincipals();
+    public SecurityContext createSecurityContext( AuthenticationToken token, Account account ) {
+        Collection principals = account.getPrincipals();
         if ( principals == null || principals.size() < 1 ) {
-            String msg = "AuthenticationInfo parameter must return at least one, non-null principal.";
+            String msg = "Account parameter must return at least one, non-null principal.";
             throw new IllegalArgumentException( msg );
         }
-        return onCreateSecurityContext( token, info );
+        return onCreateSecurityContext( token, account );
     }
 
-    protected abstract SecurityContext onCreateSecurityContext( AuthenticationToken token, AuthenticationInfo info );
+    protected abstract SecurityContext onCreateSecurityContext( AuthenticationToken token, Account account );
 
 }

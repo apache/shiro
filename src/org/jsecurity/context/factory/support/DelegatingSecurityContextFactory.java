@@ -25,7 +25,7 @@
 package org.jsecurity.context.factory.support;
 
 import org.jsecurity.SecurityManager;
-import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.InetAuthenticationToken;
 import org.jsecurity.context.SecurityContext;
@@ -51,7 +51,7 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
         this.securityManager = securityManager;
     }
 
-    protected SecurityContext onCreateSecurityContext( AuthenticationToken token, AuthenticationInfo info ) {
+    protected SecurityContext onCreateSecurityContext( AuthenticationToken token, Account account ) {
 
         //get any existing session that may exist - we don't want to lose it:
         SecurityContext securityContext = ThreadContext.getSecurityContext();
@@ -69,6 +69,6 @@ public class DelegatingSecurityContextFactory extends AbstractSecurityContextFac
             authcSourceIP = ThreadContext.getInetAddress();
         }
 
-        return new DelegatingSecurityContext( info.getPrincipals(), true, authcSourceIP, session, securityManager );
+        return new DelegatingSecurityContext( account.getPrincipals(), true, authcSourceIP, session, securityManager );
     }
 }

@@ -1,11 +1,11 @@
 package org.jsecurity;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialMatcher;
-import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.support.SimpleAuthorizationInfo;
@@ -77,7 +77,7 @@ public class AuthorizingRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        SecurityContext secCtx = securityManager.authenticate(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
         assertTrue(secCtx.getAllPrincipals().size() == 3);
@@ -96,13 +96,13 @@ public class AuthorizingRealmTest {
     }
 
     @Test
-    public void testCreateAuthenticationInfoOverride() {
+    public void testCreateAccountOverride() {
 
         Realm realm = new AllowAllRealm() {
-            protected AuthenticationInfo createAuthenticationInfo(Object principal, Object credentials) {
+            protected Account createAccount(Object principal, Object credentials) {
                 String username = (String) principal;
                 CustomUsernamePrincipal customPrincipal = new CustomUsernamePrincipal( username );
-                return new SimpleAuthenticationInfo( customPrincipal, credentials );
+                return new SimpleAccount( customPrincipal, credentials );
             }
         };
 
@@ -110,7 +110,7 @@ public class AuthorizingRealmTest {
         securityManager.init();
 
         // Do login
-        SecurityContext secCtx = securityManager.authenticate(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
         assertTrue(secCtx.getAllPrincipals().size() == 1);
@@ -140,9 +140,9 @@ public class AuthorizingRealmTest {
             setCredentialMatcher(credentialMatcher);
         }
 
-        protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
             UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-            return createAuthenticationInfo(token.getPrincipal(), token.getPrincipal());
+            return createAccount(token.getPrincipal(), token.getPrincipal());
         }
 
         protected AuthorizationInfo doGetAuthorizationInfo(Object principal) {
@@ -151,14 +151,14 @@ public class AuthorizingRealmTest {
             return new SimpleAuthorizationInfo(roles, new ArrayList<Permission>());
         }
 
-        protected AuthenticationInfo createAuthenticationInfo(Object principal, Object credentials) {
+        protected Account createAccount(Object principal, Object credentials) {
 
             List<Object> principals = new ArrayList<Object>();
             principals.add(new UserIdPrincipal(USER_ID));
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);
 
-            return createAuthenticationInfo(principals, null);
+            return createAccount(principals, null);
         }
     }
 

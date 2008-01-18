@@ -24,7 +24,7 @@
 */
 package org.jsecurity.context.factory;
 
-import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.context.SecurityContext;
 
@@ -40,11 +40,11 @@ public interface SecurityContextFactory {
 
     /**
      * Returns an implementation of the SecurityContext instance for the
-     * given authentication info after a successful authentication.
+     * given account data after a successful authentication.
      * @param token the authentication token submitted for authentication attempt
-     * @param info AuthenticationInfo created as a result of the successful authentication
+     * @param account Account created as a result of the successful authentication
      * @return a SecurityContext for the corresponding subject that will be used by the application.
      */
-    SecurityContext createSecurityContext( AuthenticationToken token, AuthenticationInfo info );
+    SecurityContext createSecurityContext( AuthenticationToken token, Account account );
 
 }

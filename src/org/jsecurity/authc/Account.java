@@ -27,67 +27,65 @@ package org.jsecurity.authc;
 import java.util.List;
 
 /**
- * <p>An <tt>AuthenticationInfo</tt> implementation represents system-specific account/user information
+ * <p>An <tt>Account</tt> implementation represents system-specific account/user information
  * in a framework-independent manner.  Instead of forcing a JSecurity user to
  * implement <tt>User</tt> or <tt>Role</tt> interfaces and being invasive on an application's
  * data model, the application must instead only implement this interface to represent such
  * data.  This enables a cleaner pluggable implementation and abstracts an application's
  * core classes away from JSecurity.</p>
- * <p/>
- * <p>This interface is used by all realms, since it is referenced from the {@link org.jsecurity.realm.Realm} interface.  Most realms
- * will use the {@link org.jsecurity.authc.support.SimpleAuthenticationInfo} implementation, but are free to create their own
- * implementation.</p>
  *
- * @see org.jsecurity.authc.support.SimpleAuthenticationInfo
+ * <p>This interface is used by all realms, since it is referenced from the {@link org.jsecurity.realm.Realm} interface.
+ * Most realms will probably use the {@link org.jsecurity.authc.support.SimpleAccount} implementation, but are of course
+ * free to create their own their own.</p>
+ *
+ * @see org.jsecurity.authc.support.SimpleAccount
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @since 0.1
+ * @since 1.0
  */
-public interface AuthenticationInfo {
+public interface Account {
 
     /**
-     * Returns the primary principal of the subject associated with this
-     * authentication info (for example, a user id, username, or public key)
+     * Returns the account's primary principal, such as a user id or username.
      *
-     * @return the primary principal of the subject associated with this
-     * authentication info.
+     * @return the account's primary principal, such as a user id or username.
      */
     Object getPrincipal();
 
     /**
-     * Returns the principals that identify the authenticated subject, such as a user's primary key
+     * Returns the principals that identify the account, such as a user's primary key
      * id or username.  Although not a requirement,
      * the list returned by the implementation should contain at least 1 principal.  The first
-     * pricipal in the list is usually (but still not a requirement) the subject's primary
+     * pricipal in the list is usually (but still not a requirement) the account's primary
      * principal (e.g. user id).
      *
-     * @return the identifying principal of the authenticated subject.
+     * @return the account's identifying principals.
      */
     List<Object> getPrincipals();
 
     /**
-     * The subject's credential as stored in the system associated with the
-     * {@link #getPrincipals() subject identifier}, such as a password char array or
+     * The account's credentials as stored in the system associated with the
+     * {@link #getPrincipals() account identifier}, such as a password char array or
      * public key.
-     * <p/>
+     *
      * <p>It could be encrypted in which case an
      * {@link org.jsecurity.realm.Realm Realm}
      * must be aware of the fact (e.g. via configuration) in order to interpret and compare
      * the credentials value.
      *
-     * @return the subject's credential verifying the {@link #getPrincipals() identifier}
+     * @return the account's credential verifying the {@link #getPrincipals() identifier}
      */
     Object getCredentials();
 
     /**
-     * Determines if the user's account is locked, meaning that the user is
+     * Determines if the account is locked, meaning that the user is
      * not allowed to log in due to a manual or automatic lockout.
      *
-     * @return true if the user's account is locked and the user should be
+     * @return true if the account is locked and the user should be
      *         denied authentication, false otherwise.
      */
-    boolean isAccountLocked();
+    boolean isLocked();
 
 
     /**

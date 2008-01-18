@@ -24,8 +24,8 @@
  */
 package org.jsecurity.realm.support.ldap;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.realm.Realm;
@@ -41,7 +41,7 @@ import javax.naming.NamingException;
  * list as well.</p>
  *
  * <p>Implementations would need to implement the
- * {@link #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken,LdapContextFactory) queryForLdapAuthenticationInfo} and
+ * {@link #queryForLdapAccount(org.jsecurity.authc.AuthenticationToken,LdapContextFactory) queryForLdapAccount} and
  * {@link #queryForLdapAuthorizationInfo(Object,LdapContextFactory) queryForLdapAuthorizationInfo} abstract methods.</p>
  *
  * <p>By default, this implementation will create an instance of {@link DefaultLdapContextFactory} to use for
@@ -51,7 +51,7 @@ import javax.naming.NamingException;
  * will cause these properties specified on the realm to be ignored.</p>
  *
  * @author Jeremy Haile
- * @see #queryForLdapAuthenticationInfo(org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
+ * @see # queryForLdapAccount (org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
  * @see #queryForLdapAuthorizationInfo(Object, LdapContextFactory)
  * @since 0.1
  */
@@ -182,13 +182,10 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
     }
 
 
-    protected AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
-
-        AuthenticationInfo authenticationInfo = null;
+    protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
+        Account account = null;
         try {
-
-            authenticationInfo = queryForLdapAuthenticationInfo( token, this.ldapContextFactory );
-
+            account = queryForLdapAccount( token, this.ldapContextFactory );
         } catch ( NamingException e ) {
             final String message = "LDAP naming error while attempting to authenticate user.";
             if ( log.isErrorEnabled() ) {
@@ -196,19 +193,16 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
             }
         }
 
-        return authenticationInfo;
+        return account;
     }
 
 
 
 
     protected AuthorizationInfo doGetAuthorizationInfo( Object principal ) {
-
         AuthorizationInfo authorizationInfo = null;
         try {
-
             authorizationInfo = queryForLdapAuthorizationInfo( principal, this.ldapContextFactory );
-
         } catch( NamingException e ) {
             final String message = "LDAP naming error while attempting to retrieve authorization for user [" + principal + "].";
             if ( log.isErrorEnabled() ) {
@@ -222,7 +216,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
 
     /**
      * <p>Abstract method that should be implemented by subclasses to builds an
-     * {@link AuthenticationInfo} object by querying the LDAP context for the
+     * {@link org.jsecurity.authc.Account} object by querying the LDAP context for the
      * specified username.</p>
      *
      * @param token the authentication token given during authentication.
@@ -230,7 +224,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
      * @return an {@link org.jsecurity.authz.support.SimpleAuthorizationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected abstract AuthenticationInfo queryForLdapAuthenticationInfo( AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException;
+    protected abstract Account queryForLdapAccount( AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException;
 
 
     /**

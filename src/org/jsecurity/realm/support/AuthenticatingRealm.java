@@ -3,7 +3,7 @@ package org.jsecurity.realm.support;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
-import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.cache.CacheProvider;
 
 /**
@@ -140,45 +140,45 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     }
 
     /**
-     * This method must be implemented by subclasses to retrieve authentication information from an
+     * This method must be implemented by subclasses to retrieve account data from an
      * implementation-specific datasource (RDBMS, LDAP, etc) for the given authentication token.
      * In most data-centric systems such as an RDBMS, LDAP, file resource, etc, this means just 'pulling'
-     * authentication information for an associated subject/user.  But in some systems (mainframe, etc), the method 
+     * account data for an associated subject/user.  But in some systems (mainframe, etc), the method
      * could actually perform EIS specific log-in logic - it is up to the realm implementation.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
      *
      * @param token the authentication token containing the user's principal and credentials.
-     * @return an {@link org.jsecurity.authc.AuthenticationInfo} object containing user information resulting from the
+     * @return an {@link org.jsecurity.authc.Account} object containing account information resulting from the
      * authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
      * @throws org.jsecurity.authc.AuthenticationException if there is an error acquiring data or performing
      * realm-specific authentication logic for the specified <tt>token</tt>
      */
-    protected abstract AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
+    protected abstract Account doGetAccount( AuthenticationToken token ) throws AuthenticationException;
 
     /**
      * Primarily used to acquire a string to display in exceptions and logging.  Default implementation
-     * returns a value based on info.getPrincipal();
+     * returns a value based on account.getPrincipal();
      *
      * <p>If overridding, be careful to not include any private credentials (such as passwords or private keys) if this
      * information should not show up in log entries or error messages.
-     * @param info account info after a successful authentication attempt.
-     * @return string representation of the given info that can be used in exceptions and logging.
+     * @param account account after a successful authentication attempt.
+     * @return String representation of the given account that can be used in exceptions and logging.
      */
-    protected String displayName( AuthenticationInfo info ) {
-        Object  p = info.getPrincipal();
+    protected String displayName( Account account) {
+        Object  p = account.getPrincipal();
         if ( p != null ) {
             return p.toString();
         } else {
-            return info.toString();
+            return account.toString();
         }
     }
 
-    public final AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
+    public final Account getAccount( AuthenticationToken token ) throws AuthenticationException {
 
-        AuthenticationInfo info = doGetAuthenticationInfo( token );
+        Account account = doGetAccount( token );
 
-        if( info == null ) {
+        if( account == null ) {
             if ( log.isDebugEnabled() ) {
                 String msg = "No account information found for submitted authentication token [" + token + "].  " +
                 "Returning null.";
@@ -187,17 +187,17 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
             return null;
         }
 
-        if ( info.isAccountLocked() ) {
-            throw new LockedAccountException( "Account [" + displayName( info ) + "] is locked." );
+        if ( account.isLocked() ) {
+            throw new LockedAccountException( "Account [" + displayName( account ) + "] is locked." );
         }
-        if ( info.isCredentialsExpired() ) {
-            String msg = "The credentials for account [" + displayName( info ) + "] are expired";
+        if ( account.isCredentialsExpired() ) {
+            String msg = "The credentials for account [" + displayName( account ) + "] are expired";
             throw new ExpiredCredentialException( msg );
         }
 
         CredentialMatcher cm = getCredentialMatcher();
         if ( cm != null ) {
-            if ( !cm.doCredentialsMatch( token.getCredentials(), info.getCredentials() ) ) {
+            if ( !cm.doCredentialsMatch( token.getCredentials(), account.getCredentials() ) ) {
                 String msg = "The credentials provided for account [" + token +
                              "] did not match the expected credentials.";
                 throw new IncorrectCredentialException( msg );
@@ -208,20 +208,20 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
                     "can configure an AllowAllCredentialMatcher." );
         }
 
-        return info;
+        return account;
     }
 
     /**
      * <p>This is a convenience method that is used by many of the JSecurity built-in realms.  It can be overridden
-     * by subclasses to build the {@link AuthenticationInfo} in a different way.</p>
+     * by subclasses to build the {@link org.jsecurity.authc.Account} in a different way.</p>
      *
-     * <p>Overriding this method is the prefered way of building a custom {@link AuthenticationInfo} object
+     * <p>Overriding this method is the prefered way of building a custom {@link org.jsecurity.authc.Account} object
      * for realms that make use of this helper method.</p>
      * @param principal the principal of the authenticated user.
      * @param credentials the credentials of the authenticated user.
-     * @return an {@link AuthenticationInfo} instance that should be used to "log in" the user.
+     * @return an {@link org.jsecurity.authc.Account} instance that should be used to "log in" the user.
      */
-    protected AuthenticationInfo createAuthenticationInfo( Object principal, Object credentials ) {
-        return new SimpleAuthenticationInfo(principal, credentials);
+    protected Account createAccount( Object principal, Object credentials ) {
+        return new SimpleAccount(principal, credentials);
     }
 }

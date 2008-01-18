@@ -26,8 +26,8 @@ package org.jsecurity.authc.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
@@ -38,7 +38,7 @@ import java.util.Collection;
  * successfully process the submitted <tt>AuthenticationToken</tt> during the log-in attempt.
  *
  * <p>This means any number of configured realms do not have to support the submitted log-in token, or they may
- * be unable to acquire <tt>AuthenticationInfo</tt> for the token, but as long as at least one can do both, this
+ * be unable to acquire <tt>Account</tt> for the token, but as long as at least one can do both, this
  * Strategy implementation will allow the log-in process to be successful.
  *
  * @since 0.2
@@ -56,13 +56,13 @@ public class AtLeastOneSuccessfulModularAuthenticationStrategy implements Modula
         //nothing necessary
     }
 
-    public void afterAttempt( Realm realm, AuthenticationToken token, AuthenticationInfo info, Throwable t ) 
+    public void afterAttempt( Realm realm, AuthenticationToken token, Account account, Throwable t )
         throws AuthenticationException {
         //nothing necessary
     }
 
-    public void afterAllAttempts( AuthenticationToken token, AuthenticationInfo aggregated ) throws AuthenticationException {
-        //we know if one or more were able to succesfully authenticate if the aggregated info object does not
+    public void afterAllAttempts( AuthenticationToken token, Account aggregated ) throws AuthenticationException {
+        //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
         boolean oneOrMoreSuccessful =
             (aggregated.getPrincipal() != null ) ||

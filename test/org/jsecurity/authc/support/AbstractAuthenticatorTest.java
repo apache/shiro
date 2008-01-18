@@ -26,8 +26,8 @@ package org.jsecurity.authc.support;
 
 import static org.easymock.EasyMock.*;
 import org.jsecurity.SecurityManager;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.event.*;
@@ -41,11 +41,11 @@ public class AbstractAuthenticatorTest {
     AbstractAuthenticator abstractAuthenticator;
     SecurityManager mockSecurityManager;
 
-    private final SimpleAuthenticationInfo authInfo = new SimpleAuthenticationInfo( "user1", "secret" );
+    private final SimpleAccount authInfo = new SimpleAccount( "user1", "secret" );
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
+            protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
                 return null;
             }
         };
@@ -53,7 +53,7 @@ public class AbstractAuthenticatorTest {
 
     private AbstractAuthenticator createAuthcReturnValidAuthcInfo() {
         return new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
+            protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
                 return authInfo;
             }
         };
@@ -77,7 +77,7 @@ public class AbstractAuthenticatorTest {
     public void newAbstractAuthenticatorSecurityManagerConstructor() {
         mockSecurityManager = createMock( SecurityManager.class );
         abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+            protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return authInfo;
             }
         };
@@ -136,19 +136,19 @@ public class AbstractAuthenticatorTest {
     /**
      * Ensures a non-null <tt>SecurityContext</tt> instance is returned from the authenticate() method after a valid
      * authentication attempt (i.e. the subclass's doAuthenticate implementation returns a valid, non-null
-     * AuthenticationInfo object).
+     * Account object).
      */
     @Test
-    public void nonNullAuthenticationInfoAfterAuthenticate() {
+    public void nonNullAccountAfterAuthenticate() {
         initAuthc();
-        AuthenticationInfo authcInfo = abstractAuthenticator.authenticate( newToken() );
+        Account authcInfo = abstractAuthenticator.authenticate( newToken() );
         assertNotNull( authcInfo );
     }
 
     @Test(expected=AuthenticationException.class)
     public void createFailureEventReturnsNull() {
         abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+            protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw new AuthenticationException();
             }
             protected AuthenticationEvent createFailureEvent(AuthenticationToken token, AuthenticationException ae) {
@@ -163,10 +163,10 @@ public class AbstractAuthenticatorTest {
     @Test
     public void createSuccessEventReturnsNull() {
         abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+            protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return authInfo;
             }
-            protected AuthenticationEvent createSuccessEvent(AuthenticationToken token, AuthenticationInfo info ) {
+            protected AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account ) {
                 return null;
             }
         };
@@ -275,7 +275,7 @@ public class AbstractAuthenticatorTest {
 
 
         abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
+            protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
                 throw ae;
             }
         };
@@ -315,7 +315,7 @@ public class AbstractAuthenticatorTest {
         AuthenticationEventSender dummyAuthcEvtSender = new SimpleAuthenticationEventSender();
 
         abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
+            protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
                 throw new IllegalArgumentException( "not an AuthenticationException subclass" );
             }
         };

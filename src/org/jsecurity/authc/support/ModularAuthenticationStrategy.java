@@ -24,8 +24,8 @@
  */
 package org.jsecurity.authc.support;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
@@ -58,10 +58,10 @@ public interface ModularAuthenticationStrategy {
     void beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException;
 
     /**
-     * Method invoked by the ModularAuthenticator just prior to the realm being consulted for authentication info,
+     * Method invoked by the ModularAuthenticator just prior to the realm being consulted for account data,
      * allowing pre-authentication-attempt logic for that realm only.
      *
-     * @param realm the realm that will be consulted for <tt>AuthenticationInfo</tt> for the specified <tt>token</tt>.
+     * @param realm the realm that will be consulted for <tt>Account</tt> for the specified <tt>token</tt>.
      * @param token the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login
      * process for the associated subject (user) to stop immediately.
@@ -71,25 +71,25 @@ public interface ModularAuthenticationStrategy {
     /**
      * Method invoked by the ModularAuthenticator just after the given realm has been consulted for authentication,
      * allowing post-authentication-attempt logic for that realm only.
-     * @param realm the realm that was just consulted for <tt>AuthenticationInfo</tt> for the given <tt>token</tt>.
+     * @param realm the realm that was just consulted for <tt>Account</tt> for the given <tt>token</tt>.
      * @param token the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
-     * @param info the <tt>AuthenticationInfo</tt> object returned by the realm during the consultation process, or
-     * <tt>null</tt> if the realm was unable to acquire account information based on the given <tt>token</tt>.
+     * @param account the <tt>Account</tt> object returned by the realm during the consultation process, or
+     * <tt>null</tt> if the realm was unable to acquire account data based on the given <tt>token</tt>.
      * @param t the Throwable thrown by the Realm during the attempt, or <tt>null</tt> if the method returned normally.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login process
      * for the associated subject (user) to stop immediately.
      */
-    void afterAttempt( Realm realm, AuthenticationToken token, AuthenticationInfo info, Throwable t )
+    void afterAttempt( Realm realm, AuthenticationToken token, Account account, Throwable t )
         throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted
-     * for authentication info, allowing post-proccessing after all realms have completed.
+     * for account data, allowing post-proccessing after all realms have completed.
      *
      * @param token the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
-     * @param aggregated the aggregated <tt>AuthenticationInfo</tt> instance populated by all realms during the
+     * @param aggregated the aggregated <tt>Account</tt> instance populated by all realms during the
      * log-in attempt.
      * @throws AuthenticationException if the Strategy implementation wishes to fail the authentication attempt.
      */
-    void afterAllAttempts( AuthenticationToken token, AuthenticationInfo aggregated ) throws AuthenticationException;
+    void afterAllAttempts( AuthenticationToken token, Account aggregated ) throws AuthenticationException;
 }

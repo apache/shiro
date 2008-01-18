@@ -24,8 +24,8 @@
 */
 package org.jsecurity.realm.support.memory;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authz.AuthorizationException;
@@ -385,7 +385,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         }
     }
 
-    protected AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
+    protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;
 
         SimpleUser user = (SimpleUser)userCache.get( upToken.getUsername() );
@@ -393,7 +393,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
             return null;
         }
 
-        return createAuthenticationInfo( user.getUsername(), user.getPassword() );
+        return createAccount( user.getUsername(), user.getPassword() );
 
     }
 
