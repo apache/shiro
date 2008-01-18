@@ -139,14 +139,14 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
      * {@link org.jsecurity.session.Session#getHostAddress() getHostAddress},
      * {@link Session#getAttribute(Object) getAttribute(Object)}, etc. would '{@link Session#touch() touch}' the session
      * object (i.e. usually updating the last access time stamp at a minimum).  Note that a write operation
-     * ({@link Session#setAttribute(Object, Object)}, etc) will <em>always</tt> touch a session, regardless of this
+     * ({@link Session#setAttribute(Object, Object)}, etc) will <em>always</em> touch a session, regardless of this
      * setting.
      *
      * <p>The default is <tt>false</tt> such that read-only operations do _not_ 'touch' the Session.
      *
      * <p>It is important to understand what this means for your application, especially as it pertains to
      * session time/orphan validation: typically orphaned sessions are reaped based on a
-     * <tt>Session</tt>'s {@link org.jsecurity.session.Session#getLastAccessTime() lastAccessTime}stamp, so if a session
+     * <tt>Session</tt>'s {@link org.jsecurity.session.Session#getLastAccessTime() lastAccessTime}, so if a session
      * is only 'touched' on a write operation (default), then a session must be altered on a regular basis in order for
      * it to not be reaped.  This is ok in 95% of applications, since Session objects are regularly modified.
      *
@@ -545,7 +545,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
     }
 
     public InetAddress getHostAddress( Serializable sessionId ) {
-        return getSession( sessionId ).getHostAddress();
+        return retrieveSession( sessionId ).getHostAddress();
     }
 
     public void stop( Serializable sessionId ) throws InvalidSessionException {
@@ -553,7 +553,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
         stop( s );
     }
 
-    public Collection<Object> getAttributeKeys( Serializable sessionId ) {
+    public Collection<Object> getAttributeKeys( Serializable sessionId ) throws InvalidSessionException {
         return getSession( sessionId ).getAttributeKeys();
     }
 

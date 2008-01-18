@@ -41,21 +41,22 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * Default JSecurity implementation of a {@link org.jsecurity.session.SessionFactory}.
- * This implementation returns instances where all method invocations delegate to a corresponding
- * {@link org.jsecurity.session.SessionManager SessionManager} method call.  That is, the
- * objects returned act as transparent proxies to the SessionManager responsible for all Sessions
- * in a system.
- * <p/>
+ * Default JSecurity implementation of a {@link org.jsecurity.session.SessionFactory} that relies on an internally
+ * wrapped {@link SessionManager SessionManager} to perform all session operations.
+ *
+ * <p>The <tt>Session</tt> instances returned from this implementation are lightweight proxies that delegate
+ * their method calls to the aforementioned <tt>SessionManager</tt> that manages all the Sessions in the system.
+ *
  * <p>This transparent proxy/delegate technique allows the JSecurity support classes to
- * maintain a stateless architecture (i.e. similar to accessing a EJB Stateless Session Bean),
+ * maintain a stateless architecture (similar to accessing a EJB Stateless Session Bean),
  * which is extremely efficient.  Any state to be maintained is the responsibility of the
- * SessionManager, not your application, thereby making your code much cleaner and more efficient.
- * <p/>
- * <p><tt>Sessions</tt> returned from this factory implementation are extremely lightweight and are
- * designed to be created as needed.  They should not be cached long-term in the
- * business/server tier (e.g. in an <tt>HttpSession</tt> or in some
- * private class {@link java.util.Map Map} attribute).
+ * SessionManager, not the Session implementation, enabling cleaner and more efficient code and business-tier
+ * caching strategies for efficient data management.
+ *
+ * <p>Also because of this stateless proxying technique, <tt>Session</tt> instances returned from this factory
+ * implementation are extremely lightweight and are designed to be instantiated as needed.  They should not be cached
+ * long-term in the business/server tier (e.g. in an <tt>HttpSession</tt> or in some class {@link java.util.Map Map}
+ * attribute), since they can just be recreated upon each request to the system or method chain invocation.
  *
  * @author Les Hazlewood
  * @since 0.1
@@ -89,7 +90,7 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventNotifi
             String msg = "The underlying SessionManager implementation [" +
                     this.sessionManager.getClass().getName() + "] does not implement the " +
                     SessionEventNotifier.class.getName() + " interface and therefore session events cannot " +
-                    "be propagated to registered listeners.  Please ensure this SessionnFactory instance is " +
+                    "be propagated to registered listeners.  Please ensure this SessionFactory instance is " +
                     "injected with a SessionManager that supports this interface if you wish to register " +
                     "for SessionEvents.";
             throw new IllegalStateException(msg);

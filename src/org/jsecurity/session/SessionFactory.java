@@ -31,11 +31,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * A <tt>SessionFactory</tt> is responsible for starting new sessions and
- * acquiring existing sessions.
- *
- * <p>A {@link Session Session} is a data context associated with a single entity (user,
- * 3rd party process, etc) that communicates with a software system over a period of time.
+ * A <tt>SessionFactory</tt> is responsible for starting new {@link Session Session}s and
+ * acquiring existing {@link Session Session}s.
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -72,11 +69,6 @@ public interface SessionFactory {
      * aware that ip-based security policies are best utilized in LAN or private WAN environments
      * when you can be ensure clients will not share IPs or be behind such NAT routers or
      * proxy servers.
-     *
-     * <p>Its probably beneficial to still require a valid, non-<tt>null</tt> argument even in
-     * such NAT environments, since the originating IP could be used in access logging.  This
-     * ip could be used when generating reports, even though it wouldn't be used as part of
-     * the application's access control policy.
      *
      * @param hostAddress the originating host InetAddress of the external party
      * (user, 3rd party product, etc) that is attempting to interact with the system.

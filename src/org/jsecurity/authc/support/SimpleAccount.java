@@ -41,7 +41,7 @@ import java.util.List;
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SimpleAccount implements Account, Serializable {
+public class SimpleAccount implements AggregateAccount, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
