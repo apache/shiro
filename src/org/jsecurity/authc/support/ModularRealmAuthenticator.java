@@ -24,8 +24,8 @@
  */
 package org.jsecurity.authc.support;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.realm.Realm;
@@ -36,7 +36,7 @@ import java.util.List;
 
 /**
  * A <tt>ModularRealmAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
- * that delgates authentication information lookups to a pluggable (modular) collection of
+ * that delgates account lookups to a pluggable (modular) collection of
  * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity
  * for authentication.  For all intents and purposes, a JSecurity Realm can be thought of a PAM 'module'.
  *
@@ -46,7 +46,7 @@ import java.util.List;
  *
  * <p>If only one realm is configured (this is often the case for most applications), authentication success is naturally
  * only dependent upon invoking this one Realm's
- * {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken) getAuthenticationInfo} method (i.e.
+ * {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken) getAccount} method (i.e.
  * a null return value means no account could be found, or an AuthenticationException could be thrown, which would be
  * propagated to the caller, etc - see the JavaDoc for more details).
  *
@@ -154,44 +154,44 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     |               M E T H O D S               |
     ============================================*/
     /**
-     * Creates an <tt>AuthenticationInfo</tt> instance that will be used to aggregate authentication info across
+     * Creates an <tt>Account</tt> instance that will be used to aggregate account data across
      * all successfully consulted Realms during a multi-realm log-in attempt.
      *
      * <p>It is primarily provided for subclass overriding behavior if necessary - the default implementation only
-     * returns <tt>new SimpleAuthenticationInfo();</tt>, which supports merging info objects.
+     * returns <tt>new SimpleAccount();</tt>, which supports merging account objects.
      *
      * <p>If this method is overridden to return something <em>other</em> than an instance of
-     * <tt>SimpleAuthenticationInfo</tt>, then the {@link #merge} method will need to be overridden as well.
+     * <tt>SimpleAccount</tt>, then the {@link #merge} method will need to be overridden as well.
      * Please see that method's JavaDoc for more info.
      *
      * @param token the authentication token submitted during the authentication process which may be useful
-     * to subclasses in constructing the returned <tt>AuthenticationInfo</tt> instance.
-     * @return an <tt>AuthenticationInfo</tt> instance that will be used to aggregate all
-     * <tt>AuthenticationInfo</tt> objects returned by all configured <tt>Realm</tt>s.
+     * to subclasses in constructing the returned <tt>Account</tt> instance.
+     * @return an <tt>Account</tt> instance that will be used to aggregate all
+     * <tt>Account</tt> objects returned by all configured <tt>Realm</tt>s.
      */
-    protected AuthenticationInfo createAggregatedAuthenticationInfo( AuthenticationToken token ) {
-        return new SimpleAuthenticationInfo();
+    protected Account createAggregatedAccount( AuthenticationToken token ) {
+        return new SimpleAccount();
     }
 
     /**
-     * Merges the <tt>AuthenticationInfo</tt> returned from a single realm into the aggregated
-     * <tt>AuthenticationInfo</tt> that summarizes all realms in a multi-realm configuration.
+     * Merges the <tt>Account</tt> returned from a single realm into the aggregated
+     * <tt>Account</tt> that summarizes all realms in a multi-realm configuration.
      *
      * <p>This method is primarily provided as a template method if subclasses wish to override it for custom
      * merging behavior.
      *
      * <p>The default implementation
-     * only checks to see if the <tt>aggregatedInfo</tt> parameter is an <tt>instanceof</tt>
-     * {@link SimpleAuthenticationInfo}, and if so, calls
-     * <tt>aggregatedInfo.{@link SimpleAuthenticationInfo#merge merge( singleRealmInfo )}</tt>, otherwise
+     * only checks to see if the <tt>aggregatedAccount</tt> parameter is an <tt>instanceof</tt>
+     * {@link SimpleAccount}, and if so, calls
+     * <tt>aggregatedAccount.{@link SimpleAccount#merge merge( singleRealmAccount )}</tt>, otherwise
      * nothing occurs.
      *
-     * @param aggregatedInfo the aggregated info from all realms
-     * @param singleRealmInfo the info provided by a single realm, to be joined with the aggregated info
+     * @param aggregatedAccount the aggregated account from all realms
+     * @param singleRealmAccount the account provided by a single realm, to be joined with the aggregated account
      */
-    protected void merge(AuthenticationInfo aggregatedInfo, AuthenticationInfo singleRealmInfo ) {
-        if ( aggregatedInfo instanceof SimpleAuthenticationInfo ) {
-            ((SimpleAuthenticationInfo)aggregatedInfo).merge( singleRealmInfo );
+    protected void merge(Account aggregatedAccount, Account singleRealmAccount) {
+        if ( aggregatedAccount instanceof SimpleAccount) {
+            ((SimpleAccount) aggregatedAccount).merge(singleRealmAccount);
         }
     }
 
@@ -211,42 +211,42 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * Performs the authentication attempt by interacting with the single configured realm, which is significantly
      * simpler than performing multi-realm logic.
      *
-     * @param realm the realm to consult for AuthenticationInfo.
+     * @param realm the realm to consult for Account.
      * @param token the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
-     * @return the AuthenticationInfo associated with the user account corresponding to the specified <tt>token</tt>
+     * @return the Account associated with the user account corresponding to the specified <tt>token</tt>
      */
-    protected AuthenticationInfo doSingleRealmAuthentication( Realm realm, AuthenticationToken token ) {
+    protected Account doSingleRealmAuthentication( Realm realm, AuthenticationToken token ) {
         if ( !realm.supports( token.getClass() ) ) {
             String msg = "Single configured realm [" + realm + "] does not support authentication tokens of type [" +
                 token.getClass().getName() + "].  Please ensure that the appropriate Realm implementation is " +
                 "configured correctly or that the realm accepts AuthenticationTokens of this type.";
             throw new UnsupportedTokenException( msg );
         }
-        AuthenticationInfo info = realm.getAuthenticationInfo( token );
-        if ( info == null ) {
-            String msg = "Single configured realm [" + realm + "] was unable to find account information for the " +
+        Account account = realm.getAccount( token );
+        if ( account == null ) {
+            String msg = "Single configured realm [" + realm + "] was unable to find account data for the " +
                 "submitted AuthenticationToken [" + token + "].";
             throw new UnknownAccountException( msg );
         }
-        return info;
+        return account;
     }
 
     /**
      * Performs the multi-realm authentication attempt by calling back to a {@link ModularAuthenticationStrategy} object
-     * as each realm is consulted for <tt>AuthenticationInfo</tt> for the specified <tt>token</tt>.
+     * as each realm is consulted for <tt>Account</tt> for the specified <tt>token</tt>.
      *
      * @param realms the multiple realms configured on this Authenticator instance.
      * @param token the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
-     * @return an aggregated AuthenticationInfo instance representing authentication info across all the successfully
+     * @return an aggregated Account instance representing account data across all the successfully
      * consulted realms.
      */
-    protected AuthenticationInfo doMultiRealmAuthentication( Collection<? extends Realm> realms, AuthenticationToken token ) {
+    protected Account doMultiRealmAuthentication( Collection<? extends Realm> realms, AuthenticationToken token ) {
 
         ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
 
         strategy.beforeAllAttempts( realms, token );
         
-        AuthenticationInfo aggregatedInfo = createAggregatedAuthenticationInfo( token );
+        Account aggregatedInfo = createAggregatedAccount( token );
 
         if (log.isDebugEnabled()) {
             log.debug("Iterating through [" + realms.size() + "] realms for PAM authentication");
@@ -263,10 +263,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                         "using realm of type [" + realm.getClass() + "]");
                 }
 
-                AuthenticationInfo realmInfo = null;
+                Account realmInfo = null;
                 Throwable t = null;
                 try {
-                    realmInfo = realm.getAuthenticationInfo( token );
+                    realmInfo = realm.getAccount( token );
                 } catch ( Throwable throwable ) {
                     t = throwable;
                     if ( log.isTraceEnabled() ) {
@@ -277,8 +277,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
                 strategy.afterAttempt( realm, token, realmInfo, t );
 
-                // If non-null info is returned, then the realm was able to authenticate the
-                // user - so merge the info with any accumulated before:
+                // If non-null account is returned, then the realm was able to authenticate the
+                // user - so merge the account with any accumulated before:
                 if( realmInfo != null ) {
 
                     if (log.isDebugEnabled()) {
@@ -310,14 +310,14 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * method will be called to determine if the realm supports the <tt>authenticationToken</tt> method argument.
      *
      * If a realm does support
-     * the token, its {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
-     * method will be called.  If the realm returns non-null authentication information, the token will be
-     * considered authenticated and the authentication info recorded.  If the realm returns <tt>null</tt>, the next
+     * the token, its {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken)}
+     * method will be called.  If the realm returns a non-null account, the token will be
+     * considered authenticated and the account data recorded.  If the realm returns <tt>null</tt>, the next
      * realm will be consulted.  If no realms support the token or all supported realms return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
      *
      * <p>After all realms have been consulted, the information from each realm is aggregated into a single
-     * {@link AuthenticationInfo} object and returned.
+     * {@link org.jsecurity.authc.Account} object and returned.
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
      * user being authenticated.
@@ -325,7 +325,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
      * for the given principal and credentials.
      */
-    protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+    protected Account doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
         assertRealmsConfigured();
 

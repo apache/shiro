@@ -1,11 +1,11 @@
 package org.jsecurity;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialMatcher;
-import org.jsecurity.authc.support.SimpleAuthenticationInfo;
+import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.support.SimpleAuthorizationInfo;
 import org.jsecurity.context.SecurityContext;
@@ -27,7 +27,7 @@ import java.util.List;
  * Simple test case for ActiveDirectoryRealm.
  *
  * todo:  While the original incarnation of this test case does not actually test the
- * heart of ActiveDirectoryRealm (no meaningful implemenation of queryForLdapAuthenticationInfo, etc) it obviously should.
+ * heart of ActiveDirectoryRealm (no meaningful implemenation of queryForLdapAccount, etc) it obviously should.
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
  * to LDAP connectivity.
  *
@@ -64,7 +64,7 @@ public class ActiveDirectoryRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        SecurityContext secCtx = securityManager.authenticate(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
 
@@ -106,42 +106,32 @@ public class ActiveDirectoryRealmTest {
         }
 
 
-        protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
+            SimpleAccount account = (SimpleAccount) super.doGetAccount(token);
 
-            SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo) super.doGetAuthenticationInfo(token);
-
-            if (authInfo != null) {
-
+            if (account != null) {
                 List<Object> principals = new ArrayList<Object>();
                 principals.add(new UserIdPrincipal(USER_ID));
                 principals.add(new UsernamePrincipal(USERNAME));
-                authInfo.setPrincipals( principals );
-
+                account.setPrincipals( principals );
             }
 
-
-            return authInfo;
+            return account;
 
         }
 
         protected AuthorizationInfo doGetAuthorizationInfo(Object principal) {
-
-
             UserIdPrincipal userIdPrincipal = (UserIdPrincipal) principal;
-            
             assertTrue(userIdPrincipal.getUserId() == USER_ID);
-
-
             List<String> roles = new ArrayList<String>();
             roles.add(ROLE);
-
             return new SimpleAuthorizationInfo(roles, null);
         }
 
         // override ldap query because i don't care about testing that piece in this case
-        protected AuthenticationInfo queryForLdapAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
+        protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
             UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-            return createAuthenticationInfo(token.getPrincipal(), token.getPrincipal());
+            return createAccount(token.getPrincipal(), token.getPrincipal());
         }
 
     }

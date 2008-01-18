@@ -26,8 +26,8 @@ package org.jsecurity;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.support.ModularRealmAuthenticator;
@@ -509,11 +509,11 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
      * <p>The default implementation delegates to the internal {@link SecurityContextFactory} property.
      *
      * @param token the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param info  the <tt>AuthenticationInfo</tt> of a newly authenticated subject/user.
+     * @param account  the <tt>Account</tt> of a newly authenticated subject/user.
      * @return the <tt>SecurityContext</tt> that represents the authorization and session data for the newly
      *         authenticated subject/user.
      */
-    protected SecurityContext createSecurityContext(AuthenticationToken token, AuthenticationInfo info) {
+    protected SecurityContext createSecurityContext(AuthenticationToken token, Account account) {
         SecurityContextFactory factory = getSecurityContextFactory();
         if (factory == null) {
             throw new IllegalStateException(
@@ -522,7 +522,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
                     "Authenticator before it is used.");
         }
 
-        return factory.createSecurityContext(token, info);
+        return factory.createSecurityContext(token, account);
     }
 
     /**
@@ -547,7 +547,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
                 "authentication.  Verify that you have either configured the " + getClass().getName() +
                 " instance with a proper SecurityContextFactory (easier) or " +
                 "that you have overridden the " + getClass().getName() +
-                ".createSecurityContext( AuthenticationInfo info ) method.";
+                ".createSecurityContext( Account account ) method.";
             throw new IllegalStateException(msg);
         }
     }
@@ -555,13 +555,13 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     /**
      * Delegates to the authenticator for authentication.
      */
-    public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
+    public Account authenticate(AuthenticationToken token) throws AuthenticationException {
         return getRequiredAuthenticator().authenticate( token );
     }
 
     /**
      * TODO - edit this
-     * <p>During a subject's (a.k.a. user's) successful login attempt, an <tt>AuthenticationInfo</tt> object is created
+     * <p>During a subject's (a.k.a. user's) successful login attempt, an <tt>Account</tt> object is created
      * for that user by a {@link SecurityContextFactory}.  <b>This factory must be set as a property of this class</b>, either via the
      * setter method, or provided by subclasses during initialization.  Most implementors will
      * want to use a {@link org.jsecurity.context.factory.support.DelegatingSecurityContextFactory} or roll their own.
@@ -574,8 +574,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
      * @throws AuthenticationException
      */
     public SecurityContext login( AuthenticationToken token ) throws AuthenticationException {
-        AuthenticationInfo info = authenticate( token );
-        SecurityContext secCtx = createSecurityContext( token, info );
+        Account account = authenticate( token );
+        SecurityContext secCtx = createSecurityContext( token, account );
         assertCreation( secCtx );
         bind( secCtx );
         return secCtx;

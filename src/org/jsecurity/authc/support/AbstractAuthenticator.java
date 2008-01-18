@@ -26,8 +26,8 @@ package org.jsecurity.authc.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.AuthenticationEvent;
@@ -198,18 +198,18 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
 
     /**
      * Creates an <tt>AuthenticationEvent</tt> in the event of a successful authentication attempt, based on the given
-     * authentication token and <tt>AuthenticationInfo</tt> that was created as a result of the successful attempt.
+     * authentication token and <tt>Account</tt> that was created as a result of the successful attempt.
      *
      * <p>The default implementation merely delegates creation to the internal {@link AuthenticationEventFactory}
      * property.
      *
      * @param token the authentication token reprenting the subject (user)'s authentication attempt.
-     * @param info the <tt>AuthenticationInfo</tt> returned by {@link #doAuthenticate} after the successful attempt.
+     * @param account the <tt>Account</tt> returned by {@link #doAuthenticate} after the successful attempt.
      * @return an event that represents the successful attempt.
      */
-    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
+    protected AuthenticationEvent createSuccessEvent( AuthenticationToken token, Account account ) {
         AuthenticationEventFactory factory = getAuthenticationEventFactory();
-        return factory.createSuccessEvent( token, info );
+        return factory.createSuccessEvent( token, account );
     }
 
     /**
@@ -247,7 +247,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
     }
 
     /**
-     * Utility method that first creates a success event based on the given token and info and then actually sends
+     * Utility method that first creates a success event based on the given token and account and then actually sends
      * the event.
      *
      * <p>The default implementation does not attempt to create an event if the {@link #setAuthenticationEventSender}
@@ -255,13 +255,13 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * sent.
      *
      * @param token the authentication token reprenting the subject (user)'s authentication attempt.
-     * @param info the <tt>AuthenticationInfo</tt> returned by {@link #doAuthenticate} after the successful attempt.
+     * @param account the <tt>Account</tt> returned by {@link #doAuthenticate} after the successful attempt.
      */
-    protected void sendSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
+    protected void sendSuccessEvent( AuthenticationToken token, Account account ) {
         AuthenticationEventSender sender = getAuthenticationEventSender();
         //only incur event creation overhead if the event can actually be sent:
         if ( sender != null ) {
-            AuthenticationEvent event = createSuccessEvent( token, info );
+            AuthenticationEvent event = createSuccessEvent( token, account );
             if ( event != null ) {
                 try {
                     send( event );
@@ -332,16 +332,16 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * for the caller to handle.</li>
      * <li>If no exception is thrown (indicating a successful login), send a success <tt>AuthenticationEvent</tt>
      * noting the successful authentication.</li>
-     * <li>Return the <tt>AuthenticationInfo</tt></li>
+     * <li>Return the <tt>Account</tt></li>
      * </ol>
      * 
      * @param token the submitted token representing the subject's (user's) login principals and credentials.
-     * @return the AuthenticationInfo referencing the authenticated user's account data.
+     * @return the Account referencing the authenticated user's account data.
      *
      * @throws AuthenticationException if there is any problem during the authentication process - see the
      * interface's JavaDoc for a more detailed explanation.
      */
-    public final AuthenticationInfo authenticate( AuthenticationToken token )
+    public final Account authenticate( AuthenticationToken token )
             throws AuthenticationException {
 
         if ( token == null ) {
@@ -352,10 +352,10 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
             log.trace( "Authentication attempt received for token [" + token + "]" );
         }
 
-        AuthenticationInfo info;
+        Account account;
         try {
-            info = doAuthenticate( token );
-            if ( info == null ) {
+            account = doAuthenticate( token );
+            if ( account == null ) {
                 String msg = "Authentication token [" + token + "] could not be processed for authentication by this " +
                         "Authenticator instance.  Please check that it is configured correctly.";
                 throw new AuthenticationException( msg );
@@ -391,12 +391,12 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
 
         if ( log.isInfoEnabled() ) {
             log.info( "Authentication successful for token [" + token + "].  " +
-                      "Returned authentication info: [" + info + "]" );
+                      "Returned account: [" + account + "]" );
         }
 
-        sendSuccessEvent( token, info );
+        sendSuccessEvent( token, account);
 
-        return info;
+        return account;
     }
 
     /**
@@ -412,10 +412,10 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      * indicate any expected problem (such as an unknown account or username, or invalid password, etc).
      *
      * @param token the authentication token encapsulating the user's login information.
-     * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
+     * @return an <tt>Account</tt> object encapsulating the user's account information
      * important to JSecurity.
      * @throws AuthenticationException if there is a problem logging in the user.
      */
-    protected abstract AuthenticationInfo doAuthenticate( AuthenticationToken token )
+    protected abstract Account doAuthenticate( AuthenticationToken token )
             throws AuthenticationException;
 }

@@ -24,7 +24,7 @@
  */
 package org.jsecurity.realm.support.activedirectory;
 
-import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authz.AuthorizationInfo;
@@ -87,7 +87,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
 
     /**
-     * <p>Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
+     * <p>Builds an {@link org.jsecurity.authc.Account} object by querying the active directory LDAP context for the
      * specified username.  This method binds to the LDAP server using the provided username and password -
      * which if successful, indicates that the password is correct.</p>
      *
@@ -95,12 +95,12 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      *
      * @param token the authentication token provided by the user.
      * @param ldapContextFactory the factory used to build connections to the LDAP server.
-     * @return an {@link AuthenticationInfo} instance containing information retrieved from LDAP
-     * that can be used to build an {@link org.jsecurity.authc.AuthenticationInfo} instance to return.
+     * @return an {@link org.jsecurity.authc.Account} instance containing information retrieved from LDAP
+     * that can be used to build an {@link org.jsecurity.authc.Account} instance to return.
      *
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected AuthenticationInfo queryForLdapAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
 
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
@@ -112,7 +112,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext( ctx );
         }
 
-        return createAuthenticationInfo( upToken.getUsername(), upToken.getPassword() );
+        return createAccount( upToken.getUsername(), upToken.getPassword() );
     }
 
 

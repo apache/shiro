@@ -51,7 +51,7 @@ import java.util.HashSet;
  * <p>
  * If the default implementation
  * of authentication and authorization cannot handle your schema, this class can be subclassed and the
- * appropriate methods overridden. (usually {@link #doGetAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)},
+ * appropriate methods overridden. (usually {@link #doGetAccount(org.jsecurity.authc.AuthenticationToken)},
  * {@link #getRoleNamesForUser(java.sql.Connection,String)}, and/or {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}
  * </p>
  *
@@ -68,7 +68,7 @@ public class JdbcRealm extends AuthorizingRealm {
     |             C O N S T A N T S             |
     ============================================*/
     /**
-     * The default query used to retrieve authentication information for the user.
+     * The default query used to retrieve account data for the user.
      */
     protected static final String DEFAULT_AUTHENTICATION_QUERY = "select password from users where username = ?";
 
@@ -117,7 +117,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * Overrides the default query used to retrieve a user's password during authentication.  When using the default
      * implementation, this query must take the user's username as a single parameter and return a single result
      * with the user's password as the first column.  If you require a solution that does not match this query
-     * structure, you can override {@link #doGetAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)} or
+     * structure, you can override {@link #doGetAccount(org.jsecurity.authc.AuthenticationToken)} or
      * just {@link #getPasswordForUser(java.sql.Connection,String)}
      *
      * @param authenticationQuery the query to use for authentication.
@@ -180,7 +180,7 @@ public class JdbcRealm extends AuthorizingRealm {
         setAuthenticationTokenClass( UsernamePasswordToken.class );
     }
 
-    protected AuthenticationInfo doGetAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException {
+    protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
 
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;
         String username = upToken.getUsername();
@@ -191,7 +191,7 @@ public class JdbcRealm extends AuthorizingRealm {
         }
 
         Connection conn = null;
-        AuthenticationInfo info = null;
+        Account account = null;
         try {
             conn = dataSource.getConnection();
 
@@ -201,7 +201,7 @@ public class JdbcRealm extends AuthorizingRealm {
                 throw new UnknownAccountException( "No account found for user [" + username + "]" );
             }
 
-            info = createAuthenticationInfo( username, password );
+            account = createAccount( username, password );
 
         } catch ( SQLException e ) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
@@ -215,7 +215,7 @@ public class JdbcRealm extends AuthorizingRealm {
             JdbcUtils.closeConnection( conn );
         }
 
-        return info;
+        return account;
     }
 
     private String getPasswordForUser( Connection conn, String username ) throws SQLException {

@@ -24,8 +24,8 @@
  */
 package org.jsecurity.authc.event.support;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventFactory;
@@ -51,13 +51,13 @@ public class SimpleAuthenticationEventFactory implements AuthenticationEventFact
     }
 
     /**
-     * Uses the principal found in the <em>AuthenticationInfo</em> parameter (not the authentication token) to
+     * Uses the principal found in the <em>Account</em> parameter (not the authentication token) to
      * construct a {@link org.jsecurity.authc.event.SuccessfulAuthenticationEvent}
      * @param token the authentication token submitted during the authentication attempt.
-     * @param info the authentication info constructed due to the successful attempt.
+     * @param account the account data constructed due to the successful attempt.
      * @return a {@link org.jsecurity.authc.event.SuccessfulAuthenticationEvent} to send due to the successful attempt.
      */
-    public AuthenticationEvent createSuccessEvent( AuthenticationToken token, AuthenticationInfo info ) {
-        return new SuccessfulAuthenticationEvent( info.getPrincipal() );
+    public AuthenticationEvent createSuccessEvent( AuthenticationToken token, Account account ) {
+        return new SuccessfulAuthenticationEvent( account.getPrincipal() );
     }
 }

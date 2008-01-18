@@ -24,8 +24,8 @@
  */
 package org.jsecurity.realm;
 
+import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authz.Authorizer;
 
@@ -88,7 +88,7 @@ public interface Realm extends Authorizer {
     boolean supports( Class authenticationTokenClass );
 
     /**
-     * Returns account information for the account associated with the specified <tt>token</tt>,
+     * Returns account information for the specified <tt>token</tt>,
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
      * @param token the application-specific representation of an account principal and credentials.
@@ -97,8 +97,8 @@ public interface Realm extends Authorizer {
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
      * @throws org.jsecurity.authc.AuthenticationException if there is an error obtaining or
-     * constructing an AuthenticationInfo based on the specified <tt>token</tt>.
+     * constructing an Account based on the specified <tt>token</tt>.
      */
-    AuthenticationInfo getAuthenticationInfo( AuthenticationToken token ) throws AuthenticationException;
+    Account getAccount( AuthenticationToken token ) throws AuthenticationException;
 
 }
