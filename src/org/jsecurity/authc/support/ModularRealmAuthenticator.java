@@ -97,6 +97,11 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     public ModularRealmAuthenticator() {
     }
 
+    public ModularRealmAuthenticator( Realm realm ) {
+        setRealm( realm );
+        init();
+    }
+
     public ModularRealmAuthenticator( List<Realm> realms ) {
         setRealms( realms );
         init();
@@ -154,45 +159,19 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     |               M E T H O D S               |
     ============================================*/
     /**
-     * Creates an <tt>Account</tt> instance that will be used to aggregate account data across
+     * Creates an <tt>AggregateAccount</tt> instance that will be used to aggregate account data across
      * all successfully consulted Realms during a multi-realm log-in attempt.
      *
      * <p>It is primarily provided for subclass overriding behavior if necessary - the default implementation only
-     * returns <tt>new SimpleAccount();</tt>, which supports merging account objects.
-     *
-     * <p>If this method is overridden to return something <em>other</em> than an instance of
-     * <tt>SimpleAccount</tt>, then the {@link #merge} method will need to be overridden as well.
-     * Please see that method's JavaDoc for more info.
+     * returns <tt>new SimpleAccount();</tt>, which implements the <tt>AggregateAccount</tt> interface.
      *
      * @param token the authentication token submitted during the authentication process which may be useful
      * to subclasses in constructing the returned <tt>Account</tt> instance.
-     * @return an <tt>Account</tt> instance that will be used to aggregate all
+     * @return an <tt>AggregateAccount</tt> instance that will be used to aggregate all
      * <tt>Account</tt> objects returned by all configured <tt>Realm</tt>s.
      */
-    protected Account createAggregatedAccount( AuthenticationToken token ) {
+    protected AggregateAccount createAggregateAccount( AuthenticationToken token ) {
         return new SimpleAccount();
-    }
-
-    /**
-     * Merges the <tt>Account</tt> returned from a single realm into the aggregated
-     * <tt>Account</tt> that summarizes all realms in a multi-realm configuration.
-     *
-     * <p>This method is primarily provided as a template method if subclasses wish to override it for custom
-     * merging behavior.
-     *
-     * <p>The default implementation
-     * only checks to see if the <tt>aggregatedAccount</tt> parameter is an <tt>instanceof</tt>
-     * {@link SimpleAccount}, and if so, calls
-     * <tt>aggregatedAccount.{@link SimpleAccount#merge merge( singleRealmAccount )}</tt>, otherwise
-     * nothing occurs.
-     *
-     * @param aggregatedAccount the aggregated account from all realms
-     * @param singleRealmAccount the account provided by a single realm, to be joined with the aggregated account
-     */
-    protected void merge(Account aggregatedAccount, Account singleRealmAccount) {
-        if ( aggregatedAccount instanceof SimpleAccount) {
-            ((SimpleAccount) aggregatedAccount).merge(singleRealmAccount);
-        }
     }
 
     /**
@@ -246,7 +225,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         strategy.beforeAllAttempts( realms, token );
         
-        Account aggregatedInfo = createAggregatedAccount( token );
+        AggregateAccount aggregateAccount = createAggregateAccount( token );
 
         if (log.isDebugEnabled()) {
             log.debug("Iterating through [" + realms.size() + "] realms for PAM authentication");
@@ -263,10 +242,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                         "using realm of type [" + realm.getClass() + "]");
                 }
 
-                Account realmInfo = null;
+                Account account = null;
                 Throwable t = null;
                 try {
-                    realmInfo = realm.getAccount( token );
+                    account = realm.getAccount( token );
                 } catch ( Throwable throwable ) {
                     t = throwable;
                     if ( log.isTraceEnabled() ) {
@@ -275,20 +254,18 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     }
                 }
 
-                strategy.afterAttempt( realm, token, realmInfo, t );
+                strategy.afterAttempt( realm, token, account, t );
 
                 // If non-null account is returned, then the realm was able to authenticate the
                 // user - so merge the account with any accumulated before:
-                if( realmInfo != null ) {
+                if( account != null ) {
 
                     if (log.isDebugEnabled()) {
                         log.debug("Account successfully authenticated using realm of type [" +
                             realm.getClass().getName() + "]");
                     }
 
-                    // Merge the module-returned data with the aggregate data
-                    merge( aggregatedInfo, realmInfo );
-
+                    aggregateAccount.merge( account );
                 }
             } else {
                 if (log.isDebugEnabled()) {
@@ -298,9 +275,9 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
             }
         }
 
-        strategy.afterAllAttempts( token, aggregatedInfo );
+        strategy.afterAllAttempts( token, aggregateAccount );
 
-        return aggregatedInfo;
+        return aggregateAccount;
     }
 
 

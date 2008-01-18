@@ -30,8 +30,8 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * A <tt>Session</tt> is a data context associated with a single entity (user, 3rd party process,
- * etc) that communicates with a software system over a period of time.
+ * A <tt>Session</tt> is a data/state context associated with a single entity (user, 3rd party process,
+ * etc) that interacts with a software system over a period of time.
  *
  * <p>A <tt>Session</tt> is intended to be managed by the business tier and accessible via other
  * tiers without being tied to any given client technology.  This is a <em>great</em> benefit to Java
@@ -100,13 +100,9 @@ public interface Session {
 
     /**
      * Returns the last time the user associated with the session interacted with the system.
-     *
-     * <p>Except for the {@link #touch() touch()} method, calling the other methods in this
-     * interface will <b><em>not</em></b> update the session's last accessed time.
-     *
-     * @see #touch()
-     *
+     * 
      * @return The time the user last interacted with the system.
+     * @see #touch()
      */
     Date getLastAccessTime();
 
@@ -202,8 +198,7 @@ public interface Session {
      * considered a graceful operation.
      *
      * <p><b>N.B.</b> Under most applications' circumstances, it is usually far better to stop the session implicitly
-     * by invalidating the 'owning'
-     * <tt>SecurityContext</tt> instead.  This is done by calling the
+     * by invalidating the 'owning' <tt>SecurityContext</tt> instead.  This is done by calling the
      * {@link org.jsecurity.context.SecurityContext#invalidate SecurityContext#invalidate} method, since
      * <tt>invalidate</tt> is expected to stop the corresponding session automatically, and also allows the framework
      * to do any other additional cleanup.

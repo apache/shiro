@@ -146,7 +146,7 @@ public class DefaultSessionManager extends AbstractSessionManager
      * validate sessions, and this attribute will be ignored.
      *
      * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
-     * @param sessionValidationInterval
+     * @param sessionValidationInterval the time in milliseconds between checking for valid sessions to reap orphans.
      */
     public void setSessionValidationInterval( long sessionValidationInterval ) {
         this.sessionValidationInterval = sessionValidationInterval;
@@ -191,7 +191,7 @@ public class DefaultSessionManager extends AbstractSessionManager
     }
 
     protected SessionValidationScheduler createSessionValidationScheduler() {
-        SessionValidationScheduler scheduler = null;
+        SessionValidationScheduler scheduler;
 
         if ( log.isDebugEnabled() ) {
             log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );

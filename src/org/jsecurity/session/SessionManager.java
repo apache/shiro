@@ -83,9 +83,7 @@ public interface SessionManager {
 
     /**
      * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> last
-     * interacted with the system.  Any interaction with the system generally updates the last
-     * access time for a session, with the exception of the methods in the
-     * {@link org.jsecurity.session.Session Session} itself (excluding {@link org.jsecurity.session.Session#touch() Session.touch()}).
+     * interacted with the system.
      * @param sessionId the system identifier for the session of interest
      * @return tye time the session last accessed the system
      * @see org.jsecurity.session.Session#getLastAccessTime()
