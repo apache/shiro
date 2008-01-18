@@ -33,33 +33,33 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class LifecycleUtils {
 
-    protected static transient final Log log = LogFactory.getLog( LifecycleUtils.class );
+    protected static transient final Log log = LogFactory.getLog(LifecycleUtils.class);
 
-    public static void init( Object o ) throws Exception {
-        if ( o instanceof Initializable ) {
-            init( (Initializable)o );
+    public static void init(Object o) throws Exception {
+        if (o instanceof Initializable) {
+            init((Initializable) o);
         }
     }
 
-    public static void init( Initializable initializable ) throws Exception {
+    public static void init(Initializable initializable) throws Exception {
         initializable.init();
     }
 
-    public static void destroy( Object o ) {
-        if ( o instanceof Destroyable ) {
-            destroy( (Destroyable)o );
+    public static void destroy(Object o) {
+        if (o instanceof Destroyable) {
+            destroy((Destroyable) o);
         }
     }
 
-    public static void destroy( Destroyable d ) {
-        try {
-            if ( d != null ) {
+    public static void destroy(Destroyable d) {
+        if (d != null) {
+            try {
                 d.destroy();
-            }
-        } catch ( Exception e ) {
-            if ( log.isDebugEnabled() ) {
-                String msg = "Unable to cleanly destroy instance [" + d + "] of type [" + d.getClass().getName() + "].";
-                log.debug( msg, e );
+            } catch (Throwable t) {
+                if (log.isDebugEnabled()) {
+                    String msg = "Unable to cleanly destroy instance [" + d + "] of type [" + d.getClass().getName() + "].";
+                    log.debug(msg, t);
+                }
             }
         }
     }
