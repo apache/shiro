@@ -113,11 +113,6 @@ public class DelegatingSecurityContext implements SecurityContext {
         this(null, authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext(Object principal, boolean authenticated, InetAddress inetAddress,
-                                     Session session, SecurityManager securityManager) {
-        this(toList(principal), authenticated, inetAddress, session, securityManager);
-    }
-
     public DelegatingSecurityContext(List principals, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
         if (securityManager == null) {

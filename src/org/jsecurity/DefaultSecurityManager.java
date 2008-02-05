@@ -51,6 +51,7 @@ import org.jsecurity.util.*;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -619,8 +620,24 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         ThreadContext.unbindSecurityContext();
     }
 
+    protected static InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            return null;
+        }
+    }
+
+    protected SecurityContext createSecurityContext( List principals, boolean authenticated, 
+                                                     InetAddress inetAddress, Session existing ) {
+        if ( inetAddress == null ) {
+            inetAddress = getLocalHost();
+        }
+        return new DelegatingSecurityContext( principals, authenticated, inetAddress, existing, this );
+    }
+
     protected SecurityContext createSecurityContext() {
-        return new DelegatingSecurityContext( this );
+        return createSecurityContext( null, false, null, null );
     }
 
     protected SecurityContext getSecurityContext(boolean create) {
