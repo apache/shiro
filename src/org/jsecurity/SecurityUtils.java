@@ -25,16 +25,23 @@
 package org.jsecurity;
 
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.SecurityContextException;
-import org.jsecurity.util.ThreadContext;
 
 /**
- * Simple utility class to perform common JSecurity operations in an application.
+ * Accesses the currently accessible <tt>SecurityContext</tt> for the calling code.
+ *
+ * @deprecated call the {@link org.jsecurity.SecurityManager#getSecurityContext()} method instead.  This class will
+ * be removed before JSecurity 1.0 final.
  *
  * @since 0.2
  * @author Les Hazlewood
  */
 public abstract class SecurityUtils {
+
+    private static SecurityManager securityManager = null; //expected to be set by framework code.
+
+    public static void setSecurityManager( SecurityManager sm ) {
+        securityManager = sm;
+    }
 
     /**
      * Returns the currently accessible <tt>SecurityContext</tt> available to the calling code.
@@ -43,18 +50,12 @@ public abstract class SecurityUtils {
      * implementation-specific methods.  It also allows the JSecurity team to change the underlying implementation of
      * this method in the future depending on requirements/updates without affecting your code that uses it.
      *
-     * <p><b>PLEASE NOTE:</b> Currently, this method should only be called in web and server-side environments.  If
-     * you're operating in a standalone application environment, you should instead create your own SecurityUtils
-     * class that returns the <tt>SecurityContext</tt> in your environment-specific manner.
+     * @deprecated call {@link org.jsecurity.SecurityManager#getSecurityContext()} instead.  This class will be
+     * removed before 1.0 final.
      *
      * @return the currently accessible <tt>SecurityContext</tt> accessible to the calling code.
      */
     public static SecurityContext getSecurityContext() {
-        SecurityContext secCtx = ThreadContext.getSecurityContext();
-        if( secCtx == null ) {
-            throw new SecurityContextException( "No security context is bound to the current thread.  " +
-                    "Make sure that a SecurityContextWebInterceptor or SecurityContextFilter is configured." );
-        }
-        return secCtx;
+        return securityManager.getSecurityContext();
     }
 }

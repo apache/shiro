@@ -51,7 +51,7 @@ import javax.naming.NamingException;
  * will cause these properties specified on the realm to be ignored.</p>
  *
  * @author Jeremy Haile
- * @see # queryForLdapAccount (org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
+ * @see #queryForLdapAccount (org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
  * @see #queryForLdapAuthorizationInfo(Object, LdapContextFactory)
  * @since 0.1
  */

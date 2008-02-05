@@ -54,6 +54,13 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
     SecurityContext login( AuthenticationToken authenticationToken ) throws AuthenticationException;
 
     /**
+     * Logs out the specified Subject/User from the system.
+     *
+     * @param subjectIdentifier the identifier of the subject/user to log out.
+     */
+    void logout( Object subjectIdentifier );
+
+    /**
      * Returns the calling context's <tt>SecurityContext</tt>.
      * @return the calling context's <tt>SecurityContext</tt>.
      */

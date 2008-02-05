@@ -83,7 +83,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     private static List<Object> toList(Object principal) {
 
         List<Object> principals = null;
-        
+
         if (principal != null) {
 
             if (principal instanceof Collection) {
@@ -93,7 +93,7 @@ public class DelegatingSecurityContext implements SecurityContext {
             principals = new ArrayList<Object>();
             principals.add(principal);
         }
-        
+
         return principals;
     }
 
@@ -105,8 +105,8 @@ public class DelegatingSecurityContext implements SecurityContext {
         }
     }
 
-    public DelegatingSecurityContext( SecurityManager securityManager ) {
-        this( false, getLocalHost(), null, securityManager );
+    public DelegatingSecurityContext(SecurityManager securityManager) {
+        this(false, getLocalHost(), null, securityManager);
     }
 
     public DelegatingSecurityContext(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
@@ -129,7 +129,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         }
 
         //noinspection unchecked
-        this.principals.addAll( principals );
+        this.principals.addAll(principals);
         this.authenticated = authenticated;
         this.inetAddress = inetAddress;
         this.session = session;
@@ -184,32 +184,26 @@ public class DelegatingSecurityContext implements SecurityContext {
         }
     }
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#getAllPrincipals()
-     */
+    /** @see org.jsecurity.context.SecurityContext#getAllPrincipals() */
     public List getAllPrincipals() {
         assertValid();
         //noinspection unchecked
-        return Collections.unmodifiableList( principals );
+        return Collections.unmodifiableList(principals);
     }
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) ()
-     */
+    /** @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) () */
     public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
         for (Object o : principals) {
             if (principalType.isAssignableFrom(o.getClass())) {
                 //noinspection unchecked
-                return (T)o;
+                return (T) o;
             }
         }
         return null;
     }
 
-    /**
-     * @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)()
-     */
+    /** @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)() */
     public <T> List<T> getAllPrincipalsByType(Class<T> principalType) {
         assertValid();
         List<T> principalsOfType = new ArrayList<T>();
@@ -218,11 +212,11 @@ public class DelegatingSecurityContext implements SecurityContext {
             for (Object o : principals) {
                 if (principalType.isAssignableFrom(o.getClass())) {
                     //noinspection unchecked
-                    principalsOfType.add((T)o);
+                    principalsOfType.add((T) o);
                 }
             }
         }
-        return Collections.unmodifiableList( principalsOfType );
+        return Collections.unmodifiableList(principalsOfType);
     }
 
     public boolean hasRole(String roleIdentifier) {
@@ -264,12 +258,12 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
-        if ( !hasPrincipal() ) {
+        if (!hasPrincipal()) {
             String msg = "Subject/User data has not yet been associated with this SecurityContext " +
                 "(this can be done by executing " + SecurityContext.class.getName() + ".login(AuthenticationToken) )." +
                 "Therefore, authorization operations are not possible (a Subject/User identity is required first).  " +
                 "Denying authorization.";
-            throw new UnauthenticatedException( msg );
+            throw new UnauthenticatedException(msg);
         }
     }
 
@@ -280,7 +274,7 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     public void checkPermissions(Collection<Permission> permissions)
-            throws AuthorizationException {
+        throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipal(), permissions);
@@ -300,19 +294,19 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public void login(AuthenticationToken token) throws AuthenticationException {
         assertValid();
-        SecurityContext authcSecCtx = securityManager.login( token );
+        SecurityContext authcSecCtx = securityManager.login(token);
         List principals = authcSecCtx.getAllPrincipals();
-        if ( principals == null || principals.isEmpty() ) {
+        if (principals == null || principals.isEmpty()) {
             String msg = "Principals collection returned from securityManager.login( token ) returned " +
                 "is null or empty.  This collection must be populated - please check the SecurityManager " +
                 "implementation to ensure this happens after a successful login attempt.";
-            throw new IllegalStateException( msg );
+            throw new IllegalStateException(msg);
         }
         this.principals = principals;
         this.authenticated = true;
-        if ( token instanceof InetAuthenticationToken) {
-            InetAddress addy = ((InetAuthenticationToken)token).getInetAddress();
-            if ( addy != null ) {
+        if (token instanceof InetAuthenticationToken) {
+            InetAddress addy = ((InetAuthenticationToken) token).getInetAddress();
+            if (addy != null) {
                 this.inetAddress = addy;
             }
         }
@@ -339,24 +333,27 @@ public class DelegatingSecurityContext implements SecurityContext {
         if (isInvalidated()) {
             return;
         }
+        setInvalidated(true);
+
         Session s = getSession(false);
         if (s != null) {
             try {
                 s.stop();
             } catch (InvalidSessionException ise) {
                 //ignored - we're invalidating, and have no further need of the session anyway
-                //log in case someone wants to know:
+                //log just in case someone wants to know:
                 if (log.isTraceEnabled()) {
-                    log.trace("Session has already been invalidated.  Ignoring and continuing ...", ise);
+                    log.trace("Session has already been invalidated.  Ignoring and continuing logout ...", ise);
                 }
             }
         }
+
+        this.securityManager.logout(getPrincipal());
         this.session = null;
         this.principals = new ArrayList();
         this.authenticated = false;
         this.inetAddress = null;
         this.securityManager = null;
-        setInvalidated(true);
     }
 
 }

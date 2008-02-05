@@ -31,7 +31,7 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.support.SecurityContextWebInterceptor;
+import org.jsecurity.web.DefaultWebSecurityManager;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -95,7 +95,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     }
 
     protected List getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
-        return (List)session.getAttribute( SecurityContextWebInterceptor.PRINCIPALS_SESSION_KEY );
+        return (List)session.getAttribute( DefaultWebSecurityManager.PRINCIPALS_SESSION_KEY );
     }
 
     protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, List principals ) {

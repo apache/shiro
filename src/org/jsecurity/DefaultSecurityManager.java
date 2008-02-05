@@ -26,10 +26,7 @@ package org.jsecurity;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.*;
 import org.jsecurity.authc.support.ModularRealmAuthenticator;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
@@ -41,8 +38,6 @@ import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.cache.ehcache.EhCacheProvider;
 import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.factory.SecurityContextFactory;
-import org.jsecurity.context.factory.support.DelegatingSecurityContextFactory;
 import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.support.file.PropertiesRealm;
@@ -91,6 +86,7 @@ import java.util.List;
  * @since 0.2
  */
 public class DefaultSecurityManager implements SecurityManager, SessionEventNotifier, CacheProviderAware, Initializable, Destroyable {
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
@@ -114,11 +110,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
 
     private Collection<Realm> realms = null;
     private boolean realmImplicitlyCreated = false;
-
-    /**
-     * The factory used to create a SecurityContext after a successful authentication.
-     */
-    protected SecurityContextFactory securityContextFactory = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -158,7 +149,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     protected Authenticator getRequiredAuthenticator() {
-        if ( this.authenticator == null ) {
+        if (this.authenticator == null) {
             String msg = "No authenticator attribute configured for this SecurityManager instance.  Please ensure " +
                 "the init() method is called prior to using this instance and a default one will be created.";
             throw new IllegalStateException(msg);
@@ -171,7 +162,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     protected Authorizer getRequiredAuthorizer() {
-        if ( this.authorizer == null ) {
+        if (this.authorizer == null) {
             String msg = "No authorizer attribute configured for this SecurityManager instance.  Please ensure " +
                 "the init() method is called prior to using this instance and a default one will be created.";
             throw new IllegalStateException(msg);
@@ -202,42 +193,10 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     protected SessionFactory getRequiredSessionFactory() {
-        if ( this.sessionFactory == null ) {
+        if (this.sessionFactory == null) {
             ensureSessionFactory();
         }
         return this.sessionFactory;
-    }
-
-    /**
-     * Returns the <tt>SecurityContextFactory</tt> that this SecurityManager will use to create a <tt>SecurityContext</tt>
-     * upon a successful authentication attempt.
-     *
-     * @return the <tt>SecurityContextFactory</tt> that this SecurityManager will use to create a <tt>SecurityContext</tt>
-     *         upon a successful authentication attempt.
-     * @see #setSecurityContextFactory #setSecurityContextFactory for more explanation.
-     */
-    protected SecurityContextFactory getSecurityContextFactory() {
-        return securityContextFactory;
-    }
-
-    /**
-     * Sets the <tt>SecurityContextFactory</tt> that this SecurityManager will use to create a <tt>SecurityContext</tt>
-     * upon a successful authentication attempt.
-     *
-     * @param securityContextFactory the <tt>SecurityContextFactory</tt> that this SecurityManager will use to create a
-     *                               <tt>SecurityContext</tt> upon a successful authentication attempt.
-     */
-    public void setSecurityContextFactory(SecurityContextFactory securityContextFactory) {
-        this.securityContextFactory = securityContextFactory;
-    }
-
-    protected SecurityContextFactory getRequiredSecurityContextFactory() {
-        if ( this.securityContextFactory == null ) {
-            String msg = "No securityContextFactory attribute configured for this SecurityManager instance.  Please " +
-                "ensure the init() method is called prior to using this instance and a default one will be created.";
-            throw new IllegalStateException(msg);
-        }
-        return this.securityContextFactory;
     }
 
     public void add(SessionEventListener listener) {
@@ -381,19 +340,19 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     protected void ensureRealms() {
-        if ( realms == null || realms.isEmpty() ) {
+        if (realms == null || realms.isEmpty()) {
             if (log.isInfoEnabled()) {
                 log.info("No realms set - creating default PropertiesRealm.");
             }
             Realm realm = createDefaultRealm();
             this.realmImplicitlyCreated = true;
-            setRealm( realm );
+            setRealm(realm);
         }
     }
 
     protected Authenticator createAuthenticator() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
-        mra.setRealms( this.realms );
+        mra.setRealms(this.realms);
         mra.init();
         authenticatorImplicitlyCreated = true;
         return mra;
@@ -402,24 +361,13 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     protected void ensureAuthenticator() {
         if (this.authenticator == null) {
             Authenticator authc = createAuthenticator();
-            setAuthenticator( authc );
-        }
-    }
-
-    protected SecurityContextFactory createSecurityContextFactory() {
-        return new DelegatingSecurityContextFactory(this);
-    }
-
-    protected void ensureSecurityContextFactory() {
-        if (getSecurityContextFactory() == null) {
-            SecurityContextFactory scf = createSecurityContextFactory();
-            setSecurityContextFactory(scf);
+            setAuthenticator(authc);
         }
     }
 
     protected Authorizer createAuthorizer() {
         ModularRealmAuthorizer mra = new ModularRealmAuthorizer();
-        mra.setRealms( this.realms );
+        mra.setRealms(this.realms);
         mra.init();
         authorizerImplicitlyCreated = true;
         return mra;
@@ -428,7 +376,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     protected void ensureAuthorizer() {
         if (authorizer == null) {
             Authorizer authz = createAuthorizer();
-            setAuthorizer( authz );
+            setAuthorizer(authz);
         }
     }
 
@@ -456,7 +404,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
                     "default SessionFactory implementation...");
             }
             SessionFactory sessionFactory = createSessionFactory();
-            sessionFactoryImplicitlyCreated = true;            
+            sessionFactoryImplicitlyCreated = true;
             setSessionFactory(sessionFactory);
         }
     }
@@ -465,7 +413,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         ensureCacheProvider();
         ensureRealms();
         ensureAuthenticator();
-        ensureSecurityContextFactory();
         ensureAuthorizer();
         if (!isLazySessions()) {
             //start SessionFactory infrastructure now
@@ -490,8 +437,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
             authenticatorImplicitlyCreated = false;
         }
         if (realmImplicitlyCreated) {
-            if( realms != null && !realms.isEmpty() ) {
-                LifecycleUtils.destroy( realms.iterator().next() );    
+            if (realms != null && !realms.isEmpty()) {
+                LifecycleUtils.destroy(realms.iterator().next());
             }
             realmImplicitlyCreated = false;
             realms = null;
@@ -503,91 +450,9 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         }
     }
 
-    /**
-     * Creates a <tt>SecurityContext</tt> instance for the user represented by the given method argument.
-     * <p/>
-     * <p>The default implementation delegates to the internal {@link SecurityContextFactory} property.
-     *
-     * @param token the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param account  the <tt>Account</tt> of a newly authenticated subject/user.
-     * @return the <tt>SecurityContext</tt> that represents the authorization and session data for the newly
-     *         authenticated subject/user.
-     */
-    protected SecurityContext createSecurityContext(AuthenticationToken token, Account account) {
-        SecurityContextFactory factory = getSecurityContextFactory();
-        if (factory == null) {
-            throw new IllegalStateException(
-                "No SecurityContextFactory class attribute has been set, so authentication cannot " +
-                    "be completed.  Make sure the init() method is being called on this " +
-                    "Authenticator before it is used.");
-        }
-
-        return factory.createSecurityContext(token, account);
-    }
-
-    /**
-     * Binds a <tt>SecurityContext</tt> instance created after authentication to the application for later use.
-     *
-     * <p>The default implementation merely binds the argument to the thread local via the {@link ThreadContext}.
-     * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
-     *
-     * @param secCtx the <tt>SecurityContext</tt> instance created after authentication to be bound to the application
-     *               for later use.
-     */
-    protected void bind(SecurityContext secCtx) {
-        if (log.isDebugEnabled()) {
-            log.debug("Binding SecurityContext [" + secCtx + "] to a thread local...");
-        }
-        ThreadContext.bind( secCtx );
-    }
-
-    private void assertCreation(SecurityContext secCtx) throws IllegalStateException {
-        if (secCtx == null) {
-            String msg = "Programming or configuration error - No SecurityContext was created after successful " +
-                "authentication.  Verify that you have either configured the " + getClass().getName() +
-                " instance with a proper SecurityContextFactory (easier) or " +
-                "that you have overridden the " + getClass().getName() +
-                ".createSecurityContext( Account account ) method.";
-            throw new IllegalStateException(msg);
-        }
-    }
-
-    /**
-     * Delegates to the authenticator for authentication.
-     */
+    /** Delegates to the authenticator for authentication. */
     public Account authenticate(AuthenticationToken token) throws AuthenticationException {
-        return getRequiredAuthenticator().authenticate( token );
-    }
-
-    /**
-     * TODO - edit this
-     * <p>During a subject's (a.k.a. user's) successful login attempt, an <tt>Account</tt> object is created
-     * for that user by a {@link SecurityContextFactory}.  <b>This factory must be set as a property of this class</b>, either via the
-     * setter method, or provided by subclasses during initialization.  Most implementors will
-     * want to use a {@link org.jsecurity.context.factory.support.DelegatingSecurityContextFactory} or roll their own.
-     *
-     * <p>Once a <tt>SecurityContext</tt> is created for a successfully authenticated subject (a.k.a. 'user'), it is
-     * first <em>bound</em> to the application for convenient access and then returned to the {@link #authenticate}
-     * caller.
-     * @param token
-     * @return
-     * @throws AuthenticationException
-     */
-    public SecurityContext login( AuthenticationToken token ) throws AuthenticationException {
-        Account account = authenticate( token );
-        SecurityContext secCtx = createSecurityContext( token, account );
-        assertCreation( secCtx );
-        bind( secCtx );
-        return secCtx;
-    }
-
-    public SecurityContext getSecurityContext() {
-        SecurityContext sc = ThreadContext.getSecurityContext();
-        if ( sc == null ) {
-            sc = new DelegatingSecurityContext( this );
-            bind( sc );
-        }
-        return sc;
+        return getRequiredAuthenticator().authenticate(token);
     }
 
     public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
@@ -631,10 +496,139 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        return getRequiredSessionFactory().start( hostAddress );
+        return getRequiredSessionFactory().start(hostAddress);
     }
 
     public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         return getRequiredSessionFactory().getSession(sessionId);
+    }
+
+    private void assertPrincipals(Account account) {
+        Collection principals = account.getPrincipals();
+        if (principals == null || principals.size() < 1) {
+            String msg = "Account returned from Authenticator must return at least one non-null principal.";
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /**
+     * Creates a <tt>SecurityContext</tt> instance for the user represented by the given method argument.
+     *
+     * @param token   the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
+     * @param account the <tt>Account</tt> of a newly authenticated subject/user.
+     * @return the <tt>SecurityContext</tt> that represents the identity and session data for the newly
+     *         authenticated subject/user.
+     */
+    protected SecurityContext createSecurityContext(AuthenticationToken token, Account account) {
+        assertPrincipals(account);
+
+        //get any existing session that may exist - we don't want to lose it:
+        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        Session session = null;
+        if (securityContext != null) {
+            session = securityContext.getSession(false);
+        }
+
+        InetAddress authcSourceIP = null;
+        if (token instanceof InetAuthenticationToken) {
+            authcSourceIP = ((InetAuthenticationToken) token).getInetAddress();
+        }
+        if (authcSourceIP == null) {
+            //try the thread local:
+            authcSourceIP = ThreadContext.getInetAddress();
+        }
+
+        return new DelegatingSecurityContext(account.getPrincipals(), true, authcSourceIP, session, this);
+    }
+
+    /**
+     * Binds a <tt>SecurityContext</tt> instance created after authentication to the application for later use.
+     *
+     * <p>The default implementation merely binds the argument to the thread local via the {@link ThreadContext}.
+     * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
+     *
+     * @param secCtx the <tt>SecurityContext</tt> instance created after authentication to be bound to the application
+     *               for later use.
+     */
+    protected void bind(SecurityContext secCtx) {
+        if (log.isDebugEnabled()) {
+            log.debug("Binding SecurityContext [" + secCtx + "] to a thread local...");
+        }
+        ThreadContext.bind(secCtx);
+    }
+
+    private void assertCreation(SecurityContext secCtx) throws IllegalStateException {
+        if (secCtx == null) {
+            String msg = "Programming error - please verify that you have overridden the " +
+                getClass().getName() + ".createSecurityContext( Account account ) method to return " +
+                "a non-null SecurityContext instance";
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    /**
+     * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
+     * <tt>SecurityContext</tt> instance representing the authenticated account's identity.
+     *
+     * <p>Once constructed, the <tt>SecurityContext</tt> instance is then {@link #bind bound} to the application for
+     * subsequent access before being returned to the caller.
+     *
+     * @param token the authenticationToken to process for the login attempt.
+     * @return a SecurityContext representing the authenticated account.
+     * @throws AuthenticationException if there is a problem authenticating the specified <tt>token</tt>.
+     */
+    public SecurityContext login(AuthenticationToken token) throws AuthenticationException {
+        Account account = authenticate(token);
+        SecurityContext secCtx = createSecurityContext(token, account);
+        assertCreation(secCtx);
+        bind(secCtx);
+        return secCtx;
+    }
+
+    public void logout(Object subjectIdentifier) {
+        //Method arg is ignored - get the SecurityContext from the environment if it exists:
+        SecurityContext sc = getSecurityContext(false);
+        if (sc != null) {
+            Object identity = sc.getPrincipal();
+            try {
+                sc.invalidate();
+            } catch (Throwable t) {
+                if (log.isTraceEnabled()) {
+                    String msg = "Unable to cleanly invalidate SecurityContext for " +
+                        "subject [" + identity + "].  Ignoring.";
+                    log.trace(msg, t);
+                }
+            }
+
+            try {
+                unbind(sc);
+            } catch (Exception e) {
+                String msg = "Unable to cleanly unbind SecurityContext.  Ignoring.";
+                if (log.isDebugEnabled()) {
+                    log.debug(msg, e);
+                }
+            }
+        }
+    }
+
+    protected void unbind(SecurityContext sc) {
+        ThreadContext.unbindSecurityContext();
+    }
+
+    protected SecurityContext createSecurityContext() {
+        return new DelegatingSecurityContext( this );
+    }
+
+    protected SecurityContext getSecurityContext(boolean create) {
+        SecurityContext sc = ThreadContext.getSecurityContext();
+        if (sc == null && create) {
+            sc = createSecurityContext();
+            bind(sc);
+        }
+        return sc;
+    }
+
+    public SecurityContext getSecurityContext() {
+        return getSecurityContext(true);
     }
 }
