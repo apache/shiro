@@ -418,6 +418,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
             //start SessionFactory infrastructure now
             ensureSessionFactory();
         }
+        //TODO - remove before 1.0 final
+        SecurityUtils.setSecurityManager( this );
     }
 
     public void destroy() {
@@ -448,6 +450,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
             cacheProvider = null;
             cacheProviderImplicitlyCreated = false;
         }
+        //TODO - remove before 1.0 final:
+        SecurityUtils.setSecurityManager( null );
     }
 
     /** Delegates to the authenticator for authentication. */
