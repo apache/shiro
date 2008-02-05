@@ -27,7 +27,6 @@ package org.jsecurity.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.session.Session;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -59,7 +58,6 @@ public abstract class ThreadContext {
 
     protected static transient final Log logger = LogFactory.getLog( ThreadContext.class );
 
-    public static final String SESSION_KEY = Session.class.getName() + "_THREAD_CONTEXT_KEY";
     public static final String SECURITY_CONTEXT_KEY = SecurityContext.class.getName() + "_THREAD_CONTEXT_KEY";
     public static final String INET_ADDRESS_KEY = InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXST_KEY";

@@ -25,7 +25,6 @@
 package org.jsecurity.authc.support;
 
 import static org.easymock.EasyMock.*;
-import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
@@ -39,8 +38,6 @@ import org.junit.Test;
 public class AbstractAuthenticatorTest {
 
     AbstractAuthenticator abstractAuthenticator;
-    SecurityManager mockSecurityManager;
-
     private final SimpleAccount authInfo = new SimpleAccount( "user1", "secret" );
 
     private AbstractAuthenticator createAuthcReturnNull() {
@@ -70,38 +67,16 @@ public class AbstractAuthenticatorTest {
     @Before
     public void setUp() {
         abstractAuthenticator = createAuthcReturnValidAuthcInfo();
-        mockSecurityManager = createMock( SecurityManager.class );
     }
 
     @Test
     public void newAbstractAuthenticatorSecurityManagerConstructor() {
-        mockSecurityManager = createMock( SecurityManager.class );
         abstractAuthenticator = new AbstractAuthenticator() {
             protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return authInfo;
             }
         };
         initAuthc();
-    }
-
-    /**
-     * Asserts that when the init() method is called without a SecurityContextFactory being set as a class attribute,
-     * a SecurityContextFactory is lazily created (based on a previously injected SecurityManager) and non-null.
-     */
-    @Test
-    public void initWithoutSessionFactory() {
-        abstractAuthenticator.init();
-        assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
-    }
-
-    /**
-     * Asserts that if neither a SecurityContextFactory or a SessionManager have been set and init() is called, that
-     * an exception is thrown due to the instance not being in an intializable state.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void initWithoutSessionFactoryOrSecurityManager() {
-        assertNotNull( abstractAuthenticator.getAuthenticationEventFactory() ); //default impl set when instance created
-        abstractAuthenticator.init();
     }
 
     /**

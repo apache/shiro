@@ -251,6 +251,6 @@ public interface SecurityContext {
      *
      * @see #getSession
      */
-    public abstract void invalidate();
+    void invalidate();
 
 }

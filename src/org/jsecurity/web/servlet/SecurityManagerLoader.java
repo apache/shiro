@@ -25,10 +25,10 @@
 package org.jsecurity.web.servlet;
 
 import org.jsecurity.SecurityManager;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.DefaultWebSecurityManager;
-import org.jsecurity.web.WebSecurityManager;
 
 import java.util.List;
 
@@ -46,19 +46,18 @@ import java.util.List;
  * <p>If there is no business-tier, i.e. this is a 'pure' web application, then a <tt>SecurityManager</tt> instance
  * needs to be created (instantiated) explicitly.  This implementation will do this automatically by default, but if
  * you wish to change the default logic, you'll need to override the
- * {@link #createSecurityManager() createSecurityManager()} method.  Subclasses with a proper business tier as
- * described above do not need to worry about doing this.
+ * {@link #createSecurityManager() createSecurityManager()} method.
  *
  * @author Les Hazlewood
- * @see # getSecurityManager
- * @see # createSecurityManager
+ * @see #getSecurityManager
+ * @see #createSecurityManager
  * @since 0.2
  */
 public class SecurityManagerLoader extends ServletContextSupport {
 
     public static final String SECURITY_MANAGER_CONTEXT_KEY = SecurityManagerLoader.class.getName() + "_SECURITY_MANAGER";
 
-    private WebSecurityManager securityManager = null;
+    private SecurityManager securityManager = null;
     private boolean securityManagerImplicitlyCreated = false;
 
     public void init() {
@@ -69,7 +68,7 @@ public class SecurityManagerLoader extends ServletContextSupport {
         ensureSecurityManager();
     }
 
-    public WebSecurityManager getSecurityManager() {
+    public SecurityManager getSecurityManager() {
         return this.securityManager;
     }
 
@@ -83,9 +82,11 @@ public class SecurityManagerLoader extends ServletContextSupport {
 
     protected void bind(SecurityManager securityManager) {
         bind("securityManager", SECURITY_MANAGER_CONTEXT_KEY, securityManager);
+        //TODO - remove before 1.0 final:
+        SecurityUtils.setSecurityManager( getSecurityManager() );
     }
 
-    protected WebSecurityManager createSecurityManager() {
+    protected SecurityManager createSecurityManager() {
         DefaultWebSecurityManager defaultSecMgr = new DefaultWebSecurityManager();
 
         defaultSecMgr.setSessionMode( getSessionMode() );
@@ -107,7 +108,7 @@ public class SecurityManagerLoader extends ServletContextSupport {
     }
 
     public void ensureSecurityManager() {
-        WebSecurityManager securityManager = getSecurityManager();
+        SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
             securityManager = createSecurityManager();
             if (securityManager == null) {
@@ -129,6 +130,8 @@ public class SecurityManagerLoader extends ServletContextSupport {
             this.securityManager = null;
             this.securityManagerImplicitlyCreated = false;
         }
+        //TODO - remove before 1.0 final:
+        SecurityUtils.setSecurityManager( null );
     }
 
 }
