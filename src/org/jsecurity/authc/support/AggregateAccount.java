@@ -27,7 +27,7 @@ package org.jsecurity.authc.support;
 import org.jsecurity.authc.Account;
 
 /**
- * An <tt>AggregateAccount</tt> is an <em>aggregation</em>, or <em>composition of accounts from across multiple <tt>Realm</tt>s.
+ * An <tt>AggregateAccount</tt> is an <em>aggregation</em>, or <em>composition</em> of accounts from across multiple <tt>Realm</tt>s.
  *
  * <p>This is useful in a multi-realm authentication configuration - the individual <tt>Account</tt>
  * objects obtained from each realm can be {@link #merge merged} into a single object that implements this

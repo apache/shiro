@@ -2,7 +2,6 @@ package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.DelegatingSecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
@@ -150,8 +149,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
                                                      boolean authenticated ) {
 
         InetAddress inetAddress = SecurityWebSupport.getInetAddress( request );
-
-        return new DelegatingSecurityContext( principals, authenticated, inetAddress, existing, this );
+        return createSecurityContext( principals, authenticated, inetAddress, existing );
     }
 
     protected void bind(SecurityContext secCtx) {

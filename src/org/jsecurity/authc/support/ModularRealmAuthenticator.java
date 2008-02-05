@@ -163,7 +163,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * all successfully consulted Realms during a multi-realm log-in attempt.
      *
      * <p>It is primarily provided for subclass overriding behavior if necessary - the default implementation only
-     * returns <tt>new SimpleAccount();</tt>, which implements the <tt>AggregateAccount</tt> interface.
+     * returns <tt>new {@link SimpleAccount SimpleAccount}();</tt>, which implements the <tt>AggregateAccount</tt> interface.
      *
      * @param token the authentication token submitted during the authentication process which may be useful
      * to subclasses in constructing the returned <tt>Account</tt> instance.
