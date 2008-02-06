@@ -573,7 +573,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
 
     protected boolean isRememberIdentity( AuthenticationToken token ) {
         return token instanceof RememberMeAuthenticationToken &&
-               ((RememberMeAuthenticationToken) token).isRememberMe();
+               ((RememberMeAuthenticationToken)token).isRememberMe();
     }
 
     protected boolean isRememberIdentity( AuthenticationToken token, Account account ) {

@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.EventObject;
 
 /**
- * General event concerning the authentication of a particular subject (aka user or account).
+ * General event concerning the authentication of a particular Subject (aka User).
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -40,52 +40,32 @@ public abstract class AuthenticationEvent extends EventObject {
      */
     protected Date timestamp = new Date();
 
-    /**
-     * The primary principal of the subject associated with this event, usually a
-     * user id or username.
-     */
-    protected final Object principal;
+    protected Object principals = null;
 
     /**
-     * Creates a new authentication event.
-     *
-     * <p>As a clarification, when constructing an instance of this class, the given principal is
-     * usually the identity associated with the authentication attempt, such as a username or id.
-     *
-     * <p>As events are often logged, it is recommended that the argument should not represent a
-     * password (which is technically considered a credential, not a principal) to avoid the
-     * possibility of logging the password in clear text, which may be viewed by 3rd parties.
-     *
-     * @param principal the object representing the identity of the subject
-     * associated with the authentication attempt.
+     * Creates a new <tt>AuthenticationEvent</tt> based on the Subject identified by the given principals.
+     * @param principals the identifiying data for the Subject associated with this event.
      */
-    public AuthenticationEvent( Object principal ) {
-        super( principal );
-        this.principal = principal;
+    public AuthenticationEvent( Object principals ) {
+        this( principals, principals );
     }
 
 
     /**
-     * Creates a new authentication event with the given source and the given principal.
+     * Creates a new authentication event with the given source and the given <tt>AuthenticationToken</tt> submitted
+     * for the Authentication attempt.
      *
-     * <p>As a clarification, when constructing an instance of this class, the given principal is
-     * usually the identity associated with the authentication attempt, such as a username or id.
-     *
-     * <p>As events are often logged, it is recommended that the argument should not represent a
-     * password (which is technically considered a credential, not a principal) to avoid the
-     * possibility of logging the password in clear text, which may be viewed by 3rd parties.
-     *
-     * @param source the component responsible for the event.
-     * @param principal the object representing the identity of the subject
+     * @param principals the identifiying data for the Subject associated with this event.
+     * @param source the component responsible for generating the event.
      * associated with the authentication attempt
      */
-    public AuthenticationEvent( Object source, Object principal ) {
+    public AuthenticationEvent( Object principals, Object source ) {
         super( source );
-        if ( principal == null ) {
-            String msg = "Principal argument cannot be null";
+        if ( principals == null ) {
+            String msg = "principals argument cannot be null";
             throw new IllegalArgumentException( msg );
         }
-        this.principal = principal;
+        this.principals = principals;
     }
 
     /**
@@ -98,13 +78,12 @@ public abstract class AuthenticationEvent extends EventObject {
     }
 
     /**
-     * Returns the principal (aka subject identity) associated with the authentication event.
+     * Returns the principals (aka Subject identity) associated with the authentication event.
      *
-     * @return the the principal (aka subject identity) associated with the authentication event.
+     * @return the the principals (aka subject identity) associated with the authentication event.
      */
-    public Object getPrincipal() {
-        return this.principal;
+    public Object getPrincipals() {
+        return this.principals;
     }
-
 
 }

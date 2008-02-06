@@ -47,7 +47,7 @@ public class SimpleAuthenticationEventFactory implements AuthenticationEventFact
      * @return a {@link org.jsecurity.authc.event.FailedAuthenticationEvent} to send due to the failed attempt.
      */
     public AuthenticationEvent createFailureEvent( AuthenticationToken token, AuthenticationException cause ) {
-        return new FailedAuthenticationEvent( token.getPrincipal(), cause );
+        return new FailedAuthenticationEvent( token, cause );
     }
 
     /**
@@ -58,6 +58,6 @@ public class SimpleAuthenticationEventFactory implements AuthenticationEventFact
      * @return a {@link org.jsecurity.authc.event.SuccessfulAuthenticationEvent} to send due to the successful attempt.
      */
     public AuthenticationEvent createSuccessEvent( AuthenticationToken token, Account account ) {
-        return new SuccessfulAuthenticationEvent( account.getPrincipal() );
+        return new SuccessfulAuthenticationEvent( token, account );
     }
 }

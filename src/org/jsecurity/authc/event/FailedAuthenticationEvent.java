@@ -25,6 +25,7 @@
 package org.jsecurity.authc.event;
 
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
 
 /**
  * Event triggered when an authentication attempt fails.  If an exception is thrown indicating
@@ -34,25 +35,25 @@ import org.jsecurity.authc.AuthenticationException;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class FailedAuthenticationEvent extends AuthenticationEvent {
+public class FailedAuthenticationEvent extends AttemptedAuthenticationEvent {
 
     private AuthenticationException cause = null;
 
-    public FailedAuthenticationEvent( Object principal ) {
-        super( principal );
+    public FailedAuthenticationEvent( AuthenticationToken token ) {
+        super( token );
     }
 
-    public FailedAuthenticationEvent( Object source, Object principal ) {
-        super( source, principal );
+    public FailedAuthenticationEvent( AuthenticationToken token, Object source ) {
+        super( token, source );
     }
 
-    public FailedAuthenticationEvent( Object principal, AuthenticationException cause ) {
-        this( principal );
+    public FailedAuthenticationEvent( AuthenticationToken token, AuthenticationException cause ) {
+        this( token );
         setCause( cause );
     }
 
-    public FailedAuthenticationEvent( Object source, Object principal, AuthenticationException cause ) {
-        super( source, principal );
+    public FailedAuthenticationEvent( AuthenticationToken token, Object source, AuthenticationException cause ) {
+        super( token, source );
         setCause( cause );
     }
 

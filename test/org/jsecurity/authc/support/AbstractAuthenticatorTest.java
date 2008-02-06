@@ -38,7 +38,7 @@ import org.junit.Test;
 public class AbstractAuthenticatorTest {
 
     AbstractAuthenticator abstractAuthenticator;
-    private final SimpleAccount authInfo = new SimpleAccount( "user1", "secret" );
+    private final SimpleAccount account = new SimpleAccount( "user1", "secret" );
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {
@@ -51,7 +51,7 @@ public class AbstractAuthenticatorTest {
     private AbstractAuthenticator createAuthcReturnValidAuthcInfo() {
         return new AbstractAuthenticator() {
             protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
-                return authInfo;
+                return account;
             }
         };
     }
@@ -73,7 +73,7 @@ public class AbstractAuthenticatorTest {
     public void newAbstractAuthenticatorSecurityManagerConstructor() {
         abstractAuthenticator = new AbstractAuthenticator() {
             protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
-                return authInfo;
+                return account;
             }
         };
         initAuthc();
@@ -139,7 +139,7 @@ public class AbstractAuthenticatorTest {
     public void createSuccessEventReturnsNull() {
         abstractAuthenticator = new AbstractAuthenticator() {
             protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
-                return authInfo;
+                return account;
             }
             protected AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account ) {
                 return null;
@@ -161,7 +161,7 @@ public class AbstractAuthenticatorTest {
         AuthenticationEventSender mockSender = createMock( AuthenticationEventSender.class );
         abstractAuthenticator.setAuthenticationEventSender( mockSender );
         initAuthc();
-        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( newToken(), account );
         mockSender.send( successEvent );
         replay( mockSender );
         abstractAuthenticator.send( successEvent );
@@ -171,7 +171,7 @@ public class AbstractAuthenticatorTest {
     @Test
     public void sendWithNullSender() {
         initAuthc();
-        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( newToken(), account );
         abstractAuthenticator.send( successEvent );
     }
 
@@ -183,13 +183,13 @@ public class AbstractAuthenticatorTest {
         abstractAuthenticator.setAuthenticationEventSender( mockSender );
         initAuthc();
         AuthenticationToken token = newToken();
-        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
-        expect( mockFactory.createSuccessEvent( token, authInfo ) ).andReturn( successEvent );
+        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( token, account );
+        expect( mockFactory.createSuccessEvent( token, account) ).andReturn( successEvent );
         mockSender.send( successEvent );
         expectLastCall().andThrow( new RuntimeException() );
         replay( mockFactory );
         replay( mockSender );
-        abstractAuthenticator.sendSuccessEvent( token, authInfo );
+        abstractAuthenticator.sendSuccessEvent( token, account);
         verify( mockFactory );
         verify( mockSender );
     }
@@ -203,13 +203,13 @@ public class AbstractAuthenticatorTest {
         abstractAuthenticator.setEventSendErrorFailsAuthentication( true );
         initAuthc();
         AuthenticationToken token = newToken();
-        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
-        expect( mockFactory.createSuccessEvent( token, authInfo ) ).andReturn( successEvent );
+        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( token, account );
+        expect( mockFactory.createSuccessEvent( token, account) ).andReturn( successEvent );
         mockSender.send( successEvent );
         expectLastCall().andThrow( new RuntimeException() );
         replay( mockFactory );
         replay( mockSender );
-        abstractAuthenticator.sendSuccessEvent( token, authInfo );
+        abstractAuthenticator.sendSuccessEvent( token, account);
         verify( mockFactory );
         verify( mockSender );
     }
@@ -226,9 +226,9 @@ public class AbstractAuthenticatorTest {
 
         AuthenticationToken token = newToken();
 
-        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( authInfo.getPrincipal() );
+        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( token, account );
 
-        expect( mockEvtFactory.createSuccessEvent( token, authInfo ) ).andReturn( successEvent );
+        expect( mockEvtFactory.createSuccessEvent( token, account) ).andReturn( successEvent );
         mockAuthcEvtSender.send( successEvent );
 
         replay( mockEvtFactory );
@@ -245,9 +245,10 @@ public class AbstractAuthenticatorTest {
         AuthenticationEventSender mockAuthcEvtSender = createMock( AuthenticationEventSender.class );
         AuthenticationEventFactory mockEvtFactory = createMock( AuthenticationEventFactory.class );
 
-        final AuthenticationException ae = new AuthenticationException( "dummy exception to test event sending" );
-        final AuthenticationEvent failedEvent = new FailedAuthenticationEvent( authInfo.getPrincipal(), ae );
+        AuthenticationToken token = newToken();
 
+        final AuthenticationException ae = new AuthenticationException( "dummy exception to test event sending" );
+        final AuthenticationEvent failedEvent = new FailedAuthenticationEvent( token, ae );
 
         abstractAuthenticator = new AbstractAuthenticator() {
             protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
@@ -260,7 +261,6 @@ public class AbstractAuthenticatorTest {
 
         initAuthc();
 
-        AuthenticationToken token = newToken();
 
         expect( mockEvtFactory.createFailureEvent( token, ae ) ).andReturn( failedEvent );
 

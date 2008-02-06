@@ -60,11 +60,11 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
     }
 
     /**
-     * Notification callback that an account has authenticated successfully.
+     * Notification callback that an account hass authenticated successfully.
      * @param event the event associated with the successful authentication attempt.
      */
     protected void accept( SuccessfulAuthenticationEvent event ) {
-        String msg = "Subject with principal [" + event.getPrincipal() + "] successfully authenticated on [" +
+        String msg = "Subject with principals [" + event.getPrincipals() + "] successfully authenticated on [" +
             ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
         log.debug( msg );
     }
@@ -74,7 +74,7 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
      * @param event the event associated with the log-out.
      */
     protected void accept( LogoutEvent event ) {
-        String msg = "Subject with principal [" + event.getPrincipal() + "] logged out on [" +
+        String msg = "Subject with principals [" + event.getPrincipals() + "] logged out on [" +
             ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
         log.debug( msg );
     }
@@ -85,7 +85,7 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
      * @param event the event generated due to an account being locked.
      */
     protected void accept( UnlockedAccountEvent event ) {
-        String msg = "The account for the subject with principal [" + event.getPrincipal() + "] was unlocked on [" +
+        String msg = "The account for the subject with principals [" + event.getPrincipals() + "] was unlocked on [" +
             ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
         log.debug( msg );
     }
@@ -98,11 +98,11 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
         AuthenticationException cause = event.getCause();
 
         if ( cause != null && ( cause instanceof LockedAccountException ) ) {
-            String msg = "The account for the subject with principal [" + event.getPrincipal() + "] was locked on [" +
+            String msg = "The account for the subject with principals [" + event.getPrincipals() + "] was locked on [" +
                 ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
             log.debug( msg );
         } else {
-            String msg = "Login attempt for subject with principal [" + event.getPrincipal() + "] failed on [" +
+            String msg = "Login attempt for subject with principals [" + event.getPrincipals() + "] failed on [" +
                 ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
             if ( cause != null ) {
                 msg += ".  Cause: ";
@@ -115,7 +115,7 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
 
     protected void accept( AuthenticationEvent event ) {
         String msg = "Received unrecognized event of type [" + event.getClass().getName() + "] for subject with " +
-            "principal [" + event.getPrincipal() + "].";
+            "principals [" + event.getPrincipals() + "].";
         log.debug( msg );
     }
 }

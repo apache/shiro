@@ -24,31 +24,33 @@
  */
 package org.jsecurity.authc.event;
 
+import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationToken;
+
 /**
- * Event triggered when the {@link #getPrincipal() associated subject} authenticates
- * successfully.
+ * Event triggered when an authentication attempt is successful.
+ * 
+ * <p>The {@link Account Account} object returned after the successful authentication is available via the
+ * {@link #getAccount() getAccount()} method.
  *
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SuccessfulAuthenticationEvent extends AuthenticationEvent {
+public class SuccessfulAuthenticationEvent extends AttemptedAuthenticationEvent {
 
-    /**
-     * Creates a SuccessfulAuthenticationEvent for the specified subject who successfully logged-in to the system.
-     * @param principal the subject identifier of the subject that successfully logged-in.
-     */
-    public SuccessfulAuthenticationEvent( Object principal ) {
-        super( principal );
+    private Account account = null;
+
+    public SuccessfulAuthenticationEvent( AuthenticationToken token, Account account ) {
+        this( token, account, null );
     }
 
-    /**
-     * Creates a SuccessfulAuthenticationEvent for the specified subject who successfully logged-in to the system,
-     * generated or caused by the specified <tt>source</tt> argument.
-     * @param source the component that generated or caused the event.
-     * @param principal the subject identifier of the subject that succesfully logged-in.
-     */
-    public SuccessfulAuthenticationEvent( Object source, Object principal ) {
-        super( source, principal );
+    public SuccessfulAuthenticationEvent( AuthenticationToken token, Account account, Object source ) {
+        super( token, source );
+        this.account = account;
+    }
+
+    public Account getAccount() {
+        return this.account;
     }
 
 }
