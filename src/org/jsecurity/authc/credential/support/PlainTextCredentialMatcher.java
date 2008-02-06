@@ -37,7 +37,6 @@ import java.util.Arrays;
  */
 public class PlainTextCredentialMatcher implements CredentialMatcher {
 
-
     /**
      * Compares two plain text passwords.  Both arguments are expected to be either a char array or a String.
      * 
@@ -47,12 +46,11 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
      */
     public boolean doCredentialsMatch( Object providedPassword,
                                        Object storedPassword ) {
-        char[] providedPasswordChars = castToCharArray(providedPassword);
-        char[] storedPasswordChars = castToCharArray(storedPassword);
+        char[] providedPasswordChars = toCharArray(providedPassword);
+        char[] storedPasswordChars = toCharArray(storedPassword);
 
         return Arrays.equals( providedPasswordChars, storedPasswordChars );
     }
-
 
     /**
      * Converts given credentials into a char[] if they are of type String or char[].
@@ -60,7 +58,7 @@ public class PlainTextCredentialMatcher implements CredentialMatcher {
      * @return the credential in char[] form.
      * @throws IllegalArgumentException if the argument is not a String or char array (char[])
      */
-    private char[] castToCharArray(Object credential) throws IllegalArgumentException {
+    private char[] toCharArray(Object credential) throws IllegalArgumentException {
         char[] chars;
 
         if( credential instanceof String ) {

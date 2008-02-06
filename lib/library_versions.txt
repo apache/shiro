@@ -55,10 +55,6 @@ Some notes:
 - required for building and running JSecurity
 - used for constructing Permissions in the Reference Implementation's PermissionAnnotationAuthorizationModule
 
-* jakarta-commons/commons-codec.jar
-- Commons Codec 1.3 (http://jakarta.apache.org/commons/codec)
-- required by the RI during build and runtime for password message digests and base64 encoding
-
 * jboss/jboss-aop.jar
 - JBoss AOP jar from the JBoss 4.0.4.GA Application Server release
 - Required at build time for JBoss integration support classes.

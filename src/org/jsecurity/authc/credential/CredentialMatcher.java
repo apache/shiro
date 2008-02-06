@@ -32,8 +32,8 @@ package org.jsecurity.authc.credential;
  * text password with a corresponding account password stored in the system.
  *
  * @see org.jsecurity.authc.credential.support.PlainTextCredentialMatcher
- * @see org.jsecurity.authc.credential.commonsdigest.Md5CredentialMatcher
- * @see org.jsecurity.authc.credential.commonsdigest.ShaCredentialMatcher
+ * @see org.jsecurity.authc.credential.support.Md5CredentialMatcher
+ * @see org.jsecurity.authc.credential.support.Sha1CredentialMatcher
  *
  * @since 0.1
  * @author Jeremy Haile
