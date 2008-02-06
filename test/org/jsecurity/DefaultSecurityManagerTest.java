@@ -38,7 +38,7 @@ public class DefaultSecurityManagerTest {
         } catch ( UnknownHostException e ) {
             e.printStackTrace();  
         }
-        SecurityContext secCtx = sm.authenticate( new UsernamePasswordToken( "guest", "guest", localhost ) );
+        SecurityContext secCtx = sm.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
         assert secCtx.isAuthenticated();
         assert "guest".equals( secCtx.getPrincipal() );        
         assert secCtx.hasRole( "guest" );
