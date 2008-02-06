@@ -571,6 +571,24 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         }
     }
 
+    protected boolean isRememberIdentity( AuthenticationToken token ) {
+        return token instanceof RememberMeAuthenticationToken &&
+               ((RememberMeAuthenticationToken) token).isRememberMe();
+    }
+
+    protected boolean isRememberIdentity( AuthenticationToken token, Account account ) {
+        return isRememberIdentity( token );
+    }
+
+    protected void rememberIdentity( Account account ) {
+        throw new UnsupportedOperationException( getClass().getName() + " implementation does not support " +
+            "remembering login identity." );
+    }
+
+    protected void rememberIdentity( AuthenticationToken token, Account account ) {
+        rememberIdentity( account );
+    }
+
     /**
      * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
      * <tt>SecurityContext</tt> instance representing the authenticated account's identity.
@@ -584,6 +602,9 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
      */
     public SecurityContext login(AuthenticationToken token) throws AuthenticationException {
         Account account = authenticate(token);
+        if ( isRememberIdentity( token, account ) ) {
+            rememberIdentity( token, account );
+        }
         SecurityContext secCtx = createSecurityContext(token, account);
         assertCreation(secCtx);
         bind(secCtx);

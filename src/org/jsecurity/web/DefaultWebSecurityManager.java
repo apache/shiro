@@ -1,6 +1,7 @@
 package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
+import org.jsecurity.authc.Account;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
@@ -77,7 +78,16 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return webSessionFactory;
     }
 
-
+    /**
+     * Since the identity is stored as a cookie, the login process must execute before any output is rendered to the
+     * Servlet Response output stream (cookies are unwritable after the response header has already gone out to the
+     * stream).
+     * @param account
+     */
+    protected void rememberIdentity(Account account) {
+        //TODO = set principals cookie here.
+        super.rememberIdentity(account);
+    }
 
     /**
      * Returns the raw {@link Session session} associated with the request, or <tt>null</tt> if there isn't one.
