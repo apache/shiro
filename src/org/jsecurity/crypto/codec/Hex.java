@@ -22,12 +22,27 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto;
+package org.jsecurity.crypto.codec;
 
 /**
  * @author Les Hazlewood
  * @since 1.0
  */
-public interface Cipher {
+public class Hex {
 
+    public static String toString(byte[] bytes) {
+        StringBuffer sb = new StringBuffer();
+        for (byte aByte : bytes) {
+            sb.append(Integer.toHexString(((int) aByte) & 0xFF));
+        }
+        return sb.toString();
+    }
+
+    public static byte[] toBytes(String hex) {
+        byte[] bytes = new byte[hex.length() / 2];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = (byte)Integer.parseInt(hex.substring(2*i, 2*i+2), 16);
+        }
+        return bytes;
+    }
 }
