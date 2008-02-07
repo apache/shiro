@@ -24,6 +24,9 @@
  */
 package org.jsecurity.crypto.support;
 
+import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.Hex;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -61,9 +64,22 @@ public class Sha1Hash extends AbstractHash {
         return md.digest( bytes );
     }
 
+    public static Sha1Hash fromHexString( String hex ) {
+        Sha1Hash hash = new Sha1Hash();
+        hash.setBytes( Hex.decode( hex ) );
+        return hash;
+    }
+
+    public static Sha1Hash fromBase64String( String base64 ) {
+        Sha1Hash hash = new Sha1Hash();
+        hash.setBytes( Base64.decodeBase64( base64 ) );
+        return hash;
+    }
+
     public static void main( String[] args ) {
         String source = "password";
         Sha1Hash hash = new Sha1Hash( source );
-        System.out.println( "'" + source + "' SHA-1 hashed is [" + hash.toBase64() + "]" );
+        System.out.println("'" + source + "' SHA-1 hashed as hex is [" + hash.toHex() + "]");
+        System.out.println( "'" + source + "' SHA-1 hashed as base64 is [" + hash.toBase64() + "]" );
     }
 }

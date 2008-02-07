@@ -25,6 +25,7 @@
 package org.jsecurity.authc.credential.support;
 
 import org.jsecurity.crypto.Hash;
+import org.jsecurity.crypto.support.AbstractHash;
 import org.jsecurity.crypto.support.Md5Hash;
 
 /**
@@ -33,19 +34,16 @@ import org.jsecurity.crypto.support.Md5Hash;
  */
 public class Md5CredentialMatcher extends HashedCredentialMatcher {
 
-    protected Hash getStoredCredentialHash(Object credential) {
-        //assume stored credential is already hashed:
-        Md5Hash hash = new Md5Hash();
-        hash.setBytes( toBytes( credential ) );
-        return hash;
+    protected AbstractHash newHashInstance() {
+        return new Md5Hash();
     }
 
-    protected Hash getProvidedCredentialHash(Object credential) {
+    protected Hash getProvidedCredentialsHash(Object credential) {
         return new Md5Hash( toBytes( credential ) );
     }
 
     public static void main( String[] args ) {
-        String password = "foobar";
+        char[] password = "foobar".toCharArray();
 
         Md5Hash hash = new Md5Hash( password );
         String hashString = hash.toString();

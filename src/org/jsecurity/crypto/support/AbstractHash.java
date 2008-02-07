@@ -24,9 +24,12 @@
  */
 package org.jsecurity.crypto.support;
 
+import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.EncodingSupport;
+import org.jsecurity.codec.Hex;
 import org.jsecurity.crypto.Hash;
-import org.jsecurity.crypto.codec.Base64;
-import org.jsecurity.util.EncodingSupport;
+
+import java.util.Arrays;
 
 /**
  * @author Les Hazlewood
@@ -36,8 +39,8 @@ public abstract class AbstractHash extends EncodingSupport implements Hash {
 
     private byte[] bytes = null;
 
-    //cache string ops to ensure multiple toString calls won't incur additional overhead:
-    private String cachedToStringValue = null;
+    //cache string ops to ensure multiple calls won't incur repeated overhead:
+    private String hexEncoded = null;
     private String base64Encoded = null;
 
     public AbstractHash(){}
@@ -60,23 +63,31 @@ public abstract class AbstractHash extends EncodingSupport implements Hash {
 
     public void setBytes( byte[] alreadyHashedBytes ) {
         this.bytes = alreadyHashedBytes;
-        this.cachedToStringValue = null;
+        this.hexEncoded = null;
         this.base64Encoded = null;
     }
 
     protected abstract byte[] hash(byte[] bytes);
 
+    /**
+     * Simple implementation that merely returns the {@link #toHex() toHex()} value.
+     * @return the {@link #toHex() toHex()} value.
+     */
     public String toString() {
-        if (this.cachedToStringValue == null) {
-            this.cachedToStringValue = toString( getBytes(), PREFERRED_ENCODING );
+        return toHex();
+    }
+
+    public String toHex() {
+        if ( this.hexEncoded == null ) {
+            this.hexEncoded = Hex.encodeToString( getBytes() );
         }
-        return this.cachedToStringValue;
+        return this.hexEncoded;
     }
 
     public String toBase64() {
         if (this.base64Encoded == null) {
             //cache result in case this method is called multiple times.
-            this.base64Encoded = Base64.encodeBytes(getBytes());
+            this.base64Encoded = Base64.encodeBase64ToString( getBytes() );
         }
         return this.base64Encoded;
     }
@@ -84,7 +95,8 @@ public abstract class AbstractHash extends EncodingSupport implements Hash {
     public boolean equals( Object o ) {
         if ( o instanceof Hash ) {
             Hash other = (Hash)o;
-            return toString().equals( other.toString() );
+            return Arrays.equals( getBytes(), other.getBytes() );
+            //return toString().equals( other.toString() );
         }
         return false;
     }

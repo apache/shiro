@@ -24,10 +24,10 @@
  */
 package org.jsecurity.crypto.support;
 
+import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.EncodingSupport;
+import org.jsecurity.codec.Hex;
 import org.jsecurity.crypto.SymmetricCipher;
-import org.jsecurity.crypto.codec.Base64;
-import org.jsecurity.crypto.codec.Hex;
-import org.jsecurity.util.EncodingSupport;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
@@ -44,7 +44,7 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
     private static final String TRANSFORMATION_STRING = ALGORITHM + "/ECB/PKCS5Padding";
 
     //created by running the test program below
-    private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
+    private static final byte[] KEY_BYTES = Base64.decodeBase64("jJ9Kg1BAevbvhSg3vBfwfQ==");
 
     private static final javax.crypto.SecretKey CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
@@ -61,9 +61,9 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
             return javax.crypto.Cipher.getInstance(TRANSFORMATION_STRING);
         } catch (Exception e) {
             String msg = "Unable to acquire a Java JCE Cipher instance using " +
-                    javax.crypto.Cipher.class.getName() + ".getInstance( \"" + TRANSFORMATION_STRING + "\" ). " +
-                    "Blowfish under this configuration is required for the " +
-                    getClass().getName() + " instance to function.";
+                javax.crypto.Cipher.class.getName() + ".getInstance( \"" + TRANSFORMATION_STRING + "\" ). " +
+                "Blowfish under this configuration is required for the " +
+                getClass().getName() + " instance to function.";
             throw new IllegalStateException(msg, e);
         }
     }
@@ -107,24 +107,30 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
         System.out.println("Base64 encoded keyData: [" + Base64.encodeBytes(keyData) + "]");
         */
 
-        String cleartext = "Hello, this is a test.";
-        byte[] cleartextBytes = EncodingSupport.toBytes( cleartext );
-        System.out.println("Clear text: [" + cleartext + "]" );
-        System.out.println("Clear text hex: [" + Hex.toString( cleartextBytes ) + "]" );
-
         SymmetricCipher cipher = new SimpleBlowfishCipher();
 
-        byte[] encrypted = cipher.encrypt( cleartextBytes );
-        String encryptedHex = Base64.encodeBytes( encrypted );
-        System.out.println("Encrypted base64: [" + encryptedHex + "]" );
+        String[] cleartext = new String[]{
+            "Hello, this is a test.",
+            "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "日本の旅行のとき僕はいつも楽しみます"
+        };
 
-        byte[] decrypted = cipher.decrypt( Base64.decode( encryptedHex ) );
-        String decryptedString = EncodingSupport.toString( decrypted );
+        for (String clear : cleartext) {
+            byte[] cleartextBytes = EncodingSupport.toBytes(clear);
+            System.out.println("Clear text: [" + clear + "]");
+            System.out.println("Clear text hex: [" + Hex.encodeToString(cleartextBytes) + "]");
 
-        System.out.println("Arrays equal? " + Arrays.equals( cleartextBytes, decrypted ) );
+            byte[] encrypted = cipher.encrypt(cleartextBytes);
+            String encryptedHex = Hex.encodeToString(encrypted);
+            System.out.println("Encrypted hex: [" + encryptedHex + "]");
 
+            byte[] decrypted = cipher.decrypt(Hex.decode(encryptedHex));
+            String decryptedString = EncodingSupport.toString(decrypted);
 
-        System.out.println("Decrypted text: [" + decryptedString + "]" );
-        System.out.println("Decrypted text hex: [" +  Hex.toString( decrypted ) + "]" );
+            System.out.println("Arrays equal? " + Arrays.equals(cleartextBytes, decrypted));
+
+            System.out.println("Decrypted text: [" + decryptedString + "]");
+            System.out.println("Decrypted text hex: [" + Hex.encodeToString(decrypted) + "]");
+        }
     }
 }

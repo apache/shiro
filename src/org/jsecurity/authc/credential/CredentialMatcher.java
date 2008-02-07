@@ -31,6 +31,7 @@ package org.jsecurity.authc.credential;
  * <p>As a commone example, an implementation of this interface might verify a user-submitted
  * text password with a corresponding account password stored in the system.
  *
+ * @see org.jsecurity.authc.credential.support.AllowAllCredentialMatcher
  * @see org.jsecurity.authc.credential.support.PlainTextCredentialMatcher
  * @see org.jsecurity.authc.credential.support.Md5CredentialMatcher
  * @see org.jsecurity.authc.credential.support.Sha1CredentialMatcher
@@ -43,11 +44,11 @@ public interface CredentialMatcher {
 
     /**
      * Determines if the provided credential matches the stored credential.
-     * @param providedCredential the credential provided by the user.
-     * @param storedCredential the credential stored in the system (possibly encrypted) used to
+     * @param providedCredentials the credentials provided by the user.
+     * @param storedCredentials the credentials stored in the system (possibly encrypted) used to
      * verify the <tt>providedCredential</tt>.
      * @return true if the credentials match, false if they do not match.
      */
-    boolean doCredentialsMatch( Object providedCredential, Object storedCredential );
+    boolean doCredentialsMatch( Object providedCredentials, Object storedCredentials );
 
 }

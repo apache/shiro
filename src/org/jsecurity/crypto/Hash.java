@@ -30,7 +30,23 @@ package org.jsecurity.crypto;
  */
 public interface Hash {
 
+    /**
+     * Returns this Hash's byte array, that is, the hashed value of the original input source.
+     * @return this Hash's byte array, that is, the hashed value of the original input source.
+     * @see #toHex
+     * @see #toBase64
+     */
     byte[] getBytes();
 
+    /**
+     * Returns a Hex encoding of this Hash's {@link #getBytes byte array}.
+     * @return a Hex encoding of this Hash's {@link #getBytes byte array}.
+     */
+    String toHex();
+
+    /**
+     * Returns a Base65 encoding of this Hash's {@link #getBytes byte array}.
+     * @return a Base64 encoding of this Hash's {@link #getBytes byte array}.
+     */
     String toBase64();
 }
