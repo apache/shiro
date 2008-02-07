@@ -22,20 +22,21 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto.support;
+package org.jsecurity.crypto.hash;
 
 import org.jsecurity.codec.Base64;
-import org.jsecurity.codec.EncodingSupport;
 import org.jsecurity.codec.Hex;
-import org.jsecurity.crypto.Hash;
+import org.jsecurity.codec.support.CodecSupport;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
  * @author Les Hazlewood
  * @since 1.0
  */
-public abstract class AbstractHash extends EncodingSupport implements Hash {
+public abstract class AbstractHash extends CodecSupport implements Hash {
 
     private byte[] bytes = null;
 
@@ -43,19 +44,22 @@ public abstract class AbstractHash extends EncodingSupport implements Hash {
     private String hexEncoded = null;
     private String base64Encoded = null;
 
-    public AbstractHash(){}
+    public AbstractHash(){
+    }
 
     public AbstractHash( byte[] bytes ) {
         setBytes( hash( bytes ) );
     }
 
     public AbstractHash( char[] chars ) {
-        this(new String(chars));
+        this( toBytes( chars ) );
     }
 
     public AbstractHash( String source ) {
-        this( toBytes( source, PREFERRED_ENCODING ) );
+        this( toBytes( source) );
     }
+
+    public abstract String getAlgorithmName();
 
     public byte[] getBytes() {
         return this.bytes;
@@ -67,7 +71,19 @@ public abstract class AbstractHash extends EncodingSupport implements Hash {
         this.base64Encoded = null;
     }
 
-    protected abstract byte[] hash(byte[] bytes);
+    protected MessageDigest getDigest( String algorithmName ) {
+        try {
+            return MessageDigest.getInstance(algorithmName);
+        } catch (NoSuchAlgorithmException e) {
+            String msg = "No native '" + algorithmName + "' MessageDigest instance available on the current JVM.";
+            throw new IllegalStateException( msg, e );
+        }
+    }
+
+    protected byte[] hash( byte[] bytes ) {
+        MessageDigest md = getDigest( getAlgorithmName() );
+        return md.digest( bytes );
+    }
 
     /**
      * Simple implementation that merely returns the {@link #toHex() toHex()} value.
@@ -96,7 +112,6 @@ public abstract class AbstractHash extends EncodingSupport implements Hash {
         if ( o instanceof Hash ) {
             Hash other = (Hash)o;
             return Arrays.equals( getBytes(), other.getBytes() );
-            //return toString().equals( other.toString() );
         }
         return false;
     }

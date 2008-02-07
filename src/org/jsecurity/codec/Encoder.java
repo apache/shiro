@@ -22,11 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.credential.support;
-
-import org.jsecurity.crypto.Hash;
-import org.jsecurity.crypto.support.AbstractHash;
-import org.jsecurity.crypto.support.Sha1Hash;
+package org.jsecurity.codec;
 
 /**
  * TODO - class javadoc
@@ -34,28 +30,8 @@ import org.jsecurity.crypto.support.Sha1Hash;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class Sha1CredentialMatcher extends HashedCredentialMatcher {
+public interface Encoder {
 
-    protected AbstractHash newHashInstance() {
-        return new Sha1Hash();
-    }
+    Object encode( Object input ) throws EncoderException;
 
-    protected Hash getProvidedCredentialsHash(Object credential) {
-        return new Sha1Hash( toBytes( credential) );
-    }
-
-    public static void main( String[] args ) {
-        String password = "foobar";
-
-        Sha1Hash hash = new Sha1Hash( "foobar" );
-        String hashString = hash.toString();
-
-        Sha1CredentialMatcher matcher = new Sha1CredentialMatcher();
-
-        if ( matcher.doCredentialsMatch( password, hashString ) ) {
-            System.out.println("Passwords match.");
-        } else {
-            System.out.println("Passwords do not match!" );
-        }
-    }
 }

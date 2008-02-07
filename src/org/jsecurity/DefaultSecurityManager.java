@@ -39,6 +39,8 @@ import org.jsecurity.cache.ehcache.EhCacheProvider;
 import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
+import org.jsecurity.context.support.PrincipalsSerializer;
+import org.jsecurity.context.support.RememberMeSerializer;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.support.file.PropertiesRealm;
 import org.jsecurity.session.InvalidSessionException;
@@ -101,6 +103,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
 
     protected Authenticator authenticator;
     private boolean authenticatorImplicitlyCreated = false;
+    protected PrincipalsSerializer rememberMeSerializer = new RememberMeSerializer();
 
     protected Authorizer authorizer = null;
     private boolean authorizerImplicitlyCreated = false;
@@ -294,7 +297,15 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         this.lazySessions = lazySessions;
     }
 
-    /*--------------------------------------------
+    public PrincipalsSerializer getRememberMeSerializer() {
+        return rememberMeSerializer;
+    }
+
+    public void setRememberMeSerializer(PrincipalsSerializer rememberMeSerializer) {
+        this.rememberMeSerializer = rememberMeSerializer;
+    }
+
+   /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
     protected CacheProvider createCacheProvider() {

@@ -22,38 +22,45 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.credential.support;
+package org.jsecurity.crypto.hash;
 
-import org.jsecurity.crypto.hash.AbstractHash;
-import org.jsecurity.crypto.hash.Hash;
-import org.jsecurity.crypto.hash.Md5Hash;
+import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.Hex;
 
 /**
  * @author Les Hazlewood
  * @since 1.0
  */
-public class Md5CredentialMatcher extends HashedCredentialMatcher {
+public class ShaHash extends AbstractHash {
 
-    protected AbstractHash newHashInstance() {
-        return new Md5Hash();
+    public ShaHash() {
     }
 
-    protected Hash getProvidedCredentialsHash(Object credential) {
-        return new Md5Hash( toBytes( credential ) );
+    public ShaHash(byte[] bytes) {
+        super( bytes );
     }
 
-    public static void main( String[] args ) {
-        char[] password = "foobar".toCharArray();
+    public ShaHash(char[] chars) {
+        super( chars );
+    }
 
-        Md5Hash hash = new Md5Hash( password );
-        String hashString = hash.toString();
+    public ShaHash(String source) {
+        super( source );
+    }
 
-        Md5CredentialMatcher matcher = new Md5CredentialMatcher();
+    public String getAlgorithmName() {
+        return "SHA";
+    }
 
-        if ( matcher.doCredentialsMatch( password, hashString ) ) {
-            System.out.println("Passwords match.");
-        } else {
-            System.out.println("Passwords do not match!" );
-        }
+    public static ShaHash fromHexString( String hex ) {
+        ShaHash hash = new ShaHash();
+        hash.setBytes( Hex.decode( hex ) );
+        return hash;
+    }
+
+    public static ShaHash fromBase64String( String base64 ) {
+        ShaHash hash = new ShaHash();
+        hash.setBytes( Base64.decodeBase64( base64 ) );
+        return hash;
     }
 }

@@ -22,13 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto.support;
+package org.jsecurity.crypto.hash;
 
 import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.Hex;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Les Hazlewood
@@ -37,31 +34,22 @@ import java.security.NoSuchAlgorithmException;
 public class Md5Hash extends AbstractHash {
 
     public Md5Hash() {
-        super();
     }
 
     public Md5Hash(byte[] bytes) {
-        super(bytes);
+        super( bytes );
     }
 
     public Md5Hash(char[] chars) {
-        super(chars);
+        super( chars );
     }
 
     public Md5Hash(String source) {
-        super(source);
+        super( source );
     }
 
-    protected byte[] hash(byte[] bytes) {
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            String msg = "No native 'MD5' MessageDigest instance available on the current JVM.";
-            throw new IllegalStateException( msg, e );
-        }
-
-        return md.digest( bytes );
+    public String getAlgorithmName() {
+        return "MD5";
     }
 
     public static Md5Hash fromHexString( String hex ) {
@@ -74,12 +62,5 @@ public class Md5Hash extends AbstractHash {
         Md5Hash hash = new Md5Hash();
         hash.setBytes( Base64.decodeBase64( base64 ) );
         return hash;
-    }
-
-    public static void main( String[] args ) {
-        String source = "password";
-        Md5Hash hash = new Md5Hash( source );
-        System.out.println("'" + source + "' MD5 hashed as hex is [" + hash.toHex() + "]" );
-        System.out.println( "'" + source + "' MD5 hashed as base64 is [" + hash.toBase64() + "]" );
     }
 }

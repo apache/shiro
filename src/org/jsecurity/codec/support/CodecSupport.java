@@ -22,7 +22,9 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.codec;
+package org.jsecurity.codec.support;
+
+import org.jsecurity.codec.CodecException;
 
 import java.io.UnsupportedEncodingException;
 
@@ -30,7 +32,7 @@ import java.io.UnsupportedEncodingException;
  * @author Les Hazlewood
  * @since 1.0
  */
-public abstract class EncodingSupport {
+public abstract class CodecSupport {
 
     public static final String PREFERRED_ENCODING = "UTF-8";
 
@@ -52,7 +54,7 @@ public abstract class EncodingSupport {
         } catch (UnsupportedEncodingException e) {
             String msg = "Unable to convert source [" + source + "] to byte array using " +
                 "encoding '" + encoding + "'";
-            throw new IllegalArgumentException( msg, e );
+            throw new CodecException( msg, e );
         }
     }
 
@@ -65,7 +67,7 @@ public abstract class EncodingSupport {
             return new String( bytes, encoding );
         } catch (UnsupportedEncodingException e) {
             String msg = "Unable to convert byte array to String with encoding '" + encoding + "'.";
-            throw new IllegalArgumentException( msg, e );
+            throw new CodecException( msg, e );
         }
     }
 

@@ -26,16 +26,16 @@ package org.jsecurity.authc.credential.support;
 
 import org.jsecurity.authc.credential.CredentialMatcher;
 import org.jsecurity.codec.Base64;
-import org.jsecurity.codec.EncodingSupport;
 import org.jsecurity.codec.Hex;
-import org.jsecurity.crypto.Hash;
-import org.jsecurity.crypto.support.AbstractHash;
+import org.jsecurity.codec.support.CodecSupport;
+import org.jsecurity.crypto.hash.AbstractHash;
+import org.jsecurity.crypto.hash.Hash;
 
 /**
  * @author Les Hazlewood
  * @since 1.0
  */
-public abstract class HashedCredentialMatcher extends EncodingSupport implements CredentialMatcher {
+public abstract class HashedCredentialMatcher extends CodecSupport implements CredentialMatcher {
 
     private boolean storedCredentialsHexEncoded = true; //false means base64 encoded
 

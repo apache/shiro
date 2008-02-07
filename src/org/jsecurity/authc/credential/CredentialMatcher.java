@@ -34,7 +34,7 @@ package org.jsecurity.authc.credential;
  * @see org.jsecurity.authc.credential.support.AllowAllCredentialMatcher
  * @see org.jsecurity.authc.credential.support.PlainTextCredentialMatcher
  * @see org.jsecurity.authc.credential.support.Md5CredentialMatcher
- * @see org.jsecurity.authc.credential.support.Sha1CredentialMatcher
+ * @see org.jsecurity.authc.credential.support.ShaCredentialMatcher
  *
  * @since 0.1
  * @author Jeremy Haile
