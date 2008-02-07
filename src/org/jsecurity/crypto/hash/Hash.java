@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto;
+package org.jsecurity.crypto.hash;
 
 /**
  * @author Les Hazlewood

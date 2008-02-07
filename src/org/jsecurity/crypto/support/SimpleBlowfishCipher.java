@@ -25,8 +25,8 @@
 package org.jsecurity.crypto.support;
 
 import org.jsecurity.codec.Base64;
-import org.jsecurity.codec.EncodingSupport;
 import org.jsecurity.codec.Hex;
+import org.jsecurity.codec.support.CodecSupport;
 import org.jsecurity.crypto.SymmetricCipher;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -116,7 +116,7 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
         };
 
         for (String clear : cleartext) {
-            byte[] cleartextBytes = EncodingSupport.toBytes(clear);
+            byte[] cleartextBytes = CodecSupport.toBytes(clear);
             System.out.println("Clear text: [" + clear + "]");
             System.out.println("Clear text hex: [" + Hex.encodeToString(cleartextBytes) + "]");
 
@@ -125,7 +125,7 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
             System.out.println("Encrypted hex: [" + encryptedHex + "]");
 
             byte[] decrypted = cipher.decrypt(Hex.decode(encryptedHex));
-            String decryptedString = EncodingSupport.toString(decrypted);
+            String decryptedString = CodecSupport.toString(decrypted);
 
             System.out.println("Arrays equal? " + Arrays.equals(cleartextBytes, decrypted));
 

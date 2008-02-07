@@ -40,6 +40,8 @@
  */
 package org.jsecurity.codec;
 
+import org.jsecurity.codec.support.CodecSupport;
+
 /**
  * Provides Base64 encoding and decoding as defined by RFC 2045.
  *
@@ -226,7 +228,7 @@ public class Base64 {
     }
 
     public static String encodeBase64ToString( byte[] bytes ) {
-        return EncodingSupport.toString( encodeBase64( bytes ) );
+        return CodecSupport.toString( encodeBase64( bytes ) );
     }
 
     /**
@@ -410,7 +412,7 @@ public class Base64 {
     }
 
     public static byte[] decodeBase64( String base64Encoded ) {
-        byte[] bytes = EncodingSupport.toBytes( base64Encoded );
+        byte[] bytes = CodecSupport.toBytes( base64Encoded );
         return decodeBase64( bytes );
     }
 
