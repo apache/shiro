@@ -25,6 +25,7 @@
 package org.jsecurity.authc.credential.support;
 
 import org.jsecurity.crypto.Hash;
+import org.jsecurity.crypto.support.AbstractHash;
 import org.jsecurity.crypto.support.Sha1Hash;
 
 /**
@@ -35,14 +36,11 @@ import org.jsecurity.crypto.support.Sha1Hash;
  */
 public class Sha1CredentialMatcher extends HashedCredentialMatcher {
 
-    protected Hash getStoredCredentialHash(Object credential) {
-        //assume stored credential is already hashed:
-        Sha1Hash hash = new Sha1Hash();
-        hash.setBytes( toBytes( credential ) );
-        return hash;
+    protected AbstractHash newHashInstance() {
+        return new Sha1Hash();
     }
 
-    protected Hash getProvidedCredentialHash(Object credential) {
+    protected Hash getProvidedCredentialsHash(Object credential) {
         return new Sha1Hash( toBytes( credential) );
     }
 

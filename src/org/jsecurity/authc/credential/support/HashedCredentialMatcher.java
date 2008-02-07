@@ -25,8 +25,11 @@
 package org.jsecurity.authc.credential.support;
 
 import org.jsecurity.authc.credential.CredentialMatcher;
+import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.EncodingSupport;
+import org.jsecurity.codec.Hex;
 import org.jsecurity.crypto.Hash;
-import org.jsecurity.util.EncodingSupport;
+import org.jsecurity.crypto.support.AbstractHash;
 
 /**
  * @author Les Hazlewood
@@ -34,26 +37,70 @@ import org.jsecurity.util.EncodingSupport;
  */
 public abstract class HashedCredentialMatcher extends EncodingSupport implements CredentialMatcher {
 
-    protected byte[] toBytes( Object o ) {
-        if ( o instanceof byte[] ) {
-            return (byte[])o;
-        } else if ( o instanceof char[] ) {
-            return toBytes( (char[])o );
-        } else if ( o instanceof String ) {
-            return toBytes( (String)o );
-        } else {
-            String msg = "The " + getClass().getName() + " implementation only supports " +
-                "credentials of type byte[], char[] or String.";
-            throw new IllegalArgumentException( msg );
+    private boolean storedCredentialsHexEncoded = true; //false means base64 encoded
+
+    /**
+     * Returns <tt>true</tt> if the system's stored credential hash is Hex encoded, <tt>false</tt> if it
+     * is Base64 encoded.
+     *
+     * <p>Default value unless overridden with the corresponding setter method is <tt>true</tt></p>
+     *
+     * @return <tt>true</tt> if the system's stored credential hash is Hex encoded, <tt>false</tt> if it
+     *         is Base64 encoded.  Default is <tt>true</tt>
+     */
+    public boolean isStoredCredentialsHexEncoded() {
+        return storedCredentialsHexEncoded;
+    }
+
+    /**
+     * Sets the indicator if this system's stored credential hash is Hex encoded or not.
+     *
+     * <p>A value of <tt>true</tt> will cause this class to decode the system credential from Hex, a
+     * value of <tt>false</tt> will cause this class to decode the system credential from Base64.</p>
+     *
+     * <p>Unless overridden via this method, the default value is <tt>true</tt>.
+     *
+     * @param storedCredentialsHexEncoded the indicator if this system's stored credential hash is Hex
+     *                                    encoded or not ('not' automatically implying it is Base64 encoded).
+     */
+    public void setStoredCredentialsHexEncoded(boolean storedCredentialsHexEncoded) {
+        this.storedCredentialsHexEncoded = storedCredentialsHexEncoded;
+    }
+
+    public boolean doCredentialsMatch(Object providedCredentials, Object storedCredentials) {
+        Hash provided = getProvidedCredentialsHash(providedCredentials);
+        Hash stored = getStoredCredentialsHash(storedCredentials);
+        return stored.equals(provided);
+    }
+
+    protected abstract Hash getProvidedCredentialsHash(Object credential);
+
+    /**
+     * Returns a new, <em>uninitialized</em> instance, without its byte array set.
+     *
+     * @return a new, <em>uninitialized</em> instance, without its byte array set.
+     */
+    protected abstract AbstractHash newHashInstance();
+
+    protected Hash getStoredCredentialsHash(Object credentials) {
+        //assume stored credential is already hashed:
+        AbstractHash hash = newHashInstance();
+
+        //apply stored credentials to this Hash instance
+        byte[] storedBytes = toBytes(credentials);
+
+        if (!(credentials instanceof byte[])) {
+            //method argument came in as a char[] or String, so
+            //we need to do text decoding first:
+            if (isStoredCredentialsHexEncoded()) {
+                storedBytes = Hex.decode( storedBytes );
+            } else {
+                storedBytes = Base64.decodeBase64( storedBytes );
+            }
         }
+        hash.setBytes( storedBytes );
+        return hash;
     }
 
-    public boolean doCredentialsMatch(Object providedCredential, Object storedCredential) {
-        Hash provided = getProvidedCredentialHash( providedCredential );
-        Hash stored = getStoredCredentialHash( storedCredential );
-        return stored.equals( provided );
-    }
 
-    protected abstract Hash getStoredCredentialHash( Object credential );
-    protected abstract Hash getProvidedCredentialHash( Object credential );
 }

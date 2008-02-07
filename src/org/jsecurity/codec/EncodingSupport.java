@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.util;
+package org.jsecurity.codec;
 
 import java.io.UnsupportedEncodingException;
 
@@ -75,5 +75,26 @@ public abstract class EncodingSupport {
 
     public static char[] toChars( byte[] bytes, String encoding ) {
         return toString( bytes, encoding ).toCharArray();
+    }
+
+    protected byte[] toBytes( Object o ) {
+        if ( o instanceof byte[] ) {
+            return (byte[])o;
+        } else if ( o instanceof char[] ) {
+            return toBytes( (char[])o );
+        } else if ( o instanceof String ) {
+            return toBytes( (String)o );
+        } else {
+            return objectToBytes( o );
+        }
+    }
+
+    // When the toBytes(object) method calls this one, the object argument won't be a byte[], char[] or String
+    // implementation authors should cast for something else.  This default implementation
+    // throws an exception immediately and it is expected that subclass authors would override it.
+    protected byte[] objectToBytes( Object o ) {
+        String msg = "The " + getClass().getName() + " implementation only supports " +
+                "credentials of type byte[], char[] or String.";
+        throw new IllegalArgumentException( msg );
     }
 }
