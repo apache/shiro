@@ -3,6 +3,7 @@ package org.jsecurity.web;
 import org.jsecurity.DefaultSecurityManager;
 import org.jsecurity.authc.Account;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.support.PrincipalsSerializer;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
@@ -110,8 +111,10 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      * @param account
      */
     protected void rememberIdentity(Account account) {
+        ServletRequest request = ThreadContext.getServletRequest();
+        ServletResponse response = ThreadContext.getServletResponse();
         String cookieValue = getRememberMeSerializer().serialize(account.getPrincipals());
-        //TODO = set principals cookie here.
+        getRememberMeCookieStore().storeValue( cookieValue, request, response );
     }
 
     /**
@@ -145,7 +148,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     protected List getPrincipals(ServletRequest servletRequest, ServletResponse servletResponse, Session existing) {
-        return getPrincipals(existing);
+        List principals = getPrincipals( existing );
+        if ( principals == null ) {
+            //check remember me:
+            String principalsString = getRememberMeCookieStore().retrieveValue( servletRequest, servletResponse );
+            if ( principalsString != null ) {
+                PrincipalsSerializer serializer = getRememberMeSerializer();
+                if ( serializer != null ) {
+                    principals = (List)getRememberMeSerializer().deserialize( principalsString );
+                    //TODO - store in session here?
+                }
+            }
+        }
+        return principals;
     }
 
     protected boolean isAuthenticated(Session session) {
