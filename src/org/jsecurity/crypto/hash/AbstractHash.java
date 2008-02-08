@@ -46,17 +46,11 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
 
     public AbstractHash(){
     }
-
-    public AbstractHash( byte[] bytes ) {
-        setBytes( hash( bytes ) );
-    }
-
-    public AbstractHash( char[] chars ) {
-        this( toBytes( chars ) );
-    }
-
-    public AbstractHash( String source ) {
-        this( toBytes( source) );
+    
+    public AbstractHash( Object source ) {
+        byte[] sourceBytes = toBytes( source );
+        byte[] hashedBytes = hash( sourceBytes );
+        setBytes( hashedBytes );
     }
 
     public abstract String getAlgorithmName();

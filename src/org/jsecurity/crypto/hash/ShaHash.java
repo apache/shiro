@@ -36,15 +36,7 @@ public class ShaHash extends AbstractHash {
     public ShaHash() {
     }
 
-    public ShaHash(byte[] bytes) {
-        super( bytes );
-    }
-
-    public ShaHash(char[] chars) {
-        super( chars );
-    }
-
-    public ShaHash(String source) {
+    public ShaHash(Object source) {
         super( source );
     }
 

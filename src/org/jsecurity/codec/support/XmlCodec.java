@@ -1,7 +1,6 @@
 package org.jsecurity.codec.support;
 
 import org.jsecurity.codec.Codec;
-import org.jsecurity.codec.DecoderException;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -19,15 +18,15 @@ import java.io.ByteArrayOutputStream;
  */
 public class XmlCodec extends CodecSupport implements Codec {
 
-    public Object encode(Object principals) {
-        if (principals == null) {
+    public Object encode(Object source) {
+        if (source == null) {
             String msg = "argument cannot be null.";
             throw new IllegalArgumentException(msg);
         }
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(bos));
-        encoder.writeObject(principals);
+        encoder.writeObject(source);
         encoder.close();
         
         return toString( bos.toByteArray() );
@@ -43,16 +42,7 @@ public class XmlCodec extends CodecSupport implements Codec {
     }
 
     public Object decode(Object encoded) {
-        if (encoded == null) {
-            String msg = "argument cannot be null.";
-            throw new DecoderException(msg);
-        }
-        if (!(encoded instanceof String) ) {
-            String msg = getClass().getName() + " implementation can only decode Strings.  " +
-                "Argument supplied is of type [" + encoded.getClass().getName() + "]";
-            throw new DecoderException( msg );
-        }
-        return decode( (String)encoded );
+        return decode( toString( encoded ) );
     }
 
 }

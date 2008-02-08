@@ -32,6 +32,6 @@ package org.jsecurity.codec;
  */
 public interface Encoder {
 
-    Object encode( Object input ) throws EncoderException;
+    Object encode( Object input ) throws CodecException;
 
 }

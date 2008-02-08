@@ -32,6 +32,6 @@ package org.jsecurity.codec;
  */
 public interface Decoder {
 
-    Object decode( Object encoded ) throws DecoderException;
+    Object decode( Object encoded ) throws CodecException;
 
 }
