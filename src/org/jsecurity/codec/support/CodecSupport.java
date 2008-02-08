@@ -80,14 +80,34 @@ public abstract class CodecSupport {
     }
 
     protected byte[] toBytes( Object o ) {
+        if ( o == null ) {
+            String msg = "Argument for byte conversion cannot be null.";
+            throw new IllegalArgumentException( msg );
+        }
         if ( o instanceof byte[] ) {
             return (byte[])o;
-        } else if ( o instanceof char[] ) {
+        } else if (o instanceof char[] ) {
             return toBytes( (char[])o );
-        } else if ( o instanceof String ) {
+        } else if (o instanceof String ) {
             return toBytes( (String)o );
         } else {
             return objectToBytes( o );
+        }
+    }
+
+    protected String toString( Object o ) {
+        if ( o == null ) {
+            String msg = "Argument for String conversion cannot be null.";
+            throw new IllegalArgumentException( msg );
+        }
+        if ( o instanceof byte[] ) {
+            return toString( (byte[])o );
+        } else if (o instanceof char[] ) {
+            return new String( (char[])o );
+        } else if (o instanceof String ) {
+            return (String)o;
+        } else {
+            return objectToString( o );
         }
     }
 
@@ -95,8 +115,20 @@ public abstract class CodecSupport {
     // implementation authors should cast for something else.  This default implementation
     // throws an exception immediately and it is expected that subclass authors would override it.
     protected byte[] objectToBytes( Object o ) {
-        String msg = "The " + getClass().getName() + " implementation only supports " +
-                "credentials of type byte[], char[] or String.";
-        throw new IllegalArgumentException( msg );
+        String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
+            "bytes[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
+            "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
+            "this argument type to a byte[], please subclass " + getClass().getName() + " and override the " +
+            "objectToBytes(Object o) method.";
+        throw new CodecException( msg );
+    }
+
+    protected String objectToString( Object o ) {
+        String msg = "The " + getClass().getName() + " implementation only supports conversion to a String " +
+            "when the source is of type byte[], char[], or String.  The instance provided as a method argument " +
+            "is of type [" + o.getClass().getName() + "].   If you would like to convert " +
+            "this argument type to a String, please subclass " + getClass().getName() + " and override the " +
+            "objectToString(Object o) method.";
+        throw new CodecException( msg );
     }
 }

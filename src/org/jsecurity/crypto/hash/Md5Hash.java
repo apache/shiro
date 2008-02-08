@@ -36,15 +36,7 @@ public class Md5Hash extends AbstractHash {
     public Md5Hash() {
     }
 
-    public Md5Hash(byte[] bytes) {
-        super( bytes );
-    }
-
-    public Md5Hash(char[] chars) {
-        super( chars );
-    }
-
-    public Md5Hash(String source) {
+    public Md5Hash(Object source) {
         super( source );
     }
 
