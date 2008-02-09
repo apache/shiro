@@ -1,8 +1,8 @@
 package org.jsecurity.realm.support;
 
 import org.jsecurity.authc.*;
-import org.jsecurity.authc.credential.CredentialMatcher;
-import org.jsecurity.authc.credential.support.PlainTextCredentialMatcher;
+import org.jsecurity.authc.credential.CredentialsMatcher;
+import org.jsecurity.authc.credential.support.SimpleCredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.cache.CacheProvider;
 
@@ -32,7 +32,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * Password matcher used to determine if the provided password matches
      * the password stored in the data store.
      */
-    protected CredentialMatcher credentialMatcher = new PlainTextCredentialMatcher();
+    protected CredentialsMatcher credentialsMatcher = new SimpleCredentialsMatcher();
 
     /**
      * The class that this realm supports for authentication tokens.  This is used by the
@@ -57,12 +57,12 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
         super( name, cacheProvider );
     }
 
-    public AuthenticatingRealm( String name, CredentialMatcher matcher ) {
+    public AuthenticatingRealm( String name, CredentialsMatcher matcher ) {
         this( name );
         setCredentialMatcher( matcher );
     }
 
-    public AuthenticatingRealm( String name, CacheProvider cacheProvider, CredentialMatcher matcher ) {
+    public AuthenticatingRealm( String name, CacheProvider cacheProvider, CredentialsMatcher matcher ) {
         this( name, cacheProvider );
         setCredentialMatcher( matcher );
     }
@@ -71,21 +71,21 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public CredentialMatcher getCredentialMatcher() {
-        return credentialMatcher;
+    public CredentialsMatcher getCredentialMatcher() {
+        return credentialsMatcher;
     }
 
     /**
      * Sets the CrendialMatcher implementation to use to verify submitted credentials with those stored in the system
      * for a given authentication attempt.  The implementation of this matcher can be switched via configuration to
-     * support any number of schemes, including plain text password comparison, digest/hashing comparisons, and others.
+     * support any number of schemes, including plain text comparisons, hashing comparisons, and others.
      *
-     * <p>Unless overridden by this method, the default value is a {@link PlainTextCredentialMatcher} instance.
+     * <p>Unless overridden by this method, the default value is a {@link org.jsecurity.authc.credential.support.SimpleCredentialsMatcher} instance.
      *
-     * @param credentialMatcher the matcher to use.
+     * @param credentialsMatcher the matcher to use.
      */
-    public void setCredentialMatcher(CredentialMatcher credentialMatcher) {
-        this.credentialMatcher = credentialMatcher;
+    public void setCredentialMatcher(CredentialsMatcher credentialsMatcher) {
+        this.credentialsMatcher = credentialsMatcher;
     }
 
     /**
@@ -195,17 +195,17 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
             throw new ExpiredCredentialException( msg );
         }
 
-        CredentialMatcher cm = getCredentialMatcher();
+        CredentialsMatcher cm = getCredentialMatcher();
         if ( cm != null ) {
-            if ( !cm.doCredentialsMatch( token.getCredentials(), account.getCredentials() ) ) {
+            if ( !cm.doCredentialsMatch( token, account ) ) {
                 String msg = "The credentials provided for account [" + token +
                              "] did not match the expected credentials.";
                 throw new IncorrectCredentialException( msg );
             }
         } else {
-            throw new AuthenticationException( "A CredentialMatcher must be configured in order to verify " +
+            throw new AuthenticationException( "A CredentialsMatcher must be configured in order to verify " +
                     "credentials during authentication.  If you do not wish for credentials to be examined, you " +
-                    "can configure an AllowAllCredentialMatcher." );
+                    "can configure an AllowAllCredentialsMatcher." );
         }
 
         return account;

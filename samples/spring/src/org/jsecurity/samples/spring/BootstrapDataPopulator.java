@@ -2,6 +2,7 @@ package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.crypto.hash.ShaHash;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -55,12 +56,12 @@ public class BootstrapDataPopulator implements InitializingBean {
         JdbcTemplate jdbcTemplate = new JdbcTemplate( this.dataSource );
         jdbcTemplate.execute( CREATE_TABLES );
 
-        //password is 'user1' hashed:
+        //password is 'user1' SHA hashed and base64 encoded:
         String query = "insert into users values ('user1', 's9qne0wEqVUbh4HQMZH+CY8yXmc=')";
         jdbcTemplate.execute( query );
         log.debug( "Created user1." );
 
-        //password is 'user2' hashed:
+        //password is 'user2' SHA hashed and base64 encoded:
         query = "insert into users values ( 'user2', 'oYgcBu7JbbmQHHu/5BxCo/COnLQ=' )";
         jdbcTemplate.execute( query );
         log.debug( "Created user2." );
@@ -82,5 +83,10 @@ public class BootstrapDataPopulator implements InitializingBean {
         query = "insert into user_roles values ( 'user2', 'role2' )";
         jdbcTemplate.execute( query );
         log.debug( "Assigned user2 role role2" );
+    }
+
+    public static void main( String[] args ) {
+        System.out.println( "value [user1] sha hashed and base64 encoded is [" + new ShaHash("user1" ).toBase64() + "]" );
+        System.out.println( "value [user2] sha hashed and base64 encoded is [" + new ShaHash("user2" ).toBase64() + "]" );
     }
 }

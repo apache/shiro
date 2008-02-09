@@ -22,16 +22,23 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
+package org.jsecurity.authc.credential.support;
 
-package org.jsecurity.crypto;
+import org.jsecurity.crypto.hash.AbstractHash;
+import org.jsecurity.crypto.hash.Hash;
+import org.jsecurity.crypto.hash.Md5Hash;
 
 /**
  * @author Les Hazlewood
  * @since 1.0
  */
-public interface SymmetricCipher extends Cipher {
+public class Md5CredentialsMatcher extends HashedCredentialsMatcher {
 
-    byte[] encrypt( byte[] raw );
+    protected AbstractHash newHashInstance() {
+        return new Md5Hash();
+    }
 
-    byte[] decrypt( byte[] encrypted );
+    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
+        return new Md5Hash( toBytes( credentials ), salt, hashIterations );
+    }
 }

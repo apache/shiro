@@ -30,4 +30,8 @@ package org.jsecurity.crypto;
  */
 public interface Cipher {
 
+    byte[] encrypt( byte[] raw, Key encryptionKey );
+
+    byte[] decrypt( byte[] encrypted, Key decryptionKey );
+
 }

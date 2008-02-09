@@ -24,8 +24,11 @@
  */
 package org.jsecurity.realm.support;
 
-import org.jsecurity.authc.credential.CredentialMatcher;
-import org.jsecurity.authz.*;
+import org.jsecurity.authc.credential.CredentialsMatcher;
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.NoAuthorizationInfoFoundException;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.util.Destroyable;
@@ -93,11 +96,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         super( name, cacheProvider );
     }
 
-    public AuthorizingRealm( String name, CredentialMatcher matcher ) {
+    public AuthorizingRealm( String name, CredentialsMatcher matcher ) {
         super( name, matcher );
     }
 
-    public AuthorizingRealm( String name, CacheProvider cacheProvider, CredentialMatcher matcher ) {
+    public AuthorizingRealm( String name, CacheProvider cacheProvider, CredentialsMatcher matcher ) {
         super( name, cacheProvider, matcher );
     }
 

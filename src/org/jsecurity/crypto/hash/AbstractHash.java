@@ -33,6 +33,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
+ * Read <a href="http://www.owasp.org/index.php/Hashing_Java">http://www.owasp.org/index.php/Hashing_Java</a> for a
+ * good article on the benefits of hashing, including what a 'salt' is as well as why multiple hash iterations can
+ * be useful.
+ * 
  * @author Les Hazlewood
  * @since 1.0
  */
@@ -44,13 +48,25 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     private String hexEncoded = null;
     private String base64Encoded = null;
 
-    public AbstractHash(){
+    public AbstractHash() {
     }
-    
-    public AbstractHash( Object source ) {
+
+    public AbstractHash(Object source) {
+        this( source, null, 1 );
+    }
+
+    public AbstractHash(Object source, Object salt ) {
+        this( source, salt, 1 );
+    }
+
+    public AbstractHash(Object source, Object salt, int hashIterations ) {
         byte[] sourceBytes = toBytes( source );
-        byte[] hashedBytes = hash( sourceBytes );
-        setBytes( hashedBytes );
+        byte[] saltBytes = null;
+        if ( salt != null ) {
+            saltBytes = toBytes( salt );
+        }
+        byte[] hashedBytes = hash( sourceBytes, saltBytes, hashIterations );
+        setBytes(hashedBytes);
     }
 
     public abstract String getAlgorithmName();
@@ -59,28 +75,48 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
         return this.bytes;
     }
 
-    public void setBytes( byte[] alreadyHashedBytes ) {
+    public void setBytes(byte[] alreadyHashedBytes) {
         this.bytes = alreadyHashedBytes;
         this.hexEncoded = null;
         this.base64Encoded = null;
     }
 
-    protected MessageDigest getDigest( String algorithmName ) {
+    protected MessageDigest getDigest(String algorithmName) {
         try {
             return MessageDigest.getInstance(algorithmName);
         } catch (NoSuchAlgorithmException e) {
             String msg = "No native '" + algorithmName + "' MessageDigest instance available on the current JVM.";
-            throw new IllegalStateException( msg, e );
+            throw new IllegalStateException(msg, e);
         }
     }
 
-    protected byte[] hash( byte[] bytes ) {
-        MessageDigest md = getDigest( getAlgorithmName() );
-        return md.digest( bytes );
+    protected byte[] hash(byte[] bytes) {
+        return hash( bytes, null, 1 );
+    }
+
+    protected byte[] hash(byte[] bytes, byte[] salt ) {
+        return hash( bytes, salt, 1 );
+    }
+
+    protected byte[] hash(byte[] bytes, byte[] salt, int hashIterations) {
+        MessageDigest md = getDigest(getAlgorithmName());
+        if ( salt != null ) {
+            md.reset();
+            md.update( salt );
+        }
+        byte[] hashed = md.digest(bytes);
+        int iterations = hashIterations - 1; //already hashed once above
+        //iterate remaining number:
+        for (int i = 0; i < iterations; i++) {
+            md.reset();
+            hashed = md.digest(hashed);
+        }
+        return hashed;
     }
 
     /**
      * Simple implementation that merely returns the {@link #toHex() toHex()} value.
+     *
      * @return the {@link #toHex() toHex()} value.
      */
     public String toString() {
@@ -88,8 +124,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     }
 
     public String toHex() {
-        if ( this.hexEncoded == null ) {
-            this.hexEncoded = Hex.encodeToString( getBytes() );
+        if (this.hexEncoded == null) {
+            this.hexEncoded = Hex.encodeToString(getBytes());
         }
         return this.hexEncoded;
     }
@@ -97,15 +133,15 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     public String toBase64() {
         if (this.base64Encoded == null) {
             //cache result in case this method is called multiple times.
-            this.base64Encoded = Base64.encodeBase64ToString( getBytes() );
+            this.base64Encoded = Base64.encodeBase64ToString(getBytes());
         }
         return this.base64Encoded;
     }
 
-    public boolean equals( Object o ) {
-        if ( o instanceof Hash ) {
-            Hash other = (Hash)o;
-            return Arrays.equals( getBytes(), other.getBytes() );
+    public boolean equals(Object o) {
+        if (o instanceof Hash) {
+            Hash other = (Hash) o;
+            return Arrays.equals(getBytes(), other.getBytes());
         }
         return false;
     }

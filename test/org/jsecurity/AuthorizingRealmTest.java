@@ -4,7 +4,7 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authc.credential.CredentialMatcher;
+import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Permission;
@@ -125,19 +125,19 @@ public class AuthorizingRealmTest {
         /*--------------------------------------------
         |         C O N S T R U C T O R S           |
             ============================================*/
-        CredentialMatcher credentialMatcher;
+        CredentialsMatcher credentialsMatcher;
 
         public AllowAllRealm() {
             super();
 
 
-            credentialMatcher = new CredentialMatcher() {
-                public boolean doCredentialsMatch(Object object, Object object1) {
+            credentialsMatcher = new CredentialsMatcher() {
+                public boolean doCredentialsMatch(AuthenticationToken object, Account object1) {
                     return true;
                 }
             };
 
-            setCredentialMatcher(credentialMatcher);
+            setCredentialMatcher(credentialsMatcher);
         }
 
         protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
