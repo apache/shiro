@@ -25,10 +25,11 @@
 package org.jsecurity.crypto.support;
 
 import org.jsecurity.codec.Base64;
-import org.jsecurity.codec.Hex;
 import org.jsecurity.codec.support.CodecSupport;
-import org.jsecurity.crypto.SymmetricCipher;
+import org.jsecurity.crypto.Cipher;
+import org.jsecurity.crypto.Key;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import java.util.Arrays;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class SimpleBlowfishCipher implements SymmetricCipher {
+public class SimpleBlowfishCipher implements Cipher {
 
     private static final String ALGORITHM = "Blowfish";
 
@@ -45,15 +46,27 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
 
     //created by running the test program below
     private static final byte[] KEY_BYTES = Base64.decodeBase64("jJ9Kg1BAevbvhSg3vBfwfQ==");
+    private static final javax.crypto.SecretKey DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
-    private static final javax.crypto.SecretKey CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
+    private javax.crypto.SecretKey key = DEFAULT_CIPHER_KEY; //default unless overridden
 
-    public byte[] encrypt(byte[] raw) {
-        return crypt(raw, javax.crypto.Cipher.ENCRYPT_MODE);
+    public SimpleBlowfishCipher() {
     }
 
-    public byte[] decrypt(byte[] encrypted) {
-        return crypt(encrypted, javax.crypto.Cipher.DECRYPT_MODE);
+    public SecretKey getKey() {
+        return key;
+    }
+
+    public void setKey(SecretKey key) {
+        this.key = key;
+    }
+
+    public byte[] encrypt(byte[] raw, Key key) {
+        return crypt(raw, javax.crypto.Cipher.ENCRYPT_MODE, key);
+    }
+
+    public byte[] decrypt(byte[] encrypted, Key key) {
+        return crypt(encrypted, javax.crypto.Cipher.DECRYPT_MODE, key);
     }
 
     protected javax.crypto.Cipher newCipherInstance() {
@@ -86,9 +99,9 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
         }
     }
 
-    protected byte[] crypt(byte[] bytes, int mode) {
+    protected byte[] crypt(byte[] bytes, int mode, Key key) {
         javax.crypto.Cipher cipher = newCipherInstance();
-        init(cipher, mode, CIPHER_KEY);
+        init(cipher, mode, getKey());
         return crypt(cipher, bytes);
     }
 
@@ -107,7 +120,7 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
         System.out.println("Base64 encoded keyData: [" + Base64.encodeBytes(keyData) + "]");
         */
 
-        SymmetricCipher cipher = new SimpleBlowfishCipher();
+        Cipher cipher = new SimpleBlowfishCipher();
 
         String[] cleartext = new String[]{
             "Hello, this is a test.",
@@ -118,19 +131,19 @@ public class SimpleBlowfishCipher implements SymmetricCipher {
         for (String clear : cleartext) {
             byte[] cleartextBytes = CodecSupport.toBytes(clear);
             System.out.println("Clear text: [" + clear + "]");
-            System.out.println("Clear text hex: [" + Hex.encodeToString(cleartextBytes) + "]");
+            System.out.println("Clear text base64: [" + Base64.encodeBase64ToString(cleartextBytes) + "]");
 
-            byte[] encrypted = cipher.encrypt(cleartextBytes);
-            String encryptedHex = Hex.encodeToString(encrypted);
-            System.out.println("Encrypted hex: [" + encryptedHex + "]");
+            byte[] encrypted = cipher.encrypt(cleartextBytes, null);
+            String encryptedBase64 = Base64.encodeBase64ToString( encrypted );
+            System.out.println("Encrypted base64: [" + encryptedBase64 + "]");
 
-            byte[] decrypted = cipher.decrypt(Hex.decode(encryptedHex));
+            byte[] decrypted = cipher.decrypt(Base64.decodeBase64(encryptedBase64), null);
             String decryptedString = CodecSupport.toString(decrypted);
 
             System.out.println("Arrays equal? " + Arrays.equals(cleartextBytes, decrypted));
 
             System.out.println("Decrypted text: [" + decryptedString + "]");
-            System.out.println("Decrypted text hex: [" + Hex.encodeToString(decrypted) + "]");
+            System.out.println("Decrypted text base64: [" + Base64.encodeBase64ToString(decrypted) + "]");
         }
     }
 }

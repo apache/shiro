@@ -45,7 +45,7 @@ public interface Hash {
     String toHex();
 
     /**
-     * Returns a Base65 encoding of this Hash's {@link #getBytes byte array}.
+     * Returns a Base64 encoding of this Hash's {@link #getBytes byte array}.
      * @return a Base64 encoding of this Hash's {@link #getBytes byte array}.
      */
     String toBase64();

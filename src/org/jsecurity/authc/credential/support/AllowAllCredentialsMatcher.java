@@ -24,7 +24,9 @@
  */
 package org.jsecurity.authc.credential.support;
 
-import org.jsecurity.authc.credential.CredentialMatcher;
+import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.credential.CredentialsMatcher;
 
 /**
  * A credential matcher that always returns <tt>true</tt> when matching credentials no matter what arguments
@@ -34,7 +36,7 @@ import org.jsecurity.authc.credential.CredentialMatcher;
  * @since 0.2
  * @author Jeremy Haile
  */
-public class AllowAllCredentialMatcher implements CredentialMatcher {
+public class AllowAllCredentialsMatcher implements CredentialsMatcher {
 
     /**
      * Always returns true, regardless of the arguments.
@@ -43,7 +45,7 @@ public class AllowAllCredentialMatcher implements CredentialMatcher {
      * @param storedCredential stored credential, ignored.
      * @return true always.
      */
-    public boolean doCredentialsMatch(Object providedCredential, Object storedCredential) {
+    public boolean doCredentialsMatch(AuthenticationToken providedCredential, Account storedCredential) {
         return true;
     }
 }

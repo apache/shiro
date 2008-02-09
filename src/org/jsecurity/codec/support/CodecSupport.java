@@ -24,6 +24,8 @@
  */
 package org.jsecurity.codec.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.codec.CodecException;
 
 import java.io.UnsupportedEncodingException;
@@ -33,6 +35,8 @@ import java.io.UnsupportedEncodingException;
  * @since 1.0
  */
 public abstract class CodecSupport {
+    
+    protected transient final Log log = LogFactory.getLog( getClass() );
 
     public static final String PREFERRED_ENCODING = "UTF-8";
 
@@ -118,8 +122,9 @@ public abstract class CodecSupport {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
             "bytes[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
             "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
-            "this argument type to a byte[], please subclass " + getClass().getName() + " and override the " +
-            "objectToBytes(Object o) method.";
+            "this argument type to a byte[], you can 1) subclass " + getClass().getName() + " and override the " +
+            "objectToBytes(Object o) method or 2) convert the argument to byte[] yourself and then use that as the " +
+            "method argument.";
         throw new CodecException( msg );
     }
 
@@ -127,8 +132,9 @@ public abstract class CodecSupport {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to a String " +
             "when the source is of type byte[], char[], or String.  The instance provided as a method argument " +
             "is of type [" + o.getClass().getName() + "].   If you would like to convert " +
-            "this argument type to a String, please subclass " + getClass().getName() + " and override the " +
-            "objectToString(Object o) method.";
+            "this argument type to a String, you can 1) subclass " + getClass().getName() + " and override the " +
+            "objectToString(Object o) method or 2) convert the argument to a String yourself and then use that as " +
+            "the method argument.";
         throw new CodecException( msg );
     }
 }

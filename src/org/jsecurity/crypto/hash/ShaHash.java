@@ -33,6 +33,8 @@ import org.jsecurity.codec.Hex;
  */
 public class ShaHash extends AbstractHash {
 
+    public static final String ALGORITHM_NAME = "SHA";
+
     public ShaHash() {
     }
 
@@ -40,8 +42,16 @@ public class ShaHash extends AbstractHash {
         super( source );
     }
 
+    public ShaHash(Object source, Object salt) {
+        super(source, salt);
+    }
+
+    public ShaHash(Object source, Object salt, int hashIterations) {
+        super(source, salt, hashIterations);
+    }
+
     public String getAlgorithmName() {
-        return "SHA";
+        return ALGORITHM_NAME;
     }
 
     public static ShaHash fromHexString( String hex ) {

@@ -18,7 +18,7 @@
          beans and swap them out for a better store (preferrably a module that accesses a
          relational database or at the very least the file system.
     -->
-    <bean name="shaCredentialMatcher" class="org.jsecurity.authc.credential.support.ShaCredentialMatcher">
+    <bean name="shaCredentialMatcher" class="org.jsecurity.authc.credential.support.ShaCredentialsMatcher">
         <property name="base64Encoded">true</property>
     </bean>
     <bean name="sampleAccount1" class="org.jsecurity.ri.authc.module.memory.AccountEntry">
@@ -32,7 +32,7 @@
         <property name="roles">role2</property>
     </bean>
     <bean name="memoryRealmRealm" class="org.jsecurity.ri.authc.module.memory.MemoryRealmRealm">
-        <property name="credentialMatcher">
+        <property name="credentialsMatcher">
             <inject bean="shaCredentialMatcher"/> </property>
         <property name="accounts">
             <set>

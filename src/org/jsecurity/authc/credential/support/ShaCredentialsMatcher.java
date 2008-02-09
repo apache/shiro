@@ -26,34 +26,21 @@ package org.jsecurity.authc.credential.support;
 
 import org.jsecurity.crypto.hash.AbstractHash;
 import org.jsecurity.crypto.hash.Hash;
-import org.jsecurity.crypto.hash.Md5Hash;
+import org.jsecurity.crypto.hash.ShaHash;
 
 /**
+ * TODO - class javadoc
+ *
  * @author Les Hazlewood
  * @since 1.0
  */
-public class Md5CredentialMatcher extends HashedCredentialMatcher {
+public class ShaCredentialsMatcher extends HashedCredentialsMatcher {
 
     protected AbstractHash newHashInstance() {
-        return new Md5Hash();
+        return new ShaHash();
     }
 
-    protected Hash getProvidedCredentialsHash(Object credential) {
-        return new Md5Hash( toBytes( credential ) );
-    }
-
-    public static void main( String[] args ) {
-        char[] password = "foobar".toCharArray();
-
-        Md5Hash hash = new Md5Hash( password );
-        String hashString = hash.toString();
-
-        Md5CredentialMatcher matcher = new Md5CredentialMatcher();
-
-        if ( matcher.doCredentialsMatch( password, hashString ) ) {
-            System.out.println("Passwords match.");
-        } else {
-            System.out.println("Passwords do not match!" );
-        }
+    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
+        return new ShaHash( toBytes( credentials ), salt, hashIterations );
     }
 }

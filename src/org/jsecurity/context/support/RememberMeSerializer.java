@@ -7,7 +7,7 @@ import org.jsecurity.codec.Codec;
 import org.jsecurity.codec.CodecException;
 import org.jsecurity.codec.support.CodecSupport;
 import org.jsecurity.codec.support.XmlCodec;
-import org.jsecurity.crypto.SymmetricCipher;
+import org.jsecurity.crypto.Cipher;
 import org.jsecurity.crypto.support.SimpleBlowfishCipher;
 
 /**
@@ -21,7 +21,7 @@ public class RememberMeSerializer implements PrincipalsSerializer {
     private transient final Log log = LogFactory.getLog(getClass());
 
     private Codec codec = new XmlCodec();
-    private SymmetricCipher cipher = new SimpleBlowfishCipher();
+    private Cipher cipher = new SimpleBlowfishCipher();
 
     public RememberMeSerializer(){}
 
@@ -33,11 +33,11 @@ public class RememberMeSerializer implements PrincipalsSerializer {
         this.codec = codec;
     }
 
-    public SymmetricCipher getCipher() {
+    public Cipher getCipher() {
         return cipher;
     }
 
-    public void setCipher(SymmetricCipher cipher) {
+    public void setCipher(Cipher cipher) {
         this.cipher = cipher;
     }
 
@@ -57,17 +57,17 @@ public class RememberMeSerializer implements PrincipalsSerializer {
     }
 
     protected byte[] encrypt(String serialized) {
-        SymmetricCipher cipher = getCipher();
+        Cipher cipher = getCipher();
         if (log.isDebugEnabled()) {
             log.debug("Using Cipher [" + cipher + "] to encrypt encoded principals String.");
         }
         byte[] serializedBytes = CodecSupport.toBytes(serialized);
-        return cipher.encrypt(serializedBytes);
+        return cipher.encrypt(serializedBytes, null);
     }
 
     protected String decrypt(byte[] encrypted) {
-        SymmetricCipher cipher = getCipher();
-        byte[] decryptedBytes = cipher.decrypt(encrypted);
+        Cipher cipher = getCipher();
+        byte[] decryptedBytes = cipher.decrypt(encrypted, null);
         return toString(decryptedBytes);
     }
 
@@ -81,7 +81,7 @@ public class RememberMeSerializer implements PrincipalsSerializer {
 
     public String serialize(Object principals) {
         String output = encode(principals);
-        SymmetricCipher cipher = getCipher();
+        Cipher cipher = getCipher();
         if (cipher != null) {
             byte[] outputBytes = encrypt(output);
             output = toString(outputBytes);
@@ -102,7 +102,7 @@ public class RememberMeSerializer implements PrincipalsSerializer {
             throw new IllegalArgumentException(msg);
         }
         String source = encoded;
-        SymmetricCipher cipher = getCipher();
+        Cipher cipher = getCipher();
         if ( cipher != null ) {
             byte[] encryptedBytes = toBytes( encoded );
             source = decrypt( encryptedBytes );
