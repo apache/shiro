@@ -48,8 +48,6 @@ import java.net.InetAddress;
  */
 public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
 
-    private boolean enforceSessionOnGet = false;
-
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be
      * validated to ensure the starting origin of the session is the same as the incoming request.
@@ -60,32 +58,6 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
     public DefaultWebSessionFactory() {
-    }
-
-    /**
-     * Returns the current session enforcement policy for the
-     * {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
-     * method - please see that method's JavaDoc for usage information.
-     *
-     * <p>The default value is <tt>false</tt>.
-     *
-     * @return the current session enforcement policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
-     *
-     */
-    public boolean isEnforceSessionOnGet() {
-        return enforceSessionOnGet;
-    }
-
-    /**
-     * Specifies session enforcemnt policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
-     * method - please see that method's JavaDoc for usage information.
-     *
-     * <p>The default value is <tt>false</tt>.
-     *
-     * @param enforceSessionOnGet the session enforcement policy for the {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
-     */
-    public void setEnforceSessionOnGet( boolean enforceSessionOnGet ) {
-        this.enforceSessionOnGet = enforceSessionOnGet;
     }
 
     public CookieStore<Serializable> getCookieSessionIdStore() {
@@ -290,29 +262,12 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     }
 
     /**
-     * Returns the Session associated with the specified request, <tt>null</tt>, or a new Session, depending on the
-     * enforcement policy in effect as specified by the {@link #setEnforceSessionOnGet(boolean) enforceSessionOnGet}
-     * property.
-     *
-     * <p>This method implementation functions as follows:</p>
-     *
-     * <ol>
-     *   <li>If the the incoming <tt>request</tt> references a valid, non-expired session, it will be returned
-     *       immediately</li>
-     *   <li>If the incoming <tt>request</tt> references an invalid, expired, or non-existent Session, and the
-     *       <tt>enforceSessionOnGet</tt> property is <tt>true</tt>, then a new Session will be created via the
-     *       {@link #start(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method and returned.</li>
-     *   <li>If the incoming <tt>request</tt> references an invalid, expired or non-existent Session, and the
-     *       <tt>enforceSessionOnGet</tt> property is <tt>false</tt>, then <tt>null</tt> is returned.</li>
-     * </ol>
-     *
-     * <p>The default value of <tt>enforceSessionOnGet</tt> is <tt>true</tt> to guarantee a Session for an
-     * HttpRequest if one is desired.
+     * Returns the Session associated with the specified request if it is valid or <tt>null</tt> if a Session doesn't
+     * exist or it was invalid.
      *
      * @param request  incoming servlet request
      * @param response outgoing servlet response
-     * @return the Session associated with the incoming request, <tt>null</tt> or a new Session, depending on the
-     * {@link #setEnforceSessionOnGet(boolean) enforceSessionOnGet} policy in effect.
+     * @return the Session associated with the incoming request or <tt>null</tt> if one does not exist.
      * @throws org.jsecurity.session.InvalidSessionException if the associated Session has expired prior to invoking this method.
      * @throws org.jsecurity.authz.AuthorizationException  if the caller is not authorized to access the session associated with the request.
      */
@@ -322,9 +277,6 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         Session session;
         try {
             session = doGetSession( request, response );
-            if ( session == null && isEnforceSessionOnGet() ) {
-                session = start( request, response );
-            }
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
                 log.trace( "Request Session is invalid, message: [" + ise.getMessage() + "]." );
@@ -339,22 +291,8 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
                                             ServletResponse response,
                                             InvalidSessionException ise ) {
         if ( log.isTraceEnabled() ) {
-            log.trace( "Handling invalid session associated with the request." );
+            log.trace( "Sesssion associated with the current request is nonexistent or invalid.  Returning null.");
         }
-
-        Session session = null;
-
-        if ( isEnforceSessionOnGet() ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Configured to create a new session on invalid session - attempting to start a new session..." );
-            }
-            session = start( request, response );
-        } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Configured to _not_ start a new session after an invalid session - returning null." );
-            }
-        }
-
-        return session;
+        return null;
     }
 }

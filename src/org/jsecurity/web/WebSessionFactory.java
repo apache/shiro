@@ -25,7 +25,6 @@
 package org.jsecurity.web;
 
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import javax.servlet.ServletRequest;
@@ -36,8 +35,8 @@ import javax.servlet.ServletResponse;
  * Web tier via {@link javax.servlet.ServletRequest ServletRequest}s.
  *
  * <p>Most implementations of this interface will act as a wrapper, delegating
- * actual session acquisition duties to an underlying JSecurity
- * {@link org.jsecurity.session.SessionFactory SessionFactory}, but obtaining any information required
+ * actual session acquisition duties to underlying
+ * {@link org.jsecurity.session.SessionFactory SessionFactory} methods, but obtaining any information required
  * to do so from the <tt>ServletRequest</tt>.   This allows a unified
  * Session management layer in the business tier (where we think it belongs) accessible by
  * any client technology, not just web-based ones.
@@ -48,13 +47,8 @@ import javax.servlet.ServletResponse;
 public interface WebSessionFactory {
 
     /**
-     * Creates a <tt>Session</tt> based on a HTTP request.
+     * Creates a {@link Session Session} based on a Servlet request.
      *
-     * <p>Implementations of this interface might acquire the IP address associated with
-     * the HTTP Request and simply delegate to
-     * {@link org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
-     * SessionFactory.init(java.net.InetAddress)} (although this is not a strict
-     * requirement - the session may be created in any number of ways).
      * @param request the current request being processed.
      * @param response the current response being generated.
      * @return a new <tt>Session</tt> based on the specified <tt>request</tt>
@@ -62,33 +56,15 @@ public interface WebSessionFactory {
     Session start( ServletRequest request, ServletResponse response );
 
     /**
-     * Returns the <tt>Session</tt> associated with the given <tt>HttpServletRequest</tt>, or
-     * <tt>null</tt> if no <tt>Session</tt> could be associated with the request.
-     *
-     * <p>Because HTTP is a stateless protocol, this method must rely on web-based means of
-     * maintaining state to acquire a handle to a Session.  This most likely means acquiring the
-     * JSecurity {@link org.jsecurity.session.Session#getSessionId() session id} from the
-     * request itself (e.g. as a request parameter), from a {@link javax.servlet.http.Cookie
-     * Cookie} or from the {@link javax.servlet.http.HttpSession HttpSession} itself.  Once an
-     * id is obtained, the <tt>Session</tt> can be acquired by delegating the call to an underlying
-     * {@link org.jsecurity.session.SessionFactory#getSession(java.io.Serializable)
-     * SessionFactory.getSession(Serializable sessionId)} method call.  (This is not a requirement,
-     * but merely suggests how it might commonly be done).
-     *
-     * <p>It is important to note that the <tt>HttpSession</tt> should only ever be
-     * used to store a handle to the JSecurity <tt>Session</tt> to eliminate dependencies on
-     * the web tier.  A JSecurity Session should be viewed as a client-agnostic replacement
-     * for the <tt>HttpSession</tt>.
+     * Returns the <tt>Session</tt> associated with the given <tt>ServletRequest</tt>, or
+     * <tt>null</tt> if no <tt>Session</tt> was associated with the request.
      *
      * @param request the current request being processed
      * @param response the current response being generated.
      * @return the <tt>Session</tt> associated with the request, or <tt>null</tt> if no
      * <tt>Session</tt> can be acquired.
-     * @throws InvalidSessionException if the session attempting to be retrieved based on the current request is
-     * invalid.
      * @throws AuthorizationException if the subject or machine associated with the current request is not authorized
      * to acquire the session associated with the request.
      */
-    Session getSession( ServletRequest request, ServletResponse response )
-        throws InvalidSessionException, AuthorizationException;
+    Session getSession( ServletRequest request, ServletResponse response ) throws AuthorizationException;
 }
