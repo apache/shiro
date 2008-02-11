@@ -227,11 +227,9 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
     protected abstract T onRetrieveValue( ServletRequest request, ServletResponse response );
 
     public void storeValue( T value, ServletRequest request, ServletResponse response ) {
-        if ( value == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Will not store a null value - returning." );
-                return;
-            }
+        if ( value == null && isMutable() ) {
+            removeValue( request, response );
+            return;
         }
 
         if ( !isMutable() ) {

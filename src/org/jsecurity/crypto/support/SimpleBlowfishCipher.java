@@ -134,8 +134,7 @@ public class SimpleBlowfishCipher implements Cipher {
 
         String[] cleartext = new String[]{
             "Hello, this is a test.",
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            "日本の旅行のとき僕はいつも楽しみます"
+            "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         };
 
         for (String clear : cleartext) {

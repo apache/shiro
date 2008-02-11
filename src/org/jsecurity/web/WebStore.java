@@ -40,5 +40,7 @@ public interface WebStore<T> {
 
     T retrieveValue( ServletRequest request, ServletResponse response );
 
-    void storeValue( T value, ServletRequest request, ServletResponse response );   
+    void storeValue( T value, ServletRequest request, ServletResponse response );
+
+    void removeValue( ServletRequest request, ServletResponse response );
 }

@@ -27,12 +27,9 @@ package org.jsecurity.context.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.RememberMeAuthenticationToken;
-import org.jsecurity.authc.event.AuthenticationEvent;
-import org.jsecurity.authc.event.FailedAuthenticationEvent;
-import org.jsecurity.authc.event.LogoutEvent;
-import org.jsecurity.authc.event.SuccessfulAuthenticationEvent;
 import org.jsecurity.crypto.Cipher;
 import org.jsecurity.util.*;
 
@@ -48,6 +45,18 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
     private boolean serializerImplicitlyCreated = false;
 
     private Cipher cipher = null;
+
+    public AbstractRememberMeManager(){}
+
+    public AbstractRememberMeManager( Serializer serializer ) {
+        this( serializer, null );
+    }
+
+    public AbstractRememberMeManager( Serializer serializer, Cipher cipher ) {
+        setSerializer( serializer );
+        setCipher( cipher );
+        init();
+    }
 
     public Serializer getSerializer() {
         return serializer;
@@ -74,7 +83,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
         }
     }
 
-    public void init() throws Exception {
+    public void init() {
         ensureSerializer();
         onInit();
     }
@@ -88,32 +97,20 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
         }
     }
 
-    public void onEvent(AuthenticationEvent event) {
-        accept( event );
+    protected boolean isRememberMe( AuthenticationToken token ) {
+        return token != null && (token instanceof RememberMeAuthenticationToken ) &&
+            ((RememberMeAuthenticationToken)token).isRememberMe();
     }
 
-    protected void accept( AuthenticationEvent event ) {
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Received an AuthenticationEvent for subject identity [" +
-                    event.getPrincipals() + "] not handled by this class." );
-        }
-    }
-
-    protected void accept( SuccessfulAuthenticationEvent event ) {
-        AuthenticationToken token = event.getToken();
-        if ( token != null &&
-             (token instanceof RememberMeAuthenticationToken) &&
-             ((RememberMeAuthenticationToken)token).isRememberMe() ) {
-            Account account = event.getAccount();
+    public void onSuccessfulLogin(AuthenticationToken token, Account account) {
+        if ( isRememberMe( token ) ) {
             rememberIdentity( token, account );
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "SuccessfulAuthenticationEvent received, but event did not contain " +
-                        "a RememberMeAuthenticationToken with isRememberMe() == true.  RememberMe " +
-                        "functionality will not be executed for the Account associated with this event." );
+            if ( log.isDebugEnabled() ) {
+                log.debug( "AuthenticationToken did not indicate RememberMe is requested.  " +
+                    "RememberMe functionality will not be executed for corresponding Account.");
             }
         }
-
     }
 
     public void rememberIdentity( AuthenticationToken submittedToken, Account successfullyAuthenticated ) {
@@ -161,7 +158,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
     protected abstract void rememberSerializedIdentity( byte[] serialized );
 
     public Object getRememberedIdentity() {
-        byte[] bytes = getRememberedSerializedIdentity();
+        byte[] bytes = getSerializedRememberedIdentity();
         if ( getCipher() != null ) {
             bytes = decrypt( bytes );
         }
@@ -172,32 +169,27 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
         return getSerializer().deserialize( serializedIdentity );
     }
 
-    protected abstract byte[] getRememberedSerializedIdentity();
+    protected abstract byte[] getSerializedRememberedIdentity();
 
-    protected Object getIdentity( AuthenticationEvent event ) {
-        return event.getPrincipals();
+    public void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {
+        forgetIdentity( token, ae );
     }
 
-    protected void accept( FailedAuthenticationEvent event ) {
-        forgetIdentity( event );
+    public void onLogout(Object subjectPrincipals) {
+        forgetIdentity( subjectPrincipals );
     }
 
-    protected void accept( LogoutEvent event ) {
-        forgetIdentity( event );
+    protected void forgetIdentity( AuthenticationToken token, AuthenticationException ae ) {
+        forgetIdentity( token );
     }
 
-    protected void forgetIdentity( AuthenticationEvent event ) {
-        Object identityToForget = getIdentity( event );
-        forgetIdentity( identityToForget );
+    protected void forgetIdentity( AuthenticationToken token ) {
+        forgetIdentity( token.getPrincipal() );
     }
 
     public void forgetIdentity( Object principals ) {
         forgetIdentity();
     }
 
-    protected void forgetIdentity() {
-        throw new UnsupportedOperationException( "the forgetIdentity() method (or one of its overloaded " +
-                "variants) must be overridden by subclasses." );
-    }
-
+    protected abstract void forgetIdentity();
 }

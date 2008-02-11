@@ -84,4 +84,14 @@ public class SessionStore<T> extends AbstractWebStore<T> {
             }
         }
     }
+
+    public void removeValue(ServletRequest request, ServletResponse response) {
+        SecurityContext securityContext = getSecurityContext( request, response );
+        if ( securityContext != null ) {
+            Session session = securityContext.getSession( false );
+            if ( session != null ) {
+                session.removeAttribute( getName() );
+            }
+        }
+    }
 }
