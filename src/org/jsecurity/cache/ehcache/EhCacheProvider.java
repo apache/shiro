@@ -116,9 +116,10 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
                     manager.addCache( cache );
                 } else {
                     manager.addCache( name );
-                    cache = manager.getCache( name );
                 }
 
+                cache = manager.getCache( name );
+                
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Started EHCache named [" + name + "]" );
                 }
