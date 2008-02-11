@@ -24,8 +24,8 @@
  */
 package org.jsecurity.authz.aop;
 
+import org.jsecurity.aop.MethodInterceptorSupport;
 import org.jsecurity.aop.MethodInvocation;
-import org.jsecurity.aop.support.MethodInterceptorSupport;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
