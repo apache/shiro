@@ -2,7 +2,6 @@ package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.RememberMeManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
@@ -14,8 +13,7 @@ import org.jsecurity.web.support.SecurityWebSupport;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.net.InetAddress;
-import java.util.List;
-
+import java.util.Collection;
 
 /**
  * @author Les Hazlewood
@@ -102,22 +100,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return session;
     }
 
-    protected List getPrincipals(Session session) {
-        List principals = null;
+    protected Object getPrincipals(Session session) {
+        Object principals = null;
         if (session != null) {
-            principals = (List) session.getAttribute(PRINCIPALS_SESSION_KEY);
+            principals = session.getAttribute(PRINCIPALS_SESSION_KEY);
         }
         return principals;
     }
 
-    protected List getPrincipals(ServletRequest servletRequest, ServletResponse servletResponse, Session existing) {
-        List principals = getPrincipals( existing );
+    protected Object getPrincipals(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
+        Object principals = getPrincipals( existing );
         if ( principals == null ) {
             //check remember me:
-            RememberMeManager rememberMeMgr = getRememberMeManager();
-            if ( rememberMeMgr != null ) {
-                principals = (List)rememberMeMgr.getRememberedIdentity();
-            }
+            principals = getRememberedIdentity();
             if ( principals != null && existing != null ) {
                 existing.setAttribute( PRINCIPALS_SESSION_KEY, principals );
             }
@@ -145,11 +140,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public SecurityContext createSecurityContext(ServletRequest request, ServletResponse response) {
         Session session = getSession(request, response);
-        return createSecurityContext(request, response, session);
+        return createSecurityContext(session, request, response);
     }
 
-    public SecurityContext createSecurityContext(ServletRequest request, ServletResponse response, Session existing) {
-        List principals = getPrincipals(request, response, existing);
+    public SecurityContext createSecurityContext(Session existing, ServletRequest request, ServletResponse response) {
+        Object principals = getPrincipals( existing, request, response );
         boolean authenticated = isAuthenticated(request, response, existing);
         return createSecurityContext(request, response, existing, principals, authenticated);
     }
@@ -157,11 +152,10 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     protected SecurityContext createSecurityContext(ServletRequest request,
                                                     ServletResponse response,
                                                     Session existing,
-                                                    List principals,
+                                                    Object principals,
                                                     boolean authenticated) {
-
         InetAddress inetAddress = SecurityWebSupport.getInetAddress(request);
-        return createSecurityContext(principals, authenticated, inetAddress, existing);
+        return createSecurityContext( principals, existing, authenticated, inetAddress );
     }
 
     protected void bind(SecurityContext secCtx) {
@@ -172,10 +166,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     protected void bind(SecurityContext securityContext, ServletRequest request, ServletResponse response) {
-        List allPrincipals = securityContext.getAllPrincipals();
-        if (allPrincipals != null && !allPrincipals.isEmpty()) {
+        Object principals = securityContext.getAllPrincipals();
+        if ( (principals instanceof Collection) && ((Collection)principals).isEmpty() ) {
+            principals = null;
+        }
+        if (principals != null) {
             Session session = securityContext.getSession();
-            session.setAttribute(PRINCIPALS_SESSION_KEY, allPrincipals);
+            session.setAttribute(PRINCIPALS_SESSION_KEY, principals);
         } else {
             Session session = securityContext.getSession(false);
             if (session != null) {

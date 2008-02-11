@@ -39,22 +39,23 @@ import org.jsecurity.util.*;
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager, Initializable, Destroyable {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private Serializer serializer = null;
     private boolean serializerImplicitlyCreated = false;
 
     private Cipher cipher = null;
 
-    public AbstractRememberMeManager(){}
-
-    public AbstractRememberMeManager( Serializer serializer ) {
-        this( serializer, null );
+    public AbstractRememberMeManager() {
     }
 
-    public AbstractRememberMeManager( Serializer serializer, Cipher cipher ) {
-        setSerializer( serializer );
-        setCipher( cipher );
+    public AbstractRememberMeManager(Serializer serializer) {
+        this(serializer, null);
+    }
+
+    public AbstractRememberMeManager(Serializer serializer, Cipher cipher) {
+        setSerializer(serializer);
+        setCipher(cipher);
         init();
     }
 
@@ -76,9 +77,9 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
 
     protected void ensureSerializer() {
         Serializer serializer = getSerializer();
-        if ( serializer == null ) {
+        if (serializer == null) {
             serializer = new XmlSerializer();
-            setSerializer( serializer );
+            setSerializer(serializer);
             this.serializerImplicitlyCreated = true;
         }
     }
@@ -88,106 +89,110 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
         onInit();
     }
 
-    protected void onInit(){}
+    protected void onInit() {
+    }
 
     public void destroy() throws Exception {
-        if ( this.serializerImplicitlyCreated) {
-            LifecycleUtils.destroy( getSerializer() );
+        if (this.serializerImplicitlyCreated) {
+            LifecycleUtils.destroy(getSerializer());
             this.serializerImplicitlyCreated = false;
         }
     }
 
-    protected boolean isRememberMe( AuthenticationToken token ) {
-        return token != null && (token instanceof RememberMeAuthenticationToken ) &&
-            ((RememberMeAuthenticationToken)token).isRememberMe();
+    protected boolean isRememberMe(AuthenticationToken token) {
+        return token != null && (token instanceof RememberMeAuthenticationToken) &&
+            ((RememberMeAuthenticationToken) token).isRememberMe();
     }
 
     public void onSuccessfulLogin(AuthenticationToken token, Account account) {
-        if ( isRememberMe( token ) ) {
-            rememberIdentity( token, account );
+        if (isRememberMe(token)) {
+            rememberIdentity(token, account);
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "AuthenticationToken did not indicate RememberMe is requested.  " +
+            if (log.isDebugEnabled()) {
+                log.debug("AuthenticationToken did not indicate RememberMe is requested.  " +
                     "RememberMe functionality will not be executed for corresponding Account.");
             }
         }
     }
 
-    public void rememberIdentity( AuthenticationToken submittedToken, Account successfullyAuthenticated ) {
-        rememberIdentity( successfullyAuthenticated );
+    public void rememberIdentity(AuthenticationToken submittedToken, Account successfullyAuthenticated) {
+        rememberIdentity(successfullyAuthenticated);
     }
 
-    public void rememberIdentity( Account successfullyAuthenticated ) {
-        Object identityToRemember = getIdentityToRemember( successfullyAuthenticated );
-        rememberIdentity( identityToRemember );
+    public void rememberIdentity(Account successfullyAuthenticated) {
+        Object identityToRemember = getIdentityToRemember(successfullyAuthenticated);
+        rememberIdentity(identityToRemember);
     }
 
-    protected Object getIdentityToRemember( Account account ) {
+    protected Object getIdentityToRemember(Account account) {
         return account.getPrincipals();
     }
 
-    protected byte[] encrypt( byte[] serialized ) {
+    protected byte[] encrypt(byte[] serialized) {
         Cipher cipher = getCipher();
-        if ( cipher != null ) {
-            return cipher.encrypt( serialized, null );
+        if (cipher != null) {
+            return cipher.encrypt(serialized, null);
         }
         return serialized;
     }
 
-    protected byte[] decrypt( byte[] encrypted ) {
+    protected byte[] decrypt(byte[] encrypted) {
         byte[] serialized = encrypted;
         Cipher cipher = getCipher();
-        if ( cipher != null ) {
-            serialized = cipher.decrypt( encrypted, null );
+        if (cipher != null) {
+            serialized = cipher.decrypt(encrypted, null);
         }
         return serialized;
     }
 
-    protected void rememberIdentity( Object accountPrincipals ) {
-        byte[] bytes = serialize( accountPrincipals );
-        if ( getCipher() != null ) {
-            bytes = encrypt( bytes );
+    protected void rememberIdentity(Object accountPrincipals) {
+        byte[] bytes = serialize(accountPrincipals);
+        if (getCipher() != null) {
+            bytes = encrypt(bytes);
         }
-        rememberSerializedIdentity( bytes );
+        rememberSerializedIdentity(bytes);
     }
 
-    protected byte[] serialize( Object accountPrincipals ) {
-        return getSerializer().serialize( accountPrincipals );
+    protected byte[] serialize(Object accountPrincipals) {
+        return getSerializer().serialize(accountPrincipals);
     }
 
-    protected abstract void rememberSerializedIdentity( byte[] serialized );
+    protected abstract void rememberSerializedIdentity(byte[] serialized);
 
     public Object getRememberedIdentity() {
         byte[] bytes = getSerializedRememberedIdentity();
-        if ( getCipher() != null ) {
-            bytes = decrypt( bytes );
+        if (bytes != null) {
+            if (getCipher() != null) {
+                bytes = decrypt(bytes);
+            }
+            return deserialize(bytes);
         }
-        return deserialize( bytes );
+        return null;
     }
 
-    protected Object deserialize( byte[] serializedIdentity ) {
-        return getSerializer().deserialize( serializedIdentity );
+    protected Object deserialize(byte[] serializedIdentity) {
+        return getSerializer().deserialize(serializedIdentity);
     }
 
     protected abstract byte[] getSerializedRememberedIdentity();
 
     public void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {
-        forgetIdentity( token, ae );
+        forgetIdentity(token, ae);
     }
 
     public void onLogout(Object subjectPrincipals) {
-        forgetIdentity( subjectPrincipals );
+        forgetIdentity(subjectPrincipals);
     }
 
-    protected void forgetIdentity( AuthenticationToken token, AuthenticationException ae ) {
-        forgetIdentity( token );
+    protected void forgetIdentity(AuthenticationToken token, AuthenticationException ae) {
+        forgetIdentity(token);
     }
 
-    protected void forgetIdentity( AuthenticationToken token ) {
-        forgetIdentity( token.getPrincipal() );
+    protected void forgetIdentity(AuthenticationToken token) {
+        forgetIdentity(token.getPrincipal());
     }
 
-    public void forgetIdentity( Object principals ) {
+    public void forgetIdentity(Object principals) {
         forgetIdentity();
     }
 

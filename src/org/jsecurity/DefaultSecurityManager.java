@@ -80,7 +80,8 @@ import java.util.List;
  * All other attributes have suitable defaults for most enterprise applications.</p>
  *
  * <p>Finally, the only absolute requirement for a <tt>DefaultSecurityManager</tt> instance to function properly is
- * that its {@link #init() init()} method must be called before it is used.</p>
+ * that its {@link #init() init()} method must be called before it is used.  Even this is called automatically if
+ * you use one of the constructors with one or more arguments.</p>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -526,6 +527,28 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
+    protected SecurityContext createSecurityContext() {
+        Object principals = getRememberedIdentity();
+        return createSecurityContext( principals );
+    }
+
+    protected SecurityContext createSecurityContext( Object subjectPrincipals ) {
+        return createSecurityContext( subjectPrincipals, null );
+    }
+
+    protected SecurityContext createSecurityContext( Object principals, Session existing ) {
+        return createSecurityContext( principals, existing, false );
+    }
+
+    protected SecurityContext createSecurityContext( Object principals, Session existing, boolean authenticated ) {
+        return createSecurityContext( principals, existing, authenticated, getLocalHost() );
+    }
+
+    protected SecurityContext createSecurityContext( Object principals, Session existing,
+                                                     boolean authenticated, InetAddress inetAddress ) {
+        return new DelegatingSecurityContext( principals, authenticated, inetAddress, existing, this );
+    }
+
     /**
      * Creates a <tt>SecurityContext</tt> instance for the user represented by the given method argument.
      *
@@ -551,9 +574,12 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         if (authcSourceIP == null) {
             //try the thread local:
             authcSourceIP = ThreadContext.getInetAddress();
+        } else {
+            //revert to localhost:
+            authcSourceIP = getLocalHost();
         }
 
-        return new DelegatingSecurityContext(account.getPrincipals(), true, authcSourceIP, session, this);
+        return createSecurityContext( account.getPrincipals(), session,  true, authcSourceIP );
     }
 
     /**
@@ -689,16 +715,20 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
-    protected SecurityContext createSecurityContext( List principals, boolean authenticated,
-                                                     InetAddress inetAddress, Session existing ) {
-        if ( inetAddress == null ) {
-            inetAddress = getLocalHost();
+    protected Object getRememberedIdentity() {
+        RememberMeManager rmm = getRememberMeManager();
+        if ( rmm != null ) {
+            try {
+                return rmm.getRememberedIdentity();
+            } catch (Exception e) {
+                if ( log.isWarnEnabled() ) {
+                    String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
+                        "] threw an exception during getRememberedIdentity().";
+                    log.warn( msg, e );
+                }
+            }
         }
-        return new DelegatingSecurityContext( principals, authenticated, inetAddress, existing, this );
-    }
-
-    protected SecurityContext createSecurityContext() {
-        return createSecurityContext( null, false, null, null );
+        return null;
     }
 
     protected SecurityContext getSecurityContext(boolean create) {
