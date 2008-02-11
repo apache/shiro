@@ -221,7 +221,7 @@
 			<!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
 			<arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
 			<doctitle><![CDATA[<h1>JSecurity API 0.2</h1>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &copy; 2004-2007 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script><script type="text/javascript">_uacct = "UA-1400114-2"; urchinTracker();</script>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &copy; 2004-2007 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-3614410-1"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]></bottom>
 			<classpath refid="all.libs"/>
 			<packageset dir="${src.dir}">
 				<include name="org/jsecurity/**"/>
