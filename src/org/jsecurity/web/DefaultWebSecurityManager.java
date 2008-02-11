@@ -1,13 +1,12 @@
 package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
-import org.jsecurity.authc.Account;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.context.support.PrincipalsSerializer;
+import org.jsecurity.context.support.RememberMeManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.support.CookieStore;
+import org.jsecurity.web.support.DefaultWebRememberMeManager;
 import org.jsecurity.web.support.DefaultWebSessionFactory;
 import org.jsecurity.web.support.HttpContainerWebSessionFactory;
 import org.jsecurity.web.support.SecurityWebSupport;
@@ -35,17 +34,14 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     public static final String AUTHENTICATED_SESSION_KEY =
         DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
-    public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
-
     protected WebSessionFactory webSessionFactory = null;
 
     private String sessionMode = HTTP_SESSION_MODE; //default
 
-    protected CookieStore<String> rememberMeCookieStore = null;
-
     public void init() {
         super.init();
-        ensureRememberMeCookieStore();
+        //TODO - register the RMM for AuthenticationEvents!
+        setRememberMeManager( new DefaultWebRememberMeManager() );
     }
 
     public String getSessionMode() {
@@ -85,38 +81,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return webSessionFactory;
     }
 
-    public CookieStore<String> getRememberMeCookieStore() {
-        return rememberMeCookieStore;
-    }
-
-    public void setRememberMeCookieStore(CookieStore<String> rememberMeCookieStore) {
-        this.rememberMeCookieStore = rememberMeCookieStore;
-    }
-
-    protected void ensureRememberMeCookieStore() {
-        CookieStore<String> cookieStore = getRememberMeCookieStore();
-        if (cookieStore == null) {
-            cookieStore = new CookieStore<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
-            cookieStore.setCheckRequestParams(false);
-            setRememberMeCookieStore(cookieStore);
-        }
-    }
-
-
-    /**
-     * Since the identity is stored as a cookie, the login process must execute before any output is rendered to the
-     * Servlet Response output stream (cookies are unwritable after the response header has already gone out to the
-     * stream).
-     *
-     * @param account
-     */
-    protected void rememberIdentity(Account account) {
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
-        String cookieValue = getRememberMeSerializer().serialize(account.getPrincipals());
-        getRememberMeCookieStore().storeValue( cookieValue, request, response );
-    }
-
     /**
      * Returns the raw {@link Session session} associated with the request, or <tt>null</tt> if there isn't one.
      *
@@ -151,13 +115,12 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         List principals = getPrincipals( existing );
         if ( principals == null ) {
             //check remember me:
-            String principalsString = getRememberMeCookieStore().retrieveValue( servletRequest, servletResponse );
-            if ( principalsString != null ) {
-                PrincipalsSerializer serializer = getRememberMeSerializer();
-                if ( serializer != null ) {
-                    principals = (List)getRememberMeSerializer().deserialize( principalsString );
-                    //TODO - store in session here?
-                }
+            RememberMeManager rememberMeMgr = getRememberMeManager();
+            if ( rememberMeMgr != null ) {
+                principals = (List)rememberMeMgr.getRememberedIdentity();
+            }
+            if ( principals != null && existing != null ) {
+                existing.setAttribute( PRINCIPALS_SESSION_KEY, principals );
             }
         }
         return principals;

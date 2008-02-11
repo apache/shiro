@@ -29,7 +29,7 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
-import org.jsecurity.codec.support.CodecSupport;
+import org.jsecurity.codec.CodecSupport;
 
 import java.util.Arrays;
 

@@ -80,8 +80,7 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
     }
 
     /**
-     * Notification callback that an account has been locked from further authentication
-     * attempts (usually due to too many failed authentication attempts).
+     * Notification callback that an account has been unlocked.
      * @param event the event generated due to an account being locked.
      */
     protected void accept( UnlockedAccountEvent event ) {

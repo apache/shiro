@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,15 +22,13 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+package org.jsecurity.codec;
 
 /**
- * A <tt>SessionEventNotifier</tt> is responsible for notifying registered
- * <tt>SessionEventListener</tt>s when a session event has been received.
- *
  * @author Les Hazlewood
+ * @since 1.0
  */
-public interface SessionEventNotifier {
-    void add( SessionEventListener listener );
-    boolean remove( SessionEventListener listener );
+public interface BinaryDecoder extends Decoder {
+
+    Object decode( byte[] encoded ) throws CodecException;
 }

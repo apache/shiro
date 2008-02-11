@@ -25,11 +25,10 @@
 package org.jsecurity.crypto.support;
 
 import org.jsecurity.codec.Base64;
-import org.jsecurity.codec.support.CodecSupport;
+import org.jsecurity.codec.CodecSupport;
 import org.jsecurity.crypto.Cipher;
 import org.jsecurity.crypto.Key;
 
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.util.Arrays;
@@ -46,18 +45,18 @@ public class SimpleBlowfishCipher implements Cipher {
 
     //created by running the test program below
     private static final byte[] KEY_BYTES = Base64.decodeBase64("jJ9Kg1BAevbvhSg3vBfwfQ==");
-    private static final javax.crypto.SecretKey DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
+    private static final JdkKey DEFAULT_CIPHER_KEY = new JdkKey( new SecretKeySpec( KEY_BYTES, ALGORITHM ) );
 
-    private javax.crypto.SecretKey key = DEFAULT_CIPHER_KEY; //default unless overridden
+    private JdkKey key = DEFAULT_CIPHER_KEY;
 
     public SimpleBlowfishCipher() {
     }
 
-    public SecretKey getKey() {
+    public JdkKey getKey() {
         return key;
     }
 
-    public void setKey(SecretKey key) {
+    public void setKey(JdkKey key) {
         this.key = key;
     }
 
@@ -101,7 +100,18 @@ public class SimpleBlowfishCipher implements Cipher {
 
     protected byte[] crypt(byte[] bytes, int mode, Key key) {
         javax.crypto.Cipher cipher = newCipherInstance();
-        init(cipher, mode, getKey());
+        java.security.Key jdkKey = getKey();
+        if ( key != null ) {
+            if ( key instanceof java.security.Key ) {
+                jdkKey = (java.security.Key)key;
+            } else {
+                String msg = "The " + getClass().getName() + " implementation only accepts " + Key.class.getName() +
+                        " instances that also implement the " + java.security.Key.class.getName() +
+                        " interface.  The argument used is of type [" + key.getClass().getName() + "].";
+                throw new IllegalArgumentException( msg );
+            }
+        }
+        init(cipher, mode, jdkKey);
         return crypt(cipher, bytes);
     }
 

@@ -39,15 +39,14 @@ import org.jsecurity.cache.ehcache.EhCacheProvider;
 import org.jsecurity.cache.support.HashtableCacheProvider;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.context.support.DelegatingSecurityContext;
-import org.jsecurity.context.support.PrincipalsSerializer;
-import org.jsecurity.context.support.RememberMeSerializer;
+import org.jsecurity.context.support.RememberMeManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.support.file.PropertiesRealm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventNotifier;
+import org.jsecurity.session.event.SessionEventListenerRegistrar;
 import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.*;
 
@@ -88,7 +87,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.2
  */
-public class DefaultSecurityManager implements SecurityManager, SessionEventNotifier, CacheProviderAware, Initializable, Destroyable {
+public class DefaultSecurityManager implements SecurityManager, SessionEventListenerRegistrar, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -103,7 +102,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
 
     protected Authenticator authenticator;
     private boolean authenticatorImplicitlyCreated = false;
-    protected PrincipalsSerializer rememberMeSerializer = new RememberMeSerializer();
 
     protected Authorizer authorizer = null;
     private boolean authorizerImplicitlyCreated = false;
@@ -111,6 +109,8 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     protected SessionFactory sessionFactory;
     private boolean sessionFactoryImplicitlyCreated = false;
     private boolean lazySessions = true;
+
+    protected RememberMeManager rememberMeManager = null;
 
     private Collection<Realm> realms = null;
     private boolean realmImplicitlyCreated = false;
@@ -206,12 +206,12 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     public void add(SessionEventListener listener) {
         ensureSessionFactory();
         assertSessionFactoryEventListenerSupport(this.sessionFactory);
-        ((SessionEventNotifier) this.sessionFactory).add(listener);
+        ((SessionEventListenerRegistrar) this.sessionFactory).add(listener);
     }
 
     public boolean remove(SessionEventListener listener) {
-        return (this.sessionFactory instanceof SessionEventNotifier) &&
-            ((SessionEventNotifier) this.sessionFactory).remove(listener);
+        return (this.sessionFactory instanceof SessionEventListenerRegistrar) &&
+            ((SessionEventListenerRegistrar) this.sessionFactory).remove(listener);
     }
 
     /**
@@ -297,12 +297,12 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         this.lazySessions = lazySessions;
     }
 
-    public PrincipalsSerializer getRememberMeSerializer() {
-        return rememberMeSerializer;
+    public RememberMeManager getRememberMeManager() {
+        return rememberMeManager;
     }
 
-    public void setRememberMeSerializer(PrincipalsSerializer rememberMeSerializer) {
-        this.rememberMeSerializer = rememberMeSerializer;
+    public void setRememberMeManager(RememberMeManager rememberMeManager) {
+        this.rememberMeManager = rememberMeManager;
     }
 
    /*--------------------------------------------
@@ -393,10 +393,10 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
     }
 
     private void assertSessionFactoryEventListenerSupport(SessionFactory factory) {
-        if (!(factory instanceof SessionEventNotifier)) {
+        if (!(factory instanceof SessionEventListenerRegistrar)) {
             String msg = "SessionEventListener registration failed:  The underlying SessionFactory instance of " +
                 "type [" + factory.getClass().getName() + "] does not implement the " +
-                SessionEventNotifier.class.getName() + " interface and therefore cannot support " +
+                SessionEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
                 "runtime SessionEvent propagation.";
             throw new IllegalStateException(msg);
         }
@@ -582,24 +582,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
         }
     }
 
-    protected boolean isRememberIdentity( AuthenticationToken token ) {
-        return token instanceof RememberMeAuthenticationToken &&
-               ((RememberMeAuthenticationToken)token).isRememberMe();
-    }
-
-    protected boolean isRememberIdentity( AuthenticationToken token, Account account ) {
-        return isRememberIdentity( token );
-    }
-
-    protected void rememberIdentity( Account account ) {
-        throw new UnsupportedOperationException( getClass().getName() + " implementation does not support " +
-            "remembering login identity." );
-    }
-
-    protected void rememberIdentity( AuthenticationToken token, Account account ) {
-        rememberIdentity( account );
-    }
-
     /**
      * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
      * <tt>SecurityContext</tt> instance representing the authenticated account's identity.
@@ -613,9 +595,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventNoti
      */
     public SecurityContext login(AuthenticationToken token) throws AuthenticationException {
         Account account = authenticate(token);
-        if ( isRememberIdentity( token, account ) ) {
-            rememberIdentity( token, account );
-        }
         SecurityContext secCtx = createSecurityContext(token, account);
         assertCreation(secCtx);
         bind(secCtx);

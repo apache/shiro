@@ -25,18 +25,15 @@
 package org.jsecurity.session.event;
 
 /**
- * Implemented by objects that wish to to be notified of events related to sessions.
+ * A <tt>SessionEventListenerRegistrar</tt> is responsible for registering and deregistering
+ * {@link SessionEventListener}s with an associated {@link SessionEventSender sending mechanism} so they may be
+ * notified when a {@link SessionEvent SessionEvent} occurs.
  *
- * @since 0.1
+ * @see org.jsecurity.session.event.support.SimpleSessionEventSender 
+ *
  * @author Les Hazlewood
  */
-public interface SessionEventListener {
-
-    /**
-     * Notification callback that something happened with a {@link org.jsecurity.session.Session Session}.
-     * Implementations decide how to process the event (e.g. delegation, visitor pattern, etc).
-     * @param event the event generated in response to something happening with a <tt>Session</tt>.
-     */
-    void onEvent( SessionEvent event );
-    
+public interface SessionEventListenerRegistrar {
+    void add( SessionEventListener listener );
+    boolean remove( SessionEventListener listener );
 }
