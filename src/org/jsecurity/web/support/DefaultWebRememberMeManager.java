@@ -89,7 +89,12 @@ public class DefaultWebRememberMeManager extends AbstractRememberMeManager {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
         String base64 = getWebStore().retrieveValue(request, response);
-        return Base64.decodeBase64(base64);
+        if ( base64 != null ) {
+            return Base64.decodeBase64( base64 );
+        } else {
+            //no cookie set - new site visitor?
+            return null;
+        }
     }
 
     protected void forgetIdentity() {
