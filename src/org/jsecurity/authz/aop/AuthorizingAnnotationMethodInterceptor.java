@@ -24,8 +24,8 @@
  */
 package org.jsecurity.authz.aop;
 
+import org.jsecurity.aop.AnnotationMethodInterceptor;
 import org.jsecurity.aop.MethodInvocation;
-import org.jsecurity.aop.support.AnnotationMethodInterceptor;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
