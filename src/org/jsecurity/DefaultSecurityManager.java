@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood, Jeremy Haile
+ * Copyright (C) 2005-2008 Les Hazlewood, Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -56,7 +56,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 
 /**
  * <p>The JSecurity framework's default implementation of the {@link org.jsecurity.SecurityManager} interface,
@@ -582,6 +581,60 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
+    protected void rememberMeSuccessfulLogin( AuthenticationToken token, Account account ) {
+        RememberMeManager rmm = getRememberMeManager();
+        if ( rmm != null ) {
+            try {
+                rmm.onSuccessfulLogin( token, account );
+            } catch (Exception e) {
+                if ( log.isWarnEnabled() ) {
+                    String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
+                        "] threw an exception during onSuccessfulLogin.  RememberMe services will not be " +
+                        "performed for Account [" + account + "].";
+                    log.warn( msg, e );
+                }
+            }
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "This " + getClass().getName() + " instance does not have a " +
+                    "[" + RememberMeManager.class.getName() + "] instance configured.  RememberMe services " +
+                    "will not be performed for account [" + account + "]." );
+            }
+        }
+    }
+
+    protected void rememberMeFailedLogin( AuthenticationToken token, AuthenticationException ex ) {
+        RememberMeManager rmm = getRememberMeManager();
+        if ( rmm != null ) {
+            try {
+                rmm.onFailedLogin( token, ex );
+            } catch (Exception e) {
+                if ( log.isWarnEnabled() ) {
+                    String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
+                        "] threw an exception during onFailedLogin for AuthenticationToken [" +
+                    token + "].";
+                    log.warn( msg, e );
+                }
+            }
+        }
+    }
+
+    protected void rememberMeLogout( Object subjectPrincipals ) {
+        RememberMeManager rmm = getRememberMeManager();
+        if ( rmm != null ) {
+            try {
+                rmm.onLogout( subjectPrincipals );
+            } catch (Exception e) {
+                if ( log.isWarnEnabled() ) {
+                    String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
+                        "] threw an exception during onLogout for subject with principals [" +
+                    subjectPrincipals + "]";
+                    log.warn( msg, e );
+                }
+            }
+        }
+    }
+
     /**
      * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
      * <tt>SecurityContext</tt> instance representing the authenticated account's identity.
@@ -594,7 +647,14 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
      * @throws AuthenticationException if there is a problem authenticating the specified <tt>token</tt>.
      */
     public SecurityContext login(AuthenticationToken token) throws AuthenticationException {
-        Account account = authenticate(token);
+        Account account;
+        try {
+            account = authenticate(token);
+            rememberMeSuccessfulLogin( token, account );
+        } catch (AuthenticationException ae) {
+            rememberMeFailedLogin( token, ae );
+            throw ae; //propagate
+        }
         SecurityContext secCtx = createSecurityContext(token, account);
         assertCreation(secCtx);
         bind(secCtx);
@@ -602,20 +662,10 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     }
 
     public void logout(Object subjectIdentifier) {
+        rememberMeLogout( subjectIdentifier );
         //Method arg is ignored - get the SecurityContext from the environment if it exists:
         SecurityContext sc = getSecurityContext(false);
         if (sc != null) {
-            Object identity = sc.getPrincipal();
-            try {
-                sc.invalidate();
-            } catch (Throwable t) {
-                if (log.isTraceEnabled()) {
-                    String msg = "Unable to cleanly invalidate SecurityContext for " +
-                        "subject [" + identity + "].  Ignoring.";
-                    log.trace(msg, t);
-                }
-            }
-
             try {
                 unbind(sc);
             } catch (Exception e) {
@@ -639,7 +689,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
-    protected SecurityContext createSecurityContext( List principals, boolean authenticated, 
+    protected SecurityContext createSecurityContext( List principals, boolean authenticated,
                                                      InetAddress inetAddress, Session existing ) {
         if ( inetAddress == null ) {
             inetAddress = getLocalHost();

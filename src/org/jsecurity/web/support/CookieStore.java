@@ -239,4 +239,11 @@ public class CookieStore<T> extends AbstractWebStore<T> {
         }
     }
 
+    public void removeValue(ServletRequest request, ServletResponse response) {
+        Cookie cookie = getCookie( toHttp(request), getName() );
+        if ( cookie != null ) {
+            cookie.setMaxAge( 0 );
+            toHttp( response ).addCookie( cookie );
+        }
+    }
 }

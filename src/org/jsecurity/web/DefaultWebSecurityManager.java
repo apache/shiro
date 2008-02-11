@@ -40,7 +40,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public void init() {
         super.init();
-        //TODO - register the RMM for AuthenticationEvents!
         setRememberMeManager( new DefaultWebRememberMeManager() );
     }
 

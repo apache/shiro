@@ -45,25 +45,25 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Simple implementation of the <tt>SecurityContext</tt> interface that delegates
+ * <p>Simple implementation of the <tt>SecurityContext</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
- * It is essentially a <tt>SecurityManager</tt> proxy.
- * <p/>
+ * It is essentially a <tt>SecurityManager</tt> proxy.</p>
+ *
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
  * architecture.  It instead asks the underlying <tt>SecurityManager</tt> every time to perform
- * the authorization check.
- * <p/>
+ * the authorization check.</p>
+ *
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
  * context data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
- * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.
- * <p/>
+ * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.</p>
+ *
  * <p>Applications from large and clustered to simple and vm local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
- * paradigm and should be used whenever possible.
+ * paradigm and should be used whenever possible.</p>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -73,29 +73,13 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected List principals = new ArrayList();
-    protected boolean authenticated;
+    protected Object principals = null;
+    protected boolean authenticated = false;
     protected InetAddress inetAddress = null;
     protected Session session = null;
-    protected SecurityManager securityManager;
     protected boolean invalidated = false;
 
-    private static List<Object> toList(Object principal) {
-
-        List<Object> principals = null;
-
-        if (principal != null) {
-
-            if (principal instanceof Collection) {
-                throw new IllegalArgumentException("Principal is an instance of [" + principal.getClass().getName() + "]. Principal must not be an instance of java.util.Collection.");
-            }
-
-            principals = new ArrayList<Object>();
-            principals.add(principal);
-        }
-
-        return principals;
-    }
+    protected SecurityManager securityManager;    
 
     protected static InetAddress getLocalHost() {
         try {
@@ -113,20 +97,32 @@ public class DelegatingSecurityContext implements SecurityContext {
         this(null, authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext(List principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSecurityContext( List principals, boolean authenticated, InetAddress inetAddress,
+                                      Session session, SecurityManager securityManager ) {
+        this( (Object)principals, authenticated, inetAddress, session, securityManager );
+    }
+
+
+    public DelegatingSecurityContext( Object principals, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager cannot be null.");
         }
 
-        if (principals == null) {
-            principals = new ArrayList<Object>();
+        if ( principals instanceof Collection ) {
+            //noinspection unchecked
+            this.principals = Collections.unmodifiableCollection( (Collection)principals );
+        } else {
+            this.principals = principals;
         }
 
-        //noinspection unchecked
-        this.principals.addAll(principals);
         this.authenticated = authenticated;
-        this.inetAddress = inetAddress;
+
+        if ( inetAddress != null ) {
+            this.inetAddress = inetAddress;
+        } else {
+            this.inetAddress = getLocalHost();
+        }
         this.session = session;
         this.securityManager = securityManager;
     }
@@ -172,27 +168,52 @@ public class DelegatingSecurityContext implements SecurityContext {
      */
     public Object getPrincipal() {
         assertValid();
-        if (this.principals == null || this.principals.isEmpty()) {
-            return null;
-        } else {
-            return this.principals.get(0);
+        if ( this.principals instanceof Collection ) {
+            Collection c = (Collection)this.principals;
+            if ( !c.isEmpty() ) {
+                return c.iterator().next();
+            }
         }
+        return this.principals;
     }
 
     /** @see org.jsecurity.context.SecurityContext#getAllPrincipals() */
     public List getAllPrincipals() {
         assertValid();
-        //noinspection unchecked
-        return Collections.unmodifiableList(principals);
+        List list;
+        if ( this.principals instanceof Collection ) {
+            if ( this.principals instanceof List ) {
+                list = (List)this.principals;
+            } else {
+                //noinspection unchecked
+                list = new ArrayList( (Collection)this.principals );
+            }
+        } else {
+            list = new ArrayList();
+            if ( this.principals != null ) {
+                //noinspection unchecked
+                list.add( this.principals );
+            }
+        }
+
+        return list;
     }
 
     /** @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) () */
     public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
-        for (Object o : principals) {
-            if (principalType.isAssignableFrom(o.getClass())) {
+        if ( this.principals instanceof Collection ) {
+            Collection c = (Collection)this.principals;
+            for( Object o : c ) {
+                if ( principalType.isAssignableFrom( o.getClass() ) ) {
+                    //noinspection unchecked
+                    return (T)o;
+                }
+            }
+        } else {
+            if ( principalType.isAssignableFrom(this.principals.getClass())) {
                 //noinspection unchecked
-                return (T) o;
+                return (T)this.principals;
             }
         }
         return null;
@@ -204,14 +225,24 @@ public class DelegatingSecurityContext implements SecurityContext {
         List<T> principalsOfType = new ArrayList<T>();
 
         if (principals != null) {
-            for (Object o : principals) {
-                if (principalType.isAssignableFrom(o.getClass())) {
+            if ( principals instanceof Collection ) {
+                Collection c = (Collection)principals;
+                if ( !c.isEmpty() ) {
+                    for( Object o : c ) {
+                        if ( principalType.isAssignableFrom( o.getClass() ) ) {
+                            //noinspection unchecked
+                            principalsOfType.add( (T)o );
+                        }
+                    }
+                }
+            } else {
+                if ( principalType.isAssignableFrom( principals.getClass() ) ) {
                     //noinspection unchecked
-                    principalsOfType.add((T) o);
+                    principalsOfType.add( (T)principals );
                 }
             }
         }
-        return Collections.unmodifiableList(principalsOfType);
+        return principalsOfType;
     }
 
     public boolean hasRole(String roleIdentifier) {

@@ -27,4 +27,12 @@ public class RequestParamStore<T> extends AbstractWebStore<T> {
     protected void onStoreValue( T value, ServletRequest request, ServletResponse response ) {
         throw new UnsupportedOperationException( "RequestParamStores are read-only." );
     }
+
+    public void removeValue(ServletRequest request, ServletResponse response) {
+        //no op - can't alter request attributes
+        if ( log.isWarnEnabled() ) {
+            String msg = "Asked to remove WebStore value.  A " + getClass().getName() + " implementation " +
+                "cannot remove values from the request params.";
+        }
+    }
 }

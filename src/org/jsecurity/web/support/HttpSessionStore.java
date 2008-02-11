@@ -79,4 +79,11 @@ public class HttpSessionStore<T> extends AbstractWebStore<T> {
             }
         }
     }
+
+    public void removeValue(ServletRequest request, ServletResponse response) {
+        HttpSession session = toHttp(request).getSession( false );
+        if ( session != null ) {
+            session.removeAttribute( getName() );
+        }
+    }
 }
