@@ -121,9 +121,9 @@ public abstract class CodecSupport {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
             "bytes[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
             "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
-            "this argument type to a byte[], you can 1) subclass " + getClass().getName() + " and override the " +
-            "objectToBytes(Object o) method or 2) convert the argument to byte[] yourself and then use that as the " +
-            "method argument.";
+            "this argument type to a byte[], you can 1) convert the argument to a byte[], char[] or String " +
+            "yourself and then use that as the method argument or 2) subclass " + getClass().getName() +
+            " and override the objectToBytes(Object o) method.";
         throw new CodecException( msg );
     }
 
@@ -131,9 +131,9 @@ public abstract class CodecSupport {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to a String " +
             "when the source is of type byte[], char[], or String.  The instance provided as a method argument " +
             "is of type [" + o.getClass().getName() + "].   If you would like to convert " +
-            "this argument type to a String, you can 1) subclass " + getClass().getName() + " and override the " +
-            "objectToString(Object o) method or 2) convert the argument to a String yourself and then use that as " +
-            "the method argument.";
+            "this argument type to a String, you can 1) convert the argument to a byte[], char[] or String yourself " +
+            "and use that as the method argument or 2) subclass " + getClass().getName() + " and override the " +
+            "objectToString(Object o) method.";
         throw new CodecException( msg );
     }
 }
