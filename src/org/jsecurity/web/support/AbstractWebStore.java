@@ -117,11 +117,11 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
     }
 
     /**
-     * If set, an instance of this class will be used to convert a Session ID to a string value (and vice versa) when
-     * reading and populating values in
+     * If set, an instance of this class will be used to convert a the object value to a string value (and vice versa)
+     * when reading and populating values in
      * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}s, {@link javax.servlet.http.Cookie Cookie}s or
      * {@link javax.servlet.http.HttpSession HttpSession}s.
-     * <p/>
+     *
      * <p>If not set, the string itself will be used.
      *
      * @param editorClass {@link PropertyEditor PropertyEditor} implementation used to
@@ -154,7 +154,7 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
             try {
                 return (T)stringValue;
             } catch ( Exception e ) {
-                String msg = "If the Generics type is not String, you must specify the 'editorClass' property.";
+                String msg = "If the type is not String, you must specify the 'editorClass' property.";
                 throw new JSecurityException( msg, e );
             }
         } else {
@@ -162,10 +162,9 @@ public abstract class AbstractWebStore<T> extends SecurityWebSupport implements 
             editor.setAsText( stringValue );
             Object value = editor.getValue();
             try {
-                T retVal = (T)value;
-                return retVal;
+                return (T)value;
             } catch ( ClassCastException e ) {
-                String msg = "Returned value from PropertyEditor does not match the specified Generics type.";
+                String msg = "Returned value from PropertyEditor does not match the specified type.";
                 throw new JSecurityException( msg, e );
             }
         }
