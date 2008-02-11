@@ -40,8 +40,6 @@
  */
 package org.jsecurity.codec;
 
-import org.jsecurity.codec.support.CodecSupport;
-
 /**
  * Provides Base64 encoding and decoding as defined by RFC 2045.
  *

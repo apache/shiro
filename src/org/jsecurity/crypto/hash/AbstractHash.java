@@ -25,8 +25,8 @@
 package org.jsecurity.crypto.hash;
 
 import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.CodecSupport;
 import org.jsecurity.codec.Hex;
-import org.jsecurity.codec.support.CodecSupport;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

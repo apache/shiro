@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,21 +22,31 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+package org.jsecurity.crypto.support;
+
+import org.jsecurity.crypto.Key;
 
 /**
- * Implemented by objects that wish to to be notified of events related to sessions.
- *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 1.0
  */
-public interface SessionEventListener {
+public class JdkKey implements Key, java.security.Key {
 
-    /**
-     * Notification callback that something happened with a {@link org.jsecurity.session.Session Session}.
-     * Implementations decide how to process the event (e.g. delegation, visitor pattern, etc).
-     * @param event the event generated in response to something happening with a <tt>Session</tt>.
-     */
-    void onEvent( SessionEvent event );
-    
+    protected java.security.Key key = null;
+
+    public JdkKey( java.security.Key key ) {
+        this.key = key;
+    }
+
+    public String getAlgorithm() {
+        return this.key.getAlgorithm();
+    }
+
+    public String getFormat() {
+        return this.key.getFormat();
+    }
+
+    public byte[] getEncoded() {
+        return this.key.getEncoded();
+    }
 }

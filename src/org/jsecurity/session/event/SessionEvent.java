@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.EventObject;
 
 /**
- * General event concerning a {@link org.jsecurity.session.Session} instance.
+ * General event concerning a {@link org.jsecurity.session.Session Session} instance.
  *
  * @since 0.1
  * @author Les Hazlewood

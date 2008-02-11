@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.event.SessionEvent;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventNotifier;
+import org.jsecurity.session.event.SessionEventListenerRegistrar;
 import org.jsecurity.session.event.SessionEventSender;
 
 import java.util.ArrayList;
@@ -36,14 +36,14 @@ import java.util.List;
 
 /**
  * Simple implementation of the {@link SessionEventSender} interface that synchronously calls any
- * registered {@link org.jsecurity.session.event.SessionEventListener}s.
+ * {@link SessionEventListenerRegistrar registered} {@link org.jsecurity.session.event.SessionEventListener listener}s.
  *
  * @see #setListeners
  *
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SimpleSessionEventSender implements SessionEventNotifier, SessionEventSender {
+public class SimpleSessionEventSender implements SessionEventSender, SessionEventListenerRegistrar {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -53,11 +53,25 @@ public class SimpleSessionEventSender implements SessionEventNotifier, SessionEv
         this.listeners = listeners;
     }
 
+    public List<SessionEventListener> getListeners() {
+        return this.listeners;
+    }
+
+    protected List<SessionEventListener> getListenersLazy() {
+        List<SessionEventListener> listeners = getListeners();
+        if ( listeners == null ) {
+            listeners = new ArrayList<SessionEventListener>();
+            setListeners( listeners );
+        }
+        return listeners;
+    }
+
     public void add( SessionEventListener listener ) {
         if ( listener == null ) {
             String msg = "Attempting to add a null session event listener";
             throw new IllegalArgumentException( msg );
         }
+        List<SessionEventListener> listeners = getListenersLazy();
         if ( !listeners.contains( listener ) ) {
             listeners.add( listener );
         }
@@ -66,7 +80,10 @@ public class SimpleSessionEventSender implements SessionEventNotifier, SessionEv
     public boolean remove( SessionEventListener listener ) {
         boolean removed = false;
         if ( listener != null ) {
-            removed = listeners.remove( listener );
+            List<SessionEventListener> listeners = getListeners();
+            if ( listeners != null ) {
+                removed = listeners.remove( listener );
+            }
         }
         return removed;
     }
@@ -77,6 +94,7 @@ public class SimpleSessionEventSender implements SessionEventNotifier, SessionEv
      * @see SessionEventSender#send( org.jsecurity.session.event.SessionEvent event )
      */
     public void send( SessionEvent event ) {
+        List<SessionEventListener> listeners = getListeners();
         if ( listeners != null && !listeners.isEmpty() ) {
             for( SessionEventListener sel : listeners ) {
                 sel.onEvent( event );

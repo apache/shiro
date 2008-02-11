@@ -32,7 +32,7 @@ import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventNotifier;
+import org.jsecurity.session.event.SessionEventListenerRegistrar;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.LifecycleUtils;
@@ -61,7 +61,7 @@ import java.net.InetAddress;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultSessionFactory implements SessionFactory, SessionEventNotifier, CacheProviderAware, Initializable, Destroyable {
+public class DefaultSessionFactory implements SessionFactory, SessionEventListenerRegistrar, CacheProviderAware, Initializable, Destroyable {
 
     protected final transient Log log = LogFactory.getLog(getClass());
 
@@ -86,10 +86,10 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventNotifi
     }
 
     private void assertSessionManagerEventNotifier() {
-        if (!(this.sessionManager instanceof SessionEventNotifier)) {
+        if (!(this.sessionManager instanceof SessionEventListenerRegistrar)) {
             String msg = "The underlying SessionManager implementation [" +
                     this.sessionManager.getClass().getName() + "] does not implement the " +
-                    SessionEventNotifier.class.getName() + " interface and therefore session events cannot " +
+                    SessionEventListenerRegistrar.class.getName() + " interface and therefore session events cannot " +
                     "be propagated to registered listeners.  Please ensure this SessionFactory instance is " +
                     "injected with a SessionManager that supports this interface if you wish to register " +
                     "for SessionEvents.";
@@ -99,12 +99,12 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventNotifi
 
     public void add(SessionEventListener listener) {
         assertSessionManagerEventNotifier();
-        ((SessionEventNotifier)this.sessionManager).add(listener);
+        ((SessionEventListenerRegistrar)this.sessionManager).add(listener);
     }
 
     public boolean remove(SessionEventListener listener) {
-        return this.sessionManager instanceof SessionEventNotifier &&
-               ((SessionEventNotifier) this.sessionManager).remove(listener);
+        return this.sessionManager instanceof SessionEventListenerRegistrar &&
+               ((SessionEventListenerRegistrar) this.sessionManager).remove(listener);
     }
 
     protected SessionManager createSessionManager() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,21 +22,15 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event;
+package org.jsecurity.util;
 
 /**
- * Implemented by objects that wish to to be notified of events related to sessions.
- *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 1.0
  */
-public interface SessionEventListener {
+public interface Serializer {
 
-    /**
-     * Notification callback that something happened with a {@link org.jsecurity.session.Session Session}.
-     * Implementations decide how to process the event (e.g. delegation, visitor pattern, etc).
-     * @param event the event generated in response to something happening with a <tt>Session</tt>.
-     */
-    void onEvent( SessionEvent event );
-    
+    byte[] serialize( Object o );
+
+    Object deserialize( byte[] serialized );
 }
