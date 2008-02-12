@@ -28,8 +28,8 @@ import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.Hex;
 
 /**
- * Generates an SHA-1 Hash (Secure Hash Standard, NIST FIPS 180-1) from a given input <tt>source</tt> with an
- * optional <tt>salt</tt> and hash iterations.
+ * Generates an MD2 Hash (RFC 1319) from a given input <tt>source</tt> with an optional <tt>salt</tt> and
+ * hash iterations.
  *
  * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
  * techniques and how the overloaded constructors function.
@@ -37,22 +37,22 @@ import org.jsecurity.codec.Hex;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class ShaHash extends AbstractHash {
+public class Md2Hash extends AbstractHash {
 
-    public static final String ALGORITHM_NAME = "SHA-1";
+    public static final String ALGORITHM_NAME = "MD2";
 
-    public ShaHash() {
+    public Md2Hash() {
     }
 
-    public ShaHash(Object source) {
-        super( source );
+    public Md2Hash(Object source) {
+        super(source);
     }
 
-    public ShaHash(Object source, Object salt) {
+    public Md2Hash(Object source, Object salt) {
         super(source, salt);
     }
 
-    public ShaHash(Object source, Object salt, int hashIterations) {
+    public Md2Hash(Object source, Object salt, int hashIterations) {
         super(source, salt, hashIterations);
     }
 
@@ -60,15 +60,15 @@ public class ShaHash extends AbstractHash {
         return ALGORITHM_NAME;
     }
 
-    public static ShaHash fromHexString( String hex ) {
-        ShaHash hash = new ShaHash();
-        hash.setBytes( Hex.decode( hex ) );
+    public static Md2Hash fromHexString(String hex) {
+        Md2Hash hash = new Md2Hash();
+        hash.setBytes(Hex.decode(hex));
         return hash;
     }
 
-    public static ShaHash fromBase64String( String base64 ) {
-        ShaHash hash = new ShaHash();
-        hash.setBytes( Base64.decodeBase64( base64 ) );
+    public static Md2Hash fromBase64String(String base64) {
+        Md2Hash hash = new Md2Hash();
+        hash.setBytes(Base64.decodeBase64(base64));
         return hash;
     }
 }

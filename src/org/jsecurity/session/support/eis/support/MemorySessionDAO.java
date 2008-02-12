@@ -24,7 +24,7 @@
  */
 package org.jsecurity.session.support.eis.support;
 
-import org.jsecurity.cache.support.HashtableCacheProvider;
+import org.jsecurity.cache.HashtableCacheProvider;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.support.SimpleSession;
 import org.jsecurity.util.ClassUtils;
@@ -38,7 +38,7 @@ import java.util.Random;
  * {@link #setCacheProvider CacheProvider} for Session caching and in-memory persistence.
  *
  * <p><b>PLEASE NOTE</b> the default CacheProvider internal to this implementation is a
- * {@link HashtableCacheProvider HashtableCacheProvider}, which IS NOT RECOMMENDED for production environments.
+ * {@link org.jsecurity.cache.HashtableCacheProvider HashtableCacheProvider}, which IS NOT RECOMMENDED for production environments.
  *
  * <p>If you
  * want to use the MemorySessionDAO in production environments, such as those that require session data to be

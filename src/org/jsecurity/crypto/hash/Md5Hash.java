@@ -28,6 +28,12 @@ import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.Hex;
 
 /**
+ * Generates an MD5 Hash (RFC 1321) from a given input <tt>source</tt> with an optional <tt>salt</tt> and
+ * hash iterations.
+ *
+ * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
+ * techniques and how the overloaded constructors function.
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

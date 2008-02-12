@@ -65,10 +65,8 @@ public class Base64 {
     /**
      * Chunk size per RFC 2045 section 6.8.
      *
-     * <p>
-     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
-     * equal signs.
-     * </p>
+     * <p>The character limit does not count the trailing CRLF, but counts all other characters, including any
+     * equal signs.</p>
      *
      * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045 section 6.8</a>
      */
@@ -124,27 +122,21 @@ public class Base64 {
     /**
      * Contains the Base64 values <code>0</code> through <code>63</code> accessed by using character encodings as
      * indices.
-     * <p>
-     * For example, <code>base64Alphabet['+']</code> returns <code>62</code>.
-     * </p>
-     * <p>
-     * The value of undefined encodings is <code>-1</code>.
-     * </p>
+     *
+     * <p>For example, <code>base64Alphabet['+']</code> returns <code>62</code>.</p>
+     *
+     * <p>The value of undefined encodings is <code>-1</code>.</p>
      */
     private static final byte[] base64Alphabet = new byte[BASELENGTH];
 
     /**
-     * <p>
-     * Contains the Base64 encodings <code>A</code> through <code>Z</code>, followed by <code>a</code> through
+     * <p>Contains the Base64 encodings <code>A</code> through <code>Z</code>, followed by <code>a</code> through
      * <code>z</code>, followed by <code>0</code> through <code>9</code>, followed by <code>+</code>, and
-     * <code>/</code>.
-     * </p>
-     * <p>
-     * This array is accessed by using character values as indices.
-     * </p>
-     * <p>
-     * For example, <code>lookUpBase64Alphabet[62] </code> returns <code>'+'</code>.
-     * </p>
+     * <code>/</code>.</p>
+     *
+     * <p>This array is accessed by using character values as indices.</p>
+     *
+     * <p>For example, <code>lookUpBase64Alphabet[62] </code> returns <code>'+'</code>.</p>
      */
     private static final byte[] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
 
@@ -185,8 +177,7 @@ public class Base64 {
     /**
      * Returns whether or not the <code>octect</code> is in the base 64 alphabet.
      *
-     * @param octect
-     *            The value to test
+     * @param octect The value to test
      * @return <code>true</code> if the value is defined in the the base 64 alphabet, <code>false</code> otherwise.
      */
     private static boolean isBase64(byte octect) {
@@ -202,8 +193,7 @@ public class Base64 {
     /**
      * Tests a given byte array to see if it contains only valid characters within the Base64 alphabet.
      *
-     * @param arrayOctect
-     *            byte array to test
+     * @param arrayOctect byte array to test
      * @return <code>true</code> if all bytes are valid characters in the Base64 alphabet or if the byte array is
      *         empty; false, otherwise
      */
@@ -232,8 +222,7 @@ public class Base64 {
     /**
      * Encodes binary data using the base64 algorithm but does not chunk the output.
      *
-     * @param binaryData
-     *            binary data to encode
+     * @param binaryData binary data to encode
      * @return Base64 characters
      */
     public static byte[] encodeBase64(byte[] binaryData) {
@@ -243,8 +232,7 @@ public class Base64 {
     /**
      * Encodes binary data using the base64 algorithm and chunks the encoded output into 76 character blocks
      *
-     * @param binaryData
-     *            binary data to encode
+     * @param binaryData binary data to encode
      * @return Base64 characters chunked in 76 character blocks
      */
     public static byte[] encodeBase64Chunked(byte[] binaryData) {
@@ -255,11 +243,9 @@ public class Base64 {
      * Decodes an Object using the base64 algorithm. This method is provided in order to satisfy the requirements of the
      * Decoder interface, and will throw a DecoderException if the supplied object is not of type byte[].
      *
-     * @param pObject
-     *            Object to decode
+     * @param pObject Object to decode
      * @return An object (of type byte[]) containing the binary data which corresponds to the byte[] supplied.
-     * @throws IllegalArgumentException
-     *             if the parameter supplied is not of type byte[]
+     * @throws IllegalArgumentException if the parameter supplied is not of type byte[]
      */
     public Object decode(Object pObject) throws IllegalArgumentException {
         if (!(pObject instanceof byte[])) {
@@ -271,8 +257,7 @@ public class Base64 {
     /**
      * Decodes a byte[] containing containing characters in the Base64 alphabet.
      *
-     * @param pArray
-     *            A byte array containing Base64 character data
+     * @param pArray A byte array containing Base64 character data
      * @return a byte array containing binary data
      */
     public byte[] decode(byte[] pArray) {
@@ -282,13 +267,10 @@ public class Base64 {
     /**
      * Encodes binary data using the base64 algorithm, optionally chunking the output into 76 character blocks.
      *
-     * @param binaryData
-     *            Array containing binary data to encode.
-     * @param isChunked
-     *            if <code>true</code> this encoder will chunk the base64 output into 76 character blocks
+     * @param binaryData Array containing binary data to encode.
+     * @param isChunked if <code>true</code> this encoder will chunk the base64 output into 76 character blocks
      * @return Base64-encoded data.
-     * @throws IllegalArgumentException
-     *             Thrown when the input array needs an output array bigger than {@link Integer#MAX_VALUE}
+     * @throws IllegalArgumentException Thrown when the input array needs an output array bigger than {@link Integer#MAX_VALUE}
      */
     public static byte[] encodeBase64(byte[] binaryData, boolean isChunked) {
         long binaryDataLength = binaryData.length;
@@ -417,8 +399,7 @@ public class Base64 {
     /**
      * Decodes Base64 data into octects
      *
-     * @param base64Data
-     *            Byte array containing Base64 data
+     * @param base64Data Byte array containing Base64 data
      * @return Array containing decoded data.
      */
     public static byte[] decodeBase64(byte[] base64Data) {
@@ -484,8 +465,7 @@ public class Base64 {
     /**
      * Discards any whitespace from a base-64 encoded block.
      *
-     * @param data
-     *            The base-64 encoded data to discard the whitespace from.
+     * @param data The base-64 encoded data to discard the whitespace from.
      * @return The data, less whitespace (see RFC 2045).
      */
     static byte[] discardWhitespace(byte[] data) {
@@ -515,8 +495,7 @@ public class Base64 {
      * Discards any characters outside of the base64 alphabet, per the requirements on page 25 of RFC 2045 - "Any
      * characters outside of the base64 alphabet are to be ignored in base64 encoded data."
      *
-     * @param data
-     *            The base-64 encoded data to groom
+     * @param data The base-64 encoded data to groom
      * @return The data, less non-base64 characters (see RFC 2045).
      */
     static byte[] discardNonBase64(byte[] data) {
@@ -542,11 +521,9 @@ public class Base64 {
      * Encodes an Object using the base64 algorithm. This method is provided in order to satisfy the requirements of the
      * Encoder interface, and will throw an IllegalArgumentException if the supplied object is not of type byte[].
      *
-     * @param pObject
-     *            Object to encode
+     * @param pObject Object to encode
      * @return An object (of type byte[]) containing the base64 encoded data which corresponds to the byte[] supplied.
-     * @throws IllegalArgumentException
-     *             if the parameter supplied is not of type byte[]
+     * @throws IllegalArgumentException if the parameter supplied is not of type byte[]
      */
     public Object encode(Object pObject) throws IllegalArgumentException {
         if (!(pObject instanceof byte[])) {
@@ -558,8 +535,7 @@ public class Base64 {
     /**
      * Encodes a byte[] containing binary data, into a byte[] containing characters in the Base64 alphabet.
      *
-     * @param pArray
-     *            a byte array containing binary data
+     * @param pArray a byte array containing binary data
      * @return A byte array containing only Base64 character data
      */
     public byte[] encode(byte[] pArray) {
