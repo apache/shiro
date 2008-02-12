@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>Simple implementation of the <tt>SecurityContext</tt> interface that delegates
+ * <p>Implementation of the <tt>SecurityContext</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.</p>
  *
@@ -96,12 +96,6 @@ public class DelegatingSecurityContext implements SecurityContext {
     public DelegatingSecurityContext(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
         this(null, authenticated, inetAddress, session, securityManager);
     }
-
-    public DelegatingSecurityContext( List principals, boolean authenticated, InetAddress inetAddress,
-                                      Session session, SecurityManager securityManager ) {
-        this( (Object)principals, authenticated, inetAddress, session, securityManager );
-    }
-
 
     public DelegatingSecurityContext( Object principals, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
@@ -161,19 +155,9 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     /**
-     * If multiple principals are defined, this method will return the first
-     * principal in the list of principals.
-     *
      * @see org.jsecurity.context.SecurityContext#getPrincipal()
      */
     public Object getPrincipal() {
-        assertValid();
-        if ( this.principals instanceof Collection ) {
-            Collection c = (Collection)this.principals;
-            if ( !c.isEmpty() ) {
-                return c.iterator().next();
-            }
-        }
         return this.principals;
     }
 
