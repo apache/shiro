@@ -166,7 +166,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     protected void bind(SecurityContext securityContext, ServletRequest request, ServletResponse response) {
-        Object principals = securityContext.getAllPrincipals();
+        Object principals = securityContext.getPrincipal();
         if ( (principals instanceof Collection) && ((Collection)principals).isEmpty() ) {
             principals = null;
         }

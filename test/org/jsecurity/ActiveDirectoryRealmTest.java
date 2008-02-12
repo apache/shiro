@@ -21,6 +21,7 @@ import javax.naming.NamingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -78,7 +79,9 @@ public class ActiveDirectoryRealmTest {
         UserIdPrincipal userIdPrincipal = (UserIdPrincipal) secCtx.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
-        assertTrue(secCtx.getAllPrincipals().size() == 2);
+        Object principals = secCtx.getPrincipal();
+
+        assertTrue( principals instanceof Collection && ((Collection)principals).size() == 2);
 
         assertTrue(realm.hasRole(userIdPrincipal, ROLE));
 
