@@ -59,24 +59,24 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
 
     public AuthenticatingRealm( String name, CredentialsMatcher matcher ) {
         this( name );
-        setCredentialMatcher( matcher );
+        setCredentialsMatcher( matcher );
     }
 
     public AuthenticatingRealm( String name, CacheProvider cacheProvider, CredentialsMatcher matcher ) {
         this( name, cacheProvider );
-        setCredentialMatcher( matcher );
+        setCredentialsMatcher( matcher );
     }
 
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public CredentialsMatcher getCredentialMatcher() {
+    public CredentialsMatcher getCredentialsMatcher() {
         return credentialsMatcher;
     }
 
     /**
-     * Sets the CrendialMatcher implementation to use to verify submitted credentials with those stored in the system
+     * Sets the CrendialsMatcher implementation to use to verify submitted credentials with those stored in the system
      * for a given authentication attempt.  The implementation of this matcher can be switched via configuration to
      * support any number of schemes, including plain text comparisons, hashing comparisons, and others.
      *
@@ -84,7 +84,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      *
      * @param credentialsMatcher the matcher to use.
      */
-    public void setCredentialMatcher(CredentialsMatcher credentialsMatcher) {
+    public void setCredentialsMatcher(CredentialsMatcher credentialsMatcher) {
         this.credentialsMatcher = credentialsMatcher;
     }
 
@@ -195,7 +195,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
             throw new ExpiredCredentialException( msg );
         }
 
-        CredentialsMatcher cm = getCredentialMatcher();
+        CredentialsMatcher cm = getCredentialsMatcher();
         if ( cm != null ) {
             if ( !cm.doCredentialsMatch( token, account ) ) {
                 String msg = "The credentials provided for account [" + token +

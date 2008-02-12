@@ -29,8 +29,6 @@ import org.jsecurity.crypto.hash.Hash;
 import org.jsecurity.crypto.hash.ShaHash;
 
 /**
- * TODO - class javadoc
- *
  * @author Les Hazlewood
  * @since 1.0
  */
