@@ -102,7 +102,7 @@ public class ActiveDirectoryRealmTest {
                 }
             };
 
-            setCredentialMatcher(credentialsMatcher);
+            setCredentialsMatcher(credentialsMatcher);
         }
 
 

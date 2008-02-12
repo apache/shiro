@@ -137,7 +137,7 @@ public class AuthorizingRealmTest {
                 }
             };
 
-            setCredentialMatcher(credentialsMatcher);
+            setCredentialsMatcher(credentialsMatcher);
         }
 
         protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {

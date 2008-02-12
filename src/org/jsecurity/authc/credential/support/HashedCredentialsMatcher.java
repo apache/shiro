@@ -33,7 +33,29 @@ import org.jsecurity.crypto.hash.Hash;
 
 /**
  * A <tt>HashedCredentialMatcher</tt> provides support for hashing of supplied credentials before being compared to
- * those in the data store.
+ * those in a data store.
+ *
+ * <p>This class (and its subclasses) function as follows:</p>
+ *
+ * <p>It first hashes the credentials supplied by the user during their login.  It then compares this hashed
+ * value directly with the credentials stored in the system.  The stored system credentials are not hashed before
+ * the comparison since it is expected that the stored value is already in hashed form.</p>
+ *
+ * <p>This class is configurable to enable salting the hashed provided credentials as well as performing multiple hash
+ * iterations:
+ *
+ * <p>If you specify that a salt is used, the submitted AuthenticationToken's principals
+ * acquired via
+ * {@link org.jsecurity.authc.AuthenticationToken#getPrincipal() AuthenticationToken.getPrincipal()} (e.g. a
+ * username or user id) will be used to salt the hash.  If you'd like to provide a different salt for an incoming
+ * <tt>AuthenticationToken</tt>, you will need to override the
+ * {@link #getSalt(AuthenticationToken) getSalt(AuthenticationToken)} to provide the salt a different way.</p>
+ *
+ * <p>If you hash your users' credentials multiple times before persisting to the data store, you will also need to
+ * set this class's {@link #setHashIterations(int) hashIterations} property.</p>
+ *
+ * <p>The following is some background information and reading on how to properly store user's credentials in a
+ * data store:</p>
  *
  * <p>Credential hashing is one of the most common security techniques when safeguarding a user's private credentials
  * (passwords, keys, etc).  Most developers never want to store their users' credentials in plain form, viewable by
@@ -49,9 +71,9 @@ import org.jsecurity.crypto.hash.Hash;
  * <p>This class effectively supports comparisons of credentials that were hashed using the above mentioned hashing,
  * salting, and iterations techniques.</p>
  *
- * <p>Note that all of JSecurity's Hash support objects (for example,
- * {@link org.jsecurity.crypto.hash.Md5Hash Md5Hash}, {@link org.jsecurity.crypto.hash.ShaHash ShaHash}, etc) all
- * support salt and iterations via overloaded constructors.
+ * <p>Note that all of JSecurity's Hash implementations (for example,
+ * {@link org.jsecurity.crypto.hash.Md5Hash Md5Hash}, {@link org.jsecurity.crypto.hash.ShaHash ShaHash}, etc)
+ * support salting and multiple hash iterations via overloaded constructors.
  *
  * @see org.jsecurity.crypto.hash.Md5Hash
  * @see org.jsecurity.crypto.hash.ShaHash
