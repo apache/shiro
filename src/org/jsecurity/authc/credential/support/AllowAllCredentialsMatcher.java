@@ -30,8 +30,8 @@ import org.jsecurity.authc.credential.CredentialsMatcher;
 
 /**
  * A credential matcher that always returns <tt>true</tt> when matching credentials no matter what arguments
- * are passed in.  This can be used for testing or when credentials are trusted implicitly for a particular
- * <tt>Realm</tt>.
+ * are passed in.  This can be used for testing or when credentials are implicitly trusted for a particular
+ * {@link org.jsecurity.realm.Realm Realm}.
  *
  * @since 0.2
  * @author Jeremy Haile
@@ -39,11 +39,11 @@ import org.jsecurity.authc.credential.CredentialsMatcher;
 public class AllowAllCredentialsMatcher implements CredentialsMatcher {
 
     /**
-     * Always returns true, regardless of the arguments.
+     * Always returns <tt>true</tt>, regardless of the arguments.
      * 
      * @param providedCredential provided credential, ignored.
      * @param storedCredential stored credential, ignored.
-     * @return true always.
+     * @return <tt>true</tt> always.
      */
     public boolean doCredentialsMatch(AuthenticationToken providedCredential, Account storedCredential) {
         return true;

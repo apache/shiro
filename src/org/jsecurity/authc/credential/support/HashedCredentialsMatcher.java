@@ -32,6 +32,30 @@ import org.jsecurity.crypto.hash.AbstractHash;
 import org.jsecurity.crypto.hash.Hash;
 
 /**
+ * A <tt>HashedCredentialMatcher</tt> provides support for hashing of supplied credentials before being compared to
+ * those in the data store.
+ *
+ * <p>Credential hashing is one of the most common security techniques when safeguarding a user's private credentials
+ * (passwords, keys, etc).  Most developers never want to store their users' credentials in plain form, viewable by
+ * anyone, so they often hash the users' credentials before they are saved in the data store.</p>
+ *
+ * <p>But, simple hashing by itself is often not good enough.  Many times, you will want to salt the hash and
+ * potentially re-hash the value multiple times.  The reasons why are beyond the scope of this JavaDoc, but there is a
+ * decent <a href="http://www.owasp.org/index.php/Hashing_Java" _target="blank">Hashing Java article</a> that explains 
+ * what a 'salt' is and why multiple hash iterations are useful.</p>
+ *
+ * <p>Make note of sections 5 &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack".</p>
+ *
+ * <p>This class effectively supports comparisons of credentials that were hashed using the above mentioned hashing,
+ * salting, and iterations techniques.</p>
+ *
+ * <p>Note that all of JSecurity's Hash support objects (for example,
+ * {@link org.jsecurity.crypto.hash.Md5Hash Md5Hash}, {@link org.jsecurity.crypto.hash.ShaHash ShaHash}, etc) all
+ * support salt and iterations via overloaded constructors.
+ *
+ * @see org.jsecurity.crypto.hash.Md5Hash
+ * @see org.jsecurity.crypto.hash.ShaHash
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

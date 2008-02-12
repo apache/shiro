@@ -28,31 +28,33 @@ import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.Hex;
 
 /**
- * Generates an SHA-1 Hash (Secure Hash Standard, NIST FIPS 180-1) from a given input <tt>source</tt> with an
- * optional <tt>salt</tt> and hash iterations.
+ * Generates an SHA-512 Hash from a given input <tt>source</tt> with an optional <tt>salt</tt> and hash iterations.
  *
  * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
  * techniques and how the overloaded constructors function.
  *
+ * <p><b>JDK Version Note</b> - Attempting to instantiate this class on JREs prior to version 1.4.0 will throw
+ * an {@link IllegalStateException IllegalStateException} 
+ *
  * @author Les Hazlewood
  * @since 1.0
  */
-public class ShaHash extends AbstractHash {
+public class Sha512Hash extends AbstractHash {
 
-    public static final String ALGORITHM_NAME = "SHA-1";
+    public static final String ALGORITHM_NAME = "SHA-512";
 
-    public ShaHash() {
+    public Sha512Hash() {
     }
 
-    public ShaHash(Object source) {
-        super( source );
+    public Sha512Hash(Object source) {
+        super(source);
     }
 
-    public ShaHash(Object source, Object salt) {
+    public Sha512Hash(Object source, Object salt) {
         super(source, salt);
     }
 
-    public ShaHash(Object source, Object salt, int hashIterations) {
+    public Sha512Hash(Object source, Object salt, int hashIterations) {
         super(source, salt, hashIterations);
     }
 
@@ -60,15 +62,19 @@ public class ShaHash extends AbstractHash {
         return ALGORITHM_NAME;
     }
 
-    public static ShaHash fromHexString( String hex ) {
-        ShaHash hash = new ShaHash();
-        hash.setBytes( Hex.decode( hex ) );
+    public static Sha512Hash fromHexString(String hex) {
+        Sha512Hash hash = new Sha512Hash();
+        hash.setBytes(Hex.decode(hex));
         return hash;
     }
 
-    public static ShaHash fromBase64String( String base64 ) {
-        ShaHash hash = new ShaHash();
-        hash.setBytes( Base64.decodeBase64( base64 ) );
+    public static Sha512Hash fromBase64String(String base64) {
+        Sha512Hash hash = new Sha512Hash();
+        hash.setBytes(Base64.decodeBase64(base64));
         return hash;
     }
+
+
+
 }
+

@@ -1,17 +1,18 @@
 <html>
 <body>
 The Session package contains all interfaces and exceptions related to managing application
-sessions, the time-based contexts in which a Subject (aka user) interacts with an application.
+sessions, the time-based data contexts in which a Subject interacts with an application.
 
 <p>Sessions in JSecurity are completely POJO-based and do not <em>require</em> an application to use
-Web-based or EJB-based session management infrastructure - the client and/or server technoloy is
-irrelevent in JSecurity's architecture, allowing session management to be employed in the smallest
-standalone application to the largest enterprise deployments.</p>
+    Web-based or EJB-based session management infrastructure - the client and/or server technoloy is
+    irrelevent in JSecurity's architecture, allowing session management to be employed in the smallest
+    standalone application to the largest enterprise deployments.</p>
+
 <p>This design decision opens up a new world to Java applications - most notably the ability to
-participate in a session regardless if the client is using HTTP, custom sockets, web services,
-or whatever.  Currently no technology in Java today allows this heterogenous client-session
-capability.  Because of this freedom, JSecurity naturally supports Single Sign-On for any
-application.</p>
+    participate in a session regardless if the client is using HTTP, custom sockets, web services,
+    or whatever. Aside from JSecurity, there is currently no technology in Java today allows this
+    heterogenous client-session capability. Because of this freedom, JSecurity naturally supports
+    Single Sign-On for any application.</p>
 
 </body>
 </html>

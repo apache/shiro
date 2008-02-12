@@ -82,6 +82,17 @@ public abstract class CodecSupport {
         return toString( bytes, encoding ).toCharArray();
     }
 
+    /**
+     * Converts the specified Object into a byte array.
+     *
+     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, or <tt>String</tt> it will be converted
+     * automatically and returned.</tt>
+     *
+     * <p>If the argument is anything other than these three types, it is passed to the
+     * {@link #objectToBytes(Object) objectToBytes} method which must be overridden by subclasses.
+     * @param o the Object to convert into a byte array
+     * @return a byte array representation of the Object argument.
+     */
     protected byte[] toBytes( Object o ) {
         if ( o == null ) {
             String msg = "Argument for byte conversion cannot be null.";
@@ -98,6 +109,17 @@ public abstract class CodecSupport {
         }
     }
 
+    /**
+     * Converts the specified Object into a String.
+     *
+     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, or <tt>String</tt> it will be converted
+     * automatically and returned.</tt>
+     *
+     * <p>If the argument is anything other than these three types, it is passed to the
+     * {@link #objectToString(Object) objectToString} method which must be overridden by subclasses.
+     * @param o the Object to convert into a byte array
+     * @return a byte array representation of the Object argument.
+     */
     protected String toString( Object o ) {
         if ( o == null ) {
             String msg = "Argument for String conversion cannot be null.";
@@ -114,9 +136,14 @@ public abstract class CodecSupport {
         }
     }
 
-    // When the toBytes(object) method calls this one, the object argument won't be a byte[], char[] or String
-    // implementation authors should cast for something else.  This default implementation
-    // throws an exception immediately and it is expected that subclass authors would override it.
+    /**
+     * Default implementation throws a CodecException immediately since it can't infer how to convert the Object
+     * to a byte array.  This method must be overridden by subclasses if anything other than the three default
+     * types (listed in the {@link #toBytes(Object) toBytes(Object)} JavaDoc) are to be converted to a byte array.
+     *
+     * @param o the Object to convert to a byte array.
+     * @return a byte array representation of the Object argument.
+     */
     protected byte[] objectToBytes( Object o ) {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
             "bytes[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
@@ -127,6 +154,14 @@ public abstract class CodecSupport {
         throw new CodecException( msg );
     }
 
+    /**
+     * Default implementation throws a CodecException immediately since it can't infer how to convert the Object
+     * to a String.  This method must be overridden by subclasses if anything other than the three default
+     * types (listed in the {@link #toBytes(Object) toBytes(Object)} JavaDoc) are to be converted to a byte array.
+     *
+     * @param o the Object to convert to a byte array.
+     * @return a String representation of the Object argument.
+     */
     protected String objectToString( Object o ) {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to a String " +
             "when the source is of type byte[], char[], or String.  The instance provided as a method argument " +

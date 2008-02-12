@@ -165,7 +165,7 @@ public class DefaultSessionManager extends AbstractSessionManager
      * {@link #setCacheProvider cacheProvider} to provide production-quality cache management.  Please ensure that
      * the <tt>CacheProvider</tt> property is configured for production environments, since the
      * <tt>MemorySessionDAO</tt> implementation defaults to a
-     * {@link org.jsecurity.cache.support.HashtableCacheProvider HashtableCacheProvider} 
+     * {@link org.jsecurity.cache.HashtableCacheProvider HashtableCacheProvider}
      * (the <tt>HashtableCacheProvider</tt> is NOT RECOMMENDED for production environments).
      *
      * @return a lazily created SessionDAO instance that this SessionManager will use for all Session EIS operations.

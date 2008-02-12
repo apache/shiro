@@ -34,7 +34,7 @@ import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.support.HashtableCacheProvider;
+import org.jsecurity.cache.HashtableCacheProvider;
 import org.jsecurity.realm.support.AuthenticatingRealm;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
