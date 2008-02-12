@@ -177,28 +177,6 @@ public class DelegatingSecurityContext implements SecurityContext {
         return this.principals;
     }
 
-    /** @see org.jsecurity.context.SecurityContext#getAllPrincipals() */
-    public List getAllPrincipals() {
-        assertValid();
-        List list;
-        if ( this.principals instanceof Collection ) {
-            if ( this.principals instanceof List ) {
-                list = (List)this.principals;
-            } else {
-                //noinspection unchecked
-                list = new ArrayList( (Collection)this.principals );
-            }
-        } else {
-            list = new ArrayList();
-            if ( this.principals != null ) {
-                //noinspection unchecked
-                list.add( this.principals );
-            }
-        }
-
-        return list;
-    }
-
     /** @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) () */
     public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
@@ -321,10 +299,14 @@ public class DelegatingSecurityContext implements SecurityContext {
     public void login(AuthenticationToken token) throws AuthenticationException {
         assertValid();
         SecurityContext authcSecCtx = securityManager.login(token);
-        List principals = authcSecCtx.getAllPrincipals();
-        if (principals == null || principals.isEmpty()) {
-            String msg = "Principals collection returned from securityManager.login( token ) returned " +
-                "is null or empty.  This collection must be populated - please check the SecurityManager " +
+        Object principals = authcSecCtx.getPrincipal();
+        if ( principals instanceof Collection && ((Collection)principals).isEmpty() ) {
+            principals = null;
+        }
+        if (principals == null ) {
+            String msg = "Principals returned from securityManager.login( token ) returned a null or " +
+                    "empty value.  This value must be non null, and if a collection, the collection must " +
+                    "be populated with one or more elements.  Please check the SecurityManager " +
                 "implementation to ensure this happens after a successful login attempt.";
             throw new IllegalStateException(msg);
         }

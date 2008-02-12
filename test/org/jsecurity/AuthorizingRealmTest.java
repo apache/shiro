@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -80,7 +81,8 @@ public class AuthorizingRealmTest {
         SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
-        assertTrue(secCtx.getAllPrincipals().size() == 3);
+        Object principals = secCtx.getPrincipal();
+        assertTrue(principals instanceof Collection && ((Collection)principals).size() == 3);
 
         UsernamePrincipal usernamePrincipal = (UsernamePrincipal) secCtx.getPrincipalByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
@@ -113,7 +115,6 @@ public class AuthorizingRealmTest {
         SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
-        assertTrue(secCtx.getAllPrincipals().size() == 1);
         assertTrue( (secCtx.getPrincipal() instanceof CustomUsernamePrincipal) );
         assertEquals( USERNAME, ((CustomUsernamePrincipal) secCtx.getPrincipal()).getUsername() );
 
