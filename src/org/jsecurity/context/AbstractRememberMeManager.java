@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context.support;
+package org.jsecurity.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

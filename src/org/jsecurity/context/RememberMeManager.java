@@ -1,4 +1,4 @@
-package org.jsecurity.context.support;
+package org.jsecurity.context;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
