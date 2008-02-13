@@ -22,14 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.event.support;
+package org.jsecurity.authc.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.event.AuthenticationEvent;
-import org.jsecurity.authc.event.AuthenticationEventListener;
-import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
-import org.jsecurity.authc.event.AuthenticationEventSender;
 
 import java.util.ArrayList;
 import java.util.Collection;

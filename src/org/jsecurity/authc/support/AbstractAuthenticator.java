@@ -31,8 +31,6 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.*;
-import org.jsecurity.authc.event.support.SimpleAuthenticationEventFactory;
-import org.jsecurity.authc.event.support.SimpleAuthenticationEventSender;
 import org.jsecurity.util.Initializable;
 
 /**

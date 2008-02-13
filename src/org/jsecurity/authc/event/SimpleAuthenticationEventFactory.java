@@ -22,15 +22,11 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.event.support;
+package org.jsecurity.authc.event;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.event.AuthenticationEvent;
-import org.jsecurity.authc.event.AuthenticationEventFactory;
-import org.jsecurity.authc.event.FailedAuthenticationEvent;
-import org.jsecurity.authc.event.SuccessfulAuthenticationEvent;
 
 /**
  * Simple principal-based implementation of the AuthenticationEventFactory interface.
