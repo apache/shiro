@@ -29,8 +29,8 @@ import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.support.eis.MemorySessionDAO;
 import org.jsecurity.session.support.eis.SessionDAO;
-import org.jsecurity.session.support.eis.support.MemorySessionDAO;
 import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.util.Destroyable;
 

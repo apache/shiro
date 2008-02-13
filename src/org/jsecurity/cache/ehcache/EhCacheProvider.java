@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.session.support.eis.support.CachingSessionDAO;
+import org.jsecurity.session.support.eis.CachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 
