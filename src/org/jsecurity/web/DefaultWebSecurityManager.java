@@ -2,6 +2,7 @@ package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
@@ -34,8 +35,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     private String sessionMode = HTTP_SESSION_MODE; //default
 
-    public void init() {
-        super.init();
+    public DefaultWebSecurityManager() {
+        super();
+    }
+
+    public DefaultWebSecurityManager(Realm singleRealm) {
+        super(singleRealm);
+    }
+
+    public DefaultWebSecurityManager(Collection<Realm> realms) {
+        super(realms);
+    }
+
+    protected void afterSessionFactorySet() {
         setRememberMeManager(new DefaultWebRememberMeManager());
     }
 
