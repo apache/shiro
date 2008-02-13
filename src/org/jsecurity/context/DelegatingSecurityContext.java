@@ -324,7 +324,6 @@ public class DelegatingSecurityContext implements SecurityContext {
         if (isInvalidated()) {
             return;
         }
-        setInvalidated(true);
 
         Session s = getSession(false);
         if (s != null) {
@@ -339,7 +338,12 @@ public class DelegatingSecurityContext implements SecurityContext {
             }
         }
 
-        this.securityManager.logout(getPrincipal());
+        try {
+            this.securityManager.logout(getPrincipal());
+        } finally {
+            setInvalidated( true );
+        }
+
         this.session = null;
         this.principals = new ArrayList();
         this.authenticated = false;
