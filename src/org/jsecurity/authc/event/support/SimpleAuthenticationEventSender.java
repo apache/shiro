@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventListener;
+import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
 import org.jsecurity.authc.event.AuthenticationEventSender;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ import java.util.List;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SimpleAuthenticationEventSender implements AuthenticationEventSender {
+public class SimpleAuthenticationEventSender implements AuthenticationEventSender, AuthenticationEventListenerRegistrar {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -59,6 +60,34 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
             throw new IllegalArgumentException( msg );
         }
         this.listeners = listeners;
+    }
+
+    protected List<AuthenticationEventListener> getListenersLazy() {
+        List<AuthenticationEventListener> listeners = getListeners();
+        if ( listeners == null ) {
+            listeners = new ArrayList<AuthenticationEventListener>();
+            setListeners( listeners );
+        }
+        return listeners;
+    }
+
+    public List<AuthenticationEventListener> getListeners() {
+        return listeners;
+    }
+
+    public void add(AuthenticationEventListener listener) {
+        getListenersLazy().add( listener );
+    }
+
+    public boolean remove(AuthenticationEventListener listener) {
+        boolean removed = false;
+        if ( listener != null ) {
+            List<AuthenticationEventListener> listeners = getListeners();
+            if ( listeners != null ) {
+                removed = listeners.remove( listener );
+            }
+        }
+        return removed;
     }
 
     /**
@@ -95,16 +124,4 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
             listeners.add( listener );
         }
     }
-
-    /**
-     * Removes the specified <tt>AuthenticationEventListener</tt> from the internal collection of
-     * <tt>AuthenticationEvent</tt> listeners.
-     * @param listener the listener to remove from receiving AuthenticationEvents.
-     */
-    public void removeListener( AuthenticationEventListener listener ) {
-        if ( listener != null ) {
-            listeners.remove( listener );
-        }
-    }
-
 }

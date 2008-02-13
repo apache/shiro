@@ -30,10 +30,9 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authc.event.AuthenticationEvent;
-import org.jsecurity.authc.event.AuthenticationEventFactory;
-import org.jsecurity.authc.event.AuthenticationEventSender;
+import org.jsecurity.authc.event.*;
 import org.jsecurity.authc.event.support.SimpleAuthenticationEventFactory;
+import org.jsecurity.authc.event.support.SimpleAuthenticationEventSender;
 import org.jsecurity.util.Initializable;
 
 /**
@@ -67,7 +66,7 @@ import org.jsecurity.util.Initializable;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public abstract class AbstractAuthenticator implements Authenticator, Initializable {
+public abstract class AbstractAuthenticator implements Authenticator, AuthenticationEventListenerRegistrar, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -144,6 +143,43 @@ public abstract class AbstractAuthenticator implements Authenticator, Initializa
      */
     public void setAuthenticationEventSender( AuthenticationEventSender authcEventSender ) {
         this.authcEventSender = authcEventSender;
+    }
+
+    protected AuthenticationEventSender createAuthenticationEventSender() {
+        return new SimpleAuthenticationEventSender();
+    }
+
+    protected AuthenticationEventSender ensureAuthenticationEventSender() {
+        AuthenticationEventSender sender = getAuthenticationEventSender();
+        if ( sender == null ) {
+            sender = createAuthenticationEventSender();
+            setAuthenticationEventSender( sender );
+        }
+        return sender;
+    }
+
+   private void assertSenderCanRegister() {
+       AuthenticationEventSender sender = getAuthenticationEventSender();
+       if ( !(sender instanceof AuthenticationEventListenerRegistrar) ) {
+           String msg = "The underlying AuthenticationEventSender implementation [" +
+                    sender.getClass().getName() + "] does not implement the " +
+                    AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore " +
+               "AuthenticationEvents cannot be propagated to registered listeners.  Please ensure this " +
+               "Authenticator instance is injected with an AuthenticationEventSender that supports this interface " +
+               "if you wish to register for AuthenticationEvents.";
+            throw new IllegalStateException(msg);
+       }
+    }
+
+    public void add(AuthenticationEventListener listener) {
+        assertSenderCanRegister();
+        ((AuthenticationEventListenerRegistrar)getAuthenticationEventSender()).add(listener);
+    }
+
+    public boolean remove(AuthenticationEventListener listener) {
+        AuthenticationEventSender sender = getAuthenticationEventSender();
+        return ( sender instanceof AuthenticationEventListenerRegistrar ) &&
+               ((AuthenticationEventListenerRegistrar)sender).remove(listener);
     }
 
     /**

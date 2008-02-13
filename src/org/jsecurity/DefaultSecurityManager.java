@@ -27,6 +27,8 @@ package org.jsecurity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
+import org.jsecurity.authc.event.AuthenticationEventListener;
+import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
 import org.jsecurity.authc.support.ModularRealmAuthenticator;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
@@ -87,7 +89,8 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.2
  */
-public class DefaultSecurityManager implements SecurityManager, SessionEventListenerRegistrar, CacheProviderAware, Initializable, Destroyable {
+public class DefaultSecurityManager implements SecurityManager, SessionEventListenerRegistrar,
+    AuthenticationEventListenerRegistrar, CacheProviderAware, Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -102,13 +105,14 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
 
     protected Authenticator authenticator;
     private boolean authenticatorImplicitlyCreated = false;
+    private Collection<AuthenticationEventListener> authenticationEventListeners = null;
 
     protected Authorizer authorizer = null;
     private boolean authorizerImplicitlyCreated = false;
 
     protected SessionFactory sessionFactory;
     private boolean sessionFactoryImplicitlyCreated = false;
-    private boolean lazySessions = true;
+    protected Collection<SessionEventListener> sessionEventListeners = null;
 
     protected RememberMeManager rememberMeManager = null;
 
@@ -161,6 +165,43 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         return this.authenticator;
     }
 
+    public Collection<AuthenticationEventListener> getAuthenticationEventListeners() {
+        return authenticationEventListeners;
+    }
+
+    /**
+     * This is a convenience method that allows registration of AuthenticationEventListeners with the underlying
+     * delegate Authenticator instance at startup.
+     *
+     * <p>This is more convenient than having to configure your own Authenticator instance, inject the listeners on
+     * it, and then set that Authenticator instance as an attribute of this class.  Instead, you can just rely
+     * on the <tt>SecurityManager</tt>'s default initialization logic to create the Authenticator instance for you
+     * and then apply these <tt>AuthenticationEventListener</tt>s on your behalf.
+     *
+     * <p>One notice however: The underlying Authenticator delegate must implement the
+     * {@link AuthenticationEventListenerRegistrar AuthenticationEventListenerRegistrar} interface in order for these
+     * listeners to be applied.  If it does not implement this interface, it is considered a configuration error and
+     * an exception will be thrown during {@link #init() initialization}.
+     *
+     * @param listeners the <tt>AuthenticationEventListener</tt>s to register with the underlying delegate
+     * <tt>Authenticator</tt> at startup.
+     */
+    public void setAuthenticationEventListeners(Collection<AuthenticationEventListener> listeners) {
+        this.authenticationEventListeners = listeners;
+    }
+
+    public void add(AuthenticationEventListener listener) {
+        Authenticator authc = getRequiredAuthenticator();
+        assertAuthenticatorEventListenerSupport(authc);
+        ((AuthenticationEventListenerRegistrar)authc).add(listener);
+    }
+
+    public boolean remove(AuthenticationEventListener listener) {
+        Authenticator authc = this.authenticator;
+        return (authc instanceof AuthenticationEventListenerRegistrar) &&
+            ((AuthenticationEventListenerRegistrar)authc).remove(listener);
+    }
+
     public void setAuthorizer(Authorizer authorizer) {
         this.authorizer = authorizer;
     }
@@ -177,13 +218,13 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     /**
      * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
      * manager's {@link #start} and {@link #getSession} calls.
-     * <p/>
+     *
      * <p>This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
      * <tt>SessionFactory</tt> interface, but instead delegates these calls to an internal
      * <tt>SessionFactory</tt> instance.
-     * <p/>
+     *
      * <p>If a <tt>SessionFactory</tt> instance is not set, a default one will be automatically created and
-     * initialized based on the {@link #isLazySessions() lazySessions} property.
+     * initialized appropriately for the the existing runtime environment.
      *
      * @param sessionFactory delegate instance to use to support this manager's {@link #start} and {@link #getSession}
      *                       implementations.
@@ -203,10 +244,35 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         return this.sessionFactory;
     }
 
+    public Collection<SessionEventListener> getSessionEventListeners() {
+        return sessionEventListeners;
+    }
+
+    /**
+     * This is a convenience method that allows registration of SessionEventListeners with the underlying delegate
+     * SessionFactory at startup.
+     *
+     * <p>This is more convenient than having to configure your own SessionFactory instance, inject the listeners on
+     * it, and then set that SessionFactory instance as an attribute of this class.  Instead, you can just rely
+     * on the <tt>SecurityManager</tt>'s default initialization logic to create the SessionFactory instance for you
+     * and then apply these <tt>SessionEventListener</tt>s on your behalf.
+     *
+     * <p>One notice however: The underlying SessionFactory delegate must implement the
+     * {@link SessionEventListenerRegistrar SessionEventListenerRegistrar} interface in order for these listeners to
+     * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
+     * will be thrown during {@link #init() initialization}.
+     *
+     * @param sessionEventListeners the <tt>SessionEventListener</tt>s to register with the underlying delegate
+     * <tt>SessionFactory</tt> at startup.
+     */
+    public void setSessionEventListeners(Collection<SessionEventListener> sessionEventListeners) {
+        this.sessionEventListeners = sessionEventListeners;
+    }
+
     public void add(SessionEventListener listener) {
         ensureSessionFactory();
         assertSessionFactoryEventListenerSupport(this.sessionFactory);
-        ((SessionEventListenerRegistrar) this.sessionFactory).add(listener);
+        ((SessionEventListenerRegistrar)this.sessionFactory).add(listener);
     }
 
     public boolean remove(SessionEventListener listener) {
@@ -259,44 +325,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         this.cacheProvider = cacheProvider;
     }
 
-    /**
-     * Returns whether or not the SessionFactory infrastructure will be lazily initialized upon the first session
-     * request.  If this returns <tt>true</tt>, the SessionFactory infrastructure will not be initialized until the
-     * first request for a session occurs.  If <tt>false</tt>, the SessionFactory infrastructure will be
-     * eagerly initialized when this SecurityManager instance is initialized.
-     * <p/>
-     * <p>The default value is <strong><tt>true</tt></strong> to slightly increase application startup times and
-     * reduce overhead when not using Sessions.  If you require JSecurity Sessions in your app (as would be the
-     * case when not a pure web-app or Session state must be accessible by many clients) it is usually better to set
-     * this value to <tt>false</tt> to eagerly initialize, ensuring initial session access will be fast and any
-     * configuration settings will be verified on application startup instead of being discovered at a later point.
-     *
-     * @return <tt>true</tt> if the SessionFactory infrastructure will be lazily initialized based on the first
-     *         request for a session, <tt>false</tt> if it will be eagerly initialized at the same time as this SecurityManager.
-     */
-    public boolean isLazySessions() {
-        return lazySessions;
-    }
-
-    /**
-     * Sets whether or not the SessionFactory infrastructure will be lazily initialized upon the first session
-     * request.  If this value is <tt>true</tt>, the SessionFactory infrastructure will not be initialized until the
-     * first request for a session occurs.  If <tt>false</tt>, the SessionFactory infrastructure will be
-     * eagerly initialized when this SecurityManager instance is initialized.
-     * <p/>
-     * <p>The default value is <strong><tt>true</tt></strong> to slightly increase application startup times and
-     * reduce overhead when not using Sessions.  If you require JSecurity Sessions in your app (as would be the
-     * case when not a pure web-app or Session state must be accessible by many clients) it is usually better to set
-     * this value to <tt>false</tt> to eagerly initialize, ensuring initial session access will be fast and any
-     * configuration settings will be verified on application startup instead of being discovered at a later point.
-     *
-     * @param lazySessions value indicating if the SessionFactory infrastructure will be lazily initialized
-     *                     (value of true) or eagerly initialized (value of false)
-     */
-    public void setLazySessions(boolean lazySessions) {
-        this.lazySessions = lazySessions;
-    }
-
     public RememberMeManager getRememberMeManager() {
         return rememberMeManager;
     }
@@ -305,7 +333,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         this.rememberMeManager = rememberMeManager;
     }
 
-   /*--------------------------------------------
+    /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
     protected CacheProvider createCacheProvider() {
@@ -402,6 +430,16 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
+    private void assertAuthenticatorEventListenerSupport(Authenticator authc) {
+        if (!(authc instanceof AuthenticationEventListenerRegistrar)) {
+            String msg = "AuthenticationEventListener registration failed:  The underlying Authenticator instance of " +
+                "type [" + authc.getClass().getName() + "] does not implement the " +
+                AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                "runtime AuthenticationEvent propagation.";
+            throw new IllegalStateException(msg);
+        }
+    }
+
     protected SessionFactory createSessionFactory() {
         DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
         sessionFactory.setCacheProvider(getCacheProvider());
@@ -421,20 +459,68 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
+    protected void registerAnyAuthenticationEventListeners() {
+        Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
+        if ( listeners != null ) {
+            if ( listeners.isEmpty() ) {
+                String msg = "AuthenticationEventListeners collection property was configured, but the collection does " +
+                    "not contain any AuthenticationEventListener objects.  This is considered a configuration error.  " +
+                    "If you do not have any listener instances, do not set the property with an empty collection.";
+                throw new IllegalStateException(msg);
+            }
+            for( AuthenticationEventListener listener : listeners ) {
+                add(listener);
+            }
+        }
+    }
+
+    protected void deregisterAnyAuthenticationEventListeners() {
+        Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
+        if ( listeners != null && !listeners.isEmpty() ) {
+            for( AuthenticationEventListener listener : listeners ) {
+                remove( listener );
+            }
+        }
+    }
+
+    protected void registerAnySessionEventListeners() {
+        Collection<SessionEventListener> listeners = getSessionEventListeners();
+        if ( listeners != null ) {
+            if ( listeners.isEmpty() ) {
+                String msg = "SessionEventListeners collection property was configured, but the collection does " +
+                    "not contain any SessionEventListener objects.  This is considered a configuration error.  " +
+                    "If you do not have any listener instances, do not set the property with an empty collection.";
+                throw new IllegalStateException(msg);
+            }
+            for( SessionEventListener listener : listeners ) {
+                add(listener);
+            }
+        }
+    }
+
+    protected void deregisterAnySessionEventListeners() {
+        Collection<SessionEventListener> listeners = getSessionEventListeners();
+        if ( listeners != null && !listeners.isEmpty() ) {
+            for( SessionEventListener listener : listeners ) {
+                remove( listener );
+            }
+        }
+    }
+
     public void init() {
         ensureCacheProvider();
         ensureRealms();
         ensureAuthenticator();
+        registerAnyAuthenticationEventListeners();
         ensureAuthorizer();
-        if (!isLazySessions()) {
-            //start SessionFactory infrastructure now
-            ensureSessionFactory();
-        }
+        ensureSessionFactory();
+        registerAnySessionEventListeners();
         //TODO - remove before 1.0 final
-        SecurityUtils.setSecurityManager( this );
+        SecurityUtils.setSecurityManager(this);
     }
 
     public void destroy() {
+        deregisterAnySessionEventListeners();
         if (sessionFactoryImplicitlyCreated) {
             LifecycleUtils.destroy(sessionFactory);
             sessionFactory = null;
@@ -445,6 +531,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
             authorizer = null;
             authorizerImplicitlyCreated = false;
         }
+        deregisterAnyAuthenticationEventListeners();
         if (authenticatorImplicitlyCreated) {
             LifecycleUtils.destroy(authenticator);
             authenticator = null;
@@ -463,7 +550,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
             cacheProviderImplicitlyCreated = false;
         }
         //TODO - remove before 1.0 final:
-        SecurityUtils.setSecurityManager( null );
+        SecurityUtils.setSecurityManager(null);
     }
 
     /** Delegates to the authenticator for authentication. */
@@ -529,24 +616,24 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
 
     protected SecurityContext createSecurityContext() {
         Object principals = getRememberedIdentity();
-        return createSecurityContext( principals );
+        return createSecurityContext(principals);
     }
 
-    protected SecurityContext createSecurityContext( Object subjectPrincipals ) {
-        return createSecurityContext( subjectPrincipals, null );
+    protected SecurityContext createSecurityContext(Object subjectPrincipals) {
+        return createSecurityContext(subjectPrincipals, null);
     }
 
-    protected SecurityContext createSecurityContext( Object principals, Session existing ) {
-        return createSecurityContext( principals, existing, false );
+    protected SecurityContext createSecurityContext(Object principals, Session existing) {
+        return createSecurityContext(principals, existing, false);
     }
 
-    protected SecurityContext createSecurityContext( Object principals, Session existing, boolean authenticated ) {
-        return createSecurityContext( principals, existing, authenticated, getLocalHost() );
+    protected SecurityContext createSecurityContext(Object principals, Session existing, boolean authenticated) {
+        return createSecurityContext(principals, existing, authenticated, getLocalHost());
     }
 
-    protected SecurityContext createSecurityContext( Object principals, Session existing,
-                                                     boolean authenticated, InetAddress inetAddress ) {
-        return new DelegatingSecurityContext( principals, authenticated, inetAddress, existing, this );
+    protected SecurityContext createSecurityContext(Object principals, Session existing,
+                                                    boolean authenticated, InetAddress inetAddress) {
+        return new DelegatingSecurityContext(principals, authenticated, inetAddress, existing, this);
     }
 
     /**
@@ -579,7 +666,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
             authcSourceIP = getLocalHost();
         }
 
-        return createSecurityContext( account.getPrincipals(), session,  true, authcSourceIP );
+        return createSecurityContext(account.getPrincipals(), session, true, authcSourceIP);
     }
 
     /**
@@ -607,55 +694,55 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         }
     }
 
-    protected void rememberMeSuccessfulLogin( AuthenticationToken token, Account account ) {
+    protected void rememberMeSuccessfulLogin(AuthenticationToken token, Account account) {
         RememberMeManager rmm = getRememberMeManager();
-        if ( rmm != null ) {
+        if (rmm != null) {
             try {
-                rmm.onSuccessfulLogin( token, account );
+                rmm.onSuccessfulLogin(token, account);
             } catch (Exception e) {
-                if ( log.isWarnEnabled() ) {
+                if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
                         "] threw an exception during onSuccessfulLogin.  RememberMe services will not be " +
                         "performed for Account [" + account + "].";
-                    log.warn( msg, e );
+                    log.warn(msg, e);
                 }
             }
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "This " + getClass().getName() + " instance does not have a " +
+            if (log.isDebugEnabled()) {
+                log.debug("This " + getClass().getName() + " instance does not have a " +
                     "[" + RememberMeManager.class.getName() + "] instance configured.  RememberMe services " +
-                    "will not be performed for account [" + account + "]." );
+                    "will not be performed for account [" + account + "].");
             }
         }
     }
 
-    protected void rememberMeFailedLogin( AuthenticationToken token, AuthenticationException ex ) {
+    protected void rememberMeFailedLogin(AuthenticationToken token, AuthenticationException ex) {
         RememberMeManager rmm = getRememberMeManager();
-        if ( rmm != null ) {
+        if (rmm != null) {
             try {
-                rmm.onFailedLogin( token, ex );
+                rmm.onFailedLogin(token, ex);
             } catch (Exception e) {
-                if ( log.isWarnEnabled() ) {
+                if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
                         "] threw an exception during onFailedLogin for AuthenticationToken [" +
-                    token + "].";
-                    log.warn( msg, e );
+                        token + "].";
+                    log.warn(msg, e);
                 }
             }
         }
     }
 
-    protected void rememberMeLogout( Object subjectPrincipals ) {
+    protected void rememberMeLogout(Object subjectPrincipals) {
         RememberMeManager rmm = getRememberMeManager();
-        if ( rmm != null ) {
+        if (rmm != null) {
             try {
-                rmm.onLogout( subjectPrincipals );
+                rmm.onLogout(subjectPrincipals);
             } catch (Exception e) {
-                if ( log.isWarnEnabled() ) {
+                if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
                         "] threw an exception during onLogout for subject with principals [" +
-                    subjectPrincipals + "]";
-                    log.warn( msg, e );
+                        subjectPrincipals + "]";
+                    log.warn(msg, e);
                 }
             }
         }
@@ -676,9 +763,9 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         Account account;
         try {
             account = authenticate(token);
-            rememberMeSuccessfulLogin( token, account );
+            rememberMeSuccessfulLogin(token, account);
         } catch (AuthenticationException ae) {
-            rememberMeFailedLogin( token, ae );
+            rememberMeFailedLogin(token, ae);
             throw ae; //propagate
         }
         SecurityContext secCtx = createSecurityContext(token, account);
@@ -688,7 +775,7 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     }
 
     public void logout(Object subjectIdentifier) {
-        rememberMeLogout( subjectIdentifier );
+        rememberMeLogout(subjectIdentifier);
         //Method arg is ignored - get the SecurityContext from the environment if it exists:
         SecurityContext sc = getSecurityContext(false);
         if (sc != null) {
@@ -717,14 +804,14 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
 
     protected Object getRememberedIdentity() {
         RememberMeManager rmm = getRememberMeManager();
-        if ( rmm != null ) {
+        if (rmm != null) {
             try {
                 return rmm.getRememberedIdentity();
             } catch (Exception e) {
-                if ( log.isWarnEnabled() ) {
+                if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
                         "] threw an exception during getRememberedIdentity().";
-                    log.warn( msg, e );
+                    log.warn(msg, e);
                 }
             }
         }
