@@ -85,7 +85,7 @@ public class ActiveDirectoryRealmTest {
 
         assertTrue(realm.hasRole(userIdPrincipal, ROLE));
 
-        secCtx.invalidate();
+        secCtx.logout();
     }
 
     public class TestActiveDirectoryRealm extends ActiveDirectoryRealm {

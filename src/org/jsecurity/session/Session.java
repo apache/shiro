@@ -198,9 +198,9 @@ public interface Session {
      * considered a graceful operation.
      *
      * <p><b>N.B.</b> Under most applications' circumstances, it is usually far better to stop the session implicitly
-     * by invalidating the 'owning' <tt>SecurityContext</tt> instead.  This is done by calling the
-     * {@link org.jsecurity.context.SecurityContext#invalidate SecurityContext#invalidate} method, since
-     * <tt>invalidate</tt> is expected to stop the corresponding session automatically, and also allows the framework
+     * by logging-out the 'owning' <tt>SecurityContext</tt> instead.  This is done by calling the
+     * {@link org.jsecurity.context.SecurityContext#logout SecurityContext#logout} method, since
+     * <tt>logout</tt> is expected to stop the corresponding session automatically, and also allows the framework
      * to do any other additional cleanup.
      *
      * @throws InvalidSessionException if this session has stopped or expired prior to calling

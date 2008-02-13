@@ -33,6 +33,7 @@ import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.LifecycleUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -69,12 +70,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * principals.
      */
     private Cache authorizationInfoCache = null;
-
-    /**
-     * Internally tracks whether or not the authorization cache was created implicitly, so that the realm knows
-     * whether or not to destroy the cache when the realm is destroyed.
-     */
-    private boolean authzInfoCacheCreatedImplicitly = false;
 
     /**
      * The postfix appended to the realm name used to create the name of the authorization cache.
@@ -173,7 +168,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                     }
                     cache = cacheProvider.buildCache( cacheName );
                     setAuthorizationInfoCache( cache );
-                    authzInfoCacheCreatedImplicitly = true;
                 } else {
                     if ( log.isInfoEnabled() ) {
                         log.info( "No cache or cacheProvider properties have been set.  AuthorizationInfo caching is " +
@@ -199,17 +193,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     protected void onInit(){}
 
     /**
-     * Cleans up this realm's implicitly created cache.  If the cache was not created implicitly (i.e. it was set
-     * explicitly via the {@link #setAuthorizationInfoCache} method, that cache is expected to be explicitly cleaned
-     * up by the caller as well.
+     * Cleans up this realm's cache.
      */
     public void destroy() {
-        if( authorizationInfoCache != null && authzInfoCacheCreatedImplicitly ) {
-            if (log.isDebugEnabled()) {
-                log.debug("Destroying authorization info cache for realm [" + getName() + "]");
-            }
-            authorizationInfoCache.destroy();
-        }
+        LifecycleUtils.destroy( authorizationInfoCache );
+        this.authorizationInfoCache = null;
     }
 
     /**

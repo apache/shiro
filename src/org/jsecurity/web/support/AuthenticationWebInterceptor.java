@@ -185,7 +185,7 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
         this.excludedPaths.add( excludedPath );
     }
 
-    public void init() throws Exception {
+    public void init() {
         if ( getRedirectUrl() == null ) {
             String msg = "redirectUrl property must be set";
             throw new IllegalArgumentException( msg );

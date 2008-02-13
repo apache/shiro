@@ -42,8 +42,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
     protected transient final Log log = LogFactory.getLog(getClass());
 
     private Serializer serializer = null;
-    private boolean serializerImplicitlyCreated = false;
-
     private Cipher cipher = null;
 
     public AbstractRememberMeManager() {
@@ -80,7 +78,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
         if (serializer == null) {
             serializer = new XmlSerializer();
             setSerializer(serializer);
-            this.serializerImplicitlyCreated = true;
         }
     }
 
@@ -93,10 +90,10 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
     }
 
     public void destroy() throws Exception {
-        if (this.serializerImplicitlyCreated) {
-            LifecycleUtils.destroy(getSerializer());
-            this.serializerImplicitlyCreated = false;
-        }
+        LifecycleUtils.destroy(getSerializer());
+        setSerializer(null);
+        LifecycleUtils.destroy(getCipher());
+        setCipher(null);
     }
 
     protected boolean isRememberMe(AuthenticationToken token) {

@@ -239,11 +239,9 @@ public interface SecurityContext {
     Session getSession( boolean create );
 
     /**
-     * Invalidates and removes any entities (such as a {@link Session Session} and authorization
-     * data associated with this <tt>SecurityContext</tt>.
-     *
-     * @see #getSession
+     * Logs out this Subject and invalidates and/or removes any associated entities
+     * (such as a {@link Session Session} and authorization data.
      */
-    void invalidate();
+    void logout();
 
 }

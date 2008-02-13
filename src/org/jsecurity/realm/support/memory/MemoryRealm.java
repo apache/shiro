@@ -32,12 +32,12 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.HashtableCacheProvider;
 import org.jsecurity.realm.support.AuthenticatingRealm;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.util.PermissionUtils;
 
 import java.util.*;
@@ -84,8 +84,6 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     ============================================*/
     protected Cache userCache = null;
     protected Cache roleCache = null;
-
-    private boolean cacheProviderImplicitlyCreated = true;
 
     private Map<String,String> userDefinitions = null;
     private Map<String,String> roleDefinitions = null;
@@ -339,7 +337,6 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         if ( provider == null ) {
             provider = new HashtableCacheProvider();
             setCacheProvider( provider );
-            this.cacheProviderImplicitlyCreated = true;
         }
 
         this.userCache = provider.buildCache( getClass().getName() + ".users" );
@@ -349,40 +346,14 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         processRoleDefinitions();
     }
 
-    protected void destroy( Cache cache ) {
-        if ( cache != null ) {
-            try {
-                cache.clear();
-            } catch ( Throwable t ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "Unable to cleanly clear cache [" + cache + "].  Ignoring (shutting down)." );
-                }
-            }
-            try {
-                cache.destroy();
-            } catch ( CacheException e ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "Unable to cleanly destroy cache [" + cache + "].  Ignoring (shutting down)." );
-                }
-            }
-
-        }
-    }
 
     public void destroy() throws Exception {
-        destroy( userCache );
-        destroy( roleCache );
-        if ( this.cacheProviderImplicitlyCreated ) {
-            if ( getCacheProvider() instanceof Destroyable ) {
-                try {
-                    ( (Destroyable)getCacheProvider() ).destroy();
-                } catch ( Exception e ) {
-                    if ( log.isInfoEnabled() ) {
-                        log.info( "Unable to cleanly destroy implicitly created CacheProvider.  Ignoring (shutting down)" );
-                    }
-                }
-            }
-        }
+        LifecycleUtils.destroy(userCache);
+        this.userCache = null;
+        LifecycleUtils.destroy(roleCache);
+        this.roleCache = null;
+        LifecycleUtils.destroy(getCacheProvider());
+        setCacheProvider(null);
     }
 
     protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {

@@ -43,6 +43,6 @@ public class DefaultSecurityManagerTest {
         assert "guest".equals( secCtx.getPrincipal() );        
         assert secCtx.hasRole( "guest" );
         Session session = secCtx.getSession();
-        secCtx.invalidate();
+        secCtx.logout();
     }
 }

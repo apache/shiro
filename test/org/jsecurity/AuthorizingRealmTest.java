@@ -94,7 +94,7 @@ public class AuthorizingRealmTest {
         assertTrue(stringPrincipal.equals(USER_ID + USERNAME));
 
 
-        secCtx.invalidate();
+        secCtx.logout();
     }
 
     @Test

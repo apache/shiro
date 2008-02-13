@@ -33,6 +33,7 @@ import org.jsecurity.session.support.eis.MemorySessionDAO;
 import org.jsecurity.session.support.eis.SessionDAO;
 import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.util.Destroyable;
+import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -68,11 +69,8 @@ public class DefaultSessionManager extends AbstractSessionManager
      * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
     protected SessionValidationScheduler sessionValidationScheduler = null;
-    private boolean sessionValidationSchedulerImplicitlyCreated = false;
 
     protected CacheProvider cacheProvider = null;
-
-    private boolean sessionDAOImplicitlyCreated = false;
 
     protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
     protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
@@ -185,8 +183,6 @@ public class DefaultSessionManager extends AbstractSessionManager
 
         dao.init();
 
-        this.sessionDAOImplicitlyCreated = true;
-
         return dao;
     }
 
@@ -201,7 +197,6 @@ public class DefaultSessionManager extends AbstractSessionManager
         if ( log.isTraceEnabled() ) {
             log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
         }
-        this.sessionValidationSchedulerImplicitlyCreated = true;
         return scheduler;
     }
 
@@ -228,9 +223,8 @@ public class DefaultSessionManager extends AbstractSessionManager
                     log.debug( msg, e );
                 }
             }
-            if ( sessionValidationSchedulerImplicitlyCreated ) {
-                destroy( scheduler );
-            }
+            LifecycleUtils.destroy(scheduler);
+            setSessionValidationScheduler(null);
         }
     }
 
@@ -252,23 +246,8 @@ public class DefaultSessionManager extends AbstractSessionManager
     }
 
     protected void destroySessionDAO() {
-        if ( sessionDAOImplicitlyCreated ) {
-            destroy( getSessionDAO() );
-        }
-    }
-
-    protected void destroy( Object o ) {
-        if ( o instanceof Destroyable ) {
-            try {
-                ((Destroyable)o).destroy();
-            } catch ( Exception e ) {
-                if ( log.isDebugEnabled() ) {
-                    String msg = "Unable to cleanly destroy Destroyable object of type [" + o.getClass().getName() +
-                        "].  Ignoring (shutting down).";
-                    log.debug( msg, e );
-                }
-            }
-        }
+        LifecycleUtils.destroy( getSessionDAO() );
+        setSessionDAO(null);
     }
 
     public void destroy() {

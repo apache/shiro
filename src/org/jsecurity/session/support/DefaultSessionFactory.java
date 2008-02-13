@@ -66,8 +66,6 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
     protected final transient Log log = LogFactory.getLog(getClass());
 
     protected SessionManager sessionManager = null;
-    private boolean sessionManagerImplicitlyCreated = false;
-
     protected CacheProvider cacheProvider;
 
     public DefaultSessionFactory() {
@@ -123,7 +121,6 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
                         "Defaulting to the default SessionManager implementation.");
             }
             SessionManager sessionManager = createSessionManager();
-            sessionManagerImplicitlyCreated = true;
             setSessionManager(sessionManager);
         } else {
             if (log.isDebugEnabled()) {
@@ -137,11 +134,8 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
     }
 
     public void destroy() {
-        if ( this.sessionManagerImplicitlyCreated ) {
-            LifecycleUtils.destroy( this.sessionManager );
-            this.sessionManager = null;
-            this.sessionManagerImplicitlyCreated = false;
-        }
+        LifecycleUtils.destroy(this.sessionManager);
+        this.sessionManager = null;
     }
 
     public Session start(InetAddress hostAddress)
