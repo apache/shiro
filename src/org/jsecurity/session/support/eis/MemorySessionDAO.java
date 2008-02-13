@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support.eis.support;
+package org.jsecurity.session.support.eis;
 
 import org.jsecurity.cache.HashtableCacheProvider;
 import org.jsecurity.session.Session;
