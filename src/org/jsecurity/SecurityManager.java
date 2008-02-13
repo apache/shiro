@@ -32,16 +32,29 @@ import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.SessionFactory;
 
 /**
- * A <tt>SecurityManager</tt> is a convenience mechanism - it extends the {@link Authenticator},
- * {@link Authorizer}, and {@link SessionFactory} interfaces, thereby consolidating
- * these behaviors into a single interface.  This allows applications to interact with a single
- * <tt>SecurityManager</tt> component for all JSecurity operations.
+ * A <tt>SecurityManager</tt> executes all security operations for <em>all</em> Subjects (aka users) across a
+ * single application.
  *
- * <p>In addition to the above the interfaces, two unique methods are provided by this interface,
- * {@link #login} and {@link #getSecurityContext}.  A SecurityContext is an encompassing component that utilizes
- * authentication, authorization, and session operations for a single Subject, and as such can only be managed by
- * <tt>A SecurityManager</tt> which is aware of all three operations (the 3 parent interfaces on the other hand
- * do not know of all operations to ensure a clean separation of concerns).
+ * <p>The interface itself primarily exists as a convenience - it extends the {@link Authenticator},
+ * {@link Authorizer}, and {@link SessionFactory} interfaces, thereby consolidating
+ * these behaviors into a single point of reference.  But for most JSecurity usages, this simplifies configuration and
+ * tends to be a more convenient approach than referencing <code>Authenticator</code>, <code>Authorizer</code>, and
+ * <code>SessionFactory</code> instances seperately;  instead one only needs to interact with a
+ * single <tt>SecurityManager</tt> instance.</p>
+ *
+ * <p>In addition to the above three interfaces, three unique methods are provided by this interface by itself,
+ * {@link #login}, {@link #logout} and {@link #getSecurityContext}.  A <tt>SecurityContext</tt> executes
+ * authentication, authorization, and session operations for a <em>single</em> user, and as such can only be
+ * managed by <tt>A SecurityManager</tt> which is aware of all three capabilities.  The three parent interfaces on the
+ * other hand do not 'know about' SecurityContexts to ensure a clean separation of concerns.
+ *
+ * <p>Usage Note:  In actuality the large majority of application programmers won't interact with a SecurityManager
+ * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently
+ * executing user.  In that case, the application programmer can call the
+ * {@link #getSecurityContext() getSecurityContext()} method and then use the returned instance for all the remaining
+ * interaction with JSecurity.
+ *
+ * <p>Framework developers on the other hand might find working with an actual SecurityManager useful.
  *
  * @see DefaultSecurityManager
  *
@@ -61,8 +74,8 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
     void logout( Object subjectIdentifier );
 
     /**
-     * Returns the calling context's <tt>SecurityContext</tt>.
-     * @return the calling context's <tt>SecurityContext</tt>.
+     * Returns the <tt>SecurityContext</tt> instance representing the currently executing user.
+     * @return the <tt>SecurityContext</tt> instance representing the currently executing user.
      */
     SecurityContext getSecurityContext();
 }

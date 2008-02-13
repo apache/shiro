@@ -34,9 +34,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Provides all authentication (login), authorization (access control), and session operations for a single
- * application <em>Subject</em> (aka 'user').  This is the primary JSecurity interaction point for single-user
- * operations.
+ * A <tt>SecurityContext</tt> executes all security operations for a <em>single</em> Subject (aka user) in an
+ * application.  These operations include authentication (login/logout), authorization (access control), and
+ * session functionality. It is JSecurity's primary interaction point for single-user operations.
  *
  * @since 0.1
  * @author Les Hazlewood
