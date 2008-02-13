@@ -29,7 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.*;
-import org.jsecurity.session.event.support.SimpleSessionEventSender;
 import org.jsecurity.session.support.eis.SessionDAO;
 import org.jsecurity.util.Initializable;
 
