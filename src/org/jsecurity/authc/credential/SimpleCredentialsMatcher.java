@@ -22,12 +22,11 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.authc.credential.support;
+package org.jsecurity.authc.credential;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.codec.CodecSupport;
 

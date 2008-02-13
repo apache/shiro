@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.credential.support;
+package org.jsecurity.authc.credential;
 
 import org.jsecurity.crypto.hash.AbstractHash;
 import org.jsecurity.crypto.hash.Hash;

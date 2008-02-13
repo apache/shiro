@@ -34,10 +34,10 @@ import org.jsecurity.authc.AuthenticationToken;
  * <p>As a common example, an implementation of this interface might verify a user-submitted
  * text password with a corresponding account password stored in the system.
  *
- * @see org.jsecurity.authc.credential.support.SimpleCredentialsMatcher
- * @see org.jsecurity.authc.credential.support.AllowAllCredentialsMatcher
- * @see org.jsecurity.authc.credential.support.Md5CredentialsMatcher
- * @see org.jsecurity.authc.credential.support.ShaCredentialsMatcher
+ * @see SimpleCredentialsMatcher
+ * @see AllowAllCredentialsMatcher
+ * @see Md5CredentialsMatcher
+ * @see ShaCredentialsMatcher
  *
  * @since 0.1
  * @author Jeremy Haile
