@@ -22,12 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto.support;
+package org.jsecurity.crypto;
 
 import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.CodecSupport;
-import org.jsecurity.crypto.Cipher;
-import org.jsecurity.crypto.Key;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
