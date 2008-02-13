@@ -22,9 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context.support;
-
-import org.jsecurity.context.SecurityContextException;
+package org.jsecurity.context;
 
 /**
  * Exception thrown when a <tt>SecurityContext</tt> is accessed that has been invalidated.  Usually this occurs

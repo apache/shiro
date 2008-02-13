@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context.support;
+package org.jsecurity.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +33,6 @@ import org.jsecurity.authc.InetAuthenticationToken;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
-import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
