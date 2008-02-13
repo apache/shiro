@@ -57,7 +57,6 @@ public class SecurityManagerLoader extends ServletContextSupport {
     public static final String SECURITY_MANAGER_CONTEXT_KEY = SecurityManagerLoader.class.getName() + "_SECURITY_MANAGER";
 
     private SecurityManager securityManager = null;
-    private boolean securityManagerImplicitlyCreated = false;
 
     public void init() {
         if (getServletContext() == null) {
@@ -114,7 +113,6 @@ public class SecurityManagerLoader extends ServletContextSupport {
                 throw new IllegalStateException(msg);
             }
             this.securityManager = securityManager;
-            this.securityManagerImplicitlyCreated = true;
         }
 
         bind(securityManager);
@@ -122,11 +120,8 @@ public class SecurityManagerLoader extends ServletContextSupport {
 
     public void destroy() {
         removeAttribute( SECURITY_MANAGER_CONTEXT_KEY );
-        if ( this.securityManagerImplicitlyCreated) {
-            LifecycleUtils.destroy( this.securityManager);
-            this.securityManager = null;
-            this.securityManagerImplicitlyCreated = false;
-        }
+        LifecycleUtils.destroy( this.securityManager );
+        this.securityManager = null;
     }
 
 }

@@ -101,23 +101,18 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     protected CacheProvider cacheProvider = null;
-    private boolean cacheProviderImplicitlyCreated = false;
 
     protected Authenticator authenticator;
-    private boolean authenticatorImplicitlyCreated = false;
     private Collection<AuthenticationEventListener> authenticationEventListeners = null;
 
     protected Authorizer authorizer = null;
-    private boolean authorizerImplicitlyCreated = false;
 
     protected SessionFactory sessionFactory;
-    private boolean sessionFactoryImplicitlyCreated = false;
     protected Collection<SessionEventListener> sessionEventListeners = null;
 
     protected RememberMeManager rememberMeManager = null;
 
     private Collection<Realm> realms = null;
-    private boolean realmImplicitlyCreated = false;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -312,10 +307,9 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
     }
 
     /**
-     * Returns the default CacheProvider used by this SecurityManager and any of the caching-aware children components
-     * implicitly created
+     * Returns the default CacheProvider used by this SecurityManager.
      *
-     * @return the cacheProvider used by this SecurityManager and any of its caching-aware implicitly created children components.
+     * @return the cacheProvider used by this SecurityManager
      */
     public CacheProvider getCacheProvider() {
         return cacheProvider;
@@ -367,7 +361,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         CacheProvider cacheProvider = getCacheProvider();
         if (cacheProvider == null) {
             cacheProvider = createCacheProvider();
-            cacheProviderImplicitlyCreated = true;
             setCacheProvider(cacheProvider);
         }
     }
@@ -385,7 +378,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
                 log.info("No realms set - creating default PropertiesRealm.");
             }
             Realm realm = createDefaultRealm();
-            this.realmImplicitlyCreated = true;
             setRealm(realm);
         }
     }
@@ -394,7 +386,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
         mra.setRealms(this.realms);
         mra.init();
-        authenticatorImplicitlyCreated = true;
         return mra;
     }
 
@@ -409,7 +400,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
         ModularRealmAuthorizer mra = new ModularRealmAuthorizer();
         mra.setRealms(this.realms);
         mra.init();
-        authorizerImplicitlyCreated = true;
         return mra;
     }
 
@@ -454,7 +444,6 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
                     "default SessionFactory implementation...");
             }
             SessionFactory sessionFactory = createSessionFactory();
-            sessionFactoryImplicitlyCreated = true;
             setSessionFactory(sessionFactory);
         }
     }
@@ -521,34 +510,29 @@ public class DefaultSecurityManager implements SecurityManager, SessionEventList
 
     public void destroy() {
         deregisterAnySessionEventListeners();
-        if (sessionFactoryImplicitlyCreated) {
-            LifecycleUtils.destroy(sessionFactory);
-            sessionFactory = null;
-            sessionFactoryImplicitlyCreated = false;
-        }
-        if (authorizerImplicitlyCreated) {
-            LifecycleUtils.destroy(authorizer);
-            authorizer = null;
-            authorizerImplicitlyCreated = false;
-        }
+        LifecycleUtils.destroy(sessionFactory);
+        sessionFactory = null;
+
+        LifecycleUtils.destroy(authorizer);
+        authorizer = null;
         deregisterAnyAuthenticationEventListeners();
-        if (authenticatorImplicitlyCreated) {
-            LifecycleUtils.destroy(authenticator);
-            authenticator = null;
-            authenticatorImplicitlyCreated = false;
-        }
-        if (realmImplicitlyCreated) {
-            if (realms != null && !realms.isEmpty()) {
-                LifecycleUtils.destroy(realms.iterator().next());
+
+        LifecycleUtils.destroy(rememberMeManager);
+        this.rememberMeManager = null;
+
+        LifecycleUtils.destroy(authenticator);
+        authenticator = null;
+
+        if (realms != null && !realms.isEmpty()) {
+            for ( Realm realm : realms ) {
+                LifecycleUtils.destroy( realm );
             }
-            realmImplicitlyCreated = false;
-            realms = null;
         }
-        if (cacheProviderImplicitlyCreated) {
-            LifecycleUtils.destroy(cacheProvider);
-            cacheProvider = null;
-            cacheProviderImplicitlyCreated = false;
-        }
+        realms = null;
+
+        LifecycleUtils.destroy(cacheProvider);
+        cacheProvider = null;
+        
         //TODO - remove before 1.0 final:
         SecurityUtils.setSecurityManager(null);
     }

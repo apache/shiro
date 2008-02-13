@@ -320,7 +320,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         return this.session;
     }
 
-    public void invalidate() {
+    public void logout() {
         if (isInvalidated()) {
             return;
         }

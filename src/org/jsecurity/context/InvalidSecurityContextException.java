@@ -26,7 +26,7 @@ package org.jsecurity.context;
 
 /**
  * Exception thrown when a <tt>SecurityContext</tt> is accessed that has been invalidated.  Usually this occurs
- * when accessing a <tt>SecurityContext</tt> whose {@link org.jsecurity.context.SecurityContext#invalidate()} method
+ * when accessing a <tt>SecurityContext</tt> whose {@link org.jsecurity.context.SecurityContext#logout()} method
  * has been called.  
  *
  * @since 0.2

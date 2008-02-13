@@ -24,6 +24,8 @@
 */
 package org.jsecurity.cache;
 
+import org.jsecurity.util.Destroyable;
+
 import java.util.Map;
 
 /**
@@ -33,7 +35,7 @@ import java.util.Map;
  * @since 0.2
  * @author Jeremy Haile
  */
-public interface Cache {
+public interface Cache extends Destroyable {
 
     /**
      * The name associated with this cache.  This should usually be

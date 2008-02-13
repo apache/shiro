@@ -24,6 +24,8 @@
  */
 package org.jsecurity.util;
 
+import org.jsecurity.JSecurityException;
+
 /**
  * JSecurity container-agnostic interface that indicates that this object requires initialization.
  *
@@ -37,8 +39,8 @@ public interface Initializable {
 
     /**
      * Initializes this object.
-     * @throws Exception if an exception occurs during initialization.
+     * @throws JSecurityException if an exception occurs during initialization.
      */
-    void init() throws Exception;
+    void init() throws JSecurityException;
     
 }
