@@ -22,14 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.event.support;
+package org.jsecurity.session.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.session.event.SessionEvent;
-import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistrar;
-import org.jsecurity.session.event.SessionEventSender;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -29,7 +29,7 @@ package org.jsecurity.session.event;
  * {@link SessionEventListener}s with an associated {@link SessionEventSender sending mechanism} so they may be
  * notified when a {@link SessionEvent SessionEvent} occurs.
  *
- * @see org.jsecurity.session.event.support.SimpleSessionEventSender 
+ * @see SimpleSessionEventSender
  *
  * @author Les Hazlewood
  */
