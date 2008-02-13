@@ -32,13 +32,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     public static final String AUTHENTICATED_SESSION_KEY =
         DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
-    protected WebSessionFactory webSessionFactory = null;
-
     private String sessionMode = HTTP_SESSION_MODE; //default
 
     public void init() {
         super.init();
-        setRememberMeManager( new DefaultWebRememberMeManager() );
+        setRememberMeManager(new DefaultWebRememberMeManager());
     }
 
     public String getSessionMode() {
@@ -64,18 +62,14 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     protected SessionFactory createSessionFactory() {
-        DefaultWebSessionFactory webSessionFactory;
-
         if (isHttpSessionMode()) {
-            webSessionFactory = new HttpContainerWebSessionFactory();
+            return new HttpContainerWebSessionFactory();
         } else {
-            webSessionFactory = new DefaultWebSessionFactory();
+            DefaultWebSessionFactory dwsf = new DefaultWebSessionFactory();
+            dwsf.setCacheProvider(getCacheProvider());
+            dwsf.init();
+            return dwsf;
         }
-
-        webSessionFactory.setCacheProvider(getCacheProvider());
-        webSessionFactory.init();
-
-        return webSessionFactory;
     }
 
     /**
@@ -89,7 +83,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      * @return the raw {@link Session session} associated with the request, or <tt>null</tt> if there isn't one.
      */
     public Session getSession(ServletRequest request, ServletResponse response) {
-        Session session = webSessionFactory.getSession(request, response);
+        Session session = ((WebSessionFactory) getSessionFactory()).getSession(request, response);
         if (log.isTraceEnabled()) {
             if (session != null) {
                 log.trace("webSessionFactory returned a Session instance of type [" + session.getClass().getName() + "]");
@@ -109,12 +103,12 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     protected Object getPrincipals(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
-        Object principals = getPrincipals( existing );
-        if ( principals == null ) {
+        Object principals = getPrincipals(existing);
+        if (principals == null) {
             //check remember me:
             principals = getRememberedIdentity();
-            if ( principals != null && existing != null ) {
-                existing.setAttribute( PRINCIPALS_SESSION_KEY, principals );
+            if (principals != null && existing != null) {
+                existing.setAttribute(PRINCIPALS_SESSION_KEY, principals);
             }
         }
         return principals;
@@ -144,7 +138,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     public SecurityContext createSecurityContext(Session existing, ServletRequest request, ServletResponse response) {
-        Object principals = getPrincipals( existing, request, response );
+        Object principals = getPrincipals(existing, request, response);
         boolean authenticated = isAuthenticated(request, response, existing);
         return createSecurityContext(request, response, existing, principals, authenticated);
     }
@@ -155,7 +149,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
                                                     Object principals,
                                                     boolean authenticated) {
         InetAddress inetAddress = SecurityWebSupport.getInetAddress(request);
-        return createSecurityContext( principals, existing, authenticated, inetAddress );
+        return createSecurityContext(principals, existing, authenticated, inetAddress);
     }
 
     protected void bind(SecurityContext secCtx) {
@@ -167,7 +161,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     protected void bind(SecurityContext securityContext, ServletRequest request, ServletResponse response) {
         Object principals = securityContext.getPrincipal();
-        if ( (principals instanceof Collection) && ((Collection)principals).isEmpty() ) {
+        if ((principals instanceof Collection) && ((Collection) principals).isEmpty()) {
             principals = null;
         }
         if (principals != null) {
