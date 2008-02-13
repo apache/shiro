@@ -22,13 +22,12 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.event.support;
+package org.jsecurity.authc.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.LockedAccountException;
-import org.jsecurity.authc.event.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

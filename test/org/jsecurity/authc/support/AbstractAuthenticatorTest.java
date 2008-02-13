@@ -30,7 +30,6 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.event.*;
-import org.jsecurity.authc.event.support.SimpleAuthenticationEventSender;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
