@@ -22,9 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto.support;
-
-import org.jsecurity.crypto.Key;
+package org.jsecurity.crypto;
 
 /**
  * @author Les Hazlewood
