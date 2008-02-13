@@ -32,7 +32,7 @@ import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
 import org.jsecurity.authc.event.AuthenticationEventSender;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Simple implementation that 'sends' an event by synchronously calling any registered
@@ -47,14 +47,19 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    protected List<AuthenticationEventListener> listeners =
-        new ArrayList<AuthenticationEventListener>();
+    protected Collection<AuthenticationEventListener> listeners = null;
+
+    public SimpleAuthenticationEventSender(){}
+
+    public SimpleAuthenticationEventSender( Collection<AuthenticationEventListener> listeners ) {
+        setListeners( listeners );
+    }
 
     /**
      * Sets the <tt>AuthenticationEventListener</tt> collection that will be called when an event is triggered.
      * @param listeners the AuthenticationEventListener collection that will be called when an event is triggered.
      */
-    public void setListeners( List<AuthenticationEventListener> listeners ) {
+    public void setListeners( Collection<AuthenticationEventListener> listeners ) {
         if ( listeners == null ) {
             String msg = "listeners argument cannot be null";
             throw new IllegalArgumentException( msg );
@@ -62,8 +67,8 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
         this.listeners = listeners;
     }
 
-    protected List<AuthenticationEventListener> getListenersLazy() {
-        List<AuthenticationEventListener> listeners = getListeners();
+    protected Collection<AuthenticationEventListener> getListenersLazy() {
+        Collection<AuthenticationEventListener> listeners = getListeners();
         if ( listeners == null ) {
             listeners = new ArrayList<AuthenticationEventListener>();
             setListeners( listeners );
@@ -71,7 +76,7 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
         return listeners;
     }
 
-    public List<AuthenticationEventListener> getListeners() {
+    public Collection<AuthenticationEventListener> getListeners() {
         return listeners;
     }
 
@@ -82,7 +87,7 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
     public boolean remove(AuthenticationEventListener listener) {
         boolean removed = false;
         if ( listener != null ) {
-            List<AuthenticationEventListener> listeners = getListeners();
+            Collection<AuthenticationEventListener> listeners = getListeners();
             if ( listeners != null ) {
                 removed = listeners.remove( listener );
             }

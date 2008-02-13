@@ -18,7 +18,7 @@
          beans and swap them out for a better store (preferrably a module that accesses a
          relational database or at the very least the file system.
     -->
-    <bean name="shaCredentialMatcher" class="org.jsecurity.authc.credential.support.ShaCredentialsMatcher">
+    <bean name="shaCredentialMatcher" class="org.jsecurity.authc.credential.ShaCredentialsMatcher">
         <property name="base64Encoded">true</property>
     </bean>
     <bean name="sampleAccount1" class="org.jsecurity.ri.authc.module.memory.AccountEntry">

@@ -2,7 +2,7 @@ package org.jsecurity.realm.support;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
-import org.jsecurity.authc.credential.support.SimpleCredentialsMatcher;
+import org.jsecurity.authc.credential.SimpleCredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.cache.CacheProvider;
 
@@ -80,7 +80,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * for a given authentication attempt.  The implementation of this matcher can be switched via configuration to
      * support any number of schemes, including plain text comparisons, hashing comparisons, and others.
      *
-     * <p>Unless overridden by this method, the default value is a {@link org.jsecurity.authc.credential.support.SimpleCredentialsMatcher} instance.
+     * <p>Unless overridden by this method, the default value is a {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher} instance.
      *
      * @param credentialsMatcher the matcher to use.
      */
