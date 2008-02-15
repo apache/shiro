@@ -6,9 +6,9 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
-import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.SimpleAuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
@@ -146,10 +146,10 @@ public class AuthorizingRealmTest {
             return createAccount(token.getPrincipal(), token.getPrincipal());
         }
 
-        protected AuthorizationInfo doGetAuthorizationInfo(Object principal) {
+        protected AuthorizingAccount doGetAccount(Object principal) {
             List<String> roles = new ArrayList<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizationInfo(roles, new ArrayList<Permission>());
+            return new SimpleAuthorizingAccount(roles, new ArrayList<Permission>());
         }
 
         protected Account createAccount(Object principal, Object credentials) {

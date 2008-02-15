@@ -195,9 +195,9 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @return the Account associated with the user account corresponding to the specified <tt>token</tt>
      */
     protected Account doSingleRealmAuthentication( Realm realm, AuthenticationToken token ) {
-        if ( !realm.supports( token.getClass() ) ) {
-            String msg = "Single configured realm [" + realm + "] does not support authentication tokens of type [" +
-                token.getClass().getName() + "].  Please ensure that the appropriate Realm implementation is " +
+        if ( !realm.supports( token ) ) {
+            String msg = "Single configured realm [" + realm + "] does not support authentication token [" +
+                token + "].  Please ensure that the appropriate Realm implementation is " +
                 "configured correctly or that the realm accepts AuthenticationTokens of this type.";
             throw new UnsupportedTokenException( msg );
         }
@@ -235,7 +235,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
             strategy.beforeAttempt( realm, token );
 
-            if( realm.supports( token.getClass() ) ) {
+            if( realm.supports( token ) ) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Attempting to authenticate token [" + token + "] " +
@@ -270,7 +270,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Realm of type [" + realm.getClass().getName() + "] does not support token " +
-                            "of type [" + token.getClass().getName() + "].  Skipping realm." );
+                            "[" + token + "].  Skipping realm." );
                 }
             }
         }
@@ -283,7 +283,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /**
      * <p>Attempts to authenticate the given token by iterating over the internal collection of
-     * {@link Realm}s.  For each realm, first the {@link Realm#supports(Class)}
+     * {@link Realm}s.  For each realm, first the {@link Realm#supports(org.jsecurity.authc.AuthenticationToken)}
      * method will be called to determine if the realm supports the <tt>authenticationToken</tt> method argument.
      *
      * If a realm does support

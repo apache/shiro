@@ -82,8 +82,8 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     public SimpleAccount() {
     }
 
-    public SimpleAccount( Object principal, Object credentials) {
-        addPrincipal( principal );
+    public SimpleAccount( Object principals, Object credentials) {
+        addPrincipal( principals );
         this.credentials = credentials;
     }
 

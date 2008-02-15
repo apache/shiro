@@ -35,15 +35,16 @@ import org.jsecurity.authz.Authorizer;
  *
  * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
  * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
- * determine authorization information, such as JDBC, File IO, Hibernate or JPA, or any other Data Access API.  They
- * are essentially security-specific <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
+ * determine authorization data (roles, permissions, etc), such as JDBC, File IO, Hibernate or JPA, or any other 
+ * Data Access API.  They are essentially security-specific
+ * <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
  *
  * <p>Because most of these datasources usually contain subject (user) information such as usernames and passwords,
- * a Realm can act
- * as a pluggable authentication module in a PAM configuration.  This allows a Realm to perform <i>both</i>
- * authentication and authorization duties for a single datasource, which caters to 90% of the use cases of most
- * applications.  If for some reason you don't want your Realm implementation to perform authentication duties, you
- * should override the {@link #supports(Class)} method to always return <tt>false</tt>.
+ * a Realm can act as a pluggable authentication module in a PAM configuration.  This allows a Realm to perform
+ * <i>both</i> authentication and authorization duties for a single datasource, which caters to 90% of the use cases
+ * of most applications.  If for some reason you don't want your Realm implementation to perform authentication
+ * duties, you should override the {@link #supports(org.jsecurity.authc.AuthenticationToken)} method to always
+ * return <tt>false</tt>.
  *
  * <p>Because every application is different, security data such as users and roles can be
  * represented in any number of ways.  JSecurity tries to
@@ -58,8 +59,7 @@ import org.jsecurity.authz.Authorizer;
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend
  * one of the subclasses, {@link AuthenticatingRealm AuthenticatingRealm} or
- * {@link AuthorizingRealm},
- * which reduce the tedious methods required to implement a <tt>Realm</tt> from scratch.</p>
+ * {@link AuthorizingRealm}, greatly reducing the effort to implement a <tt>Realm</tt> from scratch.</p>
  *
  * @see AbstractRealm AbstractRealm
  * @see AuthenticatingRealm AuthenticatingRealm
@@ -73,19 +73,17 @@ import org.jsecurity.authz.Authorizer;
 public interface Realm extends Authorizer {
 
     /**
-     * Returns <tt>true</tt> if this realm can authenticate subjects with
-     * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances of the specified Class,
+     * Returns <tt>true</tt> if this realm wishes to participate in authenticating Subjects that use
+     * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances, <tt>false</tt> otherwise.
+     *
+     * <p>If this method returns <tt>false</tt>, it will not be consulted to authenticate the Subject represented by
+     * <tt>AuthenticationToken</tt>s.
+     *
+     * @param token the AuthenticationToken submitted for the authentication attempt
+     * @return <tt>true</tt> if this realm can authenticate subjects represented by specified token,
      * <tt>false</tt> otherwise.
-     *
-     * <p>If the realm does not support the specified type, it will not be used to authenticate any
-     * tokens of that type.
-     *
-     * @param authenticationTokenClass the <tt>AuthenticationToken</tt> Class to check for support.
-     *
-     * @return <tt>true</tt> if this realm can authenticate subjects represented by tokens of the
-     * specified class, <tt>false</tt> otherwise.
      */
-    boolean supports( Class authenticationTokenClass );
+    boolean supports( AuthenticationToken token);
 
     /**
      * Returns account information for the specified <tt>token</tt>,

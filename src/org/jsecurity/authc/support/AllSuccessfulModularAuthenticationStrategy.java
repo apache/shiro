@@ -50,10 +50,9 @@ public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthen
     }
 
     public void beforeAttempt( Realm realm, AuthenticationToken token ) throws AuthenticationException {
-        Class tokenClass = token.getClass();
-        if ( !realm.supports( tokenClass ) ) {
+        if ( !realm.supports( token ) ) {
             String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support " +
-                "AuthenticationTokens of type [" + tokenClass.getName() + "].  The [" + getClass().getName() +
+                " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName() +
                 "] implementation requires all configured realm(s) to support and be able to process the submitted " +
                 "AuthenticationToken.";
             throw new UnsupportedTokenException( msg );
