@@ -196,7 +196,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
         }
         if ( account.isCredentialsExpired() ) {
             String msg = "The credentials for account [" + displayName( account ) + "] are expired";
-            throw new ExpiredCredentialException( msg );
+            throw new ExpiredCredentialsException( msg );
         }
 
         CredentialsMatcher cm = getCredentialsMatcher();
@@ -204,7 +204,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
             if ( !cm.doCredentialsMatch( token, account ) ) {
                 String msg = "The credentials provided for account [" + token +
                              "] did not match the expected credentials.";
-                throw new IncorrectCredentialException( msg );
+                throw new IncorrectCredentialsException( msg );
             }
         } else {
             throw new AuthenticationException( "A CredentialsMatcher must be configured in order to verify " +

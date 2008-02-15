@@ -31,37 +31,37 @@ package org.jsecurity.authc;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class CredentialException extends AuthenticationException {
+public class CredentialsException extends AuthenticationException {
 
     /**
-     * Creates a new CredentialException.
+     * Creates a new CredentialsException.
      */
-    public CredentialException() {
+    public CredentialsException() {
         super();
     }
 
     /**
-     * Constructs a new CredentialException.
+     * Constructs a new CredentialsException.
      * @param message the reason for the exception
      */
-    public CredentialException( String message ) {
+    public CredentialsException( String message ) {
         super( message );
     }
 
     /**
-     * Constructs a new CredentialException.
+     * Constructs a new CredentialsException.
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public CredentialException( Throwable cause ) {
+    public CredentialsException( Throwable cause ) {
         super( cause );
     }
 
     /**
-     * Constructs a new CredentialException.
+     * Constructs a new CredentialsException.
      * @param message the reason for the exception
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public CredentialException( String message, Throwable cause ) {
+    public CredentialsException( String message, Throwable cause ) {
         super( message, cause );
     }
 
