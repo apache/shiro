@@ -25,51 +25,48 @@
 package org.jsecurity.authc;
 
 /**
- * Thrown when attempting to authenticate with a credential that does not match the actual
- * credential associated with the account principal.
+ * Thrown during the authentication process when the system determines the submitted credential(s)
+ * has expired and will not allow login.
  *
- * <p>For example, this exception might be thrown if a user's password is &quot;secret&quot; and
- * &quot;secrets&quot; was entered by mistake.
- *
- * <p>Whether or not an application wishes to let
- * the user know if they entered in an incorrect credential is at the discretion of those
- * responsible for defining the view and what happens when this exception occurs.
+ * <p>This is most often used to alert a user that their credentials (e.g. password or
+ * cryptography key) has expired and they should change the value.  In such systems, the component
+ * invoking the authentication might catch this exception and redirect the user to an appropriate
+ * view to allow them to update their password or other credentials mechanism.
  *
  * @since 0.1
  * @author Les Hazlewood
  */
-public class IncorrectCredentialException extends CredentialException {
+public class ExpiredCredentialsException extends CredentialsException {
 
     /**
-     * Creates a new IncorrectCredentialException.
+     * Creates a new ExpiredCredentialsException.
      */
-    public IncorrectCredentialException() {
+    public ExpiredCredentialsException() {
         super();
     }
 
     /**
-     * Constructs a new IncorrectCredentialException.
+     * Constructs a new ExpiredCredentialsException.
      * @param message the reason for the exception
      */
-    public IncorrectCredentialException( String message ) {
+    public ExpiredCredentialsException( String message ) {
         super( message );
     }
 
     /**
-     * Constructs a new IncorrectCredentialException.
+     * Constructs a new ExpiredCredentialsException.
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public IncorrectCredentialException( Throwable cause ) {
+    public ExpiredCredentialsException( Throwable cause ) {
         super( cause );
     }
 
     /**
-     * Constructs a new IncorrectCredentialException.
+     * Constructs a new ExpiredCredentialsException.
      * @param message the reason for the exception
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public IncorrectCredentialException( String message, Throwable cause ) {
+    public ExpiredCredentialsException( String message, Throwable cause ) {
         super( message, cause );
     }
-
 }

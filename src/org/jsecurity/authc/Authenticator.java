@@ -63,8 +63,8 @@ public interface Authenticator {
      * not throw those listed or may throw other AuthenticationExceptions, but the list shows
      * the most common ones.
      *
-     * @see ExpiredCredentialException
-     * @see IncorrectCredentialException
+     * @see ExpiredCredentialsException
+     * @see IncorrectCredentialsException
      * @see ExcessiveAttemptsException
      * @see LockedAccountException
      * @see ConcurrentAccessException
