@@ -230,18 +230,18 @@ public class DelegatingSecurityContext implements SecurityContext {
         return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
     }
 
-    public boolean[] isPermitted(List<Permission> permissions) {
+    public boolean[] isPermittedPermissions(List<Permission> permissions) {
         assertValid();
         if (hasPrincipal()) {
-            return securityManager.isPermitted(getPrincipal(), permissions);
+            return securityManager.isPermittedPermissions(getPrincipal(), permissions);
         } else {
             return new boolean[permissions.size()];
         }
     }
 
-    public boolean isPermittedAll(Collection<Permission> permissions) {
+    public boolean isPermittedAllPermissions(Collection<Permission> permissions) {
         assertValid();
-        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+        return hasPrincipal() && securityManager.isPermittedAllPermissions(getPrincipal(), permissions);
     }
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
@@ -260,7 +260,40 @@ public class DelegatingSecurityContext implements SecurityContext {
         securityManager.checkPermission(getPrincipal(), permission);
     }
 
-    public void checkPermissions(Collection<Permission> permissions)
+    public void checkPermissionsPermissions(Collection<Permission> permissions)
+        throws AuthorizationException {
+        assertValid();
+        assertAuthzCheckPossible();
+        securityManager.checkPermissionsPermissions(getPrincipal(), permissions);
+    }
+
+
+    public boolean isPermitted(String permission) {
+        assertValid();
+        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
+    }
+
+    public boolean[] isPermitted(List<String> permissions) {
+        assertValid();
+        if (hasPrincipal()) {
+            return securityManager.isPermitted(getPrincipal(), permissions);
+        } else {
+            return new boolean[permissions.size()];
+        }
+    }
+
+    public boolean isPermittedAll(Collection<String> permissions) {
+        assertValid();
+        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+    }
+
+    public void checkPermission(String permission) throws AuthorizationException {
+        assertValid();
+        assertAuthzCheckPossible();
+        securityManager.checkPermission(getPrincipal(), permission);
+    }
+
+    public void checkPermissions(Collection<String> permissions)
         throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();

@@ -7,31 +7,11 @@
 
 <beans>
 
-	<bean id="authenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="interceptors">
-            <list>
-                <ref bean="sessionInterceptor"/>
-                <ref bean="securityContextInterceptor"/>
-                <ref bean="authenticationInterceptor"/>
-            </list>
-        </property>
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="index">indexController</prop>
                 <prop key="jsecurity.jnlp">jnlpController</prop>
-            </props>
-        </property>
-    </bean>
-
-	<bean id="unauthenticatedUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="interceptors">
-            <list>
-                <ref bean="sessionInterceptor"/>
-                <ref bean="securityContextInterceptor"/>
-            </list>
-        </property>
-        <property name="mappings">
-            <props>
                 <prop key="login">loginController</prop>
                 <prop key="logout">logoutController</prop>
             </props>

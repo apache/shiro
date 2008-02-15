@@ -57,13 +57,13 @@ import org.jsecurity.authz.Authorizer;
  * practically any application environment.
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend
- * one of the subclasses, {@link org.jsecurity.realm.support.AuthenticatingRealm AuthenticatingRealm} or
- * {@link org.jsecurity.realm.support.AuthorizingRealm},
+ * one of the subclasses, {@link AuthenticatingRealm AuthenticatingRealm} or
+ * {@link AuthorizingRealm},
  * which reduce the tedious methods required to implement a <tt>Realm</tt> from scratch.</p>
  *
- * @see org.jsecurity.realm.support.AbstractRealm AbstractRealm
- * @see org.jsecurity.realm.support.AuthenticatingRealm AuthenticatingRealm
- * @see org.jsecurity.realm.support.AuthorizingRealm AuthorizingRealm
+ * @see AbstractRealm AbstractRealm
+ * @see AuthenticatingRealm AuthenticatingRealm
+ * @see AuthorizingRealm AuthorizingRealm
  * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
  *
  * @since 0.1

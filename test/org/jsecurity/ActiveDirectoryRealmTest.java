@@ -7,13 +7,13 @@ import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizationInfo;
-import org.jsecurity.authz.support.SimpleAuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.context.SecurityContext;
-import org.jsecurity.realm.support.AuthorizingRealm;
-import org.jsecurity.realm.support.activedirectory.ActiveDirectoryRealm;
-import org.jsecurity.realm.support.ldap.LdapContextFactory;
+import org.jsecurity.realm.AuthorizingRealm;
+import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
+import org.jsecurity.realm.ldap.LdapContextFactory;
 import org.junit.After;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 

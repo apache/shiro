@@ -130,14 +130,14 @@ public interface SecurityContext {
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
-    boolean[] isPermitted( List<Permission> permissions );
+    boolean[] isPermittedPermissions( List<Permission> permissions );
 
     /**
      * Returns <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
      * @param permissions the permissions to be checked.
      * @return <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
      */
-    boolean isPermittedAll( Collection<Permission> permissions );
+    boolean isPermittedAllPermissions( Collection<Permission> permissions );
 
 
     /**
@@ -157,7 +157,55 @@ public interface SecurityContext {
      * @param permissions the permissions to check.
      * @throws AuthorizationException if the context does not imply all of the given permissions.
      */
-    void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException;
+    void checkPermissionsPermissions( Collection<Permission> permissions ) throws AuthorizationException;
+
+    /**
+     * Returns <tt>true</tt> if this context is
+     * permitted to perform an action or access a resource summarized by the specified permission.
+     *
+     * @param permission the permission that is being checked.
+     * @return true if the user associated with this context is permitted, false otherwise.
+     */
+    boolean isPermitted( String permission );
+
+    /**
+     * Checks a collection of permissions to see if this context is permitted any of the specified permissions, and
+     * and returns a boolean array indicating which ones are permitted.
+     *
+     * @param permissions the permissions to check for.
+     * @return an array of booleans whose indices correspond to the index of the
+     * permissions in the given list.  A true value at an index indicates the context is permitted for
+     * for the associated <tt>Permission</tt> object in the list.  A false value at an index
+     * indicates otherwise.
+     */
+    boolean[] isPermitted( List<String> permissions );
+
+    /**
+     * Returns <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
+     * @param permissions the permissions to be checked.
+     * @return <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
+     */
+    boolean isPermittedAll( Collection<String> permissions );
+
+
+    /**
+     * A convenience method to check if this context isPermitted the specified permission.
+     * If the security context does not imply the given permission, an
+     * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     * @param permission the permission to check.
+     * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
+     */
+    void checkPermission( String permission ) throws AuthorizationException;
+
+
+    /**
+     * A convenience method for checking if this context isPermitted all of the specified permissions.
+     * If the security context does not imply all of the given permissions, an
+     * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     * @param permissions the permissions to check.
+     * @throws AuthorizationException if the context does not imply all of the given permissions.
+     */
+    void checkPermissions( Collection<String> permissions ) throws AuthorizationException;
 
     /**
      * A convenience method to check if the given role is associated with this context.

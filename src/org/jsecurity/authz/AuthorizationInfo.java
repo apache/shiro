@@ -32,15 +32,15 @@ import java.util.List;
  * represent the roles and permissions that a user account has in a framework independent way.
  *
  * <p>Used internally by any realm that extends from
- * {@link org.jsecurity.realm.support.AuthorizingRealm}, which
+ * {@link org.jsecurity.realm.AuthorizingRealm}, which
  * uses this object to encapsulate the cached information.</p>
  *
- * <p>Most realms will use {@link org.jsecurity.authz.support.SimpleAuthorizationInfo} as the implementation of this interface, but are free
+ * <p>Most realms will use {@link SimpleAuthorizationInfo} as the implementation of this interface, but are free
  * to create their own implementation.</p>
  *
  * @since 0.1
  * @author Jeremy Haile
- * @see org.jsecurity.authz.support.SimpleAuthorizationInfo
+ * @see SimpleAuthorizationInfo
  */
 public interface AuthorizationInfo {
     
@@ -65,12 +65,12 @@ public interface AuthorizationInfo {
     boolean isPermitted(Permission permission);
 
     /**
-     * @see org.jsecurity.context.SecurityContext#isPermitted(java.util.List)
+     * @see org.jsecurity.context.SecurityContext#isPermittedPermissions(java.util.List)
      */
     boolean[] isPermitted(List<Permission> permissions);
 
     /**
-     * @see org.jsecurity.context.SecurityContext#isPermittedAll(java.util.Collection)
+     * @see org.jsecurity.context.SecurityContext#isPermittedAllPermissions(java.util.Collection)
      */
     boolean isPermittedAll(Collection<Permission> permissions);
 
@@ -80,7 +80,7 @@ public interface AuthorizationInfo {
     void checkPermission(Permission permission) throws AuthorizationException;
 
     /**
-     * @see org.jsecurity.context.SecurityContext#checkPermissions(java.util.Collection)
+     * @see org.jsecurity.context.SecurityContext#checkPermissionsPermissions(java.util.Collection)
      */
     void checkPermissions(Collection<Permission> permissions) throws AuthorizationException;
 

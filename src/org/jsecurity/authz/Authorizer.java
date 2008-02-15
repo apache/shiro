@@ -148,7 +148,7 @@ public interface Authorizer {
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
-    boolean[] isPermitted( Object subjectIdentifier, List<Permission> permissions );
+    boolean[] isPermittedPermissions( Object subjectIdentifier, List<Permission> permissions );
 
     /**
      * Checks if the the subject with the given <tt>subjectIdentifier</tt> implies all the
@@ -168,7 +168,7 @@ public interface Authorizer {
      * @param permissions the permissions to be checked.
      * @return true if the user has all permissions, false otherwise.
      */
-    boolean isPermittedAll( Object subjectIdentifier, Collection<Permission> permissions );
+    boolean isPermittedAllPermissions( Object subjectIdentifier, Collection<Permission> permissions );
 
 
     /**
@@ -205,7 +205,8 @@ public interface Authorizer {
      * @throws AuthorizationException if the user does not have all of the given
      * permissions.
      */
-    void checkPermissions( Object subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException;
+    void checkPermissionsPermissions( Object subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException;
+    
 
     /**
      * A convenience method to ensure a subject (and/or user) has the specified <tt>Role</tt>.

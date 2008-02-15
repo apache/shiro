@@ -24,10 +24,6 @@
  */
 package org.jsecurity.web.tags;
 
-import org.jsecurity.authz.NamedPermission;
-import org.jsecurity.authz.Permission;
-import org.jsecurity.util.PermissionUtils;
-
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -38,77 +34,31 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class PermissionTag extends SecureTag {
 
-    private String type = null;
-    private String name = null;
-    private String actions = null;
+    private String permission = null;
 
     public PermissionTag() {
     }
 
-    public String getType() {
-        return type;
+    public String getPermission() {
+        return permission;
     }
 
-    public void setType( String type ) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName( String name ) {
-        this.name = name;
-    }
-
-    public String getActions() {
-        return actions;
-    }
-
-    public void setActions( String actions ) {
-        this.actions = actions;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     protected void verifyAttributes() throws JspException {
-        String type = getType();
-        String name = getName();
-        String actions = getActions();
+        String permission = getPermission();
 
-        if ( type == null ) {
-            String msg = "the 'type' tag attribute must be set";
-            throw new JspException( msg );
-        }
-
-        if ( name == null ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "'name' tag attribute was not specified.  Assuming default of " +
-                           "\"*\", as all Permission objects must be instantiated with a " +
-                           "name/name." );
-            }
-            setName( NamedPermission.WILDCARD );
-        }
-
-        if ( (actions != null ) && actions.trim().length() == 0) {
-            String msg = "Empty actions attribute - please remove the attribute or enter " +
-                         "one or more meaningful actions.";
+        if ( permission == null || permission.length() == 0 ) {
+            String msg = "The 'permission' tag attribute must be set.";
             throw new JspException( msg );
         }
     }
 
     public int onDoStartTag() throws JspException {
 
-        Permission p;
-
-        String actions = getActions();
-
-        if ( actions == null ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No actions attribute specified, creating permission with name only." );
-            }
-            p = PermissionUtils.createPermission( getType(), getName() );
-        } else {
-            p = PermissionUtils.createPermission( getType(), getName(), actions );
-        }
+        String p = getPermission();
 
         boolean show = showTagBody( p );
         if ( show ) {
@@ -118,10 +68,10 @@ public abstract class PermissionTag extends SecureTag {
         }
     }
 
-    protected boolean isPermitted( Permission p ) {
+    protected boolean isPermitted( String p ) {
         return getSecurityContext() != null && getSecurityContext().isPermitted( p );
     }
 
-    protected abstract boolean showTagBody( Permission p );
+    protected abstract boolean showTagBody( String p );
 
 }

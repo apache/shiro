@@ -27,9 +27,13 @@ package org.jsecurity;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.session.SessionFactory;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A <tt>SecurityManager</tt> executes all security operations for <em>all</em> Subjects (aka users) across a
@@ -78,4 +82,110 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      * @return the <tt>SecurityContext</tt> instance representing the currently executing user.
      */
     SecurityContext getSecurityContext();
+
+    /**
+     * Returns <tt>true</tt> if the subject with the given <tt>subjectIdentifier</tt> is
+     * permitted to perform an action or access a resource summarized by the specified permission.
+     *
+     * <p>More specifically, this method should determine if any <tt>Permission</tt>s associated
+     * with the subject {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission) imply} the
+     * specified permission.
+     *
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
+     * representing a <tt>User</tt> database primary
+     * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
+     * is specific to the application and
+     * determined by the application's JSecurity configuration.
+     *
+     * @param subjectIdentifier the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param permission the permission that is being checked.
+     * @return true if the user associated with this context is permitted, false otherwise.
+     */
+    boolean isPermitted( Object subjectIdentifier, String permission );
+
+    /**
+     * Checks a collection of permissions to see if they are associated with the subject with
+     * the given <tt>subjectIdentifier</tt> and and returns a boolean array indicating which
+     * permissions are associated with the subject.
+     *
+     * <p>More specifically, this method should determine if each <tt>Permission</tt> in
+     * the array is {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission) implied by} permissions
+     * already associated with the subject.
+     *
+     * <p>This is primarily a performance-enhancing method to help reduce the number of
+     * {@link #isPermitted} invocations over the wire in client/server systems.
+     *
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
+     * representing a <tt>User</tt> database primary
+     * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
+     * is specific to the application and
+     * determined by the application's JSecurity configuration.
+     *
+     * @param subjectIdentifier the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param permissions the permissions to check for.
+     * @return an array of booleans whose indices correspond to the index of the
+     * permissions in the given list.  A true value at an index indicates the user is permitted for
+     * for the associated <tt>Permission</tt> object in the list.  A false value at an index
+     * indicates otherwise.
+     */
+    boolean[] isPermitted( Object subjectIdentifier, List<String> permissions );
+
+    /**
+     * Checks if the the subject with the given <tt>subjectIdentifier</tt> implies all the
+     * specified permissions.
+     *
+     * <p>More specifically, this method should determine if <em>all</em> of the given
+     * <tt>Permission</tt>s are {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission) implied by}
+     * permissions already associated with the subject.
+     *
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
+     * representing a <tt>User</tt> database primary
+     * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
+     * is specific to the application and
+     * determined by the application's JSecurity configuration.
+     * @param subjectIdentifier the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param permissions the permissions to be checked.
+     * @return true if the user has all permissions, false otherwise.
+     */
+    boolean isPermittedAll( Object subjectIdentifier, Collection<String> permissions );
+
+
+    /**
+     * A convenience method to ensure a subject (and/or user)
+     * {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission)} implies} the specified <tt>Permission</tt>.
+     * If the subject's exisiting associated permissions do not
+     * {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission)} imply} the given permission,
+     * an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     *
+     * <p>In most systems, the <tt>subjectIdentifier</tt> is usually an object
+     * representing a <tt>User</tt> database primary
+     * key or a String username.  The runtime value of the <tt>subjectIdentifier</tt>
+     * is specific to the application and
+     * determined by the application's JSecurity configuration.
+     *
+     * @param subjectIdentifier the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param permission the permission to check.
+     * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
+     */
+    void checkPermission( Object subjectIdentifier, String permission ) throws AuthorizationException;
+
+
+    /**
+     * A convenience method to ensure a subject (and/or user)
+     * {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission) implies} <em>all</em> of the
+     * specified <tt>Permission</tt>s.
+     * If the subject's exisiting associated permissions do not
+     * {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission) imply} <em>all</em> of the given permissions,
+     * an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     * @param subjectIdentifier the application-specific identifier
+     * for the subject to check (usually a user id or username).
+     * @param permissions the permissions to check.
+     * @throws AuthorizationException if the user does not have all of the given
+     * permissions.
+     */
+    void checkPermissions( Object subjectIdentifier, Collection<String> permissions ) throws AuthorizationException;
 }

@@ -30,7 +30,7 @@ import org.jsecurity.context.DelegatingSecurityContext;
 import org.jsecurity.context.RememberMeManager;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.support.file.PropertiesRealm;
+import org.jsecurity.realm.file.PropertiesRealm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;

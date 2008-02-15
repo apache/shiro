@@ -26,6 +26,10 @@ Some notes:
 - Thanks to the gents working on the Spring Framework (http://www.springframework.org)
   that provided the template and the idea for this file.
 
+* atunit/atunut.jar
+- AtUnit 1.0
+- Used in unit tests
+
 * easymock/easymock.jar, easymockclassextension.jar
 - EasyMock 2.2 w/ ClassExtension 2.2 (http://www.easymock.org)
 - Used in test cases for creating dynamic mock objects
@@ -33,6 +37,10 @@ Some notes:
 * ehcache/ehcache.jar
 - ehcache 1.3.0 (http://ehcache.sourceforge.net/)
 - Required for compiling, using ehcache cache provider, and for runtime session management
+
+* google-collections/google-collect.jar
+- Google Collections Snapshot 20071022
+- Used in test cases for conveniently constructing collections
 
 * hsqldb/hsqldb.jar
 - HSQLDB 1.8.0.7 (http://www.hsqldb.org)

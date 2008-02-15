@@ -27,178 +27,32 @@ package org.jsecurity.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.permission.PermissionResolver;
 
-import java.lang.reflect.Constructor;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @since 0.1
  * @author Les Hazlewood
+ * @author Jeremy Haile
  */
 public class PermissionUtils {
 
-    private static final String PERMISSIONS_DELIMITER = ";";
-    private static final String PERMISSION_PART_DELIMITER = ",";
-
     protected static transient final Log log = LogFactory.getLog( PermissionUtils.class );
 
-    private static String strip( String in ) {
-        String out = null;
-        if ( in != null ) {
-            out = in.trim();
-            if ( out.equals( "" ) ) {
-                out = null;
-            }
+    public static List<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
+        List<Permission> permissionList = new ArrayList<Permission>(permissionStrings.size());
+        for( String permissionString : permissionStrings ) {
+            permissionList.add( permissionResolver.resolvePermission( permissionString ) );
         }
-        return out;
+        return permissionList;
     }
 
-    private static Class[] getTypes( Object[] args ) {
-        if ( args == null || args.length == 0 ) {
-            return null;
-        } else {
-            Class[] types = new Class[args.length];
-            for( int i = 0; i < args.length; i++ ) {
-                Object arg = args[i];
-                types[i] = ( arg != null ? arg.getClass() : null );
-            }
-            return types;
-        }
-    }
-
-    private static Object[] toArray( String arg1, String arg2 ) {
-        Object[] array;
-        if ( arg2 != null ) {
-            array = new Object[]{ arg1, arg2 };
-        } else {
-            if ( arg1 != null ) {
-                array = new Object[]{ arg1 };
-            } else {
-                array = null;
-            }
-        }
-        return array;
-    }
-
-    public static Permission createPermissino( String permissionFullyQualifiedClassName ) {
-        return createPermission( permissionFullyQualifiedClassName, null, null );
-    }
-    
-    public static Permission createPermission( String permissionClassName, String nameOrTarget ) {
-        return createPermission( permissionClassName, nameOrTarget, null );
-    }
-
-    public static Permission createPermission( String permissionClassName,
-                                               String nameOrTarget,
-                                               String actions ) {
-        //noinspection unchecked
-        Class<? extends Permission> clazz = ClassUtils.forName( permissionClassName );
-        return createPermission( clazz, nameOrTarget, actions );
-    }
-
-    /**
-     * Creates a <tt>Permission</tt> instance using the default no-argument constructor.
-     * @param clazz the <tt>Permission</tt> class.
-     * @return the newly instantiated <tt>Permission</tt> instance.
-     */
-    public static Permission createPermission( Class<? extends Permission> clazz ) {
-        return createPermission( clazz, null, null );
-    }
-
-    public static Permission createPermission( Class<? extends Permission> clazz, String nameOrTarget )
-        throws UnavailableConstructorException {
-        return createPermission( clazz, nameOrTarget, null );
-    }
-
-    public static Permission createPermission( Class<? extends Permission> clazz,
-                                               String nameOrTarget,
-                                               String commaDelimitedActions ) throws UnavailableConstructorException {
-
-        Permission instance;
-
-        String value = strip( nameOrTarget );
-        String actions = strip( commaDelimitedActions );
-
-        Object[] ctorArgs = toArray( value, actions );
-
-        if ( ctorArgs == null ) {
-            instance = (Permission)ClassUtils.newInstance( clazz );
-        } else {
-            Constructor<? extends Permission> constructor;
-            Class[] argTypes = getTypes( ctorArgs );
-            try {
-                constructor = clazz.getDeclaredConstructor( argTypes );
-            } catch ( NoSuchMethodException nsme ) {
-                String msg = "Unable to find " + ( argTypes.length == 2 ? "double" : "single" ) + 
-                    " String argument constructor on class [" + clazz.getName() + "].";
-                throw new UnavailableConstructorException( msg );
-            }
-
-            instance = (Permission)ClassUtils.instantiate( constructor, ctorArgs );
-        }
-
-        return instance;
-    }
-
-    protected static Set<String> toSet( String delimited, String delimiter ) {
-        if ( delimited == null || delimited.trim().equals( "" ) ) {
-            return null;
-        }
-
-        Set<String> values = new LinkedHashSet<String>();
-        String[] rolenamesArray = delimited.split( delimiter );
-        for( String s : rolenamesArray ) {
-            String trimmed = s.trim();
-            if ( !trimmed.equals( "" ) ) {
-                values.add( trimmed );
-            }
-       }
-
-       return values;
-    }
-
-    public static Permission fromDefinition( String permDef ) {
-
-        String def = strip( permDef );
-        if ( def == null ) {
-            return null;
-        }
-
-        //split into respective components:
-        String classname = null;
-        String target = null;
-        String actions = null;
-
-        String[] parts =  def.split( PERMISSION_PART_DELIMITER, 3 );
-        if ( parts.length >= 3 ) {
-            actions = strip( parts[2] );
-        }
-        if ( parts.length >= 2 ) {
-            target = strip( parts[1] );
-        }
-        if ( parts.length >= 1 ) {
-            classname = strip( parts[0] );
-        }
-
-        return createPermission( classname, target, actions );
-    }
-
-    public static Set<Permission> fromDefinitions( String permissionDefinitions ) {
-
-        String defs = strip( permissionDefinitions );
-
-        if ( defs == null ) {
-            return null;
-        }
-
-        Set<String> defnSet = toSet( permissionDefinitions, PERMISSIONS_DELIMITER );
-        Set<Permission> perms = new LinkedHashSet<Permission>( defnSet.size() );
-
-        for( String permDef : defnSet ) {
-            perms.add( fromDefinition( permDef ) );
-        }
-
-        return perms;
+    public static List<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver, String delimiter) {
+        String[] permissionStrings = permissionsString.split( delimiter );
+        return resolvePermissions( Arrays.asList( permissionStrings ), permissionResolver );
     }
 }

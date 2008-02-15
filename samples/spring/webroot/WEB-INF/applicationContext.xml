@@ -25,7 +25,7 @@
       -  JDBC Realm - to use, inject jdbcRealm into the securityManager
       ============================================================ -->
     <!-- JdbcRealm used to access sample database -->
-    <bean id="jdbcRealm" class="org.jsecurity.realm.support.jdbc.JdbcRealm">
+    <bean id="jdbcRealm" class="org.jsecurity.realm.jdbc.JdbcRealm">
         <property name="dataSource" ref="dataSource"/>
         <property name="credentialsMatcher">
             <bean class="org.jsecurity.authc.credential.ShaCredentialsMatcher"/>
@@ -48,7 +48,7 @@
     <!-- =========================================================
       -  Property File Realm - to use, inject propertyFileRealm into the securityManager
       ============================================================ -->
-    <!--<bean id="propertyFileRealm" class="org.jsecurity.realm.support.file.PropertiesRealm">
+    <!--<bean id="propertyFileRealm" class="org.jsecurity.realm.file.PropertiesRealm">
         <property name="filePath" value="classpath:sample-users.properties"/>
     </bean>-->
 
@@ -57,7 +57,7 @@
       -  Active Directory Realm - to use, inject ldapRealm into the securityManager and update
       -  settings to match your active directory server, domain, etc.
       ============================================================ -->
-    <bean id="activeDirectoryRealm" class="org.jsecurity.realm.support.activedirectory.ActiveDirectoryRealm">
+    <bean id="activeDirectoryRealm" class="org.jsecurity.realm.activedirectory.ActiveDirectoryRealm">
         <property name="principalSuffix" value="@Solad.local"/>
         <property name="searchBase" value="OU=SolTech,DC=Solad,DC=local"/>
         <property name="url" value="ldap://mail.soltech.net:389"/>
