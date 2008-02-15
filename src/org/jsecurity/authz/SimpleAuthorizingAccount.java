@@ -24,145 +24,148 @@
 */
 package org.jsecurity.authz;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.support.SimpleAccount;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>A simple implementation of the {@link AuthorizingAccount} interface that is useful
  * for many realms.  This implementation uses an internal collection of roles and permissions
- * in order to perform authorizatino checks for a particular user.</p>
+ * in order to perform authorization checks for a particular user.</p>
  *
  * @since 0.2
  * @author Jeremy Haile
  */
 public class SimpleAuthorizingAccount extends SimpleAccount implements AuthorizingAccount {
 
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-
-    /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
-    /**
-     * Commons-logger.
-     */
-    protected transient final Log logger = LogFactory.getLog( getClass() );
-
-    /**
-     * The roles that apply to this info object.
-     */
-    protected Collection<String> roles;
-
-    /**
-     * The permissions that apply to this info object.
-     */
-    protected Collection<Permission> permissions;
-
+    protected Collection<SimpleRole> roles = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
-    /**
-     * Constructs a new instance with assigned roles and permissions.
-     * 
-     * @param roles the roles assigned to this Account.
-     * @param permissions the permissions assigned to this Account.
-     */
-    @SuppressWarnings( "unchecked" )
-    public SimpleAuthorizingAccount(Collection<String> roles, Collection<Permission> permissions) {
-        if( roles != null ) {
-            this.roles = roles;
-        } else {
-            this.roles = Collections.EMPTY_LIST;
-        }
+    public SimpleAuthorizingAccount(){}
 
-        if( permissions != null ) {
-            this.permissions = permissions;
-        } else {
-            this.permissions = Collections.EMPTY_LIST;
+    public SimpleAuthorizingAccount( Object principal, Object credentials ) {
+        super( principal, credentials );
+    }
+
+    public SimpleAuthorizingAccount( Object principal, Object credentials, Collection<String> roleNames ) {
+        this( principal, credentials );
+        this.roles = toRoles( roleNames );
+    }
+
+    public SimpleAuthorizingAccount( Object principal, Object credentials,
+                                     Collection<String> roleNames, Collection<Permission> permissions ) {
+        super( principal, credentials );
+        this.roles = toRoles( roleNames );
+        SimpleRole privatePermRole = toPrivateRole( principal, permissions );
+        if ( privatePermRole != null ) {
+            if ( this.roles == null ) {
+                this.roles = new HashSet<SimpleRole>(1);
+            }
+            this.roles.add(privatePermRole);
         }
     }
 
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
-
-
-    public boolean hasRole(String roleIdentifier) {
-        return roles != null && roles.contains(roleIdentifier);
-    }
-
-
-    public boolean[] hasRoles(List<String> roleIdentifiers) {
-        boolean[] hasRoles = new boolean[roleIdentifiers.size()];
-
-        for( int i = 0; i < roleIdentifiers.size(); i++ ) {
-            hasRoles[i] = hasRole( roleIdentifiers.get(i) );
+    protected SimpleRole toPrivateRole( Object principal, Collection<Permission> perms ) {
+        if ( perms != null && !perms.isEmpty() ) {
+            //create a 'private' role to encapsulate these permissions:
+            String privateRoleName = getClass().getName() + "_PRIVATE_ROLE_" + principal;
+            return new SimpleRole(privateRoleName, perms);
         }
-
-        return hasRoles;
+        return null;
     }
 
-
-    public boolean hasAllRoles(Collection<String> roleIdentifiers) {
-        for( String roleIdentifier : roleIdentifiers ) {
-            if( !hasRole( roleIdentifier ) ) {
-                return false;
+    protected Collection<SimpleRole> toRoles( Collection<String> roleNames ) {
+        Collection<SimpleRole> roles = null;
+        if ( roleNames != null && !roleNames.isEmpty() ) {
+            roles = new HashSet<SimpleRole>(roleNames.size());
+            for( String roleName : roleNames ) {
+                roles.add( new SimpleRole( roleName ) );
             }
         }
-        return true;
+        return roles;
     }
 
+    public Collection<SimpleRole> getRoles() {
+        return roles;
+    }
 
+    public void setRoles( Collection<SimpleRole> roles ) {
+        this.roles = roles;
+    }
 
-    public boolean isPermitted(Permission permission) {
+    public Set<Permission> getPermissions() {
+        Set<Permission> permissions = new HashSet<Permission>();
+        for( SimpleRole role : roles ) {
+            permissions.addAll( role.getPermissions() );
+        }
+        return permissions;
+    }
 
-        if( permissions != null ) {
-            for( Permission perm : permissions ) {
-                if( perm.implies( permission ) ) {
+    public Set<String> getRolenames() {
+        Set<String> rolenames = new HashSet<String>();
+        for( SimpleRole role : roles ) {
+            rolenames.add( role.getName() );
+        }
+        return rolenames;
+    }
+
+    public void add( SimpleRole role ) {
+        Collection<SimpleRole> roles = getRoles();
+        if ( roles == null ) {
+            roles = new HashSet<SimpleRole>();
+            setRoles( roles );
+        }
+        roles.add( role );
+    }
+
+    public boolean hasRole( String rolename ) {
+        Collection<SimpleRole> roles = getRoles();
+        if ( roles != null && !roles.isEmpty() ) {
+            for( SimpleRole role : roles ) {
+                if ( role.getName().equals( rolename ) ) {
                     return true;
                 }
             }
         }
-
-        if( logger.isDebugEnabled() ) {
-            logger.debug( "Context does not imply permission [" + permission + "]" );
-
-            if( permissions == null ) {
-                logger.debug( "No permissions are associated with this context.  Permissions are null." );
-            } else {
-                logger.debug( "Implies permissions:" );
-                for( Permission perm : permissions ) {
-                    logger.debug( "\t" + perm );
-                }
-            }
-        }
-
         return false;
     }
 
-
-    public boolean[] isPermitted(List<Permission> permissions) {
-        boolean[] implies = new boolean[permissions.size()];
-
-        for( int i = 0; i < permissions.size(); i++ ) {
-            implies[i] = isPermitted( permissions.get(i) );
+    public boolean isPermitted( Permission permission ) {
+        Collection<SimpleRole> roles = getRoles();
+        if ( roles != null && !roles.isEmpty() ) {
+            for( SimpleRole role : roles ) {
+                if ( role.isPermitted( permission ) ) {
+                    return true;
+                }
+            }
         }
-        return implies;
+        return false;
     }
 
+    public boolean[] hasRoles(List<String> roleIdentifiers) {
+        boolean[] result;
+        if ( roleIdentifiers != null && !roleIdentifiers.isEmpty() ) {
+            int size = roleIdentifiers.size();
+            result = new boolean[ size ];
+            int i = 0;
+            for( String roleName : roleIdentifiers ) {
+                result[i++] = hasRole( roleName );
+            }
+        } else {
+            result = new boolean[0];
+        }
+        return result;
+    }
 
-    public boolean isPermittedAll(Collection<Permission> permissions) {
-
-        if( permissions != null ) {
-            for( Permission perm : permissions ) {
-                if( !isPermitted(perm) ) {
+    public boolean hasAllRoles(Collection<String> roleIdentifiers) {
+        if ( roleIdentifiers != null && !roleIdentifiers.isEmpty() ) {
+            for( String roleName : roleIdentifiers ) {
+                if ( !hasRole(roleName ) ) {
                     return false;
                 }
             }
@@ -170,58 +173,59 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         return true;
     }
 
+    public boolean[] isPermitted(List<Permission> permissions) {
+        boolean[] result;
+        if ( permissions != null && !permissions.isEmpty() ) {
+            int size = permissions.size();
+            result = new boolean[ size ];
+            int i = 0;
+            for( Permission p : permissions ) {
+                result[i++] = isPermitted(p);
+            }
+        } else {
+            result = new boolean[0];
+        }
+        return result;
+    }
+
+    public boolean isPermittedAll(Collection<Permission> permissions) {
+        if ( permissions != null && !permissions.isEmpty() ) {
+            for( Permission p : permissions ) {
+                if ( !isPermitted(p) ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public void checkPermission(Permission permission) throws AuthorizationException {
-        if( !isPermitted( permission ) ) {
-            throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
+        if ( !isPermitted(permission) ) {
+            String msg = "User is not permitted [" + permission + "]";
+            throw new UnauthorizedException(msg);
         }
     }
 
-
     public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
-        if( permissions != null ) {
-            for( Permission permission : permissions ) {
-                if( !isPermitted( permission ) ) {
-                   throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
-                }
+        if ( permissions != null && !permissions.isEmpty() ) {
+            for( Permission p : permissions ) {
+                checkPermission(p);
             }
         }
     }
 
     public void checkRole(String role) {
-        if( !hasRole( role ) ) {
-            throw new AuthorizationException( "User does not have role [" + role + "]" );
+        if ( !hasRole( role ) ) {
+            String msg = "User does not have role [" + role + "]";
+            throw new UnauthorizedException( msg );
         }
     }
 
     public void checkRoles(Collection<String> roles) {
-       if( roles != null ) {
-            for( String role : roles ) {
-                checkRole( role );
+        if ( roles != null && !roles.isEmpty() ) {
+            for( String roleName : roles ) {
+                checkRole( roleName );
             }
         }
     }
-
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append( "Roles [" );
-        if( roles != null ) {
-            for( String role : roles ) {
-                sb.append( role ).append( " " );
-            }
-        }
-        sb.append( "] " );
-
-        sb.append( "Permissions [" );
-        if( permissions != null ) {
-            for( Permission permission : permissions ) {
-                sb.append( permission ).append( " " );
-            }
-        }
-        sb.append( "] " );
-
-        return sb.toString();
-    }
-
 }

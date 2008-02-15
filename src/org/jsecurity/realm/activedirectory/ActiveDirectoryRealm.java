@@ -156,7 +156,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext( ldapContext );
         }
 
-        return new SimpleAuthorizingAccount( roleNames, null );
+        return new SimpleAuthorizingAccount( principal, null, roleNames, null );
     }
 
     private List<String> getRoleNamesForUser( String username, LdapContext ldapContext) throws NamingException {

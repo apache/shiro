@@ -70,7 +70,7 @@
             diskPersistent="true"
             diskExpiryThreadIntervalSeconds="600"/>
 
-    <cache name="org.jsecurity.realm.memory.MemoryRealm.authorization"
+    <cache name="org.jsecurity.realm.SimpleAccountRealm.accounts"
         maxElementsInMemory="100"
         eternal="false"
         timeToLiveSeconds="600"

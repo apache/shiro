@@ -292,7 +292,7 @@ public class JdbcRealm extends AuthorizingRealm {
             JdbcUtils.closeConnection( conn );
         }
 
-        return new SimpleAuthorizingAccount( roleNames, permissions );
+        return new SimpleAuthorizingAccount( principal, null, roleNames, permissions );
     }
 
     protected Collection<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {

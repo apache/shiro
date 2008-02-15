@@ -122,7 +122,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
     }
 
     protected Object getIdentityToRemember(Account account) {
-        return account.getPrincipals();
+        return account.getPrincipal();
     }
 
     protected byte[] encrypt(byte[] serialized) {
