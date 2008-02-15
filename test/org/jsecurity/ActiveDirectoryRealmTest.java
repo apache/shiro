@@ -116,7 +116,7 @@ public class ActiveDirectoryRealmTest {
                 List<Object> principals = new ArrayList<Object>();
                 principals.add(new UserIdPrincipal(USER_ID));
                 principals.add(new UsernamePrincipal(USERNAME));
-                account.setPrincipals( principals );
+                account.setPrincipal( principals );
             }
 
             return account;
