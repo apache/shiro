@@ -245,7 +245,8 @@ public class RedirectView {
 	 * @see java.net.URLEncoder#encode(String, String)
 	 * @see java.net.URLEncoder#encode(String)
 	 */
-	protected String urlEncode(String input, String encodingScheme) throws UnsupportedEncodingException {
+    @SuppressWarnings("deprecated")
+    protected String urlEncode(String input, String encodingScheme) throws UnsupportedEncodingException {
         if ( !JavaEnvironment.isAtLeastVersion14() ) {
 			if (log.isDebugEnabled()) {
 				log.debug("Only JDK 1.3 URLEncoder available: using platform default encoding " +

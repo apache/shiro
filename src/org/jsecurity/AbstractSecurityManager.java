@@ -44,13 +44,9 @@ public abstract class AbstractSecurityManager implements SecurityManager, Initia
     public AbstractSecurityManager(){}
 
     public void init() {
-        //TODO - remove before 1.0 final?
-        SecurityUtils.setSecurityManager( this );    
     }
 
     public void destroy() {
-        //TODO - remove before 1.0 final?
-        SecurityUtils.setSecurityManager( null );
     }
 
 }

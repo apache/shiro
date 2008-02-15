@@ -50,6 +50,8 @@
     <orderEntry type="library" name="clover" level="project" />
     <orderEntry type="library" name="retroweaver" level="project" />
     <orderEntry type="library" name="jug" level="project" />
+    <orderEntry type="library" name="atunit" level="project" />
+    <orderEntry type="library" name="google-collections" level="project" />
     <orderEntryProperties />
   </component>
 </module>

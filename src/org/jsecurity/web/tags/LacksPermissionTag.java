@@ -24,8 +24,6 @@
  */
 package org.jsecurity.web.tags;
 
-import org.jsecurity.authz.Permission;
-
 /**
  * @since 0.1
  * @author Les Hazlewood
@@ -36,7 +34,7 @@ public class LacksPermissionTag extends PermissionTag {
     public LacksPermissionTag() {
     }
 
-    protected boolean showTagBody( Permission p ) {
+    protected boolean showTagBody( String p ) {
         return !isPermitted( p );
     }
 

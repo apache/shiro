@@ -25,7 +25,7 @@
 package org.jsecurity;
 
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.support.file.PropertiesRealm;
+import org.jsecurity.realm.file.PropertiesRealm;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.util.ArrayList;

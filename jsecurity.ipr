@@ -334,7 +334,6 @@
     <library name="jakarta-commons">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-beanutils-core.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-codec.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-logging.jar!/" />
       </CLASSES>
       <JAVADOC />
@@ -390,13 +389,6 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="clover">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/clover/clover-idea6.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="retroweaver">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/retroweaver/asm-util-3.0.jar!/" />
@@ -415,6 +407,28 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+    </library>
+    <library name="atunit">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/atunit/atunit.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/lib/atunit/atunit.javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/atunit/atunit.src.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="google-collections">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/google-collections/google-collect.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$PROJECT_DIR$/lib/google-collections/google-collect.javadoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/google-collections/google-collect.src.zip!/" />
+      </SOURCES>
     </library>
   </component>
 </project>

@@ -28,11 +28,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.PermissionsRequired;
-import org.jsecurity.authz.support.InvalidTargetPathException;
-import org.jsecurity.util.PermissionUtils;
 
 /**
  * @since 1.0
@@ -56,7 +53,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
         int propertyStartIndex = -1;
 
         char[] chars = namePath.toCharArray();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         //init iteration at index 1 (instead of 0).  This is because the first
         //character must be the ARRAY_OPEN_CHAR (eliminates unnecessary iteration)
         for ( int i = 1; i < chars.length; i++ ) {
@@ -86,35 +83,13 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
         }
     }
 
-    protected Permission createPermission( MethodInvocation invocation ) {
+    protected String getAnnotationValue( MethodInvocation invocation ) {
         PermissionsRequired prAnnotation =  (PermissionsRequired)getAnnotation( invocation );
-        Class<? extends Permission> clazz = prAnnotation.type();
-        String name = prAnnotation.name();
-        String namePath = prAnnotation.namePath();
-        if (namePath != null && namePath.length() == 0) {
-            namePath = null;
-        }
-        String actions = prAnnotation.actions();
-        if (actions != null && actions.length() == 0) {
-            actions = null;
-        }
-
-        if ( namePath != null ) {
-            try {
-                name = inferTargetFromPath( getMethodArguments( invocation ), namePath );
-            } catch ( Exception e ) {
-                String msg = "Unable to parse namePath property.  Please see the " +
-                             "javadoc for expected path syntax. PermissionsRequired check cannot " +
-                             "continue.";
-                throw new InvalidTargetPathException( msg, e );
-            }
-        }
-
-        return PermissionUtils.createPermission( clazz, name, actions );
+        return prAnnotation.value();
     }
 
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
-        Permission p = createPermission( mi );
+        String p = getAnnotationValue( mi );
         if ( getSecurityContext().isPermitted( p ) ) {
             String msg = "Calling SecurityContext does not have required permission [" + p + "].  " +
                     "MethodInvocation denied.";

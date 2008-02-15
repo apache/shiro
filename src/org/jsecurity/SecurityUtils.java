@@ -29,19 +29,11 @@ import org.jsecurity.context.SecurityContext;
 /**
  * Accesses the currently accessible <tt>SecurityContext</tt> for the calling code.
  *
- * @deprecated call the {@link org.jsecurity.SecurityManager#getSecurityContext()} method instead.  This class will
- * be removed before JSecurity 1.0 final.
- *
  * @since 0.2
  * @author Les Hazlewood
  */
 public abstract class SecurityUtils {
 
-    private static SecurityManager securityManager = null; //expected to be set by framework code.
-
-    public static void setSecurityManager( SecurityManager sm ) {
-        securityManager = sm;
-    }
 
     /**
      * Returns the currently accessible <tt>SecurityContext</tt> available to the calling code.
@@ -50,12 +42,10 @@ public abstract class SecurityUtils {
      * implementation-specific methods.  It also allows the JSecurity team to change the underlying implementation of
      * this method in the future depending on requirements/updates without affecting your code that uses it.
      *
-     * @deprecated call {@link org.jsecurity.SecurityManager#getSecurityContext()} instead.  This class will be
-     * removed before 1.0 final.
-     *
      * @return the currently accessible <tt>SecurityContext</tt> accessible to the calling code.
      */
     public static SecurityContext getSecurityContext() {
-        return securityManager.getSecurityContext();
+        //todo Refactor to use thread local prior to 1.0
+        throw new UnsupportedOperationException( "Should be changed to use thread local before 1.0 release" );
     }
 }

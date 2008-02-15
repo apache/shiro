@@ -16,6 +16,7 @@ import java.util.*;
  * @since 0.2
  * @author Les Hazlewood
  */
+@SuppressWarnings("deprecated")
 public class JSecurityHttpSession implements HttpSession {
 
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
