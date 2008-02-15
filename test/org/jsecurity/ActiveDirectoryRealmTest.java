@@ -6,14 +6,14 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
-import org.jsecurity.authz.AuthorizationInfo;
-import org.jsecurity.authz.SimpleAuthorizationInfo;
+import org.jsecurity.authz.AuthorizingAccount;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.context.SecurityContext;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
 import org.junit.After;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -123,12 +123,12 @@ public class ActiveDirectoryRealmTest {
 
         }
 
-        protected AuthorizationInfo doGetAuthorizationInfo(Object principal) {
+        protected AuthorizingAccount doGetAccount(Object principal) {
             UserIdPrincipal userIdPrincipal = (UserIdPrincipal) principal;
             assertTrue(userIdPrincipal.getUserId() == USER_ID);
             List<String> roles = new ArrayList<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizationInfo(roles, null);
+            return new SimpleAuthorizingAccount(roles, null);
         }
 
         // override ldap query because i don't care about testing that piece in this case

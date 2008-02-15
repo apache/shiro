@@ -115,9 +115,14 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * and then apply these <tt>AuthenticationEventListener</tt>s on your behalf.
      *
      * <p>One notice however: The underlying Authenticator delegate must implement the
-     * {@link org.jsecurity.authc.event.AuthenticationEventListenerRegistrar AuthenticationEventListenerRegistrar} interface in order for these
-     * listeners to be applied.  If it does not implement this interface, it is considered a configuration error and
-     * an exception will be thrown during {@link #init() initialization}.
+     * {@link org.jsecurity.authc.event.AuthenticationEventListenerRegistrar AuthenticationEventListenerRegistrar}
+     * interface in order for these listeners to be applied.  If it does not implement this interface, it is
+     * considered a configuration error and an exception will be thrown during {@link #init() initialization}.
+     *
+     * <p>All of JSecurity's <tt>Authenticator</tt> implementations implement the 
+     * <tt>AuthenticationEventListenerRegistrar</tt> interface, so you would only need
+     * to worry about an exception being thrown if you provided your own Authenticator instance and did not
+     * implement it.
      *
      * @param listeners the <tt>AuthenticationEventListener</tt>s to register with the underlying delegate
      * <tt>Authenticator</tt> at startup.

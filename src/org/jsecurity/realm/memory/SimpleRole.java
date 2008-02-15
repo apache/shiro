@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  * A simple representation of a security role that has a name and a set of permissions.  This object can be
- * used internally by Realms to maintain cached authorization information.
+ * used internally by Realms to maintain cached authorization data.
  *
  * @since 0.2
  * @author Les Hazlewood

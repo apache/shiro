@@ -29,8 +29,7 @@ import org.jsecurity.util.Destroyable;
 import java.util.Map;
 
 /**
- * Interface encapsulating logic related to a single cache used for caching
- * JSecurity authentication and authorization information.
+ * Interface encapsulating logic related to a single object cache.
  * 
  * @since 0.2
  * @author Jeremy Haile

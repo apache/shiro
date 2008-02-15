@@ -26,9 +26,9 @@ package org.jsecurity.realm.jdbc;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.SimpleAuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.util.JdbcUtils;
 
@@ -130,7 +130,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * Overrides the default query used to retrieve a user's roles during authorization.  When using the default
      * implementation, this query must take the user's username as a single parameter and return a row
      * per role with a single column containing the role name.  If you require a solution that does not match this query
-     * structure, you can override {@link #doGetAuthorizationInfo(Object)} or just
+     * structure, you can override {@link #doGetAccount(Object)} or just
      * {@link #getRoleNamesForUser(java.sql.Connection,String)}
      *
      * @param userRolesQuery the query to use for retrieving a user's roles.
@@ -146,7 +146,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * implementation, this query must take a role name as the single parameter and return a row
      * per permission with three columns containing the fully qualified name of the permission class, the permission
      * name, and the permission actions (in that order).  If you require a solution that does not match this query
-     * structure, you can override {@link #doGetAuthorizationInfo(Object)} or just
+     * structure, you can override {@link #doGetAccount(Object)} or just
      * {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}</p>
      *
      * <p><b>Permissions are only retrieved if you set {@link #permissionsLookupEnabled} to true.  Otherwise,
@@ -253,10 +253,10 @@ public class JdbcRealm extends AuthorizingRealm {
     /**
      * This implementation of the interface expects the <tt>argument</tt> to be a String username.
      *
-     * @see AuthorizingRealm#getAuthorizationInfo(Object)
+     * @see AuthorizingRealm#getAccount(Object)
      */
     @Override
-    protected AuthorizationInfo doGetAuthorizationInfo( Object principal ) {
+    protected AuthorizingAccount doGetAccount( Object principal ) {
 
         //null usernames are invalid
         if ( principal == null ) {
@@ -292,7 +292,7 @@ public class JdbcRealm extends AuthorizingRealm {
             JdbcUtils.closeConnection( conn );
         }
 
-        return new SimpleAuthorizationInfo( roleNames, permissions );
+        return new SimpleAuthorizingAccount( roleNames, permissions );
     }
 
     protected Collection<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {

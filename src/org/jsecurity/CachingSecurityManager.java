@@ -32,7 +32,7 @@ import org.jsecurity.util.JavaEnvironment;
 import org.jsecurity.util.LifecycleUtils;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarcy that provides support for a
+ * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that provides support for a
  * {@link CacheProvider CacheProvider} and associated convenience methods only.  All actual <tt>SecurityManager</tt>
  * method implementations are left to subclasses.
  *

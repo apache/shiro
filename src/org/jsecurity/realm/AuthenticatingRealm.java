@@ -36,8 +36,8 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
 
     /**
      * The class that this realm supports for authentication tokens.  This is used by the
-     * default implementation of the {@link #supports(Class)} method to determine whether or not the
-     * given authentication token is supported by this realm.
+     * default implementation of the {@link Realm#supports(org.jsecurity.authc.AuthenticationToken)} method to
+     * determine whether or not the given authentication token is supported by this realm.
      */
     protected Class<? extends AuthenticationToken> authenticationTokenClass = UsernamePasswordToken.class;
 
@@ -95,8 +95,9 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * about 90% of realms use username/password authentication, regardless of their protocol (e.g. over jdbc, ldap,
      * kerberos, http, etc).
      *
-     * <p>Subclasses must override this method if they won't support <tt>UsernamePasswordToken</tt> authentications and
-     * they haven't already overridden the {@link #supports} method.
+     * <p>If subclasses haven't already overridden the {@link Realm#supports Realm.supports(AuthenticationToken)} method,
+     * they must {@link #setAuthenticationTokenClass(Class) set a new class} if they won't support
+     * <tt>UsernamePasswordToken</tt> authentication token submissions.
      *
      * @return the authenticationToken class supported by this realm.
      *
@@ -109,8 +110,8 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     /**
      * Sets the authenticationToken class supported by this realm.
      *
-     * <p>Unless overridden by this method, the default value is {@link UsernamePasswordToken} to support 90% of
-     * application's out of the box.
+     * <p>Unless overridden by this method, the default value is {@link UsernamePasswordToken} to support the majority
+     * of applications.
      *
      * @param authenticationTokenClass the class of authentication token instances supported by this realm.
      *
@@ -126,24 +127,27 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     ============================================*/
     /**
      * Convenience implementation that returns
-     * <tt>getAuthenticationTokenClass().isAssignableFrom( tokenClass );</tt>.  Can be overridden
-     * by subclasses for more complex token type checking.
+     * <tt>getAuthenticationTokenClass().isAssignableFrom( token.getClass() );</tt>.  Can be overridden
+     * by subclasses for more complex token checking.
      * <p>Most implementations will only need to set a different class via
      * {@link #setAuthenticationTokenClass}, as opposed to overriding this method.
      *
-     * @param tokenClass the class of the authenticationToken being submitted for authentication.
-     * @return true if this authentication realm "understands" how to process submissions for the submitted token
-     * instances of the class, false otherwise.
+     * @param token the token being submitted for authentication.
+     * @return true if this authentication realm can process the submitted token instance of the class, false otherwise.
      */
-    public boolean supports(Class tokenClass) {
-        return getAuthenticationTokenClass().isAssignableFrom( tokenClass );
+    public boolean supports(AuthenticationToken token) {
+        if ( log.isInfoEnabled() ) {
+            log.info( "Received null AuthenticationToken.  Returning false for supports(token) implementation (can't " +
+                "process null tokens)." );
+        }
+        return token != null && getAuthenticationTokenClass().isAssignableFrom(token.getClass());
     }
 
     /**
      * This method must be implemented by subclasses to retrieve account data from an
      * implementation-specific datasource (RDBMS, LDAP, etc) for the given authentication token.
      * In most data-centric systems such as an RDBMS, LDAP, file resource, etc, this means just 'pulling'
-     * account data for an associated subject/user.  But in some systems (mainframe, etc), the method
+     * account data for an associated subject/user and nothing more.  But in some systems, the method
      * could actually perform EIS specific log-in logic - it is up to the realm implementation.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.

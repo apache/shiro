@@ -25,8 +25,7 @@
 package org.jsecurity.cache;
 
 /**
- * Interface for cache-specific implementations that can provide caches
- * used by JSecurity to cache authentication and/or authorization information.
+ * Interface for cache-specific implementations that can provide {@link Cache Cache} instances.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

@@ -26,21 +26,21 @@ package org.jsecurity.authz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authc.support.SimpleAccount;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>A simple implementation of the {@link AuthorizationInfo} interface that is useful
- * for most realms.  This implementation uses an internal collection of roles and permissions
- * in order to determine the authorization information of a particular user.</p>
+ * <p>A simple implementation of the {@link AuthorizingAccount} interface that is useful
+ * for many realms.  This implementation uses an internal collection of roles and permissions
+ * in order to perform authorizatino checks for a particular user.</p>
  *
  * @since 0.2
  * @author Jeremy Haile
  */
-@SuppressWarnings({"JavaDoc", "SimplifiableIfStatement"})
-public class SimpleAuthorizationInfo implements AuthorizationInfo {
+public class SimpleAuthorizingAccount extends SimpleAccount implements AuthorizingAccount {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -69,12 +69,13 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     |         C O N S T R U C T O R S           |
     ============================================*/
     /**
-     * Constructs a new instance of the authorization info with multiple principals.
-     * @param roles the roles associated with this auth info.
-     * @param permissions the permissions associated with this authorization info.
+     * Constructs a new instance with assigned roles and permissions.
+     * 
+     * @param roles the roles assigned to this Account.
+     * @param permissions the permissions assigned to this Account.
      */
     @SuppressWarnings( "unchecked" )
-    public SimpleAuthorizationInfo(Collection<String> roles, Collection<Permission> permissions) {
+    public SimpleAuthorizingAccount(Collection<String> roles, Collection<Permission> permissions) {
         if( roles != null ) {
             this.roles = roles;
         } else {
@@ -94,12 +95,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
 
 
     public boolean hasRole(String roleIdentifier) {
-        if( roles != null ) {
-            return roles.contains( roleIdentifier );
-        } else {
-            return false;
-        }
-
+        return roles != null && roles.contains(roleIdentifier);
     }
 
 

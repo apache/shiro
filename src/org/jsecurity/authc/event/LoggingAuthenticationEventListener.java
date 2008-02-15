@@ -44,7 +44,8 @@ import java.text.SimpleDateFormat;
  */
 public class LoggingAuthenticationEventListener implements AuthenticationEventListener {
 
-    protected static final DateFormat ISO8601_DATE_FORMAT = new SimpleDateFormat( "YYYY-MM-dd HH:mm:ss.S" );
+    //DateFormat instances are not thread-safe, so we can only statically initialize the format string:
+    protected static final String ISO_8601_DATE_FORMAT_STRING = "YYYY-MM-dd HH:mm:ss.S";
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -63,8 +64,9 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
      * @param event the event associated with the successful authentication attempt.
      */
     protected void accept( SuccessfulAuthenticationEvent event ) {
+        DateFormat df = new SimpleDateFormat( ISO_8601_DATE_FORMAT_STRING );
         String msg = "Subject with principals [" + event.getPrincipals() + "] successfully authenticated on [" +
-            ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
+            df.format( event.getTimestamp() ) + "]";
         log.debug( msg );
     }
 
@@ -73,8 +75,9 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
      * @param event the event associated with the log-out.
      */
     protected void accept( LogoutEvent event ) {
+        DateFormat df = new SimpleDateFormat( ISO_8601_DATE_FORMAT_STRING );
         String msg = "Subject with principals [" + event.getPrincipals() + "] logged out on [" +
-            ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
+            df.format( event.getTimestamp() ) + "]";
         log.debug( msg );
     }
 
@@ -83,8 +86,9 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
      * @param event the event generated due to an account being locked.
      */
     protected void accept( UnlockedAccountEvent event ) {
+        DateFormat df = new SimpleDateFormat( ISO_8601_DATE_FORMAT_STRING );
         String msg = "The account for the subject with principals [" + event.getPrincipals() + "] was unlocked on [" +
-            ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
+            df.format( event.getTimestamp() ) + "]";
         log.debug( msg );
     }
 
@@ -93,15 +97,16 @@ public class LoggingAuthenticationEventListener implements AuthenticationEventLi
      * @param event the event associated with the failed authentication attempt.
      */
     protected void accept( FailedAuthenticationEvent event ) {
+        DateFormat df = new SimpleDateFormat( ISO_8601_DATE_FORMAT_STRING );
         AuthenticationException cause = event.getCause();
 
         if ( cause != null && ( cause instanceof LockedAccountException ) ) {
             String msg = "The account for the subject with principals [" + event.getPrincipals() + "] was locked on [" +
-                ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
+                df.format( event.getTimestamp() ) + "]";
             log.debug( msg );
         } else {
             String msg = "Login attempt for subject with principals [" + event.getPrincipals() + "] failed on [" +
-                ISO8601_DATE_FORMAT.format( event.getTimestamp() ) + "]";
+                df.format( event.getTimestamp() ) + "]";
             if ( cause != null ) {
                 msg += ".  Cause: ";
                 log.debug( msg, cause );

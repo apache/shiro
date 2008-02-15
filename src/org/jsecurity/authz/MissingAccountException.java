@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Jeremy Haile
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,30 +25,30 @@
 package org.jsecurity.authz;
 
 /**
- * An exception thrown when no authorization information is found
- * for the current user.
+ * An exception thrown when an Authorization operation is performed for a subject identity, but it is discovered
+ * that there is no <tt>Account</tt> for that subject to perform authorization checks against.
  *
- * @since 0.2
- * @author Jeremy Haile
+ * @since 1.0
+ * @author Les Hazlewood
  */
-public class NoAuthorizationInfoFoundException extends AuthorizationException {
+public class MissingAccountException extends AuthorizationException {
 
-    public NoAuthorizationInfoFoundException() {
+    public MissingAccountException() {
         super();
     }
 
 
-    public NoAuthorizationInfoFoundException(String message) {
+    public MissingAccountException(String message) {
         super(message);
     }
 
 
-    public NoAuthorizationInfoFoundException(Throwable cause) {
+    public MissingAccountException(Throwable cause) {
         super(cause);
     }
 
 
-    public NoAuthorizationInfoFoundException(String message, Throwable cause) {
+    public MissingAccountException(String message, Throwable cause) {
         super(message, cause);
     }
 }

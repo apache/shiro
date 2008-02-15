@@ -24,25 +24,30 @@
  */
 package org.jsecurity.authz;
 
+import org.jsecurity.authc.Account;
+
 import java.util.Collection;
 import java.util.List;
 
 /**
- * <p>An interface that must be returned by many {@link org.jsecurity.realm.Realm} implementations and is used to
- * represent the roles and permissions that a user account has in a framework independent way.
+ * <p>An <tt>AuthorizingAccount</tt> is an {@link Account Account} that knows about its assiged roles and permissions
+ * and can perform its own authorization (access control) checks.  It primarily exists as a support class for Realm
+ * implementations that want to cache authorization state when doing an account lookup so multiple authorization checks
+ * do not need to access the Realm's underlying data store repeatedly.
  *
- * <p>Used internally by any realm that extends from
- * {@link org.jsecurity.realm.AuthorizingRealm}, which
- * uses this object to encapsulate the cached information.</p>
- *
- * <p>Most realms will use {@link SimpleAuthorizationInfo} as the implementation of this interface, but are free
- * to create their own implementation.</p>
+ * <p>Of course, an <tt>AuthorizingAccount</tt> concept is only a convenience mechansim if JSecurity account caching
+ * enabled.  Realm implementations are free to ignore this interface entirely and implement/override any of their
+ * <tt>Realm</tt>'s {@link Authorizer Authorizer} methods to execute the authorization checks as they see fit.
+ * ({@link org.jsecurity.realm.Realm Realm} is a sub-interface of {@link Authorizer Authorizer} and therefore must
+ * implement those methods as well).
+ * 
+ * @see org.jsecurity.realm.AuthorizingRealm AuthorizingRealm
  *
  * @since 0.1
  * @author Jeremy Haile
- * @see SimpleAuthorizationInfo
+ * @see SimpleAuthorizingAccount
  */
-public interface AuthorizationInfo {
+public interface AuthorizingAccount extends Account {
     
     /**
      * @see org.jsecurity.context.SecurityContext#hasRole(String)
