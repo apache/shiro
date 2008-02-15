@@ -24,8 +24,6 @@
  */
 package org.jsecurity.authc;
 
-import java.util.List;
-
 /**
  * <p>An <tt>Account</tt> implementation represents system-specific account/user information
  * in a framework-independent manner.  Instead of forcing a JSecurity user to
@@ -47,7 +45,7 @@ import java.util.List;
 public interface Account {
 
     /**
-     * Returns the account's primary principal, such as a user id or username.
+     * Returns the account's identifying principal, such as a user id or username.
      *
      * <p>In a multi-realm configuration, if this instance is an
      * {@link org.jsecurity.authc.support.AggregateAccount AggregateAccount}, the object returned from this method
@@ -61,19 +59,8 @@ public interface Account {
     Object getPrincipal();
 
     /**
-     * Returns the principals that identify the account, such as a user's primary key
-     * id or username.  Although not a requirement,
-     * the list returned by the implementation should contain at least 1 principal.  The first
-     * pricipal in the list is usually (but still not a requirement) the account's primary
-     * principal (e.g. user id).
-     *
-     * @return the account's identifying principals.
-     */
-    List<Object> getPrincipals();
-
-    /**
      * The account's credentials as stored in the system associated with the
-     * {@link #getPrincipals() account identifier}, such as a password char array or
+     * {@link #getPrincipal() account identifier}, such as a password char array or
      * public key.
      *
      * <p>It could be encrypted in which case an
@@ -81,7 +68,7 @@ public interface Account {
      * must be aware of the fact (e.g. via configuration) in order to interpret and compare
      * the credentials value.
      *
-     * @return the account's credential verifying the {@link #getPrincipals() identifier}
+     * @return the account's credentials verifying the {@link #getPrincipal() identifier}
      */
     Object getCredentials();
 

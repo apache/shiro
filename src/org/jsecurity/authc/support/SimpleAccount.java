@@ -24,50 +24,43 @@
  */
 package org.jsecurity.authc.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Simple implementation of the {@link org.jsecurity.authc.Account} interface that
  * contains all necessary information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * @see org.jsecurity.authc.Account
- *
- * @since 0.1
  * @author Jeremy Haile
+ * @see org.jsecurity.authc.Account
+ * @since 0.1
  */
 public class SimpleAccount implements AggregateAccount, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    protected transient final Log logger = LogFactory.getLog( getClass() );
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * The principals that apply to the subject/user who has been authenticated.
-     */
-    private List<Object> principals = null;
+    /** The principal that apply to the subject/user who has been authenticated. */
+    private Object principal = null;
 
-    /**
-     * Credentials that were used to authenticate the user.
-     */
+    /** Credentials that were used to authenticate the user. */
     private Object credentials = null;
 
-    /**
-     * True if the account is locked, false otherwise.
-     */
+    /** True if the account is locked, false otherwise. */
     private boolean locked = false;
 
-    /**
-     * True if the user's credentials are expired, false otherwise.
-     */
+    /** True if the user's credentials are expired, false otherwise. */
     private boolean credentialsExpired = false;
 
     /**
@@ -82,25 +75,16 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     public SimpleAccount() {
     }
 
-    public SimpleAccount( Object principals, Object credentials) {
-        addPrincipal( principals );
-        this.credentials = credentials;
+    public SimpleAccount(Object principal, Object credentials) {
+        this(principal, credentials, false, false);
     }
 
-    public SimpleAccount(List<?> principals, Object credentials) {
-        setPrincipals( principals );
-        this.credentials = credentials;
+    public SimpleAccount(Object principal, Object credentials, boolean locked, boolean credentialsExpired) {
+        this(principal, credentials, locked, credentialsExpired, true);
     }
 
-    public SimpleAccount(List<?> principals, Object credentials, boolean locked, boolean credentialsExpired) {
-        setPrincipals( principals );
-        this.credentials = credentials;
-        this.locked = locked;
-        this.credentialsExpired = credentialsExpired;
-    }
-
-    public SimpleAccount(List<?> principals, Object credentials, boolean locked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
-        setPrincipals( principals );
+    public SimpleAccount(Object principal, Object credentials, boolean locked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
+        this.principal = principal;
         this.credentials = credentials;
         this.locked = locked;
         this.credentialsExpired = credentialsExpired;
@@ -112,34 +96,18 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     ============================================*/
 
     public Object getPrincipal() {
-        if( this.principals == null || this.principals.isEmpty()) {
-            return null;
-        } else {
-            return this.principals.get(0);
-        }
+        return this.principal;
     }
 
-    public List<Object> getPrincipals() {
-        return Collections.unmodifiableList( principals );
-    }
-
-    public void setPrincipals(List<?> principals) {
-        this.principals = new ArrayList<Object>( principals.size() );
-        this.principals.addAll( principals );
-    }
-
-    public void addPrincipal( Object principal ) {
-        if ( this.principals == null ) {
-            this.principals = new ArrayList<Object>();
-        }
-        this.principals.add( principal );
+    public void setPrincipal(Object principal) {
+        this.principal = principal;
     }
 
     public Object getCredentials() {
         return credentials;
     }
 
-    public void setCredentials( Object credentials ) {
+    public void setCredentials(Object credentials) {
         this.credentials = credentials;
     }
 
@@ -170,43 +138,75 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public String toString() {
-        return "SimpleAccount for user [" + getPrincipals() + "]";
-    }
-
     /**
      * Merges the specified argument into this instance.
-     * @param account the account to merge into this instance.
+     *
+     * @param otherAccount the otherAccount to merge into this instance.
      */
-    public void merge(Account account) {
-        if ( account == null ) {
+    @SuppressWarnings({"unchecked"})
+    public void merge(Account otherAccount) {
+        if (otherAccount == null) {
             return;
         }
 
-        //noinspection unchecked
-        List<?> infoPrincipals = account.getPrincipals();
+        Object otherPrincipal = otherAccount.getPrincipal();
+        if (otherPrincipal == null) {
+            return;
+        }
 
-        if ( infoPrincipals != null && !infoPrincipals.isEmpty() ) {
-            if ( this.principals == null ) {
-                this.principals = new ArrayList<Object>( infoPrincipals.size() );
+        Object thisPrincipal = getPrincipal();
+        if (thisPrincipal == null) {
+            this.principal = otherPrincipal;
+        } else {
+            HashSet set = new HashSet();
+            if (thisPrincipal instanceof Collection) {
+                set.addAll((Collection)thisPrincipal);
+            } else {
+                set.add( thisPrincipal );
             }
-            this.principals.addAll( infoPrincipals );
+            if (otherPrincipal instanceof Collection) {
+                set.addAll((Collection)otherPrincipal);
+            } else {
+                set.add(otherPrincipal);
+            }
+            this.principal = set;
         }
 
-        if( this.credentials == null ) {
-            setCredentials(account);
+
+        if (this.credentials == null) {
+            setCredentials(otherAccount.getCredentials());
         }
 
-        if( account.isLocked() ) {
-            setLocked( true );
+        if (otherAccount.isLocked()) {
+            setLocked(true);
         }
 
-        if( account.isCredentialsExpired() ) {
-            setCredentialsExpired( true );
+        if (otherAccount.isCredentialsExpired()) {
+            setCredentialsExpired(true);
         }
 
-        if( !account.isConcurrentLoginsAllowed() ) {
-            setConcurrentLoginsAllowed( false );
+        if (!otherAccount.isConcurrentLoginsAllowed()) {
+            setConcurrentLoginsAllowed(false);
         }
+    }
+
+    public int hashCode() {
+        return ( getPrincipal() != null ? getPrincipal().hashCode() : 0 );
+    }
+
+    public boolean equals( Object o ) {
+        if ( o == this ) {
+            return true;
+        }
+        if ( o instanceof SimpleAccount ) {
+            SimpleAccount sa = (SimpleAccount)o;
+            //principal should be unique across the application, so only check this for equality:
+            return ( getPrincipal() != null ? getPrincipal().equals( sa.getPrincipal() ) : sa.getPrincipal() == null );
+        }
+        return false;
+    }
+
+    public String toString() {
+        return getPrincipal().toString();
     }
 }

@@ -128,7 +128,7 @@ public class ActiveDirectoryRealmTest {
             assertTrue(userIdPrincipal.getUserId() == USER_ID);
             List<String> roles = new ArrayList<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(roles, null);
+            return new SimpleAuthorizingAccount(userIdPrincipal, null, roles, null);
         }
 
         // override ldap query because i don't care about testing that piece in this case

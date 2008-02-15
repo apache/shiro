@@ -22,19 +22,19 @@
 * Or, you may view it online at
 * http://www.opensource.org/licenses/lgpl-license.php
 */
-package org.jsecurity.realm.memory;
+package org.jsecurity.realm;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.UnauthorizedException;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.HashtableCacheProvider;
-import org.jsecurity.realm.AuthenticatingRealm;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.LifecycleUtils;
@@ -47,6 +47,9 @@ import java.util.*;
  * uses a set of configured user accounts and roles to support authentication and authorization.  Each account entry
  * specifies the username, password, and roles for a user.  Roles can also be mapped
  * to permissions and associated with users.</p>
+ *
+ * <p>User accounts and roles are stored in two {@link Cache cache}s, so it is the Cache provider implementation that
+ * determines if this class stores all data in memory or spools to disk or clusters it, etc.
  *
  * <p>User accounts can be specified in a couple of ways:
  *
@@ -72,7 +75,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class MemoryRealm extends AuthenticatingRealm implements Initializable, Destroyable {
+public class SimpleAccountRealm extends AuthorizingRealm implements Initializable, Destroyable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -92,6 +95,11 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
+    public void MemoryRealm() {
+        //this class maintains its own userCache and roleCache - no need for parent class to do so also:
+        setAccountCacheEnabled(false);
+    }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -209,12 +217,12 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         this.roleDefinitions = roleDefinitions;
     }
 
-    protected SimpleUser getUser( String username ) {
-        return (SimpleUser)userCache.get( username );
+    protected SimpleAuthorizingAccount getUser( String username ) {
+        return (SimpleAuthorizingAccount)userCache.get( username );
     }
 
-    protected void add( SimpleUser user ) {
-        userCache.put( user.getUsername(), user );
+    protected void add( SimpleAuthorizingAccount user ) {
+        userCache.put( user.getPrincipal(), user );
     }
 
     protected SimpleRole getRole( String rolename ) {
@@ -257,12 +265,12 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
             String password = passwordAndRolesArray[0];
 
 
-            SimpleUser user = getUser( username );
+            SimpleAuthorizingAccount user = getUser( username );
             if ( user == null ) {
-                user = new SimpleUser( username, password );
+                user = new SimpleAuthorizingAccount( username, password );
                 add( user );
             }
-            user.setPassword( password );
+            user.setCredentials( password );
 
             Set<String> valueRolenames;
             if ( passwordAndRolesArray.length > 1 ) {
@@ -329,7 +337,7 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    public void init() {
+    public void onInit() {
         CacheProvider provider = getCacheProvider();
 
         if ( provider == null ) {
@@ -340,121 +348,25 @@ public class MemoryRealm extends AuthenticatingRealm implements Initializable, D
         this.userCache = provider.buildCache( getClass().getName() + ".users" );
         this.roleCache = provider.buildCache( getClass().getName() + ".roles" );
 
-        processUserDefinitions();
         processRoleDefinitions();
+        processUserDefinitions();
     }
 
 
-    public void destroy() throws Exception {
+    public void destroy() {
         LifecycleUtils.destroy(userCache);
         this.userCache = null;
         LifecycleUtils.destroy(roleCache);
         this.roleCache = null;
-        LifecycleUtils.destroy(getCacheProvider());
-        setCacheProvider(null);
+        super.destroy();
+    }
+
+    protected AuthorizingAccount doGetAccount(Object principal) {
+        return (SimpleAuthorizingAccount)userCache.get(principal);
     }
 
     protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;
-
-        SimpleUser user = (SimpleUser)userCache.get( upToken.getUsername() );
-        if ( user == null ) {
-            return null;
-        }
-
-        return createAccount( user.getUsername(), user.getPassword() );
-
+        return doGetAccount( upToken.getUsername() );
     }
-
-    protected String getUsername( Object principal ) {
-        if ( principal instanceof String ) {
-            return ((String)principal);
-        } else {
-            String msg = "The " + getClass().getName() + " implementation expects all principal arguments to be " +
-                "Strings";
-            throw new IllegalArgumentException( msg );
-        }
-    }
-
-    protected SimpleUser getUser( Object principal ) {
-        return getUser( getUsername( principal ) );
-    }
-
-    public boolean hasRole( Object principal, String roleIdentifier ) {
-        SimpleUser user = getUser( principal );
-        return ( user != null && user.hasRole( roleIdentifier ) );
-    }
-
-
-    public boolean[] hasRoles( Object principal, List<String> roleIdentifiers ) {
-        boolean[] hasRoles = new boolean[roleIdentifiers.size()];
-        for ( int i = 0; i < roleIdentifiers.size(); i++ ) {
-            hasRoles[i] = hasRole( principal, roleIdentifiers.get( i ) );
-        }
-        return hasRoles;
-    }
-
-    public boolean hasAllRoles( Object principal, Collection<String> roleIdentifiers ) {
-        for ( String rolename : roleIdentifiers ) {
-            if ( !hasRole( principal, rolename ) ) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean isPermitted( Object principal, Permission permission ) {
-        SimpleUser user = getUser( principal );
-        return user != null && user.isPermitted( permission );
-    }
-
-    public boolean[] isPermittedPermissions( Object principal, List<Permission> permissions ) {
-        boolean[] permitted = new boolean[permissions.size()];
-        for ( int i = 0; i < permissions.size(); i++ ) {
-            permitted[i] = isPermitted( principal, permissions.get( i ) );
-        }
-        return permitted;
-    }
-
-    public boolean isPermittedAllPermissions( Object principal, Collection<Permission> permissions ) {
-        for ( Permission perm : permissions ) {
-            if ( !isPermitted( principal, perm ) ) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void checkPermission( Object principal, Permission permission ) throws AuthorizationException {
-        if ( !isPermitted( principal, permission ) ) {
-            throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
-        }
-    }
-
-    public void checkPermissionsPermissions( Object principal, Collection<Permission> permissions ) throws AuthorizationException {
-        if ( permissions != null ) {
-            for ( Permission permission : permissions ) {
-                if ( !isPermitted( principal, permission ) ) {
-                    throw new UnauthorizedException( "User does not have permission [" + permission + "]" );
-                }
-            }
-        }
-    }
-
-    public void checkRole( Object principal, String role ) throws AuthorizationException {
-        if ( !hasRole( principal, role ) ) {
-            throw new UnauthorizedException( "User does not have role [" + role + "]" );
-        }
-    }
-
-    public void checkRoles( Object principal, Collection<String> roles ) throws AuthorizationException {
-        if ( roles != null ) {
-            for ( String role : roles ) {
-                if ( !hasRole( principal, role ) ) {
-                    throw new UnauthorizedException( "User does not have role [" + role + "]" );
-                }
-            }
-        }
-    }
-
 }

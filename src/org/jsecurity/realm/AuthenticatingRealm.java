@@ -3,7 +3,7 @@ package org.jsecurity.realm;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.credential.SimpleCredentialsMatcher;
-import org.jsecurity.authc.support.SimpleAccount;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.cache.CacheProvider;
 
 /**
@@ -226,6 +226,6 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * @return an {@link org.jsecurity.authc.Account} instance that should be used to "log in" the user.
      */
     protected Account createAccount( Object principal, Object credentials ) {
-        return new SimpleAccount(principal, credentials);
+        return new SimpleAuthorizingAccount(principal, credentials);
     }
 }

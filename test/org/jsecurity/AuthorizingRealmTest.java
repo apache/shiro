@@ -149,7 +149,7 @@ public class AuthorizingRealmTest {
         protected AuthorizingAccount doGetAccount(Object principal) {
             List<String> roles = new ArrayList<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(roles, new ArrayList<Permission>());
+            return new SimpleAuthorizingAccount(principal, null, roles, new ArrayList<Permission>());
         }
 
         protected Account createAccount(Object principal, Object credentials) {

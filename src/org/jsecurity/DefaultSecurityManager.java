@@ -29,8 +29,8 @@ import org.jsecurity.authz.Authorizer;
 import org.jsecurity.context.DelegatingSecurityContext;
 import org.jsecurity.context.RememberMeManager;
 import org.jsecurity.context.SecurityContext;
+import org.jsecurity.realm.PropertiesRealm;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.file.PropertiesRealm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.util.ThreadContext;
@@ -112,9 +112,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     private void assertPrincipals(Account account) {
-        Collection principals = account.getPrincipals();
-        if (principals == null || principals.size() < 1) {
-            String msg = "Account returned from Authenticator must return at least one non-null principal.";
+        Object principal = account.getPrincipal();
+        if (principal == null ) {
+            String msg = "Account returned from Authenticator must have an associated principal.";
             throw new IllegalArgumentException(msg);
         }
     }
@@ -168,7 +168,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             authcSourceIP = ThreadContext.getInetAddress();
         }
 
-        return createSecurityContext(account.getPrincipals(), session, true, authcSourceIP);
+        return createSecurityContext(account.getPrincipal(), session, true, authcSourceIP);
     }
 
     /**
