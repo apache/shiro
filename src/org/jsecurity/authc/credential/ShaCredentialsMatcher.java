@@ -29,6 +29,9 @@ import org.jsecurity.crypto.hash.Hash;
 import org.jsecurity.crypto.hash.ShaHash;
 
 /**
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
+ * SHA hashed. 
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

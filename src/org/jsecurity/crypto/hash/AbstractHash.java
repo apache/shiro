@@ -54,6 +54,15 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     private String hexEncoded = null;
     private String base64Encoded = null;
 
+    /**
+     * Creates an new instance without any of its properties set (no hashing is performed).
+     *
+     * <p>Because all constructors in this class
+     * (except this one) hash the <tt>source</tt> constructor argument, this default, no-arg constructor is useful in
+     * scenarios whenyou have a byte array that you know is already hashed and just want to set the bytes in their
+     * raw form directly on an instance.  After instantiating the instance with this default, no-arg constructor, you
+     * can then immediately call {@link #setBytes setBytes} to have a fully-initiallized instance.
+     */
     public AbstractHash() {
     }
 
@@ -95,8 +104,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     }
 
     /**
-     * Creates a hash of the specified <tt>source</tt> using the given <tt>salt</tt> then re-hashes the result
-     * <tt>hashInterations</tt> times.
+     * Creates a hash of the specified <tt>source</tt> using the given <tt>salt</tt> a total of
+     * <tt>hashIterations</tt> times.
      *
      * <p>By default, this class only supports Object method arguments of
      * type <tt>byte[]</tt>, <tt>char[]</tt> and <tt>String</tt>.  If either argument is anything other than these
@@ -109,10 +118,10 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      *
      * @param source the source object to be hashed.
      * @param salt the salt to use for the hash
-     * @param hashIterations the number of iterations this hash will be re-hashed for attack resiliency.
+     * @param hashIterations the number of times the <tt>source</tt> argument hashed for attack resiliency.
      * @throws CodecException if either Object constructor argument cannot be converted into a byte array.
      * @see <a href="http://www.owasp.org/index.php/Hashing_Java" target="blank">Hashing_Java</a> 
-     * for the benefits of salts and hash iterations.
+     * for the benefits of salts and multiple hash iterations.
      */
     public AbstractHash(Object source, Object salt, int hashIterations ) throws CodecException {
         byte[] sourceBytes = toBytes( source );
@@ -129,7 +138,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * when performing the hash.
      * @return the {@link MessageDigest MessageDigest} algorithm to use when performing the hash.
      */
-    public abstract String getAlgorithmName();
+    protected abstract String getAlgorithmName();
 
     public byte[] getBytes() {
         return this.bytes;
@@ -138,7 +147,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     /**
      * Sets the raw bytes stored by this hash instance instance.
      *
-     * <p>The bytes are kept in raw form - they will not be re-hashed.  This is primarily a utility method for
+     * <p>The bytes are kept in raw form - they will not be hashed/changed.  This is primarily a utility method for
      * constructing a Hash instance when the hashed value is already known.
      *
      * @param alreadyHashedBytes the raw already-hashed bytes to store in this instance.
@@ -189,7 +198,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      *
      * @param bytes the bytes to hash
      * @param salt the salt to use for the initial hash
-     * @param hashIterations the remaining number of times the initial hash is to be re-hashed for attack resiliency.
+     * @param hashIterations the number of times the the <tt>bytes</tt> will be hashed (for attack resiliency).
      * @return the hashed bytes.
      */
     protected byte[] hash(byte[] bytes, byte[] salt, int hashIterations) {
@@ -209,7 +218,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     }
 
     /**
-     * Simple implementation that merely returns the {@link #toHex() toHex()} value.
+     * Simple implementation that merely returns {@link #toHex() toHex()}.
      *
      * @return the {@link #toHex() toHex()} value.
      */
@@ -221,6 +230,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * Returns a hex-encoded string of the underlying {@link #getBytes byte array}.
      *
      * <p>This implementation caches the resulting hex string so multiple calls to this method remain performant.
+     * (However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
+     * next time this method is called).
      *
      * @return a hex-encoded string of the underlying {@link #getBytes byte array}.
      */
@@ -234,7 +245,9 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     /**
      * Returns a Base64-encoded string of the underlying {@link #getBytes byte array}.
      *
-     * <p>This implementation caches the resulting base64 string so multiple calls to this method remain performant.
+     * <p>This implementation caches the resulting hex string so multiple calls to this method remain performant.
+     * (However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
+     * next time this method is called).
      *
      * @return a Base64-encoded string of the underlying {@link #getBytes byte array}.
      */

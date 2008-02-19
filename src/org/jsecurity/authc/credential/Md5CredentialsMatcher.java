@@ -29,6 +29,9 @@ import org.jsecurity.crypto.hash.Hash;
 import org.jsecurity.crypto.hash.Md5Hash;
 
 /**
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be 
+ * MD5 hashed.
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

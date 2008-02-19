@@ -58,7 +58,7 @@ public class Sha384Hash extends AbstractHash {
         super(source, salt, hashIterations);
     }
 
-    public String getAlgorithmName() {
+    protected String getAlgorithmName() {
         return ALGORITHM_NAME;
     }
 

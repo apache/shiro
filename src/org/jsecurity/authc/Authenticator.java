@@ -34,6 +34,11 @@ package org.jsecurity.authc;
  * and interacting with an application-configured set of
  * {@link org.jsecurity.realm.Realm Realm}s.
  *
+ * <p>Note that most JSecurity users will not interact with an <tt>Authenticator</tt> instance directly.  JSecurity's
+ * default architecture is based on an overall <tt>SecurityManager</tt> which typically wraps an
+ * <tt>Authenticator</tt> instance.
+ *
+ * @see org.jsecurity.SecurityManager
  * @see org.jsecurity.authc.support.AbstractAuthenticator AbstractAuthenticator
  * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
  *

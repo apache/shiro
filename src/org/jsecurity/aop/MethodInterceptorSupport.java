@@ -32,8 +32,9 @@ import org.jsecurity.util.Initializable;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
- * leaves AOP implementation specifics to be handled by subclass implementations.  Shared behavior
- * is defined in this class.
+ * leaves AOP implementation specifics to be handled by subclass implementations.  This implementation primarily
+ * enables a <tt>Log</tt> and makes available the application's {@link org.jsecurity.SecurityManager SecurityManager}
+ * for use by subclasses.
  *
  * @since 0.2
  * @author Les Hazlewood
