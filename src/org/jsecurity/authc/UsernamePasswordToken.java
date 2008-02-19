@@ -28,9 +28,15 @@ import java.net.InetAddress;
 
 /**
  * <p>A simple username/password authentication token to support the most widely-used authentication mechanism.  This
- * class also implements the <tt>RememberMeAuthenticationToken</tt> and <tt>InetAuthenticationToken</tt> interfaces to
+ * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} and
+ * {@link InetAuthenticationToken InetAuthenticationToken} interfaces to
  * support &quot;Remember Me&quot; services across user sessions and to retain the IP address location from where the
  * authentication attempt is occuring.<p>
+ *
+ * <p><tt>RememberMe</tt> authentications are disabled by default, but if the application developer wishes to allow
+ * it for a login attempt, all it has to do is call {@link #setRememberMe setRememberMe(true)}.  If the underlying
+ * <tt>SecurityManager</tt> implementation also supports <tt>RememberMe</tt> services, the user's identity will be
+ * remembered across sessions.
  *
  * <p>Note that this class stores a password as a char[] instead of a String
  * (which may seem more logical).  This is because Strings are immutable and their

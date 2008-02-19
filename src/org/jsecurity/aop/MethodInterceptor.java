@@ -25,6 +25,11 @@
 package org.jsecurity.aop;
 
 /**
+ * A <tt>MethodInterceptor</tt> intercepts a <tt>MethodInvocation</tt> to perform before or after logic (aka 'advice').
+ *
+ * <p>JSecurity's implementations of this interface mostly have to deal with ensuring a current Subject has the
+ * ability to execute the method before allowing it to continue.
+ *
  * @since 0.2
  * @author Les Hazlewood
  */

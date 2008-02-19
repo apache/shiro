@@ -25,6 +25,9 @@
 package org.jsecurity.crypto;
 
 /**
+ * A JdkKey merely wraps an underlying {@link java.security.Key}, allowing the use of a Jdk Key in the JSecurity
+ * crypto API.
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

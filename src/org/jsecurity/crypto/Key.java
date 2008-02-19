@@ -25,6 +25,11 @@
 package org.jsecurity.crypto;
 
 /**
+ * A <tt>Key</tt> is a component used with a {@link Cipher Cipher} algorithm to uniquely encrypt or decrypt data.
+ *
+ * <p>The <tt>Cipher</tt> algorithm remains constant and it is a unique <tt>Key</tt> that determines the resulting 
+ * output and how to decrypt encrypted data.
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

@@ -56,7 +56,7 @@ public class ShaHash extends AbstractHash {
         super(source, salt, hashIterations);
     }
 
-    public String getAlgorithmName() {
+    protected String getAlgorithmName() {
         return ALGORITHM_NAME;
     }
 

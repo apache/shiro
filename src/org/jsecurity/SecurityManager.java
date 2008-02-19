@@ -50,7 +50,7 @@ import java.util.List;
  * {@link #login}, {@link #logout} and {@link #getSecurityContext}.  A <tt>SecurityContext</tt> executes
  * authentication, authorization, and session operations for a <em>single</em> user, and as such can only be
  * managed by <tt>A SecurityManager</tt> which is aware of all three capabilities.  The three parent interfaces on the
- * other hand do not 'know about' SecurityContexts to ensure a clean separation of concerns.
+ * other hand do not 'know about' <tt>SecurityContext</tt>s to ensure a clean separation of concerns.
  *
  * <p>Usage Note:  In actuality the large majority of application programmers won't interact with a SecurityManager
  * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently

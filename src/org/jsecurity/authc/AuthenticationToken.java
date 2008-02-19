@@ -35,7 +35,7 @@ import java.io.Serializable;
  * Authenticator then executes the authentication/log-in process.
  *
  * <p>Common implementations of an <tt>AuthenticationToken</tt> would have username/password
- * pairs, userid/public key combinations, or anything else you can think of.  The token can be
+ * pairs, X.509 Certificate, PGP key, or anything else you can think of.  The token can be
  * anything needed by an {@link Authenticator} to authenticate properly.
  *
  * <p>Because applications represent user data and credentials in different ways, implementations
@@ -48,12 +48,18 @@ import java.io.Serializable;
  * (like most), instead of implementing this interface yourself, take a look at the
  * {@link UsernamePasswordToken UsernamePasswordToken} class, as it is probably sufficient for your needs.
  *
+ * <p>RememberMe services are enabled for a token if they implement a sub-interface of this one, called
+ * {@link RememberMeAuthenticationToken RememberMeAuthenticationToken}.  Implement that interfac if you need
+ * RememberMe services (the <tt>UsernamePasswordToken</tt> already implements this interface).
+ *
  * <p>If you are familiar with JAAS, an <tt>AuthenticationToken</tt> replaces the concept of a
  * {@link javax.security.auth.callback.Callback}, and  defines meaningful behavior
  * (<tt>Callback</tt> is just a marker interface, and of little use).  We
  * also think the name <em>AuthenticationToken</em> more accurately reflects its true purpose
  * in a login framework, whereas <em>Callback</em> is less obvious.
  *
+ * @see RememberMeAuthenticationToken
+ * @see InetAuthenticationToken
  * @see UsernamePasswordToken
  *
  * @since 0.1

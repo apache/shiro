@@ -247,6 +247,13 @@ public interface SecurityContext {
     /**
      * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
+     * 
+     * <p>Note that even if this Subject's identity has been remembered via 'remember me' services, this method will
+     * still return <tt>false</tt> unless the user has actually logged in with proper credentials.  See the
+     * {@link org.jsecurity.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} class JavaDoc for why
+     * this would occur.</p>
+     *
+     *
      * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      *

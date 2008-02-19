@@ -46,9 +46,13 @@ import org.jsecurity.authc.AuthenticationToken;
 public interface CredentialsMatcher {
 
     /**
-     * Determines if the provided credential matches the stored credential.
-     * @param token
-     * @param account @return true if the credentials match, false if they do not match.
+     * Returns <tt>true</tt> if the provided token credentials match the stored account credentials,
+     * <tt>false</tt> otherwise.
+     *
+     * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt
+     * @param account the <tt>Account</tt> stored in the system.
+     * @return <tt>true</tt> if the provided token credentials match the stored account credentials,
+     * <tt>false</tt> otherwise.
      */
     boolean doCredentialsMatch( AuthenticationToken token, Account account );
 

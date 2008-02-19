@@ -32,14 +32,15 @@ import org.jsecurity.crypto.hash.AbstractHash;
 import org.jsecurity.crypto.hash.Hash;
 
 /**
- * A <tt>HashedCredentialMatcher</tt> provides support for hashing of supplied credentials before being compared to
- * those in a data store.
+ * A <tt>HashedCredentialMatcher</tt> provides support for hashing of supplied <tt>AuthenticationToken</tt> credentials
+ * before being compared to those in the account from the data store.
  *
  * <p>This class (and its subclasses) function as follows:</p>
  *
- * <p>It first hashes the credentials supplied by the user during their login.  It then compares this hashed
- * value directly with the credentials stored in the system.  The stored system credentials are not hashed before
- * the comparison since it is expected that the stored value is already in hashed form.</p>
+ * <p>It first hashes the <tt>AuthenticationToken</tt> credentials supplied by the user during their login.  It then
+ * compares this hashed value directly with the account credentials stored in the system.  The stored account
+ * credentials are not hashed before the comparison since it is expected that the stored value is already in hashed
+ * form.</p>
  *
  * <p>This class is configurable to enable salting the hashed provided credentials as well as performing multiple hash
  * iterations:

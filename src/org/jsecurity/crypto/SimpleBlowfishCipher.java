@@ -32,6 +32,23 @@ import java.security.InvalidKeyException;
 import java.util.Arrays;
 
 /**
+ * JSecurity's default symmetric block Cipher using the Blowfish algorithm.  As it is a symmetric Cipher, it uses the
+ * same <tt>Key</tt> to both encrypt and decrypt data.  If one is not provided via the {@link #setKey setKey} method,
+ * a default one will be used, BUT NOTE:
+ *
+ * <p>Because JSecurity is an open-source project, if anyone knew that you were using JSecurity's default blowfish
+ * cipher, they could download/view the source, and with enough effort, reconstruct the <tt>Key</tt> and decode
+ * encrypted data at will.
+ *
+ * <p>JSecurity only really uses Ciphers to encrypt user ids and session ids, so if that information is not critical to
+ * you, you might not worry about this Key issue.
+ *
+ * <p>However, it is hightly recommended that you provide your own <tt>Key</tt> via the {@link #setKey setKey} method
+ * to a Key known only to your application, guaranteeing that no third party can decrypt your data.  If you want to
+ * know how to do this, you can browse this class's source code for the <code>public static void main(String[] args)</code>
+ * method to see how we created our default.  Then you can duplicate the same in your environment and set the
+ * result on an instance of this class via the <tt>setKey</tt> method.
+ *
  * @author Les Hazlewood
  * @since 1.0
  */
