@@ -1,10 +1,10 @@
 package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
-import org.jsecurity.context.Subject;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.support.DefaultWebRememberMeManager;
 import org.jsecurity.web.support.DefaultWebSessionFactory;

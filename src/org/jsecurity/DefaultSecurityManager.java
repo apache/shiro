@@ -26,13 +26,13 @@ package org.jsecurity;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.context.DelegatingSubject;
-import org.jsecurity.context.RememberMeManager;
-import org.jsecurity.context.Subject;
 import org.jsecurity.realm.PropertiesRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
+import org.jsecurity.subject.DelegatingSubject;
+import org.jsecurity.subject.RememberMeManager;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
 import java.net.InetAddress;

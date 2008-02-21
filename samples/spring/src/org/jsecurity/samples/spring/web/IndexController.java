@@ -25,8 +25,8 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;

@@ -1,8 +1,8 @@
 package org.jsecurity;
 
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

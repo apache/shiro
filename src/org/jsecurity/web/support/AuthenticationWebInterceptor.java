@@ -24,9 +24,9 @@
 */
 package org.jsecurity.web.support;
 
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.web.WebInterceptor;
 
 import javax.servlet.ServletRequest;

@@ -50,52 +50,52 @@ import java.util.List;
 public interface AuthorizingAccount extends Account {
     
     /**
-     * @see org.jsecurity.context.Subject#isPermitted(Permission)
+     * @see org.jsecurity.subject.Subject#isPermitted(Permission)
      */
     boolean isPermitted(Permission permission);
 
     /**
-     * @see org.jsecurity.context.Subject#isPermittedPermissions(java.util.List)
+     * @see org.jsecurity.subject.Subject#isPermittedPermissions(java.util.List)
      */
     boolean[] isPermitted(List<Permission> permissions);
 
     /**
-     * @see org.jsecurity.context.Subject#isPermittedAllPermissions(java.util.Collection)
+     * @see org.jsecurity.subject.Subject#isPermittedAllPermissions(java.util.Collection)
      */
     boolean isPermittedAll(Collection<Permission> permissions);
 
     /**
-     * @see org.jsecurity.context.Subject#checkPermission(Permission)
+     * @see org.jsecurity.subject.Subject#checkPermission(Permission)
      */
     void checkPermission(Permission permission) throws AuthorizationException;
 
     /**
-     * @see org.jsecurity.context.Subject#checkPermissionsPermissions(java.util.Collection)
+     * @see org.jsecurity.subject.Subject#checkPermissionsPermissions(java.util.Collection)
      */
     void checkPermissions(Collection<Permission> permissions) throws AuthorizationException;
 
     /**
-     * @see org.jsecurity.context.Subject#hasRole(String)
+     * @see org.jsecurity.subject.Subject#hasRole(String)
      */
     boolean hasRole(String roleIdentifier);
 
     /**
-     * @see org.jsecurity.context.Subject#hasRoles(java.util.List)
+     * @see org.jsecurity.subject.Subject#hasRoles(java.util.List)
      */
     boolean[] hasRoles(List<String> roleIdentifiers);
 
     /**
-     * @see org.jsecurity.context.Subject#hasAllRoles(java.util.Collection)
+     * @see org.jsecurity.subject.Subject#hasAllRoles(java.util.Collection)
      */
     boolean hasAllRoles(Collection<String> roleIdentifiers);
 
     /**
-     * @see org.jsecurity.context.Subject#checkRole(String)
+     * @see org.jsecurity.subject.Subject#checkRole(String)
      */
     void checkRole(String role);
 
     /**
-     * @see org.jsecurity.context.Subject#checkRoles
+     * @see org.jsecurity.subject.Subject#checkRoles
      */
     void checkRoles(Collection<String> roles);
 }

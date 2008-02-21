@@ -1,8 +1,8 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 

@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.tags;
 
-import org.jsecurity.context.Subject;
+import org.jsecurity.subject.Subject;
 
 /**
  * Displays body content if the current user has any of the roles specified.

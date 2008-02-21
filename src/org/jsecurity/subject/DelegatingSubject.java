@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context;
+package org.jsecurity.subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +44,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>Implementation of the <tt>SecurityContext</tt> interface that delegates
+ * <p>Implementation of the <tt>Subject</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.</p>
  *
@@ -68,7 +68,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class DelegatingSecurityContext implements SecurityContext {
+public class DelegatingSubject implements Subject {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
@@ -88,15 +88,15 @@ public class DelegatingSecurityContext implements SecurityContext {
         }
     }
 
-    public DelegatingSecurityContext(SecurityManager securityManager) {
+    public DelegatingSubject(SecurityManager securityManager) {
         this(false, getLocalHost(), null, securityManager);
     }
 
-    public DelegatingSecurityContext(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
+    public DelegatingSubject(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
         this(null, authenticated, inetAddress, session, securityManager);
     }
 
-    public DelegatingSecurityContext( Object principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSubject( Object principals, boolean authenticated, InetAddress inetAddress,
                                      Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager cannot be null.");
@@ -120,10 +120,10 @@ public class DelegatingSecurityContext implements SecurityContext {
         this.securityManager = securityManager;
     }
 
-    protected void assertValid() throws InvalidSecurityContextException {
+    protected void assertValid() throws InvalidSubjectException {
         if (isInvalidated()) {
-            String msg = "The SecurityContext has been invalidated.  It can no longer be used.";
-            throw new InvalidSecurityContextException(msg);
+            String msg = "The Subject has been invalidated.  It can no longer be used.";
+            throw new InvalidSubjectException(msg);
         }
     }
 
@@ -144,9 +144,9 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     /**
-     * Returns the InetAddress associated with the client who created/is interacting with this SecurityContext.
+     * Returns the InetAddress associated with the client who created/is interacting with this Subject.
      *
-     * @return the InetAddress associated with the client who created/is interacting with this SecurityContext.
+     * @return the InetAddress associated with the client who created/is interacting with this Subject.
      */
     public InetAddress getInetAddress() {
         assertValid();
@@ -154,13 +154,13 @@ public class DelegatingSecurityContext implements SecurityContext {
     }
 
     /**
-     * @see org.jsecurity.context.SecurityContext#getPrincipal()
+     * @see Subject#getPrincipal()
      */
     public Object getPrincipal() {
         return this.principals;
     }
 
-    /** @see org.jsecurity.context.SecurityContext#getPrincipalByType(Class) () */
+    /** @see Subject#getPrincipalByType(Class) () */
     public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
         if ( this.principals instanceof Collection ) {
@@ -180,7 +180,7 @@ public class DelegatingSecurityContext implements SecurityContext {
         return null;
     }
 
-    /** @see org.jsecurity.context.SecurityContext#getAllPrincipalsByType(Class)() */
+    /** @see Subject#getAllPrincipalsByType(Class)() */
     public <T> List<T> getAllPrincipalsByType(Class<T> principalType) {
         assertValid();
         List<T> principalsOfType = new ArrayList<T>();
@@ -246,9 +246,9 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
         if (!hasPrincipal()) {
-            String msg = "Subject/User data has not yet been associated with this SecurityContext " +
-                "(this can be done by executing " + SecurityContext.class.getName() + ".login(AuthenticationToken) )." +
-                "Therefore, authorization operations are not possible (a Subject/User identity is required first).  " +
+            String msg = "Account data has not yet been associated with this Subject instance" +
+                "(this can be done by executing " + Subject.class.getName() + ".login(AuthenticationToken) )." +
+                "Therefore, authorization operations are not possible (a Subject/Account identity is required first).  " +
                 "Denying authorization.";
             throw new UnauthenticatedException(msg);
         }
@@ -313,7 +313,7 @@ public class DelegatingSecurityContext implements SecurityContext {
 
     public void login(AuthenticationToken token) throws AuthenticationException {
         assertValid();
-        SecurityContext authcSecCtx = securityManager.login(token);
+        Subject authcSecCtx = securityManager.login(token);
         Object principals = authcSecCtx.getPrincipal();
         if ( principals instanceof Collection && ((Collection)principals).isEmpty() ) {
             principals = null;

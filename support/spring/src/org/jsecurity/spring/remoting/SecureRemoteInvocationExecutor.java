@@ -27,9 +27,9 @@ package org.jsecurity.spring.remoting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
-import org.jsecurity.context.DelegatingSubject;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.DelegatingSubject;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
- * that binds the correct {@link Session} and {@link org.jsecurity.context.Subject} to the
+ * that binds the correct {@link Session} and {@link org.jsecurity.subject.Subject} to the
  * remote invocation thread during a remote execution.
  *
  * @author Jeremy Haile
