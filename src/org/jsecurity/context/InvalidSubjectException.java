@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2007 Jeremy Haile
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,20 +22,31 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.web.tags;
+package org.jsecurity.context;
 
 /**
- * @since 0.1
+ * Exception thrown when a <tt>Subject</tt> is accessed that has been invalidated.  Usually this occurs
+ * when accessing a <tt>Subject</tt> whose {@link Subject#logout()} method
+ * has been called.  
+ *
+ * @since 0.2
  * @author Les Hazlewood
  */
-public class LacksRoleTag extends RoleTag {
+public class InvalidSubjectException extends SubjectException {
 
-    public LacksRoleTag() {
+    public InvalidSubjectException() {
+        super();
     }
 
-    protected boolean showTagBody( String roleName ) {
-        boolean hasRole = getSubject() != null && getSubject().hasRole( roleName );
-        return !hasRole;
+    public InvalidSubjectException( String message ) {
+        super( message );
     }
 
+    public InvalidSubjectException( Throwable cause ) {
+        super( cause );
+    }
+
+    public InvalidSubjectException( String message, Throwable cause ) {
+        super( message, cause );
+    }
 }

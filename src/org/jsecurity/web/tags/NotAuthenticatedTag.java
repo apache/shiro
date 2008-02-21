@@ -37,7 +37,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 public class NotAuthenticatedTag extends SecureTag {
 
     public int onDoStartTag() throws JspException {
-        if ( getSecurityContext() == null || !getSecurityContext().isAuthenticated() ) {
+        if ( getSubject() == null || !getSubject().isAuthenticated() ) {
             if ( log.isTraceEnabled() ) {
                 log.trace( "Security does not exist or is not authenticated.  'notAuthenticated' tag body " +
                     "will be evaluated." );

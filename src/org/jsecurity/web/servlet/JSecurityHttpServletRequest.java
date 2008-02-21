@@ -1,6 +1,6 @@
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
@@ -50,7 +50,7 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     public String getRemoteUser() {
         String remoteUser;
-        Object scPrincipal = getSecurityContextPrincipal();
+        Object scPrincipal = getSubjectPrincipal();
         if ( scPrincipal != null ) {
             if ( scPrincipal instanceof Principal ) {
                 remoteUser = ( (Principal)scPrincipal ).getName();
@@ -63,13 +63,13 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
         return remoteUser;
     }
 
-    protected SecurityContext getSecurityContext() {
-        return ThreadContext.getSecurityContext();
+    protected Subject getSubject() {
+        return ThreadContext.getSubject();
     }
 
-    protected Object getSecurityContextPrincipal() {
+    protected Object getSubjectPrincipal() {
         Object userPrincipal = null;
-        SecurityContext sc = getSecurityContext();
+        Subject sc = getSubject();
         if ( sc != null ) {
             userPrincipal = sc.getPrincipal();
         }
@@ -77,7 +77,7 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     public boolean isUserInRole( String s ) {
-        SecurityContext sc = getSecurityContext();
+        Subject sc = getSubject();
         boolean inRole = ( sc != null && sc.hasRole( s ) );
         if ( !inRole ) {
             inRole = super.isUserInRole( s );
@@ -87,7 +87,7 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     public Principal getUserPrincipal() {
         Principal userPrincipal;
-        Object scPrincipal = getSecurityContextPrincipal();
+        Object scPrincipal = getSubjectPrincipal();
         if ( scPrincipal != null ) {
             if ( scPrincipal instanceof Principal ) {
                 userPrincipal = (Principal)scPrincipal;
@@ -123,9 +123,9 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
         } else {
             if ( this.session == null ) {
 
-                boolean existing = getSecurityContext().getSession( false ) != null;
+                boolean existing = getSubject().getSession( false ) != null;
 
-                Session jsecSession = getSecurityContext().getSession( create );
+                Session jsecSession = getSubject().getSession( create );
                 if ( jsecSession != null ) {
                     this.session = new JSecurityHttpSession( jsecSession, this, this.servletContext );
                     if ( !existing ) {

@@ -28,7 +28,7 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.SessionFactory;
 
 /**
@@ -43,15 +43,15 @@ import org.jsecurity.session.SessionFactory;
  * single <tt>SecurityManager</tt> instance.</p>
  *
  * <p>In addition to the above three interfaces, three unique methods are provided by this interface by itself,
- * {@link #login}, {@link #logout} and {@link #getSecurityContext}.  A <tt>SecurityContext</tt> executes
+ * {@link #login}, {@link #logout} and {@link #getSubject}.  A <tt>Subject</tt> executes
  * authentication, authorization, and session operations for a <em>single</em> user, and as such can only be
  * managed by <tt>A SecurityManager</tt> which is aware of all three capabilities.  The three parent interfaces on the
- * other hand do not 'know about' <tt>SecurityContext</tt>s to ensure a clean separation of concerns.
+ * other hand do not 'know about' <tt>Subject</tt>s to ensure a clean separation of concerns.
  *
  * <p>Usage Note:  In actuality the large majority of application programmers won't interact with a SecurityManager
  * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently
  * executing user.  In that case, the application programmer can call the
- * {@link #getSecurityContext() getSecurityContext()} method and then use the returned instance for all the remaining
+ * {@link # getSubject () getSubject()} method and then use the returned instance for all the remaining
  * interaction with JSecurity.
  *
  * <p>Framework developers on the other hand might find working with an actual SecurityManager useful.
@@ -64,20 +64,20 @@ import org.jsecurity.session.SessionFactory;
  */
 public interface SecurityManager extends Authenticator, Authorizer, SessionFactory {
 
-    SecurityContext login( AuthenticationToken authenticationToken ) throws AuthenticationException;
+    Subject login( AuthenticationToken authenticationToken ) throws AuthenticationException;
 
     /**
-     * Logs out the specified Subject/User from the system.
+     * Logs out the specified Subject from the system.
      *
      * @param subjectIdentifier the identifier of the subject/user to log out.
      */
     void logout( Object subjectIdentifier );
 
     /**
-     * Returns the <tt>SecurityContext</tt> instance representing the currently executing user.
-     * @return the <tt>SecurityContext</tt> instance representing the currently executing user.
+     * Returns the <tt>Subject</tt> instance representing the currently executing user.
+     * @return the <tt>Subject</tt> instance representing the currently executing user.
      */
-    SecurityContext getSecurityContext();
+    Subject getSubject();
 
 
 }

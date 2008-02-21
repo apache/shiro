@@ -26,7 +26,7 @@ package org.jsecurity.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -58,7 +58,7 @@ public abstract class ThreadContext {
 
     protected static transient final Log logger = LogFactory.getLog( ThreadContext.class );
 
-    public static final String SECURITY_CONTEXT_KEY = SecurityContext.class.getName() + "_THREAD_CONTEXT_KEY";
+    public static final String SUBJECT_KEY = Subject.class.getName() + "_THREAD_CONTEXT_KEY";
     public static final String INET_ADDRESS_KEY = InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXST_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
@@ -171,7 +171,7 @@ public abstract class ThreadContext {
     }
 
     /**
-     * Removes <em>all</em> values bound to this ThreadContext, which includes any SecurityContext, Session, or InetAddress
+     * Removes <em>all</em> values bound to this ThreadContext, which includes any Subject, Session, or InetAddress
      * that may be bound by these respective objects' conveninece methods, as well as all values bound by your
      * application code.
      * 
@@ -186,61 +186,61 @@ public abstract class ThreadContext {
     }
 
     /**
-     * Convenience method that simplifies retrieval of a thread-bound SecurityContext.  If there is no
-     * SecurityContext bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
+     * Convenience method that simplifies retrieval of a thread-bound Subject.  If there is no
+     * Subject bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
      * for the following:
      * <pre>
-     * return (SecurityContext)get( SECURITY_CONTEXT_KEY );</pre>
+     * return (Subject)get( SECURITY_CONTEXT_KEY );</pre>
      *
      * <p>This method only returns the bound value if it exists - it does not remove it
-     * from the thread.  To remove it, one must call {@link #unbindSecurityContext() unbindSecurityContext()} instead.
+     * from the thread.  To remove it, one must call {@link #unbindSubject() unbindSubject()} instead.
      *
-     * @return the SecurityContext object bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @return the Subject object bound to the thread, or <tt>null</tt> if there isn't one bound.
      * @since 0.2
      */
-    public static SecurityContext getSecurityContext() {
-        return (SecurityContext)get( SECURITY_CONTEXT_KEY );
+    public static Subject getSubject() {
+        return (Subject)get(SUBJECT_KEY);
     }
 
 
     /**
-     * Convenience method that simplifies binding a SecurityContext to the ThreadContext.
+     * Convenience method that simplifies binding a Subject to the ThreadContext.
      *
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the security context is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
      *
      * <pre>
-     * if (securityContext != null) {
-     *     put( SECURITY_CONTEXT_KEY, securityContext );
+     * if (subject != null) {
+     *     put( SECURITY_CONTEXT_KEY, subject );
      * }</pre>
      *
-     * @param securityContext the SecurityContext object to bind to the thread.  If the argument is null, nothing will be done.
+     * @param subject the Subject object to bind to the thread.  If the argument is null, nothing will be done.
      * @since 0.2
      */
-    public static void bind( SecurityContext securityContext ) {
-        if ( securityContext != null ) {
-            put( SECURITY_CONTEXT_KEY, securityContext );
+    public static void bind( Subject subject) {
+        if ( subject != null ) {
+            put(SUBJECT_KEY, subject);
         }
     }
 
     /**
-     * Convenience method that simplifies removal of a thread-local SecurityContext from the thread.
+     * Convenience method that simplifies removal of a thread-local Subject from the thread.
      * 
      * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
      *
      * <pre>
-     * return (SecurityContext)remove( SECURITY_CONTEXT_KEY );</pre>
+     * return (Subject)remove( SECURITY_CONTEXT_KEY );</pre>
      *
      * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
-     * thread execution), you should use the {@link #getSecurityContext() getSecurityContext()} method for that purpose.
+     * thread execution), you should use the {@link #getSubject() getSubject()} method for that purpose.
      *
-     * @return the SecurityContext object previously bound to the thread, or <tt>null</tt> if there was none bound.
+     * @return the Subject object previously bound to the thread, or <tt>null</tt> if there was none bound.
      * @since 0.2
      */
-    public static SecurityContext unbindSecurityContext() {
-        return (SecurityContext)remove( SECURITY_CONTEXT_KEY );
+    public static Subject unbindSubject() {
+        return (Subject)remove(SUBJECT_KEY);
     }
 
     /**

@@ -26,9 +26,9 @@ package org.jsecurity;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.context.DelegatingSecurityContext;
+import org.jsecurity.context.DelegatingSubject;
 import org.jsecurity.context.RememberMeManager;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.realm.PropertiesRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
@@ -119,44 +119,44 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    protected SecurityContext createSecurityContext() {
+    protected Subject createSubject() {
         Object principals = getRememberedIdentity();
-        return createSecurityContext(principals);
+        return createSubject(principals);
     }
 
-    protected SecurityContext createSecurityContext(Object subjectPrincipals) {
-        return createSecurityContext(subjectPrincipals, null);
+    protected Subject createSubject(Object subjectPrincipals) {
+        return createSubject(subjectPrincipals, null);
     }
 
-    protected SecurityContext createSecurityContext(Object principals, Session existing) {
-        return createSecurityContext(principals, existing, false);
+    protected Subject createSubject(Object principals, Session existing) {
+        return createSubject(principals, existing, false);
     }
 
-    protected SecurityContext createSecurityContext(Object principals, Session existing, boolean authenticated) {
-        return createSecurityContext(principals, existing, authenticated, null);
+    protected Subject createSubject(Object principals, Session existing, boolean authenticated) {
+        return createSubject(principals, existing, authenticated, null);
     }
 
-    protected SecurityContext createSecurityContext(Object principals, Session existing,
+    protected Subject createSubject(Object principals, Session existing,
                                                     boolean authenticated, InetAddress inetAddress) {
-        return new DelegatingSecurityContext(principals, authenticated, inetAddress, existing, this);
+        return new DelegatingSubject(principals, authenticated, inetAddress, existing, this);
     }
 
     /**
-     * Creates a <tt>SecurityContext</tt> instance for the user represented by the given method argument.
+     * Creates a <tt>Subject</tt> instance for the user represented by the given method argument.
      *
      * @param token   the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param account the <tt>Account</tt> of a newly authenticated subject/user.
-     * @return the <tt>SecurityContext</tt> that represents the identity and session data for the newly
-     *         authenticated subject/user.
+     * @param account the <tt>Account</tt> of a newly authenticated user.
+     * @return the <tt>Subject</tt> instance that represents the identity and session data for the newly
+     *         authenticated user.
      */
-    protected SecurityContext createSecurityContext(AuthenticationToken token, Account account) {
+    protected Subject createSubject(AuthenticationToken token, Account account) {
         assertPrincipals(account);
 
         //get any existing session that may exist - we don't want to lose it:
-        SecurityContext securityContext = ThreadContext.getSecurityContext();
+        Subject subject = ThreadContext.getSubject();
         Session session = null;
-        if (securityContext != null) {
-            session = securityContext.getSession(false);
+        if (subject != null) {
+            session = subject.getSession(false);
         }
 
         InetAddress authcSourceIP = null;
@@ -168,30 +168,30 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             authcSourceIP = ThreadContext.getInetAddress();
         }
 
-        return createSecurityContext(account.getPrincipal(), session, true, authcSourceIP);
+        return createSubject(account.getPrincipal(), session, true, authcSourceIP);
     }
 
     /**
-     * Binds a <tt>SecurityContext</tt> instance created after authentication to the application for later use.
+     * Binds a <tt>Subject</tt> instance created after authentication to the application for later use.
      *
      * <p>The default implementation merely binds the argument to the thread local via the {@link ThreadContext}.
      * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
      *
-     * @param secCtx the <tt>SecurityContext</tt> instance created after authentication to be bound to the application
+     * @param secCtx the <tt>Subject</tt> instance created after authentication to be bound to the application
      *               for later use.
      */
-    protected void bind(SecurityContext secCtx) {
+    protected void bind(Subject secCtx) {
         if (log.isDebugEnabled()) {
-            log.debug("Binding SecurityContext [" + secCtx + "] to a thread local...");
+            log.debug("Binding Subject [" + secCtx + "] to a thread local...");
         }
         ThreadContext.bind(secCtx);
     }
 
-    private void assertCreation(SecurityContext secCtx) throws IllegalStateException {
+    private void assertCreation(Subject secCtx) throws IllegalStateException {
         if (secCtx == null) {
             String msg = "Programming error - please verify that you have overridden the " +
-                getClass().getName() + ".createSecurityContext( Account account ) method to return " +
-                "a non-null SecurityContext instance";
+                getClass().getName() + ".createSubject( Account account ) method to return " +
+                "a non-null Subject instance";
             throw new IllegalStateException(msg);
         }
     }
@@ -252,16 +252,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     /**
      * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
-     * <tt>SecurityContext</tt> instance representing the authenticated account's identity.
+     * <tt>Subject</tt> instance representing the authenticated account's identity.
      *
-     * <p>Once constructed, the <tt>SecurityContext</tt> instance is then {@link #bind bound} to the application for
+     * <p>Once constructed, the <tt>Subject</tt> instance is then {@link #bind bound} to the application for
      * subsequent access before being returned to the caller.
      *
      * @param token the authenticationToken to process for the login attempt.
-     * @return a SecurityContext representing the authenticated account.
+     * @return a Subject representing the authenticated account.
      * @throws AuthenticationException if there is a problem authenticating the specified <tt>token</tt>.
      */
-    public SecurityContext login(AuthenticationToken token) throws AuthenticationException {
+    public Subject login(AuthenticationToken token) throws AuthenticationException {
         Account account;
         try {
             account = authenticate(token);
@@ -270,7 +270,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             rememberMeFailedLogin(token, ae);
             throw ae; //propagate
         }
-        SecurityContext secCtx = createSecurityContext(token, account);
+        Subject secCtx = createSubject(token, account);
         assertCreation(secCtx);
         bind(secCtx);
         return secCtx;
@@ -278,13 +278,13 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void logout(Object subjectIdentifier) {
         rememberMeLogout(subjectIdentifier);
-        //Method arg is ignored - get the SecurityContext from the environment if it exists:
-        SecurityContext sc = getSecurityContext(false);
+        //Method arg is ignored - get the Subject from the environment if it exists:
+        Subject sc = getSubject(false);
         if (sc != null) {
             try {
                 unbind(sc);
             } catch (Exception e) {
-                String msg = "Unable to cleanly unbind SecurityContext.  Ignoring.";
+                String msg = "Unable to cleanly unbind Subject.  Ignoring.";
                 if (log.isDebugEnabled()) {
                     log.debug(msg, e);
                 }
@@ -292,8 +292,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    protected void unbind(SecurityContext sc) {
-        ThreadContext.unbindSecurityContext();
+    protected void unbind(Subject sc) {
+        ThreadContext.unbindSubject();
     }
 
     protected Object getRememberedIdentity() {
@@ -312,16 +312,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return null;
     }
 
-    protected SecurityContext getSecurityContext(boolean create) {
-        SecurityContext sc = ThreadContext.getSecurityContext();
+    protected Subject getSubject(boolean create) {
+        Subject sc = ThreadContext.getSubject();
         if (sc == null && create) {
-            sc = createSecurityContext();
+            sc = createSubject();
             bind(sc);
         }
         return sc;
     }
 
-    public SecurityContext getSecurityContext() {
-        return getSecurityContext(true);
+    public Subject getSubject() {
+        return getSubject(true);
     }
 }

@@ -1,7 +1,7 @@
 package org.jsecurity;
 
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +38,7 @@ public class DefaultSecurityManagerTest {
         } catch ( UnknownHostException e ) {
             e.printStackTrace();  
         }
-        SecurityContext secCtx = sm.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
+        Subject secCtx = sm.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
         assert secCtx.isAuthenticated();
         assert "guest".equals( secCtx.getPrincipal() );        
         assert secCtx.hasRole( "guest" );

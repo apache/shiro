@@ -8,7 +8,7 @@ import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
@@ -65,7 +65,7 @@ public class ActiveDirectoryRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        Subject secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
 

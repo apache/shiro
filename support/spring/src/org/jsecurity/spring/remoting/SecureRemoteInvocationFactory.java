@@ -36,7 +36,7 @@ import org.springframework.remoting.support.RemoteInvocationFactory;
  * This factory is the client-side part of
  * the JSecurity Spring remoting invocation.  A {@link SecureRemoteInvocationExecutor} should
  * be used to export the server-side remote services to ensure that the appropriate
- * SecurityContext and Session are bound to the remote thread during execution.
+ * Subject and Session are bound to the remote thread during execution.
  *
  * @since 0.1
  * @author Jeremy Haile

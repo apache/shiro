@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.tags;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 
 /**
  * Displays body content if the current user has any of the roles specified.
@@ -41,14 +41,14 @@ public class HasAnyRolesTag extends RoleTag {
     protected boolean showTagBody( String roleNames ) {
         boolean hasAnyRole = false;
 
-        SecurityContext securityContext = getSecurityContext();
+        Subject subject = getSubject();
 
-        if( securityContext != null ) {
+        if( subject != null ) {
 
             // Iterate through roles and check to see if the user has one of the roles
             for( String role : roleNames.split(ROLE_NAMES_DELIMETER) ) {
 
-                if( securityContext.hasRole( role.trim() ) ) {
+                if( subject.hasRole( role.trim() ) ) {
                     hasAnyRole = true;
                     break;
                 }

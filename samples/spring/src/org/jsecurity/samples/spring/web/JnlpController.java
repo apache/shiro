@@ -1,7 +1,7 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -47,11 +47,11 @@ public class JnlpController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        SecurityContext securityContext = SecurityUtils.getSecurityContext();
+        Subject subject = SecurityUtils.getSubject();
         Session session = null;
 
-        if ( securityContext != null ) {
-            session = securityContext.getSession();
+        if ( subject != null ) {
+            session = subject.getSession();
         }
         if ( session == null ) {
             String msg = "Expected a non-null JSecurity session.";

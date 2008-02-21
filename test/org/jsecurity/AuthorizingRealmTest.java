@@ -9,7 +9,7 @@ import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.junit.After;
@@ -78,7 +78,7 @@ public class AuthorizingRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        Subject secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
         Object principals = secCtx.getPrincipal();
@@ -112,7 +112,7 @@ public class AuthorizingRealmTest {
         securityManager.init();
 
         // Do login
-        SecurityContext secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        Subject secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(secCtx.isAuthenticated());
         assertTrue(secCtx.hasRole(ROLE));
         assertTrue( (secCtx.getPrincipal() instanceof CustomUsernamePrincipal) );

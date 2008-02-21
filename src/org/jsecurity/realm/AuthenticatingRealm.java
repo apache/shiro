@@ -148,7 +148,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * implementation-specific datasource (RDBMS, LDAP, etc) for the given authentication token.
      * In most data-centric systems such as an RDBMS, LDAP, file resource, etc, this means just 'pulling'
      * account data for an associated subject/user and nothing more.  But in some systems, the method
-     * could actually perform EIS specific log-in logic - it is up to the realm implementation.
+     * could actually perform EIS specific log-in logic - it is up to the Realm implementation.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
      *
