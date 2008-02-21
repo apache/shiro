@@ -24,27 +24,26 @@
  */
 package org.jsecurity;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 
 /**
- * Accesses the currently accessible <tt>SecurityContext</tt> for the calling code.
+ * Accesses the currently accessible <tt>Subject</tt> for the calling code.
  *
  * @since 0.2
  * @author Les Hazlewood
  */
 public abstract class SecurityUtils {
 
-
     /**
-     * Returns the currently accessible <tt>SecurityContext</tt> available to the calling code.
+     * Returns the currently accessible <tt>Subject</tt> available to the calling code.
      *
-     * <p>This method is provided as a way of obtaining a <tt>SecurityContext</tt> without having to resort to
+     * <p>This method is provided as a way of obtaining a <tt>Subject</tt> without having to resort to
      * implementation-specific methods.  It also allows the JSecurity team to change the underlying implementation of
      * this method in the future depending on requirements/updates without affecting your code that uses it.
      *
-     * @return the currently accessible <tt>SecurityContext</tt> accessible to the calling code.
+     * @return the currently accessible <tt>Subject</tt> accessible to the calling code.
      */
-    public static SecurityContext getSecurityContext() {
+    public static Subject getSubject() {
         //todo Refactor to use thread local prior to 1.0
         throw new UnsupportedOperationException( "Should be changed to use thread local before 1.0 release" );
     }

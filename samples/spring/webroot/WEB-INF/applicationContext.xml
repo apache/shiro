@@ -79,7 +79,7 @@
     <!-- =========================================================
       -  JSecurity Spring Remoting support
       ============================================================ -->
-    <!-- Ensure any Spring-based remote method invocations can be associated with a SecurityContext and a Session -->
+    <!-- Ensure any Spring-based remote method invocations can be associated with a Subject and a Session -->
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="securityManager" ref="securityManager"/>
     </bean>

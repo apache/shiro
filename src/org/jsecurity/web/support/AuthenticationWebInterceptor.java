@@ -24,7 +24,7 @@
 */
 package org.jsecurity.web.support;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.web.WebInterceptor;
@@ -213,10 +213,10 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
     protected Map<String, Object> storeInJSecuritySession( ServletRequest request, ServletResponse response, String attemptedPage ) {
         boolean boundToSession = false;
 
-        SecurityContext securityContext = getSecurityContext( request, response );
+        Subject subject = getSubject( request, response );
 
         try {
-            Session session = securityContext.getSession( false );
+            Session session = subject.getSession( false );
             if ( session != null ) {
                 session.setAttribute( getAttemptedPageKeyName(), attemptedPage );
                 boundToSession = true;
@@ -333,8 +333,8 @@ public class AuthenticationWebInterceptor extends SecurityWebSupport implements 
     }
 
     protected boolean isAuthenticated( ServletRequest request, ServletResponse response ) throws Exception {
-        SecurityContext securityContext = getSecurityContext( request, response );
-        return securityContext.isAuthenticated();
+        Subject subject = getSubject( request, response );
+        return subject.isAuthenticated();
     }
 
     public boolean preHandle( ServletRequest request, ServletResponse response ) throws Exception {

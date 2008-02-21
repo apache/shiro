@@ -90,8 +90,8 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
 
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         String p = getAnnotationValue( mi );
-        if ( getSecurityContext().isPermitted( p ) ) {
-            String msg = "Calling SecurityContext does not have required permission [" + p + "].  " +
+        if ( getSubject().isPermitted( p ) ) {
+            String msg = "Calling Subject does not have required permission [" + p + "].  " +
                     "MethodInvocation denied.";
             throw new UnauthorizedException( msg );
         }

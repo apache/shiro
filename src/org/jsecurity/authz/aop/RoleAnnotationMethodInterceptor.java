@@ -51,8 +51,8 @@ public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
 
         String roleId = rrAnnotation.value();
 
-        if ( !getSecurityContext().hasRole( roleId ) ) {
-            String msg = "Calling SecurityContext does not have required role [" + roleId + "].  " +
+        if ( !getSubject().hasRole( roleId ) ) {
+            String msg = "Calling Subject does not have required role [" + roleId + "].  " +
                          "MethodInvocation denied.";
             throw new UnauthorizedException( msg );
         }

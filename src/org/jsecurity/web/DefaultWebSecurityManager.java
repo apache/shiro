@@ -1,7 +1,7 @@
 package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
@@ -138,59 +138,59 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return isAuthenticated(existing);
     }
 
-    public SecurityContext createSecurityContext() {
+    public Subject createSubject() {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
-        return createSecurityContext(request, response);
+        return createSubject(request, response);
     }
 
-    public SecurityContext createSecurityContext(ServletRequest request, ServletResponse response) {
+    public Subject createSubject(ServletRequest request, ServletResponse response) {
         Session session = getSession(request, response);
-        return createSecurityContext(session, request, response);
+        return createSubject(session, request, response);
     }
 
-    public SecurityContext createSecurityContext(Session existing, ServletRequest request, ServletResponse response) {
+    public Subject createSubject(Session existing, ServletRequest request, ServletResponse response) {
         Object principals = getPrincipals(existing, request, response);
         boolean authenticated = isAuthenticated(request, response, existing);
-        return createSecurityContext(request, response, existing, principals, authenticated);
+        return createSubject(request, response, existing, principals, authenticated);
     }
 
-    protected SecurityContext createSecurityContext(ServletRequest request,
+    protected Subject createSubject(ServletRequest request,
                                                     ServletResponse response,
                                                     Session existing,
                                                     Object principals,
                                                     boolean authenticated) {
         InetAddress inetAddress = SecurityWebSupport.getInetAddress(request);
-        return createSecurityContext(principals, existing, authenticated, inetAddress);
+        return createSubject(principals, existing, authenticated, inetAddress);
     }
 
-    protected void bind(SecurityContext secCtx) {
+    protected void bind(Subject secCtx) {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
         bind(secCtx, request, response);
         super.bind(secCtx);
     }
 
-    protected void bind(SecurityContext securityContext, ServletRequest request, ServletResponse response) {
-        Object principals = securityContext.getPrincipal();
+    protected void bind(Subject subject, ServletRequest request, ServletResponse response) {
+        Object principals = subject.getPrincipal();
         if ((principals instanceof Collection) && ((Collection) principals).isEmpty()) {
             principals = null;
         }
         if (principals != null) {
-            Session session = securityContext.getSession();
+            Session session = subject.getSession();
             session.setAttribute(PRINCIPALS_SESSION_KEY, principals);
         } else {
-            Session session = securityContext.getSession(false);
+            Session session = subject.getSession(false);
             if (session != null) {
                 session.removeAttribute(PRINCIPALS_SESSION_KEY);
             }
         }
 
-        if (securityContext.isAuthenticated()) {
-            Session session = securityContext.getSession();
-            session.setAttribute(AUTHENTICATED_SESSION_KEY, securityContext.isAuthenticated());
+        if (subject.isAuthenticated()) {
+            Session session = subject.getSession();
+            session.setAttribute(AUTHENTICATED_SESSION_KEY, subject.isAuthenticated());
         } else {
-            Session session = securityContext.getSession(false);
+            Session session = subject.getSession(false);
             if (session != null) {
                 session.removeAttribute(AUTHENTICATED_SESSION_KEY);
             }

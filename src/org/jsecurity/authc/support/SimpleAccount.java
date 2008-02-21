@@ -51,7 +51,7 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /** The principal that apply to the subject/user who has been authenticated. */
+    /** The principal that apply to the authenticated Subject/user. */
     private Object principal = null;
 
     /** Credentials that were used to authenticate the user. */

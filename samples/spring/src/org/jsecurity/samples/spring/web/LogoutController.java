@@ -25,7 +25,7 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller responsible for logging out the current user by invoking
- * {@link org.jsecurity.context.SecurityContext#logout()}
+ * {@link org.jsecurity.context.Subject#logout()}
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LogoutController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        SecurityContext secCtx = SecurityUtils.getSecurityContext();
+        Subject secCtx = SecurityUtils.getSubject();
         if ( secCtx != null ) {
             secCtx.logout();
         }

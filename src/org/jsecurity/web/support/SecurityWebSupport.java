@@ -26,7 +26,7 @@ package org.jsecurity.web.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ThreadContext;
@@ -39,7 +39,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Convenient superclass for web objects that need access to security context information, such as the SecurityContext,
+ * Convenient superclass for web objects that need access to security context information, such as the Subject,
  * Session, or IP address.  There is no requirement for classes to extend from this class, although many
  * web framework classes derive from this base class.
  *
@@ -66,18 +66,18 @@ public abstract class SecurityWebSupport implements Initializable {
         return clientAddress;
     }
 
-    public SecurityContext getSecurityContext( ServletRequest request, ServletResponse response ) {
-        return ThreadContext.getSecurityContext();
+    public Subject getSubject( ServletRequest request, ServletResponse response ) {
+        return ThreadContext.getSubject();
     }
 
     protected Session getSession( ServletRequest request, ServletResponse response ) {
 
         Session session = null;
 
-        SecurityContext securityContext = getSecurityContext( request, response );
+        Subject subject = getSubject( request, response );
 
-        if ( securityContext != null ) {
-            session = securityContext.getSession( false );
+        if ( subject != null ) {
+            session = subject.getSession( false );
         }
 
         return session;

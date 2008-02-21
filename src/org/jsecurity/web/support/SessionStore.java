@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.support;
 
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 
 import javax.servlet.ServletRequest;
@@ -73,9 +73,9 @@ public class SessionStore<T> extends AbstractWebStore<T> {
     }
 
     public void onStoreValue( T value, ServletRequest request, ServletResponse response ) {
-        SecurityContext securityContext = getSecurityContext( request, response );
-        if ( securityContext != null ) {
-            Session session = securityContext.getSession();
+        Subject subject = getSubject( request, response );
+        if ( subject != null ) {
+            Session session = subject.getSession();
             if ( session != null ) {
                 session.setAttribute( getName(), value );
                 if ( log.isDebugEnabled() ) {
@@ -86,9 +86,9 @@ public class SessionStore<T> extends AbstractWebStore<T> {
     }
 
     public void removeValue(ServletRequest request, ServletResponse response) {
-        SecurityContext securityContext = getSecurityContext( request, response );
-        if ( securityContext != null ) {
-            Session session = securityContext.getSession( false );
+        Subject subject = getSubject( request, response );
+        if ( subject != null ) {
+            Session session = subject.getSession( false );
             if ( session != null ) {
                 session.removeAttribute( getName() );
             }

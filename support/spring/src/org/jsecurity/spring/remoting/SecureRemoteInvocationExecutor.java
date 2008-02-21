@@ -27,8 +27,8 @@ package org.jsecurity.spring.remoting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
-import org.jsecurity.context.DelegatingSecurityContext;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.DelegatingSubject;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
- * that binds the correct {@link Session} and {@link org.jsecurity.context.SecurityContext} to the
+ * that binds the correct {@link Session} and {@link org.jsecurity.context.Subject} to the
  * remote invocation thread during a remote execution.
  *
  * @author Jeremy Haile
@@ -66,7 +66,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
     /**
      * The SecurityManager used to retrieve realms that should be associated with the
-     * created <tt>SecurityContext</tt>s upon remote invocation.
+     * created <tt>Subject</tt>s upon remote invocation.
      */
     private SecurityManager securityManager;
 
@@ -126,10 +126,10 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 }
             }
 
-            SecurityContext securityContext =
-                new DelegatingSecurityContext( principals, authenticated, inetAddress, session, securityManager );
+            Subject subject =
+                new DelegatingSubject( principals, authenticated, inetAddress, session, securityManager );
 
-            ThreadContext.bind( securityContext );
+            ThreadContext.bind(subject);
 
             return super.invoke( invocation, targetObject );
             

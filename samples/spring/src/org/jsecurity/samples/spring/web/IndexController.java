@@ -25,7 +25,7 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.SecurityContext;
+import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -69,27 +69,27 @@ public class IndexController extends SimpleFormController {
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        Session session = SecurityUtils.getSecurityContext().getSession();
+        Session session = SecurityUtils.getSubject().getSession();
         command.setValue( (String) session.getAttribute( "value" ) );
         return command;
     }
 
     protected Map<String,Object> referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        SecurityContext securityContext = SecurityUtils.getSecurityContext();
-        boolean hasRole1 = securityContext.hasRole( "role1" );
-        boolean hasRole2 = securityContext.hasRole( "role2" );
+        Subject subject = SecurityUtils.getSubject();
+        boolean hasRole1 = subject.hasRole( "role1" );
+        boolean hasRole2 = subject.hasRole( "role2" );
 
         Map<String,Object> refData = new HashMap<String,Object>();
         refData.put( "hasRole1", hasRole1 );
         refData.put( "hasRole2", hasRole2 );
-        refData.put( "sessionId", securityContext.getSession().getSessionId() );
+        refData.put( "sessionId", subject.getSession().getSessionId() );
         return refData;
     }
 
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
         SessionValueCommand command = (SessionValueCommand) obj;
 
-        Session session = SecurityUtils.getSecurityContext().getSession();
+        Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute( "value", command.getValue() );
 
         return showForm( request, response, errors );

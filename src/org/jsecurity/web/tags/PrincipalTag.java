@@ -127,14 +127,14 @@ public class PrincipalTag extends SecureTag {
     public int onDoStartTag() throws JspException {
         String strValue = null;
 
-        if( getSecurityContext() != null && getSecurityContext().isAuthenticated() ) {
+        if( getSubject() != null && getSubject().isAuthenticated() ) {
 
             // Get the principal to print out
             Object principal;
             if( type == null ) {
-                principal = getSecurityContext().getPrincipal();
+                principal = getSubject().getPrincipal();
             } else {
-                principal = getSecurityContext().getPrincipalByType( type );
+                principal = getSubject().getPrincipalByType( type );
             }
 
             // Get the string value of the principal

@@ -108,7 +108,7 @@ public class AbstractAuthenticatorTest {
     }
 
     /**
-     * Ensures a non-null <tt>SecurityContext</tt> instance is returned from the authenticate() method after a valid
+     * Ensures a non-null <tt>Subject</tt> instance is returned from the authenticate() method after a valid
      * authentication attempt (i.e. the subclass's doAuthenticate implementation returns a valid, non-null
      * Account object).
      */
