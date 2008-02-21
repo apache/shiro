@@ -22,47 +22,47 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context;
+package org.jsecurity.subject;
 
 import org.jsecurity.JSecurityException;
 
 /**
- * <p>Throw when there is an error accessing or interacting with a {@link SecurityContext}.
+ * <p>Throw when there is an error accessing or interacting with a {@link Subject}.
  *
  * @since 0.1
  * @author Jeremy Haile
  */
-public class SecurityContextException extends JSecurityException {
+public class SubjectException extends JSecurityException {
 
     /**
-     * Creates a new SecurityContextException.
+     * Creates a new SubjectException.
      */
-    public SecurityContextException() {
+    public SubjectException() {
         super();
     }
 
     /**
-     * Constructs a new SecurityContextException.
+     * Constructs a new SubjectException.
      * @param message the reason for the exception
      */
-    public SecurityContextException( String message ) {
+    public SubjectException( String message ) {
         super( message );
     }
 
     /**
-     * Constructs a new SecurityContextException.
+     * Constructs a new SubjectException.
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public SecurityContextException( Throwable cause ) {
+    public SubjectException( Throwable cause ) {
         super( cause );
     }
 
     /**
-     * Constructs a new SecurityContextException.
+     * Constructs a new SubjectException.
      * @param message the reason for the exception
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public SecurityContextException( String message, Throwable cause ) {
+    public SubjectException( String message, Throwable cause ) {
         super( message, cause );
     }
 }

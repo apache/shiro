@@ -193,13 +193,13 @@ public interface Session {
      * Explicitly stops this session and releases all associated resources.
      *
      * <p>If this session has already been authenticated (i.e. the user associated with this
-     * session has logged-in and has a {@link org.jsecurity.context.Subject Subject} ),
+     * session has logged-in and has a {@link org.jsecurity.subject.Subject Subject} ),
      * this method should only be called during the logout process, when it is
      * considered a graceful operation.
      *
      * <p><b>N.B.</b> Under most applications' circumstances, it is usually far better to stop the session implicitly
      * by logging-out the 'owning' <tt>Subject</tt> instead.  This is done by calling the
-     * {@link org.jsecurity.context.Subject#logout Subject#logout} method, since
+     * {@link org.jsecurity.subject.Subject#logout Subject#logout} method, since
      * <tt>logout</tt> is expected to stop the corresponding session automatically, and also allows the framework
      * to do any other additional cleanup.
      *

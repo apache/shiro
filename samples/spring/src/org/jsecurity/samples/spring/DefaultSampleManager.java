@@ -27,8 +27,8 @@ package org.jsecurity.samples.spring;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 
 /**
  * Default implementation of the {@link SampleManager} interface that stores

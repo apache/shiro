@@ -26,7 +26,7 @@ package org.jsecurity.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.Subject;
+import org.jsecurity.subject.Subject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

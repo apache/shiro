@@ -24,7 +24,7 @@
  */
 package org.jsecurity;
 
-import org.jsecurity.context.Subject;
+import org.jsecurity.subject.Subject;
 
 /**
  * Accesses the currently accessible <tt>Subject</tt> for the calling code.

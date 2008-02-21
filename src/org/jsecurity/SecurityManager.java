@@ -28,8 +28,8 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.SessionFactory;
+import org.jsecurity.subject.Subject;
 
 /**
  * A <tt>SecurityManager</tt> executes all security operations for <em>all</em> Subjects (aka users) across a

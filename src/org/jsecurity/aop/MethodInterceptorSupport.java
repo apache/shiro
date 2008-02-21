@@ -27,7 +27,7 @@ package org.jsecurity.aop;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
-import org.jsecurity.context.Subject;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.Initializable;
 
 /**

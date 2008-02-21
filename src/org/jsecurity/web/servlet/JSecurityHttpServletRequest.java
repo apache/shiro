@@ -1,7 +1,7 @@
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
 import javax.servlet.ServletContext;

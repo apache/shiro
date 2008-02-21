@@ -25,7 +25,7 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.context.Subject;
+import org.jsecurity.subject.Subject;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller responsible for logging out the current user by invoking
- * {@link org.jsecurity.context.Subject#logout()}
+ * {@link org.jsecurity.subject.Subject#logout()}
  *
  * @since 0.1
  * @author Jeremy Haile

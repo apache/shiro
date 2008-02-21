@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  * <p>
  * Requires the current executor's security context to imply a particular permission in
  * order to execute the annotated method.  If the executor's associated
- * {@link org.jsecurity.context.Subject Subject} determines that the
+ * {@link org.jsecurity.subject.Subject Subject} determines that the
  * executor does not imply the specified permission, the method will not be executed.
  * </p>
  * For example, this annotation<br>
@@ -51,7 +51,7 @@ import java.lang.annotation.Target;
  * to the file <tt>aFile.txt</tt> in order for the <tt>someMethod()</tt> to execute, otherwise
  * an {@link org.jsecurity.authz.AuthorizationException AuthorizationException} will be thrown.
  *
- * @see org.jsecurity.context.Subject#checkPermission
+ * @see org.jsecurity.subject.Subject#checkPermission
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -62,7 +62,7 @@ import java.lang.annotation.Target;
 public @interface PermissionsRequired {
 
     /**
-     * The permission string which will be passed to {@link org.jsecurity.context.Subject#isPermitted(String)}
+     * The permission string which will be passed to {@link org.jsecurity.subject.Subject#isPermitted(String)}
      * to determine if the user is allowed to invoke the code protected by this annotation.
      */
     String value();

@@ -24,8 +24,8 @@
  */
 package org.jsecurity.web.support;
 
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

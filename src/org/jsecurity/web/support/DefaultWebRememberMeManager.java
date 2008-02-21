@@ -25,8 +25,8 @@
 package org.jsecurity.web.support;
 
 import org.jsecurity.codec.Base64;
-import org.jsecurity.context.AbstractRememberMeManager;
 import org.jsecurity.crypto.Cipher;
+import org.jsecurity.subject.AbstractRememberMeManager;
 import org.jsecurity.util.Serializer;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebStore;

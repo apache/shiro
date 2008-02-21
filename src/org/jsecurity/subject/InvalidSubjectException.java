@@ -22,31 +22,31 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context;
+package org.jsecurity.subject;
 
 /**
- * Exception thrown when a <tt>SecurityContext</tt> is accessed that has been invalidated.  Usually this occurs
- * when accessing a <tt>SecurityContext</tt> whose {@link org.jsecurity.context.SecurityContext#logout()} method
+ * Exception thrown when a <tt>Subject</tt> is accessed that has been invalidated.  Usually this occurs
+ * when accessing a <tt>Subject</tt> whose {@link Subject#logout()} method
  * has been called.  
  *
  * @since 0.2
  * @author Les Hazlewood
  */
-public class InvalidSecurityContextException extends SecurityContextException {
+public class InvalidSubjectException extends SubjectException {
 
-    public InvalidSecurityContextException() {
+    public InvalidSubjectException() {
         super();
     }
 
-    public InvalidSecurityContextException( String message ) {
+    public InvalidSubjectException( String message ) {
         super( message );
     }
 
-    public InvalidSecurityContextException( Throwable cause ) {
+    public InvalidSubjectException( Throwable cause ) {
         super( cause );
     }
 
-    public InvalidSecurityContextException( String message, Throwable cause ) {
+    public InvalidSubjectException( String message, Throwable cause ) {
         super( message, cause );
     }
 }

@@ -26,8 +26,8 @@ package org.jsecurity.web.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.context.Subject;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.ThreadContext;
 

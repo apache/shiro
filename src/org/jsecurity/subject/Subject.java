@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.context;
+package org.jsecurity.subject;
 
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A <tt>SecurityContext</tt> executes all security operations for a <em>single</em> Subject (aka user) in an
+ * A <tt>Subject</tt> executes all security operations for a <em>single</em> Subject (aka user) in an
  * application.  These operations include authentication (login/logout), authorization (access control), and
  * session functionality. It is JSecurity's primary interaction point for single-user operations.
  *
@@ -42,12 +42,11 @@ import java.util.List;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public interface SecurityContext {
+public interface Subject {
 
     /**
-     * Returns the application-specific Subject identity associated with this <tt>SecurityContext</tt>
-     * (usually a user id or username), or <tt>null</tt> if there is no subject/user yet associated
-     * (hasn't logged in yet).
+     * Returns the application-specific Subject identity (usually a user id or username), or <tt>null</tt> if there
+     * is no account data yet associated (hasn't logged in yet).
      *
      * <p><b>N.B.</b> In a multi-realm configuration, it is possible that this Object encapsulates more than one
      * principal.  Because it is inherently application-specific, You will have to cast this object based on your
@@ -56,7 +55,7 @@ public interface SecurityContext {
      * <p>In effect, the Object returned should be the same as the return value from
      * <tt>{@link org.jsecurity.authc.Authenticator#authenticate(org.jsecurity.authc.AuthenticationToken) Authenticator.authenticate(token).}{@link org.jsecurity.authc.Account#getPrincipal() getPrincipal()}
      *
-     * @return the application-specific identity of this Subject.
+     * @return this Subject's application-specific identity.
      */
     Object getPrincipal();
 
@@ -225,9 +224,9 @@ public interface SecurityContext {
      * Performs a login attempt for the Subject associated with the calling code.  If unsuccessful,
      * an {@link AuthenticationException} is thrown, the subclass of which identifies why the attempt failed.
      * If successful, the Subject/account data associated with the submitted principals/credentials will be
-     * associated with this <tt>SecurityContext</tt> and the method will return quietly.
+     * associated with this <tt>Subject</tt> and the method will return quietly.
      *
-     * <p>Upon returninq quietly, this <tt>SecurityContext</tt> instance can be considered
+     * <p>Upon returninq quietly, this <tt>Subject</tt> instance can be considered
      * authenticated and {@link #getPrincipal() getPrincipal()} will be non-null and
      * {@link #isAuthenticated() isAuthenticated()} will be <tt>true</tt>.
      *
@@ -257,7 +256,7 @@ public interface SecurityContext {
     boolean isAuthenticated();
 
     /**
-     * Returns the application <tt>Session</tt> associated with this SecurityContext.  If no session exists when this
+     * Returns the application <tt>Session</tt> associated with this Subject.  If no session exists when this
      * method is called, a new session will be created, associated with this context, and then returned.
      * 
      * @see #getSession(boolean)
@@ -269,19 +268,19 @@ public interface SecurityContext {
     Session getSession();
 
     /**
-     * Returns the application <tt>Session</tt> associated with this SecurityContext.  Based on the boolean argument,
+     * Returns the application <tt>Session</tt> associated with this Subject.  Based on the boolean argument,
      * this method functions as follows:
      *
      * <ul>
-     *   <li>If there is already an existing session associated with this <tt>SecurityContext</tt>, it is returned and
+     *   <li>If there is already an existing session associated with this <tt>Subject</tt>, it is returned and
      * the <tt>create</tt> argument is ignored.</li>
      *   <li>If no session exists and <tt>create</tt> is <tt>true</tt>, a new session will be created, associated with
-     * this <tt>SecurityContext</tt> and then returned.</li>
+     * this <tt>Subject</tt> and then returned.</li>
      *   <li>If no session exists and <tt>create</tt> is <tt>false</tt>, <tt>null</tt> is returned.</li>
      * </ul>
      *
      * @param create boolean argument determining if a new session should be created or not if there is no existing session.
-     * @return the application <tt>Session</tt> associated with this <tt>SecurityContext</tt> or <tt>null</tt> based
+     * @return the application <tt>Session</tt> associated with this <tt>Subject</tt> or <tt>null</tt> based
      * on the above described logic.
      *
      * @since 0.2
