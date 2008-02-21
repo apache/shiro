@@ -46,7 +46,7 @@ import java.util.Collection;
  * {@link SecurityManager SecurityManager} interface, but in reality, those methods are merely passthrough calls to
  * the underlying 'real' <tt>SessionFactory</tt> instance.
  *
- * <p>The remaining <tt>SecurityManager</tt> not implemented by this class or its parents are left to be
+ * <p>The remaining <tt>SecurityManager</tt> methods not implemented by this class or its parents are left to be
  * implemented by subclasses.
  *
  * <p>In keeping with the other classes in this hierarchy and JSecurity's desire to minimize configuration whenever
@@ -183,10 +183,13 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         Collection<SessionEventListener> listeners = getSessionEventListeners();
         if ( listeners != null ) {
             if ( listeners.isEmpty() ) {
-                String msg = "SessionEventListeners collection property was configured, but the collection does " +
-                    "not contain any SessionEventListener objects.  This is considered a configuration error.  " +
-                    "If you do not have any listener instances, do not set the property with an empty collection.";
-                throw new IllegalStateException(msg);
+                if ( log.isWarnEnabled() ) {
+                String msg = "SessionEventListeners attribute was configured, but the collection does " +
+                    "not contain any elements.  This is probably a configuration problem " +
+                        "(otherwise why set an empty collection?).  Please verify your configuration.";
+                    log.warn( msg );
+                }
+                return;
             }
             for( SessionEventListener listener : listeners ) {
                 add(listener);

@@ -25,7 +25,7 @@
 package org.jsecurity.authz;
 
 /**
- * A Permission represents the ability to perform an action or access to a resource.  A Permission is the most
+ * A Permission represents the ability to perform an action or access a resource.  A Permission is the most
  * granular, or atomic, unit in a system's security policy and is the cornerstone upon which fine-grained security
  * models are built.
  *
@@ -75,8 +75,8 @@ public interface Permission {
      * and/or resource access described by the given <tt>Permission</tt> argument.  Yet another way of saying this
      * would be:
      *
-     * <p>If &quot;permission1 implies permission2&quot;, (i.e. permission1.implies( permission2 ) ), then any
-     * subject/user granted <tt>permission1</tt> would also have ability greater than or equal to that defined by
+     * <p>If &quot;permission1 implies permission2&quot;, (i.e. <code>permission1.implies( permission2 ) )</code>,
+     * then any Subject granted <tt>permission1</tt> would also have ability greater than or equal to that defined by
      * <tt>permission2</tt>.
      *
      * @param p the permission to check for behavior/functionality comparison.
