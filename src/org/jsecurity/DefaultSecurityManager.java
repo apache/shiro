@@ -142,11 +142,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * Creates a <tt>Subject</tt> instance for the user represented by the given method argument.
+     * Creates a <tt>Subject</tt> instance for the user represented by the given method arguments.
      *
-     * @param token   the submitted <tt>AuthenticationToken</tt> submitted for the successful authentication.
+     * @param token   the <tt>AuthenticationToken</tt> submitted for the successful authentication.
      * @param account the <tt>Account</tt> of a newly authenticated user.
-     * @return the <tt>Subject</tt> instance that represents the identity and session data for the newly
+     * @return the <tt>Subject</tt> instance that represents the account and session data for the newly
      *         authenticated user.
      */
     protected Subject createSubject(AuthenticationToken token, Account account) {
