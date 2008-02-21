@@ -24,6 +24,7 @@
  */
 package org.jsecurity.authz;
 
+import org.jsecurity.authz.permission.PermissionResolver;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Initializable;
 
@@ -39,6 +40,7 @@ import java.util.List;
 public class ModularRealmAuthorizer implements Authorizer, Initializable {
 
     protected Collection<Realm> realms = null;
+    protected PermissionResolver permissionResolver = null;
 
     public ModularRealmAuthorizer() {
     }
