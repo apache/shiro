@@ -29,10 +29,8 @@ import org.jsecurity.authz.Authorizer;
 import org.jsecurity.authz.ModularRealmAuthorizer;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.permission.PermissionResolver;
-import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
-import org.jsecurity.util.PermissionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -117,13 +115,6 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     protected void afterAuthenticatorSet() {
         ensureAuthorizer();
         afterAuthorizerSet();
-        ensurePermissionResolver();
-    }
-
-    protected void ensurePermissionResolver() {
-        if( getPermissionResolver() == null ) {
-            this.permissionResolver = new WildcardPermissionResolver();
-        }
     }
 
     protected void afterAuthorizerSet(){}
@@ -150,6 +141,47 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
         return authz;
     }
 
+
+    public boolean isPermitted(Object subjectIdentifier, String permissionString) {
+        return getRequiredAuthorizer().isPermitted(subjectIdentifier, permissionString);
+    }
+
+    public boolean isPermitted(Object subjectIdentifier, Permission permission) {
+        return getRequiredAuthorizer().isPermitted(subjectIdentifier, permission);
+    }
+
+    public boolean[] isPermitted(Object subjectIdentifier, String... permissions) {
+        return getRequiredAuthorizer().isPermitted(subjectIdentifier, permissions );
+    }
+
+    public boolean[] isPermitted(Object subjectIdentifier, List<Permission> permissions) {
+        return getRequiredAuthorizer().isPermitted(subjectIdentifier, permissions);
+    }
+
+    public boolean isPermittedAll(Object subjectIdentifier, String... permissions) {
+        return getRequiredAuthorizer().isPermittedAll(subjectIdentifier, permissions);
+    }
+
+    public boolean isPermittedAll(Object subjectIdentifier, Collection<Permission> permissions) {
+        return getRequiredAuthorizer().isPermittedAll(subjectIdentifier, permissions);
+    }
+
+    public void checkPermission(Object subjectIdentifier, String permission) throws AuthorizationException {
+        getRequiredAuthorizer().checkPermission(subjectIdentifier, permission);
+    }
+
+    public void checkPermission(Object subjectIdentifier, Permission permission) throws AuthorizationException {
+        getRequiredAuthorizer().checkPermission(subjectIdentifier, permission );
+    }
+
+    public void checkPermissions(Object subjectIdentifier, String... permissions) throws AuthorizationException {
+        getRequiredAuthorizer().checkPermissions(subjectIdentifier, permissions);
+    }
+
+    public void checkPermissions(Object subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
+        getRequiredAuthorizer().checkPermissions(subjectIdentifier, permissions);
+    }
+
     public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
         return getRequiredAuthorizer().hasRole(subjectIdentifier, roleIdentifier);
     }
@@ -160,51 +192,6 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
 
     public boolean hasAllRoles(Object subjectIdentifier, Collection<String> roleIdentifiers) {
         return getRequiredAuthorizer().hasAllRoles(subjectIdentifier, roleIdentifiers);
-    }
-
-    public boolean isPermitted(Object subjectIdentifier, Permission permission) {
-        return getRequiredAuthorizer().isPermitted(subjectIdentifier, permission);
-    }
-
-    public boolean[] isPermittedPermissions(Object subjectIdentifier, List<Permission> permissions) {
-        return getRequiredAuthorizer().isPermittedPermissions(subjectIdentifier, permissions);
-    }
-
-    public boolean isPermittedAllPermissions(Object subjectIdentifier, Collection<Permission> permissions) {
-        return getRequiredAuthorizer().isPermittedAllPermissions(subjectIdentifier, permissions);
-    }
-
-    public void checkPermission(Object subjectIdentifier, Permission permission) throws AuthorizationException {
-        getRequiredAuthorizer().checkPermission(subjectIdentifier, permission);
-    }
-
-    public void checkPermissionsPermissions(Object subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
-        getRequiredAuthorizer().checkPermissionsPermissions(subjectIdentifier, permissions);
-    }
-
-    public boolean isPermitted(Object subjectIdentifier, String permissionString) {
-        Permission permission = permissionResolver.resolvePermission( permissionString );
-        return getRequiredAuthorizer().isPermitted(subjectIdentifier, permission);
-    }
-
-    public boolean[] isPermitted(Object subjectIdentifier, List<String> permissionStrings) {
-        List<Permission> permissions = PermissionUtils.resolvePermissions( permissionStrings, permissionResolver );
-        return getRequiredAuthorizer().isPermittedPermissions(subjectIdentifier, permissions);
-    }
-
-    public boolean isPermittedAll(Object subjectIdentifier, Collection<String> permissionStrings) {
-        Collection<Permission> permissions = PermissionUtils.resolvePermissions( permissionStrings, permissionResolver );
-        return getRequiredAuthorizer().isPermittedAllPermissions(subjectIdentifier, permissions);
-    }
-
-    public void checkPermission(Object subjectIdentifier, String permissionString) throws AuthorizationException {
-        Permission permission = permissionResolver.resolvePermission( permissionString );
-        getRequiredAuthorizer().checkPermission(subjectIdentifier, permission);
-    }
-
-    public void checkPermissions(Object subjectIdentifier, Collection<String> permissionStrings) throws AuthorizationException {
-        Collection<Permission> permissions = PermissionUtils.resolvePermissions( permissionStrings, permissionResolver );
-        getRequiredAuthorizer().checkPermissionsPermissions(subjectIdentifier, permissions);
     }
 
     public void checkRole(Object subjectIdentifier, String role) throws AuthorizationException {
