@@ -206,6 +206,80 @@ public class DelegatingSecurityContext implements SecurityContext {
         return principalsOfType;
     }
 
+    public boolean isPermitted(String permission) {
+        assertValid();
+        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
+    }
+
+    public boolean isPermitted(Permission permission) {
+        assertValid();
+        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
+    }
+
+    public boolean[] isPermitted(String... permissions) {
+        assertValid();
+        if (hasPrincipal()) {
+            return securityManager.isPermitted(getPrincipal(), permissions);
+        } else {
+            return new boolean[permissions.length];
+        }
+    }
+
+    public boolean[] isPermitted(List<Permission> permissions) {
+        assertValid();
+        if (hasPrincipal()) {
+            return securityManager.isPermitted(getPrincipal(), permissions);
+        } else {
+            return new boolean[permissions.size()];
+        }
+    }
+
+    public boolean isPermittedAll(String... permissions) {
+        assertValid();
+        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+    }
+
+    public boolean isPermittedAll(Collection<Permission> permissions) {
+        assertValid();
+        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+    }
+
+    protected void assertAuthzCheckPossible() throws AuthorizationException {
+        if (!hasPrincipal()) {
+            String msg = "Subject/User data has not yet been associated with this SecurityContext " +
+                "(this can be done by executing " + SecurityContext.class.getName() + ".login(AuthenticationToken) )." +
+                "Therefore, authorization operations are not possible (a Subject/User identity is required first).  " +
+                "Denying authorization.";
+            throw new UnauthenticatedException(msg);
+        }
+    }
+
+    public void checkPermission(String permission) throws AuthorizationException {
+        assertValid();
+        assertAuthzCheckPossible();
+        securityManager.checkPermission(getPrincipal(), permission);
+    }
+
+    public void checkPermission(Permission permission) throws AuthorizationException {
+        assertValid();
+        assertAuthzCheckPossible();
+        securityManager.checkPermission(getPrincipal(), permission);
+    }
+
+    public void checkPermissions(String... permissions)
+        throws AuthorizationException {
+        assertValid();
+        assertAuthzCheckPossible();
+        securityManager.checkPermissions(getPrincipal(), permissions);
+    }
+
+    public void checkPermissions(Collection<Permission> permissions)
+        throws AuthorizationException {
+        assertValid();
+        assertAuthzCheckPossible();
+        securityManager.checkPermissions(getPrincipal(), permissions);
+    }
+
     public boolean hasRole(String roleIdentifier) {
         assertValid();
         return hasPrincipal() && securityManager.hasRole(getPrincipal(), roleIdentifier);
@@ -223,81 +297,6 @@ public class DelegatingSecurityContext implements SecurityContext {
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
         assertValid();
         return hasPrincipal() && securityManager.hasAllRoles(getPrincipal(), roleIdentifiers);
-    }
-
-    public boolean isPermitted(Permission permission) {
-        assertValid();
-        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
-    }
-
-    public boolean[] isPermittedPermissions(List<Permission> permissions) {
-        assertValid();
-        if (hasPrincipal()) {
-            return securityManager.isPermittedPermissions(getPrincipal(), permissions);
-        } else {
-            return new boolean[permissions.size()];
-        }
-    }
-
-    public boolean isPermittedAllPermissions(Collection<Permission> permissions) {
-        assertValid();
-        return hasPrincipal() && securityManager.isPermittedAllPermissions(getPrincipal(), permissions);
-    }
-
-    protected void assertAuthzCheckPossible() throws AuthorizationException {
-        if (!hasPrincipal()) {
-            String msg = "Subject/User data has not yet been associated with this SecurityContext " +
-                "(this can be done by executing " + SecurityContext.class.getName() + ".login(AuthenticationToken) )." +
-                "Therefore, authorization operations are not possible (a Subject/User identity is required first).  " +
-                "Denying authorization.";
-            throw new UnauthenticatedException(msg);
-        }
-    }
-
-    public void checkPermission(Permission permission) throws AuthorizationException {
-        assertValid();
-        assertAuthzCheckPossible();
-        securityManager.checkPermission(getPrincipal(), permission);
-    }
-
-    public void checkPermissionsPermissions(Collection<Permission> permissions)
-        throws AuthorizationException {
-        assertValid();
-        assertAuthzCheckPossible();
-        securityManager.checkPermissionsPermissions(getPrincipal(), permissions);
-    }
-
-
-    public boolean isPermitted(String permission) {
-        assertValid();
-        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
-    }
-
-    public boolean[] isPermitted(List<String> permissions) {
-        assertValid();
-        if (hasPrincipal()) {
-            return securityManager.isPermitted(getPrincipal(), permissions);
-        } else {
-            return new boolean[permissions.size()];
-        }
-    }
-
-    public boolean isPermittedAll(Collection<String> permissions) {
-        assertValid();
-        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
-    }
-
-    public void checkPermission(String permission) throws AuthorizationException {
-        assertValid();
-        assertAuthzCheckPossible();
-        securityManager.checkPermission(getPrincipal(), permission);
-    }
-
-    public void checkPermissions(Collection<String> permissions)
-        throws AuthorizationException {
-        assertValid();
-        assertAuthzCheckPossible();
-        securityManager.checkPermissions(getPrincipal(), permissions);
     }
 
     public void checkRole(String role) throws AuthorizationException {

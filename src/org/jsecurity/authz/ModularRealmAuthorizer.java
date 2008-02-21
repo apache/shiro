@@ -33,17 +33,18 @@ import java.util.List;
 /**
  * TODO class JavaDoc
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
 public class ModularRealmAuthorizer implements Authorizer, Initializable {
 
     protected Collection<Realm> realms = null;
 
-    public ModularRealmAuthorizer(){}
+    public ModularRealmAuthorizer() {
+    }
 
-    public ModularRealmAuthorizer( List<Realm> realms ) {
-        setRealms( realms );
+    public ModularRealmAuthorizer(List<Realm> realms) {
+        setRealms(realms);
         init();
     }
 
@@ -51,116 +52,153 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         return this.realms;
     }
 
-    public void setRealms( Collection<Realm> realms ) {
+    public void setRealms(Collection<Realm> realms) {
         this.realms = realms;
     }
 
     public void init() {
         Collection<Realm> realms = getRealms();
-        if ( realms == null || realms.isEmpty() ) {
+        if (realms == null || realms.isEmpty()) {
             String msg = "One or more realms must be configured.";
-            throw new IllegalStateException( msg );
+            throw new IllegalStateException(msg);
         }
     }
 
 
-    public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
-        boolean hasRole = false;
-        for( Realm realm : getRealms() ) {
-            if( realm.hasRole( subjectIdentifier, roleIdentifier ) ) {
-                hasRole = true;
-                break;
-            }
-        }
-        return hasRole;
-    }
-
-    public boolean[] hasRoles(Object subjectIdentifier, List<String> roleIdentifiers) {
-        boolean[] hasRoles = new boolean[roleIdentifiers.size()];
-
-        for( Realm realm : getRealms() ) {
-            boolean realmHasRoles[] = realm.hasRoles( subjectIdentifier, roleIdentifiers );
-
-            for( int i = 0; i < realmHasRoles.length; i++ ) {
-                if( realmHasRoles[i] ) {
-                    hasRoles[i] = true;
-                }
-            }
-        }
-        return hasRoles;
-    }
-
-
-    public boolean hasAllRoles(Object subjectIdentifier, Collection<String> roleIdentifiers) {
-        for( String roleIdentifier : roleIdentifiers ) {
-            if( !hasRole( subjectIdentifier, roleIdentifier ) ) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    public boolean isPermitted(Object subjectIdentifier, Permission permission) {
-        for( Realm realm : getRealms() ) {
-            if( realm.isPermitted( subjectIdentifier,  permission ) ) {
+    public boolean isPermitted(Object subjectIdentifier, String permission) {
+        for (Realm realm : getRealms()) {
+            if (realm.isPermitted(subjectIdentifier, permission)) {
                 return true;
             }
         }
         return false;
     }
 
+    public boolean isPermitted(Object subjectIdentifier, Permission permission) {
+        for (Realm realm : getRealms()) {
+            if (realm.isPermitted(subjectIdentifier, permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public boolean[] isPermittedPermissions(Object subjectIdentifier, List<Permission> permissions) {
-        boolean[] isPermitted = new boolean[permissions.size()];
-        for( Realm realm : getRealms() ) {
-            boolean realmIsPermitted[] = realm.isPermittedPermissions( subjectIdentifier, permissions );
+    public boolean[] isPermitted(Object subjectIdentifier, String... permissions) {
+        if (permissions != null && permissions.length > 0) {
+            boolean[] isPermitted = new boolean[permissions.length];
+            for (int i = 0; i < permissions.length; i++) {
+                isPermitted[i] = isPermitted(subjectIdentifier, permissions[i]);
+            }
+            return isPermitted;
+        }
+        return new boolean[0];
+    }
 
-            for( int i = 0; i < realmIsPermitted.length; i++ ) {
-                if( realmIsPermitted[i] ) {
-                    isPermitted[i] = true;
+    public boolean[] isPermitted(Object subjectIdentifier, List<Permission> permissions) {
+        if (permissions != null && !permissions.isEmpty()) {
+            boolean[] isPermitted = new boolean[permissions.size()];
+            int i = 0;
+            for (Permission p : permissions) {
+                isPermitted[i++] = isPermitted(subjectIdentifier, p);
+            }
+            return isPermitted;
+        }
+
+        return new boolean[0];
+    }
+
+    public boolean isPermittedAll(Object subjectIdentifier, String... permissions) {
+        if (permissions != null && permissions.length > 0) {
+            for (String perm : permissions) {
+                if (!isPermitted(subjectIdentifier, perm)) {
+                    return false;
                 }
             }
         }
-        return isPermitted;
+        return true;
+    }
+
+    public boolean isPermittedAll(Object subjectIdentifier, Collection<Permission> permissions) {
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Permission permission : permissions) {
+                if (!isPermitted(subjectIdentifier, permission)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void checkPermission(Object subjectIdentifier, String permission) throws AuthorizationException {
+        if ( !isPermitted(subjectIdentifier, permission ) ) {
+            throw new UnauthorizedException("Subject does not have permission [" + permission + "]");
+        }
+    }
+
+    public void checkPermission(Object subjectIdentifier, Permission permission) throws AuthorizationException {
+        if (!isPermitted(subjectIdentifier, permission)) {
+            throw new UnauthorizedException("Subject does not have permission [" + permission + "]");
+        }
+    }
+
+    public void checkPermissions(Object subjectIdentifier, String... permissions) throws AuthorizationException {
+        if ( permissions != null && permissions.length > 0 ) {
+            for( String perm : permissions ) {
+                checkPermission( subjectIdentifier, perm );
+            }
+        }
+    }
+
+    public void checkPermissions(Object subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
+        if (permissions != null) {
+            for (Permission permission : permissions) {
+                checkPermission(subjectIdentifier, permission);
+            }
+        }
+    }
+
+    public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
+        for (Realm realm : getRealms()) {
+            if (realm.hasRole(subjectIdentifier, roleIdentifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean[] hasRoles(Object subjectIdentifier, List<String> roleIdentifiers) {
+        if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
+            boolean[] isPermitted = new boolean[roleIdentifiers.size()];
+            int i = 0;
+            for (String roleId : roleIdentifiers ) {
+                isPermitted[i++] = hasRole( subjectIdentifier, roleId );
+            }
+            return isPermitted;
+        }
+
+        return new boolean[0];
     }
 
 
-    public boolean isPermittedAllPermissions(Object subjectIdentifier, Collection<Permission> permissions) {
-        for( Permission permission : permissions ) {
-            if( !isPermitted( subjectIdentifier, permission ) ) {
+    public boolean hasAllRoles(Object subjectIdentifier, Collection<String> roleIdentifiers) {
+        for (String roleIdentifier : roleIdentifiers) {
+            if (!hasRole(subjectIdentifier, roleIdentifier)) {
                 return false;
             }
         }
         return true;
     }
 
-
-    public void checkPermission(Object subjectIdentifier, Permission permission) throws AuthorizationException {
-        if( !isPermitted( subjectIdentifier, permission ) ) {
-            throw new AuthorizationException( "User does not have permission [" + permission.toString() + "]" );
-        }
-    }
-
-
-    public void checkPermissionsPermissions(Object subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
-        if( permissions != null ) {
-            for( Permission permission : permissions ) {
-                checkPermission( subjectIdentifier, permission );
-            }
-        }
-    }
-
     public void checkRole(Object subjectIdentifier, String role) throws AuthorizationException {
-        if( !hasRole( subjectIdentifier, role ) ) {
-            throw new AuthorizationException( "User does not have role [" + role + "]" );
+        if (!hasRole(subjectIdentifier, role)) {
+            throw new UnauthorizedException("Subject does not have role [" + role + "]");
         }
     }
 
     public void checkRoles(Object subjectIdentifier, Collection<String> roles) throws AuthorizationException {
-        if( roles != null ) {
-            for( String role : roles ) {
-                checkRole( subjectIdentifier, role );
+        if (roles != null) {
+            for (String role : roles) {
+                checkRole(subjectIdentifier, role);
             }
         }
     }

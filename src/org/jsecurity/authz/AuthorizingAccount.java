@@ -50,21 +50,6 @@ import java.util.List;
 public interface AuthorizingAccount extends Account {
     
     /**
-     * @see org.jsecurity.context.SecurityContext#hasRole(String)
-     */
-    boolean hasRole(String roleIdentifier);
-
-    /**
-     * @see org.jsecurity.context.SecurityContext#hasRoles(java.util.List)
-     */
-    boolean[] hasRoles(List<String> roleIdentifiers);
-
-    /**
-     * @see org.jsecurity.context.SecurityContext#hasAllRoles(java.util.Collection)
-     */
-    boolean hasAllRoles(Collection<String> roleIdentifiers);
-
-    /**
      * @see org.jsecurity.context.SecurityContext#isPermitted(Permission)
      */
     boolean isPermitted(Permission permission);
@@ -88,6 +73,21 @@ public interface AuthorizingAccount extends Account {
      * @see org.jsecurity.context.SecurityContext#checkPermissionsPermissions(java.util.Collection)
      */
     void checkPermissions(Collection<Permission> permissions) throws AuthorizationException;
+
+    /**
+     * @see org.jsecurity.context.SecurityContext#hasRole(String)
+     */
+    boolean hasRole(String roleIdentifier);
+
+    /**
+     * @see org.jsecurity.context.SecurityContext#hasRoles(java.util.List)
+     */
+    boolean[] hasRoles(List<String> roleIdentifiers);
+
+    /**
+     * @see org.jsecurity.context.SecurityContext#hasAllRoles(java.util.Collection)
+     */
+    boolean hasAllRoles(Collection<String> roleIdentifiers);
 
     /**
      * @see org.jsecurity.context.SecurityContext#checkRole(String)
