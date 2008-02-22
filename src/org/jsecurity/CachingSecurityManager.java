@@ -44,7 +44,7 @@ import org.jsecurity.util.LifecycleUtils;
  */
 public abstract class CachingSecurityManager extends AbstractSecurityManager implements CacheProviderAware {
 
-    protected CacheProvider cacheProvider = null;
+    protected CacheProvider cacheProvider;
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call

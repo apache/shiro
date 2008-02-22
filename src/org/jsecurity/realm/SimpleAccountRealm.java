@@ -96,7 +96,7 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     |         C O N S T R U C T O R S           |
     ============================================*/
 
-    public void MemoryRealm() {
+    public SimpleAccountRealm() {
         //this class maintains its own userCache and roleCache - no need for parent class to do so also:
         setAccountCacheEnabled(false);
     }
