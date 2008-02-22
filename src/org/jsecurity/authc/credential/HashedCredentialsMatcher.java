@@ -80,7 +80,7 @@ import org.jsecurity.crypto.hash.Hash;
  * @see org.jsecurity.crypto.hash.ShaHash
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
 

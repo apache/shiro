@@ -28,7 +28,7 @@ import org.jsecurity.JSecurityException;
 
 /**
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class CodecException extends JSecurityException {
 

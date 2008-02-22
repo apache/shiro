@@ -25,6 +25,8 @@
 package org.jsecurity.authz;
 
 import org.jsecurity.authz.permission.PermissionResolver;
+import org.jsecurity.authz.permission.PermissionResolverAware;
+import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Initializable;
 
@@ -32,12 +34,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * TODO class JavaDoc
+ * A <tt>ModularRealmAuthorizer</tt> is an <tt>Authorizer</tt> implementation that consults one or more configured
+ * {@link Realm Realm}s during an authorization operation.
  *
  * @author Les Hazlewood
  * @since 0.2
  */
-public class ModularRealmAuthorizer implements Authorizer, Initializable {
+public class ModularRealmAuthorizer implements Authorizer, Initializable, PermissionResolverAware {
 
     protected Collection<Realm> realms = null;
     protected PermissionResolver permissionResolver = null;
@@ -58,11 +61,29 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable {
         this.realms = realms;
     }
 
+    public PermissionResolver getPermissionResolver() {
+        return permissionResolver;
+    }
+
+    public void setPermissionResolver(PermissionResolver permissionResolver) {
+        this.permissionResolver = permissionResolver;
+    }
+
     public void init() {
         Collection<Realm> realms = getRealms();
         if (realms == null || realms.isEmpty()) {
             String msg = "One or more realms must be configured.";
             throw new IllegalStateException(msg);
+        }
+        PermissionResolver resolver = getPermissionResolver();
+        if ( resolver == null ) {
+            resolver = new WildcardPermissionResolver();
+            setPermissionResolver( resolver );
+        }
+        for( Realm realm : realms ) {
+            if ( realm instanceof PermissionResolverAware ) {
+                ((PermissionResolverAware)realm).setPermissionResolver(resolver);
+            }
         }
     }
 

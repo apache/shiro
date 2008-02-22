@@ -31,7 +31,7 @@ import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RolesRequired;
 
 /**
- * @since 1.0
+ * @since 0.9
  * @author Les Hazlewood
  */
 public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {

@@ -35,7 +35,7 @@ import org.jsecurity.codec.Hex;
  * techniques and how the overloaded constructors function.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class Md2Hash extends AbstractHash {
 

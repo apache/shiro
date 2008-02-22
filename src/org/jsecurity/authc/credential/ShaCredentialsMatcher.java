@@ -33,7 +33,7 @@ import org.jsecurity.crypto.hash.ShaHash;
  * SHA hashed. 
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class ShaCredentialsMatcher extends HashedCredentialsMatcher {
 

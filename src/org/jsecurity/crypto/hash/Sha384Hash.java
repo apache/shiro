@@ -37,7 +37,7 @@ import org.jsecurity.codec.Hex;
  * an {@link IllegalStateException IllegalStateException}
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class Sha384Hash extends AbstractHash {
 

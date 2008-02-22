@@ -37,6 +37,13 @@ import java.util.List;
 public interface Authorizer {
 
 
+    /**
+     *
+     * @param subjectIdentifier
+     * @param permission
+     * @return
+     * @since 0.9
+     */
     boolean isPermitted( Object subjectIdentifier, String permission );
 
     /**
@@ -84,6 +91,7 @@ public interface Authorizer {
      * permissions in the given list.  A true value at an index indicates the user is permitted for
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
+     * @since 0.9
      */
     boolean[] isPermitted( Object subjectIdentifier, String... permissions );
 
@@ -132,6 +140,7 @@ public interface Authorizer {
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to be checked.
      * @return true if the user has all permissions, false otherwise.
+     * @since 0.9
      */
     boolean isPermittedAll( Object subjectIdentifier, String... permissions );
 
@@ -172,6 +181,7 @@ public interface Authorizer {
      * for the subject to check (usually a user id or username).
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
+     * @since 0.9
      */
     void checkPermission( Object subjectIdentifier, String permission ) throws AuthorizationException;
 
@@ -206,8 +216,8 @@ public interface Authorizer {
      * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to check.
-     * @throws AuthorizationException if the user does not have all of the given
-     * permissions.
+     * @throws AuthorizationException if the user does not have all of the given permissions.
+     * @since 0.9
      */
     void checkPermissions( Object subjectIdentifier, String... permissions ) throws AuthorizationException;
 
@@ -221,8 +231,7 @@ public interface Authorizer {
      * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permissions the permissions to check.
-     * @throws AuthorizationException if the user does not have all of the given
-     * permissions.
+     * @throws AuthorizationException if the user does not have all of the given permissions.
      */
     void checkPermissions( Object subjectIdentifier, Collection<Permission> permissions ) throws AuthorizationException;
 

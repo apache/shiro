@@ -38,7 +38,7 @@ import java.util.Arrays;
  * <code>Object.equals</code> comparison.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
 

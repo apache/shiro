@@ -38,6 +38,7 @@ import org.jsecurity.authz.Permission;
  * configuration, URL configuration, etc.  It is useful whenever a String representation of a permission is used.</p>
  *
  * @author Jeremy Haile
+ * @since 0.9
  */
 public interface PermissionResolver {
 

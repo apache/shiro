@@ -37,7 +37,7 @@ package org.jsecurity.crypto.hash;
  * @see Sha512Hash
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public interface Hash {
 

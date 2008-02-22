@@ -55,7 +55,7 @@ package org.jsecurity.crypto;
  * @see SimpleBlowfishCipher
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public interface Cipher {
 

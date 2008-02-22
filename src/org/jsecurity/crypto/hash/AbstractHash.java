@@ -44,7 +44,7 @@ import java.util.Arrays;
  * overloaded constructors</tt>.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class AbstractHash extends CodecSupport implements Hash {
 

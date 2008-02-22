@@ -43,8 +43,9 @@ import java.util.List;
  * 
  * @see org.jsecurity.realm.AuthorizingRealm AuthorizingRealm
  *
- * @since 0.1
+ * @since 0.9
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @see SimpleAuthorizingAccount
  */
 public interface AuthorizingAccount extends Account {
@@ -55,12 +56,12 @@ public interface AuthorizingAccount extends Account {
     boolean isPermitted(Permission permission);
 
     /**
-     * @see org.jsecurity.subject.Subject#isPermittedPermissions(java.util.List)
+     * @see org.jsecurity.subject.Subject#isPermitted(java.util.List)
      */
     boolean[] isPermitted(List<Permission> permissions);
 
     /**
-     * @see org.jsecurity.subject.Subject#isPermittedAllPermissions(java.util.Collection)
+     * @see org.jsecurity.subject.Subject#isPermittedAll(java.util.Collection)
      */
     boolean isPermittedAll(Collection<Permission> permissions);
 
@@ -70,7 +71,7 @@ public interface AuthorizingAccount extends Account {
     void checkPermission(Permission permission) throws AuthorizationException;
 
     /**
-     * @see org.jsecurity.subject.Subject#checkPermissionsPermissions(java.util.Collection)
+     * @see org.jsecurity.subject.Subject#checkPermissions(java.util.Collection)
      */
     void checkPermissions(Collection<Permission> permissions) throws AuthorizationException;
 

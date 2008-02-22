@@ -35,7 +35,7 @@ import org.jsecurity.util.*;
 
 /**
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager, Initializable, Destroyable {
 

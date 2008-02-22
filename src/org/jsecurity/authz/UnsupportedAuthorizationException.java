@@ -30,7 +30,7 @@ package org.jsecurity.authz;
  * interact with the specific account instance.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class UnsupportedAuthorizationException extends AuthorizationException  {
 

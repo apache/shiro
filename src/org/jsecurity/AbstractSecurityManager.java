@@ -35,7 +35,7 @@ import org.jsecurity.util.Initializable;
  * features need to be propagated to all JSecurity <tt>SecurityManager</tt> implementations in the future.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class AbstractSecurityManager implements SecurityManager, Initializable, Destroyable {
 

@@ -51,7 +51,7 @@ package org.jsecurity.authc;
  * perform an actual authentication.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public interface RememberMeAuthenticationToken extends AuthenticationToken {
 

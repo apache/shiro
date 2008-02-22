@@ -26,6 +26,7 @@ package org.jsecurity.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.JSecurityException;
 
 /**
  * @author Les Hazlewood
@@ -35,13 +36,13 @@ public abstract class LifecycleUtils {
 
     protected static transient final Log log = LogFactory.getLog(LifecycleUtils.class);
 
-    public static void init(Object o) throws Exception {
+    public static void init(Object o) throws JSecurityException {
         if (o instanceof Initializable) {
             init((Initializable) o);
         }
     }
 
-    public static void init(Initializable initializable) throws Exception {
+    public static void init(Initializable initializable) throws JSecurityException {
         initializable.init();
     }
 

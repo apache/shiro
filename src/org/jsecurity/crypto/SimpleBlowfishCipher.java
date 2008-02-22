@@ -50,7 +50,7 @@ import java.util.Arrays;
  * result on an instance of this class via the <tt>setKey</tt> method.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class SimpleBlowfishCipher implements Cipher {
 

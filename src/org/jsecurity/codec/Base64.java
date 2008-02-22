@@ -58,7 +58,7 @@ package org.jsecurity.codec;
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @author Apache Software Foundation
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class Base64 {
 
