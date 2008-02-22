@@ -27,6 +27,9 @@ package org.jsecurity.realm;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.*;
+import org.jsecurity.authz.permission.PermissionResolver;
+import org.jsecurity.authz.permission.PermissionResolverAware;
+import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.util.Destroyable;
@@ -56,7 +59,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.2
  */
-public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, Destroyable {
+public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, Destroyable, PermissionResolverAware {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -84,6 +87,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * The postfix appended to the realm name used to create the name of the authorization cache.
      */
     private String accountCachePostfix = DEFAULT_ACCOUNT_CACHE_POSTFIX;
+
+    private PermissionResolver permissionResolver = new WildcardPermissionResolver();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -134,6 +139,14 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     public Cache getAccountCache() {
         return this.accountCache;
+    }
+
+    public PermissionResolver getPermissionResolver() {
+        return permissionResolver;
+    }
+
+    public void setPermissionResolver(PermissionResolver permissionResolver) {
+        this.permissionResolver = permissionResolver;
     }
 
     /*--------------------------------------------

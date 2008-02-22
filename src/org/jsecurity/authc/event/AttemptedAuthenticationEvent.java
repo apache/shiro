@@ -14,7 +14,7 @@ import org.jsecurity.authc.AuthenticationToken;
  * @see SuccessfulAuthenticationEvent
  * @see FailedAuthenticationEvent
  *
- * @since 1.0
+ * @since 0.9
  */
 public abstract class AttemptedAuthenticationEvent extends AuthenticationEvent {
 

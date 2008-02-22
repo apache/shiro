@@ -26,7 +26,7 @@ package org.jsecurity.util;
 
 /**
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public interface Serializer {
 

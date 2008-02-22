@@ -50,7 +50,7 @@ import java.util.Collection;
  * you use one of the overloaded constructors with one or more arguments.</p>
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class RealmSecurityManager extends CachingSecurityManager {
 

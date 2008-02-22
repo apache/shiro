@@ -26,8 +26,6 @@ package org.jsecurity.realm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.permission.PermissionResolver;
-import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.CacheProviderAware;
 
@@ -61,8 +59,6 @@ public abstract class AbstractRealm implements Realm, CacheProviderAware {
     private String name = getClass().getName() + "-" + INSTANCE_COUNT++;
     
     private CacheProvider cacheProvider = null;
-
-    private PermissionResolver permissionResolver = new WildcardPermissionResolver();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -123,13 +119,5 @@ public abstract class AbstractRealm implements Realm, CacheProviderAware {
      */
     public CacheProvider getCacheProvider() {
         return this.cacheProvider;
-    }
-
-    public PermissionResolver getPermissionResolver() {
-        return permissionResolver;
-    }
-
-    public void setPermissionResolver(PermissionResolver permissionResolver) {
-        this.permissionResolver = permissionResolver;
     }
 }

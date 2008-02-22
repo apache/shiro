@@ -40,7 +40,7 @@ import org.jsecurity.util.LifecycleUtils;
  * if one has not been provided.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class CachingSecurityManager extends AbstractSecurityManager implements CacheProviderAware {
 

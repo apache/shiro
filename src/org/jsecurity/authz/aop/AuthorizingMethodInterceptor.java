@@ -29,7 +29,7 @@ import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
- * @since 1.0
+ * @since 0.9
  * @author Les Hazlewood
  */
 public abstract class AuthorizingMethodInterceptor extends MethodInterceptorSupport {

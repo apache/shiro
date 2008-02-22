@@ -28,7 +28,7 @@ package org.jsecurity.authz;
  * An exception thrown when an Authorization operation is performed for a subject identity, but it is discovered
  * that there is no <tt>Account</tt> for that subject to perform authorization checks against.
  *
- * @since 1.0
+ * @since 0.9
  * @author Les Hazlewood
  */
 public class MissingAccountException extends AuthorizationException {

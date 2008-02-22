@@ -54,7 +54,7 @@ import java.util.Collection;
  * they have not been provided.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionEventListenerRegistrar {
 

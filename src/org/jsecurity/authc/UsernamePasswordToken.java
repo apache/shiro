@@ -145,7 +145,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @param password the password string submitted for authentication
      * @param rememberMe if the user wishes their identity to be remembered across sessions
      * 
-     * @since 1.0
+     * @since 0.9
      */
     public UsernamePasswordToken(final String username, final char[] password, final boolean rememberMe ) {
         this( username, password, rememberMe, null );
@@ -163,7 +163,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @param password the password string submitted for authentication
      * @param rememberMe if the user wishes their identity to be remembered across sessions
      *
-     * @since 1.0
+     * @since 0.9
      */
     public UsernamePasswordToken( final String username, final String password, final boolean rememberMe ) {
         this( username, password.toCharArray(), rememberMe, null );
@@ -178,7 +178,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @param rememberMe if the user wishes their identity to be remembered across sessions
      * @param inetAddress the inetAddress from where the attempt is occuring
      *
-     * @since 1.0
+     * @since 0.9
      */
     public UsernamePasswordToken( final String username, final char[] password,
                                   final boolean rememberMe, final InetAddress inetAddress ) {
@@ -202,7 +202,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @param rememberMe if the user wishes their identity to be remembered across sessions
      * @param inetAddress the inetAddress from where the attempt is occuring
      *
-     * @since 1.0
+     * @since 0.9
      */
     public UsernamePasswordToken( final String username, final String password,
                                   final boolean rememberMe, final InetAddress inetAddress ) {
@@ -299,7 +299,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @return <tt>true</tt> if the submitting user wishes their identity (principal(s)) to be remembered
      * across sessions, <tt>false</tt> otherwise (<tt>false</tt> by default).
      *
-     * @since 1.0
+     * @since 0.9
      */
     public boolean isRememberMe() {
         return rememberMe;
@@ -311,7 +311,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @param rememberMe value inidicating if the user wishes their identity (principal(s)) to be remembered across
      * sessions.
      *
-     * @since 1.0
+     * @since 0.9
      */
     public void setRememberMe(boolean rememberMe) {
         this.rememberMe = rememberMe;

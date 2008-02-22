@@ -32,7 +32,7 @@ import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.PermissionsRequired;
 
 /**
- * @since 1.0
+ * @since 0.9
  * @author Les Hazlewood
  */
 public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {

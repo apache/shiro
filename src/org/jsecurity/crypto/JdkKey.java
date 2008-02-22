@@ -29,7 +29,7 @@ package org.jsecurity.crypto;
  * crypto API.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class JdkKey implements Key, java.security.Key {
 

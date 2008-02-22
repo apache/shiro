@@ -234,7 +234,7 @@ public interface Subject {
      * Authentication subsystem for verification.
      * @throws AuthenticationException if the authentication attempt fails.
      *
-     * @since 1.0
+     * @since 0.9
      */
     void login( AuthenticationToken token ) throws AuthenticationException;
 
@@ -251,7 +251,7 @@ public interface Subject {
      * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      *
-     * @since 1.0
+     * @since 0.9
      */
     boolean isAuthenticated();
 

@@ -33,7 +33,7 @@ import org.jsecurity.crypto.hash.Md5Hash;
  * MD5 hashed.
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class Md5CredentialsMatcher extends HashedCredentialsMatcher {
 

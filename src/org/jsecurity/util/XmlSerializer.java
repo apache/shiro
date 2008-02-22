@@ -33,7 +33,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public class XmlSerializer implements Serializer {
 

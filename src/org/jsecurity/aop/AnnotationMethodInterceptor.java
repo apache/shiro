@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
  * MethodInterceptor that inspects a specific annotation on the method invocation before continuing
  * its execution.
  * 
- * @since 1.0
+ * @since 0.9
  * @author Les Hazlewood
  */
 public abstract class AnnotationMethodInterceptor extends MethodInterceptorSupport {

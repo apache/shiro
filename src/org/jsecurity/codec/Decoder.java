@@ -28,7 +28,7 @@ package org.jsecurity.codec;
  * TODO - class javadoc
  *
  * @author Les Hazlewood
- * @since 1.0
+ * @since 0.9
  */
 public interface Decoder {
 
