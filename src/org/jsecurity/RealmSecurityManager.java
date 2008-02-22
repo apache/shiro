@@ -54,7 +54,7 @@ import java.util.Collection;
  */
 public abstract class RealmSecurityManager extends CachingSecurityManager {
 
-    protected Collection<Realm> realms = null;
+    protected Collection<Realm> realms;
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call

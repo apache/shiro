@@ -44,7 +44,7 @@ import java.util.Collection;
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'
  * <tt>Authenticator</tt> instance.
  *
- * <p>All other <tt>SecurityManager</tt> (authorization, session, etc) methods are left to be implemented by subclasses. 
+ * <p>All other <tt>SecurityManager</tt> (authorization, session, etc) methods are left to be implemented by subclasses.
  *
  * <p>In keeping with the other classes in this hierarchy and JSecurity's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies will be created upon {@link #init() initialization} if
@@ -56,7 +56,7 @@ import java.util.Collection;
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager implements AuthenticationEventListenerRegistrar {
 
     protected Authenticator authenticator;
-    private Collection<AuthenticationEventListener> authenticationEventListeners = null;
+    private Collection<AuthenticationEventListener> authenticationEventListeners;
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
@@ -119,13 +119,13 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * interface in order for these listeners to be applied.  If it does not implement this interface, it is
      * considered a configuration error and an exception will be thrown during {@link #init() initialization}.
      *
-     * <p>All of JSecurity's <tt>Authenticator</tt> implementations implement the 
+     * <p>All of JSecurity's <tt>Authenticator</tt> implementations implement the
      * <tt>AuthenticationEventListenerRegistrar</tt> interface, so you would only need
      * to worry about an exception being thrown if you provided your own Authenticator instance and did not
      * implement it.
      *
      * @param listeners the <tt>AuthenticationEventListener</tt>s to register with the underlying delegate
-     * <tt>Authenticator</tt> at startup.
+     *                  <tt>Authenticator</tt> at startup.
      */
     public void setAuthenticationEventListeners(Collection<AuthenticationEventListener> listeners) {
         this.authenticationEventListeners = listeners;
@@ -134,13 +134,13 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     public void add(AuthenticationEventListener listener) {
         Authenticator authc = getRequiredAuthenticator();
         assertAuthenticatorEventListenerSupport(authc);
-        ((AuthenticationEventListenerRegistrar)authc).add(listener);
+        ((AuthenticationEventListenerRegistrar) authc).add(listener);
     }
 
     public boolean remove(AuthenticationEventListener listener) {
         Authenticator authc = getAuthenticator();
         return (authc instanceof AuthenticationEventListenerRegistrar) &&
-            ((AuthenticationEventListenerRegistrar)authc).remove(listener);
+            ((AuthenticationEventListenerRegistrar) authc).remove(listener);
     }
 
     protected Authenticator createAuthenticator() {
@@ -169,24 +169,27 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
 
     protected void registerAnyAuthenticationEventListeners() {
         Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
-        if ( listeners != null ) {
-            if ( listeners.isEmpty() ) {
-                String msg = "AuthenticationEventListeners collection property was configured, but the collection does " +
-                    "not contain any AuthenticationEventListener objects.  This is considered a configuration error.  " +
-                    "If you do not have any listener instances, do not set the property with an empty collection.";
-                throw new IllegalStateException(msg);
-            }
-            for( AuthenticationEventListener listener : listeners ) {
-                add(listener);
+        if (listeners != null) {
+            if (listeners.isEmpty()) {
+                if (log.isWarnEnabled()) {
+                    String msg = "AuthenticationEventListeners collection property was configured, but the " +
+                        "collection does not contain any elements.  Please check your configuration (forgot to " +
+                        "add one or more listeners?).  Proceeding with no listeners...";
+                    log.warn(msg);
+                }
+            } else {
+                for (AuthenticationEventListener listener : listeners) {
+                    add(listener);
+                }
             }
         }
     }
 
     protected void deregisterAnyAuthenticationEventListeners() {
         Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
-        if ( listeners != null && !listeners.isEmpty() ) {
-            for( AuthenticationEventListener listener : listeners ) {
-                remove( listener );
+        if (listeners != null && !listeners.isEmpty()) {
+            for (AuthenticationEventListener listener : listeners) {
+                remove(listener);
             }
         }
     }
@@ -197,9 +200,11 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         afterAuthenticatorSet();
     }
 
-    protected void afterAuthenticatorSet(){}
+    protected void afterAuthenticatorSet() {
+    }
 
-    protected void beforeAuthenticatorDestroyed(){}
+    protected void beforeAuthenticatorDestroyed() {
+    }
 
     protected void destroyAuthenticator() {
         LifecycleUtils.destroy(getAuthenticator());

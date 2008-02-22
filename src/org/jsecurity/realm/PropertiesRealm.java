@@ -56,10 +56,10 @@ import java.util.concurrent.TimeUnit;
  * prefixes.</p>
  *
  * <p>If none of these are specified, and the jsecurity-users.properties is not included at the root of the classpath,
- * a default failsafe configuration will be used.  This is not recommended as it only contains a 'guest' user and role,
- * which are probably of little value to most production applications.</p>
+ * a default failsafe configuration will be used.  This is not recommended as it only contains a few simple users and
+ * roles which are probably of little value to most production applications.</p>
  *
- * <p>The Properties format understood by this implementation must be written in as follows:
+ * <p>The Properties format understood by this implementation must be written as follows:
  *
  * <p>Each line's key/value pair represents either a user-to-role(s) mapping <em>or</em> a role-to-permission(s)
  * mapping.

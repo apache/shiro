@@ -52,7 +52,9 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
         String remoteUser;
         Object scPrincipal = getSubjectPrincipal();
         if ( scPrincipal != null ) {
-            if ( scPrincipal instanceof Principal ) {
+            if ( scPrincipal instanceof String ) {
+                return (String)scPrincipal;
+            } else if ( scPrincipal instanceof Principal ) {
                 remoteUser = ( (Principal)scPrincipal ).getName();
             } else {
                 remoteUser = scPrincipal.toString();
