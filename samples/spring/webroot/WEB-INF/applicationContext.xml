@@ -84,15 +84,6 @@
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
-
-    <!-- =========================================================
-      -  JSecurity web interceptors
-      ============================================================ -->
-    <bean id="authenticationInterceptor" class="org.jsecurity.spring.servlet.security.AuthenticationInterceptor">
-        <property name="contextRelative" value="true"/>
-        <property name="redirectUrl" value="/s/login"/>
-    </bean>
-
     <!-- =========================================================
       -  Sample App Objects
       ============================================================ -->
