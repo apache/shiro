@@ -71,16 +71,27 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+    /**
+     * Returns the <code>CredentialsMatcher</code> used during an authentication attempt to verify submitted
+     * credentials with those stored in the system.
+     * 
+     * <p>Unless overridden by the {@link #setCredentialsMatcher setCredentialsMatcher} method, the default
+     * value is a {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher SimpleCredentialsMatcher} instance.
+     * 
+     * @return the <code>CredentialsMatcher</code> used during an authentication attempt to verify submitted
+     * credentials with those stored in the system.
+     */
     public CredentialsMatcher getCredentialsMatcher() {
         return credentialsMatcher;
     }
 
     /**
-     * Sets the CrendialsMatcher implementation to use to verify submitted credentials with those stored in the system
-     * for a given authentication attempt.  The implementation of this matcher can be switched via configuration to
+     * Sets the CrendialsMatcher used during an authentication attempt to verify submitted credentials with those
+     * stored in the system.  The implementation of this matcher can be switched via configuration to
      * support any number of schemes, including plain text comparisons, hashing comparisons, and others.
      *
-     * <p>Unless overridden by this method, the default value is a {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher} instance.
+     * <p>Unless overridden by this method, the default value is a
+     * {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher} instance.
      *
      * @param credentialsMatcher the matcher to use.
      */
@@ -110,8 +121,8 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
     /**
      * Sets the authenticationToken class supported by this realm.
      *
-     * <p>Unless overridden by this method, the default value is {@link UsernamePasswordToken} to support the majority
-     * of applications.
+     * <p>Unless overridden by this method, the default value is
+     * {@link UsernamePasswordToken UsernamePasswordToken.class} to support the majority of applications.
      *
      * @param authenticationTokenClass the class of authentication token instances supported by this realm.
      *
@@ -129,7 +140,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * Convenience implementation that returns
      * <tt>getAuthenticationTokenClass().isAssignableFrom( token.getClass() );</tt>.  Can be overridden
      * by subclasses for more complex token checking.
-     * <p>Most implementations will only need to set a different class via
+     * <p>Most configurations will only need to set a different class via
      * {@link #setAuthenticationTokenClass}, as opposed to overriding this method.
      *
      * @param token the token being submitted for authentication.
