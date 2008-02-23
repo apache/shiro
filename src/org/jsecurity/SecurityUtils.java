@@ -25,6 +25,7 @@
 package org.jsecurity;
 
 import org.jsecurity.subject.Subject;
+import org.jsecurity.util.ThreadContext;
 
 /**
  * Accesses the currently accessible <tt>Subject</tt> for the calling code.
@@ -44,7 +45,6 @@ public abstract class SecurityUtils {
      * @return the currently accessible <tt>Subject</tt> accessible to the calling code.
      */
     public static Subject getSubject() {
-        //todo Refactor to use thread local prior to 1.0
-        throw new UnsupportedOperationException( "Should be changed to use thread local before 1.0 release" );
+        return ThreadContext.getSubject();
     }
 }
