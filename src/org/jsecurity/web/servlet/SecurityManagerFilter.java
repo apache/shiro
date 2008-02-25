@@ -12,7 +12,8 @@ import javax.servlet.ServletContext;
  */
 public abstract class SecurityManagerFilter extends OncePerRequestFilter {
 
-    SecurityManagerListener securityManagerListener = null;
+    protected SecurityManagerListener securityManagerListener = null;
+    protected SecurityManager securityManager = null;
 
     protected void onFilterConfigSet() throws Exception {
         applySessionMode();
@@ -23,6 +24,17 @@ public abstract class SecurityManagerFilter extends OncePerRequestFilter {
             securityManagerListener.setServletContext( getServletContext() );
             securityManagerListener.init();
         }
+        afterSecurityManagerSet();
+    }
+
+    /**
+     * Template initialization hook for subclasses to continue init logic after the SecurityManager is available.
+     *
+     * <p>The SecurityManager instance will be available when this is called via the
+     * {@link #getSecurityManager() getSecurityManager} method.
+     * @throws Exception if the subclass has a problem initializing.
+     */
+    protected void afterSecurityManagerSet() throws Exception {
     }
 
     public void destroy() {

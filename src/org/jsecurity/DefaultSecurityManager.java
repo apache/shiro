@@ -137,7 +137,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected Subject createSubject(Object principals, Session existing,
-                                                    boolean authenticated, InetAddress inetAddress) {
+                                    boolean authenticated, InetAddress inetAddress) {
         return new DelegatingSubject(principals, authenticated, inetAddress, existing, this);
     }
 
@@ -177,18 +177,18 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * <p>The default implementation merely binds the argument to the thread local via the {@link ThreadContext}.
      * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
      *
-     * @param secCtx the <tt>Subject</tt> instance created after authentication to be bound to the application
+     * @param subject the <tt>Subject</tt> instance created after authentication to be bound to the application
      *               for later use.
      */
-    protected void bind(Subject secCtx) {
+    protected void bind(Subject subject) {
         if (log.isDebugEnabled()) {
-            log.debug("Binding Subject [" + secCtx + "] to a thread local...");
+            log.debug("Binding Subject [" + subject + "] to a thread local...");
         }
-        ThreadContext.bind(secCtx);
+        ThreadContext.bind(subject);
     }
 
-    private void assertCreation(Subject secCtx) throws IllegalStateException {
-        if (secCtx == null) {
+    private void assertCreation(Subject subject) throws IllegalStateException {
+        if (subject == null) {
             String msg = "Programming error - please verify that you have overridden the " +
                 getClass().getName() + ".createSubject( Account account ) method to return " +
                 "a non-null Subject instance";
@@ -270,10 +270,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             rememberMeFailedLogin(token, ae);
             throw ae; //propagate
         }
-        Subject secCtx = createSubject(token, account);
-        assertCreation(secCtx);
-        bind(secCtx);
-        return secCtx;
+        Subject subject = createSubject(token, account);
+        assertCreation(subject);
+        bind(subject);
+        return subject;
     }
 
     public void logout(Object subjectIdentifier) {

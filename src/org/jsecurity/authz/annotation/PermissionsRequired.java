@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * Requires the current executor's security context to imply a particular permission in
+ * Requires the current executor's Subject to imply a particular permission in
  * order to execute the annotated method.  If the executor's associated
  * {@link org.jsecurity.subject.Subject Subject} determines that the
  * executor does not imply the specified permission, the method will not be executed.

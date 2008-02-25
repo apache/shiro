@@ -78,23 +78,23 @@ public class AuthorizingRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        Subject secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
-        assertTrue(secCtx.isAuthenticated());
-        assertTrue(secCtx.hasRole(ROLE));
-        Object principals = secCtx.getPrincipal();
+        Subject subject = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        assertTrue(subject.isAuthenticated());
+        assertTrue(subject.hasRole(ROLE));
+        Object principals = subject.getPrincipal();
         assertTrue(principals instanceof Collection && ((Collection)principals).size() == 3);
 
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) secCtx.getPrincipalByType(UsernamePrincipal.class);
+        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) subject.getPrincipalByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
 
-        UserIdPrincipal userIdPrincipal = (UserIdPrincipal) secCtx.getPrincipalByType(UserIdPrincipal.class);
+        UserIdPrincipal userIdPrincipal = (UserIdPrincipal) subject.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
-        String stringPrincipal = (String)secCtx.getPrincipalByType(String.class);
+        String stringPrincipal = (String)subject.getPrincipalByType(String.class);
         assertTrue(stringPrincipal.equals(USER_ID + USERNAME));
 
 
-        secCtx.logout();
+        subject.logout();
     }
 
     @Test
@@ -112,11 +112,11 @@ public class AuthorizingRealmTest {
         securityManager.init();
 
         // Do login
-        Subject secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
-        assertTrue(secCtx.isAuthenticated());
-        assertTrue(secCtx.hasRole(ROLE));
-        assertTrue( (secCtx.getPrincipal() instanceof CustomUsernamePrincipal) );
-        assertEquals( USERNAME, ((CustomUsernamePrincipal) secCtx.getPrincipal()).getUsername() );
+        Subject subject = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        assertTrue(subject.isAuthenticated());
+        assertTrue(subject.hasRole(ROLE));
+        assertTrue( (subject.getPrincipal() instanceof CustomUsernamePrincipal) );
+        assertEquals( USERNAME, ((CustomUsernamePrincipal) subject.getPrincipal()).getUsername() );
 
 
     }

@@ -164,11 +164,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return createSubject(principals, existing, authenticated, inetAddress);
     }
 
-    protected void bind(Subject secCtx) {
+    protected void bind(Subject subject) {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
-        bind(secCtx, request, response);
-        super.bind(secCtx);
+        bind(subject, request, response);
+        super.bind(subject);
     }
 
     protected void bind(Subject subject, ServletRequest request, ServletResponse response) {

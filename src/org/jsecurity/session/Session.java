@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * A <tt>Session</tt> is a data/state context associated with a single entity (user, 3rd party process,
+ * A <tt>Session</tt> is a data/state context associated with a single Subject (user, 3rd party process,
  * etc) that interacts with a software system over a period of time.
  *
  * <p>A <tt>Session</tt> is intended to be managed by the business tier and accessible via other

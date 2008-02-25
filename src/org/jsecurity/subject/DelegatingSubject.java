@@ -56,7 +56,7 @@ import java.util.List;
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
- * context data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
+ * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
  * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.</p>
  *

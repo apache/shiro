@@ -65,27 +65,27 @@ public class ActiveDirectoryRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        Subject secCtx = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
-        assertTrue(secCtx.isAuthenticated());
-        assertTrue(secCtx.hasRole(ROLE));
+        Subject subject = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        assertTrue(subject.isAuthenticated());
+        assertTrue(subject.hasRole(ROLE));
 
 
 
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) secCtx.getPrincipalByType(UsernamePrincipal.class);
+        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) subject.getPrincipalByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
 
 
 
-        UserIdPrincipal userIdPrincipal = (UserIdPrincipal) secCtx.getPrincipalByType(UserIdPrincipal.class);
+        UserIdPrincipal userIdPrincipal = (UserIdPrincipal) subject.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
-        Object principals = secCtx.getPrincipal();
+        Object principals = subject.getPrincipal();
 
         assertTrue( principals instanceof Collection && ((Collection)principals).size() == 2);
 
         assertTrue(realm.hasRole(userIdPrincipal, ROLE));
 
-        secCtx.logout();
+        subject.logout();
     }
 
     public class TestActiveDirectoryRealm extends ActiveDirectoryRealm {

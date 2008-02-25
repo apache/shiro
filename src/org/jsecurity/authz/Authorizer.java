@@ -63,7 +63,7 @@ public interface Authorizer {
      * @param subjectIdentifier the application-specific identifier
      * for the subject to check (usually a user id or username).
      * @param permission the permission that is being checked.
-     * @return true if the user associated with this context is permitted, false otherwise.
+     * @return true if the corresponding Subject is permitted, false otherwise.
      */
     boolean isPermitted( Object subjectIdentifier, Permission permission );
 

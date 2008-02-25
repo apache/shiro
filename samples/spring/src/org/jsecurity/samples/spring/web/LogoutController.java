@@ -42,9 +42,9 @@ import javax.servlet.http.HttpServletResponse;
 public class LogoutController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        Subject secCtx = SecurityUtils.getSubject();
-        if ( secCtx != null ) {
-            secCtx.logout();
+        Subject subject = SecurityUtils.getSubject();
+        if ( subject != null ) {
+            subject.logout();
         }
         return new ModelAndView( "redirect:login" );
     }

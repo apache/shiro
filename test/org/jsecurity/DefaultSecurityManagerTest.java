@@ -38,11 +38,11 @@ public class DefaultSecurityManagerTest {
         } catch ( UnknownHostException e ) {
             e.printStackTrace();  
         }
-        Subject secCtx = sm.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
-        assert secCtx.isAuthenticated();
-        assert "guest".equals( secCtx.getPrincipal() );        
-        assert secCtx.hasRole( "guest" );
-        Session session = secCtx.getSession();
-        secCtx.logout();
+        Subject subject = sm.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
+        assert subject.isAuthenticated();
+        assert "guest".equals( subject.getPrincipal() );
+        assert subject.hasRole( "guest" );
+        Session session = subject.getSession();
+        subject.logout();
     }
 }

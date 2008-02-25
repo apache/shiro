@@ -17,7 +17,7 @@
         <name>hasPermission</name>
         <tag-class>org.jsecurity.web.tags.HasPermissionTag</tag-class>
         <body-content>JSP</body-content>
-        <description>Displays body content only if the current user's security context
+        <description>Displays body content only if the current Subject (user)
             'has' (implies) the specified permission (i.e the user has the specified ability).</description>
         <attribute>
             <name>type</name>
@@ -40,7 +40,7 @@
         <name>lacksPermission</name>
         <tag-class>org.jsecurity.web.tags.LacksPermissionTag</tag-class>
         <body-content>JSP</body-content>
-        <description>Displays body content only if the current user's security context does
+        <description>Displays body content only if the current Subject (user) does
             NOT have (not imply) the specified permission (i.e. the user lacks the specified ability)
         </description>
         <attribute>
