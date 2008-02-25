@@ -1,8 +1,8 @@
 package org.jsecurity.web.servlet;
 
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.servlet.authz.DefaultUrlAuthorizationHelper;
-import org.jsecurity.web.servlet.authz.UrlAuthorizationHandler;
+import org.jsecurity.web.authz.DefaultUrlAuthorizationHelper;
+import org.jsecurity.web.authz.UrlAuthorizationHandler;
 import org.jsecurity.web.support.SecurityWebSupport;
 
 import javax.servlet.*;
