@@ -39,12 +39,12 @@ public class AuthenticatedTag extends SecureTag {
     public int onDoStartTag() throws JspException {
         if ( getSubject() != null && getSubject().isAuthenticated() ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Security context exists and is authenticated.  'authenticated tag body will be evaluated." );
+                log.trace( "Subject exists and is authenticated.  'authenticated tag body will be evaluated." );
             }
             return TagSupport.EVAL_BODY_INCLUDE;
         } else {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Security context does not exist or is not authenticated.  'authenticated' tag " +
+                log.trace( "Subject does not exist or is not authenticated.  'authenticated' tag " +
                     "body will not be evaluated." );
             }
             return TagSupport.SKIP_BODY;

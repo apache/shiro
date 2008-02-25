@@ -82,64 +82,64 @@ public interface Subject {
     <T> List<T> getAllPrincipalsByType(Class<T> principalType);
 
     /**
-     * Returns <tt>true</tt> if this context is
+     * Returns <tt>true</tt> if this Subject is
      * permitted to perform an action or access a resource summarized by the specified permission.
      *
      * @param permission the permission that is being checked.
-     * @return true if the user associated with this context is permitted, false otherwise.
+     * @return true if the user associated with this Subject is permitted, false otherwise.
      */
     boolean isPermitted( String permission );
 
     /**
-     * Returns <tt>true</tt> if this context is
+     * Returns <tt>true</tt> if this Subject is
      * permitted to perform an action or access a resource summarized by the specified permission.
      *
      * @param permission the permission that is being checked.
-     * @return true if the user associated with this context is permitted, false otherwise.
+     * @return true if the user associated with this Subject is permitted, false otherwise.
      */
     boolean isPermitted( Permission permission );
 
     /**
-     * Checks a collection of permissions to see if this context is permitted any of the specified permissions, and
+     * Checks a collection of permissions to see if this Subject is permitted any of the specified permissions, and
      * and returns a boolean array indicating which ones are permitted.
      *
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value at an index indicates the context is permitted for
+     * permissions in the given list.  A true value at an index indicates the Subject is permitted for
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
     boolean[] isPermitted( List<Permission> permissions );
 
     /**
-     * Checks a collection of permissions to see if this context is permitted any of the specified permissions, and
+     * Checks a collection of permissions to see if this Subject is permitted any of the specified permissions, and
      * and returns a boolean array indicating which ones are permitted.
      *
      * @param permissions the permissions to check for.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value at an index indicates the context is permitted for
+     * permissions in the given list.  A true value at an index indicates the Subject is permitted for
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
     boolean[] isPermitted( String... permissions );
 
     /**
-     * Returns <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
+     * Returns <tt>true</tt> if the Subject has all of the given permissions, <tt>false</tt> otherwise.
      * @param permissions the permissions to be checked.
-     * @return <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
+     * @return <tt>true</tt> if the Subject has all of the given permissions, <tt>false</tt> otherwise.
      */
     boolean isPermittedAll( String... permissions );
 
     /**
-     * Returns <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
+     * Returns <tt>true</tt> if the Subject has all of the given permissions, <tt>false</tt> otherwise.
      * @param permissions the permissions to be checked.
-     * @return <tt>true</tt> if the context has all of the given permissions, <tt>false</tt> otherwise.
+     * @return <tt>true</tt> if the Subject has all of the given permissions, <tt>false</tt> otherwise.
      */
     boolean isPermittedAll( Collection<Permission> permissions );
 
     /**
-     * A convenience method to check if this context isPermitted the specified permission.
-     * If the security context does not imply the given permission, an
+     * A convenience method to check if this Subject isPermitted the specified permission.
+     * If the Subject does not imply the given permission, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
@@ -147,8 +147,8 @@ public interface Subject {
     void checkPermission( String permission ) throws AuthorizationException;
 
     /**
-     * A convenience method to check if this context isPermitted the specified permission.
-     * If the security context does not imply the given permission, an
+     * A convenience method to check if this Subject isPermitted the specified permission.
+     * If the Subject does not imply the given permission, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
@@ -156,34 +156,33 @@ public interface Subject {
     void checkPermission( Permission permission ) throws AuthorizationException;
 
     /**
-     * A convenience method for checking if this context isPermitted all of the specified permissions.
-     * If the security context does not imply all of the given permissions, an
+     * A convenience method for checking if this Subject isPermitted all of the specified permissions.
+     * If the Subject does not imply all of the given permissions, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permissions the permissions to check.
-     * @throws AuthorizationException if the context does not imply all of the given permissions.
+     * @throws AuthorizationException if the Subject does not imply all of the given permissions.
      */
     void checkPermissions( String... permissions ) throws AuthorizationException;
 
     /**
-     * A convenience method for checking if this context isPermitted all of the specified permissions.
-     * If the security context does not imply all of the given permissions, an
+     * A convenience method for checking if this Subject isPermitted all of the specified permissions.
+     * If the Subject does not imply all of the given permissions, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permissions the permissions to check.
-     * @throws AuthorizationException if the context does not imply all of the given permissions.
+     * @throws AuthorizationException if the Subject does not imply all of the given permissions.
      */
     void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException;
 
     /**
-     * Checks if the given role identifier is associated with this context.
+     * Returns <tt>true</tt> if this Subject has the given role, <tt>false</tt> otherwise.
      * @param role the role identifier that is being checked.
-     * @return true if the user associated with this context has the role, false otherwise.
+     * @return <tt>true</tt> if this Subject has the given role, <tt>false</tt> otherwise.
      */
     boolean hasRole( String role );
 
     /**
      * Checks a set of role identifiers to see if they are associated with this
-     * context and returns a boolean array indicating which roles are associated
-     * with this context.
+     * Subject and returns a boolean array indicating which roles are associated.
      *
      * <p>This is primarily a performance-enhancing method to help reduce the number of
      * {@link #hasRole} invocations over the wire in client/server systems.
@@ -203,8 +202,8 @@ public interface Subject {
     boolean hasAllRoles( Collection<String> roles );
 
     /**
-     * A convenience method to check if the given role is associated with this context.
-     * If the security context does not imply the given role, an
+     * A convenience method to check if the given role is associated with this Subject.
+     * If the Subject does not imply the given role, an
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param role the role identifier to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the role.
@@ -212,11 +211,11 @@ public interface Subject {
     void checkRole( String role ) throws AuthorizationException;
 
     /**
-     * A convenience method for checking if all of the given roles are associated with this context.
-     * If the security context does not imply all of the given roles, an
-     * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
+     * A convenience method for checking if this Subject has all of the given roles.
+     * If the Subject does not have them all, an {@link org.jsecurity.authz.AuthorizationException} will be
+     * thrown.
      * @param roles the roles to check..
-     * @throws AuthorizationException if the context is not associated with the given roles.
+     * @throws AuthorizationException if the Subject does not have all of the given roles.
      */
     void checkRoles( Collection<String> roles ) throws AuthorizationException;
 
@@ -257,11 +256,11 @@ public interface Subject {
 
     /**
      * Returns the application <tt>Session</tt> associated with this Subject.  If no session exists when this
-     * method is called, a new session will be created, associated with this context, and then returned.
+     * method is called, a new session will be created, associated with this Subject, and then returned.
      * 
      * @see #getSession(boolean)
      *
-     * @return the application <tt>Session</tt> associated with this context.
+     * @return the application <tt>Session</tt> associated with this Subject.
      *
      * @since 0.2
      */

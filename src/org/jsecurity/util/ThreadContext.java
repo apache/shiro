@@ -207,7 +207,7 @@ public abstract class ThreadContext {
      * Convenience method that simplifies binding a Subject to the ThreadContext.
      *
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
-     * ThreadContext key names.  The implementation is simple in that, if the security context is not <tt>null</tt>,
+     * ThreadContext key names.  The implementation is simple in that, if the Subject is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
      *
      * <pre>

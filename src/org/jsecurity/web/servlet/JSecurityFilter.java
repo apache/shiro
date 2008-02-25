@@ -33,12 +33,9 @@ public class JSecurityFilter extends SecurityManagerFilter {
         this.urlAuthorizationHandler = urlAuthorizationHandler;
     }
 
-    protected void onFilterConfigSet() throws Exception {
-        super.onFilterConfigSet();
-
+    protected void afterSecurityManagerSet() throws Exception {
         FilterConfig config = getFilterConfig();
         this.unauthorizedPage = config.getInitParameter( "unauthorizedPage" );
-
         this.urlAuthorizationEnabled = getUrlAuthorizationHandler().configureUrlAuthorization( getSecurityManager(), config );
     }
 

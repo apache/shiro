@@ -39,7 +39,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Convenient superclass for web objects that need access to security context information, such as the Subject,
+ * Convenient superclass for web objects that need access to security components, such as the Subject,
  * Session, or IP address.  There is no requirement for classes to extend from this class, although many
  * web framework classes derive from this base class.
  *

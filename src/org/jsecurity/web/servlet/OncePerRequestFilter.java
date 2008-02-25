@@ -48,6 +48,11 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
         return filterConfig;
     }
 
+    /**
+     * Sets the FilterConfig <em>and</em> the <code>filterConfig.getServletContext()</code> as
+     * attributes of this class for use by subclasses.
+     * @param filterConfig the FilterConfig instance provided by the Servlet container at startup.
+     */
     public void setFilterConfig( FilterConfig filterConfig ) {
         this.filterConfig = filterConfig;
         setServletContext( filterConfig.getServletContext() );
