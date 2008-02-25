@@ -1,4 +1,4 @@
-package org.jsecurity.web.servlet.authz;
+package org.jsecurity.web.authz;
 
 import org.jsecurity.SecurityManager;
 

@@ -1,4 +1,4 @@
-package org.jsecurity.web.servlet.authz;
+package org.jsecurity.web.authz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,10 +16,10 @@ import java.util.*;
  */
 public class DefaultUrlAuthorizationHelper implements UrlAuthorizationHandler {
 
-    protected static final String AUTHORIZATION_STRING_DELIMITER = ",";
+    protected static final String AUTHORIZATION_STRING_DELIMITER = ";";
 
-    protected static final AuthorizationRequirement AUTHORIZED_REQUIREMENT = new AuthorizedRequirement(); 
-    protected static final AuthorizationRequirement REMEMBERED_REQUIREMENT = new RememberedRequirement();
+    protected static final AuthorizationRequirement AUTHENTICATED_REQUIREMENT = new AuthenticatedRequirement();
+    protected static final AuthorizationRequirement USER_REQUIREMENT = new UserRequirement();
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
@@ -88,11 +88,11 @@ public class DefaultUrlAuthorizationHelper implements UrlAuthorizationHandler {
 
         part = part.trim();
 
-        if( part.equals( "authorized" ) ) {
-            requirement = AUTHORIZED_REQUIREMENT;
+        if( part.equals( "authenticated" ) ) {
+            requirement = AUTHENTICATED_REQUIREMENT;
 
         } else if( part.equals( "remembered" ) ) {
-            requirement = REMEMBERED_REQUIREMENT;
+            requirement = USER_REQUIREMENT;
 
         } else if( part.startsWith( "role" ) ) {
             String[] roleParts = part.split( "." );
