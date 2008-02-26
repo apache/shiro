@@ -47,9 +47,9 @@
         <init-param>
             <param-name>urls</param-name>
             <param-value>
-                /s/index=authorized
-                /s/jsecurity.jnlp=authorized
-                /remoting/**=authorized,permission.remote:invoke
+                /s/index=authc
+                /s/jsecurity.jnlp=authc|user
+                /remoting/**=authenticated|permission.remote:invoke
             </param-value>
         </init-param>
 

@@ -91,7 +91,7 @@ public class DefaultUrlAuthorizationHelper implements UrlAuthorizationHandler {
         if( part.equals( "authenticated" ) ) {
             requirement = AUTHENTICATED_REQUIREMENT;
 
-        } else if( part.equals( "remembered" ) ) {
+        } else if( part.equals( "user" ) ) {
             requirement = USER_REQUIREMENT;
 
         } else if( part.startsWith( "role" ) ) {

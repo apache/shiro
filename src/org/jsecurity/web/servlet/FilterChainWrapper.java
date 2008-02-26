@@ -24,29 +24,32 @@
  */
 package org.jsecurity.web.servlet;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.*;
+import java.io.IOException;
+import java.util.List;
 
 /**
- * <tt>ServletContextListener</tt> that listens for the ServletContext startup, ensures a
- * {@link org.jsecurity.SecurityManager SecurityManager} exists, and then binds the <tt>SecurityManager</tt> to the
- * <tt>ServletContext</tt> for later access by the application and framework components (Filters, etc).
- *
- * <p><p>For Servlet 2.2 containers and Servlet 2.3 ones that do not initalize
- * listeners before servlets, use {@link SecurityManagerServlet}.
- *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.9
  */
-public class SecurityManagerListener extends SecurityManagerLoader implements ServletContextListener {
+public class FilterChainWrapper implements FilterChain {
 
-    public void contextInitialized( ServletContextEvent event ) {
-        setServletContext( event.getServletContext() );
-        init();
+    private FilterChain orig;
+    private List<Filter> filters;
+    private int index = 0;
+
+    public FilterChainWrapper( FilterChain orig, List<Filter> filters ) {
+        this.orig = orig;
+        this.filters = filters;
+        this.index = 0;
     }
 
-    public void contextDestroyed( ServletContextEvent event ) {
-        destroy();
-        setServletContext( null );
+    public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
+        if ( this.filters == null || this.filters.size() == this.index ) {
+            //we've reached the end of the wrapped chain, so invoke the original one:
+            this.orig.doFilter( request, response );
+        } else {
+            this.filters.get(this.index++).doFilter(request,response,this);
+        }
     }
 }
