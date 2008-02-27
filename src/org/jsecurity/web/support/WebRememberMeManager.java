@@ -73,7 +73,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
             //uses cookies by default.
             CookieStore<String> cookieStore = new CookieStore<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
             cookieStore.setCheckRequestParams(false);
-            setWebStore(webStore);
+            setWebStore(cookieStore);
         }
     }
 
