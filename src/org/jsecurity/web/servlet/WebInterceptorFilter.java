@@ -100,8 +100,14 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
 
         } catch (Exception e) {
             exception = e;
-            if (log.isTraceEnabled()) {
-                log.trace("Encountered exception in interceptor method delegation.", exception);
+            if ( e instanceof ServletException ) {
+                throw (ServletException)e;
+            } else if ( e instanceof IOException ) {
+                throw (IOException)e;
+            } else {
+                String msg = "Filter execution resulted in a Exception (not IOException or ServletException).  " +
+                        "Wrapping in ServletException and propagating.";
+                throw new ServletException( msg, e );
             }
         } finally {
             try {
