@@ -61,14 +61,14 @@ import java.util.Collection;
  * aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an instance
  * yourself before calling {@link #init() init()}.  However if you're reading this JavaDoc with the expectation of
  * operating in a Web environment, take a look at the
- * {@link org.jsecurity.web.DefaultWebSecurityManager DefaultWebSecurityManager} implementation, which
+ * {@link org.jsecurity.web.support.WebSecurityManager DefaultWebSecurityManager} implementation, which
  * <em>does</em> support <tt>RememberMe</tt> services by default at startup.
  *
  * <p>Finally, the only absolute requirement for a <tt>DefaultSecurityManager</tt> instance to function properly is
  * that its {@link #init() init()} method must be called before it is used.  Even this is called automatically if
  * you use one of the overloaded constructors with one or more arguments.</p>
  *
- * @see org.jsecurity.web.DefaultWebSecurityManager DefaultWebSecurityManager
+ * @see org.jsecurity.web.support.WebSecurityManager DefaultWebSecurityManager
  *
  * @author Les Hazlewood
  * @author Jeremy Haile

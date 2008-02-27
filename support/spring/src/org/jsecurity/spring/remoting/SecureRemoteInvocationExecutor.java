@@ -31,7 +31,7 @@ import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.DefaultWebSecurityManager;
+import org.jsecurity.web.support.WebSecurityManager;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -39,7 +39,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.List;
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
@@ -94,19 +93,19 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
         }
     }
 
-    protected List getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
-        return (List)session.getAttribute( DefaultWebSecurityManager.PRINCIPALS_SESSION_KEY );
+    protected Object getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
+        return session.getAttribute( WebSecurityManager.PRINCIPALS_SESSION_KEY );
     }
 
-    protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, List principals ) {
-        return principals != null && !principals.isEmpty();
+    protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, Object principals ) {
+        return principals != null;
     }
 
     @SuppressWarnings( { "unchecked" } )
     public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
-            List principals = null;
+            Object principals = null;
             boolean authenticated = false;
             InetAddress inetAddress = getInetAddress( invocation, targetObject );
             Session session = null;

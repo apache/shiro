@@ -87,9 +87,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     private Collection<? extends Realm> realms;
 
-    protected ModularAuthenticationStrategy modularAuthenticationStrategy =
-        new AllSuccessfulModularAuthenticationStrategy(); //default, only used w/ 2 or more realms.
-
+    protected ModularAuthenticationStrategy modularAuthenticationStrategy;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -105,6 +103,25 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     public ModularRealmAuthenticator( List<Realm> realms ) {
         setRealms( realms );
         init();
+    }
+
+    protected ModularAuthenticationStrategy createModularAuthenticationStrategy() {
+        return new AllSuccessfulModularAuthenticationStrategy();
+    }
+
+    protected void ensureModudularAuthenticationStrategy() {
+        ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
+        if ( strategy == null ) {
+            strategy = createModularAuthenticationStrategy();
+            setModularAuthenticationStrategy(strategy);
+        }
+    }
+
+    protected void afterModularAuthenticationStrategySet(){}
+
+    protected void afterAuthenticationEventFactorySet() {
+        ensureModudularAuthenticationStrategy();
+        afterModularAuthenticationStrategySet();
     }
 
     /*--------------------------------------------

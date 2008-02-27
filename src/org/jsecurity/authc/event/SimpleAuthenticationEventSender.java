@@ -39,7 +39,7 @@ import java.util.Collection;
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SimpleAuthenticationEventSender implements AuthenticationEventSender, AuthenticationEventListenerRegistrar {
+public class SimpleAuthenticationEventSender implements AuthenticationEventListenerRegistrar {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
@@ -48,31 +48,31 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
     public SimpleAuthenticationEventSender(){}
 
     public SimpleAuthenticationEventSender( Collection<AuthenticationEventListener> listeners ) {
-        setListeners( listeners );
+        setAuthenticationEventListeners( listeners );
+    }
+
+    public boolean hasListeners() {
+        return this.listeners != null && !this.listeners.isEmpty();
     }
 
     /**
      * Sets the <tt>AuthenticationEventListener</tt> collection that will be called when an event is triggered.
      * @param listeners the AuthenticationEventListener collection that will be called when an event is triggered.
      */
-    public void setListeners( Collection<AuthenticationEventListener> listeners ) {
-        if ( listeners == null ) {
-            String msg = "listeners argument cannot be null";
-            throw new IllegalArgumentException( msg );
-        }
+    public void setAuthenticationEventListeners( Collection<AuthenticationEventListener> listeners ) {
         this.listeners = listeners;
     }
 
-    protected Collection<AuthenticationEventListener> getListenersLazy() {
-        Collection<AuthenticationEventListener> listeners = getListeners();
-        if ( listeners == null ) {
-            listeners = new ArrayList<AuthenticationEventListener>();
-            setListeners( listeners );
-        }
+    public Collection<AuthenticationEventListener> getAuthenticationEventListeners() {
         return listeners;
     }
 
-    public Collection<AuthenticationEventListener> getListeners() {
+    protected Collection<AuthenticationEventListener> getListenersLazy() {
+        Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
+        if ( listeners == null ) {
+            listeners = new ArrayList<AuthenticationEventListener>();
+            setAuthenticationEventListeners( listeners );
+        }
         return listeners;
     }
 
@@ -83,7 +83,7 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
     public boolean remove(AuthenticationEventListener listener) {
         boolean removed = false;
         if ( listener != null ) {
-            Collection<AuthenticationEventListener> listeners = getListeners();
+            Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
             if ( listeners != null ) {
                 removed = listeners.remove( listener );
             }
@@ -97,7 +97,7 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventSende
      * internal listener list.
      */
     public void send( AuthenticationEvent event ) {
-        if ( listeners != null && !listeners.isEmpty() ) {
+        if ( hasListeners() ) {
             for ( AuthenticationEventListener ael : listeners ) {
                 ael.onEvent( event );
             }

@@ -27,7 +27,7 @@ package org.jsecurity.web.servlet;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
-import org.jsecurity.web.DefaultWebSecurityManager;
+import org.jsecurity.web.support.WebSecurityManager;
 
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class SecurityManagerLoader extends ServletContextSupport {
     }
 
     protected SecurityManager createSecurityManager() {
-        DefaultWebSecurityManager defaultSecMgr = new DefaultWebSecurityManager();
+        WebSecurityManager defaultSecMgr = new WebSecurityManager();
 
         defaultSecMgr.setSessionMode( getSessionMode() );
 

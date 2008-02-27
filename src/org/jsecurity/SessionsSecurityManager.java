@@ -111,6 +111,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected SessionFactory createSessionFactory() {
         DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
         sessionFactory.setCacheProvider(getCacheProvider());
+        sessionFactory.setSessionEventListeners(this.sessionEventListeners);
         sessionFactory.init();
         return sessionFactory;
     }
@@ -179,36 +180,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
             ((SessionEventListenerRegistrar) this.sessionFactory).remove(listener);
     }
 
-    protected void registerAnySessionEventListeners() {
-        Collection<SessionEventListener> listeners = getSessionEventListeners();
-        if ( listeners != null ) {
-            if ( listeners.isEmpty() ) {
-                if ( log.isWarnEnabled() ) {
-                String msg = "SessionEventListeners attribute was configured, but the collection does " +
-                    "not contain any elements.  This is probably a configuration problem " +
-                        "(otherwise why set an empty collection?).  Please verify your configuration.";
-                    log.warn( msg );
-                }
-                return;
-            }
-            for( SessionEventListener listener : listeners ) {
-                add(listener);
-            }
-        }
-    }
-
-    protected void deregisterAnySessionEventListeners() {
-        Collection<SessionEventListener> listeners = getSessionEventListeners();
-        if ( listeners != null && !listeners.isEmpty() ) {
-            for( SessionEventListener listener : listeners ) {
-                remove( listener );
-            }
-        }
-    }
-
     protected void afterAuthorizerSet() {
         ensureSessionFactory();
-        registerAnySessionEventListeners();
         afterSessionFactorySet();
     }
 
@@ -224,7 +197,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     protected void beforeAuthorizerDestroyed() {
         beforeSessionFactoryDestroyed();
-        deregisterAnySessionEventListeners();
         destroySessionFactory();
     }
 

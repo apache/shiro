@@ -38,21 +38,21 @@ import javax.servlet.ServletResponse;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class DefaultWebRememberMeManager extends AbstractRememberMeManager {
+public class WebRememberMeManager extends AbstractRememberMeManager {
 
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
 
     protected WebStore<String> webStore = null;
 
-    public DefaultWebRememberMeManager() {
+    public WebRememberMeManager() {
         super();
     }
 
-    public DefaultWebRememberMeManager(Serializer serializer) {
+    public WebRememberMeManager(Serializer serializer) {
         super(serializer);
     }
 
-    public DefaultWebRememberMeManager(Serializer serializer, Cipher cipher) {
+    public WebRememberMeManager(Serializer serializer, Cipher cipher) {
         super(serializer, cipher);    
     }
 

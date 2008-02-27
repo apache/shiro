@@ -50,7 +50,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected SessionDAO sessionDAO = null;
-    protected SimpleSessionEventSender sessionEventSender = null; //will only be created if session event listeners are registered.
+    protected SimpleSessionEventSender sessionEventSender = new SimpleSessionEventSender();
     protected boolean validateHost = false;
     protected Class<? extends Session> sessionClass = null;
 
@@ -66,19 +66,20 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
         return this.sessionDAO;
     }
 
-    protected SimpleSessionEventSender ensureSessionEventSender() {
-        if ( this.sessionEventSender == null ) {
-            this.sessionEventSender = new SimpleSessionEventSender();
-        }
-        return this.sessionEventSender;
-    }
-
     public void add( SessionEventListener listener ) {
-        ensureSessionEventSender().add( listener );
+        this.sessionEventSender.add( listener );
     }
 
     public boolean remove( SessionEventListener listener ) {
-        return ensureSessionEventSender().remove( listener );
+        return this.sessionEventSender.remove( listener );
+    }
+
+    public void setSessionEventListeners(Collection<SessionEventListener> listeners) {
+        this.sessionEventSender = new SimpleSessionEventSender( listeners );
+    }
+
+    public boolean isSendingEvents() {
+        return this.sessionEventSender.hasListeners();
     }
 
     /**
@@ -188,19 +189,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
     }
 
     protected void send( SessionEvent event ) {
-        if ( this.sessionEventSender != null ) {
-            if ( log.isDebugEnabled() ) {
-                String msg = "Using sessionEventSender to send event [" + event + "]";
-                log.debug( msg );
-            }
-            this.sessionEventSender.send( event );
-        } else {
-            if ( log.isTraceEnabled() ) {
-                String msg = "No sessionEventSender set.  Event of type [" +
-                             event.getClass().getName() + "] will not be propagated.";
-                log.trace( msg );
-            }
-        }
+        this.sessionEventSender.send(event);
     }
 
     /**
@@ -232,7 +221,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
         session.stop();
         onStop( session );
         sessionDAO.update( session );
-        send( createStopEvent( session ) );
+        if ( isSendingEvents() ) {
+            send( createStopEvent( session ) );
+        }
     }
 
     /**
@@ -249,7 +240,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
         session.stop();
         onExpire( session );
         sessionDAO.update( session );
-        send( createExpireEvent( session ) );
+        if ( isSendingEvents() ) {
+            send( createExpireEvent( session ) );
+        }
     }
 
     /**
@@ -397,7 +390,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
      * @return true if expiration is enabled for the specified session, false otherwise.
      */
     protected boolean isExpirationEnabled( Session session ) {
-        return true;
+        return getTimeout( session ) >= 0l;
     }
 
     /**
@@ -495,7 +488,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionE
     public Serializable start( InetAddress originatingHost )
         throws HostUnauthorizedException, IllegalArgumentException {
         Session s = createSession( originatingHost );
-        send( createStartEvent( s ) );
+        if ( isSendingEvents() ) {
+            send( createStartEvent( s ) );
+        }
         return s.getSessionId();
     }
 

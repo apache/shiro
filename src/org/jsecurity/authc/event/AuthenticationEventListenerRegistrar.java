@@ -24,6 +24,8 @@
  */
 package org.jsecurity.authc.event;
 
+import java.util.Collection;
+
 /**
  * TODO - class javadoc
  *
@@ -31,8 +33,7 @@ package org.jsecurity.authc.event;
  * @since 0.9
  */
 public interface AuthenticationEventListenerRegistrar {
-
+    void setAuthenticationEventListeners( Collection<AuthenticationEventListener> listeners );
     void add( AuthenticationEventListener listener );
     boolean remove( AuthenticationEventListener listener );
-
 }

@@ -24,16 +24,18 @@
  */
 package org.jsecurity.session.event;
 
+import java.util.Collection;
+
 /**
  * A <tt>SessionEventListenerRegistrar</tt> is responsible for registering and deregistering
- * {@link SessionEventListener}s with an associated {@link SessionEventSender sending mechanism} so they may be
- * notified when a {@link SessionEvent SessionEvent} occurs.
+ * {@link SessionEventListener}s so they may be notified when a {@link SessionEvent SessionEvent} occurs.
  *
  * @see SimpleSessionEventSender
  *
  * @author Les Hazlewood
  */
 public interface SessionEventListenerRegistrar {
+    void setSessionEventListeners( Collection<SessionEventListener> listeners );
     void add( SessionEventListener listener );
     boolean remove( SessionEventListener listener );
 }

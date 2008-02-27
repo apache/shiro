@@ -52,9 +52,7 @@ public class DefaultSessionManager extends AbstractSessionManager
 
     private static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    /**
-     * Default global session timeout value (30 * 60 * 1000 milliseconds = 30 minutes).
-     */
+    /** Default global session timeout value (30 * 60 * 1000 milliseconds = 30 minutes). */
     public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
 
     /**

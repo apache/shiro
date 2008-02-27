@@ -29,8 +29,10 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
+import org.jsecurity.authc.event.AuthenticationEventFactory;
 import org.jsecurity.authc.event.AuthenticationEventListener;
 import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
+import org.jsecurity.authc.support.ModularAuthenticationStrategy;
 import org.jsecurity.authc.support.ModularRealmAuthenticator;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
@@ -56,7 +58,9 @@ import java.util.Collection;
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager implements AuthenticationEventListenerRegistrar {
 
     protected Authenticator authenticator;
+    private AuthenticationEventFactory authenticationEventFactory;
     private Collection<AuthenticationEventListener> authenticationEventListeners;
+    private ModularAuthenticationStrategy modularAuthenticationStrategy;
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
@@ -101,6 +105,22 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         return authc;
     }
 
+    public AuthenticationEventFactory getAuthenticationEventFactory() {
+        return authenticationEventFactory;
+    }
+
+    public void setAuthenticationEventFactory(AuthenticationEventFactory authenticationEventFactory) {
+        this.authenticationEventFactory = authenticationEventFactory;
+    }
+
+    public ModularAuthenticationStrategy getModularAuthenticationStrategy() {
+        return modularAuthenticationStrategy;
+    }
+
+    public void setModularAuthenticationStrategy(ModularAuthenticationStrategy modularAuthenticationStrategy) {
+        this.modularAuthenticationStrategy = modularAuthenticationStrategy;
+    }
+
     public Collection<AuthenticationEventListener> getAuthenticationEventListeners() {
         return authenticationEventListeners;
     }
@@ -131,6 +151,16 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         this.authenticationEventListeners = listeners;
     }
 
+    private void assertAuthenticatorEventListenerSupport(Authenticator authc) {
+        if (!(authc instanceof AuthenticationEventListenerRegistrar)) {
+            String msg = "AuthenticationEventListener registration failed:  The underlying Authenticator instance of " +
+                "type [" + authc.getClass().getName() + "] does not implement the " +
+                AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                "runtime registration of AuthenticationEventListeners.";
+            throw new IllegalStateException(msg);
+        }
+    }
+
     public void add(AuthenticationEventListener listener) {
         Authenticator authc = getRequiredAuthenticator();
         assertAuthenticatorEventListenerSupport(authc);
@@ -146,8 +176,15 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     protected Authenticator createAuthenticator() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
         mra.setRealms(getRealms());
+        mra.setAuthenticationEventFactory( getAuthenticationEventFactory() );
+        mra.setAuthenticationEventListeners( getAuthenticationEventListeners() );
         mra.init();
         return mra;
+    }
+
+    protected void afterRealmsSet() {
+        ensureAuthenticator();
+        afterAuthenticatorSet();
     }
 
     protected void ensureAuthenticator() {
@@ -157,53 +194,12 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         }
     }
 
-    private void assertAuthenticatorEventListenerSupport(Authenticator authc) {
-        if (!(authc instanceof AuthenticationEventListenerRegistrar)) {
-            String msg = "AuthenticationEventListener registration failed:  The underlying Authenticator instance of " +
-                "type [" + authc.getClass().getName() + "] does not implement the " +
-                AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                "runtime registration of AuthenticationEventListeners.";
-            throw new IllegalStateException(msg);
-        }
-    }
-
-    protected void registerAnyAuthenticationEventListeners() {
-        Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
-        if (listeners != null) {
-            if (listeners.isEmpty()) {
-                if (log.isWarnEnabled()) {
-                    String msg = "AuthenticationEventListeners collection property was configured, but the " +
-                        "collection does not contain any elements.  Please check your configuration (forgot to " +
-                        "add one or more listeners?).  Proceeding with no listeners...";
-                    log.warn(msg);
-                }
-            } else {
-                for (AuthenticationEventListener listener : listeners) {
-                    add(listener);
-                }
-            }
-        }
-    }
-
-    protected void deregisterAnyAuthenticationEventListeners() {
-        Collection<AuthenticationEventListener> listeners = getAuthenticationEventListeners();
-        if (listeners != null && !listeners.isEmpty()) {
-            for (AuthenticationEventListener listener : listeners) {
-                remove(listener);
-            }
-        }
-    }
-
-    protected void afterRealmsSet() {
-        ensureAuthenticator();
-        registerAnyAuthenticationEventListeners();
-        afterAuthenticatorSet();
-    }
-
     protected void afterAuthenticatorSet() {
     }
 
-    protected void beforeAuthenticatorDestroyed() {
+    protected void beforeRealmsDestroyed() {
+        beforeAuthenticatorDestroyed();
+        destroyAuthenticator();
     }
 
     protected void destroyAuthenticator() {
@@ -212,10 +208,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         this.authenticationEventListeners = null;
     }
 
-    protected void beforeRealmsDestroyed() {
-        beforeAuthenticatorDestroyed();
-        deregisterAnyAuthenticationEventListeners();
-        destroyAuthenticator();
+    protected void beforeAuthenticatorDestroyed() {
     }
 
     /** Delegates to the authenticator for authentication. */
