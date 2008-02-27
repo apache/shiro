@@ -30,7 +30,6 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.WebSessionFactory;
 import org.jsecurity.web.WebStore;
 import org.jsecurity.web.servlet.JSecurityHttpServletRequest;
 import org.jsecurity.web.servlet.JSecurityHttpSession;
@@ -41,12 +40,12 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * Default JSecurity implementation of the {@link WebSessionFactory} interface.
+ * Web-capable implementation of a {@link org.jsecurity.session.SessionFactory SessionFactory}.
  *
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultWebSessionFactory extends DefaultSessionFactory implements WebSessionFactory {
+public class WebSessionFactory extends DefaultSessionFactory {
 
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be
@@ -57,7 +56,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     protected CookieStore<Serializable> cookieSessionIdStore = null;
     protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
 
-    public DefaultWebSessionFactory() {
+    public WebSessionFactory() {
     }
 
     public CookieStore<Serializable> getCookieSessionIdStore() {
@@ -77,7 +76,7 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
     }
 
     /**
-     * If set to <tt>true</tt>, this <tt>WebSessionFactory</tt> will ensure that any
+     * If set to <tt>true</tt>, this implementation will ensure that any
      * <tt>HttpRequest</tt> attempting
      * to join a session (i.e. via {@link #getSession getSession} must have the same
      * IP Address of the <tt>HttpRequest</tt> that started the session.
@@ -202,55 +201,10 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         return id;
     }
 
-    protected Session doGetSession( ServletRequest request, ServletResponse response ) {
-
-        Session session = null;
-        Serializable sessionId = retrieveSessionId( request, response );
-
-        if ( sessionId != null ) {
-            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
-            session = getSession( sessionId );
-            if ( isValidateRequestOrigin() ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Validating request origin against session origin" );
-                }
-                validateSessionOrigin( request, session );
-            }
-            if ( session != null ) {
-                request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE );
-            }
-        } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No JSecurity session id associated with the given " +
-                    "HttpServletRequest.  A Session will not be returned." );
-            }
-        }
-        return session;
-
-
-    }
-
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
         return start( request, response, hostAddress );
-    }
-
-    /**
-     * Starts a brand new Session, associates it with the specified request, and makes that session available for
-     * future requests via a Cookie or URL rewriting as specified by the Servlet Specification.
-     *
-     * @param request incoming ServletRequest
-     * @param response outgoing ServletResponse
-     * @return a new Session for the specified request/response pair.
-     */
-    public Session start( ServletRequest request, ServletResponse response ) {
-        InetAddress clientAddress = SecurityWebSupport.getInetAddress( request );
-        Session s = start( request, response, clientAddress );
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Started new Session with id [" + s.getSessionId() );
-        }
-        return s;
     }
 
     protected Session start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
@@ -259,6 +213,16 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         request.removeAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE );
         request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
         return s;
+    }
+
+    public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+        if ( sessionId != null ) {
+            return super.getSession( sessionId );
+        } else {
+            ServletRequest request = ThreadContext.getServletRequest();
+            ServletResponse response = ThreadContext.getServletResponse();
+            return getSession( request, response );
+        }
     }
 
     /**
@@ -285,6 +249,34 @@ public class DefaultWebSessionFactory extends DefaultSessionFactory implements W
         }
 
         return session;
+    }
+
+    protected Session doGetSession( ServletRequest request, ServletResponse response ) {
+
+        Session session = null;
+        Serializable sessionId = retrieveSessionId( request, response );
+
+        if ( sessionId != null ) {
+            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
+            session = getSession( sessionId );
+            if ( isValidateRequestOrigin() ) {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Validating request origin against session origin" );
+                }
+                validateSessionOrigin( request, session );
+            }
+            if ( session != null ) {
+                request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE );
+            }
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No JSecurity session id associated with the given " +
+                    "HttpServletRequest.  A Session will not be returned." );
+            }
+        }
+        return session;
+
+
     }
 
     protected Session handleInvalidSession( ServletRequest request,

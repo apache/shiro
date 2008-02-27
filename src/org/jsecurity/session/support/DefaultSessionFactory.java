@@ -39,6 +39,7 @@ import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Collection;
 
 /**
  * Default JSecurity implementation of a {@link org.jsecurity.session.SessionFactory} that relies on an internally
@@ -66,6 +67,7 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
     protected final transient Log log = LogFactory.getLog(getClass());
 
     protected SessionManager sessionManager = null;
+    protected Collection<SessionEventListener> sessionEventListeners = null;
     protected CacheProvider cacheProvider;
 
     public DefaultSessionFactory() {
@@ -105,11 +107,16 @@ public class DefaultSessionFactory implements SessionFactory, SessionEventListen
                ((SessionEventListenerRegistrar) this.sessionManager).remove(listener);
     }
 
+    public void setSessionEventListeners(Collection<SessionEventListener> listeners) {
+        this.sessionEventListeners = listeners;
+    }
+
     protected SessionManager createSessionManager() {
         DefaultSessionManager sessionManager = new DefaultSessionManager();
         if ( getCacheProvider() != null ) {
             sessionManager.setCacheProvider( getCacheProvider() );
         }
+        sessionManager.setSessionEventListeners(this.sessionEventListeners);
         sessionManager.init();
         return sessionManager;
     }

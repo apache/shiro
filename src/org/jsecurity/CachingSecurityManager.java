@@ -111,7 +111,6 @@ public abstract class CachingSecurityManager extends AbstractSecurityManager imp
     }
 
     public void init() {
-        super.init();
         ensureCacheProvider();
         afterCacheProviderSet();
     }
@@ -119,6 +118,5 @@ public abstract class CachingSecurityManager extends AbstractSecurityManager imp
     public void destroy() {
         beforeCacheProviderDestroyed();        
         destroyCacheProvider();
-        super.destroy();
     }
 }

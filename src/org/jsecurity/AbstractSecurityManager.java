@@ -42,11 +42,4 @@ public abstract class AbstractSecurityManager implements SecurityManager, Initia
     protected transient final Log log = LogFactory.getLog(getClass());
 
     public AbstractSecurityManager(){}
-
-    public void init() {
-    }
-
-    public void destroy() {
-    }
-
 }

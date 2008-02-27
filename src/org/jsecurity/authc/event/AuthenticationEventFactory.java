@@ -31,7 +31,7 @@ import org.jsecurity.authc.AuthenticationToken;
 /**
  * An AuthenticationEventFactory functions as its name implies - a Factory design pattern
  * implementation that generates AuthenticationEvents.  After created, these events can then be
- * sent to interested parties via an {@link AuthenticationEventSender}.
+ * sent to interested {@link AuthenticationEventListener}s.
  *
  * @since 0.1
  * @author Les Hazlewood

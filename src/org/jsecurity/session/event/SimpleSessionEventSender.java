@@ -28,36 +28,47 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
- * Simple implementation of the {@link SessionEventSender} interface that synchronously calls any
- * {@link SessionEventListenerRegistrar registered} {@link org.jsecurity.session.event.SessionEventListener listener}s.
+ * Simple implementation that synchronously calls any
+ * {@link SessionEventListenerRegistrar registered} {@link org.jsecurity.session.event.SessionEventListener listener}s
+ * when a <tt>SessionEvent</tt> occurs.
  *
- * @see #setListeners
+ * @see #setSessionEventListeners
  *
  * @since 0.1
  * @author Les Hazlewood
  */
-public class SimpleSessionEventSender implements SessionEventSender, SessionEventListenerRegistrar {
+public class SimpleSessionEventSender implements SessionEventListenerRegistrar {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    protected List<SessionEventListener> listeners = new ArrayList<SessionEventListener>();
+    protected Collection<SessionEventListener> listeners = null;
 
-    public void setListeners( List<SessionEventListener> listeners ) {
+    public SimpleSessionEventSender(){}
+
+    public SimpleSessionEventSender( Collection<SessionEventListener> listeners ) {
         this.listeners = listeners;
     }
 
-    public List<SessionEventListener> getListeners() {
+    public void setSessionEventListeners( Collection<SessionEventListener> listeners ) {
+        this.listeners = listeners;
+    }
+
+    public Collection<SessionEventListener> getSessionEventListeners() {
         return this.listeners;
     }
 
-    protected List<SessionEventListener> getListenersLazy() {
-        List<SessionEventListener> listeners = getListeners();
+    public boolean hasListeners() {
+        return this.listeners != null && !this.listeners.isEmpty();
+    }
+
+    protected Collection<SessionEventListener> getListenersLazy() {
+        Collection<SessionEventListener> listeners = getSessionEventListeners();
         if ( listeners == null ) {
             listeners = new ArrayList<SessionEventListener>();
-            setListeners( listeners );
+            setSessionEventListeners( listeners );
         }
         return listeners;
     }
@@ -67,7 +78,7 @@ public class SimpleSessionEventSender implements SessionEventSender, SessionEven
             String msg = "Attempting to add a null session event listener";
             throw new IllegalArgumentException( msg );
         }
-        List<SessionEventListener> listeners = getListenersLazy();
+        Collection<SessionEventListener> listeners = getListenersLazy();
         if ( !listeners.contains( listener ) ) {
             listeners.add( listener );
         }
@@ -76,7 +87,7 @@ public class SimpleSessionEventSender implements SessionEventSender, SessionEven
     public boolean remove( SessionEventListener listener ) {
         boolean removed = false;
         if ( listener != null ) {
-            List<SessionEventListener> listeners = getListeners();
+            Collection<SessionEventListener> listeners = getSessionEventListeners();
             if ( listeners != null ) {
                 removed = listeners.remove( listener );
             }
@@ -86,11 +97,9 @@ public class SimpleSessionEventSender implements SessionEventSender, SessionEven
 
     /**
      * Sends the specified <tt>event</tt> to all registered {@link SessionEventListener}s.
-     * 
-     * @see SessionEventSender#send( org.jsecurity.session.event.SessionEvent event )
      */
     public void send( SessionEvent event ) {
-        List<SessionEventListener> listeners = getListeners();
+        Collection<SessionEventListener> listeners = getSessionEventListeners();
         if ( listeners != null && !listeners.isEmpty() ) {
             for( SessionEventListener sel : listeners ) {
                 sel.onEvent( event );

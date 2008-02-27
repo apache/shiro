@@ -89,24 +89,19 @@ public class DelegatingSubject implements Subject {
     }
 
     public DelegatingSubject(SecurityManager securityManager) {
-        this(false, getLocalHost(), null, securityManager);
-    }
-
-    public DelegatingSubject(boolean authenticated, InetAddress inetAddress, Session session, SecurityManager securityManager) {
-        this(null, authenticated, inetAddress, session, securityManager);
+        this(null, false, getLocalHost(), null, securityManager);
     }
 
     public DelegatingSubject( Object principals, boolean authenticated, InetAddress inetAddress,
-                                     Session session, SecurityManager securityManager) {
+                              Session session, SecurityManager securityManager) {
         if (securityManager == null) {
-            throw new IllegalArgumentException("SecurityManager cannot be null.");
+            throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
-
+        this.securityManager = securityManager;
+        this.principals = principals;
         if ( principals instanceof Collection ) {
             //noinspection unchecked
             this.principals = Collections.unmodifiableCollection( (Collection)principals );
-        } else {
-            this.principals = principals;
         }
 
         this.authenticated = authenticated;
@@ -117,7 +112,6 @@ public class DelegatingSubject implements Subject {
             this.inetAddress = getLocalHost();
         }
         this.session = session;
-        this.securityManager = securityManager;
     }
 
     protected void assertValid() throws InvalidSubjectException {

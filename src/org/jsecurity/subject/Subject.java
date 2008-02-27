@@ -87,6 +87,7 @@ public interface Subject {
      *
      * @param permission the permission that is being checked.
      * @return true if the user associated with this Subject is permitted, false otherwise.
+     * @since 0.9
      */
     boolean isPermitted( String permission );
 
@@ -108,8 +109,9 @@ public interface Subject {
      * permissions in the given list.  A true value at an index indicates the Subject is permitted for
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
+     * @since 0.9
      */
-    boolean[] isPermitted( List<Permission> permissions );
+    boolean[] isPermitted( String... permissions );
 
     /**
      * Checks a collection of permissions to see if this Subject is permitted any of the specified permissions, and
@@ -121,12 +123,13 @@ public interface Subject {
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
-    boolean[] isPermitted( String... permissions );
+    boolean[] isPermitted( List<Permission> permissions );
 
     /**
      * Returns <tt>true</tt> if the Subject has all of the given permissions, <tt>false</tt> otherwise.
      * @param permissions the permissions to be checked.
      * @return <tt>true</tt> if the Subject has all of the given permissions, <tt>false</tt> otherwise.
+     * @since 0.9
      */
     boolean isPermittedAll( String... permissions );
 
@@ -143,6 +146,7 @@ public interface Subject {
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permission the permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
+     * @since 0.9
      */
     void checkPermission( String permission ) throws AuthorizationException;
 
@@ -161,6 +165,7 @@ public interface Subject {
      * {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      * @param permissions the permissions to check.
      * @throws AuthorizationException if the Subject does not imply all of the given permissions.
+     * @since 0.9
      */
     void checkPermissions( String... permissions ) throws AuthorizationException;
 
