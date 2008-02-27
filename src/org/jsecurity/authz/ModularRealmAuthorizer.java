@@ -26,7 +26,6 @@ package org.jsecurity.authz;
 
 import org.jsecurity.authz.permission.PermissionResolver;
 import org.jsecurity.authz.permission.PermissionResolverAware;
-import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.Initializable;
 
@@ -76,13 +75,11 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
             throw new IllegalStateException(msg);
         }
         PermissionResolver resolver = getPermissionResolver();
-        if ( resolver == null ) {
-            resolver = new WildcardPermissionResolver();
-            setPermissionResolver( resolver );
-        }
-        for( Realm realm : realms ) {
-            if ( realm instanceof PermissionResolverAware ) {
-                ((PermissionResolverAware)realm).setPermissionResolver(resolver);
+        if (resolver != null) {
+            for (Realm realm : realms) {
+                if (realm instanceof PermissionResolverAware) {
+                    ((PermissionResolverAware) realm).setPermissionResolver(resolver);
+                }
             }
         }
     }
@@ -153,7 +150,7 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
     }
 
     public void checkPermission(Object subjectIdentifier, String permission) throws AuthorizationException {
-        if ( !isPermitted(subjectIdentifier, permission ) ) {
+        if (!isPermitted(subjectIdentifier, permission)) {
             throw new UnauthorizedException("Subject does not have permission [" + permission + "]");
         }
     }
@@ -165,9 +162,9 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
     }
 
     public void checkPermissions(Object subjectIdentifier, String... permissions) throws AuthorizationException {
-        if ( permissions != null && permissions.length > 0 ) {
-            for( String perm : permissions ) {
-                checkPermission( subjectIdentifier, perm );
+        if (permissions != null && permissions.length > 0) {
+            for (String perm : permissions) {
+                checkPermission(subjectIdentifier, perm);
             }
         }
     }
@@ -193,8 +190,8 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
         if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
             boolean[] isPermitted = new boolean[roleIdentifiers.size()];
             int i = 0;
-            for (String roleId : roleIdentifiers ) {
-                isPermitted[i++] = hasRole( subjectIdentifier, roleId );
+            for (String roleId : roleIdentifiers) {
+                isPermitted[i++] = hasRole(subjectIdentifier, roleId);
             }
             return isPermitted;
         }

@@ -173,15 +173,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
             ((AuthenticationEventListenerRegistrar) authc).remove(listener);
     }
 
-    protected Authenticator createAuthenticator() {
-        ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
-        mra.setRealms(getRealms());
-        mra.setAuthenticationEventFactory( getAuthenticationEventFactory() );
-        mra.setAuthenticationEventListeners( getAuthenticationEventListeners() );
-        mra.init();
-        return mra;
-    }
-
     protected void afterRealmsSet() {
         ensureAuthenticator();
         afterAuthenticatorSet();
@@ -192,6 +183,15 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
             Authenticator authc = createAuthenticator();
             setAuthenticator(authc);
         }
+    }
+
+    protected Authenticator createAuthenticator() {
+        ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
+        mra.setRealms(getRealms());
+        mra.setAuthenticationEventFactory( getAuthenticationEventFactory() );
+        mra.setAuthenticationEventListeners( getAuthenticationEventListeners() );
+        mra.init();
+        return mra;
     }
 
     protected void afterAuthenticatorSet() {
