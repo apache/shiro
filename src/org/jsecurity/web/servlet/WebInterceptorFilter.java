@@ -67,7 +67,7 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
     }
 
     protected void continueChain(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
+            throws IOException, ServletException {
         chain.doFilter(request, response);
         if (log.isTraceEnabled()) {
             log.trace("Completed chain execution.");
@@ -75,8 +75,8 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
     }
 
     protected void doFilterInternal(
-        ServletRequest request, ServletResponse response, FilterChain chain)
-        throws ServletException, IOException {
+            ServletRequest request, ServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
 
         Exception exception = null;
 
@@ -90,7 +90,7 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
             }
 
             if (continueChain) {
-                continueChain( request, response, chain );
+                continueChain(request, response, chain);
             }
 
             interceptor.postHandle(request, response);
@@ -100,15 +100,6 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
 
         } catch (Exception e) {
             exception = e;
-            if ( e instanceof ServletException ) {
-                throw (ServletException)e;
-            } else if ( e instanceof IOException ) {
-                throw (IOException)e;
-            } else {
-                String msg = "Filter execution resulted in a Exception (not IOException or ServletException).  " +
-                        "Wrapping in ServletException and propagating.";
-                throw new ServletException( msg, e );
-            }
         } finally {
             try {
                 interceptor.afterCompletion(request, response, exception);
@@ -116,8 +107,20 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
                     log.trace("Successfully invoked interceptor.afterCompletion method.");
                 }
             } catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("WebInterceptor [" + interceptor + "] afterCompletion method threw an exception: ", e);
+                if (exception == null) {
+                    exception = e;
+                }
+            }
+            if (exception != null) {
+                if (exception instanceof ServletException) {
+                    throw (ServletException) exception;
+                } else if (exception instanceof IOException) {
+                    throw (IOException) exception;
+                } else {
+                    String msg = "Filter execution resulted in a Exception " +
+                            "(not IOException or ServletException as the Filter api recommends).  " +
+                            "Wrapping in ServletException and propagating.";
+                    throw new ServletException(msg, exception);
                 }
             }
         }
