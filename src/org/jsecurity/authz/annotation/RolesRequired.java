@@ -48,8 +48,8 @@ package org.jsecurity.authz.annotation;
  *
  * <p>If you require such dynamic functionality, only the
  * {@link org.jsecurity.authz.annotation.PermissionsRequired PermissionsRequired} annotation makes sense - Permission
- * capabilities will not change for an application since permissions directly correspond to how
- * the application's functionality is programmed (that is they reflect the application's functionality only, not
+ * types will not change during runtime for an application since permissions directly correspond to how
+ * the application's functionality is programmed (that is, they reflect the application's functionality only, not
  * <em>who</em> is executing the the functionality).
  *
  * @see org.jsecurity.subject.Subject#hasRole(String)

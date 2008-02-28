@@ -36,13 +36,10 @@ import java.lang.annotation.Target;
  * {@link org.jsecurity.subject.Subject Subject} determines that the
  * executor does not imply the specified permission, the method will not be executed.
  * </p>
- * For example, this annotation<br>
+ *
+ * <p>For example, this declaration<br>
  * <blockquote><pre>
- * &#64;PermissionsRequired(
- *     type=java.io.FilePermssion.class,
- *     name="aFile.txt",
- *     actions="read,write"
- * )
+ * &#64;PermissionsRequired( "file:read,write:aFile.txt" )
  * void someMethod();
  * </pre>
  * </blockquote>
