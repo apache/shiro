@@ -76,7 +76,7 @@ public interface Permission {
      * would be:
      *
      * <p>If &quot;permission1 implies permission2&quot;, (i.e. <code>permission1.implies( permission2 ) )</code>,
-     * then any Subject granted <tt>permission1</tt> would also have ability greater than or equal to that defined by
+     * then any Subject granted <tt>permission1</tt> would have ability greater than or equal to that defined by
      * <tt>permission2</tt>.
      *
      * @param p the permission to check for behavior/functionality comparison.
