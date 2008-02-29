@@ -130,7 +130,7 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
         } catch (Exception e) {
             if ( log.isInfoEnabled() ) {
                 log.info( "Unable to find a jsecurity-users.properties file at location [" + this.filePath + "].  " +
-                        "Defaulting to JSecurity's failsafe properties file (Guest user only)." );
+                        "Defaulting to JSecurity's failsafe properties file (demo use only)." );
             }
             this.filePath = FAILSAFE_FILE_PATH;
             reloadProperties();

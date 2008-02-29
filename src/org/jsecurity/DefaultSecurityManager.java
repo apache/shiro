@@ -40,27 +40,26 @@ import java.util.Collection;
 
 /**
  * <p>The JSecurity framework's default concrete implementation of the {@link org.jsecurity.SecurityManager} interface,
- * based around a collection of security {@link org.jsecurity.realm.Realm}s.  This implementation delegates its
+ * based around a collection of {@link org.jsecurity.realm.Realm}s.  This implementation delegates its
  * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
- * {@link SessionFactory SessionFactory} instances respectively via superclass implementation. It also provides
- * sensible defaults to simplify configuration.</p>
+ * {@link SessionFactory SessionFactory} instances respectively via superclass implementation.</p>
  *
- * <p>To greatly reduce and simplify configuration, this implementation (and parent class implementations) will
- * create defaults for <em>all</em> of its required dependencies.  Therefore, you only need to override the
- * attributes suitable for your application, but please note the following:</p>
+ * <p>To greatly reduce and simplify configuration, this implementation (and its superclasses) will
+ * create suitable defaults for <em>all</em> of its required dependencies.  Therefore, you only need to override
+ * attributes for custom behavior.  But, note the following:</p>
  *
  * <p>Unless you're happy with the default simple {@link PropertiesRealm properties file}-based realm, which may or
  * may not be flexible enough for enterprise applications, you might want to specify at least one custom
  * <tt>Realm</tt> implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.
  * All other attributes have suitable defaults for most enterprise applications.</p>
  *
- * <p><b>RememberMe notice</b>: Note that this class supports the ability to configure a
+ * <p><b>RememberMe notice</b>: This class supports the ability to configure a
  * {@link #setRememberMeManager RememberMeManager}
  * for <tt>RememberMe</tt> identity services for login/logout. BUT, for this attribute only, a default instance
- * <em>will not</em> be created at startup.  Because RememberMe services are inherently client tier-specific and therefore
- * aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an instance
- * yourself before calling {@link #init() init()}.  However if you're reading this JavaDoc with the expectation of
- * operating in a Web environment, take a look at the
+ * <em>will not</em> be created at startup.  Because RememberMe services are inherently client tier-specific and
+ * therefore aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an
+ * instance yourself before calling {@link #init() init()}.  However if you're reading this JavaDoc with the
+ * expectation of operating in a Web environment, take a look at the
  * {@link org.jsecurity.web.support.WebSecurityManager DefaultWebSecurityManager} implementation, which
  * <em>does</em> support <tt>RememberMe</tt> services by default at startup.
  *
