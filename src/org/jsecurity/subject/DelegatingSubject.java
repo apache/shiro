@@ -72,7 +72,7 @@ public class DelegatingSubject implements Subject {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected Object principals = null;
+    protected Object principal = null;
     protected boolean authenticated = false;
     protected InetAddress inetAddress = null;
     protected Session session = null;
@@ -92,16 +92,16 @@ public class DelegatingSubject implements Subject {
         this(null, false, getLocalHost(), null, securityManager);
     }
 
-    public DelegatingSubject( Object principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSubject( Object principal, boolean authenticated, InetAddress inetAddress,
                               Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
         this.securityManager = securityManager;
-        this.principals = principals;
-        if ( principals instanceof Collection ) {
+        this.principal = principal;
+        if ( principal instanceof Collection ) {
             //noinspection unchecked
-            this.principals = Collections.unmodifiableCollection( (Collection)principals );
+            this.principal = Collections.unmodifiableCollection( (Collection) principal);
         }
 
         this.authenticated = authenticated;
@@ -151,14 +151,14 @@ public class DelegatingSubject implements Subject {
      * @see Subject#getPrincipal()
      */
     public Object getPrincipal() {
-        return this.principals;
+        return this.principal;
     }
 
     /** @see Subject#getPrincipalByType(Class) () */
     public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
-        if ( this.principals instanceof Collection ) {
-            Collection c = (Collection)this.principals;
+        if ( this.principal instanceof Collection ) {
+            Collection c = (Collection)this.principal;
             for( Object o : c ) {
                 if ( principalType.isAssignableFrom( o.getClass() ) ) {
                     //noinspection unchecked
@@ -166,9 +166,9 @@ public class DelegatingSubject implements Subject {
                 }
             }
         } else {
-            if ( principalType.isAssignableFrom(this.principals.getClass())) {
+            if ( principalType.isAssignableFrom(this.principal.getClass())) {
                 //noinspection unchecked
-                return (T)this.principals;
+                return (T)this.principal;
             }
         }
         return null;
@@ -179,9 +179,9 @@ public class DelegatingSubject implements Subject {
         assertValid();
         List<T> principalsOfType = new ArrayList<T>();
 
-        if (principals != null) {
-            if ( principals instanceof Collection ) {
-                Collection c = (Collection)principals;
+        if (principal != null) {
+            if ( principal instanceof Collection ) {
+                Collection c = (Collection) principal;
                 if ( !c.isEmpty() ) {
                     for( Object o : c ) {
                         if ( principalType.isAssignableFrom( o.getClass() ) ) {
@@ -191,9 +191,9 @@ public class DelegatingSubject implements Subject {
                     }
                 }
             } else {
-                if ( principalType.isAssignableFrom( principals.getClass() ) ) {
+                if ( principalType.isAssignableFrom( principal.getClass() ) ) {
                     //noinspection unchecked
-                    principalsOfType.add( (T)principals );
+                    principalsOfType.add( (T) principal);
                 }
             }
         }
@@ -319,7 +319,7 @@ public class DelegatingSubject implements Subject {
                 "implementation to ensure this happens after a successful login attempt.";
             throw new IllegalStateException(msg);
         }
-        this.principals = principals;
+        this.principal = principals;
         this.authenticated = true;
         if (token instanceof InetAuthenticationToken) {
             InetAddress addy = ((InetAuthenticationToken) token).getInetAddress();
@@ -371,7 +371,7 @@ public class DelegatingSubject implements Subject {
         }
 
         this.session = null;
-        this.principals = new ArrayList();
+        this.principal = new ArrayList();
         this.authenticated = false;
         this.inetAddress = null;
         this.securityManager = null;

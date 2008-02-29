@@ -248,9 +248,9 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
     }
 
     /**
-     * Returns the {@link #getUsername() username} as a Principal.
+     * Simply returns {@link #getUsername() getUsername()}.
      * @see org.jsecurity.authc.AuthenticationToken#getPrincipal()
-     * @return the {@link #getUsername() username} as a Principal.
+     * @return the {@link #getUsername() username}.
      */
     public Object getPrincipal() {
         return getUsername();
@@ -282,10 +282,10 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
 
     /**
      * Sets the inetAddress from where the authentication attempt occurs.  It is up to the Authenticator
-     * implementation processing this token if  an authentication attempt without an inetAddress is valid or not.
+     * implementation processing this token if an authentication attempt without an inetAddress is valid or not.
      *
      * <p>(JSecurity's default Authenticator
-     * allows <tt>null</tt> IPs to support localhost and proxy server environments).</p>
+     * allows <tt>null</tt> IPs to allow localhost and proxy server environments).</p>
      * @param inetAddress the inetAddress from where the authentication attempt occurs.
      * @since 0.2
      */

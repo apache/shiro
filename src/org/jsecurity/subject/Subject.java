@@ -34,9 +34,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A <tt>Subject</tt> executes all security operations for a <em>single</em> Subject (aka user) in an
- * application.  These operations include authentication (login/logout), authorization (access control), and
- * session functionality. It is JSecurity's primary interaction point for single-user operations.
+ * A <tt>Subject</tt> represents state and security operations for a <em>single</em> application user.
+ * These operations include authentication (login/logout), authorization (access control), and
+ * session functionality. It is JSecurity's primary mechanism for single-user security functionality.
  *
  * @since 0.1
  * @author Les Hazlewood
@@ -45,15 +45,24 @@ import java.util.List;
 public interface Subject {
 
     /**
-     * Returns the application-specific Subject identity (usually a user id or username), or <tt>null</tt> if there
-     * is no account data yet associated (hasn't logged in yet).
+     * Returns this Subject's uniquely-identifying principal, or <tt>null</tt> if this
+     * Subject doesn't yet have account data associated with it (for example, if they haven't logged in).
      *
-     * <p><b>N.B.</b> In a multi-realm configuration, it is possible that this Object encapsulates more than one
-     * principal.  Because it is inherently application-specific, You will have to cast this object based on your
-     * application's Authentication and Realm configuration.
+     * <p>The term <em>principal</em> is just a fancy security term for any identifying attribute(s) of an application
+     * user, such as a username, or user id, or public key, or anything else you might use in your application to
+     * identify a user.  And although given names and family names (first/last) are technically principals as well,
+     * JSecurity expects the object(s) returned from this method to be uniquely identifying attibute(s) for
+     * your application.  This implies that things like given names and family names are usually poor candidates as
+     * return values since they are rarely guaranteed to be unique.</p>
      *
-     * <p>In effect, the Object returned should be the same as the return value from
-     * <tt>{@link org.jsecurity.authc.Authenticator#authenticate(org.jsecurity.authc.AuthenticationToken) Authenticator.authenticate(token).}{@link org.jsecurity.authc.Account#getPrincipal() getPrincipal()}
+     * <p>Most single-Realm applications would return from this method a single principal as noted above
+     * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large 
+     * majority of JSecurity applications.</p>
+     *
+     * <p>However, in <em>multi</em>-Realm configurations, which are fully supported by JSecurity as well, it is
+     * possible that the return value encapsulates more than one principal.  Typically multi-realm applications need to
+     * retain the unique principals for <em>each</em> Realm so future security checks against these Realms can
+     * utilize these multiple principals.</p>
      *
      * @return this Subject's application-specific identity.
      */
@@ -227,7 +236,7 @@ public interface Subject {
     /**
      * Performs a login attempt for the Subject associated with the calling code.  If unsuccessful,
      * an {@link AuthenticationException} is thrown, the subclass of which identifies why the attempt failed.
-     * If successful, the Subject/account data associated with the submitted principals/credentials will be
+     * If successful, the account data associated with the submitted principals/credentials will be
      * associated with this <tt>Subject</tt> and the method will return quietly.
      *
      * <p>Upon returninq quietly, this <tt>Subject</tt> instance can be considered
@@ -243,7 +252,7 @@ public interface Subject {
     void login( AuthenticationToken token ) throws AuthenticationException;
 
     /**
-     * Returns <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
+     * Returns <tt>true</tt> if this Subject (user) has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      * 
      * <p>Note that even if this Subject's identity has been remembered via 'remember me' services, this method will
@@ -251,8 +260,7 @@ public interface Subject {
      * {@link org.jsecurity.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} class JavaDoc for why
      * this would occur.</p>
      *
-     *
-     * @return <tt>true</tt> if the user represented by this <tt>SecurityContxt</tt> has proven their identity
+     * @return <tt>true</tt> if this Subject has proven their identity
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      *
      * @since 0.9

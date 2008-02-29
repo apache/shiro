@@ -27,28 +27,30 @@ package org.jsecurity.authc;
 /**
  * An <tt>AuthenticationToken</tt> that indicates if the user wishes their identity to be remembered across sessions.
  *
- * <p>Please note however that when a new session is created for the corresponding user, that user's identity is
+ * <p>Please note however that when a new session is created for the corresponding user, that user's identity would be 
  * remembered, but they are <em>NOT</em> considered authenticated:
  *
  * <p>Authentication is the process of proving you are who you say you are.  In a RememberMe scenario, a remembered
  * identity gives the system an idea who that person probably is, but in reality, has no way of guaranteeing the
  * remembered identity <em>really</em> is that user.
  *
- * <p>So, although many parts of the application can perform user-specific logic, such as customized views, it should
- * never perform security-sensitive operations until the user has actually executed a proper authentication attempt.
+ * <p>So, although many parts of the application can still perform user-specific logic, such as customized views,
+ * based on the remembered identity, it should never perform security-sensitive operations until the user has
+ * actually executed a successful authentication attempt.
  *
  * <p>We see this paradigm all over the web, and we'll use <tt>amazon.com</tt> as an example:
  *
  * <p>When you visit Amazon.com and perform a login and ask it to 'remember me', it will set a cookie with your
- * identity.  If you don't log out and your session expires, and come back, say the next day, Amazon still knows
- * who you <em>probably</em> are.</p>
+ * identity.  If you don't log out and your session expires, and you come back, say the next day, Amazon still knows
+ * who you <em>probably</em> are: you still see all of your book and movie recommendations and similar user-specific
+ * features since these are based on your (remembered) user id.</p>
  *
  * <p>BUT, if you try to do some sensitive operations, such as access your account's billing data, Amazon forces you
  * to do an actual log-in, requiring your username and password.
  *
- * <p>This is because, although amazon.com assumed your identity from 'remember me', the only way to really
- * guarantee you are who you say you are (and therefore able to access sensitive account data), is for you to
- * perform an actual authentication.
+ * <p>This is because, although amazon.com assumed your identity from 'remember me', it recognized that you were not
+ * actually authenticated.  The only way to really guarantee you are who you say you are, and therefore able to
+ * access sensitive account data), is for you to perform an actual authentication.
  *
  * @author Les Hazlewood
  * @since 0.9

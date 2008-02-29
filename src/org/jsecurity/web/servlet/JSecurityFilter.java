@@ -26,7 +26,7 @@ package org.jsecurity.web.servlet;
 
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebInterceptor;
-import org.jsecurity.web.authz.DefaultUrlAuthorizationHelper;
+import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationWebInterceptor;
 import org.jsecurity.web.support.SecurityWebSupport;
@@ -79,7 +79,7 @@ public class JSecurityFilter extends WebInterceptorFilter implements WebIntercep
 
     public UrlAuthorizationHandler getUrlAuthorizationHandler() {
         if( urlAuthorizationHandler == null ) {
-            urlAuthorizationHandler = new DefaultUrlAuthorizationHelper();
+            urlAuthorizationHandler = new DefaultUrlAuthorizationHandler();
         }
         return urlAuthorizationHandler;
     }

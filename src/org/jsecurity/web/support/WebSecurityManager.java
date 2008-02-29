@@ -13,6 +13,9 @@ import java.net.InetAddress;
 import java.util.Collection;
 
 /**
+ * SecurityManager implementation that should be used in web-based applications or any application that requires
+ * HTTP connectivity (SOAP, http remoting, etc).
+ * 
  * @author Les Hazlewood
  * @since 0.2
  */

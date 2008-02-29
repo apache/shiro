@@ -84,13 +84,13 @@ public class AuthorizingRealmTest {
         Object principals = subject.getPrincipal();
         assertTrue(principals instanceof Collection && ((Collection)principals).size() == 3);
 
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) subject.getPrincipalByType(UsernamePrincipal.class);
+        UsernamePrincipal usernamePrincipal = subject.getPrincipalByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
 
-        UserIdPrincipal userIdPrincipal = (UserIdPrincipal) subject.getPrincipalByType(UserIdPrincipal.class);
+        UserIdPrincipal userIdPrincipal = subject.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
-        String stringPrincipal = (String)subject.getPrincipalByType(String.class);
+        String stringPrincipal = subject.getPrincipalByType(String.class);
         assertTrue(stringPrincipal.equals(USER_ID + USERNAME));
 
 
@@ -142,7 +142,6 @@ public class AuthorizingRealmTest {
         }
 
         protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
-            UsernamePasswordToken upToken = (UsernamePasswordToken) token;
             return createAccount(token.getPrincipal(), token.getPrincipal());
         }
 
@@ -153,12 +152,10 @@ public class AuthorizingRealmTest {
         }
 
         protected Account createAccount(Object principal, Object credentials) {
-
             List<Object> principals = new ArrayList<Object>();
             principals.add(new UserIdPrincipal(USER_ID));
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);
-
             return createAccount(principals, null);
         }
     }
