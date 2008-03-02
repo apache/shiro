@@ -61,10 +61,10 @@ import org.jsecurity.authz.Authorizer;
  * one of the subclasses, {@link AuthenticatingRealm AuthenticatingRealm} or
  * {@link AuthorizingRealm}, greatly reducing the effort to implement a <tt>Realm</tt> from scratch.</p>
  *
- * @see AbstractRealm AbstractRealm
+ * @see CachingRealm CachingRealm
  * @see AuthenticatingRealm AuthenticatingRealm
  * @see AuthorizingRealm AuthorizingRealm
- * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
+ * @see org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood

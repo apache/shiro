@@ -47,19 +47,19 @@ import java.util.List;
  * <p>Implementation of the <tt>Subject</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.</p>
- *
+ * <p/>
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
  * architecture.  It instead asks the underlying <tt>SecurityManager</tt> every time to perform
  * the authorization check.</p>
- *
+ * <p/>
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
  * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.</p>
- *
+ * <p/>
  * <p>Applications from large and clustered to simple and vm local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.</p>
@@ -78,7 +78,7 @@ public class DelegatingSubject implements Subject {
     protected Session session = null;
     protected boolean invalidated = false;
 
-    protected SecurityManager securityManager;    
+    protected SecurityManager securityManager;
 
     protected static InetAddress getLocalHost() {
         try {
@@ -92,21 +92,21 @@ public class DelegatingSubject implements Subject {
         this(null, false, getLocalHost(), null, securityManager);
     }
 
-    public DelegatingSubject( Object principal, boolean authenticated, InetAddress inetAddress,
-                              Session session, SecurityManager securityManager) {
+    public DelegatingSubject(Object principal, boolean authenticated, InetAddress inetAddress,
+                             Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
         this.securityManager = securityManager;
         this.principal = principal;
-        if ( principal instanceof Collection ) {
+        if (principal instanceof Collection) {
             //noinspection unchecked
-            this.principal = Collections.unmodifiableCollection( (Collection) principal);
+            this.principal = Collections.unmodifiableCollection((Collection) principal);
         }
 
         this.authenticated = authenticated;
 
-        if ( inetAddress != null ) {
+        if (inetAddress != null) {
             this.inetAddress = inetAddress;
         } else {
             this.inetAddress = getLocalHost();
@@ -154,46 +154,50 @@ public class DelegatingSubject implements Subject {
         return this.principal;
     }
 
-    /** @see Subject#getPrincipalByType(Class) () */
+    /**
+     * @see Subject#getPrincipalByType(Class) ()
+     */
     public <T> T getPrincipalByType(Class<T> principalType) {
         assertValid();
-        if ( this.principal instanceof Collection ) {
-            Collection c = (Collection)this.principal;
-            for( Object o : c ) {
-                if ( principalType.isAssignableFrom( o.getClass() ) ) {
+        if (this.principal instanceof Collection) {
+            Collection c = (Collection) this.principal;
+            for (Object o : c) {
+                if (principalType.isAssignableFrom(o.getClass())) {
                     //noinspection unchecked
-                    return (T)o;
+                    return (T) o;
                 }
             }
         } else {
-            if ( principalType.isAssignableFrom(this.principal.getClass())) {
+            if (principalType.isAssignableFrom(this.principal.getClass())) {
                 //noinspection unchecked
-                return (T)this.principal;
+                return (T) this.principal;
             }
         }
         return null;
     }
 
-    /** @see Subject#getAllPrincipalsByType(Class)() */
-    public <T> List<T> getAllPrincipalsByType(Class<T> principalType) {
+    /**
+     * @see Subject#getAllPrincipalsByType(Class)()
+     */
+    public <T> Collection<T> getAllPrincipalsByType(Class<T> principalType) {
         assertValid();
         List<T> principalsOfType = new ArrayList<T>();
 
         if (principal != null) {
-            if ( principal instanceof Collection ) {
+            if (principal instanceof Collection) {
                 Collection c = (Collection) principal;
-                if ( !c.isEmpty() ) {
-                    for( Object o : c ) {
-                        if ( principalType.isAssignableFrom( o.getClass() ) ) {
+                if (!c.isEmpty()) {
+                    for (Object o : c) {
+                        if (principalType.isAssignableFrom(o.getClass())) {
                             //noinspection unchecked
-                            principalsOfType.add( (T)o );
+                            principalsOfType.add((T) o);
                         }
                     }
                 }
             } else {
-                if ( principalType.isAssignableFrom( principal.getClass() ) ) {
+                if (principalType.isAssignableFrom(principal.getClass())) {
                     //noinspection unchecked
-                    principalsOfType.add( (T) principal);
+                    principalsOfType.add((T) principal);
                 }
             }
         }
@@ -241,9 +245,9 @@ public class DelegatingSubject implements Subject {
     protected void assertAuthzCheckPossible() throws AuthorizationException {
         if (!hasPrincipal()) {
             String msg = "Account data has not yet been associated with this Subject instance" +
-                "(this can be done by executing " + Subject.class.getName() + ".login(AuthenticationToken) )." +
-                "Therefore, authorization operations are not possible (a Subject/Account identity is required first).  " +
-                "Denying authorization.";
+                    "(this can be done by executing " + Subject.class.getName() + ".login(AuthenticationToken) )." +
+                    "Therefore, authorization operations are not possible (a Subject/Account identity is required first).  " +
+                    "Denying authorization.";
             throw new UnauthenticatedException(msg);
         }
     }
@@ -261,14 +265,14 @@ public class DelegatingSubject implements Subject {
     }
 
     public void checkPermissions(String... permissions)
-        throws AuthorizationException {
+            throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipal(), permissions);
     }
 
     public void checkPermissions(Collection<Permission> permissions)
-        throws AuthorizationException {
+            throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipal(), permissions);
@@ -309,14 +313,14 @@ public class DelegatingSubject implements Subject {
         assertValid();
         Subject authcSecCtx = securityManager.login(token);
         Object principals = authcSecCtx.getPrincipal();
-        if ( principals instanceof Collection && ((Collection)principals).isEmpty() ) {
+        if (principals instanceof Collection && ((Collection) principals).isEmpty()) {
             principals = null;
         }
-        if (principals == null ) {
+        if (principals == null) {
             String msg = "Principals returned from securityManager.login( token ) returned a null or " +
                     "empty value.  This value must be non null, and if a collection, the collection must " +
                     "be populated with one or more elements.  Please check the SecurityManager " +
-                "implementation to ensure this happens after a successful login attempt.";
+                    "implementation to ensure this happens after a successful login attempt.";
             throw new IllegalStateException(msg);
         }
         this.principal = principals;
@@ -367,14 +371,15 @@ public class DelegatingSubject implements Subject {
         try {
             this.securityManager.logout(getPrincipal());
         } finally {
-            setInvalidated( true );
+            setInvalidated(true);
+            this.session = null;
+            this.principal = new ArrayList();
+            this.authenticated = false;
+            this.inetAddress = null;
+            this.securityManager = null;
         }
 
-        this.session = null;
-        this.principal = new ArrayList();
-        this.authenticated = false;
-        this.inetAddress = null;
-        this.securityManager = null;
+
     }
 
 }

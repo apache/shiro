@@ -65,9 +65,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     |             C O N S T A N T S             |
     ============================================*/
     /**
-     * The default postfix appended to the realm name for caching AuthorizingAccounts.
+     * The default postfix appended to the realm name for caching Accounts.
      */
     private static final String DEFAULT_ACCOUNT_CACHE_POSTFIX = ".accounts";
+
+    private static int INSTANCE_COUNT = 0;
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -82,11 +84,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * The cache used by this realm to store Accounts associated with individual Subject principals.
      */
     private Cache accountCache = null;
-
-    /**
-     * The postfix appended to the realm name used to create the name of the authorization cache.
-     */
-    private String accountCachePostfix = DEFAULT_ACCOUNT_CACHE_POSTFIX;
+    private String accountCacheName = null;
 
     private PermissionResolver permissionResolver = new WildcardPermissionResolver();
 
@@ -94,29 +92,23 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     |         C O N S T R U C T O R S           |
     ============================================*/
     public AuthorizingRealm() {
-        super();
     }
 
-    public AuthorizingRealm(String name) {
-        super(name);
+    public AuthorizingRealm(CacheProvider cacheProvider) {
+        super(cacheProvider);
     }
 
-    public AuthorizingRealm(String name, CacheProvider cacheProvider) {
-        super(name, cacheProvider);
+    public AuthorizingRealm(CredentialsMatcher matcher) {
+        super(matcher);
     }
 
-    public AuthorizingRealm(String name, CredentialsMatcher matcher) {
-        super(name, matcher);
-    }
-
-    public AuthorizingRealm(String name, CacheProvider cacheProvider, CredentialsMatcher matcher) {
-        super(name, cacheProvider, matcher);
+    public AuthorizingRealm(CacheProvider cacheProvider, CredentialsMatcher matcher) {
+        super(cacheProvider, matcher);
     }
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-
     public void setAccountCacheEnabled(boolean accountCacheEnabled) {
         this.accountCacheEnabled = accountCacheEnabled;
     }
@@ -125,20 +117,20 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return this.accountCacheEnabled;
     }
 
-    public void setAccountCachePostfix(String accountCachePostfix) {
-        this.accountCachePostfix = accountCachePostfix;
-    }
-
-    public String getAccountCachePostfix() {
-        return accountCachePostfix;
-    }
-
     public void setAccountCache(Cache accountCache) {
         this.accountCache = accountCache;
     }
 
     public Cache getAccountCache() {
         return this.accountCache;
+    }
+
+    public String getAccountCacheName() {
+        return accountCacheName;
+    }
+
+    public void setAccountCacheName(String accountCacheName) {
+        this.accountCacheName = accountCacheName;
     }
 
     public PermissionResolver getPermissionResolver() {
@@ -152,11 +144,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
-
     /**
      * Initializes this realm and potentially enables a cache, depending on configuration.
-     * <p/>
+     *
      * <p>When this method is called, the following logic is executed:
      * <ol>
      * <li>If the {@link #setAccountCache cache} property has been set, it will be
@@ -175,11 +165,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * </ol>
      */
     public final void init() {
-        if (log.isTraceEnabled()) {
-            log.trace("Initializing caches for realm [" + getName() + "]");
-        }
 
         if (isAccountCacheEnabled()) {
+            if (log.isTraceEnabled()) {
+                log.trace("Initializing account cache.");
+            }
 
             Cache cache = getAccountCache();
 
@@ -192,23 +182,26 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 CacheProvider cacheProvider = getCacheProvider();
 
                 if (cacheProvider != null) {
-                    String cacheName = getName() + getAccountCachePostfix();
+                    String cacheName = getAccountCacheName();
+                    if ( cacheName == null ) {
+                        //Simple default in case they didn't provide one:
+                        cacheName = getClass().getName() + "_" + INSTANCE_COUNT++ + DEFAULT_ACCOUNT_CACHE_POSTFIX;
+                    }
                     if (log.isDebugEnabled()) {
-                        log.debug("CacheProvider [" + cacheProvider + "] set.  Building " +
-                                "authorizationInfo cache named [" + cacheName + "]");
+                        log.debug("CacheProvider [" + cacheProvider + "] has been configured.  Building " +
+                                "Account cache named [" + cacheName + "]");
                     }
                     cache = cacheProvider.buildCache(cacheName);
                     setAccountCache(cache);
                 } else {
                     if (log.isInfoEnabled()) {
-                        log.info("No cache or cacheProvider properties have been set.  AuthorizingAccount caching is " +
-                                "disabled for realm [" + getName() + "]");
+                        log.info("No cache or cacheProvider properties have been set.  Account caching is " +
+                                "disabled.");
                     }
                 }
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("AuthorizingAccount for realm [" + getName() + "] will be cached " +
-                            "using cache [" + cache + "]");
+                    log.debug("Accounts will be cached using cache [" + cache + "]");
                 }
             }
 
@@ -242,25 +235,28 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     protected abstract AuthorizingAccount doGetAccount(Object principal);
 
     /**
-     * <p>Retrieves Account information from underlying data store.  If this implementation has caching enabled, the
-     * returned Account objects will be cached before the method returns and subsequent calls will check the
-     * cache first before accesing the data store.
-     * <p/>
-     * <p>Subclasses must implement the {@link #doGetAccount(Object)} method to access the data store in the event
-     * that caching is disabled or there is a cache miss.
+     * <p>Retrieves Account information for the given account principal.
+     *
+     * <p>If caching is enabled, the account cache will be checked first and if found, will return the cached account.
+     * If caching is disabled, or there is a cache miss from the cache lookup, the Account will be looked up from
+     * the underlying data store via the {@link #doGetAccount(Object)} method, which must be implemented by subclasses.
+     *
+     * <p>If caching is enabled, the retrieved Account from <tt>doGetAccount</tt> will be added to the account cache
+     * first and then returned.
      *
      * @param principal the primary identifying principal of the Account that should be retrieved.
      * @return the Account associated with this princpal.
      */
     protected Account getAccount(Object principal) {
+
+        if ( principal == null ) {
+            return null;
+        }
+
         Account account = null;
 
         if (log.isDebugEnabled()) {
             log.debug("Retrieving Account for principal [" + principal + "]");
-        }
-
-        if (principal == null) {
-            throw new AuthorizationException("Accounts cannot be retrieved from null principals.");
         }
 
         boolean cacheEnabled = isAccountCacheEnabled();
@@ -298,10 +294,21 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return account;
     }
 
+    protected AuthorizingAccount getAuthorizingAccount(Object principal) {
+        if (principal == null) {
+            throw new AuthorizationException("Specified principal argument is null and authorization checks cannot " +
+                    "occur without a known account identity.");
+        }
+        Account account = getAccount(principal);
+        assertNotNullAccount(principal, account);
+        assertAuthorizingAccount(account);
+        return (AuthorizingAccount) account;
+    }
+
     protected void assertNotNullAccount(Object subjectPrincipal, Account account) {
         if (account == null) {
             throw new MissingAccountException("No Account found for Subject principal [" +
-                    subjectPrincipal + "] in realm [" + getName() + "]");
+                    subjectPrincipal + "]");
         }
     }
 
@@ -316,15 +323,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                     "approach since it often gives finer control of how authorization checks occur, but you would have " +
                     "to override these methods explicitly since JSecurity can't infer your application's security " +
                     "data model.";
-            throw new UnsupportedAuthorizationException(msg);
+            throw new UnsupportedAccountException(msg);
         }
-    }
-
-    protected AuthorizingAccount getAuthorizingAccount(Object principal) {
-        Account account = getAccount(principal);
-        assertNotNullAccount(principal, account);
-        assertAuthorizingAccount(account);
-        return (AuthorizingAccount) account;
     }
 
 

@@ -22,11 +22,11 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.support;
+package org.jsecurity.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.Account;
+import org.jsecurity.authc.pam.AggregateAccount;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -183,10 +183,6 @@ public class SimpleAccount implements AggregateAccount, Serializable {
 
         if (otherAccount.isCredentialsExpired()) {
             setCredentialsExpired(true);
-        }
-
-        if (!otherAccount.isConcurrentLoginsAllowed()) {
-            setConcurrentLoginsAllowed(false);
         }
     }
 

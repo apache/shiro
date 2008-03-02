@@ -28,7 +28,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * An <tt>Authorizer</tt> performs all authorization checks and lookups (Access Control) for a given Subject (aka 'user').
+ * An <tt>Authorizer</tt> performs authorization checks and lookups (Access Control) for any given Subject
+ * (aka 'user').
  *
  * @since 0.1
  * @author Jeremy Haile
@@ -38,7 +39,6 @@ public interface Authorizer {
 
 
     /**
-     *
      * @param subjectIdentifier
      * @param permission
      * @return

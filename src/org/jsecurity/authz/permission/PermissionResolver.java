@@ -27,15 +27,17 @@ package org.jsecurity.authz.permission;
 import org.jsecurity.authz.Permission;
 
 /**
- * <p>Interface used to resolve a {@link org.jsecurity.authz.Permission} object from a String representation.
+ * <p>A PermisisonResolver resolves a String value and converts it into a
+ * {@link org.jsecurity.authz.Permission} instance.
  *
- * <p>For most purposes, the default {@link org.jsecurity.authz.permission.WildcardPermissionResolver} should be
+ * <p>The default {@link org.jsecurity.authz.permission.WildcardPermissionResolver} should be
  * suitable for most purposes, which constructs {@link org.jsecurity.authz.permission.WildcardPermission} objects.
- * However, any resolver may be configured if an application wishes to use a different
- * {@link org.jsecurity.authz.Permission} implementation(s).</p>
+ * However, any resolver may be configured if an application wishes to use different
+ * {@link org.jsecurity.authz.Permission} implementations.</p>
  *
- * <p>The <tt>PermissionResolver</tt> is used by many components in JSecurity, such as annotations, property file
- * configuration, URL configuration, etc.  It is useful whenever a String representation of a permission is used.</p>
+ * <p>A <tt>PermissionResolver</tt> is used by many JSecurity components such as annotations, property file
+ * configuration, URL configuration, etc.  It is useful whenever a String representation of a permission is specified
+ * and that String needs to be converted to an instance before executing a security check.</p>
  *
  * @author Jeremy Haile
  * @since 0.9

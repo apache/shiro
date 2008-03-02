@@ -45,7 +45,7 @@
 
     <!-- Root JSecurity Authenticator - coordinates and uses a configured set of
          Realms to implement PAM behavior.  Add modules as necessary.  -->
-    <bean name="authenticator" class="org.jsecurity.authc.support.ModularRealmAuthenticator">
+    <bean name="authenticator" class="org.jsecurity.authc.pam.ModularRealmAuthenticator">
         <property name="realm"><inject bean="memoryRealmRealm"/></property>
         <property name="modules">
             <list>

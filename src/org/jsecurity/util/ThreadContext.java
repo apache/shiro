@@ -39,12 +39,10 @@ import java.util.Map;
  * current thread based on key/value pairs.
  *
  * <p>An internal {@link java.util.HashMap} is used to maintain the key/value pairs
- * for each thread. If a Thread is pooled or reused, the internal map will not
- * be cleared upon thread reuse. It is the application's responsibility to bind
- * and remove values as necessary.</p>
+ * for each thread.</p>
  *
- * <p>If the desired behavior is to ensure that Thread data is not shared across
- * threads in a pooled or reusable Threaded environment, the application must
+ * <p>If the desired behavior is to ensure that bound data is not shared across
+ * threads in a pooled or reusable threaded environment, the application (or more likely a framework) must
  * bind and remove any necessary values at the beginning and end of stack
  * execution, respectively (i.e. individually explicitly or all via the <tt>clear</tt> method).</p>
  *

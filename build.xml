@@ -21,8 +21,8 @@
 
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
-    <property name="major.version" value="1"/>
-    <property name="minor.version" value="0"/>
+    <property name="major.version" value="0"/>
+    <property name="minor.version" value="9"/>
     <property name="patch.version" value="0-alpha"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
     
@@ -220,8 +220,8 @@
 			<arg value="-J-XX:MaxPermSize=128m"/>
 			<!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
 			<arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
-			<doctitle><![CDATA[<h1>JSecurity API 0.2</h1>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &copy; 2004-2007 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-3614410-1"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]></bottom>
+			<doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-3614410-1"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]></bottom>
 			<classpath refid="all.libs"/>
 			<packageset dir="${src.dir}">
 				<include name="org/jsecurity/**"/>

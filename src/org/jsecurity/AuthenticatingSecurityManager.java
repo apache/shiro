@@ -32,8 +32,8 @@ import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.AuthenticationEventFactory;
 import org.jsecurity.authc.event.AuthenticationEventListener;
 import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
-import org.jsecurity.authc.support.ModularAuthenticationStrategy;
-import org.jsecurity.authc.support.ModularRealmAuthenticator;
+import org.jsecurity.authc.pam.ModularAuthenticationStrategy;
+import org.jsecurity.authc.pam.ModularRealmAuthenticator;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -95,16 +95,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         this.authenticator = authenticator;
     }
 
-    protected Authenticator getRequiredAuthenticator() {
-        Authenticator authc = getAuthenticator();
-        if (authc == null) {
-            String msg = "No authenticator attribute configured for this SecurityManager instance.  Please ensure " +
-                "the init() method is called prior to using this instance and a default one will be created.";
-            throw new IllegalStateException(msg);
-        }
-        return authc;
-    }
-
     public AuthenticationEventFactory getAuthenticationEventFactory() {
         return authenticationEventFactory;
     }
@@ -151,28 +141,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         this.authenticationEventListeners = listeners;
     }
 
-    private void assertAuthenticatorEventListenerSupport(Authenticator authc) {
-        if (!(authc instanceof AuthenticationEventListenerRegistrar)) {
-            String msg = "AuthenticationEventListener registration failed:  The underlying Authenticator instance of " +
-                "type [" + authc.getClass().getName() + "] does not implement the " +
-                AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                "runtime registration of AuthenticationEventListeners.";
-            throw new IllegalStateException(msg);
-        }
-    }
-
-    public void add(AuthenticationEventListener listener) {
-        Authenticator authc = getRequiredAuthenticator();
-        assertAuthenticatorEventListenerSupport(authc);
-        ((AuthenticationEventListenerRegistrar) authc).add(listener);
-    }
-
-    public boolean remove(AuthenticationEventListener listener) {
-        Authenticator authc = getAuthenticator();
-        return (authc instanceof AuthenticationEventListenerRegistrar) &&
-            ((AuthenticationEventListenerRegistrar) authc).remove(listener);
-    }
-
     protected void afterRealmsSet() {
         ensureAuthenticator();
         afterAuthenticatorSet();
@@ -202,17 +170,49 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         destroyAuthenticator();
     }
 
+    protected void beforeAuthenticatorDestroyed() {
+    }
+
     protected void destroyAuthenticator() {
         LifecycleUtils.destroy(getAuthenticator());
         this.authenticator = null;
         this.authenticationEventListeners = null;
     }
 
-    protected void beforeAuthenticatorDestroyed() {
+    private void assertAuthenticatorEventListenerSupport(Authenticator authc) {
+        if (!(authc instanceof AuthenticationEventListenerRegistrar)) {
+            String msg = "AuthenticationEventListener registration failed:  The underlying Authenticator instance of " +
+                "type [" + authc.getClass().getName() + "] does not implement the " +
+                AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                "runtime registration of AuthenticationEventListeners.";
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    public void add(AuthenticationEventListener listener) {
+        Authenticator authc = getRequiredAuthenticator();
+        assertAuthenticatorEventListenerSupport(authc);
+        ((AuthenticationEventListenerRegistrar) authc).add(listener);
+    }
+
+    public boolean remove(AuthenticationEventListener listener) {
+        Authenticator authc = getAuthenticator();
+        return (authc instanceof AuthenticationEventListenerRegistrar) &&
+            ((AuthenticationEventListenerRegistrar) authc).remove(listener);
     }
 
     /** Delegates to the authenticator for authentication. */
     public Account authenticate(AuthenticationToken token) throws AuthenticationException {
         return getRequiredAuthenticator().authenticate(token);
+    }
+
+    protected Authenticator getRequiredAuthenticator() {
+        Authenticator authc = getAuthenticator();
+        if (authc == null) {
+            String msg = "No authenticator attribute configured for this SecurityManager instance.  Please ensure " +
+                "the init() method is called prior to using this instance and a default one will be created.";
+            throw new IllegalStateException(msg);
+        }
+        return authc;
     }
 }

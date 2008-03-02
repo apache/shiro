@@ -25,10 +25,7 @@
 package org.jsecurity.authc.support;
 
 import static org.easymock.EasyMock.*;
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.authc.*;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventFactory;
 import org.jsecurity.authc.event.FailedAuthenticationEvent;

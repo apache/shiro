@@ -34,8 +34,8 @@ package org.jsecurity.authc;
  * identity gives the system an idea who that person probably is, but in reality, has no way of guaranteeing the
  * remembered identity <em>really</em> is that user.
  *
- * <p>So, although many parts of the application can still perform user-specific logic, such as customized views,
- * based on the remembered identity, it should never perform security-sensitive operations until the user has
+ * <p>So, although many parts of the application can still perform user-specific logic based on the remembered
+ * identity, such as customized views, it should never perform security-sensitive operations until the user has
  * actually executed a successful authentication attempt.
  *
  * <p>We see this paradigm all over the web, and we'll use <tt>amazon.com</tt> as an example:
@@ -48,9 +48,9 @@ package org.jsecurity.authc;
  * <p>BUT, if you try to do some sensitive operations, such as access your account's billing data, Amazon forces you
  * to do an actual log-in, requiring your username and password.
  *
- * <p>This is because, although amazon.com assumed your identity from 'remember me', it recognized that you were not
+ * <p>This is because although amazon.com assumed your identity from 'remember me', it recognized that you were not
  * actually authenticated.  The only way to really guarantee you are who you say you are, and therefore able to
- * access sensitive account data), is for you to perform an actual authentication.
+ * access sensitive account data, is for you to perform an actual authentication.
  *
  * @author Les Hazlewood
  * @since 0.9

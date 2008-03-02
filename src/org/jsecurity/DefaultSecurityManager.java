@@ -275,6 +275,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return subject;
     }
 
+    protected void onSuccessfulLogin( AuthenticationToken token, Account account ) {
+
+    }
+
     public void logout(Object subjectIdentifier) {
         rememberMeLogout(subjectIdentifier);
         //Method arg is ignored - get the Subject from the environment if it exists:

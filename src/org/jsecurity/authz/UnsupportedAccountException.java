@@ -32,21 +32,21 @@ package org.jsecurity.authz;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class UnsupportedAuthorizationException extends AuthorizationException  {
+public class UnsupportedAccountException extends AuthorizationException  {
 
-    public UnsupportedAuthorizationException() {
+    public UnsupportedAccountException() {
         super();
     }
 
-    public UnsupportedAuthorizationException(String message) {
+    public UnsupportedAccountException(String message) {
         super(message);
     }
 
-    public UnsupportedAuthorizationException(Throwable cause) {
+    public UnsupportedAccountException(Throwable cause) {
         super(cause);
     }
 
-    public UnsupportedAuthorizationException(String message, Throwable cause) {
+    public UnsupportedAccountException(String message, Throwable cause) {
         super(message, cause);
     }
 }
