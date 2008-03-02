@@ -32,11 +32,14 @@ package org.jsecurity.authc;
  * data.  This enables a cleaner pluggable implementation and abstracts an application's
  * core classes away from JSecurity.</p>
  *
- * <p>This interface is used by all realms, since it is referenced from the {@link org.jsecurity.realm.Realm} interface.
- * Most realms will probably use the {@link org.jsecurity.authc.support.SimpleAccount} implementation, but are of course
- * free to create their own their own.</p>
+ * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
+ * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
+ * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
+ * out for any reason.  If you're using JSecurity's default implementations of this interface, they only ever print the
+ * account {@link #getPrincipal() principal}, so you do not need to do anything additional</p>
  *
- * @see org.jsecurity.authc.support.SimpleAccount
+ * @see SimpleAccount
+ * @see org.jsecurity.authz.SimpleAuthorizingAccount
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -48,7 +51,7 @@ public interface Account {
      * Returns the account's identifying principal, such as a user id or username.
      *
      * <p>In a multi-realm configuration, if this instance is an
-     * {@link org.jsecurity.authc.support.AggregateAccount AggregateAccount}, the object returned from this method
+     * {@link org.jsecurity.authc.pam.AggregateAccount AggregateAccount}, the object returned from this method
      * might be an implementation-specific object representing multiple principals.  This might be an instance of
      * java.util.Collection, but it does not have to be - it is up to the Authenticator and Realm implementations as to
      * what is returned.
@@ -90,19 +93,5 @@ public interface Account {
      *         be denied authentication, false otherwise.
      */
     boolean isCredentialsExpired();
-
-
-    /**
-     * Determines if the user is allowed to concurrently login from two
-     * unique sessions.  For example, if Joe needs the ability to leave
-     * an account logged in at home and still log in from work, then
-     * concurrent logins should be enabled.  This feature is mainly intended
-     * to prevent account sharing where a user distributes his password to
-     * others who log in concurrently.
-     *
-     * @return true if the user should be allowed to login concurrently,
-     *         false otherwise.
-     */
-    boolean isConcurrentLoginsAllowed();
 
 }

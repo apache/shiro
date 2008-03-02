@@ -1,11 +1,7 @@
 package org.jsecurity;
 
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
-import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.AuthorizingRealm;

@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.support;
+package org.jsecurity.authc.pam;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;

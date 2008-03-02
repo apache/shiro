@@ -24,17 +24,21 @@
  */
 package org.jsecurity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.cache.HashtableCacheProvider;
 import org.jsecurity.cache.ehcache.EhCacheProvider;
+import org.jsecurity.util.Destroyable;
+import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
 import org.jsecurity.util.LifecycleUtils;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that provides support for a
- * {@link CacheProvider CacheProvider} and associated convenience methods only.  All actual <tt>SecurityManager</tt>
- * method implementations are left to subclasses.
+ *
+ * A very basic extension point for the SecurityManager interface that merely provides logging and caching 
+ * support.  All <tt>SecurityManager</tt> method implementations are left to subclasses.
  *
  * <p>Upon {@link #init() initialization}, a sensible default <tt>CacheProvider</tt> will be created automatically
  * if one has not been provided.
@@ -42,7 +46,9 @@ import org.jsecurity.util.LifecycleUtils;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class CachingSecurityManager extends AbstractSecurityManager implements CacheProviderAware {
+public abstract class CachingSecurityManager implements SecurityManager, Initializable, Destroyable, CacheProviderAware {
+
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected CacheProvider cacheProvider;
 
@@ -64,6 +70,20 @@ public abstract class CachingSecurityManager extends AbstractSecurityManager imp
 
     public void setCacheProvider(CacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
+    }
+
+    public void init() {
+        ensureCacheProvider();
+        afterCacheProviderSet();
+    }
+
+    protected void ensureCacheProvider() {
+        //only create one if one hasn't been explicitly set by the instantiator
+        CacheProvider cacheProvider = getCacheProvider();
+        if (cacheProvider == null) {
+            cacheProvider = createCacheProvider();
+            setCacheProvider(cacheProvider);
+        }
     }
 
     protected CacheProvider createCacheProvider() {
@@ -91,32 +111,17 @@ public abstract class CachingSecurityManager extends AbstractSecurityManager imp
         return provider;
     }
 
-
-    protected synchronized void ensureCacheProvider() {
-        //only create one if one hasn't been explicitly set by the instantiator
-        CacheProvider cacheProvider = getCacheProvider();
-        if (cacheProvider == null) {
-            cacheProvider = createCacheProvider();
-            setCacheProvider(cacheProvider);
-        }
-    }
-
     protected void afterCacheProviderSet(){}
+
+    public void destroy() {
+        beforeCacheProviderDestroyed();
+        destroyCacheProvider();
+    }
 
     protected void beforeCacheProviderDestroyed(){}    
 
     protected void destroyCacheProvider() {
         LifecycleUtils.destroy( getCacheProvider() );
         this.cacheProvider = null;
-    }
-
-    public void init() {
-        ensureCacheProvider();
-        afterCacheProviderSet();
-    }
-
-    public void destroy() {
-        beforeCacheProviderDestroyed();        
-        destroyCacheProvider();
     }
 }

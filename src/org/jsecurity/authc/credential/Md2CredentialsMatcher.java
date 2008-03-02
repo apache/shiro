@@ -22,24 +22,26 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity;
+package org.jsecurity.authc.credential;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsecurity.util.Destroyable;
-import org.jsecurity.util.Initializable;
+import org.jsecurity.crypto.hash.AbstractHash;
+import org.jsecurity.crypto.hash.Hash;
+import org.jsecurity.crypto.hash.Md2Hash;
 
 /**
- * Abstract implementation of the SecurityManager interface that merely provides logging support and leaves
- * everything else to subclasses.  It primarily exists as a potential expansion point in case wide-scoped
- * features need to be propagated to all JSecurity <tt>SecurityManager</tt> implementations in the future.
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
+ * MD2 hashed.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AbstractSecurityManager implements SecurityManager, Initializable, Destroyable {
+public class Md2CredentialsMatcher extends HashedCredentialsMatcher {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected AbstractHash newHashInstance() {
+        return new Md2Hash();
+    }
 
-    public AbstractSecurityManager(){}
+    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
+        return new Md2Hash( toBytes( credentials ), salt, hashIterations );
+    }
 }

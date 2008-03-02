@@ -37,22 +37,22 @@ import org.jsecurity.subject.Subject;
  *
  * <p>The interface itself primarily exists as a convenience - it extends the {@link Authenticator},
  * {@link Authorizer}, and {@link SessionFactory} interfaces, thereby consolidating
- * these behaviors into a single point of reference.  But for most JSecurity usages, this simplifies configuration and
+ * these behaviors into a single point of reference.  For most JSecurity usages, this simplifies configuration and
  * tends to be a more convenient approach than referencing <code>Authenticator</code>, <code>Authorizer</code>, and
  * <code>SessionFactory</code> instances seperately;  instead one only needs to interact with a
  * single <tt>SecurityManager</tt> instance.</p>
  *
  * <p>In addition to the above three interfaces, three unique methods are provided by this interface by itself,
- * {@link #login}, {@link #logout} and {@link #getSubject}.  A <tt>Subject</tt> executes
+ * {@link #login}, {@link #logout} and {@link #getSubject}.  A {@link Subject Subject} executes
  * authentication, authorization, and session operations for a <em>single</em> user, and as such can only be
  * managed by <tt>A SecurityManager</tt> which is aware of all three capabilities.  The three parent interfaces on the
- * other hand do not 'know about' <tt>Subject</tt>s to ensure a clean separation of concerns.
+ * other hand do not 'know' about <tt>Subject</tt>s to ensure a clean separation of concerns.
  *
- * <p>Usage Note:  In actuality the large majority of application programmers won't interact with a SecurityManager
+ * <p>Usage Note: In actuality the large majority of application programmers won't interact with a SecurityManager
  * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently
  * executing user.  In that case, the application programmer can call the
- * {@link # getSubject () getSubject()} method and then use the returned instance for all the remaining
- * interaction with JSecurity.
+ * {@link #getSubject() getSubject()} method and then use that returned instance for continued interaction with
+ * JSecurity.
  *
  * <p>Framework developers on the other hand might find working with an actual SecurityManager useful.
  *
@@ -64,6 +64,7 @@ import org.jsecurity.subject.Subject;
  */
 public interface SecurityManager extends Authenticator, Authorizer, SessionFactory {
 
+    
     Subject login( AuthenticationToken authenticationToken ) throws AuthenticationException;
 
     /**

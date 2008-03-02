@@ -22,25 +22,26 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authz.permission;
+package org.jsecurity.authc.credential;
+
+import org.jsecurity.crypto.hash.AbstractHash;
+import org.jsecurity.crypto.hash.Hash;
+import org.jsecurity.crypto.hash.Sha256Hash;
 
 /**
- * Interface implemented by a component that wishes to use any application-configured <tt>PermissionResolver</tt> that
- * might already exist instead of potentially creating one itself.
- *
- * <p>This is mostly implemented by {@link org.jsecurity.authz.Authorizer Authorizer} implementations since they
- * are the ones performing permission checks and need to know how to resolve Strings into
- * {@link org.jsecurity.authz.Permission Permission} instances.
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
+ * SHA-256 hashed.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface PermissionResolverAware {
+public class Sha256CredentialsMatcher extends HashedCredentialsMatcher {
 
-    /**
-     * Sets the specified <tt>PermissionResolver</tt> on this instance.
-     *
-     * @param pr the <tt>PermissionResolver</tt> being set.
-     */
-    public void setPermissionResolver( PermissionResolver pr );
+    protected AbstractHash newHashInstance() {
+        return new Sha256Hash();
+    }
+
+    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
+        return new Sha256Hash( toBytes( credentials ), salt, hashIterations );
+    }
 }

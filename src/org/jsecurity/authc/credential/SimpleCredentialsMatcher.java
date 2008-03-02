@@ -26,8 +26,8 @@ package org.jsecurity.authc.credential;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.SimpleAccount;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authc.support.SimpleAccount;
 import org.jsecurity.codec.CodecSupport;
 
 import java.util.Arrays;

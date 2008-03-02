@@ -1,6 +1,7 @@
 package org.jsecurity.realm;
 
 import org.jsecurity.authc.*;
+import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.credential.SimpleCredentialsMatcher;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
@@ -10,63 +11,54 @@ import org.jsecurity.cache.CacheProvider;
  * A top-level abstract implementation of the <tt>Realm</tt> interface that only implements authentication support
  * (log-in) operations and leaves authorization (access control) behavior to subclasses.
  *
- * <p>Since a realm provides both authentication <em>and</em> authorization operations, the implementation approach for
+ * <p>Since a Realm provides both authentication <em>and</em> authorization operations, the implementation approach for
  * this class could have been reversed.  That is, authorization support could have been implemented here and
  * authentication support left to subclasses.
  *
  * <p>The reason the existing implementation is in place though
  * (authentication support) is that most authentication operations are fairly common across the large majority of
  * applications, whereas authorization operations are more so heavily dependent upon the application's data model, which
- * varies widely.
+ * can vary widely.
  *
  * <p>By providing the most common authentication operations here and leaving data-model specific checks to subclasses,
- * a top-level abstract class for most common authentication behavior is more useful as an extension point (rather
- * than the other way around).
+ * a top-level abstract class for most common authentication behavior is more useful as an extension point instead of
  *
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AuthenticatingRealm extends AbstractRealm {
+public abstract class AuthenticatingRealm extends CachingRealm {
 
     /**
      * Password matcher used to determine if the provided password matches
      * the password stored in the data store.
      */
-    protected CredentialsMatcher credentialsMatcher = new SimpleCredentialsMatcher();
+    private CredentialsMatcher credentialsMatcher = new SimpleCredentialsMatcher();
 
     /**
      * The class that this realm supports for authentication tokens.  This is used by the
      * default implementation of the {@link Realm#supports(org.jsecurity.authc.AuthenticationToken)} method to
      * determine whether or not the given authentication token is supported by this realm.
      */
-    protected Class<? extends AuthenticationToken> authenticationTokenClass = UsernamePasswordToken.class;
-
+    private Class<? extends AuthenticationToken> authenticationTokenClass = UsernamePasswordToken.class;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
     public AuthenticatingRealm() {
-        super();
     }
 
-    public AuthenticatingRealm( String name ) {
-        super( name );
+    public AuthenticatingRealm( CacheProvider cacheProvider ) {
+        setCacheProvider(cacheProvider);
     }
 
-    public AuthenticatingRealm( String name, CacheProvider cacheProvider ) {
-        super( name, cacheProvider );
-    }
-
-    public AuthenticatingRealm( String name, CredentialsMatcher matcher ) {
-        this( name );
+    public AuthenticatingRealm( CredentialsMatcher matcher ) {
         setCredentialsMatcher( matcher );
     }
 
-    public AuthenticatingRealm( String name, CacheProvider cacheProvider, CredentialsMatcher matcher ) {
-        this( name, cacheProvider );
+    public AuthenticatingRealm( CacheProvider cacheProvider, CredentialsMatcher matcher ) {
+        setCacheProvider( cacheProvider );
         setCredentialsMatcher( matcher );
     }
-
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -132,7 +124,6 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
         this.authenticationTokenClass = authenticationTokenClass;
     }
 
-
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -147,10 +138,6 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      * @return true if this authentication realm can process the submitted token instance of the class, false otherwise.
      */
     public boolean supports(AuthenticationToken token) {
-        if ( log.isInfoEnabled() ) {
-            log.info( "Received null AuthenticationToken.  Returning false for supports(token) implementation (can't " +
-                "process null tokens)." );
-        }
         return token != null && getAuthenticationTokenClass().isAssignableFrom(token.getClass());
     }
 
@@ -171,23 +158,6 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
      */
     protected abstract Account doGetAccount( AuthenticationToken token ) throws AuthenticationException;
 
-    /**
-     * Primarily used to acquire a string to display in exceptions and logging.  Default implementation
-     * returns a value based on account.getPrincipal();
-     *
-     * <p>If overridding, be careful to not include any private credentials (such as passwords or private keys) if this
-     * information should not show up in log entries or error messages.
-     * @param account account after a successful authentication attempt.
-     * @return String representation of the given account that can be used in exceptions and logging.
-     */
-    protected String displayName( Account account) {
-        Object  p = account.getPrincipal();
-        if ( p != null ) {
-            return p.toString();
-        } else {
-            return account.toString();
-        }
-    }
 
     public final Account getAccount( AuthenticationToken token ) throws AuthenticationException {
 
@@ -203,10 +173,10 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
         }
 
         if ( account.isLocked() ) {
-            throw new LockedAccountException( "Account [" + displayName( account ) + "] is locked." );
+            throw new LockedAccountException( "Account [" + account + "] is locked." );
         }
         if ( account.isCredentialsExpired() ) {
-            String msg = "The credentials for account [" + displayName( account ) + "] are expired";
+            String msg = "The credentials for account [" + account + "] are expired";
             throw new ExpiredCredentialsException( msg );
         }
 
@@ -220,7 +190,7 @@ public abstract class AuthenticatingRealm extends AbstractRealm {
         } else {
             throw new AuthenticationException( "A CredentialsMatcher must be configured in order to verify " +
                     "credentials during authentication.  If you do not wish for credentials to be examined, you " +
-                    "can configure an AllowAllCredentialsMatcher." );
+                    "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance." );
         }
 
         return account;

@@ -22,12 +22,9 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.authc.support;
+package org.jsecurity.authc.pam;
 
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.UnknownAccountException;
+import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
 
 import java.util.ArrayList;
@@ -63,7 +60,7 @@ import java.util.List;
  * in a mult-realm scenario, the strategy object is only utilized when more than one Realm is configured.
  *
  * <p>For greater security in a multi-realm configuration, unless overridden, the default implementation is the
- * {@link org.jsecurity.authc.support.AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy}
+ * {@link AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy}
  *
  * @see #setRealms
  * @see AllSuccessfulModularAuthenticationStrategy
@@ -152,7 +149,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      *
      * <p>Unless overridden by
      * the {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy)} method, the default implementation
-     * is the {@link org.jsecurity.authc.support.AllSuccessfulModularAuthenticationStrategy}.
+     * is the {@link AllSuccessfulModularAuthenticationStrategy}.
      *
      * @return the <tt>ModularAuthenticationStrategy</tt> utilized by this modular authenticator during a log-in attempt.
      * @since 0.2

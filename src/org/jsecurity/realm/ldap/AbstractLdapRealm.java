@@ -75,7 +75,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
 
     protected String systemPassword = null;
 
-    private LdapContextFactory ldapContextFactory;
+    private LdapContextFactory ldapContextFactory = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |

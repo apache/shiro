@@ -24,7 +24,7 @@
 */
 package org.jsecurity.authz;
 
-import org.jsecurity.authc.support.SimpleAccount;
+import org.jsecurity.authc.SimpleAccount;
 
 import java.util.Collection;
 import java.util.HashSet;

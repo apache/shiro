@@ -55,14 +55,15 @@ public interface Subject {
      * your application.  This implies that things like given names and family names are usually poor candidates as
      * return values since they are rarely guaranteed to be unique.</p>
      *
-     * <p>Most single-Realm applications would return from this method a single principal as noted above
+     * <p>Most single-Realm applications would return from this method a single unique principal as noted above
      * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large 
      * majority of JSecurity applications.</p>
      *
      * <p>However, in <em>multi</em>-Realm configurations, which are fully supported by JSecurity as well, it is
      * possible that the return value encapsulates more than one principal.  Typically multi-realm applications need to
-     * retain the unique principals for <em>each</em> Realm so future security checks against these Realms can
-     * utilize these multiple principals.</p>
+     * retain the unique principals for <em>each</em> Realm so subsequent security checks against these Realms can
+     * utilize these multiple principals.  In these cases, the object returned could be a Collection or any
+     * application-specific instance that encapsulates the principals.</p>
      *
      * @return this Subject's application-specific identity.
      */
@@ -82,13 +83,13 @@ public interface Subject {
 
     /**
      * Returns all principals assignable from the specified type that is associated with this <tt>Subject</tt>, or an
-     * empty List if no principals are associated.
+     * empty Collection if no principals are associated.
      *
      * @param principalType the principal type that should be returned.
-     * @return a List of principals that are assignable from the specified type, or
-     * an empty List if no principals of this type are associated.
+     * @return a Collection of principals that are assignable from the specified type, or
+     * an empty Collection if no principals of this type are associated.
      */
-    <T> List<T> getAllPrincipalsByType(Class<T> principalType);
+    <T> Collection<T> getAllPrincipalsByType(Class<T> principalType);
 
     /**
      * Returns <tt>true</tt> if this Subject is

@@ -39,8 +39,8 @@ package org.jsecurity.authc;
  * <tt>Authenticator</tt> instance.
  *
  * @see org.jsecurity.SecurityManager
- * @see org.jsecurity.authc.support.AbstractAuthenticator AbstractAuthenticator
- * @see org.jsecurity.authc.support.ModularRealmAuthenticator ModularRealmAuthenticator
+ * @see AbstractAuthenticator AbstractAuthenticator
+ * @see org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator
  *
  * @since 0.1
  * @author Les Hazlewood

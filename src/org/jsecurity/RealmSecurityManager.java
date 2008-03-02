@@ -119,11 +119,9 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         this.realms = realms;
     }
 
-    protected Realm createDefaultRealm() {
-        PropertiesRealm propsRealm = new PropertiesRealm();
-        propsRealm.setCacheProvider(getCacheProvider());
-        propsRealm.init();
-        return propsRealm;
+    protected void afterCacheProviderSet() {
+        ensureRealms();
+        afterRealmsSet();
     }
 
     protected void ensureRealms() {
@@ -137,12 +135,19 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         }
     }
 
-    protected void afterCacheProviderSet() {
-        ensureRealms();
-        afterRealmsSet();
+    protected Realm createDefaultRealm() {
+        PropertiesRealm propsRealm = new PropertiesRealm();
+        propsRealm.setCacheProvider(getCacheProvider());
+        propsRealm.init();
+        return propsRealm;
     }
 
     protected void afterRealmsSet(){}
+
+    protected void beforeCacheProviderDestroyed() {
+        beforeRealmsDestroyed();
+        destroyRealms();
+    }
 
     protected void beforeRealmsDestroyed(){}
 
@@ -156,8 +161,4 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         this.realms = null;
     }
 
-    protected void beforeCacheProviderDestroyed() {
-        beforeRealmsDestroyed();
-        destroyRealms();
-    }
 }
