@@ -84,7 +84,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     private Collection<? extends Realm> realms;
 
-    protected ModularAuthenticationStrategy modularAuthenticationStrategy;
+    private ModularAuthenticationStrategy modularAuthenticationStrategy;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -324,6 +324,28 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
             return doSingleRealmAuthentication( realms.iterator().next(), authenticationToken );
         } else {
             return doMultiRealmAuthentication( realms, authenticationToken );
+        }
+    }
+
+    /**
+     * First calls <code>super.onLogout(accountPrincipal)</code> to ensure a logout event is sent, and for each
+     * wrapped <tt>Realm</tt> that implements the {@link LogoutAware LogoutAware} interface, calls
+     * <code>((LogoutAware)realm).onLogout(accountPrincipal)</code> to allow each realm the opportunity to perform
+     * logout/cleanup operations during an user-logout.
+     *
+     * <p>JSecurity's Realm implementations all implement the <tt>LogoutAware</tt> interface by default and can be
+     * overridden for realm-specific logout logic.
+     *
+     * @param accountPrincipal the application-specific Subject/user identifier.
+     */
+    public void onLogout(Object accountPrincipal) {
+        super.onLogout(accountPrincipal);
+        if ( realms != null && !realms.isEmpty() ) {
+            for( Realm realm : realms ) {
+                if ( realm instanceof LogoutAware ) {
+                    ((LogoutAware)realm).onLogout( accountPrincipal );
+                }
+            }
         }
     }
 }

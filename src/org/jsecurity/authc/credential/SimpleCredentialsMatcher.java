@@ -37,7 +37,7 @@ import java.util.Arrays;
  * byte[], char[], and Strings, and if the arguments do not match these types, then reverts back to simple
  * <code>Object.equals</code> comparison.
  *
- * <p>Hashing comparisons (the most common technique used secure applications) are not supported by this class, but
+ * <p>Hashing comparisons (the most common technique used in secure applications) are not supported by this class, but
  * instead by {@link HashedCredentialsMatcher HashedCredentialsMatcher} implementations.
  *
  * @see HashedCredentialsMatcher

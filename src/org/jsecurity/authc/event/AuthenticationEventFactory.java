@@ -44,6 +44,7 @@ public interface AuthenticationEventFactory {
      * @param token - the authentication token submitted during the authentication attempt.
      * @param ex - the exception thrown during the attempt.
      * @return the AuthenticationEvent to send due to the failed attempt.
+     * @see SuccessfulAuthenticationEvent
      */
     AuthenticationEvent createFailureEvent( AuthenticationToken token, AuthenticationException ex );
 
@@ -52,7 +53,16 @@ public interface AuthenticationEventFactory {
      * @param token the authentication token submitted during the authentication attempt.
      * @param account the account data retrieved in response to the successful token submission.
      * @return the AuthenticationEvent to send due to the successful log-in attempt.
+     * @see FailedAuthenticationEvent
      */
     AuthenticationEvent createSuccessEvent( AuthenticationToken token, Account account );
 
+    /**
+     * Creates an AuthenticationEvent in response to a Subject logging out.
+     *
+     * @param subjectPrincipal the application-specific Subject/account identifier.
+     * @return an AuthenticationEvent to send due to the Subject logging out.
+     * @see LogoutEvent
+     */
+    AuthenticationEvent createLogoutEvent(Object subjectPrincipal);
 }

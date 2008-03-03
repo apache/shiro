@@ -55,8 +55,10 @@ import java.util.Collection;
  *
  * <p><b>RememberMe notice</b>: This class supports the ability to configure a
  * {@link #setRememberMeManager RememberMeManager}
- * for <tt>RememberMe</tt> identity services for login/logout. BUT, for this attribute only, a default instance
- * <em>will not</em> be created at startup.  Because RememberMe services are inherently client tier-specific and
+ * for <tt>RememberMe</tt> identity services for login/logout, BUT, a default instance <em>will not</em> be created
+ * for this attribute at startup.
+ *
+ * <p>Because RememberMe services are inherently client tier-specific and
  * therefore aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an
  * instance yourself before calling {@link #init() init()}.  However if you're reading this JavaDoc with the
  * expectation of operating in a Web environment, take a look at the
@@ -275,12 +277,14 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return subject;
     }
 
-    protected void onSuccessfulLogin( AuthenticationToken token, Account account ) {
-
-    }
-
     public void logout(Object subjectIdentifier) {
         rememberMeLogout(subjectIdentifier);
+
+        Authenticator authc = getAuthenticator();
+        if ( authc instanceof LogoutAware ) {
+            ((LogoutAware)authc).onLogout( subjectIdentifier );
+        }
+
         //Method arg is ignored - get the Subject from the environment if it exists:
         Subject sc = getSubject(false);
         if (sc != null) {

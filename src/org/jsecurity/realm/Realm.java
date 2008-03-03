@@ -89,13 +89,17 @@ public interface Realm extends Authorizer {
      * Returns account information for the specified <tt>token</tt>,
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
+     * <p>This method effectively represents a login attempt for the corresponding user with the underlying EIS datasource.
+     * Most implementations merely just need to return the account data only (as the method name implies) and let
+     * JSecurity do the rest, but implementations may of course perform eis specific login operations if so desired.
+     *
      * @param token the application-specific representation of an account principal and credentials.
      *
      * @return the account information for the account associated with the specified <tt>token</tt>,
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
      * @throws org.jsecurity.authc.AuthenticationException if there is an error obtaining or
-     * constructing an Account based on the specified <tt>token</tt>.
+     * constructing an Account based on the specified <tt>token</tt> or implementation-specifc login behavior fails.
      */
     Account getAccount( AuthenticationToken token ) throws AuthenticationException;
 

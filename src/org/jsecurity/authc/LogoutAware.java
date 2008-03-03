@@ -22,42 +22,26 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto.hash;
+package org.jsecurity.authc;
 
 /**
- * A <tt>Hash</tt> represents a one-way conversion algorithm that transforms an input source to an underlying
- * byte array.
+ * An SPI interface allowing cleanup logic to be executed during logout of a previously authenticated Subject/user.
  *
- * @see AbstractHash
- * @see Md2Hash
- * @see Md5Hash
- * @see ShaHash
- * @see Sha256Hash
- * @see Sha384Hash
- * @see Sha512Hash
+ * <p>As it is an SPI interface, it is really intended for SPI implementors such as those implementing Realms.
+ *
+ * <p>All of JSecurity's concrete Realm implementations implement this interface as a convenience for those wishing
+ * to subclass them.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface Hash {
+public interface LogoutAware {
 
     /**
-     * Returns this Hash's byte array, that is, the hashed value of the original input source.
-     * @return this Hash's byte array, that is, the hashed value of the original input source.
-     * @see #toHex
-     * @see #toBase64
+     * Callback allowing logout logic if so desired for a previously
+     * authenticated Subject/user.
+     *
+     * @param accountPrincipal the application-specific Subject/user identifier that is logging out.
      */
-    byte[] getBytes();
-
-    /**
-     * Returns a Hex encoding of this Hash's {@link #getBytes byte array}.
-     * @return a Hex encoding of this Hash's {@link #getBytes byte array}.
-     */
-    String toHex();
-
-    /**
-     * Returns a Base64 encoding of this Hash's {@link #getBytes byte array}.
-     * @return a Base64 encoding of this Hash's {@link #getBytes byte array}.
-     */
-    String toBase64();
+    public void onLogout( Object accountPrincipal );
 }

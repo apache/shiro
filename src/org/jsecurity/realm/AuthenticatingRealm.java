@@ -26,7 +26,7 @@ import org.jsecurity.cache.CacheProvider;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class AuthenticatingRealm extends CachingRealm {
+public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {
 
     /**
      * Password matcher used to determine if the provided password matches

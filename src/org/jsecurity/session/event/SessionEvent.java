@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,10 +24,10 @@
  */
 package org.jsecurity.session.event;
 
+import org.jsecurity.SecurityEvent;
+
 import java.io.Serializable;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.EventObject;
 
 /**
  * General event concerning a {@link org.jsecurity.session.Session Session} instance.
@@ -35,12 +35,7 @@ import java.util.EventObject;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class SessionEvent extends EventObject {
-
-    /**
-     * Timestamp when this even took place.
-     */
-    protected Date timestamp = new Date();
+public abstract class SessionEvent extends SecurityEvent {
 
     /**
      * Session ID associated with this event.
@@ -67,19 +62,6 @@ public abstract class SessionEvent extends EventObject {
         this.sessionId = sessionId;
     }
 
-    public void setTimestamp( Date timestamp ) {
-        this.timestamp = timestamp;
-    }
-
-    /**
-     * Returns the timestamp associated with this event.
-     *
-     * @return the timestamp associated with this event.
-     */
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
     public Serializable getSessionId() {
         return this.sessionId;
     }
@@ -89,11 +71,7 @@ public abstract class SessionEvent extends EventObject {
         sb.append("eventClass=").append(getClass().getName());
         sb.append(",source=").append(getSource());
         sb.append(",sessionId=").append(getSessionId());
-        sb.append(",timestamp=").append( DateFormat.getInstance().format( getTimestamp().getTime() ) );
+        sb.append(",timestamp=").append( DateFormat.getInstance().format( getTimestamp() ) );
         return sb;
-    }
-
-    public String toString() {
-        return toStringBuffer().toString();
     }
 }

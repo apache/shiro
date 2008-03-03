@@ -22,42 +22,49 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.crypto.hash;
+package org.jsecurity;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.EventObject;
 
 /**
- * A <tt>Hash</tt> represents a one-way conversion algorithm that transforms an input source to an underlying
- * byte array.
+ * Parent class of all events triggered by JSecurity.
  *
- * @see AbstractHash
- * @see Md2Hash
- * @see Md5Hash
- * @see ShaHash
- * @see Sha256Hash
- * @see Sha384Hash
- * @see Sha512Hash
- *
- * @author Les Hazlewood
  * @since 0.9
+ * @author Les Hazlewood
  */
-public interface Hash {
+public abstract class SecurityEvent extends EventObject {
 
     /**
-     * Returns this Hash's byte array, that is, the hashed value of the original input source.
-     * @return this Hash's byte array, that is, the hashed value of the original input source.
-     * @see #toHex
-     * @see #toBase64
+     * The time at which this event took place.
      */
-    byte[] getBytes();
+    protected Date timestamp = new Date();
 
     /**
-     * Returns a Hex encoding of this Hash's {@link #getBytes byte array}.
-     * @return a Hex encoding of this Hash's {@link #getBytes byte array}.
+     * Creates a new <tt>SecurityEvent</tt> for the given source.
+     * @param source the source responsible or related to the event.
      */
-    String toHex();
+    public SecurityEvent( Object source ) {
+        super(source);
+    }
+
 
     /**
-     * Returns a Base64 encoding of this Hash's {@link #getBytes byte array}.
-     * @return a Base64 encoding of this Hash's {@link #getBytes byte array}.
+     * Returns the timestamp associated with this event.
+     *
+     * @return the timestamp associated with this event.
      */
-    String toBase64();
+    public Date getTimestamp() {
+        return timestamp;
+    }
+    
+    public final String toString() {
+        return toStringBuffer().toString();
+    }
+
+    protected StringBuffer toStringBuffer() {
+        return new StringBuffer( DateFormat.getInstance().format(getTimestamp()) );
+    }
+
 }

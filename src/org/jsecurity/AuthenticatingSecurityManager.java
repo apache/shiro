@@ -57,7 +57,7 @@ import java.util.Collection;
  */
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager implements AuthenticationEventListenerRegistrar {
 
-    protected Authenticator authenticator;
+    private Authenticator authenticator;
     private AuthenticationEventFactory authenticationEventFactory;
     private Collection<AuthenticationEventListener> authenticationEventListeners;
     private ModularAuthenticationStrategy modularAuthenticationStrategy;

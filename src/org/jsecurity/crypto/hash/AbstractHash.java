@@ -245,7 +245,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     /**
      * Returns a Base64-encoded string of the underlying {@link #getBytes byte array}.
      *
-     * <p>This implementation caches the resulting hex string so multiple calls to this method remain performant.
+     * <p>This implementation caches the resulting Base64 string so multiple calls to this method remain performant.
      * (However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
      * next time this method is called).
      *

@@ -56,4 +56,8 @@ public class SimpleAuthenticationEventFactory implements AuthenticationEventFact
     public AuthenticationEvent createSuccessEvent( AuthenticationToken token, Account account ) {
         return new SuccessfulAuthenticationEvent( token, account );
     }
+
+    public AuthenticationEvent createLogoutEvent(Object subjectPrincipal) {
+        return new LogoutEvent( subjectPrincipal );
+    }
 }
