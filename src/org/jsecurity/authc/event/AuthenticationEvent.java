@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,8 +24,7 @@
  */
 package org.jsecurity.authc.event;
 
-import java.util.Date;
-import java.util.EventObject;
+import org.jsecurity.SecurityEvent;
 
 /**
  * General event concerning the authentication of a particular Subject (aka User).
@@ -33,12 +32,7 @@ import java.util.EventObject;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class AuthenticationEvent extends EventObject {
-
-    /**
-     * The time at which this event took place.
-     */
-    protected Date timestamp = new Date();
+public abstract class AuthenticationEvent extends SecurityEvent {
 
     protected Object principals = null;
 
@@ -66,15 +60,6 @@ public abstract class AuthenticationEvent extends EventObject {
             throw new IllegalArgumentException( msg );
         }
         this.principals = principals;
-    }
-
-    /**
-     * Returns the timestamp associated with this event.
-     *
-     * @return the timestamp associated with this event.
-     */
-    public Date getTimestamp() {
-        return timestamp;
     }
 
     /**

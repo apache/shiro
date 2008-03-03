@@ -418,4 +418,17 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         AuthorizingAccount account = getAuthorizingAccount(principal);
         account.checkRoles(roles);
     }
+
+    /**
+     * If account caching is enabled, this will remove the account from the cache.  Subclasses are free to override
+     * for additional behavior, but be sure to call <tt>super.onLogout</tt> to ensure cache cleanup.
+     * @param accountPrincipal the application-specific Subject/user identifier.
+     */
+    public void onLogout(Object accountPrincipal) {
+        Cache cache = getAccountCache();
+        //cache instance will be non-null if caching is enabled:
+        if ( cache != null && accountPrincipal != null) {
+            cache.remove( accountPrincipal );
+        }
+    }
 }

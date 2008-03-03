@@ -61,12 +61,15 @@ import java.util.Collection;
  * @author Les Hazlewood
  * @since 0.1
  */
-public abstract class AbstractAuthenticator implements Authenticator, AuthenticationEventListenerRegistrar, Initializable {
+public abstract class AbstractAuthenticator
+        implements Authenticator, LogoutAware, AuthenticationEventListenerRegistrar, Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    /** Commons-logging logger */
+    /**
+     * Commons-logging logger
+     */
     protected final transient Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
@@ -74,7 +77,9 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
     ============================================*/
     private SimpleAuthenticationEventSender authcEventSender = new SimpleAuthenticationEventSender();
 
-    /** Factory used to create authentication events for publishing. */
+    /**
+     * Factory used to create authentication events for publishing.
+     */
     private AuthenticationEventFactory authenticationEventFactory;
 
     /*--------------------------------------------
@@ -125,7 +130,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
     }
 
     public boolean isSendingEvents() {
-        return this.authcEventSender.hasListeners();
+        return this.authcEventSender.isSending();
     }
 
     /*-------------------------------------------
@@ -146,7 +151,9 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
     protected void afterAuthenticationEventFactorySet() {
     }
 
-    /** Provided for subclass overriding.  Default implementation does nothing.. */
+    /**
+     * Provided for subclass overriding.  Default implementation does nothing..
+     */
     public void init() {
         ensureAuthenticationEventFactory();
         afterAuthenticationEventFactorySet();
@@ -184,6 +191,20 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
     }
 
     /**
+     * Creates an <tt>AuthenticationEvent</tt> in response to a Subject logging out, based on the specified
+     * subjectIdentifier.
+     *
+     * <p>The default implementation merely delegates creation to the internal {@link AuthenticationEventFactory}
+     *
+     * @param subjectPrincipal the application-specific Subject/user identifier.
+     * @return an event that indicates the corresponding Subject is logging out.
+     */
+    protected AuthenticationEvent createLogoutEvent(Object subjectPrincipal) {
+        AuthenticationEventFactory factory = getAuthenticationEventFactory();
+        return factory.createLogoutEvent(subjectPrincipal);
+    }
+
+    /**
      * Utility method that first creates a failure event based on the given token and exception and then actually sends
      * the event.
      *
@@ -193,6 +214,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
     protected void sendFailureEvent(AuthenticationToken token, AuthenticationException ae) {
         AuthenticationEvent event = createFailureEvent(token, ae);
         send(event);
+
     }
 
     /**
@@ -208,13 +230,25 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
     }
 
     /**
+     * Utility method that first creates a logout event based on the given subjectIdentifier and then actually
+     * sends the event.
+     *
+     * @param subjectPrincipal the application-specific Subject/user identifier.
+     */
+    protected void sendLogoutEvent(Object subjectPrincipal) {
+        AuthenticationEvent event = createLogoutEvent(subjectPrincipal);
+        send(event);
+
+    }
+
+    /**
      * Utility method that will send any type of <tt>AuthenticationEvent</tt> instance.
      *
      * @param event the <tt>AuthenticationEvent</tt> to send to interested parties.
      * @throws IllegalArgumentException if the method argument is null
      */
     protected void send(AuthenticationEvent event) throws IllegalArgumentException {
-        if (event != null && this.authcEventSender.hasListeners()) {
+        if (event != null && isSendingEvents()) {
             this.authcEventSender.send(event);
         }
     }
@@ -240,7 +274,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
      *                                 interface's JavaDoc for a more detailed explanation.
      */
     public final Account authenticate(AuthenticationToken token)
-        throws AuthenticationException {
+            throws AuthenticationException {
 
         if (token == null) {
             throw new IllegalArgumentException("Method argumet (authentication token) cannot be null.");
@@ -255,7 +289,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
             account = doAuthenticate(token);
             if (account == null) {
                 String msg = "Authentication token [" + token + "] could not be processed for authentication by this " +
-                    "Authenticator instance.  Please check that it is configured correctly.";
+                        "Authenticator instance.  Please check that it is configured correctly.";
                 throw new AuthenticationException(msg);
             }
         } catch (Throwable t) {
@@ -267,7 +301,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
                 //Exception thrown was not an expected AuthenticationException.  Therefore it is probably a little more
                 //severe or unexpected.  So, wrap in an AuthenticationException, log to warn, and propagate:
                 String msg = "Authentication failed for token submission [" + token + "].  Possible unexpected " +
-                    "error? (Typical or expected login exceptions should extend from AuthenticationException).";
+                        "error? (Typical or expected login exceptions should extend from AuthenticationException).";
                 ae = new AuthenticationException(msg, t);
                 if (log.isWarnEnabled()) {
                     log.warn(msg, t);
@@ -278,8 +312,8 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
                     sendFailureEvent(token, ae);
                 } catch (Throwable t2) {
                     String msg = "Unable to send event for failed authentication attempt.  Please check the " +
-                        "authenticationEventSender implementation.  Logging sending exception and propagating " +
-                        "original AuthenticationException instead...";
+                            "authenticationEventSender implementation.  Logging sending exception and propagating " +
+                            "original AuthenticationException instead...";
                     if (log.isWarnEnabled()) {
                         log.warn(msg, t2);
                     }
@@ -292,7 +326,7 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
 
         if (log.isInfoEnabled()) {
             log.info("Authentication successful for token [" + token + "].  " +
-                "Returned account: [" + account + "]");
+                    "Returned account: [" + account + "]");
         }
 
         if (isSendingEvents()) {
@@ -320,5 +354,20 @@ public abstract class AbstractAuthenticator implements Authenticator, Authentica
      * @throws AuthenticationException if there is a problem logging in the user.
      */
     protected abstract Account doAuthenticate(AuthenticationToken token)
-        throws AuthenticationException;
+            throws AuthenticationException;
+
+    /**
+     * Merely creates a LogoutEvent and sends it to any registered {@link AuthenticationEventListener listeners}.
+     *
+     * <p>If subclasses override this method, they should call <code>super.sendLogoutEvent(accountPrincipal)</code>
+     * to ensure interested parties still can receive logout events.
+     *
+     * @param accountPrincipal the application-specific Subject/user identifier.
+     */
+    public void onLogout(Object accountPrincipal) {
+        if (isSendingEvents()) {
+            sendLogoutEvent(accountPrincipal);
+        }
+    }
+
 }

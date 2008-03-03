@@ -51,6 +51,10 @@ public class SimpleAuthenticationEventSender implements AuthenticationEventListe
         setAuthenticationEventListeners( listeners );
     }
 
+    public boolean isSending() {
+        return hasListeners();
+    }
+
     public boolean hasListeners() {
         return this.listeners != null && !this.listeners.isEmpty();
     }

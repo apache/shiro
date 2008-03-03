@@ -25,8 +25,8 @@
 package org.jsecurity.authc;
 
 /**
- * <p>An <tt>Account</tt> implementation represents system-specific account/user information
- * in a framework-independent manner.  Instead of forcing a JSecurity user to
+ * <p>An <tt>Account</tt> represents system-specific account/user information
+ * in an application-independent manner.  Instead of forcing a JSecurity user to
  * implement <tt>User</tt> or <tt>Role</tt> interfaces and being invasive on an application's
  * data model, the application must instead only implement this interface to represent such
  * data.  This enables a cleaner pluggable implementation and abstracts an application's
@@ -36,7 +36,7 @@ package org.jsecurity.authc;
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
  * out for any reason.  If you're using JSecurity's default implementations of this interface, they only ever print the
- * account {@link #getPrincipal() principal}, so you do not need to do anything additional</p>
+ * account {@link #getPrincipal() principal}, so you do not need to do anything additional.</p>
  *
  * @see SimpleAccount
  * @see org.jsecurity.authz.SimpleAuthorizingAccount
@@ -63,8 +63,7 @@ public interface Account {
 
     /**
      * The account's credentials as stored in the system associated with the
-     * {@link #getPrincipal() account identifier}, such as a password char array or
-     * public key.
+     * {@link #getPrincipal() account identifier}, such as a password or private key.
      *
      * <p>It could be encrypted in which case an
      * {@link org.jsecurity.realm.Realm Realm}
@@ -86,7 +85,7 @@ public interface Account {
 
 
     /**
-     * Determines if the user's credentials (e.g. password) has expired and must be
+     * Determines if the user's credentials (e.g. password) have expired and must be
      * changed before login is allowed.
      *
      * @return true if the user's credentials are expired and the user should
