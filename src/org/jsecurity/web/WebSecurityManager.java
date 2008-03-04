@@ -6,6 +6,8 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.session.HttpContainerSessionFactory;
+import org.jsecurity.web.session.WebSessionFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

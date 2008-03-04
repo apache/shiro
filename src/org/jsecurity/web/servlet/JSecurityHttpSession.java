@@ -26,7 +26,7 @@ package org.jsecurity.web.servlet;
 
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.web.WebSession;
+import org.jsecurity.web.session.WebSession;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;

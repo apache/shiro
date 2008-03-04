@@ -29,7 +29,8 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.subject.AbstractRememberMeManager;
 import org.jsecurity.util.Serializer;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.value.CookieStore;
+import org.jsecurity.web.store.CookieStore;
+import org.jsecurity.web.store.WebStore;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

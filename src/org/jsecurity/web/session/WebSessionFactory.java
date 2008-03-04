@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.web.support;
+package org.jsecurity.web.session;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
@@ -30,9 +30,12 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.WebStore;
+import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.servlet.JSecurityHttpServletRequest;
 import org.jsecurity.web.servlet.JSecurityHttpSession;
+import org.jsecurity.web.store.CookieStore;
+import org.jsecurity.web.store.RequestParamStore;
+import org.jsecurity.web.store.WebStore;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -53,26 +56,26 @@ public class WebSessionFactory extends DefaultSessionFactory {
      */
     private boolean validateRequestOrigin = false; //default
 
-    protected CookieStore<Serializable> cookieSessionIdStore = null;
-    protected RequestParamStore<Serializable> reqParamSessionIdStore = null;
+    protected CookieStore<Serializable> sessionIdCookieValue = null;
+    protected RequestParamStore<Serializable> sessionIdRequestParamValue = null;
 
     public WebSessionFactory() {
     }
 
-    public CookieStore<Serializable> getCookieSessionIdStore() {
-        return cookieSessionIdStore;
+    public CookieStore<Serializable> getSessionIdCookieValue() {
+        return sessionIdCookieValue;
     }
 
-    public void setCookieSessionIdStore( CookieStore<Serializable> cookieSessionIdStore ) {
-        this.cookieSessionIdStore = cookieSessionIdStore;
+    public void setSessionIdCookieValue( CookieStore<Serializable> sessionIdCookieValue) {
+        this.sessionIdCookieValue = sessionIdCookieValue;
     }
 
-    public RequestParamStore<Serializable> getReqParamSessionIdStore() {
-        return reqParamSessionIdStore;
+    public RequestParamStore<Serializable> getSessionIdRequestParamValue() {
+        return sessionIdRequestParamValue;
     }
 
-    public void setReqParamSessionIdStore( RequestParamStore<Serializable> reqParamSessionIdStore ) {
-        this.reqParamSessionIdStore = reqParamSessionIdStore;
+    public void setSessionIdRequestParamValue( RequestParamStore<Serializable> sessionIdRequestParamValue) {
+        this.sessionIdRequestParamValue = sessionIdRequestParamValue;
     }
 
     /**
@@ -123,19 +126,19 @@ public class WebSessionFactory extends DefaultSessionFactory {
     }
 
     protected void ensureCookieSessionIdStore() {
-        CookieStore<Serializable> cookieStore = getCookieSessionIdStore();
+        CookieStore<Serializable> cookieStore = getSessionIdCookieValue();
         if ( cookieStore == null ) {
             cookieStore = new CookieStore<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
             cookieStore.setCheckRequestParams( false );
-            setCookieSessionIdStore( cookieStore );
+            setSessionIdCookieValue( cookieStore );
         }
     }
 
     protected void ensureRequestParamSessionIdStore() {
-        RequestParamStore<Serializable> reqParamStore = getReqParamSessionIdStore();
+        RequestParamStore<Serializable> reqParamStore = getSessionIdRequestParamValue();
         if ( reqParamStore == null ) {
             reqParamStore = new RequestParamStore<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
-            setReqParamSessionIdStore( reqParamStore );
+            setSessionIdRequestParamValue( reqParamStore );
         }
     }
 
@@ -181,18 +184,18 @@ public class WebSessionFactory extends DefaultSessionFactory {
         //'real' session value:
         Serializable existingId = retrieveSessionId( request, response );
         if ( existingId == null || !currentId.equals( existingId ) ) {
-            getCookieSessionIdStore().storeValue( currentId, request, response );
+            getSessionIdCookieValue().storeValue( currentId, request, response );
         }
     }
 
     protected Serializable retrieveSessionId( ServletRequest request, ServletResponse response ) {
-        WebStore<Serializable> cookieSessionIdStore = getCookieSessionIdStore();
+        WebStore<Serializable> cookieSessionIdStore = getSessionIdCookieValue();
         Serializable id = cookieSessionIdStore.retrieveValue( request, response );
         if ( id != null ) {
             request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 JSecurityHttpServletRequest.COOKIE_SESSION_ID_SOURCE );
         } else {
-            id = getReqParamSessionIdStore().retrieveValue( request, response );
+            id = getSessionIdRequestParamValue().retrieveValue( request, response );
             if ( id != null ) {
                 request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                     JSecurityHttpServletRequest.URL_SESSION_ID_SOURCE );
