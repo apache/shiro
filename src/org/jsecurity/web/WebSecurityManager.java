@@ -1,4 +1,4 @@
-package org.jsecurity.web.support;
+package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;

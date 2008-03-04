@@ -26,7 +26,7 @@ package org.jsecurity.web.servlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.web.support.WebSecurityManager;
+import org.jsecurity.web.WebSecurityManager;
 
 import javax.servlet.ServletContext;
 

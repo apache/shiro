@@ -25,11 +25,11 @@
 package org.jsecurity.web.servlet;
 
 import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.WebInterceptor;
 import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationWebInterceptor;
-import org.jsecurity.web.support.SecurityWebSupport;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
