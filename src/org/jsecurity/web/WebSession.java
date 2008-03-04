@@ -1,4 +1,4 @@
-package org.jsecurity.web.support;
+package org.jsecurity.web;
 
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;

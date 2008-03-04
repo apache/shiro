@@ -22,10 +22,11 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.web.support;
+package org.jsecurity.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.Initializable;
@@ -67,7 +68,7 @@ public abstract class SecurityWebSupport implements Initializable {
     }
 
     public Subject getSubject( ServletRequest request, ServletResponse response ) {
-        return ThreadContext.getSubject();
+        return SecurityUtils.getSubject();
     }
 
     protected Session getSession( ServletRequest request, ServletResponse response ) {

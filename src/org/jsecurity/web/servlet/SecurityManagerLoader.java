@@ -27,7 +27,7 @@ package org.jsecurity.web.servlet;
 import org.jsecurity.SecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
-import org.jsecurity.web.support.WebSecurityManager;
+import org.jsecurity.web.WebSecurityManager;
 
 import java.util.List;
 

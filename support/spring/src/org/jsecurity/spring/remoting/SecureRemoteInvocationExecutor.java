@@ -31,7 +31,7 @@ import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.support.WebSecurityManager;
+import org.jsecurity.web.WebSecurityManager;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
