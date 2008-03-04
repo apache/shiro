@@ -1,4 +1,4 @@
-package org.jsecurity.web.support;
+package org.jsecurity.web.store;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

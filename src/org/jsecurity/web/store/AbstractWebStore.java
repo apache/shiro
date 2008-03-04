@@ -22,14 +22,14 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.web.support;
+package org.jsecurity.web.store;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Initializable;
-import org.jsecurity.web.WebStore;
+import org.jsecurity.web.SecurityWebSupport;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
