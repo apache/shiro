@@ -158,6 +158,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         mra.setRealms(getRealms());
         mra.setAuthenticationEventFactory( getAuthenticationEventFactory() );
         mra.setAuthenticationEventListeners( getAuthenticationEventListeners() );
+        mra.setModularAuthenticationStrategy( getModularAuthenticationStrategy() );
         mra.init();
         return mra;
     }

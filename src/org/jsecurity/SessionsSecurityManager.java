@@ -111,13 +111,13 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected SessionFactory createSessionFactory() {
         DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
         sessionFactory.setCacheProvider(getCacheProvider());
-        sessionFactory.setSessionEventListeners(this.sessionEventListeners);
+        sessionFactory.setSessionEventListeners(getSessionEventListeners());
         sessionFactory.init();
         return sessionFactory;
     }
 
     protected void ensureSessionFactory() {
-        if (this.sessionFactory == null) {
+        if (getSessionFactory() == null) {
             if (log.isInfoEnabled()) {
                 log.info("No delegate SessionFactory instance has been set as a property of this class.  Creating a " +
                     "default SessionFactory implementation...");
@@ -128,10 +128,10 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     protected SessionFactory getRequiredSessionFactory() {
-        if (this.sessionFactory == null) {
+        if (getSessionFactory() == null) {
             ensureSessionFactory();
         }
-        return this.sessionFactory;
+        return getSessionFactory();
     }
 
     public Collection<SessionEventListener> getSessionEventListeners() {
