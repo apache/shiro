@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that delegates all 
+ * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that delegates all
  * authorization (access control) operations to a wrapped {@link Authorizer Authorizer} instance.  That is,
  * this class implements all the <tt>Authorizer</tt> methods in the {@link SecurityManager SecurityManager}
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'
@@ -55,10 +55,14 @@ import java.util.List;
  */
 public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityManager implements PermissionResolverAware {
 
-    /** The wrapped instance to which all of this <tt>SecurityManager</tt> authorization calls are delegated. */
+    /**
+     * The wrapped instance to which all of this <tt>SecurityManager</tt> authorization calls are delegated.
+     */
     protected Authorizer authorizer = null;
 
-    /** The <tt>PermissionResolver</tt> instance to pass to the wrapped <tt>Authorizer</tt> instance during init. */
+    /**
+     * The <tt>PermissionResolver</tt> instance to pass to the wrapped <tt>Authorizer</tt> instance during init.
+     */
     protected PermissionResolver permissionResolver = null;
 
     /**
@@ -117,8 +121,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      * <p>See the {@link #setPermissionResolver setPermissionResolver} method for more detail.
      *
      * @return the <tt>PermissionResolver</tt> instance that will be passed on to the underlying wrapped
-     * {@link Authorizer Authorizer} instance during {@link #init() initialization}.
-     *
+     *         {@link Authorizer Authorizer} instance during {@link #init() initialization}.
      * @see #setPermissionResolver setPermissionResolver
      */
     public PermissionResolver getPermissionResolver() {
@@ -157,18 +160,13 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      * Creates a new <tt>Authorizer</tt> to use as the wrapped instance for this <tt>SecurityManager</tt>
      * implementation.
      *
-     * <p>The newly created instance should have all of its necessary dependencies set, but <em>not</em> initialize itself
-     * before this method call returns:  if a configured {@link #setPermissionResolver PermissionResolver} exists, it will
-     * be applied to the instance returned from this method first, and then JSecurity will call the instance's init
-     * method (assuming the returned instance implements the {@link org.jsecurity.util.Initializable Initializable}
-     * interface as well).
-     *
-     * @return the new, dependencies-set-but-uninitialized <tt>Authorizer</tt> to use as the wrapped instance for this
-     *         <tt>SecurityManager</tt> implementation.
+     * @return the new <tt>Authorizer</tt> to use as the wrapped instance for this <tt>SecurityManager</tt> implementation.
      */
     protected Authorizer createAuthorizer() {
         ModularRealmAuthorizer mra = new ModularRealmAuthorizer();
         mra.setRealms(getRealms());
+        mra.setPermissionResolver( getPermissionResolver() );
+        mra.init();
         return mra;
     }
 
@@ -181,15 +179,6 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     protected void ensureAuthorizer() {
         if (getAuthorizer() == null) {
             Authorizer authz = createAuthorizer();
-
-            PermissionResolver resolver = getPermissionResolver();
-            if (resolver != null && authz instanceof PermissionResolverAware) {
-                ((PermissionResolverAware)authz).setPermissionResolver(resolver);
-            }
-
-            //now call init:
-            LifecycleUtils.init( authz );
-
             setAuthorizer(authz);
         }
     }
@@ -228,7 +217,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     /**
-     * Implementation of parent class's template hook for destruction/cleanup logic.  
+     * Implementation of parent class's template hook for destruction/cleanup logic.
      *
      * <p>This implementation ensures subclasses are cleaned up first by calling
      * {@link #beforeAuthorizerDestroyed() beforeAuthorizerDestroyed()} and then actually cleans up the
@@ -246,7 +235,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      *
      * @return the delegate <tt>Authorizer</tt> instance used by this <tt>SecurityManager</tt>
      * @throws IllegalStateException if for some reason the <tt>Authorizer</tt> instance is <tt>null</tt>, indicating
-     * this <tt>SecurityManager</tt> instance was not properly {@link #init() initialized}.
+     *                               this <tt>SecurityManager</tt> instance was not properly {@link #init() initialized}.
      */
     protected Authorizer getRequiredAuthorizer() throws IllegalStateException {
         Authorizer authz = getAuthorizer();

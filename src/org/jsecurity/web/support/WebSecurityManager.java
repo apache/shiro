@@ -55,6 +55,14 @@ public class WebSecurityManager extends DefaultSecurityManager {
     }
 
     public void setSessionMode(String sessionMode) {
+        if ( sessionMode == null ||
+             (!sessionMode.equals(HTTP_SESSION_MODE) && !sessionMode.equals(JSECURITY_SESSION_MODE ) ) ) {
+            String msg = "Invalid sessionMode [" + sessionMode + "].  Allowed values are " +
+                    "public static final String constants in the " + getClass().getName() + " class: '" 
+                    + HTTP_SESSION_MODE + "' or '" + JSECURITY_SESSION_MODE + "', with '" +
+                    HTTP_SESSION_MODE + "' being the default.";
+            throw new IllegalArgumentException(msg );
+        }
         this.sessionMode = sessionMode;
     }
 

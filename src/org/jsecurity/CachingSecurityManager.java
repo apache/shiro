@@ -78,11 +78,9 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
     }
 
     protected void ensureCacheProvider() {
-        //only create one if one hasn't been explicitly set by the instantiator
-        CacheProvider cacheProvider = getCacheProvider();
-        if (cacheProvider == null) {
-            cacheProvider = createCacheProvider();
-            setCacheProvider(cacheProvider);
+        if (getCacheProvider() == null) {
+            CacheProvider provider = createCacheProvider();
+            setCacheProvider(provider);
         }
     }
 
