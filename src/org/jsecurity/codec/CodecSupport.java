@@ -146,7 +146,7 @@ public abstract class CodecSupport {
      */
     protected byte[] objectToBytes( Object o ) {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
-            "bytes[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
+            "byte[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
             "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
             "this argument type to a byte[], you can 1) convert the argument to a byte[], char[] or String " +
             "yourself and then use that as the method argument or 2) subclass " + getClass().getName() +
