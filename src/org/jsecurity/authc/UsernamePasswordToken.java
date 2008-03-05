@@ -28,24 +28,25 @@ import java.net.InetAddress;
 
 /**
  * <p>A simple username/password authentication token to support the most widely-used authentication mechanism.  This
- * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} and
- * {@link InetAuthenticationToken InetAuthenticationToken} interfaces to
- * support &quot;Remember Me&quot; services across user sessions and to retain the IP address location from where the
- * authentication attempt is occuring.<p>
+ * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} to support
+ * &quot;Remember Me&quot; services across user sessions as well as the
+ * {@link InetAuthenticationToken InetAuthenticationToken} to retain the IP address location from where the
+ * authentication attempt is occuring.</p>
  *
- * <p><tt>RememberMe</tt> authentications are disabled by default, but if the application developer wishes to allow
+ * <p>&quot;Remember Me&quot; authentications are disabled by default, but if the application developer wishes to allow
  * it for a login attempt, all it has to do is call {@link #setRememberMe setRememberMe(true)}.  If the underlying
  * <tt>SecurityManager</tt> implementation also supports <tt>RememberMe</tt> services, the user's identity will be
  * remembered across sessions.
  *
  * <p>Note that this class stores a password as a char[] instead of a String
  * (which may seem more logical).  This is because Strings are immutable and their
- * internal value cannot be overwritten.  For more information, see the
+ * internal value cannot be overwritten - meaning even a nulled String instance might be accessible in memory at a later
+ * time (e.g. memory dump).  This is not good for sensitive information such as passwords. For more information, see the
  * <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jce/JCERefGuide.html#PBEEx">
  * Java Cryptography Extension Reference Guide</a>.</p>
  *
- * <p>The contents of this token should be cleared after the authentication attempt by calling the
- * {@link #clear()} method.</p>
+ * <p>To avoid this possibility of later memory access, the application developer should always call
+ * {@link #clear() clear()} after using the token to perform a login attempt.</p>
  * 
  * @since 0.1
  * @author Jeremy Haile

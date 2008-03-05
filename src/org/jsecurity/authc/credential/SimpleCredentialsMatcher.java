@@ -30,8 +30,6 @@ import org.jsecurity.authc.SimpleAccount;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.codec.CodecSupport;
 
-import java.util.Arrays;
-
 /**
  * Simple CredentialsMatcher implementation.  Supports direct (plain) comparison for credentials of type
  * byte[], char[], and Strings, and if the arguments do not match these types, then reverts back to simple
@@ -50,9 +48,12 @@ import java.util.Arrays;
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
 
     /**
-     * Returns the <tt>token</tt>'s credentials.  This default implementation merely returns
+     * Returns the <tt>token</tt>'s credentials.
+     *
+     * <p>This default implementation merely returns
      * {@link AuthenticationToken#getCredentials() authenticationToken.getCredentials()} and exists as a template hook
-     * if subclasses wish to obtain the credentials in a different way.
+     * if subclasses wish to obtain the credentials in a different way or convert them to a different format before
+     * returning.
      *
      * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt.
      * @return the <tt>token</tt>'s associated credentials.
@@ -62,9 +63,12 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Returns the <tt>account</tt>'s credentials.  This default implementation merely returns
+     * Returns the <tt>account</tt>'s credentials.
+     *
+     * <p>This default implementation merely returns
      * {@link Account#getCredentials() account.getCredentials()} and exists as a template hook if subclasses
-     * wish to obtain the credentials in a different way.
+     * wish to obtain the credentials in a different way or convert them to a different format before
+     * returning.
      *
      * @param account the <tt>Account</tt> stored in the data store to be compared against the submitted authentication
      * token's credentials.
@@ -77,31 +81,22 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     /**
      * Returns <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      *
+     * <p>This default implementation merely performs an Object equality check,
+     * that is <code>accountCredentials.equals(tokenCredentials)</code>.  It primarily exists as a template hook
+     * if subclasses wish to determine equality in another way.
+     *
      * @param tokenCredentials the <tt>AuthenticationToken</tt>'s associated credentials.
      * @param accountCredentials the <tt>Account</tt>'s stored credentials.
      * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      */
     protected boolean equals( Object tokenCredentials, Object accountCredentials ) {
-        if ( tokenCredentials.getClass().isArray() || accountCredentials.getClass().isArray() ) {
-            try {
-                byte[] tokenBytes = toBytes( tokenCredentials );
-                byte[] accountBytes = toBytes( accountCredentials );
-                return Arrays.equals( tokenBytes, accountBytes );
-            } catch (Exception e) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "At least one of the two credentials for comparsion is an array, but unable to " +
-                            "successfully convert both argments to arrays for array-equality comparison.  Reverting " +
-                            "to simple Object.equals() check.", e );
-                }
-            }
-        }
-        return tokenCredentials.equals(accountCredentials);
+        return accountCredentials.equals(tokenCredentials);
     }
 
     /**
-     * Acquires the <tt>token</tt>'s credentials (via {@link #getCredentials(AuthenticationToken) getCredentials(token)}
+     * Acquires the <tt>token</tt>'s credentials (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
      * and then the <tt>account</tt>'s credentials
-     * (via {@link #getCredentials(Account) getCredentials(account)} and then passes both of
+     * (via {@link #getCredentials(Account) getCredentials(account)}) and then passes both of
      * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
      * comparison.
      * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt.
