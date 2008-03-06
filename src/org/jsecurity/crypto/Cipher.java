@@ -30,7 +30,7 @@ package org.jsecurity.crypto;
  * a <tt>Key</tt> as well.
  *
  * <p>In what is known as <em>Symmetric</em> <tt>Cipher</tt>s, the <tt>Key</tt> used to encrypt the source is the same
- * <tt>Key</tt> used to decrypt it.
+ * as (or trivially similar to) the <tt>Key</tt> used to decrypt it.
  *
  * <p>In <em>Assymetric</em> <tt>Cipher</tt>s, the encryption <tt>Key</tt> is not the same as the decryption <tt>Key</tt>.
  * The most common type of Assymetric Ciphers are based on what is called public/private key pairs:

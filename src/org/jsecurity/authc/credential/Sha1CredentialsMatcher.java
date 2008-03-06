@@ -26,22 +26,22 @@ package org.jsecurity.authc.credential;
 
 import org.jsecurity.crypto.hash.AbstractHash;
 import org.jsecurity.crypto.hash.Hash;
-import org.jsecurity.crypto.hash.Md2Hash;
+import org.jsecurity.crypto.hash.Sha1Hash;
 
 /**
  * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
- * MD2 hashed.
+ * SHA hashed. 
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public class Md2CredentialsMatcher extends HashedCredentialsMatcher {
+public class Sha1CredentialsMatcher extends HashedCredentialsMatcher {
 
     protected AbstractHash newHashInstance() {
-        return new Md2Hash();
+        return new Sha1Hash();
     }
 
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations ) {
-        return new Md2Hash( credentials, salt, hashIterations );
+        return new Sha1Hash( credentials, salt, hashIterations );
     }
 }

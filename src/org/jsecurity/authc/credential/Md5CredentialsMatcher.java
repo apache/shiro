@@ -41,7 +41,7 @@ public class Md5CredentialsMatcher extends HashedCredentialsMatcher {
         return new Md5Hash();
     }
 
-    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
-        return new Md5Hash( toBytes( credentials ), salt, hashIterations );
+    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations ) {
+        return new Md5Hash( credentials, salt, hashIterations );
     }
 }

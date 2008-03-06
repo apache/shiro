@@ -37,7 +37,7 @@ import org.jsecurity.authc.AuthenticationToken;
  * @see SimpleCredentialsMatcher
  * @see AllowAllCredentialsMatcher
  * @see Md5CredentialsMatcher
- * @see ShaCredentialsMatcher
+ * @see Sha1CredentialsMatcher
  *
  * @since 0.1
  * @author Jeremy Haile

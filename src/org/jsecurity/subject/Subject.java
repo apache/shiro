@@ -170,7 +170,7 @@ public interface Subject {
      *
      * @param permissions the String representations of the Permissions that are being checked.
      * @return true if this Subject has all of the specified permissions, false otherwise.
-     * @see #isPermittedAll(Collection<Permission>)
+     * @see #isPermittedAll(Collection)
      * @since 0.9
      */
     boolean isPermittedAll( String... permissions );

@@ -25,13 +25,13 @@
 package org.jsecurity.crypto.hash;
 
 /**
- * A <tt>Hash</tt> represents a one-way conversion algorithm that transforms an input source to an underlying
+ * A Cryptoraphic <tt>Hash</tt> represents a one-way conversion algorithm that transforms an input source to an underlying
  * byte array.
  *
  * @see AbstractHash
  * @see Md2Hash
  * @see Md5Hash
- * @see ShaHash
+ * @see Sha1Hash
  * @see Sha256Hash
  * @see Sha384Hash
  * @see Sha512Hash

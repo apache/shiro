@@ -26,8 +26,6 @@ package org.jsecurity.authc.credential;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.SimpleAccount;
-import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.codec.CodecSupport;
 
 /**
@@ -40,7 +38,7 @@ import org.jsecurity.codec.CodecSupport;
  *
  * @see HashedCredentialsMatcher
  * @see Md5CredentialsMatcher
- * @see ShaCredentialsMatcher
+ * @see Sha1CredentialsMatcher
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -109,18 +107,5 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
         Object accountCredentials = getCredentials( account );
         return equals( tokenCredentials, accountCredentials );
     }
-
-    /**
-     * Simple method to test the equality-checking logic.
-     * @param args command line arguments (ignored).
-     */
-    public static void main( String[] args ) {
-        SimpleCredentialsMatcher matcher = new SimpleCredentialsMatcher();
-        AuthenticationToken token = new UsernamePasswordToken( "user1", "blah" );
-        Account account = new SimpleAccount( "user1", toBytes("blah") );
-        boolean matches = matcher.doCredentialsMatch(token, account);
-        System.out.println("Principals match? " + matches );
-    }
-
 
 }

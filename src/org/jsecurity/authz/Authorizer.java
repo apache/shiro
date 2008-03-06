@@ -128,7 +128,7 @@ public interface Authorizer {
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permissions the String representations of the Permissions that are being checked.
      * @return true if the user has all of the specified permissions, false otherwise.
-     * @see #isPermittedAll(Object,Collection<Permission>)
+     * @see #isPermittedAll(Object,Collection)
      * @since 0.9
      */
     boolean isPermittedAll( Object subjectPrincipal, String... permissions );

@@ -41,7 +41,7 @@ public class Sha512CredentialsMatcher extends HashedCredentialsMatcher {
         return new Sha512Hash();
     }
 
-    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
-        return new Sha512Hash( toBytes( credentials ), salt, hashIterations );
+    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations ) {
+        return new Sha512Hash( credentials, salt, hashIterations );
     }
 }
