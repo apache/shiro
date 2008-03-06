@@ -29,6 +29,7 @@ import org.jsecurity.codec.CodecSupport;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.util.Arrays;
 
 /**
@@ -60,18 +61,18 @@ public class SimpleBlowfishCipher implements Cipher {
 
     //created by running the test program below
     private static final byte[] KEY_BYTES = Base64.decodeBase64("jJ9Kg1BAevbvhSg3vBfwfQ==");
-    private static final JdkKey DEFAULT_CIPHER_KEY = new JdkKey( new SecretKeySpec( KEY_BYTES, ALGORITHM ) );
+    private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
-    private JdkKey key = DEFAULT_CIPHER_KEY;
+    private Key key = DEFAULT_CIPHER_KEY;
 
     public SimpleBlowfishCipher() {
     }
 
-    public JdkKey getKey() {
+    public Key getKey() {
         return key;
     }
 
-    public void setKey(JdkKey key) {
+    public void setKey(Key key) {
         this.key = key;
     }
 
@@ -88,9 +89,9 @@ public class SimpleBlowfishCipher implements Cipher {
             return javax.crypto.Cipher.getInstance(TRANSFORMATION_STRING);
         } catch (Exception e) {
             String msg = "Unable to acquire a Java JCE Cipher instance using " +
-                javax.crypto.Cipher.class.getName() + ".getInstance( \"" + TRANSFORMATION_STRING + "\" ). " +
-                "Blowfish under this configuration is required for the " +
-                getClass().getName() + " instance to function.";
+                    javax.crypto.Cipher.class.getName() + ".getInstance( \"" + TRANSFORMATION_STRING + "\" ). " +
+                    "Blowfish under this configuration is required for the " +
+                    getClass().getName() + " instance to function.";
             throw new IllegalStateException(msg, e);
         }
     }
@@ -116,14 +117,14 @@ public class SimpleBlowfishCipher implements Cipher {
     protected byte[] crypt(byte[] bytes, int mode, Key key) {
         javax.crypto.Cipher cipher = newCipherInstance();
         java.security.Key jdkKey = getKey();
-        if ( key != null ) {
-            if ( key instanceof java.security.Key ) {
-                jdkKey = (java.security.Key)key;
+        if (key != null) {
+            if (key instanceof java.security.Key) {
+                jdkKey = (java.security.Key) key;
             } else {
                 String msg = "The " + getClass().getName() + " implementation only accepts " + Key.class.getName() +
                         " instances that also implement the " + java.security.Key.class.getName() +
                         " interface.  The argument used is of type [" + key.getClass().getName() + "].";
-                throw new IllegalArgumentException( msg );
+                throw new IllegalArgumentException(msg);
             }
         }
         init(cipher, mode, jdkKey);
@@ -148,8 +149,8 @@ public class SimpleBlowfishCipher implements Cipher {
         Cipher cipher = new SimpleBlowfishCipher();
 
         String[] cleartext = new String[]{
-            "Hello, this is a test.",
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                "Hello, this is a test.",
+                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         };
 
         for (String clear : cleartext) {
@@ -158,7 +159,7 @@ public class SimpleBlowfishCipher implements Cipher {
             System.out.println("Clear text base64: [" + Base64.encodeBase64ToString(cleartextBytes) + "]");
 
             byte[] encrypted = cipher.encrypt(cleartextBytes, null);
-            String encryptedBase64 = Base64.encodeBase64ToString( encrypted );
+            String encryptedBase64 = Base64.encodeBase64ToString(encrypted);
             System.out.println("Encrypted base64: [" + encryptedBase64 + "]");
 
             byte[] decrypted = cipher.decrypt(Base64.decodeBase64(encryptedBase64), null);
