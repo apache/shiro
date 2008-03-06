@@ -52,7 +52,7 @@ import javax.naming.NamingException;
  *
  * @author Jeremy Haile
  * @see #queryForLdapAccount (org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
- * @see # queryForLdapAccount (Object, LdapContextFactory)
+ * @see #queryForLdapAccount (Object, LdapContextFactory)
  * @since 0.1
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm implements Initializable {

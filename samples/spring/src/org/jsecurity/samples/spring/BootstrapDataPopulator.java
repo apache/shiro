@@ -2,7 +2,7 @@ package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.crypto.hash.ShaHash;
+import org.jsecurity.crypto.hash.Sha1Hash;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -86,7 +86,7 @@ public class BootstrapDataPopulator implements InitializingBean {
     }
 
     public static void main( String[] args ) {
-        System.out.println( "value [user1] sha hashed and base64 encoded is [" + new ShaHash("user1" ).toBase64() + "]" );
-        System.out.println( "value [user2] sha hashed and base64 encoded is [" + new ShaHash("user2" ).toBase64() + "]" );
+        System.out.println( "value [user1] sha hashed and base64 encoded is [" + new Sha1Hash("user1" ).toBase64() + "]" );
+        System.out.println( "value [user2] sha hashed and base64 encoded is [" + new Sha1Hash("user2" ).toBase64() + "]" );
     }
 }

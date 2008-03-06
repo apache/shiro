@@ -41,7 +41,7 @@ public class Sha384CredentialsMatcher extends HashedCredentialsMatcher {
         return new Sha384Hash();
     }
 
-    protected Hash getProvidedCredentialsHash(Object credentials, Object salt, int hashIterations ) {
-        return new Sha384Hash( toBytes( credentials ), salt, hashIterations );
+    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations ) {
+        return new Sha384Hash( credentials, salt, hashIterations );
     }
 }

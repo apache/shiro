@@ -154,11 +154,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * method invocations.
      * All future calls to <tt>getAccount</tt> will attempt to use this Account cache first
      * to alleviate any potentially unnecessary calls to an underlying data store.</li>
-     * <li>If the {@link # setAccountCache cache} property has <b>not</b> been set,
+     * <li>If the {@link #setAccountCache cache} property has <b>not</b> been set,
      * the {@link #setCacheProvider cacheProvider} property will be checked.
      * If a <tt>cacheProvider</tt> has been set, it will be used to create an Account
      * <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
-     * <li>If neither the {@link # setAccountCache (org.jsecurity.cache.Cache) cache}
+     * <li>If neither the {@link #setAccountCache (org.jsecurity.cache.Cache) cache}
      * or {@link #setCacheProvider (org.jsecurity.cache.CacheProvider) cacheProvider}
      * properties are set, caching will be disabled and Account lookups will be delegated to
      * subclass implementations for each authorization check.</li>

@@ -55,7 +55,7 @@ import org.jsecurity.crypto.hash.Hash;
  * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").
  *
  * <p>We should also note here that all of JSecurity's Hash implementations (for example,
- * {@link org.jsecurity.crypto.hash.Md5Hash Md5Hash}, {@link org.jsecurity.crypto.hash.ShaHash ShaHash}, etc)
+ * {@link org.jsecurity.crypto.hash.Md5Hash Md5Hash}, {@link org.jsecurity.crypto.hash.Sha1Hash Sha1Hash}, etc)
  * support salting and multiple hash iterations via overloaded constructors.</p>
  *
  * <h4>Salting</h4>
@@ -63,11 +63,12 @@ import org.jsecurity.crypto.hash.Hash;
  * <p>Salting of the authentication token's credentials hash is disabled by default, but you may enable it by setting
  * {@link #setHashSalted hashSalted} to
  * <tt>true</tt>.  If you do enable it, the value used to salt the hash will be
- * obtained from {@link #getSalt(AuthenticationToken) getSalt(authenticationToken}.
+ * obtained from {@link #getSalt(AuthenticationToken) getSalt(authenticationToken)}.
  *
  * <p>The default <tt>getSalt</tt> implementation merely returns
- * <code>token.getPrincipal()</code>, effectively using the user's identity as the salt, a most common technique.  If
- * you wish to provide the authentication token's salt another way, you may override this <tt>getSalt</tt> method.
+ * <code>token.getPrincipal()</code>, effectively using the user's identity as the salt, a most common
+ * technique.  If you wish to provide the authentication token's salt another way, you may override this
+ * <tt>getSalt</tt> method.
  *
  * <h4>Multiple Hash Iterations</h4>
  *
@@ -75,7 +76,7 @@ import org.jsecurity.crypto.hash.Hash;
  * set this class's {@link #setHashIterations(int) hashIterations} property.</p>
  *
  * @see org.jsecurity.crypto.hash.Md5Hash
- * @see org.jsecurity.crypto.hash.ShaHash
+ * @see org.jsecurity.crypto.hash.Sha1Hash
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -124,6 +125,8 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      *
      * <p>If enabled, the salt used will be obtained via the {@link #getSalt(AuthenticationToken) getSalt} method.
      *
+     * <p>The default value is <tt>false</tt>.
+     *
      * @return <tt>true</tt> if a submitted <tt>AuthenticationToken</tt>'s credentials should be salted when hashing,
      * <tt>false</tt> if it should not be salted.
      */
@@ -133,8 +136,10 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
 
     /**
      * Sets whether or not to salt a submitted <tt>AuthenticationToken</tt>'s credentials when hashing.
-     * 
+     *
      * <p>If enabled, the salt used will be obtained via the {@link #getSalt(AuthenticationToken) getSalt} method.
+     *
+     * <p>The default value is <tt>false</tt>.
      *
      * @param hashSalted whether or not to salt a submitted <tt>AuthenticationToken</tt>'s credentials when hashing.
      */
@@ -188,8 +193,10 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
     }
 
     /**
-     * As this is a HashedCredentialMatcher, this method overrides the parent by returning a hashed value
-     * of the submitted token's credentials.  Based on this class's configuration, the return value may be salted and/or
+     * As this is a HashedCredentialMatcher, this method overrides the parent method by returning a hashed value
+     * of the submitted token's credentials.
+     *
+     * <p>Based on this class's configuration, the return value may be salted and/or
      * hashed multiple times (see the class-level JavaDoc for more information on salting and
      * multiple hash iterations).
      *
@@ -197,8 +204,9 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * @return the hashed value of the authentication token's credentials.
      */
     protected Object getCredentials(AuthenticationToken token) {
+        Object credentials = token.getCredentials();
         Object salt = isHashSalted() ? getSalt( token ) : null;
-        return getProvidedCredentialsHash(token.getCredentials(), salt, getHashIterations() );
+        return hashProvidedCredentials(credentials, salt, getHashIterations() );
     }
 
     /**
@@ -212,7 +220,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <ul>
      * <li>If <code>account.getCredentials()</code> is a byte array, just set that byte array directly on
      * the <tt>Hash</tt> implementation and return it.</li>
-     * <li>If <code>account.getCredentials()</code> is <em>not</em> a byte array, convert it to a byte array via the
+     * <li>If <code>account.getCredentials()</code> is a String or char[], convert it to a byte array via the
      * {@link #toBytes toBytes} method, and then check for encoding:
      * <ol><li>If {@link #storedCredentialsHexEncoded storedCredentialsHexEncoded}, Hex decode that byte array, otherwise
      *         Base64 decode the byte array</li>
@@ -226,14 +234,10 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
     protected Object getCredentials(Account account) {
         Object credentials = account.getCredentials();
 
-        //assume stored credential is already hashed:
-        AbstractHash hash = newHashInstance();
-
-        //apply stored credentials to this Hash instance
         byte[] storedBytes = toBytes(credentials);
 
-        if (!(credentials instanceof byte[])) {
-            //method argument came in as a char[] or String, so
+        if ( credentials instanceof String || credentials instanceof char[] ) {
+            //account.credentials were a char[] or String, so
             //we need to do text decoding first:
             if (isStoredCredentialsHexEncoded()) {
                 storedBytes = Hex.decode( storedBytes );
@@ -241,6 +245,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
                 storedBytes = Base64.decodeBase64( storedBytes );
             }
         }
+        AbstractHash hash = newHashInstance();
         hash.setBytes( storedBytes );
         return hash;
     }
@@ -249,13 +254,13 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * Hashes the provided credentials a total of <tt>hashIterations</tt> times, using the given salt.  The hash
      * implementation/algorithm used is left to subclasses.
      *
-     * @param credential the submitted authentication token's credentials to hash
+     * @param credentials the submitted authentication token's credentials to hash
      * @param salt the value to salt the hash, or <tt>null</tt> if a salt will not be used.
      * @param hashIterations the number of times to hash the credentials.  At least one hash will always occur though,
      * even if this argument is 0 or negative.
      * @return the hashed value of the provided credentials, according to the specified salt and hash iterations.
      */
-    protected abstract Hash getProvidedCredentialsHash(Object credential, Object salt, int hashIterations );
+    protected abstract Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations );
 
     /**
      * Returns a new, <em>uninitialized</em> instance, without its byte array set.  Used as a utility method in the

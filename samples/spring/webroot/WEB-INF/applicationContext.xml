@@ -28,7 +28,7 @@
     <bean id="jdbcRealm" class="org.jsecurity.realm.jdbc.JdbcRealm">
         <property name="dataSource" ref="dataSource"/>
         <property name="credentialsMatcher">
-            <bean class="org.jsecurity.authc.credential.ShaCredentialsMatcher"/>
+            <bean class="org.jsecurity.authc.credential.Sha1CredentialsMatcher"/>
         </property>
     </bean>
 
