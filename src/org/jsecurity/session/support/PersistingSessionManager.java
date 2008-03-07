@@ -1,0 +1,494 @@
+/*
+ * Copyright (C) 2005-2007 Les Hazlewood
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the
+ *
+ * Free Software Foundation, Inc.
+ * 59 Temple Place, Suite 330
+ * Boston, MA 02111-1307
+ * USA
+ *
+ * Or, you may view it online at
+ * http://www.opensource.org/licenses/lgpl-license.php
+ */
+package org.jsecurity.session.support;
+
+import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheProviderAware;
+import org.jsecurity.session.ExpiredSessionException;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.UnknownSessionException;
+import org.jsecurity.session.support.eis.MemorySessionDAO;
+import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.util.Destroyable;
+import org.jsecurity.util.LifecycleUtils;
+
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.text.DateFormat;
+import java.util.Date;
+
+/**
+ * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
+ *
+ * @author Les Hazlewood
+ * @author Jeremy Haile
+ * @since 0.1
+ */
+public class PersistingSessionManager extends BasicSessionManager implements CacheProviderAware, Destroyable {
+
+    protected static final long MILLIS_PER_SECOND = 1000;
+    protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
+
+    /**
+     * Default global session timeout value (30 * 60 * 1000 milliseconds = 30 minutes).
+     */
+    public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
+
+    protected boolean validateHost = false;
+    protected SessionDAO sessionDAO = null;
+    protected boolean touchSessionOnRead = false;
+
+    protected CacheProvider cacheProvider = null;
+
+    protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
+
+    public PersistingSessionManager() {
+    }
+
+    public PersistingSessionManager(CacheProvider cacheProvider) {
+        this();
+        setCacheProvider(cacheProvider);
+        init();
+    }
+
+    public CacheProvider getCacheProvider() {
+        return cacheProvider;
+    }
+
+    public void setCacheProvider(CacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
+    }
+
+    /**
+     * Returns <tt>true</tt> if this SessionManager will validate the originating host address
+     * before creating a session, false otherwise.
+     *
+     * <p>If <tt>true</tt>, the originating host address will be validated via the
+     * {@link #validate(InetAddress)} method.  Subclasses should override that method for
+     * application-specific validation.
+     *
+     * <p>The default value is <tt>false</tt>, to account for localhost and proxy environments.
+     *
+     * @return true if the originating host address will be validated prior to creating a session,
+     *         false otherwise.
+     * @see #validate(InetAddress)
+     */
+    public boolean isValidateHost() {
+        return validateHost;
+    }
+
+    /**
+     * If set to <tt>true</tt> the <tt>originatingHost</tt> address will be validated prior to
+     * starting a new Session.  A value of <tt>false</tt> disables host validation.
+     * <p>Defaults to <tt>true</tt>.
+     *
+     * @param validateHost whether or not to validate the originatingHost address prior to
+     *                     session creation.
+     * @see #validate
+     * @see #createSession
+     */
+    public void setValidateHost(boolean validateHost) {
+        this.validateHost = validateHost;
+    }
+
+    /**
+     * Returns whether or not a read only operation on a persisted session (e.g.
+     * {@link org.jsecurity.session.Session#getHostAddress() getHostAddress},
+     * {@link Session#getAttribute(Object) getAttribute(Object)}, etc. would '{@link Session#touch() touch}' the session
+     * object (i.e. usually updating the last access time stamp at a minimum).  Note that a write operation
+     * ({@link Session#setAttribute(Object, Object)}, etc) will <em>always</em> touch a session, regardless of this
+     * setting.
+     *
+     * <p>The default is <tt>false</tt> such that read-only operations do _not_ 'touch' the Session.
+     *
+     * <p>It is important to understand what this means for your application, especially as it pertains to
+     * session time/orphan validation: typically orphaned sessions are reaped based on a
+     * <tt>Session</tt>'s {@link org.jsecurity.session.Session#getLastAccessTime() lastAccessTime}, so if a session
+     * is only 'touched' on a write operation (default), then a session must be altered on a regular basis in order for
+     * it to not be reaped.  This is ok in 95% of applications, since Session objects are regularly modified.
+     *
+     * <p>In applications that don't modify the attributes internally very often, the application is of course always
+     * free to explicitcly call the {@link Session#touch() touch} method to avoid session timeout.
+     *
+     * @return whether or not a read only operation on a persisted session would 'touch' it, thereby likely changing
+     *         its internal state and causing an eis update.  Default is <tt>false</tt>.
+     */
+    public boolean isTouchSessionOnRead() {
+        return touchSessionOnRead;
+    }
+
+    public void setTouchSessionOnRead(boolean touchSessionOnRead) {
+        this.touchSessionOnRead = touchSessionOnRead;
+    }
+
+    public SessionDAO getSessionDAO() {
+        return sessionDAO;
+    }
+
+    public void setSessionDAO(SessionDAO sessionDAO) {
+        this.sessionDAO = sessionDAO;
+    }
+
+    public void init() {
+        ensureSessionDAO();
+        afterSessionDAOSet();
+    }
+
+    protected void afterSessionDAOSet() {}
+
+
+    /**
+     * Returns the time in milliseconds that any session may remain idle before expiring.  This
+     * value is just a global default for all sessions and may be overridden by subclasses on a
+     * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
+     * so desired.
+     *
+     * <ul>
+     * <li>A negative return value means sessions never expire.</li>
+     * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
+     * </ul>
+     *
+     * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
+     * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
+     *
+     * @return the time in milliseconds that any session may remain idle before expiring.
+     */
+    public long getGlobalSessionTimeout() {
+        return globalSessionTimeout;
+    }
+
+    /**
+     * Sets the time in milliseconds that any session may remain idle before expiring.  This
+     * value is just a global default for all sessions.  Subclasses may override the
+     * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
+     *
+     * @param globalSessionTimeout the time in milliseconds any session may remain idle before
+     *                             expiring.
+     */
+    public void setGlobalSessionTimeout(int globalSessionTimeout) {
+        this.globalSessionTimeout = globalSessionTimeout;
+    }
+
+    protected void ensureSessionDAO() {
+        SessionDAO sessionDAO = getSessionDAO();
+        if (sessionDAO == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No sessionDAO set.  Attempting to create default instance.");
+            }
+            sessionDAO = createSessionDAO();
+            setSessionDAO(sessionDAO);
+        }
+    }
+
+    /**
+     * Creates a default <tt>SessionDAO</tt> during {@link #init initialization} as a fail-safe mechanism if one has
+     * not already been explicitly set via {@link #setSessionDAO}, relying upon the configured
+     * {@link #setCacheProvider cacheProvider} to determine caching strategies.
+     *
+     * <p><b>N.B.</b> This implementation constructs a {@link MemorySessionDAO} instance, relying on a configured
+     * {@link #setCacheProvider cacheProvider} to provide production-quality cache management.  Please ensure that
+     * the <tt>CacheProvider</tt> property is configured for production environments, since the
+     * <tt>MemorySessionDAO</tt> implementation defaults to a
+     * {@link org.jsecurity.cache.HashtableCacheProvider HashtableCacheProvider}
+     * (the <tt>HashtableCacheProvider</tt> is NOT RECOMMENDED for production environments).
+     *
+     * @return a lazily created SessionDAO instance that this SessionManager will use for all Session EIS operations.
+     */
+    protected SessionDAO createSessionDAO() {
+
+        if (log.isDebugEnabled()) {
+            log.debug("No sessionDAO set.  Creating default instance...");
+        }
+
+        MemorySessionDAO dao = new MemorySessionDAO();
+
+        CacheProvider cacheProvider = getCacheProvider();
+        if (cacheProvider != null) {
+            dao.setCacheProvider(cacheProvider);
+        }
+
+        dao.init();
+
+        return dao;
+    }
+
+    protected void destroySessionDAO() {
+        LifecycleUtils.destroy(getSessionDAO());
+        setSessionDAO(null);
+    }
+
+    public void destroy() {
+        beforeSessionDAODestroyed();
+        destroySessionDAO();
+    }
+
+    protected void beforeSessionDAODestroyed(){}
+
+    protected Session newSessionInstance( InetAddress originatingHost ) {
+        SimpleSession ss = new SimpleSession();
+        if ( originatingHost != null ) {
+            ss.setHostAddress(originatingHost);
+        }
+        ss.setTimeout(getGlobalSessionTimeout());
+        return ss;
+    }
+
+    protected Session getSession( Serializable sessionId ) {
+        return retrieveAndValidateSession(sessionId);
+    }
+
+    protected Session retrieveSession( Serializable sessionId ) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Retrieving session with id [" + sessionId + "] from the EIS" );
+        }
+        Session s = sessionDAO.readSession( sessionId );
+        if ( s == null ) {
+            String msg = "There is no session in the EIS database with session id [" +
+                         sessionId + "]";
+            throw new UnknownSessionException( msg );
+        }
+        return s;
+    }
+
+    protected Session retrieveAndValidateSession( Serializable sessionId ) {
+        Session s = retrieveSession( sessionId );
+        validate( s );
+        return s;
+    }
+
+    protected Session createSession( InetAddress originatingHost ) {
+
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Creating session for originating host [" + originatingHost + "]" );
+        }
+
+        if ( isValidateHost() ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Host validation enabled.  Validating originating host ["
+                           + originatingHost + "]" );
+            }
+            validate( originatingHost );
+        }
+
+        Session s = newSessionInstance(originatingHost);
+
+        //save initialized Session to EIS:
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Creating new EIS record for new session instance [" + s + "]" );
+        }
+        sessionDAO.create( s );
+
+        return s;
+    }
+
+    /**
+     * Ensures the originatingHost is a value allowed by the system for session interaction.
+     *
+     * <p>The default implementation just ensures the value is not null and throws an
+     * {@link IllegalArgumentException} if this is the case.
+     *
+     * <p>Subclasses may override this
+     * method to do any number of checks, such as ensuring the originatingHost is in a valid
+     * range, part of a particular subnet, or configured in the database as a valid IP.
+     *
+     * @param originatingHost the originating host address associated with the session
+     * creation attempt.
+     * @throws IllegalArgumentException if the originatingHost argument is <tt>null</tt>
+     */
+    protected void validate( InetAddress originatingHost ) {
+        if ( originatingHost == null ) {
+            String msg = "originatingHost argument is null.  A valid non-null originating " +
+                         "host address must be specified when initiating a session";
+            throw new IllegalArgumentException( msg );
+        }
+    }
+
+    protected void validate( Session session ) throws InvalidSessionException {
+
+        if ( isExpired( session ) ) {
+            //update EIS entry if it hasn't been updated already:
+            if ( !session.isExpired() ) {
+                expire( session );
+            }
+
+            //throw an exception explaining details of why it expired:
+            Date lastAccessTime = session.getLastAccessTime();
+            long timeout = getTimeout( session );
+
+            Serializable sessionId = session.getSessionId();
+
+            DateFormat df = DateFormat.getInstance();
+            String msg = "Session with id [" + sessionId + "] has expired. " +
+                         "Last access time: " + df.format( lastAccessTime ) +
+                         ".  Current time: " + df.format( new Date() ) +
+                         ".  Session timeout is set to " + timeout/MILLIS_PER_SECOND + " seconds (" +
+                         timeout / MILLIS_PER_MINUTE + " minutes)";
+            if ( log.isTraceEnabled() ) {
+                log.trace( msg );
+            }
+            throw new ExpiredSessionException( msg, sessionId );
+        }
+
+        //check for stopped (but not expired):
+        if ( session.getStopTimestamp() != null ) {
+            //destroy timestamp is set, so the session is considered stopped:
+            String msg = "Session with id [" + session.getSessionId() + "] has been " +
+                         "explicitly stopped.  No further interaction under this session is " +
+                         "allowed.";
+            throw new InvalidSessionException( msg, session.getSessionId() );
+        }
+    }
+
+    protected void onStop(Session session) {
+        if (log.isTraceEnabled()) {
+            log.trace("Updating last access and destroy time of session with id [" + session.getSessionId() + "]");
+        }
+        // when properly stopping a session, it makes sense (for most systems) that the stop time and last access time
+        // are the same:
+        SimpleSession simpleSession = (SimpleSession) session;
+        Date stopTimestamp = simpleSession.getStopTimestamp();
+        if (stopTimestamp == null) {
+            stopTimestamp = new Date();
+            simpleSession.setStopTimestamp(stopTimestamp);
+        }
+        simpleSession.setLastAccessTime(stopTimestamp);
+        sessionDAO.update(simpleSession);
+    }
+
+    protected void expire( Session session ) {
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Expiring session with id [" + session.getSessionId() + "]" );
+        }
+        sendExpireEvent(session);
+        session.stop();
+        onExpire( session );
+    }
+
+    protected void onExpire(Session session) {
+        if (log.isTraceEnabled()) {
+            log.trace("Updating expiration status of session with id [" +
+                    session.getSessionId() + "]");
+        }
+        SimpleSession ss = (SimpleSession) session;
+        ss.setExpired(true);
+        sessionDAO.update(ss);
+    }
+
+
+    /**
+     * Subclass template hook in case per-session timeout is not based on
+     * {@link org.jsecurity.session.Session#getTimeout()}.
+     *
+     * <p>This implementation merely returns {@link org.jsecurity.session.Session#getTimeout()}</p>
+     *
+     * @param session the session for which to determine session timeout.
+     * @return the time in milliseconds the specified session may remain idle before expiring.
+     */
+    protected long getTimeout( Session session ) {
+        return session.getTimeout();
+    }
+
+    /**
+     * Determines if the specified session is expired.
+     * @param session the persistent pojo Session implementation to check for expiration.
+     * @return true if the specified session has expired, false otherwise.
+     */
+    protected boolean isExpired( Session session ) {
+
+        //If the EIS data has already been set as expired, return true:
+
+        //WARNING:  This will cause an infinite loop if the session argument is a proxy back
+        //to this instance (e.g. as would be the case if passing in a DelegatingSession instace.
+        //To be safe, make sure the argument is representative of EIS data and
+        //the isExpired method returns a boolean class attribute and does not call another object.
+        if ( session.isExpired() ) {
+            return true;
+        }
+
+        if ( isExpirationEnabled( session ) ) {
+
+            long timeout = getTimeout( session );
+
+            if ( timeout >= 0l ) {
+
+                Date lastAccessTime = session.getLastAccessTime();
+
+                if ( lastAccessTime == null ) {
+                    String msg = "session.lastAccessTime for session with id [" +
+                                 session.getSessionId() + "] is null.  This value must be set at " +
+                                 "least once.  Please check the " +
+                                 session.getClass().getName() + " implementation and ensure " +
+                                 "this value will be set (perhaps in the constructor?)";
+                    throw new IllegalStateException( msg );
+                }
+
+                // Calculate at what time a session would have been last accessed
+                // for it to be expired at this point.  In other words, subtract
+                // from the current time the amount of time that a session can
+                // be inactive before expiring.  If the session was last accessed
+                // before this time, it is expired.
+                long expireTimeMillis = System.currentTimeMillis() - timeout;
+                Date expireTime = new Date( expireTimeMillis );
+                return lastAccessTime.before( expireTime );
+            } else {
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "No timeout for session with id [" + session.getSessionId() +
+                              "].  Session is not considered expired." );
+                }
+            }
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Time-out is disabled for Session with id [" + session.getSessionId() +
+                          "].  Session is not expired." );
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether or not a particular session can expire.
+     *
+     * <p>Default implementation always returns <tt>true</tt>.
+     *
+     * <p>Overriding this method can be particularly useful in some circumstances.  For example,
+     * daemon users (background process users) can be configured in a system like any other user.
+     * It is much easier to define a daemon account and use the same session and security framework
+     * that supports normal human users, rather than program special-case logic.  Daemon accounts
+     * are often expected to interact with the system at any time, regardless of (in)activity.
+     * This method provides a means to disable session expiration in such cases.
+     *
+     * <p>Most overriding implementations usually infer a user or user id from the specified
+     * <tt>Session</tt> and determine per-user timeout settings in a specific manner.
+     *
+     * @param session the session for which to determine if timeout expiration is enabled.
+     * @return true if expiration is enabled for the specified session, false otherwise.
+     */
+    protected boolean isExpirationEnabled( Session session ) {
+        return getTimeout( session ) >= 0l;
+    }
+
+}

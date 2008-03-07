@@ -40,7 +40,7 @@ public abstract class CodecSupport {
     public static final String PREFERRED_ENCODING = "UTF-8";
 
     public static byte[] toBytes( char[] chars ) {
-        return toBytes( new String( chars ) );
+        return toBytes( new String( chars ), PREFERRED_ENCODING );
     }
 
     public static byte[] toBytes( char[] chars, String encoding ) {
@@ -155,20 +155,13 @@ public abstract class CodecSupport {
     }
 
     /**
-     * Default implementation throws a CodecException immediately since it can't infer how to convert the Object
-     * to a String.  This method must be overridden by subclasses if anything other than the three default
-     * types (listed in the {@link #toBytes(Object) toBytes(Object)} JavaDoc) are to be converted to a byte array.
+     * Default implementation merely returns <code>objectArgument.toString()</code>.  Subclasses can override this
+     * method for different mechanisms of converting an object to a String.
      *
      * @param o the Object to convert to a byte array.
      * @return a String representation of the Object argument.
      */
     protected String objectToString( Object o ) {
-        String msg = "The " + getClass().getName() + " implementation only supports conversion to a String " +
-            "when the source is of type byte[], char[], or String.  The instance provided as a method argument " +
-            "is of type [" + o.getClass().getName() + "].   If you would like to convert " +
-            "this argument type to a String, you can 1) convert the argument to a byte[], char[] or String yourself " +
-            "and use that as the method argument or 2) subclass " + getClass().getName() + " and override the " +
-            "objectToString(Object o) method.";
-        throw new CodecException( msg );
+        return o.toString();
     }
 }
