@@ -217,16 +217,14 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      *
      * <p>This implementation's reconstruction effort functions as follows:
      *
-     * <ul>
-     * <li>If <code>account.getCredentials()</code> is a byte array, just set that byte array directly on
-     * the <tt>Hash</tt> implementation and return it.</li>
-     * <li>If <code>account.getCredentials()</code> is a String or char[], convert it to a byte array via the
-     * {@link #toBytes toBytes} method, and then check for encoding:
-     * <ol><li>If {@link #storedCredentialsHexEncoded storedCredentialsHexEncoded}, Hex decode that byte array, otherwise
+     * <ol>
+     * <li>Convert <code>account.getCredentials()</code> to a byte array via the {@link #toBytes toBytes} method.
+     * <li>If <code>account.getCredentials()</code> was originally a String or char[] before <tt>toBytes</tt> was
+     * called, check for encoding:
+     * <li>If {@link #storedCredentialsHexEncoded storedCredentialsHexEncoded}, Hex decode that byte array, otherwise
      *         Base64 decode the byte array</li>
-     *     <li>Set the decoded bytes directly on the <tt>Hash</tt> implementation and return it.</li></ol>
-     * </li>
-     * </ul>
+     * <li>Set the byte[] array directly on the <tt>Hash</tt> implementation and return it.</li>
+     * </ol>
      *
      * @param account the Account from which to retrive the credentials which assumed to be in already-hashed form.
      * @return a {@link Hash Hash} instance representing the given Account's stored credentials.

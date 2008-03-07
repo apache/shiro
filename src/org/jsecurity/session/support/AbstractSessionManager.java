@@ -39,6 +39,9 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
+ *
+ * @deprecated removing in favor of EventCapabableSessionManager hierarchy.
+ * 
  * @since 0.1
  * @author Les Hazlewood
  */

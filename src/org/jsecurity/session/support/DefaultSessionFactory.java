@@ -59,6 +59,8 @@ import java.util.Collection;
  * long-term in the business/server tier (e.g. in an <tt>HttpSession</tt> or in some class {@link java.util.Map Map}
  * attribute), since they can just be recreated upon each request to the system or method chain invocation.
  *
+ * @deprecated removing in favor of EventCapabableSessionManager hierarchy.
+ *
  * @author Les Hazlewood
  * @since 0.1
  */

@@ -34,8 +34,8 @@ import java.util.List;
 /**
  * A <tt>ModularRealmAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
  * that delgates account lookups to a pluggable (modular) collection of
- * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity
- * for authentication.  For all intents and purposes, a JSecurity Realm can be thought of a PAM 'module'.
+ * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity.
+ * In addition to authorization duties, a JSecurity Realm can also be thought of a PAM 'module'.
  *
  * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
  * <tt>Realm</tt>s as you see fit.  Common realms are those based on accessing
