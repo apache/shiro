@@ -25,62 +25,75 @@
 package org.jsecurity.authz;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
- * A simple representation of a security role that has a name and a set of permissions.  This object can be
- * used internally by Realms to maintain cached authorization data.
+ * A simple representation of a security role that has a name and a collection of permissions.  This object can be
+ * used internally by Realms to maintain authorization state.
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
 public class SimpleRole implements Serializable {
 
     protected String name = null;
-    protected Collection<Permission> permissions;
+    protected Set<Permission> permissions;
 
-    public SimpleRole(){}
-
-    public SimpleRole( String name ) {
-        setName( name );
+    public SimpleRole() {
     }
 
-    public SimpleRole( String name, Collection<Permission> permissions ) {
-        setName( name );
-        setPermissions( permissions );
+    public SimpleRole(String name) {
+        setName(name);
+    }
+
+    public SimpleRole(String name, Set<Permission> permissions) {
+        setName(name);
+        setPermissions(permissions);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName( String name ) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Collection<Permission> getPermissions() {
+    public Set<Permission> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions( Collection<Permission> permissions ) {
+    public void setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
     }
 
-    public void add( Permission permission ) {
-        Collection<Permission> permissions = getPermissions();
-        if ( permissions == null ) {
-            permissions = new ArrayList<Permission>();
-            setPermissions( permissions );
+    public void add(Permission permission) {
+        Set<Permission> permissions = getPermissions();
+        if (permissions == null) {
+            permissions = new LinkedHashSet<Permission>();
+            setPermissions(permissions);
         }
-        permissions.add( permission );
+        permissions.add(permission);
     }
 
-    public boolean isPermitted( Permission p ) {
+    public void addAll(Collection<Permission> perms) {
+        if (perms != null && !perms.isEmpty()) {
+            Set<Permission> permissions = getPermissions();
+            if (permissions == null) {
+                permissions = new LinkedHashSet<Permission>(perms.size());
+                setPermissions(permissions);
+            }
+            permissions.addAll(perms);
+        }
+    }
+
+    public boolean isPermitted(Permission p) {
         Collection<Permission> perms = getPermissions();
-        if ( perms != null && !perms.isEmpty() ) {
-            for( Permission perm : perms ) {
-                if ( perm.implies( p ) ) {
+        if (perms != null && !perms.isEmpty()) {
+            for (Permission perm : perms) {
+                if (perm.implies(p)) {
                     return true;
                 }
             }
@@ -89,17 +102,17 @@ public class SimpleRole implements Serializable {
     }
 
     public int hashCode() {
-        return ( getName() != null ? getName().hashCode() : 0 );
+        return (getName() != null ? getName().hashCode() : 0);
     }
 
-    public boolean equals( Object o ) {
-        if ( o == this ) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if ( o instanceof SimpleRole ) {
-            SimpleRole sr = (SimpleRole)o;
+        if (o instanceof SimpleRole) {
+            SimpleRole sr = (SimpleRole) o;
             //only check name, since role names should be unique across an entire application:
-            return ( getName() != null ? getName().equals( sr.getName() ) : sr.getName() == null );
+            return (getName() != null ? getName().equals(sr.getName()) : sr.getName() == null);
         }
         return false;
     }

@@ -81,7 +81,7 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     |             C O N S T A N T S             |
     ============================================*/
     private static final String USER_ROLENAME_DELIMITER = ",";
-    private static final String PERMISSION_DELIMITER = ";";
+    private static final String PERMISSION_DELIMITER = ",";
     
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -193,19 +193,16 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
      *
      * <p>Each Map.Entry must be a rolename (key) to permission(s) (value) mapping like the following:</p>
      *
-     * <p><code><em>rolename</em> : <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
+     * <p><code><em>rolename</em> : <em>permissionDefinition1</em>,<em>permissionDefinition2</em>,...</code></p>
      *
-     * <p>Each Map.Entry value must specify one or more <em>permissionDefinition</em>s.  A <em>permissionDefinition</em>
-     * is defined as</p>
+     * <p>Each Map.Entry value must specify one or more comma-delimited <em>permissionDefinition</em>s.
      *
-     * <p><code><em>requiredPermissionClassName</em>,<em>requiredPermissionName</em>,<em>optionalActionsString</em></code></p>
+     * <p>A <em>permissionDefinition</em> is an arbitrary String, but must people will want to use
+     * Strings that conform to the {@link org.jsecurity.authz.permission.WildcardPermission WildcardPermission}
+     * string format for ease of use and flexibility.</p>
      *
-     *
-     * <p><em>optionalActionsString</em> is optional as implied, but if it exists, it <em>is</em> allowed to contain
-     * commas as well.
-     *
-     * <p>But note that because a single <em>permissionDefinition</em> is internally delimited via commas (,), multiple
-     * <em>permissionDefinition</em>s for a single role must be delimited via semi-colons (;)
+     * <p>Note that if an individual <em>permissionDefnition</em> needs to be internally comma-delimited, you will need
+     * to surround that definition with double quotes (&quot;) to avoid parsing errors.
      *
      * <p><b>PLEASE NOTE</b> that if you have roles that don't require permission associations, don't include them in this
      * list - just defining the role name in a {@link #setUserDefinitions(java.util.Map) user definition} is enough to create the
@@ -309,7 +306,7 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
                 add( role );
             }
 
-            List<Permission> permissions = PermissionUtils.resolveDelimitedPermissions( value, getPermissionResolver(), PERMISSION_DELIMITER );
+            Set<Permission> permissions = PermissionUtils.resolveDelimitedPermissions( value, getPermissionResolver(), PERMISSION_DELIMITER );
             role.setPermissions( permissions );
         }
     }

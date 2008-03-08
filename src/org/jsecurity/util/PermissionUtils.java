@@ -29,10 +29,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.permission.PermissionResolver;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @since 0.1
@@ -41,18 +40,60 @@ import java.util.List;
  */
 public class PermissionUtils {
 
+    private static final String DOUBLE_QUOTE = "\"";
+
     protected static transient final Log log = LogFactory.getLog( PermissionUtils.class );
 
-    public static List<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
-        List<Permission> permissionList = new ArrayList<Permission>(permissionStrings.size());
+    public static Set<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
+        Set<Permission> permissions = new LinkedHashSet<Permission>(permissionStrings.size());
         for( String permissionString : permissionStrings ) {
-            permissionList.add( permissionResolver.resolvePermission( permissionString ) );
+            permissions.add( permissionResolver.resolvePermission( permissionString ) );
         }
-        return permissionList;
+        return permissions;
     }
 
-    public static List<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver, String delimiter) {
-        String[] permissionStrings = permissionsString.split( delimiter );
-        return resolvePermissions( Arrays.asList( permissionStrings ), permissionResolver );
+    public static Set<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver, String delimiter) {
+
+        String[] tokens = permissionsString.split( delimiter );
+
+        //check for quoted strings:
+        Set<String> permDefinitions = new LinkedHashSet<String>();
+
+        boolean quoted = false;
+        StringBuffer permDefinition = new StringBuffer();
+
+        for( String token : tokens ) {
+
+            if ( token.startsWith(DOUBLE_QUOTE)) {
+                token = token.substring(1);
+                if (token.endsWith(DOUBLE_QUOTE)) {
+                    token = token.substring(0,token.length()-1);
+                    permDefinition = new StringBuffer(token);
+                } else {
+                    quoted = true;
+                    permDefinition = new StringBuffer(token).append(delimiter);
+                }
+            } else {
+                if ( token.endsWith(DOUBLE_QUOTE) ) {
+                    token = token.substring(0,token.length()-1);
+                    permDefinition.append(token);
+                    quoted = false;
+                } else {
+                    permDefinition.append(token);
+
+                }
+            }
+
+            if ( !quoted && permDefinition.length() > 0 ) {
+                permDefinitions.add( permDefinition.toString() );
+            }
+        }
+
+
+        return resolvePermissions( permDefinitions, permissionResolver );
+    }
+
+    public static void main( String[] args ) {
+
     }
 }
