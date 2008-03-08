@@ -26,8 +26,9 @@ package org.jsecurity.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.event.*;
-import org.jsecurity.util.Initializable;
+import org.jsecurity.authc.event.AuthenticationEvent;
+import org.jsecurity.authc.event.AuthenticationEventListener;
+import org.jsecurity.authc.event.mgt.*;
 
 import java.util.Collection;
 
@@ -46,23 +47,19 @@ import java.util.Collection;
  * subclass's {@link #doAuthenticate} implementation throwing an exception or not, respectively.  That is, a failure
  * event will be created if <tt>doAuthenticate</tt> throws an exception a success event will be created and
  * sent if it does not.  The actual events
- * themselves are constructed via an {@link AuthenticationEventFactory} and sent to interested
+ * themselves are constructed and sent via an {@link AuthenticationEventManager} to interested
  * {@link AuthenticationEventListener}s.  If no <tt>AuthenticationEventListener</tt>s are configured, no events will
  * be created or sent.
  *
- * <p>Both the event factory and the event listeners may be set as properties of this class, but a default event
- * factory will be provided.
- *
- * <p>After all class attributes have been set, the {@link #init()}
- * method must be called, either by a framework or explicitly in code, before the AbstractAuthenticator
- * instance can be used.
+ * <p>Both the event manager and the event listeners may be set as properties of this class, but a default event
+ * manager will be provided.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class AbstractAuthenticator
-        implements Authenticator, LogoutAware, AuthenticationEventListenerRegistrar, Initializable {
+        implements Authenticator, LogoutAware, AuthenticationEventListenerRegistrar {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -75,12 +72,7 @@ public abstract class AbstractAuthenticator
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private SimpleAuthenticationEventSender authcEventSender = new SimpleAuthenticationEventSender();
-
-    /**
-     * Factory used to create authentication events for publishing.
-     */
-    private AuthenticationEventFactory authenticationEventFactory;
+    private AuthenticationEventManager authcEventManager = new DefaultAuthenticationEventManager();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -91,72 +83,36 @@ public abstract class AbstractAuthenticator
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    /**
-     * Returns the <tt>AuthenticationEventFactory</tt> this <tt>Authenticator</tt> will use to create
-     * <tt>AuthenticationEvents</tt> during successful or failed authentication attempts.
-     *
-     * @return the <tt>AuthenticationEventFactory</tt> this <tt>Authenticator</tt> will use to create
-     *         <tt>AuthenticationEvents</tt> during successful or failed authentication attempts.
-     */
-    public AuthenticationEventFactory getAuthenticationEventFactory() {
-        return authenticationEventFactory;
+
+    public AuthenticationEventManager getAuthenticationEventManager() {
+        return authcEventManager;
     }
 
-    /**
-     * Sets the <tt>AuthenticationEventFactory</tt> this <tt>Authenticator</tt> will use to create
-     * <tt>AuthenticationEvents</tt> during successful or failed authentication attempts.
-     *
-     * @param factory the <tt>AuthenticationEventFactory</tt> this <tt>Authenticator</tt> will use to create
-     *                <tt>AuthenticationEvents</tt> during successful or failed authentication attempts.
-     */
-    public void setAuthenticationEventFactory(AuthenticationEventFactory factory) {
-        this.authenticationEventFactory = factory;
+    public void setAuthenticationEventManager(AuthenticationEventManager authcEventManager) {
+        this.authcEventManager = authcEventManager;
     }
 
-    public Collection<AuthenticationEventListener> getAuthenticationEventListeners() {
-        return authcEventSender.getAuthenticationEventListeners();
-    }
-
-    public void setAuthenticationEventListeners(Collection<AuthenticationEventListener> authenticationEventListeners) {
-        this.authcEventSender = new SimpleAuthenticationEventSender(authenticationEventListeners);
+    public void setAuthenticationEventListeners(Collection<AuthenticationEventListener> listeners) {
+        this.authcEventManager.setAuthenticationEventListeners(listeners);
     }
 
     public void add(AuthenticationEventListener listener) {
-        this.authcEventSender.add(listener);
+        this.authcEventManager.add(listener);
     }
 
     public boolean remove(AuthenticationEventListener listener) {
-        return this.authcEventSender.remove(listener);
+        return this.authcEventManager.remove(listener);
     }
 
     public boolean isSendingEvents() {
-        return this.authcEventSender.isSending();
+        return this.authcEventManager.isSendingEvents();
     }
 
     /*-------------------------------------------
     |               M E T H O D S               |
     ============================================*/
     protected AuthenticationEventFactory createAuthenticationEventFactory() {
-        return new SimpleAuthenticationEventFactory();
-    }
-
-    protected void ensureAuthenticationEventFactory() {
-        AuthenticationEventFactory factory = getAuthenticationEventFactory();
-        if (factory == null) {
-            factory = createAuthenticationEventFactory();
-            setAuthenticationEventFactory(factory);
-        }
-    }
-
-    protected void afterAuthenticationEventFactorySet() {
-    }
-
-    /**
-     * Provided for subclass overriding.  Default implementation does nothing..
-     */
-    public void init() {
-        ensureAuthenticationEventFactory();
-        afterAuthenticationEventFactorySet();
+        return new DefaultAuthenticationEventFactory();
     }
 
     /**
@@ -171,8 +127,7 @@ public abstract class AbstractAuthenticator
      * @return an event that represents the failed attempt.
      */
     protected AuthenticationEvent createFailureEvent(AuthenticationToken token, AuthenticationException ae) {
-        AuthenticationEventFactory factory = getAuthenticationEventFactory();
-        return factory.createFailureEvent(token, ae);
+        return this.authcEventManager.createFailureEvent(token,ae);
     }
 
     /**
@@ -186,22 +141,20 @@ public abstract class AbstractAuthenticator
      * @return an event that represents the successful attempt.
      */
     protected AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account) {
-        AuthenticationEventFactory factory = getAuthenticationEventFactory();
-        return factory.createSuccessEvent(token, account);
+        return this.authcEventManager.createSuccessEvent(token,account);
     }
 
     /**
      * Creates an <tt>AuthenticationEvent</tt> in response to a Subject logging out, based on the specified
      * subjectIdentifier.
      *
-     * <p>The default implementation merely delegates creation to the internal {@link AuthenticationEventFactory}
+     * <p>The default implementation merely delegates creation to the internal {@link org.jsecurity.authc.event.mgt.AuthenticationEventFactory}
      *
      * @param subjectPrincipal the application-specific Subject/user identifier.
      * @return an event that indicates the corresponding Subject is logging out.
      */
     protected AuthenticationEvent createLogoutEvent(Object subjectPrincipal) {
-        AuthenticationEventFactory factory = getAuthenticationEventFactory();
-        return factory.createLogoutEvent(subjectPrincipal);
+        return this.authcEventManager.createLogoutEvent(subjectPrincipal);
     }
 
     /**
@@ -249,7 +202,7 @@ public abstract class AbstractAuthenticator
      */
     protected void send(AuthenticationEvent event) throws IllegalArgumentException {
         if (event != null && isSendingEvents()) {
-            this.authcEventSender.send(event);
+            this.authcEventManager.send(event);
         }
     }
 

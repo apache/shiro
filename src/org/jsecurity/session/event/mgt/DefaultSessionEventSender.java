@@ -42,7 +42,7 @@ import java.util.Collection;
  * @since 0.9
  * @author Les Hazlewood
  */
-public class DefaultSessionEventSender implements SessionEventSender, SessionEventListenerRegistrar {
+public class DefaultSessionEventSender implements SessionEventSender {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 

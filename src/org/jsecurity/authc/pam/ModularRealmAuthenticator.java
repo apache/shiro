@@ -26,6 +26,7 @@ package org.jsecurity.authc.pam;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.util.Initializable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,7 +71,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class ModularRealmAuthenticator extends AbstractAuthenticator {
+public class ModularRealmAuthenticator extends AbstractAuthenticator implements Initializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -116,7 +117,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     protected void afterModularAuthenticationStrategySet(){}
 
-    protected void afterAuthenticationEventFactorySet() {
+    public void init() {
         ensureModudularAuthenticationStrategy();
         afterModularAuthenticationStrategySet();
     }
