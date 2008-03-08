@@ -25,15 +25,11 @@
 package org.jsecurity.session.support;
 
 import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.CacheProviderAware;
-import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.support.eis.MemorySessionDAO;
 import org.jsecurity.session.support.eis.SessionDAO;
-import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.util.Destroyable;
-import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -45,111 +41,35 @@ import java.util.Date;
  *
  * @since 0.1
  * @author Les Hazlewood
- * @author Jeremy Haile
  */
-public class DefaultSessionManager extends AbstractSessionManager
-    implements ValidatingSessionManager, CacheProviderAware, Destroyable {
+public class DefaultSessionManager extends AbstractValidatingSessionManager
+    implements Destroyable {
 
-    private static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
+    protected SessionDAO sessionDAO = null;
 
-    /** Default global session timeout value (30 * 60 * 1000 milliseconds = 30 minutes). */
-    public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
+    public DefaultSessionManager() {}
 
-    /**
-     * The default interval at which sessions will be validated (1 hour);
-     * This can be overridden by calling {@link #setSessionValidationInterval(long)}
-     */
-    public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = MILLIS_PER_HOUR;
-
-    /**
-     * Scheduler used to validate sessions on a regular basis.
-     * By default, the session manager will use Quartz to schedule session validation, but this
-     * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
-     */
-    protected SessionValidationScheduler sessionValidationScheduler = null;
-
-    protected CacheProvider cacheProvider = null;
-
-    protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
-    protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
-
-    public DefaultSessionManager() {
-        setSessionClass( SimpleSession.class );
+    public void setSessionDAO(SessionDAO sessionDAO) {
+        this.sessionDAO = sessionDAO;
     }
 
-    public DefaultSessionManager( CacheProvider cacheProvider ) {
-        this();
-        setCacheProvider( cacheProvider );
-        init();
+    public SessionDAO getSessionDAO() {
+        return this.sessionDAO;
     }
 
-    public void setSessionValidationScheduler( SessionValidationScheduler sessionValidationScheduler ) {
-        this.sessionValidationScheduler = sessionValidationScheduler;
+    protected void afterSessionValidationStarted() {
+        ensureSessionDAO();
     }
 
-    public SessionValidationScheduler getSessionValidationScheduler() {
-        return sessionValidationScheduler;
-    }
-
-    public CacheProvider getCacheProvider() {
-        return cacheProvider;
-    }
-
-    public void setCacheProvider( CacheProvider cacheProvider ) {
-        this.cacheProvider = cacheProvider;
-    }
-
-    /**
-     * Returns the time in milliseconds that any session may remain idle before expiring.  This
-     * value is just a global default for all sessions and may be overridden by subclasses on a
-     * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
-     * so desired.
-     *
-     * <ul>
-     *     <li>A negative return value means sessions never expire.</li>
-     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
-     * </ul>
-     *
-     * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
-     * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
-     *
-     * @return the time in milliseconds that any session may remain idle before expiring.
-     */
-    public long getGlobalSessionTimeout() {
-        return globalSessionTimeout;
-    }
-
-    /**
-     * Sets the time in milliseconds that any session may remain idle before expiring.  This
-     * value is just a global default for all sessions.  Subclasses may override the
-     * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
-     *
-     * @param globalSessionTimeout the time in milliseconds any session may remain idle before
-     * expiring.
-     */
-    public void setGlobalSessionTimeout( int globalSessionTimeout ) {
-        this.globalSessionTimeout = globalSessionTimeout;
-    }
-
-    /**
-     * If using the underlying default <tt>SessionValidationScheduler</tt> (that is, the
-     * {@link #setSessionValidationScheduler(SessionValidationScheduler) setSessionValidationScheduler} method is
-     * never called) , this method allows one to specify how
-     * frequently session should be validated (to check for orphans).  The default value is 
-     * {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
-     *
-     * <p>If you override the default scheduler, it is assumed that overriding instance 'knows' how often to
-     * validate sessions, and this attribute will be ignored.
-     *
-     * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
-     * @param sessionValidationInterval the time in milliseconds between checking for valid sessions to reap orphans.
-     */
-    public void setSessionValidationInterval( long sessionValidationInterval ) {
-        this.sessionValidationInterval = sessionValidationInterval;
-    }
-
-    public long getSessionValidationInterval() {
-        return sessionValidationInterval;
+    protected void ensureSessionDAO() {
+        SessionDAO sessionDAO = getSessionDAO();
+        if ( sessionDAO == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No sessionDAO set.  Attempting to create default instance." );
+            }
+            sessionDAO = createSessionDAO();
+            setSessionDAO( sessionDAO );
+        }
     }
 
     /**
@@ -157,7 +77,7 @@ public class DefaultSessionManager extends AbstractSessionManager
      * not already been explicitly set via {@link #setSessionDAO}, relying upon the configured
      * {@link #setCacheProvider cacheProvider} to determine caching strategies.
      *
-     * <p><b>N.B.</b> This implementation constructs a {@link MemorySessionDAO} instance, relying on a configured
+     * <p><b>N.B.</b> This implementation constructs a {@link org.jsecurity.session.support.eis.MemorySessionDAO} instance, relying on a configured
      * {@link #setCacheProvider cacheProvider} to provide production-quality cache management.  Please ensure that
      * the <tt>CacheProvider</tt> property is configured for production environments, since the
      * <tt>MemorySessionDAO</tt> implementation defaults to a
@@ -184,150 +104,59 @@ public class DefaultSessionManager extends AbstractSessionManager
         return dao;
     }
 
-    protected SessionValidationScheduler createSessionValidationScheduler() {
-        SessionValidationScheduler scheduler;
+    protected Session createSession(InetAddress originatingHost) {
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );
+        if (log.isTraceEnabled()) {
+            log.trace("Creating session for originating host [" + originatingHost + "]");
         }
-        scheduler = new QuartzSessionValidationScheduler( this );
-        (( QuartzSessionValidationScheduler )scheduler).setSessionValidationInterval( getSessionValidationInterval() );
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
-        }
-        return scheduler;
+
+        Session s = newSessionInstance(originatingHost);
+        create(s);
+
+        return s;
     }
 
-    protected void startSessionValidation() {
-        SessionValidationScheduler scheduler = getSessionValidationScheduler();
-        if ( scheduler == null ) {
-            scheduler = createSessionValidationScheduler();
-            setSessionValidationScheduler( scheduler );
-        }
-        if ( log.isInfoEnabled() ) {
-            log.info( "Starting session validation scheduler..." );
-        }
-        scheduler.startSessionValidation();
+    protected Session newSessionInstance(InetAddress inetAddress) {
+        return new SimpleSession(inetAddress);
     }
 
-    protected void stopSessionValidation() {
-        SessionValidationScheduler scheduler = getSessionValidationScheduler();
-        if ( scheduler != null ) {
-            try {
-                scheduler.stopSessionValidation();
-            } catch ( Exception e ) {
-                if ( log.isDebugEnabled() ) {
-                    String msg = "Unable to stop SessionValidationScheduler.  Ignoring (shutting down)...";
-                    log.debug( msg, e );
-                }
-            }
-            LifecycleUtils.destroy(scheduler);
-            setSessionValidationScheduler(null);
+    protected void create(Session session) {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating new EIS record for new session instance [" + session + "]");
         }
+        sessionDAO.create(session);
     }
 
-    protected void ensureSessionDAO() {
-        SessionDAO sessionDAO = getSessionDAO();
-        if ( sessionDAO == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No sessionDAO set.  Attempting to create default instance." );
-            }
-            sessionDAO = createSessionDAO();
-            setSessionDAO( sessionDAO );
+    protected void onStop(Session session) {
+        if ( session instanceof SimpleSession ) {
+            Date stopTs = session.getStopTimestamp();
+            ((SimpleSession)session).setLastAccessTime(stopTs);
         }
+        onChange(session);
     }
 
-    public void init() {
-        ensureSessionDAO();
-        super.init();
-        startSessionValidation();
+    protected void onExpiration(Session session) {
+        if ( session instanceof SimpleSession ) {
+            ((SimpleSession)session).setExpired(true);
+        }
+        onChange(session);
     }
 
-    protected void destroySessionDAO() {
-        LifecycleUtils.destroy( getSessionDAO() );
-        setSessionDAO(null);
+    protected void onChange(Session session) {
+        sessionDAO.update(session);
     }
 
-    public void destroy() {
-        stopSessionValidation();
-        destroySessionDAO();
+    protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
+        if (log.isTraceEnabled()) {
+            log.trace("Retrieving session with id [" + sessionId + "]");
+        }
+        Session s = sessionDAO.readSession(sessionId);
+        validate(s);
+        return s;
     }
 
-    protected void onStop( Session session ) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Updating last access and destroy time of session with id [" + session.getSessionId() + "]" );
-        }
-        // when properly stopping a session, it makes sense (for most systems) that the stop time and last access time
-        // are the same:
-        SimpleSession simpleSession = (SimpleSession)session;
-        Date stopTimestamp = simpleSession.getStopTimestamp();
-        if ( stopTimestamp == null ) {
-            stopTimestamp = new Date();
-            simpleSession.setStopTimestamp( stopTimestamp );
-        }
-        simpleSession.setLastAccessTime( stopTimestamp );
-    }
-
-    protected void onExpire( Session session ) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Updating expiration status of session with id [" +
-                session.getSessionId() + "]" );
-        }
-        SimpleSession ss = (SimpleSession)session;
-        ss.setExpired( true );
-    }
-
-    protected void init( Session newInstance, InetAddress hostAddr ) {
-        if ( newInstance instanceof SimpleSession ) {
-            SimpleSession ss = (SimpleSession)newInstance;
-            if ( hostAddr != null ) {
-                ss.setHostAddress( hostAddr );
-            }
-            ss.setTimeout( getGlobalSessionTimeout() );
-        }
-    }
-
-    /**
-     * @see org.jsecurity.session.support.ValidatingSessionManager#validateSessions()
-     */
-    public void validateSessions() {
-        if ( log.isInfoEnabled() ) {
-            log.info( "Validating all active sessions..." );
-        }
-
-        int invalidCount = 0;
-
-        Collection<Session> activeSessions = getSessionDAO().getActiveSessions();
-
-        if ( activeSessions != null && !activeSessions.isEmpty() ) {
-            for ( Session s : activeSessions ) {
-                try {
-                    validate( s );
-                } catch ( InvalidSessionException e ) {
-                    if ( log.isDebugEnabled() ) {
-                        boolean expired = ( e instanceof ExpiredSessionException );
-                        String msg = "Invalidated session with id [" + s.getSessionId() + "]" +
-                            ( expired ? " (expired)" : " (stopped)" );
-                        log.debug( msg );
-                    }
-                    invalidCount++;
-                }
-            }
-        }
-
-        if ( log.isInfoEnabled() ) {
-            String msg = "Finished session validation.";
-            if ( invalidCount > 0 ) {
-                msg += "  [" + invalidCount + "] sessions were stopped.";
-            } else {
-                msg += "  No sessions were stopped.";
-            }
-            log.info( msg );
-        }
-    }
-
-    public void validateSession( Serializable sessionId ) {
-        retrieveAndValidateSession( sessionId );
+    protected Collection<Session> getActiveSessions() {
+        return sessionDAO.getActiveSessions();
     }
 
 }

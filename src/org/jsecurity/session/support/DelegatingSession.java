@@ -53,7 +53,7 @@ import java.util.Date;
  */
 public class DelegatingSession implements Session {
 
-    private Serializable sessionId = null;
+    private Serializable id = null;
 
     //cached fields to avoid a server-side method call if out-of-process:
     private Date startTimestamp = null;
@@ -68,9 +68,9 @@ public class DelegatingSession implements Session {
 
     public DelegatingSession(){}
 
-    public DelegatingSession( SessionManager sessionManager, Serializable sessionId ) {
+    public DelegatingSession( SessionManager sessionManager, Serializable id) {
         this.sessionManager = sessionManager;
-        this.sessionId = sessionId;
+        this.id = id;
     }
 
     /**
@@ -106,18 +106,18 @@ public class DelegatingSession implements Session {
     /**
      * Sets the sessionId used by this handle for all future {@link SessionManager SessionManager}
      * method invocations.
-     * @param sessionId the <tt>sessionId</tt> to use for all <tt>SessionManager</tt> invocations.
+     * @param id the <tt>sessionId</tt> to use for all <tt>SessionManager</tt> invocations.
      * @see #setSessionManager( SessionManager sessionManager )
      */
-    public void setSessionId( Serializable sessionId ) {
-        this.sessionId = sessionId;
+    public void setId( Serializable id) {
+        this.id = id;
     }
 
     /**
-     * @see Session#getSessionId()
+     * @see Session#getId()
      */
-    public Serializable getSessionId() {
-        return sessionId;
+    public Serializable getId() {
+        return id;
     }
 
     /**
@@ -125,7 +125,7 @@ public class DelegatingSession implements Session {
      */
     public Date getStartTimestamp() {
         if ( startTimestamp == null ) {
-            startTimestamp = sessionManager.getStartTimestamp( sessionId );
+            startTimestamp = sessionManager.getStartTimestamp(id);
         }
         return startTimestamp;
     }
@@ -135,7 +135,7 @@ public class DelegatingSession implements Session {
      */
     public Date getStopTimestamp() {
         if ( stopTimestamp == null ) {
-            stopTimestamp = sessionManager.getStopTimestamp( sessionId );
+            stopTimestamp = sessionManager.getStopTimestamp(id);
         }
         return stopTimestamp;
     }
@@ -145,7 +145,7 @@ public class DelegatingSession implements Session {
      */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
-        return sessionManager.getLastAccessTime( sessionId );
+        return sessionManager.getLastAccessTime(id);
     }
 
     /**
@@ -153,15 +153,15 @@ public class DelegatingSession implements Session {
      */
     public boolean isExpired() {
         //can't cache - only business pojo knows the accurate time for expiration:
-        return sessionManager.isExpired( sessionId );
+        return sessionManager.isExpired(id);
     }
 
     public long getTimeout() throws InvalidSessionException {
-        return sessionManager.getTimeout( sessionId );
+        return sessionManager.getTimeout(id);
     }
 
     public void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException {
-        sessionManager.setTimeout( sessionId, maxIdleTimeInMillis );
+        sessionManager.setTimeout(id, maxIdleTimeInMillis );
     }
 
     /**
@@ -169,7 +169,7 @@ public class DelegatingSession implements Session {
      */
     public InetAddress getHostAddress() {
         if ( hostAddress == null ) {
-            hostAddress = sessionManager.getHostAddress( sessionId );
+            hostAddress = sessionManager.getHostAddress(id);
         }
         return hostAddress;
     }
@@ -178,28 +178,28 @@ public class DelegatingSession implements Session {
      * @see org.jsecurity.session.Session#touch()
      */
     public void touch() throws InvalidSessionException {
-        sessionManager.touch( sessionId );
+        sessionManager.touch(id);
     }
 
     /**
      * @see org.jsecurity.session.Session#stop()
      */
     public void stop() throws InvalidSessionException {
-        sessionManager.stop( sessionId );
+        sessionManager.stop(id);
     }
 
     /**
      * @see org.jsecurity.session.Session#getAttributeKeys
      */
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-        return sessionManager.getAttributeKeys( sessionId );
+        return sessionManager.getAttributeKeys(id);
     }
 
     /**
      * @see Session#getAttribute(Object key)
      */
     public Object getAttribute( Object key ) throws InvalidSessionException {
-        return sessionManager.getAttribute( sessionId, key );
+        return sessionManager.getAttribute(id, key );
     }
 
     /**
@@ -209,7 +209,7 @@ public class DelegatingSession implements Session {
         if ( value == null ) {
             removeAttribute( key );
         } else {
-            sessionManager.setAttribute( sessionId, key, value );
+            sessionManager.setAttribute(id, key, value );
         }
     }
 
@@ -217,6 +217,6 @@ public class DelegatingSession implements Session {
      * @see Session#removeAttribute(Object key)
      */
     public Object removeAttribute( Object key ) throws InvalidSessionException {
-        return sessionManager.removeAttribute( sessionId, key );
+        return sessionManager.removeAttribute(id, key );
     }
 }

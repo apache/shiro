@@ -73,7 +73,7 @@ public class JnlpController extends AbstractController {
 
         Map<String,Object> model = new HashMap<String,Object>();
         model.put( "codebaseUrl", sb.toString() );
-        model.put( "sessionId", session.getSessionId() );
+        model.put( "sessionId", session.getId() );
         return new ModelAndView( jnlpView, model );
     }
 }

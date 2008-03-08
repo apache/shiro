@@ -104,7 +104,7 @@ public class MemorySessionDAO extends CachingSessionDAO {
     }
 
     protected void assignSessionId( Session session, Serializable sessionId ) {
-        ((SimpleSession)session).setSessionId( sessionId );
+        ((SimpleSession)session).setId( sessionId );
     }
 
     protected Session doReadSession( Serializable sessionId ) {

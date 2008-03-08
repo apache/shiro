@@ -130,7 +130,7 @@ public class ActiveDirectoryRealmTest {
         // override ldap query because i don't care about testing that piece in this case
         protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
             UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-            return createAccount(token.getPrincipal(), token.getPrincipal());
+            return new SimpleAccount(token.getPrincipal(), token.getPrincipal());
         }
 
     }

@@ -31,7 +31,7 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionFactory;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistrar;
+import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;
 import org.jsecurity.session.support.DefaultSessionFactory;
 import org.jsecurity.util.LifecycleUtils;
 

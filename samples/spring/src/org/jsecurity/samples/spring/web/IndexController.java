@@ -82,7 +82,7 @@ public class IndexController extends SimpleFormController {
         Map<String,Object> refData = new HashMap<String,Object>();
         refData.put( "hasRole1", hasRole1 );
         refData.put( "hasRole2", hasRole2 );
-        refData.put( "sessionId", subject.getSession().getSessionId() );
+        refData.put( "sessionId", subject.getSession().getId() );
         return refData;
     }
 

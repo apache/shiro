@@ -38,7 +38,7 @@ public class WebSession implements Session {
         this.inetAddress = inetAddress;
     }
 
-    public Serializable getSessionId() {
+    public Serializable getId() {
         return httpSession.getId();
     }
 

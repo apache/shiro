@@ -4,7 +4,6 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.credential.SimpleCredentialsMatcher;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.cache.CacheProvider;
 
 /**
@@ -141,24 +140,6 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
         return token != null && getAuthenticationTokenClass().isAssignableFrom(token.getClass());
     }
 
-    /**
-     * This method must be implemented by subclasses to retrieve account data from an
-     * implementation-specific datasource (RDBMS, LDAP, etc) for the given authentication token.
-     * In most data-centric systems such as an RDBMS, LDAP, file resource, etc, this means just 'pulling'
-     * account data for an associated subject/user and nothing more.  But in some systems, the method
-     * could actually perform EIS specific log-in logic - it is up to the Realm implementation.
-     *
-     * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
-     *
-     * @param token the authentication token containing the user's principal and credentials.
-     * @return an {@link org.jsecurity.authc.Account} object containing account information resulting from the
-     * authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
-     * @throws org.jsecurity.authc.AuthenticationException if there is an error acquiring data or performing
-     * realm-specific authentication logic for the specified <tt>token</tt>
-     */
-    protected abstract Account doGetAccount( AuthenticationToken token ) throws AuthenticationException;
-
-
     public final Account getAccount( AuthenticationToken token ) throws AuthenticationException {
 
         Account account = doGetAccount( token );
@@ -197,16 +178,21 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
     }
 
     /**
-     * <p>This is a convenience method that is used by many of the JSecurity built-in realms.  It can be overridden
-     * by subclasses to build the {@link org.jsecurity.authc.Account} in a different way.</p>
+     * This method must be implemented by subclasses to retrieve account data from an
+     * implementation-specific datasource (RDBMS, LDAP, etc) for the given authentication token.
+     * In most data-centric systems such as an RDBMS, LDAP, file resource, etc, this means just 'pulling'
+     * account data for an associated subject/user and nothing more.  But in some systems, the method
+     * could actually perform EIS specific log-in logic - it is up to the Realm implementation.
      *
-     * <p>Overriding this method is the prefered way of building a custom {@link org.jsecurity.authc.Account} object
-     * for realms that make use of this helper method.</p>
-     * @param principal the principal of the authenticated user.
-     * @param credentials the credentials of the authenticated user.
-     * @return an {@link org.jsecurity.authc.Account} instance that should be used to "log in" the user.
+     * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
+     *
+     * @param token the authentication token containing the user's principal and credentials.
+     * @return an {@link org.jsecurity.authc.Account} object containing account information resulting from the
+     * authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
+     * @throws org.jsecurity.authc.AuthenticationException if there is an error acquiring data or performing
+     * realm-specific authentication logic for the specified <tt>token</tt>
      */
-    protected Account createAccount( Object principal, Object credentials ) {
-        return new SimpleAuthorizingAccount(principal, credentials);
-    }
+    protected abstract Account doGetAccount( AuthenticationToken token ) throws AuthenticationException;
+
+
 }

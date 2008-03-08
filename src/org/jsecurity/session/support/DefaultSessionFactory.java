@@ -32,7 +32,7 @@ import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.CacheProviderAware;
 import org.jsecurity.session.*;
 import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.SessionEventListenerRegistrar;
+import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.LifecycleUtils;
@@ -58,8 +58,6 @@ import java.util.Collection;
  * implementation are extremely lightweight and are designed to be instantiated as needed.  They should not be cached
  * long-term in the business/server tier (e.g. in an <tt>HttpSession</tt> or in some class {@link java.util.Map Map}
  * attribute), since they can just be recreated upon each request to the system or method chain invocation.
- *
- * @deprecated removing in favor of EventCapabableSessionManager hierarchy.
  *
  * @author Les Hazlewood
  * @since 0.1

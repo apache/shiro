@@ -24,13 +24,12 @@
  */
 package org.jsecurity.session.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -41,9 +40,7 @@ import java.util.*;
  */
 public class SimpleSession implements Session, Serializable {
 
-    private final transient Log log = LogFactory.getLog( getClass() );
-
-    private Serializable sessionId = null;
+    private Serializable id = null;
     private Date startTimestamp = null;
     private Date stopTimestamp = null;
     private Date lastAccessTime = null;
@@ -54,25 +51,29 @@ public class SimpleSession implements Session, Serializable {
     private Map<Object, Object> attributes = null;
 
     public SimpleSession() {
-        startTimestamp = new Date();
-        lastAccessTime = startTimestamp; //default when first instantiated
+        this(getLocalHost());
+    }
+
+    public SimpleSession( InetAddress hostAddress ) {
+        this.startTimestamp = new Date();
+        this.lastAccessTime = startTimestamp;
+        this.hostAddress = hostAddress;
+    }
+
+    private static InetAddress getLocalHost() {
         try {
-            hostAddress = InetAddress.getLocalHost();
-        } catch ( Exception e ) {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "Unable to acquire localhost address from " +
-                          "method call java.net.InetAddress.getLocalHost().  hostAddress " +
-                          "will be null", e );
-            }
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            throw new IllegalStateException(e);
         }
     }
 
-    public Serializable getSessionId() {
-        return this.sessionId;
+    public Serializable getId() {
+        return this.id;
     }
 
-    public void setSessionId( Serializable sessionId ) {
-        this.sessionId = sessionId;
+    public void setId( Serializable id) {
+        this.id = id;
     }
 
     public Date getStartTimestamp() {

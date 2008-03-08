@@ -43,12 +43,12 @@ public interface SessionDAO {
      * Inserts a new Session record into the underling EIS (e.g. Relational database, file system, mainframe,
      * etc, depending on the DAO implementation).
      *
-     * <p>After this method is invoked, the {@link org.jsecurity.session.Session#getSessionId()}
+     * <p>After this method is invoked, the {@link org.jsecurity.session.Session#getId()}
      * method executed on the argument must return a valid session identifier.  That is, the following should
      * always be true:
      * <br/><br/><code>
      * <pre>Serializable id = create( session );
-id.equals( session.getSessionId() ) == true</pre></code>
+id.equals( session.getId() ) == true</pre></code>
      *
      * <p>Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.
@@ -72,7 +72,7 @@ id.equals( session.getSessionId() ) == true</pre></code>
 
     /**
      * Updates (persists) data from a previously created Session instance in the EIS identified by
-     * <tt>{@link Session#getSessionId() session.getSessionId()}</tt>.  This effectively propagates
+     * <tt>{@link Session#getId() session.getId()}</tt>.  This effectively propagates
      * the data in the argument to the EIS record previously saved.
      *
      * <p>Aside from the UnknownSessionException, implementations are free to throw any other
@@ -81,14 +81,14 @@ id.equals( session.getSessionId() ) == true</pre></code>
      *
      * @param session the Session to update
      * @throws UnknownSessionException if no existing EIS session record exists with the
-     * identifier of {@link Session#getSessionId() session.getSessionId()}
+     * identifier of {@link Session# getId () session.getSessionId()}
      */
     void update( Session session ) throws UnknownSessionException;
 
     /**
      * Deletes the associated EIS record of the specified <tt>session</tt>.  If there never
      * existed a session EIS record with the identifier of
-     * {@link Session#getSessionId() session.getSessionId()}, then this method does nothing.
+     * {@link Session#getId() session.getId()}, then this method does nothing.
      *
      * @param session the session to delete.
      */

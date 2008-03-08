@@ -100,7 +100,7 @@ public class AuthorizingRealmTest {
             protected Account createAccount(Object principal, Object credentials) {
                 String username = (String) principal;
                 CustomUsernamePrincipal customPrincipal = new CustomUsernamePrincipal( username );
-                return new SimpleAccount( customPrincipal, credentials );
+                return new SimpleAuthorizingAccount( customPrincipal, credentials );
             }
         };
 
@@ -138,7 +138,7 @@ public class AuthorizingRealmTest {
         }
 
         protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
-            return createAccount(token.getPrincipal(), token.getPrincipal());
+            return doGetAccount( token.getPrincipal() );
         }
 
         protected AuthorizingAccount doGetAccount(Object principal) {
@@ -152,7 +152,7 @@ public class AuthorizingRealmTest {
             principals.add(new UserIdPrincipal(USER_ID));
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);
-            return createAccount(principals, null);
+            return new SimpleAccount(principals,null);
         }
     }
 

@@ -93,7 +93,7 @@ public class JSecurityHttpSession implements HttpSession {
     }
 
     public String getId() {
-        return getSession().getSessionId().toString();
+        return getSession().getId().toString();
     }
 
     public long getLastAccessedTime() {
