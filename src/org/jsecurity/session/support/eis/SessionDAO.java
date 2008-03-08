@@ -81,7 +81,7 @@ id.equals( session.getId() ) == true</pre></code>
      *
      * @param session the Session to update
      * @throws UnknownSessionException if no existing EIS session record exists with the
-     * identifier of {@link Session# getId () session.getSessionId()}
+     * identifier of {@link Session#getId() session.getSessionId()}
      */
     void update( Session session ) throws UnknownSessionException;
 

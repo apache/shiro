@@ -125,9 +125,6 @@ public class AbstractAuthenticatorTest {
             protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw new AuthenticationException();
             }
-            protected AuthenticationEvent createFailureEvent(AuthenticationToken token, AuthenticationException ae) {
-                return null;
-            }
         };
         initAuthc();
         abstractAuthenticator.authenticate( newToken() );
@@ -138,9 +135,6 @@ public class AbstractAuthenticatorTest {
         abstractAuthenticator = new AbstractAuthenticator() {
             protected Account doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return account;
-            }
-            protected AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account ) {
-                return null;
             }
         };
         initAuthc();

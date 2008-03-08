@@ -33,8 +33,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A <tt>ModularRealmAuthenticator</tt> is an {@link org.jsecurity.authc.Authenticator Authenticator}
- * that delgates account lookups to a pluggable (modular) collection of
+ * A <tt>ModularRealmAuthenticator</tt> delgates account lookups to a pluggable (modular) collection of
  * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity.
  * In addition to authorization duties, a JSecurity Realm can also be thought of a PAM 'module'.
  *
@@ -44,9 +43,7 @@ import java.util.List;
  *
  * <p>If only one realm is configured (this is often the case for most applications), authentication success is naturally
  * only dependent upon invoking this one Realm's
- * {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken) getAccount} method (i.e.
- * a null return value means no account could be found, or an AuthenticationException could be thrown, which would be
- * propagated to the caller, etc - see the JavaDoc for more details).
+ * {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken) getAccount} method.
  *
  * <p>But if two or more realms are configured, PAM behavior is implemented by iterating over the collection of realms
  * and interacting with each over the course of the authentication attempt.  As this is more complicated, this
@@ -211,14 +208,14 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
      */
     protected Account doSingleRealmAuthentication( Realm realm, AuthenticationToken token ) {
         if ( !realm.supports( token ) ) {
-            String msg = "Single configured realm [" + realm + "] does not support authentication token [" +
+            String msg = "Realm [" + realm + "] does not support authentication token [" +
                 token + "].  Please ensure that the appropriate Realm implementation is " +
                 "configured correctly or that the realm accepts AuthenticationTokens of this type.";
             throw new UnsupportedTokenException( msg );
         }
         Account account = realm.getAccount( token );
         if ( account == null ) {
-            String msg = "Single configured realm [" + realm + "] was unable to find account data for the " +
+            String msg = "Realm [" + realm + "] was unable to find account data for the " +
                 "submitted AuthenticationToken [" + token + "].";
             throw new UnknownAccountException( msg );
         }
@@ -254,7 +251,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
 
                 if (log.isDebugEnabled()) {
                     log.debug("Attempting to authenticate token [" + token + "] " +
-                        "using realm of type [" + realm.getClass() + "]");
+                        "using realm of type [" + realm + "]");
                 }
 
                 Account account = null;
@@ -284,7 +281,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
                 }
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("Realm of type [" + realm.getClass().getName() + "] does not support token " +
+                    log.debug("Realm of type [" + realm + "] does not support token " +
                             "[" + token + "].  Skipping realm." );
                 }
             }
@@ -304,8 +301,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
      * If a realm does support
      * the token, its {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken)}
      * method will be called.  If the realm returns a non-null account, the token will be
-     * considered authenticated and the account data recorded.  If the realm returns <tt>null</tt>, the next
-     * realm will be consulted.  If no realms support the token or all supported realms return null,
+     * considered authenticated for that realm and the account data recorded.  If the realm returns <tt>null</tt>,
+     * the next realm will be consulted.  If no realms support the token or all supporting realms return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
      *
      * <p>After all realms have been consulted, the information from each realm is aggregated into a single
