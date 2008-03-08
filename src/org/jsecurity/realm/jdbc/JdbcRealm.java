@@ -200,7 +200,7 @@ public class JdbcRealm extends AuthorizingRealm {
                 throw new UnknownAccountException( "No account found for user [" + username + "]" );
             }
 
-            account = createAccount( username, password );
+            account = createAccount( username, password.toCharArray() );
 
         } catch ( SQLException e ) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
@@ -215,6 +215,10 @@ public class JdbcRealm extends AuthorizingRealm {
         }
 
         return account;
+    }
+
+    protected Account createAccount( String username, char[] password ) {
+        return new SimpleAuthorizingAccount( username, password );
     }
 
     private String getPasswordForUser( Connection conn, String username ) throws SQLException {

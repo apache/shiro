@@ -115,6 +115,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         return createAccount( upToken.getUsername(), upToken.getPassword() );
     }
 
+    protected Account createAccount( String username, char[] password ) {
+        return new SimpleAuthorizingAccount( username, password );
+    }
+
 
     /**
      * <p>Builds an {@link org.jsecurity.authz.AuthorizingAccount} object by querying the active directory LDAP context for the

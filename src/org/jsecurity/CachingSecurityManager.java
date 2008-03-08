@@ -36,8 +36,7 @@ import org.jsecurity.util.JavaEnvironment;
 import org.jsecurity.util.LifecycleUtils;
 
 /**
- *
- * A very basic extension point for the SecurityManager interface that merely provides logging and caching 
+ * A very basic extension point for the SecurityManager interface that merely provides logging and caching
  * support.  All <tt>SecurityManager</tt> method implementations are left to subclasses.
  *
  * <p>Upon {@link #init() initialization}, a sensible default <tt>CacheProvider</tt> will be created automatically
@@ -54,7 +53,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
-     * {@link #init()} after the necessary properties have been set.
+     * {@link #init()} after first setting necessary attributes.
      */
     public CachingSecurityManager() {
     }
@@ -78,9 +77,17 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
     }
 
     protected void ensureCacheProvider() {
-        if (getCacheProvider() == null) {
+        CacheProvider cacheProvider = getCacheProvider();
+        if (cacheProvider == null) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "No CacheProvider has been configured.  Attempting to create a default one..." );
+            }
             CacheProvider provider = createCacheProvider();
             setCacheProvider(provider);
+        } else {
+            if ( log.isInfoEnabled() ) {
+                log.info( "Using configured CacheProvider [" + cacheProvider + "]" );
+            }
         }
     }
 
@@ -97,10 +104,11 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
             provider = ehCacheProvider;
         } else {
             if (log.isWarnEnabled()) {
-                String msg = "Instantiating default CacheProvider which will create in-memory HashTable caches.  " +
-                    "This is NOT RECOMMENDED for production environments.  Please ensure ehcache.jar is in the " +
-                    "classpath and JSecurity will automatically use a production-quality CacheProvider " +
-                    "implementation, or you may alternatively provide your own via the #setCacheProvider method.";
+                String msg = "Ehcache was not found in the classpath.  Reverting to failsafe CacheProvider which will " +
+                        "create in-memory HashTable caches.  This is NOT RECOMMENDED for production environments.  " +
+                        "Please ensure ehcache.jar is in the classpath and JSecurity will automatically use a " +
+                        "production-quality CacheProvider implementation, or you may alternatively provide your " +
+                        "own via the " + getClass().getName() + "#setCacheProvider method.";
                 log.warn(msg);
             }
             provider = new HashtableCacheProvider();

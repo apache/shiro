@@ -222,7 +222,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAwar
      *
      * @param session the Session instance to persist to the EIS.
      * @return the id of the session created in the EIS (i.e. this is almost always a primary key and should be the
-     *         value returned from {@link org.jsecurity.session.Session#getSessionId() Session.getSessionId()}.
+     *         value returned from {@link org.jsecurity.session.Session#getId() Session.getId()}.
      */
     protected abstract Serializable doCreate( Session session );
 
@@ -274,10 +274,10 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAwar
      *
      * @param session the session object to update in the EIS.
      * @throws UnknownSessionException if no existing EIS session record exists with the
-     *                                 identifier of {@link Session#getSessionId() session.getSessionId()}
+     *                                 identifier of {@link Session#getId() session.getId()}
      */
     public void update( Session session ) throws UnknownSessionException {
-        Serializable id = session.getSessionId();
+        Serializable id = session.getId();
         if ( ( session.getStopTimestamp() != null ) || session.isExpired() ) {
             activeSessions.remove( id );
         } else {
@@ -302,7 +302,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAwar
      * @param session the session to remove from caches and permanently delete from the EIS.
      */
     public void delete( Session session ) {
-        Serializable id = session.getSessionId();
+        Serializable id = session.getId();
         activeSessions.remove( id );
         doDelete( session );
     }

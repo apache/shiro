@@ -55,22 +55,9 @@ public interface Session {
      * an identifier are {@link java.util.UUID UUID}s, {@link java.lang.Integer Integer}s, and
      * {@link java.lang.String String}s.
      *
-     * <p>This method was not called <code>getId()</code> or <code>getID()</code> as a convenience
-     * to the many systems that may already be using such a method name to identify objects
-     * internally.  If they exist, these methods most likely return a database primary key
-     * (such as a UUID or Integer).
-     *
-     * <p>In these types of systems, it would probably make sense for an implementation of this
-     * interface to return that internal identifier.  For example:<br/><br/>
-     *
-     * <pre>
-     * public Serializable getSessionId() {
-     *     return getId(); //system specific identifier
-     * }</pre>
-     *
      * @return The unique identifier assigned to the session upon creation.
      */
-    Serializable getSessionId();
+    Serializable getId();
 
     /**
      * Returns the time the session was started; that is, the time the system created the instance.

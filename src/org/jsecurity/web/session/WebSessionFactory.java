@@ -146,7 +146,7 @@ public class WebSessionFactory extends DefaultSessionFactory {
         throws HostUnauthorizedException {
         InetAddress requestIp = SecurityWebSupport.getInetAddress( request );
         InetAddress originIp = session.getHostAddress();
-        Serializable sessionId = session.getSessionId();
+        Serializable sessionId = session.getId();
 
         if ( originIp == null ) {
             if ( requestIp != null ) {
@@ -212,7 +212,7 @@ public class WebSessionFactory extends DefaultSessionFactory {
 
     protected Session start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
         Session s = super.start( inetAddress );
-        storeSessionId( s.getSessionId(), request, response );
+        storeSessionId( s.getId(), request, response );
         request.removeAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE );
         request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
         return s;

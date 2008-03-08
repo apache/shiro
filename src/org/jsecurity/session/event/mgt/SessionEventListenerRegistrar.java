@@ -22,25 +22,23 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.web;
+package org.jsecurity.session.event.mgt;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import org.jsecurity.session.event.SessionEventListener;
+
+import java.util.Collection;
 
 /**
- * A <tt>WebStore</tt> is a storage mechanism for a single object accessible during a web request.
+ * A <tt>SessionEventListenerRegistrar</tt> is responsible for registering and deregistering
+ * {@link org.jsecurity.session.event.SessionEventListener}s so they may be notified when a {@link org.jsecurity.session.event.SessionEvent SessionEvent} occurs.
  *
- * <p>It is used to make objects associated with the transient request persistent beyond the request so that they can
- * be retrieved upon a later request.
+ * @see DefaultSessionEventSender
  *
  * @author Les Hazlewood
- * @since 0.2
+ * @since 0.9
  */
-public interface WebStore<T> {
-
-    T retrieveValue( ServletRequest request, ServletResponse response );
-
-    void storeValue( T value, ServletRequest request, ServletResponse response );
-
-    void removeValue( ServletRequest request, ServletResponse response );
+public interface SessionEventListenerRegistrar {
+    void setSessionEventListeners( Collection<SessionEventListener> listeners );
+    void add( SessionEventListener listener );
+    boolean remove( SessionEventListener listener );
 }
