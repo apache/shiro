@@ -38,7 +38,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -275,8 +276,8 @@ public class JdbcRealm extends AuthorizingRealm {
         String username = (String)principal;
 
         Connection conn = null;
-        Collection<String> roleNames = null;
-        Collection<Permission> permissions = null;
+        Set<String> roleNames = null;
+        Set<Permission> permissions = null;
         try {
             conn = dataSource.getConnection();
 
@@ -299,10 +300,10 @@ public class JdbcRealm extends AuthorizingRealm {
         return new SimpleAuthorizingAccount( principal, null, roleNames, permissions );
     }
 
-    protected Collection<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {
+    protected Set<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Collection<String> roleNames = new HashSet<String>();
+        Set<String> roleNames = new LinkedHashSet<String>();
         try {
             ps = conn.prepareStatement( userRolesQuery );
             ps.setString( 1, username );
@@ -327,14 +328,14 @@ public class JdbcRealm extends AuthorizingRealm {
         } finally {
             JdbcUtils.closeResultSet( rs );
             JdbcUtils.closeStatement( ps );
-        }
+        }                           
         return roleNames;
     }
 
-    protected Collection<Permission> getPermissions( Connection conn, String username, Collection<String> roleNames ) throws SQLException {
+    protected Set<Permission> getPermissions( Connection conn, String username, Collection<String> roleNames ) throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
-        Collection<Permission> permissions = new HashSet<Permission>();
+        Set<Permission> permissions = new LinkedHashSet<Permission>();
         try {
             for ( String roleName : roleNames ) {
 

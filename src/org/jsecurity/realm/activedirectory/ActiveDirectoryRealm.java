@@ -149,23 +149,20 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         // Perform context search
         LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
 
-        List<String> roleNames;
+        Set<String> roleNames;
 
         try {
-
             roleNames = getRoleNamesForUser(username, ldapContext);
-
         } finally {
-
             LdapUtils.closeContext( ldapContext );
         }
 
         return new SimpleAuthorizingAccount( principal, null, roleNames, null );
     }
 
-    private List<String> getRoleNamesForUser( String username, LdapContext ldapContext) throws NamingException {
-        List<String> roleNames;
-        roleNames = new ArrayList<String>();
+    private Set<String> getRoleNamesForUser( String username, LdapContext ldapContext) throws NamingException {
+        Set<String> roleNames;
+        roleNames = new LinkedHashSet<String>();
 
         SearchControls searchCtls = new SearchControls();
         searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
