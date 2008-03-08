@@ -22,11 +22,11 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support.eis;
+package org.jsecurity.session.mgt.eis;
 
 import org.jsecurity.cache.HashtableCacheProvider;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.support.SimpleSession;
+import org.jsecurity.session.mgt.SimpleSession;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.JavaEnvironment;
 

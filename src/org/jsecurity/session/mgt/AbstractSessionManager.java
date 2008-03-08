@@ -22,14 +22,17 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support;
+package org.jsecurity.session.mgt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.cache.CacheProviderAware;
-import org.jsecurity.session.*;
+import org.jsecurity.session.ExpiredSessionException;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.UnknownSessionException;
 import org.jsecurity.session.event.SessionEventListener;
 import org.jsecurity.session.event.mgt.DefaultSessionEventManager;
 import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;

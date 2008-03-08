@@ -22,12 +22,12 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support;
+package org.jsecurity.session.mgt;
 
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.support.quartz.QuartzSessionValidationScheduler;
+import org.jsecurity.session.mgt.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
@@ -269,7 +269,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );
         }
         scheduler = new QuartzSessionValidationScheduler( this );
-        (( QuartzSessionValidationScheduler )scheduler).setSessionValidationInterval( getSessionValidationInterval() );
+        ((QuartzSessionValidationScheduler)scheduler).setSessionValidationInterval( getSessionValidationInterval() );
         if ( log.isTraceEnabled() ) {
             log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
         }
@@ -320,7 +320,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
 
     /**
-     * @see org.jsecurity.session.support.ValidatingSessionManager#validateSessions()
+     * @see ValidatingSessionManager#validateSessions()
      */
     public void validateSessions() {
         if ( log.isInfoEnabled() ) {

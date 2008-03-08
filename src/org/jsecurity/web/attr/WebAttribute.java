@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood, Jeremy Haile
+ * Copyright (C) 2005-2007 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,27 +22,25 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support;
+package org.jsecurity.web.attr;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
- * Interface that should be implemented by classes that can control validating sessions on a regular
- * basis.  This interface is used as a delegate for session validation by the {@link DefaultSessionManager}
+ * A <tt>WebAttribute</tt> is a storage mechanism for a single object accessible during a web request.
  *
- * @see org.jsecurity.session.support.DefaultSessionManager#setSessionValidationScheduler(SessionValidationScheduler)
+ * <p>It is used to make objects associated with the transient request persistent beyond the request so that they can
+ * be retrieved upon a later request.
  *
- * @since 0.1
- * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @since 0.2
  */
-public interface SessionValidationScheduler {
+public interface WebAttribute<T> {
 
-    /**
-     * Starts the session validation job.
-     */
-    void startSessionValidation();
+    T retrieveValue( ServletRequest request, ServletResponse response );
 
-    /**
-     * Stops the session validation job.
-     */    
-    void stopSessionValidation();
+    void storeValue( T value, ServletRequest request, ServletResponse response );
 
+    void removeValue( ServletRequest request, ServletResponse response );
 }

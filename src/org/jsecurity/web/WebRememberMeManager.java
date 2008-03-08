@@ -29,8 +29,8 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.subject.AbstractRememberMeManager;
 import org.jsecurity.util.Serializer;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.store.CookieStore;
-import org.jsecurity.web.store.WebStore;
+import org.jsecurity.web.attr.CookieAttribute;
+import org.jsecurity.web.attr.WebAttribute;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -43,7 +43,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
 
-    protected WebStore<String> webStore = null;
+    protected WebAttribute<String> identityAttribute = null;
 
     public WebRememberMeManager() {
         super();
@@ -57,24 +57,24 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         super(serializer, cipher);    
     }
 
-    public WebStore<String> getWebStore() {
-        return webStore;
+    public WebAttribute<String> getIdentityAttribute() {
+        return identityAttribute;
     }
 
-    public void setWebStore(WebStore<String> webStore) {
-        this.webStore = webStore;
+    public void setIdentityAttribute(WebAttribute<String> identityAttribute) {
+        this.identityAttribute = identityAttribute;
     }
 
     protected void onInit() {
-        ensureWebStore();
+        ensureWebAttribute();
     }
 
-    protected void ensureWebStore() {
-        if (getWebStore() == null) {
+    protected void ensureWebAttribute() {
+        if (getIdentityAttribute() == null) {
             //uses cookies by default.
-            CookieStore<String> cookieStore = new CookieStore<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
+            CookieAttribute<String> cookieStore = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
             cookieStore.setCheckRequestParams(false);
-            setWebStore(cookieStore);
+            setIdentityAttribute(cookieStore);
         }
     }
 
@@ -83,13 +83,13 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         ServletResponse response = ThreadContext.getServletResponse();
         //base 64 encode it and store as a cookie:
         String base64 = Base64.encodeBase64ToString(serialized);
-        getWebStore().storeValue(base64, request, response);
+        getIdentityAttribute().storeValue(base64, request, response);
     }
 
     protected byte[] getSerializedRememberedIdentity() {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
-        String base64 = getWebStore().retrieveValue(request, response);
+        String base64 = getIdentityAttribute().retrieveValue(request, response);
         if ( base64 != null ) {
             return Base64.decodeBase64( base64 );
         } else {
@@ -101,6 +101,6 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     protected void forgetIdentity() {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
-        getWebStore().removeValue( request, response );
+        getIdentityAttribute().removeValue( request, response );
     }
 }
