@@ -29,9 +29,9 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authc.event.AuthenticationEventFactory;
 import org.jsecurity.authc.event.AuthenticationEventListener;
-import org.jsecurity.authc.event.AuthenticationEventListenerRegistrar;
+import org.jsecurity.authc.event.mgt.AuthenticationEventListenerRegistrar;
+import org.jsecurity.authc.event.mgt.AuthenticationEventManager;
 import org.jsecurity.authc.pam.ModularAuthenticationStrategy;
 import org.jsecurity.authc.pam.ModularRealmAuthenticator;
 import org.jsecurity.realm.Realm;
@@ -58,7 +58,7 @@ import java.util.Collection;
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager implements AuthenticationEventListenerRegistrar {
 
     private Authenticator authenticator;
-    private AuthenticationEventFactory authenticationEventFactory;
+    private AuthenticationEventManager authenticationEventManager;
     private Collection<AuthenticationEventListener> authenticationEventListeners;
     private ModularAuthenticationStrategy modularAuthenticationStrategy;
 
@@ -95,12 +95,12 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         this.authenticator = authenticator;
     }
 
-    public AuthenticationEventFactory getAuthenticationEventFactory() {
-        return authenticationEventFactory;
+    public AuthenticationEventManager getAuthenticationEventManager() {
+        return authenticationEventManager;
     }
 
-    public void setAuthenticationEventFactory(AuthenticationEventFactory authenticationEventFactory) {
-        this.authenticationEventFactory = authenticationEventFactory;
+    public void setAuthenticationEventManager(AuthenticationEventManager authenticationEventManager) {
+        this.authenticationEventManager = authenticationEventManager;
     }
 
     public ModularAuthenticationStrategy getModularAuthenticationStrategy() {
@@ -125,7 +125,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * and then apply these <tt>AuthenticationEventListener</tt>s on your behalf.
      *
      * <p>One notice however: The underlying Authenticator delegate must implement the
-     * {@link org.jsecurity.authc.event.AuthenticationEventListenerRegistrar AuthenticationEventListenerRegistrar}
+     * {@link org.jsecurity.authc.event.mgt.AuthenticationEventListenerRegistrar AuthenticationEventListenerRegistrar}
      * interface in order for these listeners to be applied.  If it does not implement this interface, it is
      * considered a configuration error and an exception will be thrown during {@link #init() initialization}.
      *
@@ -156,7 +156,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     protected Authenticator createAuthenticator() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
         mra.setRealms(getRealms());
-        mra.setAuthenticationEventFactory( getAuthenticationEventFactory() );
+        mra.setAuthenticationEventManager( getAuthenticationEventManager() );
         mra.setAuthenticationEventListeners( getAuthenticationEventListeners() );
         mra.setModularAuthenticationStrategy( getModularAuthenticationStrategy() );
         mra.init();

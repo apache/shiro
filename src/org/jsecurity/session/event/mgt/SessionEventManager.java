@@ -6,7 +6,7 @@ import org.jsecurity.session.Session;
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface SessionEventManager extends SessionEventSender, SessionEventListenerRegistrar, SessionEventFactory {
+public interface SessionEventManager extends SessionEventFactory, SessionEventSender {
 
     void sendStartEvent(Session session);
 
