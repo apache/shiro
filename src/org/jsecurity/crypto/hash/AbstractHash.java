@@ -96,8 +96,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * @param source the source object to be hashed.
      * @param salt the salt to use for the hash
      * @throws CodecException if either constructor argument cannot be converted into a byte array.
-     * @see <a href="http://www.owasp.org/index.php/Hashing_Java" target="blank">Hashing_Java</a>
-     * for the benefits of salts and hash iterations.
      */
     public AbstractHash(Object source, Object salt ) throws CodecException {
         this( source, salt, 1 );
@@ -120,8 +118,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * @param salt the salt to use for the hash
      * @param hashIterations the number of times the <tt>source</tt> argument hashed for attack resiliency.
      * @throws CodecException if either Object constructor argument cannot be converted into a byte array.
-     * @see <a href="http://www.owasp.org/index.php/Hashing_Java" target="blank">Hashing_Java</a>
-     * for the benefits of salts and multiple hash iterations.
      */
     public AbstractHash(Object source, Object salt, int hashIterations ) throws CodecException {
         byte[] sourceBytes = toBytes( source );

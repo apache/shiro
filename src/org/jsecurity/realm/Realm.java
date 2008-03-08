@@ -39,27 +39,26 @@ import org.jsecurity.authz.Authorizer;
  * Data Access API.  They are essentially security-specific
  * <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
  *
- * <p>Because most of these datasources usually contain subject (user) information such as usernames and passwords,
- * a Realm can act as a pluggable authentication module in a PAM configuration.  This allows a Realm to perform
- * <i>both</i> authentication and authorization duties for a single datasource, which caters to 90% of the use cases
- * of most applications.  If for some reason you don't want your Realm implementation to perform authentication
+ * <p>Because most of these datasources usually contain Subject (a.k.a. User) information such as usernames and
+ * passwords, a Realm can act as a pluggable authentication module in a PAM configuration.  This allows a Realm to
+ * perform <i>both</i> authentication and authorization duties for a single datasource, which caters to the large
+ * majority of applications.  If for some reason you don't want your Realm implementation to perform authentication
  * duties, you should override the {@link #supports(org.jsecurity.authc.AuthenticationToken)} method to always
  * return <tt>false</tt>.
  *
  * <p>Because every application is different, security data such as users and roles can be
- * represented in any number of ways.  JSecurity tries to
- * maintain a non-intrusive development philosophy whenever possible - it does not require you to
- * implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt> interfaces or classes.
+ * represented in any number of ways.  JSecurity tries to maintain a non-intrusive development philosophy whenever
+ * possible - it does not require you to implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt>
+ * interfaces or classes.
  *
- * <p>Instead, JSecurity allows applications to implement this interface to access
- * environment-specific datasources and data model objects.  The implementation can then be
- * plugged in to the application's JSecurity configuration.  This modular technique abstracts
- * away any environment/modeling details and allows JSecurity to be deployed in
+ * <p>Instead, JSecurity allows applications to implement this interface to access environment-specific datasources
+ * and data model objects.  The implementation can then be plugged in to the application's JSecurity configuration.
+ * This modular technique abstracts away any environment/modeling details and allows JSecurity to be deployed in
  * practically any application environment.
  *
- * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend
- * one of the subclasses, {@link AuthenticatingRealm AuthenticatingRealm} or
- * {@link AuthorizingRealm}, greatly reducing the effort to implement a <tt>Realm</tt> from scratch.</p>
+ * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend one of the subclasses,
+ * {@link AuthenticatingRealm AuthenticatingRealm} or {@link AuthorizingRealm}, greatly reducing the effort requird
+ * to implement a <tt>Realm</tt> from scratch.</p>
  *
  * @see CachingRealm CachingRealm
  * @see AuthenticatingRealm AuthenticatingRealm
@@ -73,14 +72,15 @@ import org.jsecurity.authz.Authorizer;
 public interface Realm extends Authorizer {
 
     /**
-     * Returns <tt>true</tt> if this realm wishes to participate in authenticating Subjects that use
-     * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instances, <tt>false</tt> otherwise.
+     * Returns <tt>true</tt> if this realm wishes to authenticate the Subject represented by the given
+     * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instance, <tt>false</tt> otherwise.
      *
-     * <p>If this method returns <tt>false</tt>, it will not be consulted to authenticate the Subject represented by
-     * <tt>AuthenticationToken</tt>s.
+     * <p>If this method returns <tt>false</tt>, it will not be called to authenticate the Subject represented by
+     * the token - more specifically, a <tt>false</tt> return value means this Realm instance's 
+     * {@link #getAccount getAccount} method will not be invoked for that token.
      *
      * @param token the AuthenticationToken submitted for the authentication attempt
-     * @return <tt>true</tt> if this realm can authenticate subjects represented by specified token,
+     * @return <tt>true</tt> if this realm can/will authenticate Subjects represented by specified token,
      * <tt>false</tt> otherwise.
      */
     boolean supports( AuthenticationToken token);
@@ -90,8 +90,9 @@ public interface Realm extends Authorizer {
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
      * <p>This method effectively represents a login attempt for the corresponding user with the underlying EIS datasource.
-     * Most implementations merely just need to return the account data only (as the method name implies) and let
-     * JSecurity do the rest, but implementations may of course perform eis specific login operations if so desired.
+     * Most implementations merely just need to lookup and return the account data only (as the method name implies)
+     * and let JSecurity do the rest, but implementations may of course perform eis specific login operations if so
+     * desired.
      *
      * @param token the application-specific representation of an account principal and credentials.
      *

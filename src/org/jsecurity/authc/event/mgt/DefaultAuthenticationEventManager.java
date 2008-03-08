@@ -51,6 +51,48 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
         return this.authenticationEventFactory.createLogoutEvent(subjectPrincipal);
     }
 
+    /**
+     * Utility method that first creates a failure event based on the given token and exception and then actually sends
+     * the event.
+     *
+     * @param token the authentication token reprenting the subject (user)'s authentication attempt.
+     * @param ae    the <tt>AuthenticationException</tt> that occurred as a result of the attempt.
+     */
+    public void sendFailureEvent(AuthenticationToken token, AuthenticationException ae) {
+        if (isSendingEvents()) {
+            AuthenticationEvent event = createFailureEvent(token, ae);
+            send(event);
+        }
+    }
+
+    /**
+     * Utility method that first creates a success event based on the given token and account and then actually sends
+     * the event.
+     *
+     * @param token   the authentication token reprenting the subject (user)'s authentication attempt.
+     * @param account the <tt>Account</tt> obtained after the successful attempt.
+     */
+    public void sendSuccessEvent(AuthenticationToken token, Account account) {
+        if (isSendingEvents()) {
+            AuthenticationEvent event = createSuccessEvent(token, account);
+            send(event);
+        }
+    }
+
+    /**
+     * Utility method that first creates a logout event based on the given subjectIdentifier and then actually
+     * sends the event.
+     *
+     * @param subjectPrincipal the application-specific Subject/user identifier.
+     */
+    public void sendLogoutEvent(Object subjectPrincipal) {
+        if (isSendingEvents()) {
+            AuthenticationEvent event = createLogoutEvent(subjectPrincipal);
+            send(event);
+        }
+
+    }
+
     public void send(AuthenticationEvent ae) {
         this.authenticationEventSender.send(ae);
     }

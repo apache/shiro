@@ -63,12 +63,6 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     /** True if the user's credentials are expired, false otherwise. */
     private boolean credentialsExpired = false;
 
-    /**
-     * True if the user is allowed to log in concurrently from two
-     * separate locations, false otherwise.
-     */
-    private boolean concurrentLoginsAllowed = true;
-
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -80,15 +74,10 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     }
 
     public SimpleAccount(Object principal, Object credentials, boolean locked, boolean credentialsExpired) {
-        this(principal, credentials, locked, credentialsExpired, true);
-    }
-
-    public SimpleAccount(Object principal, Object credentials, boolean locked, boolean credentialsExpired, boolean concurrentLoginsAllowed) {
         this.principal = principal;
         this.credentials = credentials;
         this.locked = locked;
         this.credentialsExpired = credentialsExpired;
-        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
     }
 
     /*--------------------------------------------
@@ -125,14 +114,6 @@ public class SimpleAccount implements AggregateAccount, Serializable {
 
     public void setCredentialsExpired(boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
-    }
-
-    public boolean isConcurrentLoginsAllowed() {
-        return concurrentLoginsAllowed;
-    }
-
-    public void setConcurrentLoginsAllowed(boolean concurrentLoginsAllowed) {
-        this.concurrentLoginsAllowed = concurrentLoginsAllowed;
     }
 
     /*--------------------------------------------
@@ -203,6 +184,6 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     }
 
     public String toString() {
-        return getPrincipal().toString();
+        return getPrincipal() != null ? getPrincipal().toString() : "empty";
     }
 }

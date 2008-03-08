@@ -28,9 +28,11 @@ package org.jsecurity.authc;
  * <p>An <tt>Account</tt> represents system-specific account/user information
  * in an application-independent manner.  Instead of forcing a JSecurity user to
  * implement <tt>User</tt> or <tt>Role</tt> interfaces and being invasive on an application's
- * data model, the application must instead only implement this interface to represent such
- * data.  This enables a cleaner pluggable implementation and abstracts an application's
- * core classes away from JSecurity.</p>
+ * data model, the application instead returns instances of this interface to represent such data.  This enables a
+ * cleaner pluggable implementation and abstracts an application's core classes away from JSecurity.</p>
+ *
+ * <p>In fact, JSecurity's default implementations of this interface are usually good for the majority of applications
+ * and no additional implementation is required.
  *
  * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to

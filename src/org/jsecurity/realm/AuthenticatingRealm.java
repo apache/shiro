@@ -19,8 +19,9 @@ import org.jsecurity.cache.CacheProvider;
  * applications, whereas authorization operations are more so heavily dependent upon the application's data model, which
  * can vary widely.
  *
- * <p>By providing the most common authentication operations here and leaving data-model specific checks to subclasses,
- * a top-level abstract class for most common authentication behavior is more useful as an extension point instead of
+ * <p>By providing the most common authentication operations here and leaving data-model specific authorization checks
+ * to subclasses, a top-level abstract class for most common authentication behavior is more useful as an extension
+ * point for most applications.
  *
  * @since 0.2
  * @author Les Hazlewood
@@ -178,21 +179,21 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
     }
 
     /**
-     * This method must be implemented by subclasses to retrieve account data from an
-     * implementation-specific datasource (RDBMS, LDAP, etc) for the given authentication token.
-     * In most data-centric systems such as an RDBMS, LDAP, file resource, etc, this means just 'pulling'
-     * account data for an associated subject/user and nothing more.  But in some systems, the method
-     * could actually perform EIS specific log-in logic - it is up to the Realm implementation.
+     * Retrieves account data from an implementation-specific datasource (RDBMS, LDAP, etc) for the given
+     * authentication token.
+     *
+     * <p>For most datasources, this means just 'pulling' account data for an associated subject/user and nothing
+     * more and letting JSecurity do the rest.  But in some systems, this method could actually perform EIS specific
+     * log-in logic in addition to just retrieving data - it is up to the Realm implementation.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
      *
      * @param token the authentication token containing the user's principal and credentials.
-     * @return an {@link org.jsecurity.authc.Account} object containing account information resulting from the
+     * @return an {@link org.jsecurity.authc.Account} containing account data resulting from the
      * authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
      * @throws org.jsecurity.authc.AuthenticationException if there is an error acquiring data or performing
      * realm-specific authentication logic for the specified <tt>token</tt>
      */
     protected abstract Account doGetAccount( AuthenticationToken token ) throws AuthenticationException;
-
 
 }
