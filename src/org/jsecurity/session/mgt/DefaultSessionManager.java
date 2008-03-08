@@ -22,13 +22,13 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support;
+package org.jsecurity.session.mgt;
 
 import org.jsecurity.cache.CacheProvider;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.support.eis.MemorySessionDAO;
-import org.jsecurity.session.support.eis.SessionDAO;
+import org.jsecurity.session.mgt.eis.MemorySessionDAO;
+import org.jsecurity.session.mgt.eis.SessionDAO;
 import org.jsecurity.util.Destroyable;
 
 import java.io.Serializable;
@@ -77,7 +77,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
      * not already been explicitly set via {@link #setSessionDAO}, relying upon the configured
      * {@link #setCacheProvider cacheProvider} to determine caching strategies.
      *
-     * <p><b>N.B.</b> This implementation constructs a {@link org.jsecurity.session.support.eis.MemorySessionDAO} instance, relying on a configured
+     * <p><b>N.B.</b> This implementation constructs a {@link org.jsecurity.session.mgt.eis.MemorySessionDAO} instance, relying on a configured
      * {@link #setCacheProvider cacheProvider} to provide production-quality cache management.  Please ensure that
      * the <tt>CacheProvider</tt> property is configured for production environments, since the
      * <tt>MemorySessionDAO</tt> implementation defaults to a

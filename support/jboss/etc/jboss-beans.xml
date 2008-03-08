@@ -64,7 +64,7 @@
     <!-- ===================================================================================
          Session Management Configuration
          =================================================================================== -->
-    <bean name="sessionManager" class="org.jsecurity.session.support.DefaultSessionManager">
+    <bean name="sessionManager" class="org.jsecurity.session.mgt.DefaultSessionManager">
         <create method="init"/>
     </bean>
 

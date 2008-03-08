@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support;
+package org.jsecurity.session.mgt;
 
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;

@@ -22,13 +22,13 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support.quartz;
+package org.jsecurity.session.mgt.quartz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.session.support.DefaultSessionManager;
-import org.jsecurity.session.support.SessionValidationScheduler;
-import org.jsecurity.session.support.ValidatingSessionManager;
+import org.jsecurity.session.mgt.DefaultSessionManager;
+import org.jsecurity.session.mgt.SessionValidationScheduler;
+import org.jsecurity.session.mgt.ValidatingSessionManager;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -37,7 +37,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * An implementation of the {@link SessionValidationScheduler SessionValidationScheduler} that uses Quartz to schedule a
- * job to call {@link org.jsecurity.session.support.ValidatingSessionManager#validateSessions()} on
+ * job to call {@link org.jsecurity.session.mgt.ValidatingSessionManager#validateSessions()} on
  * a regular basis.
  *
  * @since 0.1
@@ -127,7 +127,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     /**
      * Specifies how frequently (in milliseconds) this Scheduler will call the
-     * {@link org.jsecurity.session.support.ValidatingSessionManager#validateSessions() ValidatingSessionManager#validateSessions()} method.
+     * {@link org.jsecurity.session.mgt.ValidatingSessionManager#validateSessions() ValidatingSessionManager#validateSessions()} method.
      *
      * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
      * @param sessionValidationInterval

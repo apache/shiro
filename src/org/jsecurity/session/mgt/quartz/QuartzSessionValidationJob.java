@@ -22,18 +22,18 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.session.support.quartz;
+package org.jsecurity.session.mgt.quartz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.session.support.ValidatingSessionManager;
+import org.jsecurity.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * A quartz job that basically just calls the {@link org.jsecurity.session.support.ValidatingSessionManager#validateSessions()}
+ * A quartz job that basically just calls the {@link org.jsecurity.session.mgt.ValidatingSessionManager#validateSessions()}
  * method on a configured session manager.  The session manager will automatically be injected by the
  * superclass if it is in the job data map or the scheduler map.
  *
