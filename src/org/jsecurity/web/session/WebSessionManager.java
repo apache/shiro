@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood
+ * Copyright (C) 2005-2008 Les Hazlewood
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,7 +28,7 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.mgt.DefaultSessionFactory;
+import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.attr.CookieAttribute;
@@ -43,12 +43,12 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 /**
- * Web-capable implementation of a {@link org.jsecurity.session.SessionFactory SessionFactory}.
+ * Web-application capable <tt>SessionManager</tt> implementation.
  *
  * @author Les Hazlewood
- * @since 0.1
+ * @since 0.9
  */
-public class WebSessionFactory extends DefaultSessionFactory {
+public class WebSessionManager extends DefaultSessionManager {
 
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be
@@ -59,7 +59,7 @@ public class WebSessionFactory extends DefaultSessionFactory {
     protected CookieAttribute<Serializable> sessionIdCookieValue = null;
     protected RequestParamAttribute<Serializable> sessionIdRequestParamValue = null;
 
-    public WebSessionFactory() {
+    public WebSessionManager() {
     }
 
     public CookieAttribute<Serializable> getSessionIdCookieValue() {
@@ -204,23 +204,23 @@ public class WebSessionFactory extends DefaultSessionFactory {
         return id;
     }
 
-    public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
+    public Serializable start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
         return start( request, response, hostAddress );
     }
 
-    protected Session start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
-        Session s = super.start( inetAddress );
-        storeSessionId( s.getId(), request, response );
+    protected Serializable start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
+        Serializable sessionId = super.start( inetAddress );
+        storeSessionId( sessionId, request, response );
         request.removeAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE );
         request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
-        return s;
+        return sessionId;
     }
 
-    public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+    public Session doGetSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         if ( sessionId != null ) {
-            return super.getSession( sessionId );
+            return super.doGetSession( sessionId );
         } else {
             ServletRequest request = ThreadContext.getServletRequest();
             ServletResponse response = ThreadContext.getServletResponse();
@@ -277,9 +277,8 @@ public class WebSessionFactory extends DefaultSessionFactory {
                     "HttpServletRequest.  A Session will not be returned." );
             }
         }
+
         return session;
-
-
     }
 
     protected Session handleInvalidSession( ServletRequest request,
@@ -290,4 +289,5 @@ public class WebSessionFactory extends DefaultSessionFactory {
         }
         return null;
     }
+
 }

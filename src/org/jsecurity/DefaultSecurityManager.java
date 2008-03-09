@@ -29,7 +29,6 @@ import org.jsecurity.authz.Authorizer;
 import org.jsecurity.realm.PropertiesRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
 import org.jsecurity.subject.DelegatingSubject;
 import org.jsecurity.subject.RememberMeManager;
 import org.jsecurity.subject.Subject;
@@ -42,7 +41,8 @@ import java.util.Collection;
  * <p>The JSecurity framework's default concrete implementation of the {@link org.jsecurity.SecurityManager} interface,
  * based around a collection of {@link org.jsecurity.realm.Realm}s.  This implementation delegates its
  * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
- * {@link SessionFactory SessionFactory} instances respectively via superclass implementation.</p>
+ * {@link org.jsecurity.session.mgt.SessionManager SessionManager} instances respectively via superclass
+ * implementation.</p>
  *
  * <p>To greatly reduce and simplify configuration, this implementation (and its superclasses) will
  * create suitable defaults for <em>all</em> of its required dependencies.  Therefore, you only need to override
@@ -266,9 +266,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Account account;
         try {
             account = authenticate(token);
-            rememberMeSuccessfulLogin(token, account);
+            onSuccessfulLogin(token,account);
         } catch (AuthenticationException ae) {
-            rememberMeFailedLogin(token, ae);
+            try {
+                onFailedLogin(token,ae);
+            } catch (Exception e) {
+                if ( log.isInfoEnabled() ) {
+                    log.info( "onFailedLogin(AuthenticationToken,AuthenticationException) method threw an " +
+                            "exception.  Logging and propagating original AuthenticationException.", e );
+                }
+            }
             throw ae; //propagate
         }
         Subject subject = createSubject(token, account);
@@ -277,8 +284,20 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return subject;
     }
 
-    public void logout(Object subjectIdentifier) {
+    protected void onSuccessfulLogin( AuthenticationToken token, Account account ) {
+        rememberMeSuccessfulLogin(token,account);
+    }
+
+    protected void onFailedLogin(AuthenticationToken token, AuthenticationException ae ) {
+        rememberMeFailedLogin(token,ae);
+    }
+
+    protected void beforeLogout( Object subjectIdentifier ) {
         rememberMeLogout(subjectIdentifier);
+    }
+
+    public void logout(Object subjectIdentifier) {
+        beforeLogout(subjectIdentifier);
 
         Authenticator authc = getAuthenticator();
         if ( authc instanceof LogoutAware ) {
