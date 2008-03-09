@@ -27,12 +27,15 @@ package org.jsecurity;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
+import org.jsecurity.session.StoppedSessionException;
 import org.jsecurity.session.event.SessionEventListener;
 import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;
-import org.jsecurity.session.mgt.DefaultSessionFactory;
+import org.jsecurity.session.mgt.DefaultSessionManager;
+import org.jsecurity.session.mgt.DelegatingSession;
+import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
@@ -41,10 +44,10 @@ import java.util.Collection;
 
 /**
  * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that delegates all
- * {@link org.jsecurity.session.Session session} operations to a wrapped {@link SessionFactory SessionFactory}
- * instance.  That is, this class implements the <tt>SessionFactory</tt> methods in the
+ * {@link org.jsecurity.session.Session session} operations to a wrapped {@link SessionManager SessionManager}
+ * instance.  That is, this class implements the methods in the
  * {@link SecurityManager SecurityManager} interface, but in reality, those methods are merely passthrough calls to
- * the underlying 'real' <tt>SessionFactory</tt> instance.
+ * the underlying 'real' <tt>SessionManager</tt> instance.
  *
  * <p>The remaining <tt>SecurityManager</tt> methods not implemented by this class or its parents are left to be
  * implemented by subclasses.
@@ -58,7 +61,7 @@ import java.util.Collection;
  */
 public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionEventListenerRegistrar {
 
-    protected SessionFactory sessionFactory;
+    protected SessionManager sessionManager;
     protected Collection<SessionEventListener> sessionEventListeners = null;
 
     /**
@@ -87,51 +90,50 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     /**
-     * Sets the underlying delegate {@link SessionFactory} instance that will be used to support calls to this
-     * manager's {@link #start} and {@link #getSession} calls.
+     * Sets the underlying delegate {@link SessionManager} instance that will be used to support this implementation's
+     * <tt>SessionManager</tt> method calls.
      *
      * <p>This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
-     * <tt>SessionFactory</tt> interface, but instead delegates these calls to an internal
-     * <tt>SessionFactory</tt> instance.
+     * <tt>SessionManager</tt> interface, but instead delegates these calls to an internal
+     * <tt>SessionManager</tt> instance.
      *
-     * <p>If a <tt>SessionFactory</tt> instance is not set, a default one will be automatically created and
+     * <p>If a <tt>SessionManager</tt> instance is not set, a default one will be automatically created and
      * initialized appropriately for the the existing runtime environment.
      *
-     * @param sessionFactory delegate instance to use to support this manager's {@link #start} and {@link #getSession}
-     *                       implementations.
+     * @param sessionManager delegate instance to use to support this manager's <tt>SessionManager</tt> method calls.
      */
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
-    public SessionFactory getSessionFactory() {
-        return this.sessionFactory;
+    public SessionManager getSessionManager() {
+        return this.sessionManager;
     }
 
-    protected SessionFactory createSessionFactory() {
-        DefaultSessionFactory sessionFactory = new DefaultSessionFactory();
-        sessionFactory.setCacheProvider(getCacheProvider());
-        sessionFactory.setSessionEventListeners(getSessionEventListeners());
-        sessionFactory.init();
-        return sessionFactory;
+    protected SessionManager createSessionManager() {
+        DefaultSessionManager sessionManager = new DefaultSessionManager();
+        sessionManager.setCacheProvider(getCacheProvider());
+        sessionManager.setSessionEventListeners(getSessionEventListeners());
+        sessionManager.init();
+        return sessionManager;
     }
 
-    protected void ensureSessionFactory() {
-        if (getSessionFactory() == null) {
+    protected void ensureSessionManager() {
+        if (getSessionManager() == null) {
             if (log.isInfoEnabled()) {
-                log.info("No delegate SessionFactory instance has been set as a property of this class.  Creating a " +
-                    "default SessionFactory implementation...");
+                log.info("No delegate SessionManager instance has been set as a property of this class.  Creating a " +
+                    "default SessionManager instance...");
             }
-            SessionFactory sessionFactory = createSessionFactory();
-            setSessionFactory(sessionFactory);
+            SessionManager sessionManager = createSessionManager();
+            setSessionManager(sessionManager);
         }
     }
 
-    protected SessionFactory getRequiredSessionFactory() {
-        if (getSessionFactory() == null) {
-            ensureSessionFactory();
+    protected SessionManager getRequiredSessionManager() {
+        if (getSessionManager() == null) {
+            ensureSessionManager();
         }
-        return getSessionFactory();
+        return getSessionManager();
     }
 
     public Collection<SessionEventListener> getSessionEventListeners() {
@@ -140,29 +142,29 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     /**
      * This is a convenience method that allows registration of SessionEventListeners with the underlying delegate
-     * SessionFactory at startup.
+     * SessionManager at startup.
      *
-     * <p>This is more convenient than having to configure your own SessionFactory instance, inject the listeners on
-     * it, and then set that SessionFactory instance as an attribute of this class.  Instead, you can just rely
-     * on the <tt>SecurityManager</tt>'s default initialization logic to create the SessionFactory instance for you
+     * <p>This is more convenient than having to configure your own SessionManager instance, inject the listeners on
+     * it, and then set that SessionManager instance as an attribute of this class.  Instead, you can just rely
+     * on the <tt>SecurityManager</tt>'s default initialization logic to create the SessionManager instance for you
      * and then apply these <tt>SessionEventListener</tt>s on your behalf.
      *
-     * <p>One notice however: The underlying SessionFactory delegate must implement the
+     * <p>One notice however: The underlying SessionManager delegate must implement the
      * {@link SessionEventListenerRegistrar SessionEventListenerRegistrar} interface in order for these listeners to
      * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
      * will be thrown during {@link #init() initialization}.
      *
      * @param sessionEventListeners the <tt>SessionEventListener</tt>s to register with the underlying delegate
-     * <tt>SessionFactory</tt> at startup.
+     * <tt>SessionManager</tt> at startup.
      */
     public void setSessionEventListeners(Collection<SessionEventListener> sessionEventListeners) {
         this.sessionEventListeners = sessionEventListeners;
     }
 
-    private void assertSessionFactoryEventListenerSupport(SessionFactory factory) {
-        if (!(factory instanceof SessionEventListenerRegistrar)) {
-            String msg = "SessionEventListener registration failed:  The underlying SessionFactory instance of " +
-                "type [" + factory.getClass().getName() + "] does not implement the " +
+    private void assertSessionEventListenerSupport(SessionManager sessionManager) {
+        if (!(sessionManager instanceof SessionEventListenerRegistrar)) {
+            String msg = "SessionEventListener registration failed:  The underlying SessionManager instance of " +
+                "type [" + sessionManager.getClass().getName() + "] does not implement the " +
                 SessionEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
                 "runtime SessionEvent propagation.";
             throw new IllegalStateException(msg);
@@ -170,42 +172,54 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     public void add(SessionEventListener listener) {
-        ensureSessionFactory();
-        assertSessionFactoryEventListenerSupport(this.sessionFactory);
-        ((SessionEventListenerRegistrar)this.sessionFactory).add(listener);
+        ensureSessionManager();
+        SessionManager sm = getSessionManager();
+        assertSessionEventListenerSupport(sm);
+        ((SessionEventListenerRegistrar)sm).add(listener);
     }
 
     public boolean remove(SessionEventListener listener) {
-        return (this.sessionFactory instanceof SessionEventListenerRegistrar) &&
-            ((SessionEventListenerRegistrar) this.sessionFactory).remove(listener);
+        SessionManager sm = getSessionManager();
+        return (sm instanceof SessionEventListenerRegistrar) &&
+            ((SessionEventListenerRegistrar)sm).remove(listener);
     }
 
     protected void afterAuthorizerSet() {
-        ensureSessionFactory();
-        afterSessionFactorySet();
+        ensureSessionManager();
+        afterSessionManagerSet();
     }
 
-    protected void afterSessionFactorySet(){}
+    protected void afterSessionManagerSet(){}
 
-    protected void beforeSessionFactoryDestroyed(){}
+    protected void beforeSessionManagerDestroyed(){}
 
-    protected void destroySessionFactory() {
-        LifecycleUtils.destroy(getSessionFactory());
-        this.sessionFactory = null;
+    protected void destroySessionManager() {
+        LifecycleUtils.destroy(getSessionManager());
+        this.sessionManager = null;
         this.sessionEventListeners = null;
     }
 
     protected void beforeAuthorizerDestroyed() {
-        beforeSessionFactoryDestroyed();
-        destroySessionFactory();
+        beforeSessionManagerDestroyed();
+        destroySessionManager();
     }
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        return getRequiredSessionFactory().start(hostAddress);
+        Serializable sessionId = getRequiredSessionManager().start(hostAddress);
+        return new DelegatingSession(sessionManager, sessionId);
     }
 
     public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        return getRequiredSessionFactory().getSession(sessionId);
+        SessionManager sm = getRequiredSessionManager();
+        if (sm.isExpired(sessionId)) {
+            String msg = "Session with id [" + sessionId + "] has expired and may not be used.";
+            throw new ExpiredSessionException(msg);
+        } else if (sm.isStopped(sessionId)) {
+            String msg = "Session with id [" + sessionId + "] has been stopped and may not be used.";
+            throw new StoppedSessionException(msg);
+        }
+
+        return new DelegatingSession(sm, sessionId);
     }
 
 }

@@ -33,7 +33,8 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * A SessionManager manages the creation, maintenance, and clean-up of {@link org.jsecurity.session.Session Session}s.
+ * A SessionManager manages the creation, maintenance, and clean-up of all application
+ * {@link org.jsecurity.session.Session Session}s.
  *
  * @since 0.1
  * @author Les Hazlewood

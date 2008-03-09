@@ -2,12 +2,13 @@ package org.jsecurity.web;
 
 import org.jsecurity.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.SessionFactory;
+import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.session.HttpContainerSessionFactory;
-import org.jsecurity.web.session.WebSessionFactory;
+import org.jsecurity.web.session.ServletContainerSessionManager;
+import org.jsecurity.web.session.WebSessionManager;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -46,7 +47,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
         super(realms);
     }
 
-    protected void afterSessionFactorySet() {
+    protected void afterSessionManagerSet() {
         WebRememberMeManager rmm = new WebRememberMeManager();
         rmm.init();
         setRememberMeManager(rmm);
@@ -72,14 +73,17 @@ public class WebSecurityManager extends DefaultSecurityManager {
         return this.sessionMode.equals(HTTP_SESSION_MODE);
     }
 
-    protected SessionFactory createSessionFactory() {
+    protected SessionManager createSessionManager() {
         if (isHttpSessionMode()) {
-            return new HttpContainerSessionFactory();
+            ServletContainerSessionManager scsm = new ServletContainerSessionManager();
+            scsm.setSessionEventListeners(getSessionEventListeners());
+            return scsm;
         } else {
-            WebSessionFactory wsf = new WebSessionFactory();
-            wsf.setCacheProvider(getCacheProvider());
-            wsf.init();
-            return wsf;
+            WebSessionManager wsm = new WebSessionManager();
+            wsm.setCacheProvider(getCacheProvider());
+            wsm.setSessionEventListeners(getSessionEventListeners());
+            wsm.init();
+            return wsm;
         }
     }
 
@@ -122,7 +126,16 @@ public class WebSecurityManager extends DefaultSecurityManager {
     }
 
     public Subject createSubject(ServletRequest request, ServletResponse response) {
-        Session session = getSession(null); //expected the underlying SessionFactory can pull from the thread-local request
+        Session session = null; 
+        try {
+            session = getSession(null);
+        } catch (InvalidSessionException ignored) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No Session exists for the incoming request and is therefore not available to use to " +
+                        "construct a Subject instance.  This is perfectly ok and a new Subject instance will be " +
+                        "created.  This can be ignored - logging for traceability only.", ignored );
+            }
+        }
         return createSubject(session, request, response);
     }
 
