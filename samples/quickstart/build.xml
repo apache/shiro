@@ -1,19 +1,18 @@
 <?xml version="1.0"?>
 
-<project name="spring-sample" default="dist">
+<project name="quickstart" default="dist">
 
     <property name="root.base.dir" value="../.."/>
 
     <!-- "extend" parent build definition -->
     <import file="../../build.xml" />
 
-    <property name="module.name" value="spring"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
+    <property name="module.name" value="quickstart"/>
+    <property name="module.base.dir" value="${root.base.dir}/samples/quickstart"/>
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
     <!-- Module properties -->
-    <property name="module.name" value="api"/>
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
     <property name="dist.war" value="${root.base.dir}/build/${dist.war.name}"/>
 
@@ -42,7 +41,7 @@
       -  =================================================================== -->
     <target name="compile">
 
-        <mkdir dir="${classes.dir}"/>
+        <!-- <mkdir dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}/META-INF"/>
 
 		<javac destdir="${classes.dir}"
@@ -53,74 +52,53 @@
                classpathref="all.libs">
 			<src path="${src.dir}"/>
             <classpath location="${root.dist.dir}/jsecurity.jar"/>
-        </javac>
+        </javac> -->
 
     </target>
 
     <target name="jar" depends="compile">
 
-        <mkdir dir="${dist.dir}"/>
+        <!-- <mkdir dir="${dist.dir}"/>
 
-        <jar jarfile="${dist.dir}/jsecurity-spring-sample.jar">
+        <jar jarfile="${dist.jar}">
             <fileset dir="${classes.dir}">
                 <include name="**/*.class"/>
             </fileset>
             <fileset dir="${etc.dir}">
                 <include name="*.xml"/>
                 <include name="*.gif"/>
-                <include name="*.jpg"/>                
-                <include name="*.properties"/>                
+                <include name="*.jpg"/>
+                <include name="*.properties"/>
             </fileset>
             <manifest>
-                <attribute name="Implementation-Title"
-                           value="${project.name}-${module.name}"/>
+                <attribute name="Implementation-Title" value="${project.name}-${module.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="${project.name}-Version" value="${version}"/>
             </manifest>
-        </jar>
+        </jar> -->
     </target>
 
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist" depends="compile,jar">
-
-        <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
-        <mkdir dir="${webstart.lib.dir}"/>
-        <copy todir="${webstart.lib.dir}" preservelastmodified="true" flatten="true">
-            <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
-            <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
-            <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
-            <fileset dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
-        </copy>
-        <signjar keystore="${etc.dir}/jsecurity-sample.jks"
-                 alias="jsecurity"
-                 keypass="jsecurity"
-                 storepass="jsecurity">
-            <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
-        </signjar>
-
-        <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
-            <lib dir="${lib.dir}/ehcache" includes="*.jar"/>
-            <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
-            <lib dir="${lib.dir}/hsqldb" includes="hsqldb.jar"/>
-            <lib dir="${lib.dir}/spring" includes="*.jar"/>
-            <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
-            <lib dir="${lib.dir}/quartz" includes="*.jar"/>
-            <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
+    <target name="dist">
+        <war warfile="${dist.war}" webxml="WEB-INF/web.xml">
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
-            <webinf dir="${basedir}" includes="resources/**"/>
-            <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
-
-            <lib dir="${dist.dir}" includes="*.jar"/>
-
-            <!-- Jar for webstart application -->
-            <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
+            <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
+            <lib dir="${lib.dir}/jakarta-taglibs" includes="standard.jar"/>
+            <lib dir="${lib.dir}/log4j" includes="log4j.jar"/>
+            <lib dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
+            <fileset dir="${module.base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
+            <!-- <lib dir="${dist.dir}" includes="*.jar"/> -->
         </war>
     </target>
 
-    <target name="deploy" depends="dist" >
-        <copy file="${dist.war}" todir="${deploy.dir}" preservelastmodified="true" overwrite="true"/>
+    <target name="quick-deploy">
+        <echo>Deploying application to Tomcat...</echo>
+        <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
+        <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
+
+    <target name="deploy" depends="dist,quick-deploy"/>
 
 </project>

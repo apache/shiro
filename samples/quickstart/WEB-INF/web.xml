@@ -3,7 +3,7 @@
 <web-app version="2.4"
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <!-- By default, JSecurity's Session infrastructure in a web environment will use the Servlet container's
          HttpSession.  But if you need to share session state across client mediums (e.g. web mvc and Swing),
@@ -18,7 +18,21 @@
     <filter>
         <filter-name>JSecurityFilter</filter-name>
         <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
+        <!-- <init-param>
+            <param-name>unauthorizedPage</param-name>
+            <param-value>/s/unauthorized</param-value>
+        </init-param>
+        <init-param>
+            <param-name>urls</param-name>
+            <param-value>
+                /s/index=authc
+                /s/jsecurity.jnlp=authc|user
+                /remoting/**=authenticated|permission.remote:invoke
+            </param-value>
+        </init-param> -->
+
     </filter>
+
 
     <filter-mapping>
         <filter-name>JSecurityFilter</filter-name>

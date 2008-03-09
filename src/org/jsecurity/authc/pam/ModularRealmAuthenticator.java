@@ -88,6 +88,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
     |         C O N S T R U C T O R S           |
     ============================================*/
     public ModularRealmAuthenticator() {
+        super();
     }
 
     public ModularRealmAuthenticator( Realm realm ) {

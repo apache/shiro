@@ -167,47 +167,51 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     public final void init() {
 
         if (isAccountCacheEnabled()) {
-            if (log.isTraceEnabled()) {
-                log.trace("Initializing account cache.");
-            }
-
-            Cache cache = getAccountCache();
-
-            if (cache == null) {
-
-                if (log.isDebugEnabled()) {
-                    log.debug("No cache implementation set.  Checking cacheProvider...");
-                }
-
-                CacheProvider cacheProvider = getCacheProvider();
-
-                if (cacheProvider != null) {
-                    String cacheName = getAccountCacheName();
-                    if ( cacheName == null ) {
-                        //Simple default in case they didn't provide one:
-                        cacheName = getClass().getName() + "_" + INSTANCE_COUNT++ + DEFAULT_ACCOUNT_CACHE_POSTFIX;
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.debug("CacheProvider [" + cacheProvider + "] has been configured.  Building " +
-                                "Account cache named [" + cacheName + "]");
-                    }
-                    cache = cacheProvider.buildCache(cacheName);
-                    setAccountCache(cache);
-                } else {
-                    if (log.isInfoEnabled()) {
-                        log.info("No cache or cacheProvider properties have been set.  Account caching is " +
-                                "disabled.");
-                    }
-                }
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Accounts will be cached using cache [" + cache + "]");
-                }
-            }
-
+            initAccountCache();
         }
 
         onInit();
+    }
+
+    protected void initAccountCache() {
+        if (log.isTraceEnabled()) {
+            log.trace("Initializing account cache.");
+        }
+
+        Cache cache = getAccountCache();
+
+        if (cache == null) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("No cache implementation set.  Checking cacheProvider...");
+            }
+
+            CacheProvider cacheProvider = getCacheProvider();
+
+            if (cacheProvider != null) {
+                String cacheName = getAccountCacheName();
+                if (cacheName == null) {
+                    //Simple default in case they didn't provide one:
+                    cacheName = getClass().getName() + "_" + INSTANCE_COUNT++ + DEFAULT_ACCOUNT_CACHE_POSTFIX;
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("CacheProvider [" + cacheProvider + "] has been configured.  Building " +
+                            "Account cache named [" + cacheName + "]");
+                }
+                cache = cacheProvider.buildCache(cacheName);
+                setAccountCache(cache);
+            } else {
+                if (log.isInfoEnabled()) {
+                    log.info("No cache or cacheProvider properties have been set.  Account caching is " +
+                            "disabled.");
+                }
+            }
+        } else {
+            cache.clear();
+            if (log.isDebugEnabled()) {
+                log.debug("Accounts will be cached using cache [" + cache + "]");
+            }
+        }
     }
 
     /**
@@ -249,7 +253,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      */
     protected Account getAccount(Object principal) {
 
-        if ( principal == null ) {
+        if (principal == null) {
             return null;
         }
 
@@ -343,12 +347,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         for (String permString : permissions) {
             perms.add(getPermissionResolver().resolvePermission(permString));
         }
-        return isPermitted( subjectIdentifier, perms );
+        return isPermitted(subjectIdentifier, perms);
     }
 
     public boolean[] isPermitted(Object principal, List<Permission> permissions) {
         AuthorizingAccount account = getAuthorizingAccount(principal);
-        return account.isPermitted( permissions );
+        return account.isPermitted(permissions);
     }
 
     public boolean isPermittedAll(Object subjectIdentifier, String... permissions) {
@@ -357,7 +361,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             for (String permString : permissions) {
                 perms.add(getPermissionResolver().resolvePermission(permString));
             }
-            return isPermittedAll(subjectIdentifier, perms );
+            return isPermittedAll(subjectIdentifier, perms);
         }
         return false;
     }
@@ -422,13 +426,14 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /**
      * If account caching is enabled, this will remove the account from the cache.  Subclasses are free to override
      * for additional behavior, but be sure to call <tt>super.onLogout</tt> to ensure cache cleanup.
+     *
      * @param accountPrincipal the application-specific Subject/user identifier.
      */
     public void onLogout(Object accountPrincipal) {
         Cache cache = getAccountCache();
         //cache instance will be non-null if caching is enabled:
-        if ( cache != null && accountPrincipal != null) {
-            cache.remove( accountPrincipal );
+        if (cache != null && accountPrincipal != null) {
+            cache.remove(accountPrincipal);
         }
     }
 }

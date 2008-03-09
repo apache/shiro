@@ -165,7 +165,9 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     protected Authorizer createAuthorizer() {
         ModularRealmAuthorizer mra = new ModularRealmAuthorizer();
         mra.setRealms(getRealms());
-        mra.setPermissionResolver( getPermissionResolver() );
+        if ( getPermissionResolver() != null ) {
+            mra.setPermissionResolver( getPermissionResolver() );
+        }
         mra.init();
         return mra;
     }

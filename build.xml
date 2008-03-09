@@ -19,6 +19,9 @@
     <!-- Allow override of default build properties from properties file. -->
     <property file="build.properties"/>
 
+    <!-- Environment variables (e.g. to pickup CATALINA_HOME for test deployment) -->
+    <property environment="env"/>
+
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
     <property name="major.version" value="0"/>
@@ -189,11 +192,19 @@
 
     </target>
 
+    <target name="samples.quickstart" depends="jar">
+        <ant dir="samples/quickstart"/>
+    </target>
+
     <target name="samples.spring" depends="compile.spring">
         <ant dir="samples/spring"/>
     </target>
 
-    <target name="samples" depends="samples.spring"/>
+    <target name="samples" depends="samples.quickstart,samples.spring"/>
+
+    <target name="samples.quickstart.deploy" depends="samples.quickstart">
+        <ant dir="samples/quickstart" target="deploy"/>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Javadoc all main sources                                            -->

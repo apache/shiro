@@ -156,9 +156,15 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     protected Authenticator createAuthenticator() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
         mra.setRealms(getRealms());
-        mra.setAuthenticationEventManager( getAuthenticationEventManager() );
-        mra.setAuthenticationEventListeners( getAuthenticationEventListeners() );
-        mra.setModularAuthenticationStrategy( getModularAuthenticationStrategy() );
+        if ( getAuthenticationEventManager() != null ) {
+            mra.setAuthenticationEventManager( getAuthenticationEventManager());
+        }
+        if ( getAuthenticationEventListeners() != null ) {
+            mra.setAuthenticationEventListeners(getAuthenticationEventListeners());
+        }
+        if ( getModularAuthenticationStrategy() != null ) {
+            mra.setModularAuthenticationStrategy( getModularAuthenticationStrategy() );
+        }
         mra.init();
         return mra;
     }
