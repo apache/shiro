@@ -188,8 +188,13 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
         String authorizationHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
 
         if (authorizationHeader != null && authorizationHeader.length() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Executing login with headers [" + authorizationHeader + "]");
+            }
+
             String[] authTokens = authorizationHeader.split(" ");
-            if (authTokens[0].equals(HttpServletRequest.BASIC_AUTH)) {
+
+            if (authTokens[0].trim().equalsIgnoreCase(HttpServletRequest.BASIC_AUTH)) {
                 String encodedCredentials = authTokens[1];
 
                 byte[] decodedCredentialByteArray = Base64.decodeBase64(encodedCredentials);
@@ -198,18 +203,30 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
                 String[] credentials = decodedCredentials.split(":");
 
                 if (credentials != null && credentials.length > 1) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Processing login request [" + credentials[0] + "]");
+                    }
                     Subject subject = getSubject(request, response);
                     UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(credentials[0], credentials[1]);
                     try {
                         subject.login(usernamePasswordToken);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Successfully logged in user [" + credentials[0] + "]");
+                        }
                         isLoggedIn = true;
                     } catch (AuthenticationException ae) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Unable to log in subject.", ae);
+                            log.debug("Unable to log in subject [" + credentials[0] + "]", ae);
                         }
+
+                        return sendChallenge(request, response);
                     }
                 }
             }
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Returning [" + isLoggedIn + "] from executeLogin()");
         }
 
         return isLoggedIn;
