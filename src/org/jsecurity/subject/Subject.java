@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * A <tt>Subject</tt> represents state and security operations for a <em>single</em> application user.
  * These operations include authentication (login/logout), authorization (access control), and
- * session functionality. It is JSecurity's primary mechanism for single-user security functionality.
+ * session access. It is JSecurity's primary mechanism for single-user security functionality.
  *
  * <p>Note that there are many *Permission methods in this interface overloaded to accept String arguments instead of
  * {@link Permission Permission} instances. They are a convenience allowing the caller to use a String representation of
@@ -311,11 +311,12 @@ public interface Subject {
     void login( AuthenticationToken token ) throws AuthenticationException;
 
     /**
-     * Returns <tt>true</tt> if this Subject/user has proven their identity
+     * Returns <tt>true</tt> if this Subject/user has proven their identity <em>during their current session</em>
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      * 
      * <p>Note that even if this Subject's identity has been remembered via 'remember me' services, this method will
-     * still return <tt>false</tt> unless the user has actually logged in with proper credentials.  See the
+     * still return <tt>false</tt> unless the user has actually logged in with proper credentials <em>during their
+     * current session</em>.  See the
      * {@link org.jsecurity.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} class JavaDoc for why
      * this would occur.</p>
      *
