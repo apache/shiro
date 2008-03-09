@@ -66,16 +66,6 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
     protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
-    protected static final String CONTENT_TYPE_HEADER = "text/html";
-
-    protected static final String UNAUTHORIZED_PAGE_HTML_CHUNK_1 = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
-            "<html><head>\n" +
-            "<title>401 Unauthorized</title>\n" +
-            "</head><body>\n" +
-            "<h1>Unauthorized</h1>\n" +
-            "<p>You must log in to access ";
-    protected static final String UNAUTHORIZED_PAGE_HTML_CHUNK_2 = ".\n<hr>\n<address>";
-    protected static final String UNAUTHORIZED_PAGE_HTML_CHUNK_3 = "</address>\n </body></html>";
 
     /**
      * The name that is displayed during the challenge process of authentication.
@@ -133,45 +123,7 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
         String authenticateHeader = HttpServletRequest.BASIC_AUTH + " realm=\"" + applicationName + "\"";
         httpResponse.setHeader(AUTHENTICATE_HEADER, authenticateHeader);
 
-        // Commented out so we can do testing on what happens if we don't send a body. Considering this due
-        // to internationalization issues.
-//        String contentBody = buildContentBody(toHttp(request));
-//
-//        httpResponse.setContentLength(contentBody.length());
-//        httpResponse.setContentType(CONTENT_TYPE_HEADER);
-//
-//        try {
-//            PrintWriter printWriter = httpResponse.getWriter();
-//            printWriter.write(contentBody);
-//            httpResponse.flushBuffer();
-//
-//        } catch (IOException ioe) {
-//            if (log.isErrorEnabled()) {
-//                log.error("Error sending response.", ioe);
-//            }
-//        }
-
         return false;
-    }
-
-    /**
-     * Builds the body of the response that will be sent back to the client.
-     *
-     * @param request
-     * @return the string representation of the message body
-     */
-    protected String buildContentBody(HttpServletRequest request) {
-        StringBuilder contentBody = new StringBuilder();
-
-        contentBody.append(UNAUTHORIZED_PAGE_HTML_CHUNK_1);
-        contentBody.append(request.getRequestURI());
-        contentBody.append(UNAUTHORIZED_PAGE_HTML_CHUNK_2);
-        contentBody.append(request.getServerName());
-        contentBody.append(" Port ");
-        contentBody.append(request.getServerPort());
-        contentBody.append(UNAUTHORIZED_PAGE_HTML_CHUNK_3);
-
-        return contentBody.toString();
     }
 
     /**
