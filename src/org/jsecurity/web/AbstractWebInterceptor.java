@@ -25,19 +25,16 @@
 
 package org.jsecurity.web;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * Base class for all web interceptors. This class is an adapter for the WebInterceptor interface.
+ * <p>Base class for all web interceptors. This class is an adapter for the WebInterceptor interface.</p>
  *
- * @since: 0.9
- *
- * @author: Allan Ditzel
+ * @author Allan Ditzel
+ * @since 0.9
  */
 public abstract class AbstractWebInterceptor extends SecurityWebSupport implements WebInterceptor {
 

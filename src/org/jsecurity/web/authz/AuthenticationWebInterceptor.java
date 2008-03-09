@@ -25,22 +25,21 @@
 
 package org.jsecurity.web.authz;
 
-import org.jsecurity.web.AbstractWebInterceptor;
 import org.jsecurity.subject.Subject;
+import org.jsecurity.web.AbstractWebInterceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * Base class for all web interceptors that require authentication. This class encapsulates the logic of checking
+ * <p>Base class for all web interceptors that require authentication. This class encapsulates the logic of checking
  * whether a user is already authenticated in the system. If the user is not authenticated, we use the template
- * method pattern to delegate the processing of an unauthenticated request to sub classes.
+ * method pattern to delegate the processing of an unauthenticated request to sub classes.</p>
  *
- * @since: 0.9
- *
- * @author: Allan Ditzel
+ * @author Allan Ditzel
+ * @since 0.9
  */
-public abstract class AuthenticatorWebInterceptor extends AbstractWebInterceptor {
+public abstract class AuthenticationWebInterceptor extends AbstractWebInterceptor {
 
     public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         if (isSubjectAuthenticated(request, response)) {
