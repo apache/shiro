@@ -243,7 +243,7 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
         } catch ( Exception e ) {
             //ignored
         }
-        super.init();
+        initUserAndRoleCaches();
         createRealmEntitiesFromProperties( properties );
     }
 

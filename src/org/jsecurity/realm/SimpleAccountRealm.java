@@ -335,6 +335,10 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     |               M E T H O D S               |
     ============================================*/
     public void onInit() {
+        initUserAndRoleCaches();
+    }
+
+    protected void initUserAndRoleCaches() {
         CacheProvider provider = getCacheProvider();
 
         if ( provider == null ) {
