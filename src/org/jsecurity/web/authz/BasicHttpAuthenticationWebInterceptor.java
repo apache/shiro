@@ -25,61 +25,57 @@
 
 package org.jsecurity.web.authz;
 
-import org.jsecurity.subject.Subject;
-import org.jsecurity.codec.Base64;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.codec.Base64;
+import org.jsecurity.subject.Subject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
- * Supports Basic HTTP Authentication. Class is RFC 2616 compliant (http://www.w3.org/Protocols/rfc2616/rfc2616.html).
+ * <p>Supports Basic HTTP Authentication. Class is RFC 2617 compliant.</p>
  *
- * Basic authentication works as follows:
+ * <p>Basic authentication works as follows:</p>
  *
- * A request comes in for a resource that requires authorization. The server replies with a 401 response
- * code, a WWW-Authenticate header, and the contents of a page informing the user that the incoming resource
- * requires authorization.
+ * <p>A request comes in for a resource that requires authentication. The server replies with a 401 response
+ * code, a <code>WWW-Authenticate</code> header, and the contents of a page informing the user that the incoming resource
+ * requires authentication.</p>
  *
- * Upon receiving the WWW-Authenticate challenge from the server, the client then takes a username and a password
- * and puts them in the following format:
+ * <p>Upon receiving the <code>WWW-Authenticate</code> challenge from the server, the client then takes a username and a password
+ * and puts them in the following format:</p>
  *
- * username:password
+ * <p><code>username:password</code></p>
  *
- * This token is then base 64 encoded.
+ * <p>This token is then base 64 encoded.</p>
  *
- * The client then sends another request for the same resource with the following header:
+ * <p>The client then sends another request for the same resource with the following header:</p>
  *
- * Authorization: Basic *Base 64 encoded username and password token*
+ * <p><code>Authorization: Basic *Base 64 encoded username and password token*</code></p>
  *
- * In the case of this interceptor, the onAunAuthenticatedRequest() method will only be called if the subject making
- * the request is not authenticated.
+ * <p>In the case of this interceptor, the onUnAuthenticatedRequest(ServletRequest request, ServletResponse response) method will only be called if the subject making
+ * the request is not authenticated.</p>
  *
- * @since: 0.9
- *
- * @author: Allan Ditzel
+ * @see <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>
+ * @author Allan Ditzel
+ * @since 0.9
  */
-public class BasicHttpAuthenticationWebInterceptor extends AuthenticatorWebInterceptor {
+public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInterceptor {
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
     protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
     protected static final String CONTENT_TYPE_HEADER = "text/html";
 
-    protected static final String UNAUTHORIZED_PAGE_HTML = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n" +
-            " \"http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd\">\n" +
-            "<HTML>\n" +
-            "  <HEAD>\n" +
-            "    <TITLE>Error</TITLE>\n" +
-            "    <META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=ISO-8859-1\">\n" +
-            "  </HEAD>\n" +
-            "  <BODY><H1>401 Unauthorised.</H1></BODY>\n" +
-            "</HTML>";
+    protected static final String UNAUTHORIZED_PAGE_HTML_CHUNK_1 = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
+            "<html><head>\n" +
+            "<title>401 Unauthorized</title>\n" +
+            "</head><body>\n" +
+            "<h1>Unauthorized</h1>\n" +
+            "<p>You must log in to access ";
+    protected static final String UNAUTHORIZED_PAGE_HTML_CHUNK_2 = ".\n<hr>\n<address>";
+    protected static final String UNAUTHORIZED_PAGE_HTML_CHUNK_3 = "</address>\n </body></html>";
 
     /**
      * The name that is displayed during the challenge process of authentication.
@@ -120,7 +116,7 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticatorWebInter
         HttpServletRequest httpRequest = toHttp(request);
         String authorizationHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
 
-        return authorizationHeader == null ? false : true;
+        return authorizationHeader != null;
     }
 
     /**
@@ -136,21 +132,46 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticatorWebInter
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         String authenticateHeader = HttpServletRequest.BASIC_AUTH + " realm=\"" + applicationName + "\"";
         httpResponse.setHeader(AUTHENTICATE_HEADER, authenticateHeader);
-        httpResponse.setContentLength(UNAUTHORIZED_PAGE_HTML.length());
-        httpResponse.setContentType(CONTENT_TYPE_HEADER);
 
-        try {
-            PrintWriter printWriter = httpResponse.getWriter();
-            printWriter.write(UNAUTHORIZED_PAGE_HTML);
-            httpResponse.flushBuffer();
-
-        } catch (IOException ioe) {
-            if (log.isErrorEnabled()) {
-                log.error("Error sending response.", ioe);
-            }
-        }
+        // Commented out so we can do testing on what happens if we don't send a body. Considering this due
+        // to internationalization issues.
+//        String contentBody = buildContentBody(toHttp(request));
+//
+//        httpResponse.setContentLength(contentBody.length());
+//        httpResponse.setContentType(CONTENT_TYPE_HEADER);
+//
+//        try {
+//            PrintWriter printWriter = httpResponse.getWriter();
+//            printWriter.write(contentBody);
+//            httpResponse.flushBuffer();
+//
+//        } catch (IOException ioe) {
+//            if (log.isErrorEnabled()) {
+//                log.error("Error sending response.", ioe);
+//            }
+//        }
 
         return false;
+    }
+
+    /**
+     * Builds the body of the response that will be sent back to the client.
+     *
+     * @param request
+     * @return the string representation of the message body
+     */
+    protected String buildContentBody(HttpServletRequest request) {
+        StringBuilder contentBody = new StringBuilder();
+
+        contentBody.append(UNAUTHORIZED_PAGE_HTML_CHUNK_1);
+        contentBody.append(request.getRequestURI());
+        contentBody.append(UNAUTHORIZED_PAGE_HTML_CHUNK_2);
+        contentBody.append(request.getServerName());
+        contentBody.append(" Port ");
+        contentBody.append(request.getServerPort());
+        contentBody.append(UNAUTHORIZED_PAGE_HTML_CHUNK_3);
+
+        return contentBody.toString();
     }
 
     /**
@@ -178,9 +199,7 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticatorWebInter
 
                 if (credentials != null && credentials.length > 1) {
                     Subject subject = getSubject(request, response);
-                    UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken();
-                    usernamePasswordToken.setUsername(credentials[0]);
-                    usernamePasswordToken.setPassword(credentials[1].toCharArray());
+                    UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(credentials[0], credentials[1]);
                     try {
                         subject.login(usernamePasswordToken);
                         isLoggedIn = true;
