@@ -56,7 +56,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p>
  *
- * <p>In the case of this interceptor, the onUnAuthenticatedRequest(ServletRequest request, ServletResponse response) method will only be called if the subject making
+ * <p>In the case of this interceptor, the onUnauthenticatedRequest(ServletRequest request, ServletResponse response) method will only be called if the subject making
  * the request is not authenticated.</p>
  *
  * @see <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>
@@ -88,7 +88,7 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
      * @param response
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
-    protected boolean onUnAuthenticatedRequest(ServletRequest request, ServletResponse response) {
+    protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) {
         if (isLoginAttempt(request, response)) {
             return executeLogin(request, response);
         } else {
