@@ -23,10 +23,10 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.web.authz;
+package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.subject.Subject;
-import org.jsecurity.web.AbstractWebInterceptor;
+import org.jsecurity.web.filter.AbstractWebInterceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
