@@ -27,10 +27,7 @@ package org.jsecurity.web.servlet;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.WebInterceptor;
-import org.jsecurity.web.authz.BasicHttpAuthenticationWebInterceptor;
-import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
-import org.jsecurity.web.authz.UrlAuthorizationHandler;
-import org.jsecurity.web.authz.UrlAuthorizationWebInterceptor;
+import org.jsecurity.web.authz.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -46,19 +43,22 @@ import java.util.List;
  */
 public class JSecurityFilter extends SecurityManagerFilter {
 
-    protected List<WebInterceptor> webInterceptors;
-    protected String urls = null; //if exists, we need to create a UrlAuthorizationWebInterceptor.
+    protected List webInterceptors;
+    protected String interceptors = null;
+    protected String urls = null;
     protected String unauthorizedPage;
+
+    protected InterceptorBuilder interceptorBuilder = new DefaultInterceptorBuilder();
 
     protected UrlAuthorizationHandler urlAuthorizationHandler;
 
     private List<Filter> filters;
 
-    public List<WebInterceptor> getWebInterceptors() {
+    public List getWebInterceptors() {
         return webInterceptors;
     }
 
-    public void setWebInterceptors(List<WebInterceptor> webInterceptors) {
+    public void setWebInterceptors(List webInterceptors) {
         this.webInterceptors = webInterceptors;
     }
 
@@ -91,29 +91,40 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     protected void applyInitParams() {
         FilterConfig config = getFilterConfig();
+
+        this.interceptors = config.getInitParameter("interceptors");
+        if ( this.interceptors != null ) {
+            this.interceptors = this.interceptors.trim();
+            if ( this.interceptors.equals("")) {
+                this.interceptors = null;
+            }
+        }
+
         this.urls = config.getInitParameter("urls");
         this.unauthorizedPage = config.getInitParameter("unauthorizedPage");
     }
 
     protected void ensureWebInterceptors() {
-        List<WebInterceptor> webInterceptors = new ArrayList<WebInterceptor>();
+        List interceptors = new ArrayList();
+
+        if ( this.interceptors != null ) {
+            interceptors = this.interceptorBuilder.buildInterceptors(this.interceptors);
+        }
+
         List<WebInterceptor> configured = getWebInterceptors();
 
         String urls = getUrls();
         if (urls != null) {
             WebInterceptor uawi = new UrlAuthorizationWebInterceptor(getSecurityManager(), urls);
-            webInterceptors.add(uawi);
+            interceptors.add(uawi);
         }
 
         if (configured != null && !configured.isEmpty()) {
-            webInterceptors.addAll(configured);
+            interceptors.addAll(configured);
         }
 
-        //TESTING ONLY:
-        webInterceptors.add( new BasicHttpAuthenticationWebInterceptor() );
-
-        if (!webInterceptors.isEmpty()) {
-            setWebInterceptors(webInterceptors);
+        if (!interceptors.isEmpty()) {
+            setWebInterceptors(interceptors);
         }
     }
 

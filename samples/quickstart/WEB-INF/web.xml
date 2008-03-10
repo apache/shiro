@@ -18,18 +18,25 @@
     <filter>
         <filter-name>JSecurityFilter</filter-name>
         <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
-        <!-- <init-param>
+        <init-param>
             <param-name>unauthorizedPage</param-name>
             <param-value>/s/unauthorized</param-value>
         </init-param>
         <init-param>
+            <param-name>interceptors</param-name>
+            <param-value>
+                authc = org.jsecurity.web.authz.BasicHttpAuthenticationWebInterceptor
+                authc.applicationName = JSecurity Quickstart
+            </param-value>
+        </init-param>
+        <init-param>
             <param-name>urls</param-name>
             <param-value>
-                /s/index=authc
+                /account/** = authc
                 /s/jsecurity.jnlp=authc|user
                 /remoting/**=authenticated|permission.remote:invoke
             </param-value>
-        </init-param> -->
+        </init-param>
 
     </filter>
 

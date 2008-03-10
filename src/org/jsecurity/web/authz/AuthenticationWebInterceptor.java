@@ -45,7 +45,7 @@ public abstract class AuthenticationWebInterceptor extends AbstractWebIntercepto
         if (isSubjectAuthenticated(request, response)) {
             return true;
         } else {
-            return onUnAuthenticatedRequest(request, response);
+            return onUnauthenticatedRequest(request, response);
         }
     }
 
@@ -70,5 +70,5 @@ public abstract class AuthenticationWebInterceptor extends AbstractWebIntercepto
      * @return true if the request should continue to be processed; false if the subclass will handle/render 
      * the response directly.
      */
-    protected abstract boolean onUnAuthenticatedRequest(ServletRequest request, ServletResponse response);
+    protected abstract boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response);
 }
