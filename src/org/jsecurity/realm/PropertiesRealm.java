@@ -135,7 +135,7 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
             this.filePath = FAILSAFE_FILE_PATH;
             reloadProperties();
         }
-        startReloadThread();
+        //startReloadThread();
     }
 
     public void destroy() {

@@ -24,6 +24,9 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.servlet.*;
 import java.io.IOException;
 import java.util.List;
@@ -33,6 +36,8 @@ import java.util.List;
  * @since 0.9
  */
 public class FilterChainWrapper implements FilterChain {
+
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private FilterChain orig;
     private List<Filter> filters;
@@ -47,8 +52,14 @@ public class FilterChainWrapper implements FilterChain {
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         if ( this.filters == null || this.filters.size() == this.index ) {
             //we've reached the end of the wrapped chain, so invoke the original one:
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Invoking original filter chain." );
+            }
             this.orig.doFilter( request, response );
         } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Invoking wrapped filter at index [" + this.index + "]" );
+            }
             this.filters.get(this.index++).doFilter(request,response,this);
         }
     }

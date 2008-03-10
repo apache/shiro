@@ -88,6 +88,7 @@
             <lib dir="${lib.dir}/jakarta-taglibs" includes="standard.jar"/>
             <lib dir="${lib.dir}/log4j" includes="log4j.jar"/>
             <lib dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
+            <lib dir="${lib.dir}/ehcache" includes="ehcache.jar"/>
             <fileset dir="${module.base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
             <!-- <lib dir="${dist.dir}" includes="*.jar"/> -->
         </war>

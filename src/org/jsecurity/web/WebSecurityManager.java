@@ -133,7 +133,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
             if ( log.isTraceEnabled() ) {
                 log.trace( "No Session exists for the incoming request and is therefore not available to use to " +
                         "construct a Subject instance.  This is perfectly ok and a new Subject instance will be " +
-                        "created.  This can be ignored - logging for traceability only.", ignored );
+                        "created.  This exception can be ignored - logging for traceability only.", ignored );
             }
         }
         return createSubject(session, request, response);

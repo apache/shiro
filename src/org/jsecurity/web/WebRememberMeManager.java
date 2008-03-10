@@ -82,7 +82,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
         //base 64 encode it and store as a cookie:
-        String base64 = Base64.encodeBase64ToString(serialized);
+        String base64 = Base64.encodeToString(serialized);
         getIdentityAttribute().storeValue(base64, request, response);
     }
 
@@ -91,7 +91,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         ServletResponse response = ThreadContext.getServletResponse();
         String base64 = getIdentityAttribute().retrieveValue(request, response);
         if ( base64 != null ) {
-            return Base64.decodeBase64( base64 );
+            return Base64.decode( base64 );
         } else {
             //no cookie set - new site visitor?
             return null;
