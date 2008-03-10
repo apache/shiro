@@ -197,7 +197,7 @@ public class Base64 {
      * @return <code>true</code> if all bytes are valid characters in the Base64 alphabet or if the byte array is
      *         empty; false, otherwise
      */
-    public static boolean isArrayByteBase64(byte[] arrayOctect) {
+    public static boolean isBase64(byte[] arrayOctect) {
 
         arrayOctect = discardWhitespace(arrayOctect);
 
@@ -215,64 +215,69 @@ public class Base64 {
         return true;
     }
 
-    public static String encodeBase64ToString( byte[] bytes ) {
-        return CodecSupport.toString( encodeBase64( bytes ) );
+    /**
+     * Discards any whitespace from a base-64 encoded block.
+     *
+     * @param data The base-64 encoded data to discard the whitespace from.
+     * @return The data, less whitespace (see RFC 2045).
+     */
+    static byte[] discardWhitespace(byte[] data) {
+        byte groomedData[] = new byte[data.length];
+        int bytesCopied = 0;
+
+        for (int i = 0; i < data.length; i++) {
+            switch (data[i]) {
+                case (byte) ' ' :
+                case (byte) '\n' :
+                case (byte) '\r' :
+                case (byte) '\t' :
+                    break;
+                default :
+                    groomedData[bytesCopied++] = data[i];
+            }
+        }
+
+        byte packedData[] = new byte[bytesCopied];
+
+        System.arraycopy(groomedData, 0, packedData, 0, bytesCopied);
+
+        return packedData;
     }
 
-    /**
-     * Encodes binary data using the base64 algorithm but does not chunk the output.
-     *
-     * @param binaryData binary data to encode
-     * @return Base64 characters
-     */
-    public static byte[] encodeBase64(byte[] binaryData) {
-        return encodeBase64(binaryData, false);
+    public static String encodeToString( byte[] bytes ) {
+        byte[] encoded = encode( bytes );
+        return CodecSupport.toString( encoded );
     }
 
     /**
      * Encodes binary data using the base64 algorithm and chunks the encoded output into 76 character blocks
      *
-     * @param binaryData binary data to encode
+     * @param binaryData binary data to encodeToChars
      * @return Base64 characters chunked in 76 character blocks
      */
-    public static byte[] encodeBase64Chunked(byte[] binaryData) {
-        return encodeBase64(binaryData, true);
+    public static byte[] encodeChunked(byte[] binaryData) {
+        return encode(binaryData, true);
     }
 
     /**
-     * Decodes an Object using the base64 algorithm. This method is provided in order to satisfy the requirements of the
-     * Decoder interface, and will throw a DecoderException if the supplied object is not of type byte[].
+     * Encodes a byte[] containing binary data, into a byte[] containing characters in the Base64 alphabet.
      *
-     * @param pObject Object to decode
-     * @return An object (of type byte[]) containing the binary data which corresponds to the byte[] supplied.
-     * @throws IllegalArgumentException if the parameter supplied is not of type byte[]
+     * @param pArray a byte array containing binary data
+     * @return A byte array containing only Base64 character data
      */
-    public Object decode(Object pObject) throws IllegalArgumentException {
-        if (!(pObject instanceof byte[])) {
-            throw new IllegalArgumentException("Parameter supplied to Base64 decode is not a byte[]");
-        }
-        return decode((byte[]) pObject);
-    }
-
-    /**
-     * Decodes a byte[] containing containing characters in the Base64 alphabet.
-     *
-     * @param pArray A byte array containing Base64 character data
-     * @return a byte array containing binary data
-     */
-    public byte[] decode(byte[] pArray) {
-        return decodeBase64(pArray);
+    public static byte[] encode(byte[] pArray) {
+        return encode(pArray, false);
     }
 
     /**
      * Encodes binary data using the base64 algorithm, optionally chunking the output into 76 character blocks.
      *
-     * @param binaryData Array containing binary data to encode.
+     * @param binaryData Array containing binary data to encodeToChars.
      * @param isChunked if <code>true</code> this encoder will chunk the base64 output into 76 character blocks
      * @return Base64-encoded data.
      * @throws IllegalArgumentException Thrown when the input array needs an output array bigger than {@link Integer#MAX_VALUE}
      */
-    public static byte[] encodeBase64(byte[] binaryData, boolean isChunked) {
+    public static byte[] encode(byte[] binaryData, boolean isChunked) {
         long binaryDataLength = binaryData.length;
         long lengthDataBits = binaryDataLength * EIGHTBIT;
         long fewerThan24bits = lengthDataBits % TWENTYFOURBITGROUP;
@@ -391,9 +396,19 @@ public class Base64 {
         return encodedData;
     }
 
-    public static byte[] decodeBase64( String base64Encoded ) {
+    public static String decodeToString( String base64Encoded ) {
+        byte[] encodedBytes = CodecSupport.toBytes( base64Encoded );
+        return decodeToString( encodedBytes );
+    }
+
+    public static String decodeToString( byte[] base64Encoded ) {
+        byte[] decoded = decode( base64Encoded );
+        return CodecSupport.toString( decoded );
+    }
+
+    public static byte[] decode( String base64Encoded ) {
         byte[] bytes = CodecSupport.toBytes( base64Encoded );
-        return decodeBase64( bytes );
+        return decode( bytes );
     }
 
     /**
@@ -402,7 +417,7 @@ public class Base64 {
      * @param base64Data Byte array containing Base64 data
      * @return Array containing decoded data.
      */
-    public static byte[] decodeBase64(byte[] base64Data) {
+    public static byte[] decode(byte[] base64Data) {
         // RFC 2045 requires that we discard ALL non-Base64 characters
         base64Data = discardNonBase64(base64Data);
 
@@ -453,42 +468,12 @@ public class Base64 {
             } else if (marker1 == PAD) {
                 // One PAD e.g. 3cQ[Pad]
                 b3 = base64Alphabet[marker0];
-
                 decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
                 decodedData[encodedIndex + 1] = (byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf));
             }
             encodedIndex += 3;
         }
         return decodedData;
-    }
-
-    /**
-     * Discards any whitespace from a base-64 encoded block.
-     *
-     * @param data The base-64 encoded data to discard the whitespace from.
-     * @return The data, less whitespace (see RFC 2045).
-     */
-    static byte[] discardWhitespace(byte[] data) {
-        byte groomedData[] = new byte[data.length];
-        int bytesCopied = 0;
-
-        for (int i = 0; i < data.length; i++) {
-            switch (data[i]) {
-                case (byte) ' ' :
-                case (byte) '\n' :
-                case (byte) '\r' :
-                case (byte) '\t' :
-                    break;
-                default :
-                    groomedData[bytesCopied++] = data[i];
-            }
-        }
-
-        byte packedData[] = new byte[bytesCopied];
-
-        System.arraycopy(groomedData, 0, packedData, 0, bytesCopied);
-
-        return packedData;
     }
 
     /**
@@ -513,33 +498,6 @@ public class Base64 {
         System.arraycopy(groomedData, 0, packedData, 0, bytesCopied);
 
         return packedData;
-    }
-
-    // Implementation of the Encoder Interface
-
-    /**
-     * Encodes an Object using the base64 algorithm. This method is provided in order to satisfy the requirements of the
-     * Encoder interface, and will throw an IllegalArgumentException if the supplied object is not of type byte[].
-     *
-     * @param pObject Object to encode
-     * @return An object (of type byte[]) containing the base64 encoded data which corresponds to the byte[] supplied.
-     * @throws IllegalArgumentException if the parameter supplied is not of type byte[]
-     */
-    public Object encode(Object pObject) throws IllegalArgumentException {
-        if (!(pObject instanceof byte[])) {
-            throw new IllegalArgumentException("Parameter supplied to Base64 encode is not a byte[]");
-        }
-        return encode((byte[]) pObject);
-    }
-
-    /**
-     * Encodes a byte[] containing binary data, into a byte[] containing characters in the Base64 alphabet.
-     *
-     * @param pArray a byte array containing binary data
-     * @return A byte array containing only Base64 character data
-     */
-    public byte[] encode(byte[] pArray) {
-        return encodeBase64(pArray, false);
     }
 
 }

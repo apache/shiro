@@ -70,7 +70,7 @@ public class Sha256Hash extends AbstractHash {
 
     public static Sha256Hash fromBase64String(String base64) {
         Sha256Hash hash = new Sha256Hash();
-        hash.setBytes(Base64.decodeBase64(base64));
+        hash.setBytes(Base64.decode(base64));
         return hash;
     }
 

@@ -241,7 +241,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     public String toBase64() {
         if (this.base64Encoded == null) {
             //cache result in case this method is called multiple times.
-            this.base64Encoded = Base64.encodeBase64ToString(getBytes());
+            this.base64Encoded = Base64.encodeToString(getBytes());
         }
         return this.base64Encoded;
     }

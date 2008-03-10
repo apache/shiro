@@ -70,7 +70,7 @@ public class Sha512Hash extends AbstractHash {
 
     public static Sha512Hash fromBase64String(String base64) {
         Sha512Hash hash = new Sha512Hash();
-        hash.setBytes(Base64.decodeBase64(base64));
+        hash.setBytes(Base64.decode(base64));
         return hash;
     }
 

@@ -69,8 +69,27 @@ public class Hex {
         return new String( encodedChars );
     }
 
-    public static byte[] decode( String hex ) {
-        return decode( hex.toCharArray() );
+    /**
+     * Converts an array of bytes into an array of characters representing the hexidecimal values of each byte in order.
+     * The returned array will be double the length of the passed array, as it takes two characters to represent any
+     * given byte.
+     *
+     * @param data byte[] to convert to Hex characters
+     * @return A char[] containing hexidecimal characters
+     */
+    public static char[] encode(byte[] data) {
+
+        int l = data.length;
+
+           char[] out = new char[l << 1];
+
+           // two characters form the hex value.
+           for (int i = 0, j = 0; i < l; i++) {
+               out[j++] = DIGITS[(0xF0 & data[i]) >>> 4 ];
+               out[j++] = DIGITS[ 0x0F & data[i] ];
+           }
+
+           return out;
     }
 
     /**
@@ -88,8 +107,13 @@ public class Hex {
      * @see #decode(char[])
      */
 	public static byte[] decode(byte[] array) throws IllegalArgumentException {
-		return decode(new String(array));
+        String s = CodecSupport.toString(array);
+        return decode(s);
 	}
+
+    public static byte[] decode( String hex ) {
+        return decode( hex.toCharArray() );
+    }
 
     /**
      * Converts an array of characters representing hexidecimal values into an
@@ -142,26 +166,5 @@ public class Hex {
         return digit;
     }
 
-    /**
-     * Converts an array of bytes into an array of characters representing the hexidecimal values of each byte in order.
-     * The returned array will be double the length of the passed array, as it takes two characters to represent any
-     * given byte.
-     *
-     * @param data byte[] to convert to Hex characters
-     * @return A char[] containing hexidecimal characters
-     */
-    public static char[] encode(byte[] data) {
 
-        int l = data.length;
-
-           char[] out = new char[l << 1];
-
-           // two characters form the hex value.
-           for (int i = 0, j = 0; i < l; i++) {
-               out[j++] = DIGITS[(0xF0 & data[i]) >>> 4 ];
-               out[j++] = DIGITS[ 0x0F & data[i] ];
-           }
-
-           return out;
-    }
 }

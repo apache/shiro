@@ -240,7 +240,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
             if (isStoredCredentialsHexEncoded()) {
                 storedBytes = Hex.decode( storedBytes );
             } else {
-                storedBytes = Base64.decodeBase64( storedBytes );
+                storedBytes = Base64.decode( storedBytes );
             }
         }
         AbstractHash hash = newHashInstance();

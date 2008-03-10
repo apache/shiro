@@ -68,7 +68,7 @@ public class Sha1Hash extends AbstractHash {
 
     public static Sha1Hash fromBase64String( String base64 ) {
         Sha1Hash hash = new Sha1Hash();
-        hash.setBytes( Base64.decodeBase64( base64 ) );
+        hash.setBytes( Base64.decode( base64 ) );
         return hash;
     }
 }

@@ -79,7 +79,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Converts the <tt>AuthenticationToken</tt> to a <tt>byte[]</tt>
+     * Converts the <tt>AuthenticationToken</tt> credentials to a <tt>byte[]</tt>
      *
      * @param token
      * @return a <tt>byte[]</tt> representation of the <tt>token</tt>
@@ -112,7 +112,6 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      */
     protected boolean equals( byte[] tokenCredentials, byte[] accountCredentials ) {
-
         return Arrays.equals( tokenCredentials, accountCredentials );
     }
 

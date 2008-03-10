@@ -68,7 +68,7 @@ public class Md2Hash extends AbstractHash {
 
     public static Md2Hash fromBase64String(String base64) {
         Md2Hash hash = new Md2Hash();
-        hash.setBytes(Base64.decodeBase64(base64));
+        hash.setBytes(Base64.decode(base64));
         return hash;
     }
 }

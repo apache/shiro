@@ -58,7 +58,6 @@ public abstract class AuthenticationWebInterceptor extends AbstractWebIntercepto
      */
     private boolean isSubjectAuthenticated(ServletRequest request, ServletResponse response) {
         Subject subject = getSubject(request, response);
-
         return subject.isAuthenticated();
     }
 
@@ -68,8 +67,8 @@ public abstract class AuthenticationWebInterceptor extends AbstractWebIntercepto
      *
      * @param request
      * @param response
-     * @return true if the request should continue to be processed; false if the request should not continue to be
-     * processed.
+     * @return true if the request should continue to be processed; false if the subclass will handle/render 
+     * the response directly.
      */
     protected abstract boolean onUnAuthenticatedRequest(ServletRequest request, ServletResponse response);
 }

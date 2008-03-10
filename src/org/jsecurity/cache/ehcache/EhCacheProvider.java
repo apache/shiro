@@ -104,8 +104,8 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
         try {
             net.sf.ehcache.Cache cache = getCacheManager().getCache( name );
             if ( cache == null ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Could not find a specific ehcache configuration for cache named [" + name + "]; using defaults." );
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Could not find a specific ehcache configuration for cache named [" + name + "]; using defaults." );
                 }
                 if ( name.equals( DEFAULT_ACTIVE_SESSIONS_CACHE_NAME ) ) {
                     if ( log.isInfoEnabled() ) {
@@ -120,8 +120,8 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
 
                 cache = manager.getCache( name );
                 
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Started EHCache named [" + name + "]" );
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Started EHCache named [" + name + "]" );
                 }
             }
             return new EhCache( cache, getCacheManager() );

@@ -36,7 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * <p>Supports Basic HTTP Authentication. Class is RFC 2617 compliant.</p>
+ * <p>Supports Basic HTTP Authentication as specified in
+ * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
  *
  * <p>Basic authentication works as follows:</p>
  *
@@ -53,7 +54,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <p>The client then sends another request for the same resource with the following header:</p>
  *
- * <p><code>Authorization: Basic *Base 64 encoded username and password token*</code></p>
+ * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p>
  *
  * <p>In the case of this interceptor, the onUnAuthenticatedRequest(ServletRequest request, ServletResponse response) method will only be called if the subject making
  * the request is not authenticated.</p>
@@ -105,7 +106,6 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = toHttp(request);
         String authorizationHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
-
         return authorizationHeader != null;
     }
 
@@ -117,12 +117,13 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
      * @return false - this sends the challenge to be sent back 
      */
     protected boolean sendChallenge(ServletRequest request, ServletResponse response) {
-
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Authentication required: sending 401 Authentication challenge response." );
+        }
         HttpServletResponse httpResponse = toHttp(response);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         String authenticateHeader = HttpServletRequest.BASIC_AUTH + " realm=\"" + applicationName + "\"";
         httpResponse.setHeader(AUTHENTICATE_HEADER, authenticateHeader);
-
         return false;
     }
 
@@ -134,6 +135,9 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
      * @return true if the subject was successfully logged in, false otherwise
      */
     protected boolean executeLogin(ServletRequest request, ServletResponse response) {
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Attempting to authenticate Subject based on Http BASIC Authentication request..." );
+        }
         boolean isLoggedIn = false;
 
         HttpServletRequest httpRequest = toHttp(request);
@@ -149,8 +153,7 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
             if (authTokens[0].trim().equalsIgnoreCase(HttpServletRequest.BASIC_AUTH)) {
                 String encodedCredentials = authTokens[1];
 
-                byte[] decodedCredentialByteArray = Base64.decodeBase64(encodedCredentials);
-                String decodedCredentials = new String(decodedCredentialByteArray);
+                String decodedCredentials = Base64.decodeToString(encodedCredentials);
 
                 String[] credentials = decodedCredentials.split(":");
 

@@ -27,6 +27,7 @@ package org.jsecurity.web.servlet;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.WebInterceptor;
+import org.jsecurity.web.authz.BasicHttpAuthenticationWebInterceptor;
 import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationWebInterceptor;
@@ -43,7 +44,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class JSecurityFilter extends WebInterceptorFilter implements WebInterceptor {
+public class JSecurityFilter extends SecurityManagerFilter {
 
     protected List<WebInterceptor> webInterceptors;
     protected String urls = null; //if exists, we need to create a UrlAuthorizationWebInterceptor.
@@ -78,7 +79,7 @@ public class JSecurityFilter extends WebInterceptorFilter implements WebIntercep
     }
 
     public UrlAuthorizationHandler getUrlAuthorizationHandler() {
-        if( urlAuthorizationHandler == null ) {
+        if (urlAuthorizationHandler == null) {
             urlAuthorizationHandler = new DefaultUrlAuthorizationHandler();
         }
         return urlAuthorizationHandler;
@@ -88,93 +89,93 @@ public class JSecurityFilter extends WebInterceptorFilter implements WebIntercep
         this.urlAuthorizationHandler = urlAuthorizationHandler;
     }
 
-    public WebInterceptor getWebInterceptor() {
-        return this;
-    }
-
     protected void applyInitParams() {
         FilterConfig config = getFilterConfig();
-        this.urls = config.getInitParameter( "urls" );
+        this.urls = config.getInitParameter("urls");
         this.unauthorizedPage = config.getInitParameter("unauthorizedPage");
     }
 
     protected void ensureWebInterceptors() {
         List<WebInterceptor> webInterceptors = new ArrayList<WebInterceptor>();
         List<WebInterceptor> configured = getWebInterceptors();
+
         String urls = getUrls();
-        if ( urls != null ) {
-            WebInterceptor uawi = new UrlAuthorizationWebInterceptor( getSecurityManager(), urls );
-            webInterceptors.add( uawi );
-            //add any configured _after_ the above one:
-            if ( configured != null && !configured.isEmpty() ) {
-                webInterceptors.addAll( configured );
-            }
-        } else {
-            webInterceptors = configured;
+        if (urls != null) {
+            WebInterceptor uawi = new UrlAuthorizationWebInterceptor(getSecurityManager(), urls);
+            webInterceptors.add(uawi);
         }
 
-        if ( webInterceptors != null && !webInterceptors.isEmpty() ) {
-            setWebInterceptors( webInterceptors );
+        if (configured != null && !configured.isEmpty()) {
+            webInterceptors.addAll(configured);
+        }
+
+        //TESTING ONLY:
+        webInterceptors.add( new BasicHttpAuthenticationWebInterceptor() );
+
+        if (!webInterceptors.isEmpty()) {
+            setWebInterceptors(webInterceptors);
         }
     }
 
     protected void applyWebInterceptorFilters() {
         List<WebInterceptor> interceptors = getWebInterceptors();
-        if ( interceptors != null && !interceptors.isEmpty() ) {
-            List<Filter> filters = new ArrayList<Filter>( interceptors.size() );
-            for( WebInterceptor interceptor : interceptors ) {
+        if (interceptors != null && !interceptors.isEmpty()) {
+            List<Filter> filters = new ArrayList<Filter>(interceptors.size());
+            for (WebInterceptor interceptor : interceptors) {
                 WebInterceptorFilter filter = new WebInterceptorFilter();
-                filter.setServletContext( getServletContext() );
-                filter.setWebInterceptor( interceptor );
+                filter.setServletContext(getServletContext());
+                filter.setWebInterceptor(interceptor);
                 filter.afterSecurityManagerSet();
-                filters.add( filter );
+                filters.add(filter);
             }
             this.filters = filters;
         }
     }
 
-    protected void afterWebInterceptorSet() {
+    protected void afterSecurityManagerSet() throws Exception {
         applyInitParams();
         ensureWebInterceptors();
         applyWebInterceptorFilters();
     }
 
-    protected void continueChain(ServletRequest request, ServletResponse response, FilterChain orig) throws IOException, ServletException {
-        FilterChain chain = orig;
-        if ( this.filters != null && !this.filters.isEmpty() ) {
-            chain = new FilterChainWrapper(orig,this.filters);
+    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,
+                                    FilterChain origChain) throws ServletException, IOException {
+        FilterChain chain = origChain;
+        if (this.filters != null && !this.filters.isEmpty()) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Filters and/or WebInterceptors configured - wrapping FilterChain." );
+            }
+            chain = new FilterChainWrapper(chain, this.filters);
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "No Filters or WebInterceptors configured - FilterChain will not be wrapped." );
+            }
         }
-        super.continueChain( request, response, chain );
-    }
 
-    public boolean preHandle(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletResponse response = (HttpServletResponse)servletResponse;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        ThreadContext.bind( SecurityWebSupport.getInetAddress( request ) );
+        ThreadContext.bind(SecurityWebSupport.getInetAddress(request));
 
         boolean httpSessions = isHttpSessions();
-        request = new JSecurityHttpServletRequest( request, getServletContext(), httpSessions );
-        if ( !httpSessions ) {
+        request = new JSecurityHttpServletRequest(request, getServletContext(), httpSessions);
+        if (!httpSessions) {
             //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using JSecurity sessions (i.e. not simple HttpSession based sessions):
-            response = new JSecurityHttpServletResponse( response, getServletContext(), (JSecurityHttpServletRequest)request );
+            response = new JSecurityHttpServletResponse(response, getServletContext(), (JSecurityHttpServletRequest) request);
         }
 
-        ThreadContext.bind( request );
-        ThreadContext.bind( response );
-        ThreadContext.bind( getSecurityManager().getSubject() );
-        return true;
-    }
+        ThreadContext.bind(request);
+        ThreadContext.bind(response);
+        ThreadContext.bind(getSecurityManager().getSubject());
 
-    public void postHandle(ServletRequest request, ServletResponse response) throws Exception {
-        //no-op
-    }
-
-    public void afterCompletion(ServletRequest request, ServletResponse response, Exception exception) throws Exception {
-        ThreadContext.unbindServletRequest();
-        ThreadContext.unbindServletResponse();
-        ThreadContext.unbindInetAddress();
-        ThreadContext.unbindSubject();
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            ThreadContext.unbindServletRequest();
+            ThreadContext.unbindServletResponse();
+            ThreadContext.unbindInetAddress();
+            ThreadContext.unbindSubject();
+        }
     }
 }

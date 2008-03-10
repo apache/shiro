@@ -182,8 +182,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *               for later use.
      */
     protected void bind(Subject subject) {
-        if (log.isDebugEnabled()) {
-            log.debug("Binding Subject [" + subject + "] to a thread local...");
+        if (log.isTraceEnabled()) {
+            log.trace("Binding Subject [" + subject + "] to a thread local...");
         }
         ThreadContext.bind(subject);
     }

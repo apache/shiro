@@ -60,7 +60,7 @@ public class SimpleBlowfishCipher implements Cipher {
     private static final String TRANSFORMATION_STRING = ALGORITHM + "/ECB/PKCS5Padding";
 
     //created by running the test program below
-    private static final byte[] KEY_BYTES = Base64.decodeBase64("jJ9Kg1BAevbvhSg3vBfwfQ==");
+    private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
     private Key key = DEFAULT_CIPHER_KEY;
@@ -156,19 +156,19 @@ public class SimpleBlowfishCipher implements Cipher {
         for (String clear : cleartext) {
             byte[] cleartextBytes = CodecSupport.toBytes(clear);
             System.out.println("Clear text: [" + clear + "]");
-            System.out.println("Clear text base64: [" + Base64.encodeBase64ToString(cleartextBytes) + "]");
+            System.out.println("Clear text base64: [" + Base64.encodeToString(cleartextBytes) + "]");
 
             byte[] encrypted = cipher.encrypt(cleartextBytes, null);
-            String encryptedBase64 = Base64.encodeBase64ToString(encrypted);
+            String encryptedBase64 = Base64.encodeToString(encrypted);
             System.out.println("Encrypted base64: [" + encryptedBase64 + "]");
 
-            byte[] decrypted = cipher.decrypt(Base64.decodeBase64(encryptedBase64), null);
+            byte[] decrypted = cipher.decrypt(Base64.decode(encryptedBase64), null);
             String decryptedString = CodecSupport.toString(decrypted);
 
             System.out.println("Arrays equal? " + Arrays.equals(cleartextBytes, decrypted));
 
             System.out.println("Decrypted text: [" + decryptedString + "]");
-            System.out.println("Decrypted text base64: [" + Base64.encodeBase64ToString(decrypted) + "]");
+            System.out.println("Decrypted text base64: [" + Base64.encodeToString(decrypted) + "]");
         }
     }
 }

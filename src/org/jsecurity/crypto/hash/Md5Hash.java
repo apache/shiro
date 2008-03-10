@@ -68,7 +68,7 @@ public class Md5Hash extends AbstractHash {
 
     public static Md5Hash fromBase64String(String base64) {
         Md5Hash hash = new Md5Hash();
-        hash.setBytes(Base64.decodeBase64(base64));
+        hash.setBytes(Base64.decode(base64));
         return hash;
     }
 }
