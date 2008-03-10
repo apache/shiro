@@ -24,7 +24,7 @@ public class DefaultInterceptorBuilder implements InterceptorBuilder {
 
             String definitionLine = scanner.nextLine().trim();
 
-            if (!definitionLine.equals("")) {
+            if (!definitionLine.equals("") && !definitionLine.startsWith("#")) {
 
                 if ( log.isTraceEnabled() ) {
                     log.trace( "Parsing interceptor definition line [" + definitionLine + "]" );
