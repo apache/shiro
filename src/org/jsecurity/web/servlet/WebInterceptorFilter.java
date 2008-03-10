@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.web.WebInterceptor;
+import org.jsecurity.web.filter.WebInterceptor;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,7 +34,7 @@ import java.io.IOException;
 
 /**
  * A <tt>WebInterceptorFilter</tt> is a Servlet Filter that merely delegates all filter operations to a single internally
- * wrapped {@link org.jsecurity.web.WebInterceptor} instance.  It is a simple utility class to cleanly use a
+ * wrapped {@link org.jsecurity.web.filter.WebInterceptor} instance.  It is a simple utility class to cleanly use a
  * <tt>WebInterceptor</tt> as a servlet filter if so desired - the benefit is that you only have to code one
  * WebInterceptor class, and you can re-use it in multiple environments such as in a servlet container,
  * in Spring or Pico, JBoss, etc.  This Filter represents the mechanism to use that one WebInterceptor directly in a

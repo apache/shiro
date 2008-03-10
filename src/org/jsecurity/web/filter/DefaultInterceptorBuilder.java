@@ -1,4 +1,4 @@
-package org.jsecurity.web.authz;
+package org.jsecurity.web.filter;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
