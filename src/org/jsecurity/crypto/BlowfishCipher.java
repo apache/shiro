@@ -27,9 +27,11 @@ package org.jsecurity.crypto;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.CodecSupport;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -53,19 +55,22 @@ import java.util.Arrays;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class SimpleBlowfishCipher implements Cipher {
+public class BlowfishCipher implements Cipher {
 
     private static final String ALGORITHM = "Blowfish";
 
     private static final String TRANSFORMATION_STRING = ALGORITHM + "/ECB/PKCS5Padding";
 
-    //created by running the test program below
+    //The following KEY_BYTES String was created by running
+    //System.out.println( Base64.encode( generateNewKey().getEncoded() ) ); and copying-n-pasting the output here.
+    //You should run the same and set the resulting output as a property of this class instead of using
+    //JSecurity's default Key for proper security.
     private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
     private Key key = DEFAULT_CIPHER_KEY;
 
-    public SimpleBlowfishCipher() {
+    public BlowfishCipher() {
     }
 
     public Key getKey() {
@@ -117,36 +122,29 @@ public class SimpleBlowfishCipher implements Cipher {
     protected byte[] crypt(byte[] bytes, int mode, Key key) {
         javax.crypto.Cipher cipher = newCipherInstance();
         java.security.Key jdkKey = getKey();
-        if (key != null) {
-            if (key instanceof java.security.Key) {
-                jdkKey = (java.security.Key) key;
-            } else {
-                String msg = "The " + getClass().getName() + " implementation only accepts " + Key.class.getName() +
-                        " instances that also implement the " + java.security.Key.class.getName() +
-                        " interface.  The argument used is of type [" + key.getClass().getName() + "].";
-                throw new IllegalArgumentException(msg);
-            }
-        }
         init(cipher, mode, jdkKey);
         return crypt(cipher, bytes);
     }
 
+    public static Key generateNewKey() {
+        return generateNewKey(128);
+    }
+
+    public static Key generateNewKey( int keyBitSize ) {
+        KeyGenerator kg;
+        try {
+            kg = KeyGenerator.getInstance( ALGORITHM );
+        } catch (NoSuchAlgorithmException e) {
+            String msg = "Unable to acquire " + ALGORITHM + " algorithm.  This is required to function.";
+            throw new IllegalStateException(msg,e);
+        }
+        kg.init(keyBitSize);
+        return kg.generateKey();
+    }
+
     public static void main(String[] unused) throws Exception {
 
-        /* Commented out - only used to generate a a new permanent KEY_BYTES constant
-        // Generate a secret key
-        KeyGenerator kg = KeyGenerator.getInstance( ALGORITHM );
-        kg.init(128); //using a 128 bit key size
-        SecretKey key = kg.generateKey();
-
-        String algorithm = key.getAlgorithm();
-        byte[] keyData = key.getEncoded();
-        //the following output in between the brackets is copied-and-pasted into this class's KEY_BYTES line of code.
-        //This constant is the embedded key used to symmetrically encode/decode data.
-        System.out.println("Base64 encoded keyData: [" + Base64.encodeBytes(keyData) + "]");
-        */
-
-        Cipher cipher = new SimpleBlowfishCipher();
+        Cipher cipher = new BlowfishCipher();
 
         String[] cleartext = new String[]{
                 "Hello, this is a test.",

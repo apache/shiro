@@ -26,7 +26,6 @@ package org.jsecurity.authc.pam;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.util.Initializable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,7 +67,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class ModularRealmAuthenticator extends AbstractAuthenticator implements Initializable {
+public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -82,7 +81,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
      */
     private Collection<? extends Realm> realms;
 
-    private ModularAuthenticationStrategy modularAuthenticationStrategy;
+    private ModularAuthenticationStrategy modularAuthenticationStrategy =
+        new AllSuccessfulModularAuthenticationStrategy();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -93,31 +93,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator implements 
 
     public ModularRealmAuthenticator( Realm realm ) {
         setRealm( realm );
-        init();
     }
 
     public ModularRealmAuthenticator( List<Realm> realms ) {
         setRealms( realms );
-        init();
-    }
-
-    protected ModularAuthenticationStrategy createModularAuthenticationStrategy() {
-        return new AllSuccessfulModularAuthenticationStrategy();
-    }
-
-    protected void ensureModudularAuthenticationStrategy() {
-        ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
-        if ( strategy == null ) {
-            strategy = createModularAuthenticationStrategy();
-            setModularAuthenticationStrategy(strategy);
-        }
-    }
-
-    protected void afterModularAuthenticationStrategySet(){}
-
-    public void init() {
-        ensureModudularAuthenticationStrategy();
-        afterModularAuthenticationStrategySet();
     }
 
     /*--------------------------------------------

@@ -165,7 +165,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         if ( getModularAuthenticationStrategy() != null ) {
             mra.setModularAuthenticationStrategy( getModularAuthenticationStrategy() );
         }
-        mra.init();
         return mra;
     }
 

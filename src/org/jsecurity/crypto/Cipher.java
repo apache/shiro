@@ -54,7 +54,7 @@ import java.security.Key;
  * the cookie, it can decrypt it via the same <tt>Key</tt> and there is no potential for discovery since that Key
  * is never shared with anyone.
  *
- * @see SimpleBlowfishCipher
+ * @see BlowfishCipher
  *
  * @author Les Hazlewood
  * @since 0.9

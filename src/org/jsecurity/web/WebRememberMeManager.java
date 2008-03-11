@@ -43,7 +43,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
 
-    protected WebAttribute<String> identityAttribute = null;
+    protected WebAttribute<String> identityAttribute = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
 
     public WebRememberMeManager() {
         super();
@@ -63,19 +63,6 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     public void setIdentityAttribute(WebAttribute<String> identityAttribute) {
         this.identityAttribute = identityAttribute;
-    }
-
-    protected void onInit() {
-        ensureWebAttribute();
-    }
-
-    protected void ensureWebAttribute() {
-        if (getIdentityAttribute() == null) {
-            //uses cookies by default.
-            CookieAttribute<String> cookieStore = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
-            cookieStore.setCheckRequestParams(false);
-            setIdentityAttribute(cookieStore);
-        }
     }
 
     protected void rememberSerializedIdentity(byte[] serialized) {
