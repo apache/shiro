@@ -18,31 +18,20 @@
     <filter>
         <filter-name>JSecurityFilter</filter-name>
         <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
-        <init-param>
-            <param-name>unauthorizedPage</param-name>
-            <param-value>/unauthorized.jsp</param-value>
-        </init-param>
-        <init-param>
-            <param-name>interceptors</param-name>
-            <param-value>
-                # If any interceptors configured here have properties to be set (e.g.
-                # the authc interceptor below specifies an 'applicationName' property)
-                # Then Jakarta commons-beanutils-core.jar needs to be in the classpath
-                
-                authc = org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor
-                authc.applicationName = JSecurity Quickstart
-                
-            </param-value>
-        </init-param>
-        <init-param>
-            <param-name>urls</param-name>
-            <param-value>
-                /account/** = authc
-                /s/jsecurity.jnlp=authc
-                /remoting/** authc, perms[remote:invoke], roles[guest,schwartz]
-            </param-value>
-        </init-param>
+        <init-param><param-name>config</param-name><param-value>
+            [global]
+            # sessionMode = http
+            # unauthorizedPage = /unauthorizedPage.jsp
 
+            [interceptors]
+            authc = org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor
+            authc.applicationName = JSecurity Quickstart
+
+            [urls]
+            /account/** = authc
+            /s/jsecurity.jnlp=authc
+            /remoting/** authc, perms[remote:invoke], roles[guest,schwartz]
+        </param-value></init-param>
     </filter>
 
 

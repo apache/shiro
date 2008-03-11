@@ -49,7 +49,6 @@ public class WebSecurityManager extends DefaultSecurityManager {
 
     protected void afterSessionManagerSet() {
         WebRememberMeManager rmm = new WebRememberMeManager();
-        rmm.init();
         setRememberMeManager(rmm);
     }
 

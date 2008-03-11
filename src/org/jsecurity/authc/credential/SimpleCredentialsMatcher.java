@@ -79,28 +79,6 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Converts the <tt>AuthenticationToken</tt> credentials to a <tt>byte[]</tt>
-     *
-     * @param token
-     * @return a <tt>byte[]</tt> representation of the <tt>token</tt>
-     */
-    protected byte[] getCredentialsBytes( AuthenticationToken token ) {
-        Object credentials = getCredentials( token );
-        return toBytes( credentials );
-    }
-
-    /**
-     * Converts the <tt>Account</tt> to a <tt>byte[]</tt>
-     *
-     * @param account
-     * @return a <tt>byte[]</tt> representation of the <tt>account</tt>
-     */
-    protected byte[] getCredentialsBytes( Account account ) {
-        Object credentials = getCredentials( account );
-        return toBytes( credentials );
-    }
-
-    /**
      * Returns <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      *
      * <p>This default implementation merely performs an Object equality check,
@@ -111,15 +89,22 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @param accountCredentials the <tt>Account</tt>'s stored credentials.
      * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      */
-    protected boolean equals( byte[] tokenCredentials, byte[] accountCredentials ) {
-        return Arrays.equals( tokenCredentials, accountCredentials );
+    protected boolean equals( Object tokenCredentials, Object accountCredentials ) {
+        if ( (tokenCredentials instanceof byte[] || tokenCredentials instanceof char[] || tokenCredentials instanceof String ) &&
+             (accountCredentials instanceof byte[] || accountCredentials instanceof char[] || tokenCredentials instanceof String ) ) {
+            byte[] tokenBytes = toBytes(tokenCredentials);
+            byte[] accountBytes = toBytes(accountCredentials);
+            return Arrays.equals( tokenBytes, accountBytes );
+        } else {
+            return accountCredentials.equals( tokenCredentials );
+        }
     }
 
     /**
      * Acquires the <tt>token</tt>'s credentials (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
      * and then the <tt>account</tt>'s credentials
      * (via {@link #getCredentials(Account) getCredentials(account)}) and then passes both of
-     * them to the {@link #equals(byte[],byte[]) equals(tokenCredentials, accountCredentials)} method for equality
+     * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
      * comparison.
      * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt.
      * @param account the <tt>Account</tt> stored in the system matching the token principal.
@@ -127,8 +112,8 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * <tt>false</tt> otherwise
      */
     public boolean doCredentialsMatch(AuthenticationToken token, Account account) {
-        byte[] tokenCredentials = getCredentialsBytes( token );
-        byte[] accountCredentials = getCredentialsBytes( account );
+        Object tokenCredentials = getCredentials(token);
+        Object accountCredentials = getCredentials(account);
         return equals( tokenCredentials, accountCredentials );
     }
 

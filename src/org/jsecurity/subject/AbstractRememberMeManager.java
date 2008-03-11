@@ -30,31 +30,32 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.RememberMeAuthenticationToken;
+import org.jsecurity.crypto.BlowfishCipher;
 import org.jsecurity.crypto.Cipher;
-import org.jsecurity.util.*;
+import org.jsecurity.util.Serializer;
+import org.jsecurity.util.XmlSerializer;
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AbstractRememberMeManager implements RememberMeManager, Initializable, Destroyable {
+public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    private Serializer serializer = null;
-    private Cipher cipher = null;
+    private Serializer serializer = new XmlSerializer();
+    private Cipher cipher = new BlowfishCipher();
 
     public AbstractRememberMeManager() {
     }
 
     public AbstractRememberMeManager(Serializer serializer) {
-        this(serializer, null);
+        setSerializer(serializer);
     }
 
     public AbstractRememberMeManager(Serializer serializer, Cipher cipher) {
         setSerializer(serializer);
         setCipher(cipher);
-        init();
     }
 
     public Serializer getSerializer() {
@@ -71,29 +72,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager, In
 
     public void setCipher(Cipher cipher) {
         this.cipher = cipher;
-    }
-
-    protected void ensureSerializer() {
-        Serializer serializer = getSerializer();
-        if (serializer == null) {
-            serializer = new XmlSerializer();
-            setSerializer(serializer);
-        }
-    }
-
-    public void init() {
-        ensureSerializer();
-        onInit();
-    }
-
-    protected void onInit() {
-    }
-
-    public void destroy() throws Exception {
-        LifecycleUtils.destroy(getSerializer());
-        setSerializer(null);
-        LifecycleUtils.destroy(getCipher());
-        setCipher(null);
     }
 
     protected boolean isRememberMe(AuthenticationToken token) {
