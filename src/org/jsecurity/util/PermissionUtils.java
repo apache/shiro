@@ -34,27 +34,37 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class PermissionUtils {
 
-    private static final String DOUBLE_QUOTE = "\"";
+    public static final String DOUBLE_QUOTE = "\"";
+    public static final String COMMA = ",";
 
-    protected static transient final Log log = LogFactory.getLog( PermissionUtils.class );
+    protected static transient final Log log = LogFactory.getLog(PermissionUtils.class);
 
     public static Set<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
         Set<Permission> permissions = new LinkedHashSet<Permission>(permissionStrings.size());
-        for( String permissionString : permissionStrings ) {
-            permissions.add( permissionResolver.resolvePermission( permissionString ) );
+        for (String permissionString : permissionStrings) {
+            permissions.add(permissionResolver.resolvePermission(permissionString));
         }
         return permissions;
     }
 
-    public static Set<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver, String delimiter) {
+    public static Set<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver) {
+        return resolveDelimitedPermissions(permissionsString, permissionResolver, DOUBLE_QUOTE);
+    }
 
-        String[] tokens = permissionsString.split( delimiter );
+    public static Set<String> toPermissionStrings(String permissionsString ) {
+        return toPermissionStrings(permissionsString, COMMA);
+    }
+
+    public static Set<String> toPermissionStrings(String permissionsString, String delimiter) {
+
+        //TODO - this won't work if a quoted string has internal commas!
+        String[] tokens = permissionsString.split(delimiter);
 
         //check for quoted strings:
         Set<String> permDefinitions = new LinkedHashSet<String>();
@@ -62,20 +72,20 @@ public class PermissionUtils {
         boolean quoted = false;
         StringBuffer permDefinition = new StringBuffer();
 
-        for( String token : tokens ) {
+        for (String token : tokens) {
 
-            if ( token.startsWith(DOUBLE_QUOTE)) {
+            if (token.startsWith(DOUBLE_QUOTE)) {
                 token = token.substring(1);
                 if (token.endsWith(DOUBLE_QUOTE)) {
-                    token = token.substring(0,token.length()-1);
+                    token = token.substring(0, token.length() - 1);
                     permDefinition = new StringBuffer(token);
                 } else {
                     quoted = true;
                     permDefinition = new StringBuffer(token).append(delimiter);
                 }
             } else {
-                if ( token.endsWith(DOUBLE_QUOTE) ) {
-                    token = token.substring(0,token.length()-1);
+                if (token.endsWith(DOUBLE_QUOTE)) {
+                    token = token.substring(0, token.length() - 1);
                     permDefinition.append(token);
                     quoted = false;
                 } else {
@@ -84,16 +94,16 @@ public class PermissionUtils {
                 }
             }
 
-            if ( !quoted && permDefinition.length() > 0 ) {
-                permDefinitions.add( permDefinition.toString() );
+            if (!quoted && permDefinition.length() > 0) {
+                permDefinitions.add(permDefinition.toString());
             }
         }
 
-
-        return resolvePermissions( permDefinitions, permissionResolver );
+        return permDefinitions;
     }
 
-    public static void main( String[] args ) {
-
+    public static Set<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver, String delimiter) {
+        Set<String> permStrings = toPermissionStrings(delimiter);
+        return resolvePermissions(permStrings, permissionResolver);
     }
 }

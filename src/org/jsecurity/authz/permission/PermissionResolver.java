@@ -37,7 +37,7 @@ import org.jsecurity.authz.Permission;
  *
  * <p>A <tt>PermissionResolver</tt> is used by many JSecurity components such as annotations, property file
  * configuration, URL configuration, etc.  It is useful whenever a String representation of a permission is specified
- * and that String needs to be converted to an instance before executing a security check.</p>
+ * and that String needs to be converted to a Permission instance before executing a security check.</p>
  *
  * @author Jeremy Haile
  * @since 0.9

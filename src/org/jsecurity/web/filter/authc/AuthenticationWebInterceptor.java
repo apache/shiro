@@ -41,7 +41,8 @@ import javax.servlet.ServletResponse;
  */
 public abstract class AuthenticationWebInterceptor extends AbstractWebInterceptor {
 
-    public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+    public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+        //mapped value is ignored - not needed for most (if not all) authc interceptors.
         if (isSubjectAuthenticated(request, response)) {
             return true;
         } else {

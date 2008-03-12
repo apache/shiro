@@ -172,7 +172,7 @@ public class RedirectView {
 	 * @see #appendQueryProperties
 	 * @see #sendRedirect
 	 */
-	protected final void renderMergedOutputModel(
+	public final void renderMergedOutputModel(
 			Map model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		// Prepare name URL.

@@ -31,7 +31,7 @@ import java.util.*;
 
 /**
  * <p>A simple implementation of the {@link AuthorizingAccount} interface that is useful
- * for many realms.  This implementation uses an internal collection of roles and permissions
+ * for many realms.  This implementation caches an internal collection of roles and permissions
  * in order to perform authorization checks for a particular user.</p>
  *
  * @author Jeremy Haile

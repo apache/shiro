@@ -4,8 +4,13 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
+import org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor;
+import org.jsecurity.web.filter.authz.PermissionsAuthorizationWebInterceptor;
+import org.jsecurity.web.filter.authz.RolesAuthorizationWebInterceptor;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @author Les Hazlewood
@@ -15,44 +20,48 @@ public class DefaultInterceptorBuilder implements InterceptorBuilder {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    public List buildInterceptors(String config) {
-
+    public Map<String, Object> buildDefaultInterceptors() {
         Map<String, Object> interceptors = new LinkedHashMap<String, Object>();
+        interceptors.put("authcBasic", new BasicHttpAuthenticationWebInterceptor());
+        interceptors.put("roles", new RolesAuthorizationWebInterceptor());
+        interceptors.put("perms", new PermissionsAuthorizationWebInterceptor());
+        return interceptors;
+    }
 
-        Scanner scanner = new Scanner(config);
-        while (scanner.hasNextLine()) {
+    public Map<String, Object> buildInterceptors(String config) {
 
-            String definitionLine = scanner.nextLine().trim();
+        Map<String, Object> interceptors = buildDefaultInterceptors();
 
-            if (!definitionLine.equals("") && !definitionLine.startsWith("#")) {
+        if (config != null) {
+            Scanner scanner = new Scanner(config);
+            while (scanner.hasNextLine()) {
 
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "Parsing interceptor definition line [" + definitionLine + "]" );
+                String definitionLine = scanner.nextLine().trim();
+
+                if (!definitionLine.equals("") && !definitionLine.startsWith("#")) {
+
+                    if (log.isTraceEnabled()) {
+                        log.trace("Parsing interceptor definition line [" + definitionLine + "]");
+                    }
+
+                    String[] parts = definitionLine.split("=", 2);
+                    if (parts == null || parts.length != 2) {
+                        String msg = "Config parsing error - each configuration line must have the format:  key = value";
+                        throw new IllegalStateException(msg);
+                    }
+
+                    String key = parts[0].trim();
+                    String value = parts[1].trim();
+
+                    buildInterceptor(key, value, interceptors);
                 }
-                
-                String[] parts = definitionLine.split("=", 2);
-                if (parts == null || parts.length != 2) {
-                    String msg = "Config parsing error - each configuration line must have the format:  key = value";
-                    throw new IllegalStateException(msg);
-                }
 
-                String key = parts[0].trim();
-                String value = parts[1].trim();
-
-                buildInterceptor(key, value, interceptors);
             }
-
-        }
-        scanner.close();
-
-        List ordered = null;
-
-        if (!interceptors.isEmpty()) {
-            //noinspection unchecked
-            ordered = new ArrayList(interceptors.values());
+            scanner.close();
         }
 
-        return ordered;
+
+        return interceptors;
     }
 
     protected Object newInstance(String propValue) {
@@ -64,8 +73,8 @@ public class DefaultInterceptorBuilder implements InterceptorBuilder {
         int index = key.indexOf('.');
 
         if (index >= 0) {
-            String name = key.substring(0, index );
-            String property = key.substring(index + 1, key.length() );
+            String name = key.substring(0, index);
+            String property = key.substring(index + 1, key.length());
             Object interceptor = interceptors.get(name);
             if (interceptor == null) {
                 if (property.equals("class")) {
@@ -94,8 +103,8 @@ public class DefaultInterceptorBuilder implements InterceptorBuilder {
 
     protected void applyProperty(Object interceptor, String propertyName, String value) {
         try {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Applying property [" + propertyName + "] value [" + value + "] on interceptor of type [" + interceptor.getClass().getName() + "]" );
+            if (log.isTraceEnabled()) {
+                log.trace("Applying property [" + propertyName + "] value [" + value + "] on interceptor of type [" + interceptor.getClass().getName() + "]");
             }
             BeanUtils.setProperty(interceptor, propertyName, value);
         } catch (Exception e) {

@@ -34,11 +34,24 @@ import java.util.HashSet;
 
 /**
  * Simple implementation of the {@link org.jsecurity.authc.Account} interface that
- * contains all necessary information as instance variables and exposes them
+ * contains principal and credential information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
+ * <p>Realm implementations can use this for simple principal/credential accounts, but note:  
+ *
+ * <p>This class cannot perform its own authorization checks for roles and permissions.  It is therefore not sufficient
+ * to use to back a Realm's {@link org.jsecurity.authz.Authorizer Authorizer} method implementations.  If you need
+ * an Account object to perform role and permission checks itself, you might want to use instaces of
+ * {@link org.jsecurity.authz.SimpleAuthorizingAccount SimpleAuthorizingAccount} instead of this class.
+ *
+ * <p>But note that a <tt>SimpleAuthorizingAccount</tt> object caches its roles and permission definitions and will not
+ * persist any changes to these definitions back to the source Realm.  If you need dynamic runtime modification of Roles
+ * and/or Permissions for any given account, your Realm implementation will need to perform the authorization checks
+ * directly since instances of this class are primarily used for caching and could represent stale data.
+ *
  * @author Jeremy Haile
- * @see org.jsecurity.authc.Account
+ * @author Les Hazlewood
+ * @see org.jsecurity.authz.SimpleAuthorizingAccount
  * @since 0.1
  */
 public class SimpleAccount implements AggregateAccount, Serializable {

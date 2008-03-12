@@ -27,11 +27,13 @@ package org.jsecurity.web.filter;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.AntPathMatcher;
+import org.jsecurity.web.RedirectView;
 import org.jsecurity.web.SecurityWebSupport;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * <p>Base class for all web interceptors. This class is an adapter for the WebInterceptor interface.</p>
@@ -44,18 +46,52 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
 
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    /**
-     * A collection of url-to-config entries where the key is the url and the value is the
-     * interceptor-specific configuration elements.  The subclass is expected to
-     */
-    protected Map<String, ?> appliedUrls = null; //url to interceptor-specific-config mapping.
+    private String url;
+    private boolean contextRelative = true;
+	private boolean http10Compatible = true;
+	private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
+    private Map queryParams = new HashMap();
 
-    /**
-     * Default implementation
-     *
-     * @throws JSecurityException
-     */
-    public void init() throws JSecurityException {
+    public AbstractWebInterceptor(){}
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public boolean isContextRelative() {
+        return contextRelative;
+    }
+
+    public void setContextRelative(boolean contextRelative) {
+        this.contextRelative = contextRelative;
+    }
+
+    public boolean isHttp10Compatible() {
+        return http10Compatible;
+    }
+
+    public void setHttp10Compatible(boolean http10Compatible) {
+        this.http10Compatible = http10Compatible;
+    }
+
+    public String getEncodingScheme() {
+        return encodingScheme;
+    }
+
+    public void setEncodingScheme(String encodingScheme) {
+        this.encodingScheme = encodingScheme;
+    }
+
+    public Map getQueryParams() {
+        return queryParams;
+    }
+
+    public void setQueryParams(Map queryParams) {
+        this.queryParams = queryParams;
     }
 
     /**
@@ -74,6 +110,53 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
     }
 
     /**
+     * Default implementation
+     *
+     * @throws JSecurityException
+     */
+    public void init() throws JSecurityException {
+    }
+
+    protected void issueRedirect(ServletRequest request, ServletResponse response ) throws IOException {
+        RedirectView view = new RedirectView( getUrl(), isContextRelative(), isHttp10Compatible() );
+        view.renderMergedOutputModel(getQueryParams(), toHttp(request), toHttp(response) );
+    }
+
+    /**
+     * A collection of url-to-config entries where the key is the url and the value is the
+     * interceptor-specific configuration elements.  The subclass is expected to
+     */
+    protected Map<String, ?> appliedUrls = null; //url to interceptor-specific-config mapping.
+
+    public static final String TOKEN_DELIMITER = "[,][\\s]*"; //comma followed by optional white space
+
+    protected Map<String, Set<String>> tokenizeValues(Map<String,String> urlValueMap) {
+
+        Map<String,Set<String>> converted = new LinkedHashMap<String,Set<String>>(this.appliedUrls.size());
+
+        for( Map.Entry<String,String> entry : urlValueMap.entrySet() ) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if ( value != null ) {
+                //TODO - split is not good enough here - we need to check for quoted strings
+                //since quoted strings can have internal commas
+                String[] split = value.split(TOKEN_DELIMITER);
+                Set<String> set = new LinkedHashSet<String>( split.length );
+                for( String s : split ) {
+                    set.add(s.trim());
+                }
+                converted.put(key,set);
+            }
+        }
+
+        if (!converted.isEmpty()) {
+            return converted;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Default implemenation of this method. Always returns true. Sub-classes should override this method.
      *
      * @param request
@@ -87,18 +170,19 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
 
             String requestURI = toHttp(request).getRequestURI();
             
-            //todo Need to strip off context path here.  See Spring's UrlPathHelper.getPathWithinApplication()
+            //TODO Need to strip off context path here.  See Spring's UrlPathHelper.getPathWithinApplication()
 
-            // If URL path isn't matched, we assume that the user is authorized - so default to true
+            // If URL path isn't matched, we allow the request to go through so default to true
             boolean continueChain = true;
             for (String url : this.appliedUrls.keySet()) {
 
                 // If the path does match, then pass on to the subclass implementation for specific checks:
                 if (pathMatcher.match(url, requestURI)) {
-                    continueChain = onPreHandle( request, response );
+                    continueChain = onPreHandle( request, response, this.appliedUrls.get(url) );
                 }
 
                 if ( !continueChain ) {
+                    //it is expected the subclass renders the response directly, so just return false
                     return false;
                 }
             }
@@ -107,7 +191,7 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
         return true;
     }
 
-    protected boolean onPreHandle(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue ) throws Exception {
         return true;
     }
 

@@ -1,6 +1,6 @@
 package org.jsecurity.web.filter;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Les Hazlewood
@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface InterceptorBuilder {
     
-    List buildInterceptors( String config );
+    Map<String,Object> buildInterceptors( String config );
 }
