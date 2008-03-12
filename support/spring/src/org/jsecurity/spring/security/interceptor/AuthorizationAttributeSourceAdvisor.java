@@ -27,8 +27,8 @@ package org.jsecurity.spring.security.interceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityManager;
-import org.jsecurity.authz.annotation.PermissionsRequired;
-import org.jsecurity.authz.annotation.RolesRequired;
+import org.jsecurity.authz.annotation.RequiresPermissions;
+import org.jsecurity.authz.annotation.RequiresRoles;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -60,19 +60,19 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     /**
-     * Returns <tt>true</tt> if the method has a JSecurity <tt>RolesRequired</tt> or
-     * <tt>PermissionsRequired</tt> annotation, false otherwise.
+     * Returns <tt>true</tt> if the method has a JSecurity <tt>RequiresRoles</tt> or
+     * <tt>RequiresPermissions</tt> annotation, false otherwise.
      * @param method the method to check for a JSecurity annotation
      * @param targetClass the class potentially declaring JSecurity annotations
-     * @return <tt>true</tt> if the method has a JSecurity <tt>RolesRequired</tt> or
-     * <tt>PermissionsRequired</tt> annotation, false otherwise.
-     * @see RolesRequired
-     * @see PermissionsRequired
+     * @return <tt>true</tt> if the method has a JSecurity <tt>RequiresRoles</tt> or
+     * <tt>RequiresPermissions</tt> annotation, false otherwise.
+     * @see org.jsecurity.authz.annotation.RequiresRoles
+     * @see org.jsecurity.authz.annotation.RequiresPermissions
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
     public boolean matches( Method method, Class targetClass) {
-        return ( (method.getAnnotation( PermissionsRequired.class ) != null ) ||
-                 (method.getAnnotation( RolesRequired.class ) != null ) );
+        return ( (method.getAnnotation( RequiresPermissions.class ) != null ) ||
+                 (method.getAnnotation( RequiresRoles.class ) != null ) );
     }
 
     public void afterPropertiesSet() throws Exception {

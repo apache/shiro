@@ -24,7 +24,7 @@
  */
 package org.jsecurity.samples.spring;
 
-import org.jsecurity.authz.annotation.RolesRequired;
+import org.jsecurity.authz.annotation.RequiresRoles;
 
 /**
  * Business manager interface used for sample application.
@@ -50,12 +50,12 @@ public interface SampleManager {
     /**
      * Method that requires <tt>role1</tt> in order to be invoked.
      */
-    @RolesRequired( "role1" )
+    @RequiresRoles( "role1" )
     void secureMethod1();
 
     /**
      * Method that requires <tt>role2</tt> in order to be invoked.
      */
-    @RolesRequired( "role2" )
+    @RequiresRoles( "role2" )
     void secureMethod2();
 }

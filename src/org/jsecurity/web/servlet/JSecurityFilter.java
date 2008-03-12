@@ -28,7 +28,6 @@ import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationHandler;
-import org.jsecurity.web.authz.UrlAuthorizationWebInterceptor;
 import org.jsecurity.web.filter.DefaultInterceptorBuilder;
 import org.jsecurity.web.filter.InterceptorBuilder;
 import org.jsecurity.web.filter.WebInterceptor;
@@ -39,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Les Hazlewood
@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class JSecurityFilter extends SecurityManagerFilter {
 
-    protected List webInterceptors;
+    protected Map<String, Object> filtersAndInterceptors;
     protected String interceptors = null;
     protected String urls = null;
     protected String unauthorizedPage;
@@ -58,12 +58,12 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     private List<Filter> filters;
 
-    public List getWebInterceptors() {
-        return webInterceptors;
+    public Map<String, Object> getFiltersAndInterceptors() {
+        return filtersAndInterceptors;
     }
 
-    public void setWebInterceptors(List webInterceptors) {
-        this.webInterceptors = webInterceptors;
+    public void setFiltersAndInterceptors(Map<String, Object> filtersAndInterceptors) {
+        this.filtersAndInterceptors = filtersAndInterceptors;
     }
 
     public String getUrls() {
@@ -97,9 +97,9 @@ public class JSecurityFilter extends SecurityManagerFilter {
         FilterConfig config = getFilterConfig();
 
         this.interceptors = config.getInitParameter("interceptors");
-        if ( this.interceptors != null ) {
+        if (this.interceptors != null) {
             this.interceptors = this.interceptors.trim();
-            if ( this.interceptors.equals("")) {
+            if (this.interceptors.equals("")) {
                 this.interceptors = null;
             }
         }
@@ -109,40 +109,38 @@ public class JSecurityFilter extends SecurityManagerFilter {
     }
 
     protected void ensureWebInterceptors() {
-        List interceptors = new ArrayList();
+        Map<String, Object> interceptors = this.interceptorBuilder.buildInterceptors(this.interceptors);
 
-        if ( this.interceptors != null ) {
-            interceptors = this.interceptorBuilder.buildInterceptors(this.interceptors);
-        }
-
-        List<WebInterceptor> configured = getWebInterceptors();
-
-        String urls = getUrls();
-        if (urls != null) {
-            WebInterceptor uawi = new UrlAuthorizationWebInterceptor(getSecurityManager(), urls);
-            interceptors.add(uawi);
-        }
-
-        if (configured != null && !configured.isEmpty()) {
-            interceptors.addAll(configured);
+        if (this.filtersAndInterceptors != null && !this.filtersAndInterceptors.isEmpty()) {
+            interceptors.putAll(this.filtersAndInterceptors);
         }
 
         if (!interceptors.isEmpty()) {
-            setWebInterceptors(interceptors);
+            setFiltersAndInterceptors(interceptors);
         }
     }
 
-    protected void applyWebInterceptorFilters() {
-        List<WebInterceptor> interceptors = getWebInterceptors();
+    protected void applyWebInterceptorFilters() throws ServletException {
+        
+        Map<String, Object> interceptors = getFiltersAndInterceptors();
+
         if (interceptors != null && !interceptors.isEmpty()) {
+
             List<Filter> filters = new ArrayList<Filter>(interceptors.size());
-            for (WebInterceptor interceptor : interceptors) {
-                WebInterceptorFilter filter = new WebInterceptorFilter();
-                filter.setServletContext(getServletContext());
-                filter.setWebInterceptor(interceptor);
-                filter.afterSecurityManagerSet();
-                filters.add(filter);
+
+            for( Map.Entry<String,Object> entry : interceptors.entrySet() ) {
+
+                Object value = entry.getValue();
+
+                if ( !(value instanceof Filter) && value instanceof WebInterceptor ) {
+                    WebInterceptor interceptor = (WebInterceptor)value;
+                    WebInterceptorFilter filter = new WebInterceptorFilter();
+                    filter.setWebInterceptor(interceptor);
+                    filter.init( getFilterConfig() );
+                    entry.setValue(filter);
+                }
             }
+
             this.filters = filters;
         }
     }
@@ -157,13 +155,13 @@ public class JSecurityFilter extends SecurityManagerFilter {
                                     FilterChain origChain) throws ServletException, IOException {
         FilterChain chain = origChain;
         if (this.filters != null && !this.filters.isEmpty()) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Filters and/or WebInterceptors configured - wrapping FilterChain." );
+            if (log.isTraceEnabled()) {
+                log.trace("Filters and/or WebInterceptors configured - wrapping FilterChain.");
             }
             chain = new FilterChainWrapper(chain, this.filters);
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No Filters or WebInterceptors configured - FilterChain will not be wrapped." );
+            if (log.isTraceEnabled()) {
+                log.trace("No Filters or WebInterceptors configured - FilterChain will not be wrapped.");
             }
         }
 

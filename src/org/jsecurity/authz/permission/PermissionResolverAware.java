@@ -28,7 +28,8 @@ package org.jsecurity.authz.permission;
  * Interface implemented by a component that wishes to use any application-configured <tt>PermissionResolver</tt> that
  * might already exist instead of potentially creating one itself.
  *
- * <p>This is mostly implemented by {@link org.jsecurity.authz.Authorizer Authorizer} implementations since they
+ * <p>This is mostly implemented by {@link org.jsecurity.authz.Authorizer Authorizer} and
+ * {@link org.jsecurity.realm.Realm Realm} implementations since they
  * are the ones performing permission checks and need to know how to resolve Strings into
  * {@link org.jsecurity.authz.Permission Permission} instances.
  *

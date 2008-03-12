@@ -36,7 +36,7 @@ import java.util.List;
  * do not need to access the Realm's underlying data store repeatedly.
  *
  * <p>Of course, an <tt>AuthorizingAccount</tt> concept is only a convenience mechansim if JSecurity account caching
- * enabled.  Realm implementations are free to ignore this interface entirely and implement/override any of their
+ * is enabled.  Realm implementations are free to ignore this interface entirely and implement/override any of their
  * <tt>Realm</tt>'s {@link Authorizer Authorizer} methods to execute the authorization checks as they see fit.
  * ({@link org.jsecurity.realm.Realm Realm} is a sub-interface of {@link Authorizer Authorizer} and therefore must
  * implement those methods as well).

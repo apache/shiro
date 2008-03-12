@@ -29,7 +29,11 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
-import org.jsecurity.authz.annotation.PermissionsRequired;
+import org.jsecurity.authz.annotation.RequiresPermissions;
+import org.jsecurity.subject.Subject;
+import org.jsecurity.util.PermissionUtils;
+
+import java.util.Set;
 
 /**
  * @since 0.9
@@ -40,7 +44,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
     private static final char ARRAY_CLOSE_CHAR = ']';
 
     public PermissionAnnotationMethodInterceptor() {
-        setAnnotationClass( PermissionsRequired.class );
+        setAnnotationClass( RequiresPermissions.class );
     }
 
     public PermissionAnnotationMethodInterceptor( SecurityManager securityManager ) {
@@ -84,16 +88,31 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
     }
 
     protected String getAnnotationValue( MethodInvocation invocation ) {
-        PermissionsRequired prAnnotation =  (PermissionsRequired)getAnnotation( invocation );
+        RequiresPermissions prAnnotation =  (RequiresPermissions)getAnnotation( invocation );
         return prAnnotation.value();
     }
 
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         String p = getAnnotationValue( mi );
-        if ( getSubject().isPermitted( p ) ) {
-            String msg = "Calling Subject does not have required permission [" + p + "].  " +
-                    "MethodInvocation denied.";
-            throw new UnauthorizedException( msg );
+        Set<String> perms = PermissionUtils.toPermissionStrings(p);
+
+        Subject subject = getSubject();
+
+        if ( perms.size() == 1 ) {
+            if ( !subject.isPermitted(perms.iterator().next()) ) {
+                String msg = "Calling Subject does not have required permission [" + p + "].  " +
+                    "Method invocation denied.";
+                throw new UnauthorizedException( msg );    
+            }
+        } else {
+            String[] permStrings = new String[perms.size()];
+            permStrings = perms.toArray(permStrings);
+            if ( !subject.isPermittedAll(permStrings)) {
+                 String msg = "Calling Subject does not have required permissions [" + p + "].  " +
+                              "Method invocation denied.";
+                 throw new UnauthorizedException(msg);
+            }
+
         }
     }
 

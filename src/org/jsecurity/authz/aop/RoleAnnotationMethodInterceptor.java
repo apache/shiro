@@ -28,7 +28,11 @@ import org.jsecurity.SecurityManager;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
-import org.jsecurity.authz.annotation.RolesRequired;
+import org.jsecurity.authz.annotation.RequiresRoles;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @since 0.9
@@ -37,7 +41,7 @@ import org.jsecurity.authz.annotation.RolesRequired;
 public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
     public RoleAnnotationMethodInterceptor() {
-        setAnnotationClass( RolesRequired.class );
+        setAnnotationClass( RequiresRoles.class );
     }
 
     public RoleAnnotationMethodInterceptor( SecurityManager securityManager ) {
@@ -47,14 +51,25 @@ public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
     }
 
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
-        RolesRequired rrAnnotation = (RolesRequired)getAnnotation( mi );
+        RequiresRoles rrAnnotation = (RequiresRoles)getAnnotation( mi );
 
         String roleId = rrAnnotation.value();
 
-        if ( !getSubject().hasRole( roleId ) ) {
-            String msg = "Calling Subject does not have required role [" + roleId + "].  " +
+        String[] roles = roleId.split(",");
+
+        if ( roles.length == 1 ) {
+            if ( !getSubject().hasRole(roles[0])) {
+                String msg = "Calling Subject does not have required role [" + roleId + "].  " +
                          "MethodInvocation denied.";
-            throw new UnauthorizedException( msg );
+                throw new UnauthorizedException( msg );
+            }
+        } else {
+            Set<String> rolesSet = new LinkedHashSet<String>( Arrays.asList(roles));
+            if ( !getSubject().hasAllRoles(rolesSet)) {
+                String msg = "Calling Subject does not have required roles [" + roleId + "].  " +
+                         "MethodInvocation denied.";
+                throw new UnauthorizedException( msg );
+            }
         }
     }
 }

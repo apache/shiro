@@ -129,21 +129,10 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     /**
-     * Sets the <tt>PermissionResolver</tt> instance that will be passed on to the underlying wrapped
+     * Sets the <tt>PermissionResolver</tt> instance that will be passed on to the underlying default wrapped
      * {@link Authorizer Authorizer} instance during {@link #init() initialization}.
      *
-     * <p>The specified <tt>PermissionResolver</tt> will only be passed on to the wrapped <tt>Authorizer</tt>
-     * instance if that instance implements the {@link PermissionResolverAware PermissionResolverAware} interface.
-     *
-     * <p>If you don't specify a custom <tt>Authorizer</tt> instance via the {@link #setAuthorizer setAuthorizer} method,
-     * JSecurity will create a suitable default and that default <em>does</em>
-     * implement <tt>PermissionResolverAware</tt> interface and will therefore receive the argument.
-     *
-     * <p>If you do specify your own <tt>Authorizer</tt> instance and wish to receive this <tt>PermissionResolver</tt>
-     * argument, you will have to ensure your <tt>Authorizer</tt> implementation also implements
-     * the <tt>PermissionResolverAware</tt> interface. Then it will be applied.
-     *
-     * <p>The entire purpose of this method is one of convenience:  it allows you to configure an application-wide
+     * <p>This is a convenience method:  it allows you to configure an application-wide
      * <tt>PermissionResolver</tt> on the <tt>SecurityManager</tt> instance, and it will trickle its way down to the
      * 'real' authorizer and/or underlying Realms.  This is easier to configure at the <tt>SecurityManager</tt> level
      * than constructing your own object graph just to configure a <tt>PermissionResolver</tt> instance on objects

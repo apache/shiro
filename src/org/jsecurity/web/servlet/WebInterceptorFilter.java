@@ -24,12 +24,11 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.web.filter.WebInterceptor;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import java.io.IOException;
 
 /**
@@ -43,7 +42,9 @@ import java.io.IOException;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class WebInterceptorFilter extends SecurityManagerFilter {
+public class WebInterceptorFilter implements Filter {
+
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     protected WebInterceptor webInterceptor;
 
@@ -55,27 +56,7 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
         this.webInterceptor = webInterceptor;
     }
 
-    public void afterSecurityManagerSet() {
-        WebInterceptor interceptor = getWebInterceptor();
-        if (interceptor == null) {
-            throw new IllegalStateException("WebInterceptor property must be set.");
-        }
-        afterWebInterceptorSet();
-    }
-
-    protected void afterWebInterceptorSet() {
-    }
-
-    protected void continueChain(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        chain.doFilter(request, response);
-        if (log.isTraceEnabled()) {
-            log.trace("Completed chain execution.");
-        }
-    }
-
-    protected void doFilterInternal(
-            ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
         Exception exception = null;
@@ -90,7 +71,7 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
             }
 
             if (continueChain) {
-                continueChain(request, response, chain);
+                chain.doFilter(request,response);
             }
 
             interceptor.postHandle(request, response);
@@ -124,5 +105,16 @@ public class WebInterceptorFilter extends SecurityManagerFilter {
                 }
             }
         }
+    }
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+        WebInterceptor interceptor = getWebInterceptor();
+        if (interceptor == null) {
+            throw new IllegalStateException("WebInterceptor property must be set.");
+        }
+    }
+
+    public void destroy() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
