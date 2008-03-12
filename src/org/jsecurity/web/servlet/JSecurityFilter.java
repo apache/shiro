@@ -121,22 +121,22 @@ public class JSecurityFilter extends SecurityManagerFilter {
     }
 
     protected void applyWebInterceptorFilters() throws ServletException {
-        
+
         Map<String, Object> interceptors = getFiltersAndInterceptors();
 
         if (interceptors != null && !interceptors.isEmpty()) {
 
             List<Filter> filters = new ArrayList<Filter>(interceptors.size());
 
-            for( Map.Entry<String,Object> entry : interceptors.entrySet() ) {
+            for (Map.Entry<String, Object> entry : interceptors.entrySet()) {
 
                 Object value = entry.getValue();
 
-                if ( !(value instanceof Filter) && value instanceof WebInterceptor ) {
-                    WebInterceptor interceptor = (WebInterceptor)value;
+                if (!(value instanceof Filter) && value instanceof WebInterceptor) {
+                    WebInterceptor interceptor = (WebInterceptor) value;
                     WebInterceptorFilter filter = new WebInterceptorFilter();
                     filter.setWebInterceptor(interceptor);
-                    filter.init( getFilterConfig() );
+                    filter.init(getFilterConfig());
                     entry.setValue(filter);
                 }
             }
