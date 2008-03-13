@@ -16,9 +16,7 @@ import org.junit.Test;
 import javax.naming.NamingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Simple test case for ActiveDirectoryRealm.
@@ -122,7 +120,7 @@ public class ActiveDirectoryRealmTest {
         protected AuthorizingAccount doGetAccount(Object principal) {
             UserIdPrincipal userIdPrincipal = (UserIdPrincipal) principal;
             assertTrue(userIdPrincipal.getUserId() == USER_ID);
-            List<String> roles = new ArrayList<String>();
+            Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
             return new SimpleAuthorizingAccount(userIdPrincipal, null, roles, null);
         }
