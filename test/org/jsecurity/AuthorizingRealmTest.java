@@ -1,6 +1,7 @@
 package org.jsecurity;
 
 import org.jsecurity.authc.*;
+import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
@@ -20,8 +21,7 @@ import java.util.*;
 /**
  * Simple test case for AuthorizingRealm.
  *
- * todo:  this is a very simple test designed to mimic the AllowAllRealm approach we have been using lately
- * this could/should be expaned to be more robust end to end test for the AuthorizingRealm
+ * TODO - this could/should be expaned to be more robust end to end test for the AuthorizingRealm
  *
  * @author Tim Veil
  */
@@ -117,22 +117,11 @@ public class AuthorizingRealmTest {
 
     public class AllowAllRealm extends AuthorizingRealm {
 
-        /*--------------------------------------------
-        |         C O N S T R U C T O R S           |
-            ============================================*/
         CredentialsMatcher credentialsMatcher;
 
         public AllowAllRealm() {
             super();
-
-
-            credentialsMatcher = new CredentialsMatcher() {
-                public boolean doCredentialsMatch(AuthenticationToken object, Account object1) {
-                    return true;
-                }
-            };
-
-            setCredentialsMatcher(credentialsMatcher);
+            setCredentialsMatcher( new AllowAllCredentialsMatcher() );
         }
 
         protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
