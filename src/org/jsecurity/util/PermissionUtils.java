@@ -63,7 +63,6 @@ public class PermissionUtils {
 
     public static Set<String> toPermissionStrings(String permissionsString, String delimiter) {
 
-        //TODO - this won't work if a quoted string has internal commas!
         String[] tokens = permissionsString.split(delimiter);
 
         //check for quoted strings:

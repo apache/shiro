@@ -15,9 +15,7 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * Simple test case for AuthorizingRealm.
@@ -142,9 +140,9 @@ public class AuthorizingRealmTest {
         }
 
         protected AuthorizingAccount doGetAccount(Object principal) {
-            List<String> roles = new ArrayList<String>();
+            Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(principal, null, roles, new ArrayList<Permission>());
+            return new SimpleAuthorizingAccount(principal, null, roles, new HashSet<Permission>());
         }
 
         protected Account createAccount(Object principal, Object credentials) {
