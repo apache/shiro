@@ -27,6 +27,7 @@ package org.jsecurity.web.filter;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.AntPathMatcher;
+import org.jsecurity.util.StringUtils;
 import org.jsecurity.web.RedirectView;
 import org.jsecurity.web.SecurityWebSupport;
 
@@ -128,24 +129,18 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
      */
     protected Map<String, ?> appliedUrls = null; //url to interceptor-specific-config mapping.
 
-    public static final String TOKEN_DELIMITER = "[,][\\s]*"; //comma followed by optional white space
 
     protected Map<String, Set<String>> tokenizeValues(Map<String,String> urlValueMap) {
 
         Map<String,Set<String>> converted = new LinkedHashMap<String,Set<String>>(this.appliedUrls.size());
 
         for( Map.Entry<String,String> entry : urlValueMap.entrySet() ) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if ( value != null ) {
-                //TODO - split is not good enough here - we need to check for quoted strings
-                //since quoted strings can have internal commas
-                String[] split = value.split(TOKEN_DELIMITER);
-                Set<String> set = new LinkedHashSet<String>( split.length );
-                for( String s : split ) {
-                    set.add(s.trim());
-                }
-                converted.put(key,set);
+            String url = entry.getKey();
+            String interceptorConfig = entry.getValue();
+            if ( interceptorConfig != null ) {
+                String[] configTokens = StringUtils.split(interceptorConfig);
+                Set<String> configTokensSet = new LinkedHashSet<String>( Arrays.asList(configTokens) );
+                converted.put(url,configTokensSet);
             }
         }
 
