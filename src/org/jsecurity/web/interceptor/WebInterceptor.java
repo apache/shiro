@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.web.filter;
+package org.jsecurity.web.interceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

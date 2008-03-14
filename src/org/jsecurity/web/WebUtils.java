@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008 Les Hazlewood and original authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jsecurity.web;
 
 import org.apache.commons.logging.Log;
@@ -9,11 +24,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lhazlewood
- * Date: Mar 14, 2008
- * Time: 1:05:19 AM
- * To change this template use File | Settings | File Templates.
+ * Simple utility class for operations used across multiple class hierarchies in the web framework code.
+ *
+ * <p>Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
+ * and in these cases, we have retained all license, copyright and author information.
+ *
+ * @author Les Hazlewood
+ * @author Rod Johnson
+ * @author Juergen Hoeller
+ * @since 0.9
  */
 public class WebUtils {
 
@@ -23,6 +42,8 @@ public class WebUtils {
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
      * <p>If included via a RequestDispatcher, the current resource will see the
      * originating request. Its own URI and paths are exposed as request attributes.
+     *
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = "javax.servlet.include.request_uri";
     public static final String INCLUDE_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.include.context_path";
@@ -34,6 +55,8 @@ public class WebUtils {
      * Standard Servlet 2.4+ spec request attributes for forward URI and paths.
      * <p>If forwarded to via a RequestDispatcher, the current resource will see its
      * own URI and paths. The originating URI and paths are exposed as request attributes.
+     *
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     public static final String FORWARD_REQUEST_URI_ATTRIBUTE = "javax.servlet.forward.request_uri";
     public static final String FORWARD_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.forward.context_path";
@@ -45,6 +68,8 @@ public class WebUtils {
      * Default character encoding to use when <code>request.getCharacterEncoding</code>
      * returns <code>null</code>, according to the Servlet spec.
      *
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     *
      * @see javax.servlet.ServletRequest#getCharacterEncoding
      */
     public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
@@ -53,7 +78,7 @@ public class WebUtils {
      * Return the path within the web application for the given request.
      * <p>Detects include request URL if called within a RequestDispatcher include.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @return the path within the web application
@@ -80,7 +105,7 @@ public class WebUtils {
      * containers like JBoss/Jetty incorrectly include ";" strings like ";jsessionid"
      * in the URI. This method cuts off such incorrect appendices.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @return the request URI
@@ -96,7 +121,7 @@ public class WebUtils {
     /**
      * Decode the supplied URI string and strips any extraneous portion after a ';'.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     private static String decodeAndCleanUriString(HttpServletRequest request, String uri) {
         uri = decodeRequestString(request, uri);
@@ -110,7 +135,7 @@ public class WebUtils {
      * <p>As the value returned by <code>request.getContextPath()</code> is <i>not</i>
      * decoded by the servlet container, this method will decode it.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @return the context path
@@ -132,7 +157,7 @@ public class WebUtils {
      * from the request, falling back to the default "ISO-8859-1".
      * <p>The default implementation uses <code>URLDecoder.decode(input, enc)</code>.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @param source  the String to decode
@@ -162,7 +187,7 @@ public class WebUtils {
      * <p>The default implementation checks the request encoding,
      * falling back to the default encoding specified for this resolver.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @return the encoding for the request (never <code>null</code>)

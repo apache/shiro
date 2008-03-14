@@ -29,7 +29,7 @@
                 # the authc interceptor below specifies an 'applicationName' property)
                 # Then Jakarta commons-beanutils-core.jar needs to be in the classpath
 
-                authc = org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor
+                authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
                 authc.applicationName = JSecurity Quickstart
 
             </param-value>

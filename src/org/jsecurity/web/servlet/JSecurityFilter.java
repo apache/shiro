@@ -29,10 +29,10 @@ import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationHandler;
-import org.jsecurity.web.filter.DefaultInterceptorBuilder;
-import org.jsecurity.web.filter.InterceptorBuilder;
-import org.jsecurity.web.filter.MatchingWebInterceptor;
-import org.jsecurity.web.filter.WebInterceptor;
+import org.jsecurity.web.interceptor.DefaultInterceptorBuilder;
+import org.jsecurity.web.interceptor.InterceptorBuilder;
+import org.jsecurity.web.interceptor.MatchingWebInterceptor;
+import org.jsecurity.web.interceptor.WebInterceptor;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

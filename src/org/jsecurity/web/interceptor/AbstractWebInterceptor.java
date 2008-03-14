@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.web.filter;
+package org.jsecurity.web.interceptor;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.AntPathMatcher;
