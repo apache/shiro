@@ -163,7 +163,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
     |               M E T H O D S                |
     ============================================*/
 
-    protected void onInit() {
+    protected void afterAccountCacheSet() {
         if( ldapContextFactory == null ) {
 
             if( log.isDebugEnabled() ) {
