@@ -33,7 +33,6 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.mgt.SecurityManager;
-import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
 import java.net.InetAddress;
@@ -47,19 +46,19 @@ import java.util.List;
  * <p>Implementation of the <tt>Subject</tt> interface that delegates
  * method calls to an underlying {@link org.jsecurity.mgt.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.</p>
- * <p/>
+ * 
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
  * identifier, such as a user primary key or username) for better performance in a stateless
  * architecture.  It instead asks the underlying <tt>SecurityManager</tt> every time to perform
  * the authorization check.</p>
- * <p/>
+ *
  * <p>A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying <tt>SecurityManager</tt> implementation manage caching, not this class.  A
  * <tt>SecurityManager</tt> is considered a business-tier component, where caching strategies are better suited.</p>
- * <p/>
+ *
  * <p>Applications from large and clustered to simple and vm local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.</p>
@@ -355,31 +354,16 @@ public class DelegatingSubject implements Subject {
             return;
         }
 
-        Session s = getSession(false);
-        if (s != null) {
-            try {
-                s.stop();
-            } catch (InvalidSessionException ise) {
-                //ignored - we're invalidating, and have no further need of the session anyway
-                //log just in case someone wants to know:
-                if (log.isTraceEnabled()) {
-                    log.trace("Session has already been invalidated.  Ignoring and continuing logout ...", ise);
-                }
-            }
-        }
-
         try {
             this.securityManager.logout(getPrincipal());
         } finally {
             setInvalidated(true);
             this.session = null;
-            this.principal = new ArrayList();
+            this.principal = null;
             this.authenticated = false;
             this.inetAddress = null;
             this.securityManager = null;
         }
-
-
     }
 
 }
