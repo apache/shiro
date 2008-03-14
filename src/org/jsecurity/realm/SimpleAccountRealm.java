@@ -76,9 +76,12 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
         this.roleCache = roleCache;
     }
 
-    public void onInit() {
+    public void afterAccountCacheSet() {
         initRoleCache();
+        afterRoleCacheSet();
     }
+
+    public void afterRoleCacheSet(){}
 
     protected void initRoleCache() {
         CacheProvider provider = getCacheProvider();

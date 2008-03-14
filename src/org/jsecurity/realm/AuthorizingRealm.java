@@ -165,13 +165,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * </ol>
      */
     public final void init() {
-
         if (isAccountCacheEnabled()) {
             initAccountCache();
         }
-
-        onInit();
+        afterAccountCacheSet();
     }
+
+    protected void afterAccountCacheSet(){}
 
     protected void initAccountCache() {
         if (log.isTraceEnabled()) {
@@ -212,13 +212,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 log.debug("Accounts will be cached using cache [" + cache + "]");
             }
         }
-    }
-
-    /**
-     * Template method that subclasses can override for custom initialization behavior.  The default
-     * implementation does nothing.
-     */
-    protected void onInit() {
     }
 
     /**

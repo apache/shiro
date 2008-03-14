@@ -87,6 +87,10 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
 
     protected void userAndRoleCachesCreated() {
+        processDefinitions();
+    }
+
+    protected void processDefinitions() {
         try {
             processRoleDefinitions();
             processUserDefinitions();

@@ -176,7 +176,7 @@ public class JdbcRealm extends AuthorizingRealm {
     |               M E T H O D S               |
     ============================================*/
 
-    public void onInit() {
+    public void afterAccountCacheSet() {
         setAuthenticationTokenClass( UsernamePasswordToken.class );
     }
 
