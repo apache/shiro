@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity.web.filter.authc;
+package org.jsecurity.web.interceptor.authc;
 
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;

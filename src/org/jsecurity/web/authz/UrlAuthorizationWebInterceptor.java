@@ -1,7 +1,7 @@
 package org.jsecurity.web.authz;
 
 import org.jsecurity.SecurityManager;
-import org.jsecurity.web.filter.WebInterceptor;
+import org.jsecurity.web.interceptor.WebInterceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

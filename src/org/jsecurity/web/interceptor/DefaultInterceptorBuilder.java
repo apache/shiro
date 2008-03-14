@@ -1,12 +1,12 @@
-package org.jsecurity.web.filter;
+package org.jsecurity.web.interceptor;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
-import org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor;
-import org.jsecurity.web.filter.authz.PermissionsAuthorizationWebInterceptor;
-import org.jsecurity.web.filter.authz.RolesAuthorizationWebInterceptor;
+import org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor;
+import org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor;
+import org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

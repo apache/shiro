@@ -1,6 +1,6 @@
-package org.jsecurity.web.filter.authz;
+package org.jsecurity.web.interceptor.authz;
 
-import org.jsecurity.web.filter.AbstractWebInterceptor;
+import org.jsecurity.web.interceptor.AbstractWebInterceptor;
 
 /**
  * @author Les Hazlewood

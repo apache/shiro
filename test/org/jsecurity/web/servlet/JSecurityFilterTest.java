@@ -66,7 +66,7 @@ public class JSecurityFilterTest {
 
     @Test
     public void testCustomInterceptorConfig() throws Exception {
-        String interceptors = "authc = org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor\n" +
+        String interceptors = "authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor\n" +
                 "              authc.applicationName = JSecurity Quickstart";
 
         expect(mockFilterConfig.getInitParameter("interceptors")).andReturn(interceptors);
@@ -78,7 +78,7 @@ public class JSecurityFilterTest {
     //TODO - make this exception a subclass of ServletException to indicate invalid configuration?
     @Test(expected = ServletException.class)
     public void testCustomInterceptorConfigInvalidKeyValuePair() throws Exception {
-        String interceptors = "authc = org.jsecurity.web.filter.authc.BasicHttpAuthenticationWebInterceptor\n" +
+        String interceptors = "authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor\n" +
                 "              authc.applicationName JSecurity Quickstart";
 
         expect(mockFilterConfig.getInitParameter("interceptors")).andReturn(interceptors);

@@ -1,4 +1,4 @@
-package org.jsecurity.web.filter;
+package org.jsecurity.web.interceptor;
 
 import java.util.Map;
 

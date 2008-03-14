@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Les Hazlewood
+ * Copyright 2008 Les Hazlewood and original authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,16 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
+ * <p>Simple utility class for String operations useful across the framework.
+ *
+ * <p>Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
+ * and in these cases, we have retained all license, copyright and author information.
+ *
  * @author Les Hazlewood
+ * @author Rod Johnson
+ * @author Juergen Hoeller
+ * @author Keith Donald
+ * @author Rob Harrop
  * @since 0.9
  */
 public class StringUtils {
@@ -43,7 +52,7 @@ public class StringUtils {
      * StringUtils.hasText(" 12345 ") = true
      * </pre>
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param str the String to check (may be <code>null</code>)
      * @return <code>true</code> if the String is not <code>null</code>, its length is
@@ -73,7 +82,7 @@ public class StringUtils {
      * StringUtils.hasLength("Hello") = true
      * </pre>
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param str the String to check (may be <code>null</code>)
      * @return <code>true</code> if the String is not null and has length
@@ -88,7 +97,7 @@ public class StringUtils {
      * Test if the given String starts with the specified prefix,
      * ignoring upper/lower case.
      *
-     * <p>Implementation Borrowed from the Spring Framework
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param str    the String to check
      * @param prefix the prefix to look for
@@ -129,6 +138,9 @@ public class StringUtils {
 	 * delimiter characters. Each of those characters can be used to separate
 	 * tokens. A delimiter is always a single character; for multi-character
 	 * delimiters, consider using <code>delimitedListToStringArray</code>
+     *
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     *
 	 * @param str the String to tokenize
 	 * @param delimiters the delimiter characters, assembled as String
 	 * (each of those characters is individually considered as delimiter).
@@ -146,6 +158,9 @@ public class StringUtils {
 	 * delimiter characters. Each of those characters can be used to separate
 	 * tokens. A delimiter is always a single character; for multi-character
 	 * delimiters, consider using <code>delimitedListToStringArray</code>
+     *
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     *
 	 * @param str the String to tokenize
 	 * @param delimiters the delimiter characters, assembled as String
 	 * (each of those characters is individually considered as delimiter)
@@ -181,6 +196,9 @@ public class StringUtils {
     /**
 	 * Copy the given Collection into a String array.
 	 * The Collection must contain String elements only.
+     *
+     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     *
 	 * @param collection the Collection to copy
 	 * @return the String array (<code>null</code> if the passed-in
 	 * Collection was <code>null</code>)
