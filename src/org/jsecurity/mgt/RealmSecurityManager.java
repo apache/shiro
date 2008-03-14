@@ -22,24 +22,24 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity;
+package org.jsecurity.mgt;
 
-import org.jsecurity.realm.PropertiesRealm;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy based around a collection of
+ * JSecurity support of a {@link SecurityManager} class hierarchy based around a collection of
  * {@link org.jsecurity.realm.Realm}s.  All actual <tt>SecurityManager</tt> method implementations are left to
  * subclasses.
  *
  * <p>Upon {@link #init() initialization}, a default <tt>Realm</tt> will be created automatically if one has not
  * been provided, but please note:
  *
- * <p>Unless you're happy with the default simple {@link org.jsecurity.realm.PropertiesRealm properties file}-based realm, which may or
+ * <p>Unless you're happy with the default simple {@link org.jsecurity.realm.text.PropertiesRealm properties file}-based realm, which may or
  * may not be flexible enough for enterprise applications, you might want to specify at least one custom
  * <tt>Realm</tt> implementation that 'knows' about your application's data/security model
  * (via {@link #setRealm} or one of the overloaded constructors).  All other attributes in this class hierarchy

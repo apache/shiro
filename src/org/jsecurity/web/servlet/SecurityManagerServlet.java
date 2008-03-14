@@ -28,7 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 /**
- * Bootstrap servlet to start up the application's {@link org.jsecurity.SecurityManager SecurityManager}
+ * Bootstrap servlet to start up the application's {@link org.jsecurity.mgt.SecurityManager SecurityManager}
  *
  * <p>This servlet should have a lower <code>load-on-startup</code> value
  * in <code>web.xml</code> than any servlets that access the <tt>SecurityManager</tt>.

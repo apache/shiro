@@ -2,7 +2,7 @@ package org.jsecurity.web.authz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.AntPathMatcher;
 
@@ -29,7 +29,7 @@ public class DefaultUrlAuthorizationHandler implements UrlAuthorizationHandler {
 
     protected Map<String, List<AuthorizationRequirement>> urlMap;
 
-    public boolean configureUrlAuthorization(SecurityManager securityManager, FilterConfig config) {
+    public boolean configureUrlAuthorization(org.jsecurity.mgt.SecurityManager securityManager, FilterConfig config) {
 
         if( securityManager == null ) {
             throw new IllegalArgumentException( "SecurityManager cannot be null." );

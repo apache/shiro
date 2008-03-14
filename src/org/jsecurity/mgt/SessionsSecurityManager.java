@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity;
+package org.jsecurity.mgt;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
@@ -43,7 +43,7 @@ import java.net.InetAddress;
 import java.util.Collection;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that delegates all
+ * JSecurity support of a {@link SecurityManager} class hierarchy that delegates all
  * {@link org.jsecurity.session.Session session} operations to a wrapped {@link SessionManager SessionManager}
  * instance.  That is, this class implements the methods in the
  * {@link SecurityManager SecurityManager} interface, but in reality, those methods are merely passthrough calls to

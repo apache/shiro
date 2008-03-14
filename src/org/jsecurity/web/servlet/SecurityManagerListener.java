@@ -29,7 +29,7 @@ import javax.servlet.ServletContextListener;
 
 /**
  * <tt>ServletContextListener</tt> that listens for the ServletContext startup, ensures a
- * {@link org.jsecurity.SecurityManager SecurityManager} exists, and then binds the <tt>SecurityManager</tt> to the
+ * {@link org.jsecurity.mgt.SecurityManager SecurityManager} exists, and then binds the <tt>SecurityManager</tt> to the
  * <tt>ServletContext</tt> for later access by the application and framework components (Filters, etc).
  *
  * <p><p>For Servlet 2.2 containers and Servlet 2.3 ones that do not initalize

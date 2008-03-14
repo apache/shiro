@@ -1,6 +1,6 @@
 package org.jsecurity.spring;
 
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.web.servlet.JSecurityFilter;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.context.ApplicationContext;
@@ -55,7 +55,7 @@ public class SpringJSecurityFilter extends JSecurityFilter {
         return (SecurityManager) retrieved;
     }
 
-    protected SecurityManager getSecurityManager() {
+    protected org.jsecurity.mgt.SecurityManager getSecurityManager() {
         ServletContext sc = getFilterConfig().getServletContext();
         ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
         return getSecurityManager( appCtx );

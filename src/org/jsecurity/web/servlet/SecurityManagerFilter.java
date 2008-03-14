@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 
 import javax.servlet.ServletContext;
 
@@ -42,7 +42,7 @@ public abstract class SecurityManagerFilter extends OncePerRequestFilter {
 
     protected void onFilterConfigSet() throws Exception {
         applySessionMode();
-        SecurityManager securityManager = getSecurityManager();
+        org.jsecurity.mgt.SecurityManager securityManager = getSecurityManager();
         //not using the loader explicitly or not overridden, so lets start one:
         if ( securityManager == null ) {
             securityManagerListener = new SecurityManagerListener();

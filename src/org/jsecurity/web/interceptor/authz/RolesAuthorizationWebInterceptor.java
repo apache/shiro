@@ -25,6 +25,7 @@ public class RolesAuthorizationWebInterceptor extends AuthorizationWebIntercepto
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
 
         Subject subject = getSubject(request, response);

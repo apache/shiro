@@ -6,6 +6,7 @@ import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.Subject;

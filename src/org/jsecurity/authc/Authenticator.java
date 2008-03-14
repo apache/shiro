@@ -38,7 +38,7 @@ package org.jsecurity.authc;
  * default architecture is based on an overall <tt>SecurityManager</tt> which typically wraps an
  * <tt>Authenticator</tt> instance.
  *
- * @see org.jsecurity.SecurityManager
+ * @see org.jsecurity.mgt.SecurityManager
  * @see AbstractAuthenticator AbstractAuthenticator
  * @see org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator
  *

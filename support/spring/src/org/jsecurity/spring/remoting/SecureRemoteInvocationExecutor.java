@@ -26,7 +26,7 @@ package org.jsecurity.spring.remoting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
 import org.jsecurity.subject.Subject;
@@ -77,7 +77,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public void setSecurityManager( SecurityManager securityManager ) {
+    public void setSecurityManager( org.jsecurity.mgt.SecurityManager securityManager ) {
         this.securityManager = securityManager;
     }
 
