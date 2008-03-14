@@ -391,7 +391,9 @@
         <root url="jar://$PROJECT_DIR$/lib/spring/spring.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="jar:///usr/local/java/tools/spring/current/dist/spring-sources.jar!/" />
+      </SOURCES>
     </library>
     <library name="easymock">
       <CLASSES>

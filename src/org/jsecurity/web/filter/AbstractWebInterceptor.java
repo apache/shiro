@@ -27,14 +27,17 @@ package org.jsecurity.web.filter;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.AntPathMatcher;
-import org.jsecurity.util.StringUtils;
+import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.RedirectView;
 import org.jsecurity.web.SecurityWebSupport;
+import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <p>Base class for all web interceptors. This class is an adapter for the WebInterceptor interface.</p>
@@ -43,9 +46,14 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AbstractWebInterceptor extends SecurityWebSupport implements WebInterceptor {
+public abstract class AbstractWebInterceptor extends SecurityWebSupport implements MatchingWebInterceptor {
 
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
+    /**
+     * A collection of path-to-config entries where the key is the path and the value is the
+     * interceptor-specific configuration element.
+     */
+    protected Map<String,Object> appliedPaths = new LinkedHashMap<String,Object>(); //path to interceptor-specific-config mapping.
 
     private String url;
     private boolean contextRelative = true;
@@ -96,21 +104,6 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
     }
 
     /**
-     * Sets the URLs that this interceptor should filter.
-     *
-     * <p>The map is a url (key) to interceptor-specific config string (value) entries.  Subclasses are expected to
-     * process the config strings (map values) for the corresponding urls (keys).
-     *
-     * <p>It is expected that the implementation will ignore all requests to urls <em>not</em> matched by those in
-     * this map.
-     *
-     * @param urlToConfigMap
-     */
-    public void setAppliedUrls(Map<String, String> urlToConfigMap) {
-        this.appliedUrls = urlToConfigMap;
-    }
-
-    /**
      * Default implementation
      *
      * @throws JSecurityException
@@ -123,32 +116,13 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
         view.renderMergedOutputModel(getQueryParams(), toHttp(request), toHttp(response) );
     }
 
-    /**
-     * A collection of url-to-config entries where the key is the url and the value is the
-     * interceptor-specific configuration elements.  The subclass is expected to
-     */
-    protected Map<String, ?> appliedUrls = null; //url to interceptor-specific-config mapping.
-
-
-    protected Map<String, Set<String>> tokenizeValues(Map<String,String> urlValueMap) {
-
-        Map<String,Set<String>> converted = new LinkedHashMap<String,Set<String>>(this.appliedUrls.size());
-
-        for( Map.Entry<String,String> entry : urlValueMap.entrySet() ) {
-            String url = entry.getKey();
-            String interceptorConfig = entry.getValue();
-            if ( interceptorConfig != null ) {
-                String[] configTokens = StringUtils.split(interceptorConfig);
-                Set<String> configTokensSet = new LinkedHashSet<String>( Arrays.asList(configTokens) );
-                converted.put(url,configTokensSet);
-            }
+    public void processPathConfig(String path, String config) {
+        String[] values = null;
+        if ( config != null ) {
+            values = split(config);
         }
 
-        if (!converted.isEmpty()) {
-            return converted;
-        } else {
-            return null;
-        }
+        this.appliedPaths.put(path,values);
     }
 
     /**
@@ -161,25 +135,32 @@ public abstract class AbstractWebInterceptor extends SecurityWebSupport implemen
      */
     public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 
-        if (this.appliedUrls != null && !this.appliedUrls.isEmpty()) {
+        if (this.appliedPaths != null && !this.appliedPaths.isEmpty()) {
 
-            String requestURI = toHttp(request).getRequestURI();
-            
-            //TODO Need to strip off context path here.  See Spring's UrlPathHelper.getPathWithinApplication()
+            String requestURI = WebUtils.getPathWithinApplication(toHttp(request));
 
             // If URL path isn't matched, we allow the request to go through so default to true
             boolean continueChain = true;
-            for (String url : this.appliedUrls.keySet()) {
+            for (String path : this.appliedPaths.keySet()) {
 
                 // If the path does match, then pass on to the subclass implementation for specific checks:
-                if (pathMatcher.match(url, requestURI)) {
-                    continueChain = onPreHandle( request, response, this.appliedUrls.get(url) );
+                if (pathMatcher.match(path, requestURI)) {
+                    if ( log.isTraceEnabled() ) {
+                        log.trace( "matched path [" + path + "] for requestURI [" + requestURI + "].  " +
+                                "Performing onPreHandle check..." );
+                    }
+                    Object config = this.appliedPaths.get(path);
+                    continueChain = onPreHandle( request, response, config );
                 }
 
                 if ( !continueChain ) {
                     //it is expected the subclass renders the response directly, so just return false
                     return false;
                 }
+            }
+        } else {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "appliedPaths property is null or empty.  This interceptor will passthrough immediately." );
             }
         }
 
