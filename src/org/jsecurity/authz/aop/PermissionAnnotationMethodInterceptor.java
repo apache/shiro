@@ -25,11 +25,11 @@
 package org.jsecurity.authz.aop;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.jsecurity.SecurityManager;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RequiresPermissions;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.PermissionUtils;
 

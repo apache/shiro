@@ -4,6 +4,7 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
@@ -65,12 +66,12 @@ public class ActiveDirectoryRealmTest {
 
 
 
-        UsernamePrincipal usernamePrincipal = (UsernamePrincipal) subject.getPrincipalByType(UsernamePrincipal.class);
+        UsernamePrincipal usernamePrincipal = subject.getPrincipalByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
 
 
 
-        UserIdPrincipal userIdPrincipal = (UserIdPrincipal) subject.getPrincipalByType(UserIdPrincipal.class);
+        UserIdPrincipal userIdPrincipal = subject.getPrincipalByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
         Object principals = subject.getPrincipal();
@@ -127,7 +128,6 @@ public class ActiveDirectoryRealmTest {
 
         // override ldap query because i don't care about testing that piece in this case
         protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
-            UsernamePasswordToken upToken = (UsernamePasswordToken) token;
             return new SimpleAccount(token.getPrincipal(), token.getPrincipal());
         }
 

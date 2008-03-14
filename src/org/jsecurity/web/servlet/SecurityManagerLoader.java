@@ -24,7 +24,7 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.WebSecurityManager;
@@ -104,7 +104,7 @@ public class SecurityManagerLoader extends ServletContextSupport {
     }
 
     public void ensureSecurityManager() {
-        SecurityManager securityManager = getSecurityManager();
+        org.jsecurity.mgt.SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
             securityManager = createSecurityManager();
             if (securityManager == null) {

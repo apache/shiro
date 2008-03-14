@@ -22,11 +22,10 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity;
+package org.jsecurity.mgt;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.realm.PropertiesRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
@@ -38,7 +37,7 @@ import java.net.InetAddress;
 import java.util.Collection;
 
 /**
- * <p>The JSecurity framework's default concrete implementation of the {@link org.jsecurity.SecurityManager} interface,
+ * <p>The JSecurity framework's default concrete implementation of the {@link SecurityManager} interface,
  * based around a collection of {@link org.jsecurity.realm.Realm}s.  This implementation delegates its
  * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
  * {@link org.jsecurity.session.mgt.SessionManager SessionManager} instances respectively via superclass
@@ -48,7 +47,7 @@ import java.util.Collection;
  * create suitable defaults for <em>all</em> of its required dependencies.  Therefore, you only need to override
  * attributes for custom behavior.  But, note the following:</p>
  *
- * <p>Unless you're happy with the default simple {@link PropertiesRealm properties file}-based realm, which may or
+ * <p>Unless you're happy with the default simple {@link org.jsecurity.realm.text.PropertiesRealm properties file}-based realm, which may or
  * may not be flexible enough for enterprise applications, you might want to specify at least one custom
  * <tt>Realm</tt> implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.
  * All other attributes have suitable defaults for most enterprise applications.</p>

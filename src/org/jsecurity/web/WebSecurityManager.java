@@ -1,6 +1,6 @@
 package org.jsecurity.web;
 
-import org.jsecurity.DefaultSecurityManager;
+import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;

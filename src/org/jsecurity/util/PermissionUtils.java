@@ -24,11 +24,10 @@
  */
 package org.jsecurity.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.permission.PermissionResolver;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -40,10 +39,18 @@ import java.util.Set;
  */
 public class PermissionUtils {
 
-    public static final String DOUBLE_QUOTE = "\"";
-    public static final String COMMA = ",";
+    public static Set<Permission> resolveDelimitedPermissions(String s, PermissionResolver permissionResolver) {
+        Set<String> permStrings = toPermissionStrings(s);
+        return resolvePermissions(permStrings, permissionResolver);
+    }
 
-    protected static transient final Log log = LogFactory.getLog(PermissionUtils.class);
+    public static Set<String> toPermissionStrings(String permissionsString) {
+        String[] tokens = StringUtils.split(permissionsString);
+        if ( tokens != null && tokens.length > 0 ) {
+            return new LinkedHashSet<String>(Arrays.asList(tokens));
+        }
+        return null;
+    }
 
     public static Set<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
         Set<Permission> permissions = new LinkedHashSet<Permission>(permissionStrings.size());
@@ -51,58 +58,5 @@ public class PermissionUtils {
             permissions.add(permissionResolver.resolvePermission(permissionString));
         }
         return permissions;
-    }
-
-    public static Set<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver) {
-        return resolveDelimitedPermissions(permissionsString, permissionResolver, DOUBLE_QUOTE);
-    }
-
-    public static Set<String> toPermissionStrings(String permissionsString ) {
-        return toPermissionStrings(permissionsString, COMMA);
-    }
-
-    public static Set<String> toPermissionStrings(String permissionsString, String delimiter) {
-
-        String[] tokens = permissionsString.split(delimiter);
-
-        //check for quoted strings:
-        Set<String> permDefinitions = new LinkedHashSet<String>();
-
-        boolean quoted = false;
-        StringBuffer permDefinition = new StringBuffer();
-
-        for (String token : tokens) {
-
-            if (token.startsWith(DOUBLE_QUOTE)) {
-                token = token.substring(1);
-                if (token.endsWith(DOUBLE_QUOTE)) {
-                    token = token.substring(0, token.length() - 1);
-                    permDefinition = new StringBuffer(token);
-                } else {
-                    quoted = true;
-                    permDefinition = new StringBuffer(token).append(delimiter);
-                }
-            } else {
-                if (token.endsWith(DOUBLE_QUOTE)) {
-                    token = token.substring(0, token.length() - 1);
-                    permDefinition.append(token);
-                    quoted = false;
-                } else {
-                    permDefinition.append(token);
-
-                }
-            }
-
-            if (!quoted && permDefinition.length() > 0) {
-                permDefinitions.add(permDefinition.toString());
-            }
-        }
-
-        return permDefinitions;
-    }
-
-    public static Set<Permission> resolveDelimitedPermissions(String permissionsString, PermissionResolver permissionResolver, String delimiter) {
-        Set<String> permStrings = toPermissionStrings(delimiter);
-        return resolvePermissions(permStrings, permissionResolver);
     }
 }

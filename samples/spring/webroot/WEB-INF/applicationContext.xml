@@ -16,7 +16,7 @@
     <bean class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
 
     <!-- JSecurity's main business-tier object:  -->
-    <bean id="securityManager" class="org.jsecurity.DefaultSecurityManager">
+    <bean id="securityManager" class="org.jsecurity.mgt.DefaultSecurityManager">
         <property name="realm" ref="activeDirectoryRealm"/>
     </bean>
 
@@ -48,7 +48,7 @@
     <!-- =========================================================
       -  Property File Realm - to use, inject propertyFileRealm into the securityManager
       ============================================================ -->
-    <!--<bean id="propertyFileRealm" class="org.jsecurity.realm.PropertiesRealm">
+    <!--<bean id="propertyFileRealm" class="org.jsecurity.realm.text.PropertiesRealm">
         <property name="filePath" value="classpath:sample-users.properties"/>
     </bean>-->
 

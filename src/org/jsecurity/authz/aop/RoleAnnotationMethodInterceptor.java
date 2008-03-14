@@ -24,11 +24,11 @@
  */
 package org.jsecurity.authz.aop;
 
-import org.jsecurity.SecurityManager;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RequiresRoles;
+import org.jsecurity.mgt.SecurityManager;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

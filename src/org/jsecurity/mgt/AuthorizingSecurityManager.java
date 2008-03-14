@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity;
+package org.jsecurity.mgt;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that delegates all
+ * JSecurity support of a {@link SecurityManager} class hierarchy that delegates all
  * authorization (access control) operations to a wrapped {@link Authorizer Authorizer} instance.  That is,
  * this class implements all the <tt>Authorizer</tt> methods in the {@link SecurityManager SecurityManager}
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'

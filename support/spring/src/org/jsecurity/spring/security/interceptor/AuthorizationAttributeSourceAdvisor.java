@@ -26,9 +26,9 @@ package org.jsecurity.spring.security.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityManager;
 import org.jsecurity.authz.annotation.RequiresPermissions;
 import org.jsecurity.authz.annotation.RequiresRoles;
+import org.jsecurity.mgt.SecurityManager;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -51,7 +51,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     public AuthorizationAttributeSourceAdvisor() {
     }
 
-    public SecurityManager getSecurityManager() {
+    public org.jsecurity.mgt.SecurityManager getSecurityManager() {
         return securityManager;
     }
 

@@ -22,7 +22,7 @@
  * Or, you may view it online at
  * http://www.opensource.org/licenses/lgpl-license.php
  */
-package org.jsecurity.realm;
+package org.jsecurity.realm.text;
 
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.ResourceUtils;
@@ -31,8 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,8 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A subclass of <tt>SimpleAccountRealm</tt> that defers all logic to the parent class, but just enables
- * {@link java.util.Properties Properties} based configuration in addition to the parent class's String and Map
- * configuration.
+ * {@link java.util.Properties Properties} based configuration in addition to the parent class's String configuration.
  *
  * <p>This class allows processing of a single .properties file for user, role, and
  * permission configuration.
@@ -57,7 +54,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <p>If none of these are specified, and the jsecurity-users.properties is not included at the root of the classpath,
  * a default failsafe configuration will be used.  This is not recommended as it only contains a few simple users and
- * roles which are probably of little value to most production applications.</p>
+ * roles which are probably of little value to production applications.</p>
  *
  * <p>The Properties format understood by this implementation must be written as follows:
  *
@@ -69,14 +66,14 @@ import java.util.concurrent.TimeUnit;
  * <p><code><b>user.</b><em>username</em> = <em>password</em>,role1,role2,...</code></p>
  *
  * <p>Note that each key is prefixed with the token <tt><b>user.</b></tt>  Each value must adhere to the
- * the {@link #setUserDefinitions(Map) setUserDefinitions(Map)} JavaDoc.</p>
+ * the {@link #setUserDefinitions(String) setUserDefinitions(String)} JavaDoc.</p>
  *
  * <p>The role-to-permission(s) lines have this format:</p>
  *
- * <p><code><b>role.</b><em>rolename</em> = <em>permissionDefinition1</em>;<em>permissionDefinition2</em>;...</code></p>
+ * <p><code><b>role.</b><em>rolename</em> = <em>permissionDefinition1</em>, <em>permissionDefinition2</em>, ...</code></p>
  *
  * <p>where each key is prefixed with the token <tt><b>role.</b></tt> and the value adheres to the format specified in
- * the {@link #setRoleDefinitions(Map) setRoleDefinitions(Map)} JavaDoc.
+ * the {@link #setRoleDefinitions(String) setRoleDefinitions(String)} JavaDoc.
  *
  * <p>Here is an example of a very simple properties definition that conforms to the above format rules and corresponding
  * method JavaDocs:
@@ -97,7 +94,7 @@ import java.util.concurrent.TimeUnit;
  * @author Les Hazlewood
  * @author Jeremy Haile
  */
-public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
+public class PropertiesRealm extends TextConfigurationRealm implements Runnable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -106,7 +103,7 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
     private static final String USERNAME_PREFIX = "user.";
     private static final String ROLENAME_PREFIX = "role.";
     private static final String DEFAULT_FILE_PATH = "classpath:jsecurity-users.properties";
-    private static final String FAILSAFE_FILE_PATH = "classpath:org/jsecurity/default-jsecurity-users.properties";
+    private static final String FAILSAFE_FILE_PATH = "classpath:org/jsecurity/realm/text/default-jsecurity-users.properties";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -243,8 +240,11 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
         } catch ( Exception e ) {
             //ignored
         }
-        initUserAndRoleCaches();
+
         createRealmEntitiesFromProperties( properties );
+
+        initAccountCache();
+        initRoleCache();
     }
 
 
@@ -271,27 +271,25 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
     @SuppressWarnings( "unchecked" )
     private void createRealmEntitiesFromProperties( Properties properties ) {
 
-        Map<String,String> userDefs = new HashMap<String,String>();
-        Map<String,String> roleDefs = new HashMap<String,String>();
-
-        //split into respective props for parent class:
+        StringBuffer userDefs = new StringBuffer();
+        StringBuffer roleDefs = new StringBuffer();
 
         Enumeration<String> propNames = (Enumeration<String>)properties.propertyNames();
 
         while ( propNames.hasMoreElements() ) {
 
-            String key = propNames.nextElement();
-            String value = properties.getProperty( key );
+            String key = propNames.nextElement().trim();
+            String value = properties.getProperty( key ).trim();
             if ( log.isTraceEnabled() ) {
                 log.trace( "Processing properties line - key: [" + key + "], value: [" + value + "]." );
             }
 
             if ( isUsername( key ) ) {
                 String username = getUsername( key );
-                userDefs.put( username, value );
+                userDefs.append(username).append( " = " ).append( value ).append("\n");
             } else if ( isRolename( key ) ) {
                 String rolename = getRolename( key );
-                roleDefs.put( rolename, value );
+                roleDefs.append(rolename).append( " = " ).append( value ).append("\n");
             } else {
                 String msg = "Encountered unexpected key/value pair.  All keys must be prefixed with either '" + 
                     USERNAME_PREFIX + "' or '" + ROLENAME_PREFIX + "'.";
@@ -299,11 +297,10 @@ public class PropertiesRealm extends SimpleAccountRealm implements Runnable {
             }
         }
 
-        setUserDefinitions( userDefs );
-        setRoleDefinitions( roleDefs );
+        setUserDefinitions( userDefs.toString() );
+        setRoleDefinitions( roleDefs.toString() );
 
-        processUserDefinitions();
-        processRoleDefinitions();
+        userAndRoleCachesCreated();
     }
 
     private Properties loadProperties( String filePath ) {

@@ -26,14 +26,14 @@ package org.jsecurity.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.Initializable;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
  * leaves AOP implementation specifics to be handled by subclass implementations.  This implementation primarily
- * enables a <tt>Log</tt> and makes available the application's {@link org.jsecurity.SecurityManager SecurityManager}
+ * enables a <tt>Log</tt> and makes available the application's {@link org.jsecurity.mgt.SecurityManager SecurityManager}
  * for use by subclasses.
  *
  * @since 0.2
@@ -43,7 +43,7 @@ public abstract class MethodInterceptorSupport implements MethodInterceptor, Ini
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    protected SecurityManager securityManager = null;
+    protected org.jsecurity.mgt.SecurityManager securityManager = null;
 
     public MethodInterceptorSupport(){}
 

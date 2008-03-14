@@ -23,7 +23,7 @@
  * http://www.opensource.org/licenses/lgpl-license.php
  */
 
-package org.jsecurity;
+package org.jsecurity.mgt;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
@@ -40,7 +40,7 @@ import org.jsecurity.util.LifecycleUtils;
 import java.util.Collection;
 
 /**
- * JSecurity support of a {@link org.jsecurity.SecurityManager} class hierarchy that delegates all
+ * JSecurity support of a {@link SecurityManager} class hierarchy that delegates all
  * authentication operations to a wrapped {@link Authenticator Authenticator} instance.  That is, this class
  * implements all the <tt>Authenticator</tt> methods in the {@link SecurityManager SecurityManager}
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'

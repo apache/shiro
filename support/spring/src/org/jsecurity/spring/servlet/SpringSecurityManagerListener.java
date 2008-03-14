@@ -24,7 +24,7 @@
  */
 package org.jsecurity.spring.servlet;
 
-import org.jsecurity.SecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.web.servlet.SecurityManagerListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -59,7 +59,7 @@ public class SpringSecurityManagerListener extends SecurityManagerListener {
 
     private void assertSecurityManager( Object secMgrBean ) {
         if ( secMgrBean == null ) {
-            String msg = "There is no " + SecurityManager.class.getName() + " instance bound in in the " +
+            String msg = "There is no " + org.jsecurity.mgt.SecurityManager.class.getName() + " instance bound in in the " +
                     "Spring WebApplicationContext under the name of '" + getSecurityManagerBeanName() + "'."  +
                     "  Please ensure that such a bean exists, or you can change which bean is accessed by " +
                     "setting the " + getClass().getName() + "#SecurityManagerBeanName attribute.";

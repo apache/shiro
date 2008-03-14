@@ -1,7 +1,7 @@
 package org.jsecurity;
 
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.session.Session;
+import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
 import org.junit.Before;
@@ -42,7 +42,7 @@ public class DefaultSecurityManagerTest {
         assert subject.isAuthenticated();
         assert "guest".equals( subject.getPrincipal() );
         assert subject.hasRole( "guest" );
-        Session session = subject.getSession();
+        subject.getSession();
         subject.logout();
     }
 }

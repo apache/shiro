@@ -26,13 +26,13 @@ package org.jsecurity.subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityManager;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.InetAuthenticationToken;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 
@@ -45,7 +45,7 @@ import java.util.List;
 
 /**
  * <p>Implementation of the <tt>Subject</tt> interface that delegates
- * method calls to an underlying {@link org.jsecurity.SecurityManager SecurityManager} instance for security checks.
+ * method calls to an underlying {@link org.jsecurity.mgt.SecurityManager SecurityManager} instance for security checks.
  * It is essentially a <tt>SecurityManager</tt> proxy.</p>
  * <p/>
  * <p>This implementation does not maintain state such as roles and permissions (only a subject
@@ -129,7 +129,7 @@ public class DelegatingSubject implements Subject {
         this.invalidated = invalidated;
     }
 
-    public SecurityManager getSecurityManager() {
+    public org.jsecurity.mgt.SecurityManager getSecurityManager() {
         return securityManager;
     }
 
