@@ -87,7 +87,7 @@ public interface Subject {
      * as to which principal will be returned.
      *
      * @param principalType the type of the principal that should be returned.
-     * @return a principal of the specified type.
+     * @return a principal of the specified type or <tt>null</tt> if there isn't one of the specified type.
      */
     <T> T getPrincipalByType(Class<T> principalType);
 
@@ -305,7 +305,6 @@ public interface Subject {
      * @param token the token encapsulating the subject's principals and credentials to be passed to the
      * Authentication subsystem for verification.
      * @throws AuthenticationException if the authentication attempt fails.
-     *
      * @since 0.9
      */
     void login( AuthenticationToken token ) throws AuthenticationException;
@@ -322,7 +321,6 @@ public interface Subject {
      *
      * @return <tt>true</tt> if this Subject has proven their identity during their current session 
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
-     *
      * @since 0.9
      */
     boolean isAuthenticated();
@@ -332,9 +330,7 @@ public interface Subject {
      * method is called, a new session will be created, associated with this Subject, and then returned.
      * 
      * @see #getSession(boolean)
-     *
      * @return the application <tt>Session</tt> associated with this Subject.
-     *
      * @since 0.2
      */
     Session getSession();
@@ -354,7 +350,6 @@ public interface Subject {
      * @param create boolean argument determining if a new session should be created or not if there is no existing session.
      * @return the application <tt>Session</tt> associated with this <tt>Subject</tt> or <tt>null</tt> based
      * on the above described logic.
-     *
      * @since 0.2
      */
     Session getSession( boolean create );

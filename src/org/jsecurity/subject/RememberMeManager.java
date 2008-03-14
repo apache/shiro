@@ -5,6 +5,9 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
+ * A RememberMeManager is responsible for remembering a Subject's identity across that subject's sessions with
+ * the application.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */

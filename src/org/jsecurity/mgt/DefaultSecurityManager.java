@@ -27,6 +27,7 @@ package org.jsecurity.mgt;
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
 import org.jsecurity.subject.RememberMeManager;
@@ -304,14 +305,39 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
 
         //Method arg is ignored - get the Subject from the environment if it exists:
-        Subject sc = getSubject(false);
-        if (sc != null) {
+        Subject subject = getSubject(false);
+        if (subject != null) {
             try {
-                unbind(sc);
+                stopSession(subject);
             } catch (Exception e) {
-                String msg = "Unable to cleanly unbind Subject.  Ignoring.";
                 if (log.isDebugEnabled()) {
+                    String msg = "Unable to cleanly stop Session for Subject [" + subject.getPrincipal() + "] " +
+                        "Ignoring (logging out).";
                     log.debug(msg, e);
+                }
+            }
+            try {
+                unbind(subject);
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    String msg = "Unable to cleanly unbind Subject.  Ignoring (logging out).";
+                    log.debug(msg, e);
+                }
+            }
+        }
+    }
+
+    protected void stopSession( Subject subject ) {
+        Session s = subject.getSession(false);
+        if (s != null) {
+            try {
+                s.stop();
+            } catch (InvalidSessionException ise) {
+                //ignored - we're invalidating, and have no further need of the session anyway
+                //log just in case someone wants to know:
+                if (log.isTraceEnabled()) {
+                    log.trace("Session has already been invalidated for subject [" +
+                        subject.getPrincipal() + "].  Ignoring and continuing logout ...", ise);
                 }
             }
         }
