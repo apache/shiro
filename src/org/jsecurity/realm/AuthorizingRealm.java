@@ -67,7 +67,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /**
      * The default postfix appended to the realm name for caching Accounts.
      */
-    private static final String DEFAULT_ACCOUNT_CACHE_POSTFIX = ".accounts";
+    private static final String DEFAULT_ACCOUNT_CACHE_POSTFIX = "-accounts";
 
     private static int INSTANCE_COUNT = 0;
 
@@ -192,7 +192,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 String cacheName = getAccountCacheName();
                 if (cacheName == null) {
                     //Simple default in case they didn't provide one:
-                    cacheName = getClass().getName() + "_" + INSTANCE_COUNT++ + DEFAULT_ACCOUNT_CACHE_POSTFIX;
+                    cacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_ACCOUNT_CACHE_POSTFIX;
+                    setAccountCacheName(cacheName);
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("CacheProvider [" + cacheProvider + "] has been configured.  Building " +

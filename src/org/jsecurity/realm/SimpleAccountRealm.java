@@ -59,11 +59,12 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     /**
      * The default postfix appended to the Role cache name.
      */
-    private static final String DEFAULT_ROLE_CACHE_POSTFIX = ".roles";
+    private static final String DEFAULT_ROLE_CACHE_POSTFIX = "-roles";
     private static int INSTANCE_COUNT = 0;
 
     //parent class already has the user account cache, we just need to add a role cache:
     protected Cache roleCache = null;
+    protected String roleCacheName;
 
     public SimpleAccountRealm() {
     }
@@ -74,6 +75,14 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
 
     public void setRoleCache(Cache roleCache) {
         this.roleCache = roleCache;
+    }
+
+    public String getRoleCacheName() {
+        return roleCacheName;
+    }
+
+    public void setRoleCacheName(String roleCacheName) {
+        this.roleCacheName = roleCacheName;
     }
 
     public void afterAccountCacheSet() {
@@ -95,7 +104,11 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
             initAccountCache();
         }
 
-        String roleCacheName = getClass().getName() + "_" + INSTANCE_COUNT++ + DEFAULT_ROLE_CACHE_POSTFIX;
+        String roleCacheName = getRoleCacheName();
+        if ( roleCacheName == null ) {
+            roleCacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_ROLE_CACHE_POSTFIX;
+            setRoleCacheName( roleCacheName );
+        }
         Cache roleCache = provider.buildCache( roleCacheName );
         setRoleCache(roleCache);
 

@@ -97,8 +97,8 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
      */
     public final Cache buildCache( String name ) throws CacheException {
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Loading a new EhCache cache named [" + name + "]" );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Loading a new EhCache cache named [" + name + "]" );
         }
 
         try {
@@ -122,6 +122,10 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
                 
                 if ( log.isInfoEnabled() ) {
                     log.info( "Started EHCache named [" + name + "]" );
+                }
+            } else {
+                if ( log.isInfoEnabled() ) {
+                    log.info("Using preconfigured EHCache named [" + cache.getName() + "]" );
                 }
             }
             return new EhCache( cache, getCacheManager() );

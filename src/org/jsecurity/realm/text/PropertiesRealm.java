@@ -130,7 +130,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Runnable 
         }
         //we can only determine if files have been modified at runtime (not classpath entries or urls), so only
         //start the thread in this case:
-        if ( this.resourcePath.startsWith( ResourceUtils.FILE_PREFIX ) ) {
+        if ( this.resourcePath.startsWith( ResourceUtils.FILE_PREFIX ) && scheduler != null ) {
             startReloadThread();
         }
     }
@@ -221,11 +221,53 @@ public class PropertiesRealm extends TextConfigurationRealm implements Runnable 
         createRealmEntitiesFromProperties(properties);
     }
 
+    private Properties loadProperties(String resourcePath) {
+        Properties props = new Properties();
+
+        InputStream is = null;
+        try {
+
+            if (log.isDebugEnabled()) {
+                log.debug("Opening input stream for path [" + resourcePath + "]...");
+            }
+
+            is = ResourceUtils.getInputStreamForPath(resourcePath);
+            if (useXmlFormat) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Loading properties from path [" + resourcePath + "] in XML format...");
+                }
+
+                props.loadFromXML(is);
+            } else {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Loading properties from path [" + resourcePath + "]...");
+                }
+
+                props.load(is);
+            }
+
+        } catch (IOException e) {
+            throw new JSecurityException("Error reading properties path [" + resourcePath + "].  " +
+                "Initializing of the realm from this file failed.", e);
+        } finally {
+            ResourceUtils.close(is);
+        }
+
+        return props;
+    }
+
 
     private void reloadPropertiesIfNecessary() {
         if (isSourceModified()) {
             restart();
         }
+    }
+
+    private boolean isSourceModified() {
+        //we can only check last modified times on files - classpath and URL entries can't tell us modification times
+        return this.resourcePath.startsWith(ResourceUtils.FILE_PREFIX) && isFileModified();
     }
 
     private boolean isFileModified() {
@@ -237,11 +279,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Runnable 
         } else {
             return false;
         }
-    }
-
-    private boolean isSourceModified() {
-        //we can only check last modified times on files - classpath and URL entries can't tell us modification times
-        return this.resourcePath.startsWith(ResourceUtils.FILE_PREFIX) && isFileModified();
     }
 
     @SuppressWarnings("unchecked")
@@ -261,27 +298,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Runnable 
             //ignored
         }
         init();
-    }
-
-
-    protected String getName(String key, String prefix) {
-        return key.substring(prefix.length(), key.length());
-    }
-
-    protected boolean isUsername(String key) {
-        return key != null && key.startsWith(USERNAME_PREFIX);
-    }
-
-    protected boolean isRolename(String key) {
-        return key != null && key.startsWith(ROLENAME_PREFIX);
-    }
-
-    protected String getUsername(String key) {
-        return getName(key, USERNAME_PREFIX);
-    }
-
-    protected String getRolename(String key) {
-        return getName(key, ROLENAME_PREFIX);
     }
 
     @SuppressWarnings("unchecked")
@@ -318,41 +334,23 @@ public class PropertiesRealm extends TextConfigurationRealm implements Runnable 
         processDefinitions();
     }
 
-    private Properties loadProperties(String filePath) {
-        Properties props = new Properties();
-
-        InputStream is = null;
-        try {
-
-            if (log.isDebugEnabled()) {
-                log.debug("Opening input stream for file path [" + filePath + "]...");
-            }
-
-            is = ResourceUtils.getInputStreamForPath(filePath);
-            if (useXmlFormat) {
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Loading properties from path [" + filePath + "] in XML format...");
-                }
-
-                props.loadFromXML(is);
-            } else {
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Loading properties from path [" + filePath + "]...");
-                }
-
-                props.load(is);
-            }
-
-        } catch (IOException e) {
-            throw new JSecurityException("Error reading properties path [" + filePath + "].  " +
-                "Initializing of the realm from this file failed.", e);
-        } finally {
-            ResourceUtils.close(is);
-        }
-
-        return props;
+    protected String getName(String key, String prefix) {
+        return key.substring(prefix.length(), key.length());
     }
 
+    protected boolean isUsername(String key) {
+        return key != null && key.startsWith(USERNAME_PREFIX);
+    }
+
+    protected boolean isRolename(String key) {
+        return key != null && key.startsWith(ROLENAME_PREFIX);
+    }
+
+    protected String getUsername(String key) {
+        return getName(key, USERNAME_PREFIX);
+    }
+
+    protected String getRolename(String key) {
+        return getName(key, ROLENAME_PREFIX);
+    }
 }
