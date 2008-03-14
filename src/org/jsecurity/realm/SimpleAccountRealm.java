@@ -370,4 +370,10 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;
         return doGetAccount( upToken.getUsername() );
     }
+
+    public void onLogout(Object accountPrincipal) {
+        //override parent method of removing user from cache
+        //we don't want that to happen on memory-only realm since that would permanently
+        //remove the user from the realm.
+    }
 }

@@ -24,21 +24,25 @@
  */
 package org.jsecurity.web.servlet;
 
+import static org.jsecurity.util.StringUtils.*;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
 import org.jsecurity.web.authz.UrlAuthorizationHandler;
 import org.jsecurity.web.filter.DefaultInterceptorBuilder;
 import org.jsecurity.web.filter.InterceptorBuilder;
+import org.jsecurity.web.filter.MatchingWebInterceptor;
 import org.jsecurity.web.filter.WebInterceptor;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @author Les Hazlewood
@@ -93,19 +97,18 @@ public class JSecurityFilter extends SecurityManagerFilter {
         this.urlAuthorizationHandler = urlAuthorizationHandler;
     }
 
+    protected void afterSecurityManagerSet() throws Exception {
+        applyInitParams();
+        ensureWebInterceptors();
+        applyUrlMappings();
+        applyWebInterceptorFilters();
+    }
+
     protected void applyInitParams() {
         FilterConfig config = getFilterConfig();
-
-        this.interceptors = config.getInitParameter("interceptors");
-        if (this.interceptors != null) {
-            this.interceptors = this.interceptors.trim();
-            if (this.interceptors.equals("")) {
-                this.interceptors = null;
-            }
-        }
-
-        this.urls = config.getInitParameter("urls");
-        this.unauthorizedPage = config.getInitParameter("unauthorizedPage");
+        this.interceptors = clean(config.getInitParameter("interceptors"));
+        this.urls = clean(config.getInitParameter("urls"));
+        this.unauthorizedPage = clean(config.getInitParameter("unauthorizedPage"));
     }
 
     protected void ensureWebInterceptors() {
@@ -124,31 +127,103 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
         Map<String, Object> interceptors = getFiltersAndInterceptors();
 
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Interceptors configured: " + interceptors.size() );
+        }
+
         if (interceptors != null && !interceptors.isEmpty()) {
 
             List<Filter> filters = new ArrayList<Filter>(interceptors.size());
 
-            for (Map.Entry<String, Object> entry : interceptors.entrySet()) {
+            for( String key : interceptors.keySet() ) {
 
-                Object value = entry.getValue();
+                Object value = interceptors.get(key);
+
+                Filter filter = null;
 
                 if (!(value instanceof Filter) && value instanceof WebInterceptor) {
                     WebInterceptor interceptor = (WebInterceptor) value;
-                    WebInterceptorFilter filter = new WebInterceptorFilter();
-                    filter.setWebInterceptor(interceptor);
+                    WebInterceptorFilter wiFilter = new WebInterceptorFilter();
+                    wiFilter.setWebInterceptor(interceptor);
+                    filter = wiFilter;
+                } else if ( value instanceof Filter ) {
+                    filter = (Filter)value;
+                }
+                if ( filter != null ) {
                     filter.init(getFilterConfig());
-                    entry.setValue(filter);
+                    filters.add(filter);
                 }
             }
 
             this.filters = filters;
         }
+
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Filters configured and/or wrapped: " + (filters != null ? filters.size() : 0) );
+        }
     }
 
-    protected void afterSecurityManagerSet() throws Exception {
-        applyInitParams();
-        ensureWebInterceptors();
-        applyWebInterceptorFilters();
+    protected void applyUrlMappings() throws ParseException {
+
+        if (this.urls == null || this.filtersAndInterceptors == null || this.filtersAndInterceptors.isEmpty()) {
+            if ( log.isDebugEnabled() ) {
+                log.debug("No urls or filters/interceptors to process." );
+            }
+            return;
+        }
+
+        if ( log.isTraceEnabled() ) {
+            log.trace("Before url scanning." );
+        }
+
+        Scanner scanner = new Scanner(this.urls);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] pathValue = splitKeyValue(line);
+            String path = pathValue[0];
+            String value = pathValue[1];
+
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Processing path [" + path + "] with value [" + value + "]" );
+            }
+
+
+            //parse the value by tokenizing it to get the resulting interceptor-specific config entries
+            //
+            //e.g. for a value of
+            //
+            //     "authc, roles[admin,user], perms[file:edit]"
+            //
+            // the resulting token array would equal
+            //
+            //     { "authc", "roles[admin,user]", "perms[file:edit]" }
+            //
+            String[] interceptorTokens = split(value, ',', '[', ']', true, true);
+
+            //each token is specific to each web interceptor.
+            //strip the name and extract any interceptor-specific config between brackets [ ]
+            for (String token : interceptorTokens) {
+                String[] nameAndConfig = token.split("\\[", 2);
+                String name = nameAndConfig[0];
+                String config = null;
+
+                if (nameAndConfig.length == 2) {
+                    config = nameAndConfig[1];
+                    //if there was an open bracket, there was a close bracket, so strip it too:
+                    config = config.substring(0, config.length() - 1);
+                }
+
+                //now we have the interceptor name, path and (possibly null) path-specific config.  Let's apply them:
+                Object interceptor = this.filtersAndInterceptors.get(name);
+                if (interceptor instanceof MatchingWebInterceptor) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Applying path [" + path + "] to interceptor [" + name + "] " +
+                                "with config [" + config + "]");
+                    }
+                    ((MatchingWebInterceptor) interceptor).processPathConfig(path, config);
+                }
+            }
+        }
     }
 
     protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,

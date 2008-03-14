@@ -90,8 +90,17 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      */
     protected boolean equals( Object tokenCredentials, Object accountCredentials ) {
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Performing credentials equality check for tokenCredentials of type [" +
+            tokenCredentials.getClass().getName() + " and accountCredentials of type [" +
+            accountCredentials.getClass().getName() + "]" );
+        }
         if ( (tokenCredentials instanceof byte[] || tokenCredentials instanceof char[] || tokenCredentials instanceof String ) &&
-             (accountCredentials instanceof byte[] || accountCredentials instanceof char[] || tokenCredentials instanceof String ) ) {
+             (accountCredentials instanceof byte[] || accountCredentials instanceof char[] || accountCredentials instanceof String ) ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Both credentials arguments can be easily converted to byte arrays.  Performing " +
+                        "array equals comparison" );
+            }
             byte[] tokenBytes = toBytes(tokenCredentials);
             byte[] accountBytes = toBytes(accountCredentials);
             return Arrays.equals( tokenBytes, accountBytes );

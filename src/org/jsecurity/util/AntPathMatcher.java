@@ -39,8 +39,6 @@
 
 package org.jsecurity.util;
 
-import org.springframework.util.StringUtils;
-
 /**
  *
  * <p>This class was borrowed from the Spring Framework with modifications.  We didn't want to reinvent the wheel of
@@ -127,7 +125,7 @@ public class AntPathMatcher {
 			return false;
 		}
 
-		String[] pattDirs = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator);
+        String[] pattDirs = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator);
 		String[] pathDirs = StringUtils.tokenizeToStringArray(path, this.pathSeparator);
 
 		int pattIdxStart = 0;

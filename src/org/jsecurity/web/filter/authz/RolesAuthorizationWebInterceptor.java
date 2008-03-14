@@ -1,11 +1,12 @@
 package org.jsecurity.web.filter.authz;
 
-import org.jsecurity.JSecurityException;
 import org.jsecurity.subject.Subject;
+import static org.jsecurity.util.StringUtils.split;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -14,10 +15,13 @@ import java.util.Set;
  */
 public class RolesAuthorizationWebInterceptor extends AuthorizationWebInterceptor {
 
-    public void init() throws JSecurityException {
-        //convert applied URLs values to a Set of Roles:
-        if (this.appliedUrls != null && !this.appliedUrls.isEmpty()) {
-            this.appliedUrls = tokenizeValues((Map<String,String>)this.appliedUrls);
+    public void processPathConfig(String path, String config) {
+        if ( config != null ) {
+            String[] values = split(config);
+            if ( values != null ) {
+                Set<String> set = new LinkedHashSet<String>( Arrays.asList(values) );
+                this.appliedPaths.put(path, set);
+            }
         }
     }
 
@@ -28,7 +32,7 @@ public class RolesAuthorizationWebInterceptor extends AuthorizationWebIntercepto
 
         if ( roles != null && !roles.isEmpty() ) {
             if ( roles.size() == 1 ) {
-                if ( !subject.hasRole(roles.iterator().next())) {
+                if ( !subject.hasRole(roles.iterator().next()) ) {
                     issueRedirect(request,response);
                 }
             } else {
