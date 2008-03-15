@@ -26,8 +26,8 @@ package org.jsecurity.realm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.CacheProviderAware;
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.CacheManagerAware;
 
 /**
  * <p>A very basic abstract extension point for the {@link Realm} interface that provides logging and caching support.
@@ -37,7 +37,7 @@ import org.jsecurity.cache.CacheProviderAware;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class CachingRealm implements Realm, CacheProviderAware {
+public abstract class CachingRealm implements Realm, CacheManagerAware {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -47,33 +47,33 @@ public abstract class CachingRealm implements Realm, CacheProviderAware {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private CacheProvider cacheProvider;
+    private CacheManager cacheManager;
 
     public CachingRealm(){}
 
-    public CachingRealm( CacheProvider cacheProvider ) {
-        setCacheProvider( cacheProvider );
+    public CachingRealm( CacheManager cacheManager) {
+        setCacheManager(cacheManager);
     }
 
     /**
-     * Sets the <tt>CacheProvider</tt> to be used for data caching to reduce EIS round trips.
+     * Sets the <tt>CacheManager</tt> to be used for data caching to reduce EIS round trips.
      *
      * <p>This property is <tt>null</tt> by default, indicating that caching is turned off.
      *
-     * @param authzInfoCacheProvider the <tt>CacheProvider</tt> to use for data caching, or <tt>null</tt> to disable caching.
+     * @param authzInfoCacheManager the <tt>CacheManager</tt> to use for data caching, or <tt>null</tt> to disable caching.
      */
-    public void setCacheProvider( CacheProvider authzInfoCacheProvider) {
-        this.cacheProvider = authzInfoCacheProvider;
+    public void setCacheManager( CacheManager authzInfoCacheManager) {
+        this.cacheManager = authzInfoCacheManager;
     }
 
     /**
-     * Returns the <tt>CacheProvider</tt> used for data caching to reduce EIS round trips, or <tt>null</tt> if
+     * Returns the <tt>CacheManager</tt> used for data caching to reduce EIS round trips, or <tt>null</tt> if
      * caching is disabled.
      *
-     * @return the <tt>CacheProvider</tt> used for data caching to reduce EIS round trips, or <tt>null</tt> if
+     * @return the <tt>CacheManager</tt> used for data caching to reduce EIS round trips, or <tt>null</tt> if
      * caching is disabled.
      */
-    public CacheProvider getCacheProvider() {
-        return this.cacheProvider;
+    public CacheManager getCacheManager() {
+        return this.cacheManager;
     }
 }

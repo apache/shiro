@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile
+* Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -29,21 +29,22 @@ import org.jsecurity.util.Destroyable;
 import java.util.Map;
 
 /**
- * Interface encapsulating logic related to a single object cache.
- * 
+ * Interface abstracting all Cache functions relevant to JSecurity's needs.
+ *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public interface Cache extends Destroyable {
 
     /**
      * The name associated with this cache.  This should usually be
      * unique for all caches associated with a particular
-     * {@link CacheProvider}
+     * {@link CacheManager}
      *
      * @return the unique name of this cache.
      */
-    public String getCacheName();
+    public String getName();
 
     /**
      * Get an item from the cache.
@@ -60,14 +61,6 @@ public interface Cache extends Destroyable {
      * @param value the value to be stored in the cache.
      */
     public void put( Object key, Object value ) throws CacheException;
-
-    /**
-     * Update an existing item in the cache.
-     *
-     * @param key   the key of the item being updated.
-     * @param value the new value of the item being updated.
-     */
-    public void update( Object key, Object value ) throws CacheException;
 
     /**
      * Remove an item from the cache.
@@ -87,33 +80,11 @@ public interface Cache extends Destroyable {
     public void destroy() throws CacheException;
 
     /**
-     * The number of bytes that this cache is currently using in memory.
+     * Returns the number of cache entries currently contained in the cache.
      *
-     * @return The number of bytes consumed by this cache, or -1 if unknown or
-     *         unsupported.
+     * @return the number of cache entries currently contained in the cache.
      */
-    public long getSizeInMemory();
-
-    /**
-     * Returns the number of cache entries currently contained in the cache (sum of both in-memory and on disk).
-     *
-     * @return the number of cache entries currently contained in the cache (sum both in-memory and on disk).
-     */
-    public long getElementCount();
-
-    /**
-     * The number of cache entries currently contained in the cache's in-memory store.
-     *
-     * @return The count of entries in memory, or -1 if unknown or unsupported.
-     */
-    public long getElementCountInMemory();
-
-    /**
-     * The count of entries currently contained in the cache's disk store.
-     *
-     * @return The count of entries on disk, or -1 if unknown or unsupported.
-     */
-    public long getElementCountOnDisk();
+    public long getSize();
 
 
     /**

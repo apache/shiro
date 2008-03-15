@@ -31,7 +31,7 @@ import org.jsecurity.authz.permission.PermissionResolver;
 import org.jsecurity.authz.permission.PermissionResolverAware;
 import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.LifecycleUtils;
@@ -94,16 +94,16 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     public AuthorizingRealm() {
     }
 
-    public AuthorizingRealm(CacheProvider cacheProvider) {
-        super(cacheProvider);
+    public AuthorizingRealm(CacheManager cacheManager) {
+        super(cacheManager);
     }
 
     public AuthorizingRealm(CredentialsMatcher matcher) {
         super(matcher);
     }
 
-    public AuthorizingRealm(CacheProvider cacheProvider, CredentialsMatcher matcher) {
-        super(cacheProvider, matcher);
+    public AuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
+        super(cacheManager, matcher);
     }
 
     /*--------------------------------------------
@@ -155,11 +155,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * All future calls to <tt>getAccount</tt> will attempt to use this Account cache first
      * to alleviate any potentially unnecessary calls to an underlying data store.</li>
      * <li>If the {@link #setAccountCache cache} property has <b>not</b> been set,
-     * the {@link #setCacheProvider cacheProvider} property will be checked.
-     * If a <tt>cacheProvider</tt> has been set, it will be used to create an Account
+     * the {@link #setCacheManager cacheManager} property will be checked.
+     * If a <tt>cacheManager</tt> has been set, it will be used to create an Account
      * <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
      * <li>If neither the {@link #setAccountCache (org.jsecurity.cache.Cache) cache}
-     * or {@link #setCacheProvider (org.jsecurity.cache.CacheProvider) cacheProvider}
+     * or {@link # setCacheManager (org.jsecurity.cache.CacheManager) cacheManager}
      * properties are set, caching will be disabled and Account lookups will be delegated to
      * subclass implementations for each authorization check.</li>
      * </ol>
@@ -183,12 +183,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         if (cache == null) {
 
             if (log.isDebugEnabled()) {
-                log.debug("No cache implementation set.  Checking cacheProvider...");
+                log.debug("No cache implementation set.  Checking cacheManager...");
             }
 
-            CacheProvider cacheProvider = getCacheProvider();
+            CacheManager cacheManager = getCacheManager();
 
-            if (cacheProvider != null) {
+            if (cacheManager != null) {
                 String cacheName = getAccountCacheName();
                 if (cacheName == null) {
                     //Simple default in case they didn't provide one:
@@ -196,14 +196,14 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                     setAccountCacheName(cacheName);
                 }
                 if (log.isDebugEnabled()) {
-                    log.debug("CacheProvider [" + cacheProvider + "] has been configured.  Building " +
+                    log.debug("CacheManager [" + cacheManager + "] has been configured.  Building " +
                             "Account cache named [" + cacheName + "]");
                 }
-                cache = cacheProvider.buildCache(cacheName);
+                cache = cacheManager.buildCache(cacheName);
                 setAccountCache(cache);
             } else {
                 if (log.isInfoEnabled()) {
-                    log.info("No cache or cacheProvider properties have been set.  Account caching is " +
+                    log.info("No cache or cacheManager properties have been set.  Account caching is " +
                             "disabled.");
                 }
             }

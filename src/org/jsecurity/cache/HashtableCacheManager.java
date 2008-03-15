@@ -25,13 +25,13 @@
 package org.jsecurity.cache;
 
 /**
- * A {@link CacheProvider} that returns {@link HashtableCache} caches.
+ * A {@link CacheManager} that returns {@link HashtableCache} caches.
  *
  * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class HashtableCacheProvider implements CacheProvider {
+public class HashtableCacheManager implements CacheManager {
 
     /**
      * Builds a new {@link HashtableCache} with the given name.

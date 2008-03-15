@@ -144,7 +144,7 @@ public abstract class JavaEnvironment {
 
     /**
      * Returns if Ehcache is in the classpath and available to be used (e.g. when creating a
-     * {@link org.jsecurity.cache.CacheProvider CacheProvider}.
+     * {@link org.jsecurity.cache.CacheManager CacheManager}.
      * @return true if Ehcache is in the classpath and can be used for caching, false otherwise.
      */
     public static boolean isEhcacheAvailable() {

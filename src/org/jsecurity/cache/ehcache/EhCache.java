@@ -79,7 +79,7 @@ public class EhCache implements Cache {
         this.cacheManager = cacheManager;
     }
 
-    public String getCacheName() {
+    public String getName() {
         return cache.getName();
     }
 
@@ -92,7 +92,7 @@ public class EhCache implements Cache {
     public Object get(Object key) throws CacheException {
         try {
             if (logger.isTraceEnabled()) {
-                logger.trace("Getting object from cache [" + getCacheName() + "] for key [" + key + "]");
+                logger.trace("Getting object from cache [" + getName() + "] for key [" + key + "]");
             }
             if (key == null) {
                 return null;
@@ -113,17 +113,6 @@ public class EhCache implements Cache {
         }
     }
 
-
-    /**
-     * Puts an object into the cache.
-     *
-     * @param key   the key associated with the object
-     * @param value the value associated with the key.
-     */
-    public void update(Object key, Object value) throws CacheException {
-        put(key, value);
-    }
-
     /**
      * Puts an object into the cache.
      *
@@ -133,7 +122,7 @@ public class EhCache implements Cache {
     public void put(Object key, Object value) throws CacheException {
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Putting object in cache [" + getCacheName() + "] for key [" + key + "]");
+            logger.trace("Putting object in cache [" + getName() + "] for key [" + key + "]");
         }
 
         try {
@@ -155,7 +144,7 @@ public class EhCache implements Cache {
     public void remove(Object key) throws CacheException {
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Removing object from cache [" + getCacheName() + "] for key [" + key + "]");
+            logger.trace("Removing object from cache [" + getName() + "] for key [" + key + "]");
         }
         try {
             cache.remove(key);
@@ -172,7 +161,7 @@ public class EhCache implements Cache {
     public void clear() throws CacheException {
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Clearing all objects from cache [" + getCacheName() + "]");
+            logger.trace("Clearing all objects from cache [" + getName() + "]");
         }
         try {
             cache.removeAll();
@@ -186,7 +175,7 @@ public class EhCache implements Cache {
      */
     public void destroy() throws CacheException {
         if ( logger.isDebugEnabled() ) {
-            logger.debug( "Cleaning up and removing cache [" + getCacheName() + "]" );
+            logger.debug( "Cleaning up and removing cache [" + getName() + "]" );
         }
         try {
             cacheManager.removeCache(cache.getName());
@@ -196,8 +185,15 @@ public class EhCache implements Cache {
         }
     }
 
+    public long getSize() {
+        try {
+            return cache.getSize();
+        } catch (Throwable t) {
+            throw new CacheException(t);
+        }
+    }
 
-    public long getSizeInMemory() {
+    public long getMemoryUsage() {
         try {
             return cache.calculateInMemorySize();
         }
@@ -206,16 +202,7 @@ public class EhCache implements Cache {
         }
     }
 
-
-    public long getElementCount() {
-        try {
-            return cache.getSize();
-        } catch (Throwable t) {
-            throw new CacheException(t);
-        }
-    }
-
-    public long getElementCountInMemory() {
+    public long getMemoryStoreSize() {
         try {
             return cache.getMemoryStoreSize();
         }
@@ -224,7 +211,7 @@ public class EhCache implements Cache {
         }
     }
 
-    public long getElementCountOnDisk() {
+    public long getDiskStoreSize() {
         try {
             return cache.getDiskStoreSize();
         } catch ( Throwable t ) {
@@ -255,6 +242,6 @@ public class EhCache implements Cache {
     }
 
     public String toString() {
-        return "EhCache [" + getCacheName() + "]";
+        return "EhCache [" + getName() + "]";
     }
 }

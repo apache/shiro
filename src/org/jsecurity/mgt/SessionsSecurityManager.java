@@ -112,8 +112,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     protected SessionManager createSessionManager() {
         DefaultSessionManager sessionManager = new DefaultSessionManager();
-        if ( getCacheProvider() != null ) {
-            sessionManager.setCacheProvider(getCacheProvider());
+        if ( getCacheManager() != null ) {
+            sessionManager.setCacheManager(getCacheManager());
         }
         if ( getSessionEventListeners() != null ) {
             sessionManager.setSessionEventListeners( getSessionEventListeners() );

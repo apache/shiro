@@ -25,13 +25,13 @@
 package org.jsecurity.cache;
 
 /**
- * Interface for cache-specific implementations that can provide {@link Cache Cache} instances.
+ * Interface for cache-specific implementations that can managed/provide {@link Cache Cache} instances.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.2
  */
-public interface CacheProvider {
+public interface CacheManager {
 
     /**
      * Configure and creates a cache with the given name using the specified
@@ -39,7 +39,7 @@ public interface CacheProvider {
      *
      * @param cacheName the name of the cache to create.
      * @return a new cache built using the given name.
-     * @throws CacheException if there is a cache error in the provider implementation.
+     * @throws CacheException if there is a cache error in the manager implementation.
      */
     public Cache buildCache( String cacheName ) throws CacheException;
 }

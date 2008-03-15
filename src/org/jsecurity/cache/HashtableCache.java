@@ -32,7 +32,7 @@ import java.util.Map;
  * An implementation of the JSecurity {@link Cache} interface that uses a
  * {@link Hashtable} to store cached objects.  This implementation is only suitable for
  * development/testing use.  A more robust caching solution should be used for production
- * systems such as the {@link org.jsecurity.cache.ehcache.EhCacheProvider}
+ * systems such as the {@link org.jsecurity.cache.ehcache.EhCacheManager}
  *
  * @since 0.2
  * @author Jeremy Haile
@@ -50,7 +50,6 @@ public class HashtableCache implements Cache {
      */
     private final String cacheName;
 
-
     /**
      * Creates a new cache with the given name.
      *
@@ -60,7 +59,7 @@ public class HashtableCache implements Cache {
         this.cacheName = cacheName;
     }
 
-    public String getCacheName() {
+    public String getName() {
         return cacheName;
     }
 
@@ -70,10 +69,6 @@ public class HashtableCache implements Cache {
 
     public Object get( Object key ) throws CacheException {
         return hashtable.get( key );
-    }
-
-    public void update( Object key, Object value ) throws CacheException {
-        put( key, value );
     }
 
     public void put( Object key, Object value ) throws CacheException {
@@ -92,21 +87,8 @@ public class HashtableCache implements Cache {
         clear();
     }
 
-    public long getSizeInMemory() {
-        return -1;
-    }
-
-
-    public long getElementCount() {
+    public long getSize() {
         return hashtable.size();
-    }
-
-    public long getElementCountInMemory() {
-        return getElementCount();
-    }
-
-    public long getElementCountOnDisk() {
-        return 0;
     }
 
     public Map toMap() {

@@ -24,7 +24,7 @@
  */
 package org.jsecurity.session.mgt;
 
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheManager;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.eis.MemorySessionDAO;
@@ -75,14 +75,14 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
     /**
      * Creates a default <tt>SessionDAO</tt> during {@link #init initialization} as a fail-safe mechanism if one has
      * not already been explicitly set via {@link #setSessionDAO}, relying upon the configured
-     * {@link #setCacheProvider cacheProvider} to determine caching strategies.
+     * {@link #setCacheManager cacheManager} to determine caching strategies.
      *
      * <p><b>N.B.</b> This implementation constructs a {@link org.jsecurity.session.mgt.eis.MemorySessionDAO} instance, relying on a configured
-     * {@link #setCacheProvider cacheProvider} to provide production-quality cache management.  Please ensure that
-     * the <tt>CacheProvider</tt> property is configured for production environments, since the
+     * {@link # setCacheManager cacheManager} to provide production-quality cache management.  Please ensure that
+     * the <tt>CacheManager</tt> property is configured for production environments, since the
      * <tt>MemorySessionDAO</tt> implementation defaults to a
-     * {@link org.jsecurity.cache.HashtableCacheProvider HashtableCacheProvider}
-     * (the <tt>HashtableCacheProvider</tt> is NOT RECOMMENDED for production environments).
+     * {@link org.jsecurity.cache.HashtableCacheManager HashtableCacheManager}
+     * (the <tt>HashtableCacheManager</tt> is NOT RECOMMENDED for production environments).
      *
      * @return a lazily created SessionDAO instance that this SessionManager will use for all Session EIS operations.
      */
@@ -94,9 +94,9 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
 
         MemorySessionDAO dao = new MemorySessionDAO();
 
-        CacheProvider cacheProvider = getCacheProvider();
-        if ( cacheProvider != null ) {
-            dao.setCacheProvider( cacheProvider );
+        CacheManager cacheManager = getCacheManager();
+        if ( cacheManager != null ) {
+            dao.setCacheManager(cacheManager);
         }
 
         dao.init();

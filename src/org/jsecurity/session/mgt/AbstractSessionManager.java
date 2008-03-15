@@ -27,8 +27,8 @@ package org.jsecurity.session.mgt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.CacheProviderAware;
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
@@ -48,12 +48,12 @@ import java.util.Date;
  * @since 0.1
  * @author Les Hazlewood
  */
-public abstract class AbstractSessionManager implements SessionManager, CacheProviderAware, SessionEventListenerRegistrar {
+public abstract class AbstractSessionManager implements SessionManager, CacheManagerAware, SessionEventListenerRegistrar {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
     protected SessionEventManager sessionEventManager = new DefaultSessionEventManager();
-    protected CacheProvider cacheProvider;
+    protected CacheManager cacheManager;
 
     public AbstractSessionManager() {
     }
@@ -66,12 +66,12 @@ public abstract class AbstractSessionManager implements SessionManager, CachePro
         this.sessionEventManager = sessionEventManager;
     }
 
-    public CacheProvider getCacheProvider() {
-        return cacheProvider;
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
 
-    public void setCacheProvider(CacheProvider cacheProvider) {
-        this.cacheProvider = cacheProvider;
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     public void setSessionEventListeners(Collection<SessionEventListener> listeners) {

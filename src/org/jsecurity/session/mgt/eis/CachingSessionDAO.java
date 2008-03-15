@@ -27,8 +27,8 @@ package org.jsecurity.session.mgt.eis;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.CacheProviderAware;
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
 import org.jsecurity.util.Destroyable;
@@ -43,59 +43,59 @@ import java.util.Map;
  * An CachingSessionDAO is a SessionDAO that provides a transparent caching layer between the components that
  * use it and the underlying EIS (Enterprise Information System) for enhanced performance.
  * <p/>
- * <p>This implementation caches all active sessions in a cache created by a required {@link CacheProvider}.  All
+ * <p>This implementation caches all active sessions in a cache created by a required {@link org.jsecurity.cache.CacheManager}.  All
  * <tt>SessionDAO</tt> methods are implemented by this class to employ caching behavior and delegates the actual
  * EIS operations to respective do* methods to be implemented by subclasses (doCreate, doRead, etc).
  * <p/>
- * <p>After instantiating an instance of this class (or subclass) and setting the <tt>CacheProvider</tt> property,
+ * <p>After instantiating an instance of this class (or subclass) and setting the <tt>CacheManager</tt> property,
  * the {@link #init} method must be called to properly initialize the cache.  Also, to ensure proper cache
  * shutdown and cleanup, the {@link #destroy} method must be called when the instance is no longer to be used.
  *
  * @author Les Hazlewood
  * @since 0.2
  */
-public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAware, Initializable, Destroyable {
+public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware, Initializable, Destroyable {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected Cache activeSessions = null;
 
-    protected CacheProvider cacheProvider = null;
+    protected CacheManager cacheManager = null;
 
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
 
     /**
-     * JavaBeans compatible constructor.  The {@link #setCacheProvider CacheProvider} property must be set and the
+     * JavaBeans compatible constructor.  The {@link #setCacheManager CacheManager} property must be set and the
      * {@link #init} method called before the instance can be used.
      */
     public CachingSessionDAO() {
     }
 
     /**
-     * Sets the cacheProvider to use for constructing the session cache.
+     * Sets the cacheManager to use for constructing the session cache.
      *
-     * @param cacheProvider the provider to use for constructing the session cache.
+     * @param cacheManager the manager to use for constructing the session cache.
      */
-    public void setCacheProvider( CacheProvider cacheProvider ) {
-        this.cacheProvider = cacheProvider;
+    public void setCacheManager( CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     /**
-     * Returns the CacheProvider used by the implementation that creates the activeSessions Cache.
-     * @return the CacheProvider used by the implementation that creates the activeSessions Cache.
+     * Returns the CacheManager used by the implementation that creates the activeSessions Cache.
+     * @return the CacheManager used by the implementation that creates the activeSessions Cache.
      */
-    public CacheProvider getCacheProvider() {
-        return cacheProvider;
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
 
     /**
-     * Constructor taking in the required <tt>CacheProvider</tt> property.  This constructor will call init()
+     * Constructor taking in the required <tt>CacheManager</tt> property.  This constructor will call init()
      * automatically, thereby making the instance ready for use immediately after instantiation.
      *
-     * @param provider the required <tt>CacheProvider</tt> property necessary for cache initialization.
+     * @param manager the required <tt>CacheManager</tt> property necessary for cache initialization.
      */
-    public CachingSessionDAO( CacheProvider provider ) {
-        setCacheProvider( provider );
+    public CachingSessionDAO( CacheManager manager) {
+        setCacheManager(manager);
         init();
     }
 
@@ -104,11 +104,11 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAwar
      * additional custom startup behavior.
      */
     public void init() {
-        if ( this.cacheProvider == null ) {
-            throw new IllegalStateException( "CacheProvider property must be set." );
+        if ( this.cacheManager == null ) {
+            throw new IllegalStateException( "CacheManager property must be set." );
         }
 
-        this.activeSessions = buildActiveSessionCache( this.cacheProvider );
+        this.activeSessions = buildActiveSessionCache( this.cacheManager);
 
         onInit();
     }
@@ -140,26 +140,26 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAwar
     }
 
     /**
-     * Builds a Cache with the given name using the specified CacheProvider.
+     * Builds a Cache with the given name using the specified CacheManager.
      * <p/>
-     * <p>The default implementation merely returns <code>cacheProvider.buildCache( cacheName );</code>.
+     * <p>The default implementation merely returns <code>cacheManager.buildCache( cacheName );</code>.
      *
-     * @param cacheProvider the provider to use to build the cache.
-     * @param cacheName     the name associated with the cache to build.
+     * @param cacheManager the manager to use to build the cache.
+     * @param cacheName    the name associated with the cache to build.
      * @return a Cache built with the specified name.
      */
-    protected Cache buildCache( CacheProvider cacheProvider, String cacheName ) {
-        return cacheProvider.buildCache( cacheName );
+    protected Cache buildCache( CacheManager cacheManager, String cacheName ) {
+        return cacheManager.buildCache( cacheName );
     }
 
     /**
-     * Creates the <tt>activeSessions</tt> cache class attribute using the specified CacheProvider.
+     * Creates the <tt>activeSessions</tt> cache class attribute using the specified CacheManager.
      *
-     * @param cacheProvider the provider to use to create the </tt>activeSessions</tt> cache.
+     * @param cacheManager the manager to use to create the </tt>activeSessions</tt> cache.
      * @return the Cache instance to assign to the <tt>activeSessions</tt> class attribute.
      */
-    protected Cache buildActiveSessionCache( CacheProvider cacheProvider ) {
-        return buildCache( cacheProvider, ACTIVE_SESSION_CACHE_NAME );
+    protected Cache buildActiveSessionCache( CacheManager cacheManager) {
+        return buildCache(cacheManager, ACTIVE_SESSION_CACHE_NAME );
     }
 
     /**
@@ -332,18 +332,5 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheProviderAwar
             }
         }
         return Collections.EMPTY_LIST;
-    }
-
-    /**
-     * Returns the total number of sessions that are active (i.e. those that are not stopped or expired).
-     * <p/>
-     * <p>This implementation merely returns the size of the internal <tt>activeSessions</tt> cache.  Subclass
-     * implementations may wish to override this method to get the number in a different way - perhaps from a
-     * RDBMS query or other means.
-     *
-     * @return the number of sessions in the system that are currently active (i.e. not stopped or expired).
-     */
-    public long getActiveSessionCount() {
-        return activeSessions.getElementCount();
     }
 }

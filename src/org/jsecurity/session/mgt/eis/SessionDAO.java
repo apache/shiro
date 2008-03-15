@@ -105,11 +105,4 @@ id.equals( session.getId() ) == true</pre></code>
      * empty collection or <tt>null</tt> if there are no active sessions.
      */
     Collection<Session> getActiveSessions();
-
-    /**
-     * Convenience method to determine the number of active sessions; primarily used for
-     * reporting.
-     * @return the total number of active sessions (those that haven't been stopped or expired).
-     */
-    long getActiveSessionCount();
 }
