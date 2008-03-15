@@ -27,8 +27,6 @@ package org.jsecurity.web.servlet;
 import static org.jsecurity.util.StringUtils.*;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
-import org.jsecurity.web.authz.DefaultUrlAuthorizationHandler;
-import org.jsecurity.web.authz.UrlAuthorizationHandler;
 import org.jsecurity.web.interceptor.DefaultInterceptorBuilder;
 import org.jsecurity.web.interceptor.InterceptorBuilder;
 import org.jsecurity.web.interceptor.MatchingWebInterceptor;
@@ -58,8 +56,6 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     protected InterceptorBuilder interceptorBuilder = new DefaultInterceptorBuilder();
 
-    protected UrlAuthorizationHandler urlAuthorizationHandler;
-
     private List<Filter> filters;
 
     public Map<String, Object> getFiltersAndInterceptors() {
@@ -86,17 +82,6 @@ public class JSecurityFilter extends SecurityManagerFilter {
         this.unauthorizedPage = unauthorizedPage;
     }
 
-    public UrlAuthorizationHandler getUrlAuthorizationHandler() {
-        if (urlAuthorizationHandler == null) {
-            urlAuthorizationHandler = new DefaultUrlAuthorizationHandler();
-        }
-        return urlAuthorizationHandler;
-    }
-
-    public void setUrlAuthorizationHandler(UrlAuthorizationHandler urlAuthorizationHandler) {
-        this.urlAuthorizationHandler = urlAuthorizationHandler;
-    }
-
     protected void afterSecurityManagerSet() throws Exception {
         applyInitParams();
         ensureWebInterceptors();
@@ -106,6 +91,9 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     protected void applyInitParams() {
         FilterConfig config = getFilterConfig();
+        //only apply init params for the properties that are null - this allows subclasses to set the values
+        //before the init params are read, which essentially allows overrides.
+
         this.interceptors = clean(config.getInitParameter("interceptors"));
         this.urls = clean(config.getInitParameter("urls"));
         this.unauthorizedPage = clean(config.getInitParameter("unauthorizedPage"));
