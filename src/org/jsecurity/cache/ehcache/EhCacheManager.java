@@ -36,7 +36,7 @@ import org.jsecurity.util.Initializable;
 import java.io.InputStream;
 
 /**
- * <p>JSecurity {@link org.jsecurity.cache.CacheManager} for ehcache 1.2 and above.</p>
+ * <p>JSecurity <code>CacheManager</code> implementation utilizing the Ehcache framework for all cache functionality.</p>
  *
  * <p>This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
@@ -94,7 +94,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      *
      * @param name the name of the cache to load/create.
      */
-    public final Cache buildCache( String name ) throws CacheException {
+    public final Cache getCache( String name ) throws CacheException {
 
         if ( log.isTraceEnabled() ) {
             log.trace( "Loading a new EhCache cache named [" + name + "]" );
@@ -127,7 +127,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
                     log.info("Using preconfigured EHCache named [" + cache.getName() + "]" );
                 }
             }
-            return new EhCache( cache, getCacheManager() );
+            return new EhCache( cache );
         } catch ( net.sf.ehcache.CacheException e ) {
             throw new CacheException( e );
         }

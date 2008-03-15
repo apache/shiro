@@ -83,10 +83,6 @@ public class HashtableCache implements Cache {
         hashtable.clear();
     }
 
-    public void destroy() throws CacheException {
-        clear();
-    }
-
     public long getSize() {
         return hashtable.size();
     }

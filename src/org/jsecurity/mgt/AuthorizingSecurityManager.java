@@ -168,9 +168,10 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      * an attribute of this class.
      */
     protected void ensureAuthorizer() {
-        if (getAuthorizer() == null) {
-            Authorizer authz = createAuthorizer();
-            setAuthorizer(authz);
+        Authorizer authorizer = getAuthorizer();
+        if ( authorizer == null) {
+            authorizer = createAuthorizer();
+            setAuthorizer(authorizer);
         }
     }
 

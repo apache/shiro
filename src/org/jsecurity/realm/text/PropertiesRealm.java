@@ -25,6 +25,7 @@
 package org.jsecurity.realm.text;
 
 import org.jsecurity.JSecurityException;
+import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.ResourceUtils;
 
 import java.io.File;
@@ -94,7 +95,7 @@ import java.util.concurrent.TimeUnit;
  * @author Jeremy Haile
  * @since 0.2
  */
-public class PropertiesRealm extends TextConfigurationRealm implements Runnable {
+public class PropertiesRealm extends TextConfigurationRealm implements Destroyable, Runnable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -145,7 +146,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Runnable 
                 log.info("Unable to cleanly shutdown Scheduler.  Ignoring (shutting down)...", e);
             }
         }
-        super.destroy();
     }
 
     protected void startReloadThread() {
