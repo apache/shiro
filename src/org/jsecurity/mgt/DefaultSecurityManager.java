@@ -69,10 +69,9 @@ import java.util.Collection;
  * that its {@link #init() init()} method must be called before it is used.  Even this is called automatically if
  * you use one of the overloaded constructors with one or more arguments.</p>
  *
- * @see org.jsecurity.web.WebSecurityManager DefaultWebSecurityManager
- *
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @see org.jsecurity.web.WebSecurityManager DefaultWebSecurityManager
  * @since 0.2
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {
@@ -114,7 +113,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     private void assertPrincipals(Account account) {
         Object principal = account.getPrincipal();
-        if (principal == null ) {
+        if (principal == null) {
             String msg = "Account returned from Authenticator must have an associated principal.";
             throw new IllegalArgumentException(msg);
         }
@@ -179,7 +178,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
      *
      * @param subject the <tt>Subject</tt> instance created after authentication to be bound to the application
-     *               for later use.
+     *                for later use.
      */
     protected void bind(Subject subject) {
         if (log.isTraceEnabled()) {
@@ -191,8 +190,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     private void assertCreation(Subject subject) throws IllegalStateException {
         if (subject == null) {
             String msg = "Programming error - please verify that you have overridden the " +
-                getClass().getName() + ".createSubject( Account account ) method to return " +
-                "a non-null Subject instance";
+                    getClass().getName() + ".createSubject( Account account ) method to return " +
+                    "a non-null Subject instance";
             throw new IllegalStateException(msg);
         }
     }
@@ -205,16 +204,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
-                        "] threw an exception during onSuccessfulLogin.  RememberMe services will not be " +
-                        "performed for Account [" + account + "].";
+                            "] threw an exception during onSuccessfulLogin.  RememberMe services will not be " +
+                            "performed for Account [" + account + "].";
                     log.warn(msg, e);
                 }
             }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("This " + getClass().getName() + " instance does not have a " +
-                    "[" + RememberMeManager.class.getName() + "] instance configured.  RememberMe services " +
-                    "will not be performed for account [" + account + "].");
+                        "[" + RememberMeManager.class.getName() + "] instance configured.  RememberMe services " +
+                        "will not be performed for account [" + account + "].");
             }
         }
     }
@@ -227,8 +226,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
-                        "] threw an exception during onFailedLogin for AuthenticationToken [" +
-                        token + "].";
+                            "] threw an exception during onFailedLogin for AuthenticationToken [" +
+                            token + "].";
                     log.warn(msg, e);
                 }
             }
@@ -243,8 +242,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
-                        "] threw an exception during onLogout for subject with principals [" +
-                        subjectPrincipals + "]";
+                            "] threw an exception during onLogout for subject with principals [" +
+                            subjectPrincipals + "]";
                     log.warn(msg, e);
                 }
             }
@@ -266,14 +265,14 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Account account;
         try {
             account = authenticate(token);
-            onSuccessfulLogin(token,account);
+            onSuccessfulLogin(token, account);
         } catch (AuthenticationException ae) {
             try {
-                onFailedLogin(token,ae);
+                onFailedLogin(token, ae);
             } catch (Exception e) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "onFailedLogin(AuthenticationToken,AuthenticationException) method threw an " +
-                            "exception.  Logging and propagating original AuthenticationException.", e );
+                if (log.isInfoEnabled()) {
+                    log.info("onFailedLogin(AuthenticationToken,AuthenticationException) method threw an " +
+                            "exception.  Logging and propagating original AuthenticationException.", e);
                 }
             }
             throw ae; //propagate
@@ -284,24 +283,28 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return subject;
     }
 
-    protected void onSuccessfulLogin( AuthenticationToken token, Account account ) {
-        rememberMeSuccessfulLogin(token,account);
+    protected void onSuccessfulLogin(AuthenticationToken token, Account account) {
+        rememberMeSuccessfulLogin(token, account);
     }
 
-    protected void onFailedLogin(AuthenticationToken token, AuthenticationException ae ) {
-        rememberMeFailedLogin(token,ae);
+    protected void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {
+        rememberMeFailedLogin(token, ae);
     }
 
-    protected void beforeLogout( Object subjectIdentifier ) {
+    protected void beforeLogout(Object subjectIdentifier) {
         rememberMeLogout(subjectIdentifier);
     }
 
     public void logout(Object subjectIdentifier) {
-        beforeLogout(subjectIdentifier);
 
-        Authenticator authc = getAuthenticator();
-        if ( authc instanceof LogoutAware ) {
-            ((LogoutAware)authc).onLogout( subjectIdentifier );
+        if (subjectIdentifier != null) {
+            
+            beforeLogout(subjectIdentifier);
+
+            Authenticator authc = getAuthenticator();
+            if (authc instanceof LogoutAware) {
+                ((LogoutAware) authc).onLogout(subjectIdentifier);
+            }
         }
 
         //Method arg is ignored - get the Subject from the environment if it exists:
@@ -312,7 +315,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     String msg = "Unable to cleanly stop Session for Subject [" + subject.getPrincipal() + "] " +
-                        "Ignoring (logging out).";
+                            "Ignoring (logging out).";
                     log.debug(msg, e);
                 }
             }
@@ -327,7 +330,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    protected void stopSession( Subject subject ) {
+    protected void stopSession(Subject subject) {
         Session s = subject.getSession(false);
         if (s != null) {
             try {
@@ -337,7 +340,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 //log just in case someone wants to know:
                 if (log.isTraceEnabled()) {
                     log.trace("Session has already been invalidated for subject [" +
-                        subject.getPrincipal() + "].  Ignoring and continuing logout ...", ise);
+                            subject.getPrincipal() + "].  Ignoring and continuing logout ...", ise);
                 }
             }
         }
@@ -355,7 +358,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
-                        "] threw an exception during getRememberedIdentity().";
+                            "] threw an exception during getRememberedIdentity().";
                     log.warn(msg, e);
                 }
             }
