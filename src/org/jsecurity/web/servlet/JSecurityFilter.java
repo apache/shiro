@@ -266,4 +266,20 @@ public class JSecurityFilter extends SecurityManagerFilter {
             ThreadContext.unbindSubject();
         }
     }
+
+    public void destroy() {
+        if ( this.filters != null && !this.filters.isEmpty() ) {
+            for( Filter filter : filters ) {
+                try {
+                    filter.destroy();
+                } catch (Exception e) {
+                    if ( log.isWarnEnabled() ) {
+                        log.warn("Unable to cleanly destroy filter [" + filter + "].  Ignoring (shutting down)...", e );
+                    }
+                }
+            }
+        }
+        
+        super.destroy();
+    }
 }

@@ -81,7 +81,7 @@ Some notes:
 
 * quartz/quartz.jar
 - Quartz 1.5.2 (http://www.opensymphony.com/quartz)
-- required by the RI during build and runtime for scheduling support
+- required during build and runtime for Quartz-based session validation support
 
 * retroweaver/retroweaver.jar,retroweaver-rt.jar
 - Retroweaver 2.0 (http://retroweaver.sourceforge.net)

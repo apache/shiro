@@ -26,6 +26,7 @@ package org.jsecurity.web.servlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.interceptor.WebInterceptor;
 
 import javax.servlet.*;
@@ -115,6 +116,6 @@ public class WebInterceptorFilter implements Filter {
     }
 
     public void destroy() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        LifecycleUtils.destroy(getWebInterceptor());
     }
 }
