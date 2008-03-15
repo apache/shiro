@@ -32,9 +32,7 @@ import org.jsecurity.authz.permission.PermissionResolverAware;
 import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheManager;
-import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
-import org.jsecurity.util.LifecycleUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,13 +41,13 @@ import java.util.List;
 /**
  * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding Authorization
  * (access control) support via the use of {@link AuthorizingAccount AuthorizingAccount} instances.
- * <p/>
+ *
  * <p>This implementation can only support Authorization operations if the subclass implementation's
  * {@link #getAccount(Object) getAccount(principal)} method returns an {@link AuthorizingAccount AuthorizingAccount}.
  * <p>If it does not, subclasses <em>must</em> override all {@link org.jsecurity.authz.Authorizer Authorizer} methods,
- * since the JSecurity default implementations cannot infer Role/Permissino assignments via anything but
+ * since the JSecurity default implementations cannot infer Role/Permission assignments via anything but
  * <tt>AuthorizingAccount</tt> instances.
- * <p/>
+ *
  * <p>If your Realm implementation does not want to deal with <tt>AuthorizingAccount</tt> constructs, you are of course
  * free to subclass the {@link AuthorizingRealm AuthorizingRealm} directly and implement the remaining
  * interface methods yourself.  Many people do this if they want to have better control over how the
@@ -59,7 +57,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.2
  */
-public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, Destroyable, PermissionResolverAware {
+public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, PermissionResolverAware {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -74,12 +72,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * Determines whether or not caching is enabled for AuthorizationAccounts.  Caching is enabled by default, but
-     * realms that access AuthorizationAccounts in memory, or those that do their own caching, may wish to disable caching.
-     */
-    private boolean accountCacheEnabled = true;
-
     /**
      * The cache used by this realm to store Accounts associated with individual Subject principals.
      */
@@ -109,14 +101,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setAccountCacheEnabled(boolean accountCacheEnabled) {
-        this.accountCacheEnabled = accountCacheEnabled;
-    }
-
-    public boolean isAccountCacheEnabled() {
-        return this.accountCacheEnabled;
-    }
-
     public void setAccountCache(Cache accountCache) {
         this.accountCache = accountCache;
     }
@@ -165,13 +149,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * </ol>
      */
     public final void init() {
-        if (isAccountCacheEnabled()) {
-            initAccountCache();
-        }
+        initAccountCache();
         afterAccountCacheSet();
     }
 
-    protected void afterAccountCacheSet(){}
+    protected void afterAccountCacheSet() {
+    }
 
     protected void initAccountCache() {
         if (log.isTraceEnabled()) {
@@ -199,7 +182,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                     log.debug("CacheManager [" + cacheManager + "] has been configured.  Building " +
                             "Account cache named [" + cacheName + "]");
                 }
-                cache = cacheManager.buildCache(cacheName);
+                cache = cacheManager.getCache(cacheName);
                 setAccountCache(cache);
             } else {
                 if (log.isInfoEnabled()) {
@@ -207,21 +190,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                             "disabled.");
                 }
             }
-        } else {
-            cache.clear();
-            if (log.isDebugEnabled()) {
-                log.debug("Accounts will be cached using cache [" + cache + "]");
-            }
         }
-    }
-
-    /**
-     * Cleans up this realm's cache.
-     */
-    public void destroy() {
-        Cache accountCache = getAccountCache();
-        LifecycleUtils.destroy(accountCache);
-        this.accountCache = null;
     }
 
     /**
@@ -257,21 +226,17 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             log.debug("Retrieving Account for principal [" + principal + "]");
         }
 
-        boolean cacheEnabled = isAccountCacheEnabled();
-        Cache accountCache = null;
-        if (cacheEnabled) {
-            accountCache = getAccountCache();
-            if (accountCache != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Attempting to retrieve the Account from cache.");
-                }
-                account = (Account) accountCache.get(principal);
-                if (log.isTraceEnabled()) {
-                    if (account == null) {
-                        log.trace("No Account found in cache for principal [" + principal + "]");
-                    } else {
-                        log.trace("Account found in cache for principal [" + principal + "]");
-                    }
+        Cache accountCache = getAccountCache();
+        if (accountCache != null) {
+            if (log.isTraceEnabled()) {
+                log.trace("Attempting to retrieve the Account from cache.");
+            }
+            account = (Account) accountCache.get(principal);
+            if (log.isTraceEnabled()) {
+                if (account == null) {
+                    log.trace("No Account found in cache for principal [" + principal + "]");
+                } else {
+                    log.trace("Account found in cache for principal [" + principal + "]");
                 }
             }
         }

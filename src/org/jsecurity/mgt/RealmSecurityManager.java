@@ -24,6 +24,8 @@
  */
 package org.jsecurity.mgt;
 
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.util.LifecycleUtils;
@@ -121,6 +123,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
 
     protected void afterCacheManagerSet() {
         ensureRealms();
+        applyRealmsCacheManager();
         afterRealmsSet();
     }
 
@@ -132,6 +135,18 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
             }
             Realm realm = createDefaultRealm();
             setRealm(realm);
+        }
+    }
+
+    protected void applyRealmsCacheManager() {
+        Collection<Realm> realms = getRealms();
+        CacheManager cacheManager = getCacheManager();
+        if ( cacheManager != null && realms != null && !realms.isEmpty() ) {
+            for( Realm realm : realms ) {
+                if ( realm instanceof CacheManagerAware) {
+                    ((CacheManagerAware)realm).setCacheManager(cacheManager);
+                }
+            }
         }
     }
 

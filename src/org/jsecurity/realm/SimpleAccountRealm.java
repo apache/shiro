@@ -34,9 +34,7 @@ import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.HashtableCacheManager;
-import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
-import org.jsecurity.util.LifecycleUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +52,7 @@ import java.util.Set;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class SimpleAccountRealm extends AuthorizingRealm implements Initializable, Destroyable {
+public class SimpleAccountRealm extends AuthorizingRealm implements Initializable {
 
     /**
      * The default postfix appended to the Role cache name.
@@ -109,7 +107,7 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
             roleCacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_ROLE_CACHE_POSTFIX;
             setRoleCacheName( roleCacheName );
         }
-        Cache roleCache = manager.buildCache( roleCacheName );
+        Cache roleCache = manager.getCache( roleCacheName );
         setRoleCache(roleCache);
 
         userAndRoleCachesCreated();
@@ -149,12 +147,6 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     }
 
     protected void userAndRoleCachesCreated(){}
-
-    public void destroy() {
-        LifecycleUtils.destroy(roleCache);
-        this.roleCache = null;
-        super.destroy();
-    }
 
     protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;

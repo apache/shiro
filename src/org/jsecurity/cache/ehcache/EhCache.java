@@ -24,7 +24,6 @@
 */
 package org.jsecurity.cache.ehcache;
 
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an EhCache cache.
+ * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache}.
  *
  * @since 0.2
  * @author Jeremy Haile
@@ -52,31 +51,19 @@ public class EhCache implements Cache {
     protected final transient Log logger = LogFactory.getLog(getClass());
 
     /**
-     * The underlying EhCache cache used by this JSecurity cache.
+     * The wrapped Ehcache instance.
      */
-    private net.sf.ehcache.Cache cache;
-
-    /**
-     * The cache manager that created this cache.  This is used to remove the cache
-     * when the cache is destroyed.
-     * @see #destroy()
-     */
-    private CacheManager cacheManager;
+    private net.sf.ehcache.Ehcache cache;
 
     /**
      * Constructs a new EhCache instance with the given cache.
      * @param cache - delegate EhCache instance this JSecurity cache instance will wrap.
-     * @param cacheManager the cache manager that created this cache.
      */
-    public EhCache(net.sf.ehcache.Cache cache, CacheManager cacheManager) {
+    public EhCache(net.sf.ehcache.Cache cache ) {
         if ( cache == null ) {
             throw new IllegalArgumentException( "Cache argument cannot be null." );
         }
-        if ( cacheManager == null ) {
-            throw new IllegalArgumentException( "CacheManager argument cannot be null. " );
-        }
         this.cache = cache;
-        this.cacheManager = cacheManager;
     }
 
     public String getName() {
@@ -167,21 +154,6 @@ public class EhCache implements Cache {
             cache.removeAll();
         } catch ( Throwable t ) {
             throw new CacheException( t );
-        }
-    }
-
-    /**
-     * Remove the cache and make it unuseable.
-     */
-    public void destroy() throws CacheException {
-        if ( logger.isDebugEnabled() ) {
-            logger.debug( "Cleaning up and removing cache [" + getName() + "]" );
-        }
-        try {
-            cacheManager.removeCache(cache.getName());
-        }
-        catch ( Throwable t ) {
-            throw new CacheException(t);
         }
     }
 

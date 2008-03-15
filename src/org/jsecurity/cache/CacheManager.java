@@ -25,7 +25,11 @@
 package org.jsecurity.cache;
 
 /**
- * Interface for cache-specific implementations that can managed/provide {@link Cache Cache} instances.
+ * A CacheManager provides and maintains the lifecycles of {@link Cache Cache} instances.
+ *
+ * <p>It is really a wrapper API around the underlying cache subsystem's central cache manager component.
+ * (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence, GigaSpaces, etc, etc), allowing a
+ * JSecurity user to configure any cache framework they choose.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -34,12 +38,12 @@ package org.jsecurity.cache;
 public interface CacheManager {
 
     /**
-     * Configure and creates a cache with the given name using the specified
-     * properties for configuration.
+     * Acquires the cache with name <code>cacheName</code>.  If a cache does not yet exist with that name, a new one
+     * will be created with that name and returned.
      *
-     * @param cacheName the name of the cache to create.
-     * @return a new cache built using the given name.
-     * @throws CacheException if there is a cache error in the manager implementation.
+     * @param cacheName the name of the cache to acquire.
+     * @return the Cache with the given name
+     * @throws CacheException if there is an error acquiring the Cache instance.
      */
-    public Cache buildCache( String cacheName ) throws CacheException;
+    public Cache getCache( String cacheName ) throws CacheException;
 }

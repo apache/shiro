@@ -39,7 +39,7 @@ public class HashtableCacheManager implements CacheManager {
      * @param cacheName the name of the new cache to create.
      * @return a new cache.
      */
-    public Cache buildCache( String cacheName ) {
+    public Cache getCache( String cacheName ) {
         return new HashtableCache( cacheName );
     }
 }

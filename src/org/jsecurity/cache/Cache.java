@@ -24,18 +24,20 @@
 */
 package org.jsecurity.cache;
 
-import org.jsecurity.util.Destroyable;
-
 import java.util.Map;
 
 /**
- * Interface abstracting all Cache functions relevant to JSecurity's needs.
+ * A Cache instance maintains objects for performance enhancements.
+ *
+ * <p>It is really a wrapper API around the underlying cache subsystem's cache instance
+ * (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence, GigaSpaces, etc, etc), allowing a
+ * JSecurity user to configure any cache framework they choose.
  *
  * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public interface Cache extends Destroyable {
+public interface Cache {
 
     /**
      * The name associated with this cache.  This should usually be
@@ -51,6 +53,7 @@ public interface Cache extends Destroyable {
      *
      * @param key the key that the item was previous stored with.
      * @return the cached object or <tt>null</tt>
+     * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public Object get( Object key ) throws CacheException;
 
@@ -59,6 +62,7 @@ public interface Cache extends Destroyable {
      *
      * @param key   the key used to identify the object being stored.
      * @param value the value to be stored in the cache.
+     * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public void put( Object key, Object value ) throws CacheException;
 
@@ -66,18 +70,15 @@ public interface Cache extends Destroyable {
      * Remove an item from the cache.
      *
      * @param key the key of the item to be removed.
+     * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public void remove( Object key ) throws CacheException;
 
     /**
      * Clear all objects from the cache.
+     * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public void clear() throws CacheException;
-
-    /**
-     * Clean up any resources used by this cache.
-     */
-    public void destroy() throws CacheException;
 
     /**
      * Returns the number of cache entries currently contained in the cache.
@@ -85,7 +86,6 @@ public interface Cache extends Destroyable {
      * @return the number of cache entries currently contained in the cache.
      */
     public long getSize();
-
 
     /**
      * Converts the contents of this cache to a map for debugging or
