@@ -13,9 +13,18 @@
             #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
             #       Everything else is just commented to explain everything in-depth. Feel free to delete any
             #       comments that you don't want to read ;)
+            #
+            # All defaults are listed below, but commented out.  If you want to change any value, you only
+            # need to uncomment the line you want to change.
 
             [global]
 
+            # The global section defines JSecurity-wide configuration or properties that can be shared across any
+            # configured interceptor (below).
+            #
+            # For example, the 'roles' and 'perms' interceptors below use the following property to redirect
+            # to when a user does not have the required respective roles or permissions needed to access a url path.
+            #
             #unauthorizedPage = /unauthorized.jsp
             #
             # Session Mode: By default, JSecurity's Session infrastructure in a web environment will use the
