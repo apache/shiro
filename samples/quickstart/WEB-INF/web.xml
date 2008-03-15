@@ -53,7 +53,7 @@
             # to continue, and if they're not, forces login via an Http BASIC browser dialog.  Upon successful login,
             # they're allowed to continue on to the requested resource/url.
             #authcBasic = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
-            #authc.applicationName = JSecurity Quickstart
+            #authcBasic.applicationName = JSecurity Quickstart
             #
             # Roles interceptor: requires the requesting user to have one or more roles for the request to continue
             # and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
