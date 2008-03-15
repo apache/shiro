@@ -11,10 +11,10 @@
         <init-param><param-name>config</param-name><param-value>
 
             #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
-            #       Everything else is just commented to explain everything in-depth. Feel free to delete any
+            #       Everything else is just commented to explain things in-depth. Feel free to delete any
             #       comments that you don't want to read ;)
             #
-            # All defaults are listed below, but commented out.  If you want to change any value, you only
+            # All defaults are listed below but commented out.  If you want to change any value, you only
             # need to uncomment the line you want to change.
 
             [global]
@@ -44,10 +44,29 @@
             # The commented values are provided by JSecurity by default.  You can uncomment any line that you wish
             # to override.  It is not necessary to uncomment all of an interceptor's properties or even the main
             # name to class definition itself - you only need to uncomment the lines you want to override.
-
-            # Authentication interceptor - requires the requesting user to be authenticated for the request to continue.
-            authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
-            authc.applicationName = JSecurity Quickstart
+            #
+            # Each interceptor is configured based on its functionality and/or protocol.  You should read each
+            # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
+            # effect the user experience.
+            #
+            # Http BASIC Authentication interceptor: requires the requesting user to be authenticated for the request
+            # to continue, and if they're not, forces login via an Http BASIC browser dialog.  Upon successful login,
+            # they're allowed to continue on to the requested resource/url.
+            #authcBasic = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
+            #authc.applicationName = JSecurity Quickstart
+            #
+            # Roles interceptor: requires the requesting user to have one or more roles for the request to continue
+            # and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
+            #roles = org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor
+            #
+            # Permissions interceptor: requires the requesting user to have one or more permissions for the request to
+            # continue, and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
+            #perms = org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor
+            #
+            #
+            #
+            # Define your own interceptors here.  To properly handle path matching, all interceptor implementations
+            # should extend the org.jsecurity.web.interceptor.PathMatchingWebInterceptor abstract class.
 
             [urls]
 
@@ -81,13 +100,13 @@
             # Examples:
             #
             # To illustrate chain configuration, look at the /account/** mapping below.  This says
-            # "apply the above 'authc' to any request matching the '/account/**' pattern.  Since the
+            # "apply the above 'authc' interceptor to any request matching the '/account/**' pattern".  Since the
             # 'authc' interceptor does not need any path-specific config, it doesn't have any extra config brackets [].
-            # (the 'authc' interceptor will force a login for unauthenticated users and then send them back to the
+            # (the 'authc' interceptor will force a login for unauthenticated users and then send them to the
             #  originally requested URL).
             #
             # The /remoting/** definition on the other hand uses the 'roles' and 'perms' interceptors which do use
-            # the bracket notation.  That definition says:
+            # bracket notation.  That definition says:
             #
             # "To access /remoting/** urls, ensure that the user is first authenticated ('authc'), then that user must
             # be verified to have the 'b2bClient' role, and then finally they must have the
