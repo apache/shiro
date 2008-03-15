@@ -14,7 +14,9 @@ JDK 1.3 and 1.4 only: you must include retroweaver.jar and its associated depend
 Feature-based dependencies
 --------------------------
 - If you want to use JSecurity's enterprise session management:
-  . JDK 1.5+: include ehcache.jar and quartz.jar
-  . JDK 1.3 or 1.4: include ehcache.jar, quartz.jar, jug.jar and jug-native.zip
+  . JDK 1.5+: include ehcache.jar
+  . JDK 1.3 or 1.4: include ehcache.jar, jug.jar and jug-native.zip
 
-- If you want to use JSecurity code Annotations, include Jakarta commons-beanutils-core.jar
+- JSecurity Web Filter text-based config ('config' init param) in web.xml:
+- JSecurity code Annotations:
+  . include Jakarta commons-beanutils-core.jar

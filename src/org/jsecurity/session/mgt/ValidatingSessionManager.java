@@ -72,12 +72,10 @@ public interface ValidatingSessionManager extends SessionManager {
      * proactive systems, this {@link #validateSessions()} method should be invoked regularaly
      * anyway to <em>guarantee</em> no orphans exist.
      *
-     * <p><b>Note:</b> It is <em>highly</em> recommended that this method be invoked by a
-     * sophisticated scheduling mechanism such as {@link java.util.Timer} (not recommended
-     * in managed J2EE environments) or via 3rd-party
-     * scheduling tools such as the
-     * <a href="http://www.opensymphony.com/quartz/">Quartz Enterprise Job Scheduler</a>
-     * (highly recommended in all environments).
+     * <p><b>Note:</b> JSecurity supports automatic execution of this method at a regular interval
+     * by using {@link SessionValidationScheduler}s.  The JSecurity default SecurityManager implementations
+     * needing session validation will create and use one by default if one is not provided by the
+     * application configuration.
      */
     void validateSessions();
 

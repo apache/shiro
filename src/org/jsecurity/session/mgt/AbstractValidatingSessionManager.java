@@ -27,7 +27,6 @@ package org.jsecurity.session.mgt;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.session.mgt.quartz.QuartzSessionValidationScheduler;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
@@ -58,10 +57,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      */
     public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = MILLIS_PER_HOUR;
 
+    protected boolean sessionValidationSchedulerEnabled = true; //default
     /**
      * Scheduler used to validate sessions on a regular basis.
-     * By default, the session manager will use Quartz to schedule session validation, but this
-     * can be overridden by calling {@link #setSessionValidationScheduler(SessionValidationScheduler)}
      */
     protected SessionValidationScheduler sessionValidationScheduler = null;
 
@@ -69,6 +67,14 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
 
     public AbstractValidatingSessionManager() {
+    }
+
+    public boolean isSessionValidationSchedulerEnabled() {
+        return sessionValidationSchedulerEnabled;
+    }
+
+    public void setSessionValidationSchedulerEnabled(boolean sessionValidationSchedulerEnabled) {
+        this.sessionValidationSchedulerEnabled = sessionValidationSchedulerEnabled;
     }
 
     public void setSessionValidationScheduler( SessionValidationScheduler sessionValidationScheduler ) {
@@ -268,8 +274,8 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         if ( log.isDebugEnabled() ) {
             log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );
         }
-        scheduler = new QuartzSessionValidationScheduler( this );
-        ((QuartzSessionValidationScheduler)scheduler).setSessionValidationInterval( getSessionValidationInterval() );
+        scheduler = new ExecutorServiceSessionValidationScheduler( this );
+        ((ExecutorServiceSessionValidationScheduler)scheduler).setInterval(getSessionValidationInterval());
         if ( log.isTraceEnabled() ) {
             log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
         }
@@ -305,7 +311,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     }
 
     public void init() {
-        startSessionValidation();
+        if (isSessionValidationSchedulerEnabled()) {
+            startSessionValidation();
+        }
         afterSessionValidationStarted();
     }
 
