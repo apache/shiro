@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/jsecurity.css"/>" />
+    <link type="text/css" rel="stylesheet" href="<c:url value="/style.css"/>" />
 </head>
 <body>
 
