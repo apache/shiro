@@ -29,7 +29,7 @@ import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.interceptor.DefaultInterceptorBuilder;
 import org.jsecurity.web.interceptor.InterceptorBuilder;
-import org.jsecurity.web.interceptor.MatchingWebInterceptor;
+import org.jsecurity.web.interceptor.PathConfigWebInterceptor;
 import org.jsecurity.web.interceptor.WebInterceptor;
 
 import javax.servlet.*;
@@ -49,10 +49,15 @@ import java.util.Scanner;
  */
 public class JSecurityFilter extends SecurityManagerFilter {
 
-    protected Map<String, Object> filtersAndInterceptors;
+    private static final String[] CONFIG_SECTIONS = {"[global]", "[interceptors]", "[urls]"};
+
+    protected String config = null;
+    protected String global = null;
     protected String interceptors = null;
     protected String urls = null;
     protected String unauthorizedPage;
+
+    protected Map<String, Object> filtersAndInterceptors;
 
     protected InterceptorBuilder interceptorBuilder = new DefaultInterceptorBuilder();
 
@@ -64,6 +69,30 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     public void setFiltersAndInterceptors(Map<String, Object> filtersAndInterceptors) {
         this.filtersAndInterceptors = filtersAndInterceptors;
+    }
+
+    public String getConfig() {
+        return config;
+    }
+
+    public void setConfig(String config) {
+        this.config = config;
+    }
+
+    public String getGlobal() {
+        return global;
+    }
+
+    public void setGlobal(String global) {
+        this.global = global;
+    }
+
+    public String getInterceptors() {
+        return interceptors;
+    }
+
+    public void setInterceptors(String interceptors) {
+        this.interceptors = interceptors;
     }
 
     public String getUrls() {
@@ -84,23 +113,94 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     protected void afterSecurityManagerSet() throws Exception {
         applyInitParams();
+        applyConfig();
         ensureWebInterceptors();
         applyUrlMappings();
         applyWebInterceptorFilters();
     }
 
+    protected void applyConfig() throws Exception {
+
+        String config = getConfig();
+        //The following 3 values will be non-null if they have been overidden.
+        //If they are overridden, we don't set them in the scanning below so that we
+        //retain user-configured values.
+        String global = getGlobal();
+        String interceptors = getInterceptors();
+        String urls = getUrls();
+
+        if (config != null) {
+
+            boolean inGlobal = false;
+            boolean inInterceptors = false;
+
+            StringBuffer section = new StringBuffer();
+            Scanner scanner = new Scanner(config);
+            while (scanner.hasNextLine()) {
+
+                String line = clean(scanner.nextLine());
+                //ignore comments:
+                if ( line != null && line.startsWith( "#" ) ) {
+                    line = null;
+                }
+                
+                if (line != null) {
+                    if (CONFIG_SECTIONS[0].equals(line.toLowerCase())) {
+                        inGlobal = true;
+                        if ( log.isDebugEnabled() ) {
+                            log.debug( "Parsing " + CONFIG_SECTIONS[0] );
+                        }
+                    } else if (CONFIG_SECTIONS[1].equals(line.toLowerCase())) {
+                        if (inGlobal) {
+                            if (global == null && section.length() > 0) { //only set if not set previously by the user
+                                global = section.toString();
+                                setGlobal(global);
+                            }
+                        }
+                        section = new StringBuffer();
+                        inGlobal = false;
+                        inInterceptors = true;
+                        if ( log.isDebugEnabled() ) {
+                            log.debug( "Parsing " + CONFIG_SECTIONS[1] );
+                        }
+                    } else if (CONFIG_SECTIONS[2].equals(line.toLowerCase())) {
+                        if (inInterceptors) {
+                            if (interceptors == null && section.length() > 0) { //only set if not set previously by the user
+                                interceptors = section.toString();
+                                setInterceptors(interceptors);
+                            }
+                        }
+                        section = new StringBuffer();
+                        inInterceptors = false;
+                        inGlobal = false;
+                        if ( log.isDebugEnabled() ) {
+                            log.debug( "Parsing " + CONFIG_SECTIONS[2] );
+                        }
+                    } else {
+                        section.append(line).append("\n");
+                    }
+                }
+            }
+
+            if (urls == null && section.length() > 0) {
+                urls = section.toString();
+                setUrls(urls);
+            }
+        }
+    }
+
     protected void applyInitParams() {
         FilterConfig config = getFilterConfig();
+
         //only apply init params for the properties that are null - this allows subclasses to set the values
         //before the init params are read, which essentially allows overrides.
-
-        this.interceptors = clean(config.getInitParameter("interceptors"));
-        this.urls = clean(config.getInitParameter("urls"));
-        this.unauthorizedPage = clean(config.getInitParameter("unauthorizedPage"));
+        if (getConfig() == null) {
+            setConfig( clean(config.getInitParameter("config") ) );
+        }
     }
 
     protected void ensureWebInterceptors() {
-        Map<String, Object> interceptors = this.interceptorBuilder.buildInterceptors(this.interceptors);
+        Map<String, Object> interceptors = this.interceptorBuilder.buildInterceptors(getInterceptors());
 
         if (this.filtersAndInterceptors != null && !this.filtersAndInterceptors.isEmpty()) {
             interceptors.putAll(this.filtersAndInterceptors);
@@ -115,29 +215,37 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
         Map<String, Object> interceptors = getFiltersAndInterceptors();
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Interceptors configured: " + interceptors.size() );
+        if (log.isDebugEnabled()) {
+            log.debug("Interceptors configured: " + interceptors.size());
         }
 
         if (interceptors != null && !interceptors.isEmpty()) {
 
             List<Filter> filters = new ArrayList<Filter>(interceptors.size());
 
-            for( String key : interceptors.keySet() ) {
+            for (String key : interceptors.keySet()) {
 
                 Object value = interceptors.get(key);
 
                 Filter filter = null;
 
-                if (!(value instanceof Filter) && value instanceof WebInterceptor) {
+                if ( value instanceof Filter ) {
+                    filter = (Filter)value;
+                } else if ( value instanceof WebInterceptor ) {
                     WebInterceptor interceptor = (WebInterceptor) value;
                     WebInterceptorFilter wiFilter = new WebInterceptorFilter();
                     wiFilter.setWebInterceptor(interceptor);
                     filter = wiFilter;
-                } else if ( value instanceof Filter ) {
-                    filter = (Filter)value;
+                } else if ( value != null ) {
+                    String msg = "filtersAndInterceptors collection contains an object of type [" +
+                            value.getClass().getName() + "].  This instance does not implement " +
+                            Filter.class.getName() + " or the " + WebInterceptor.class.getName() + " interfaces.  " +
+                            "Only filters and interceptors should be configured.";
+                    throw new ServletException(msg);
+
                 }
-                if ( filter != null ) {
+
+                if (filter != null) {
                     filter.init(getFilterConfig());
                     filters.add(filter);
                 }
@@ -146,22 +254,22 @@ public class JSecurityFilter extends SecurityManagerFilter {
             this.filters = filters;
         }
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Filters configured and/or wrapped: " + (filters != null ? filters.size() : 0) );
+        if (log.isDebugEnabled()) {
+            log.debug("Filters configured and/or wrapped: " + (filters != null ? filters.size() : 0));
         }
     }
 
     protected void applyUrlMappings() throws ParseException {
 
         if (this.urls == null || this.filtersAndInterceptors == null || this.filtersAndInterceptors.isEmpty()) {
-            if ( log.isDebugEnabled() ) {
-                log.debug("No urls or filters/interceptors to process." );
+            if (log.isDebugEnabled()) {
+                log.debug("No urls or filters/interceptors to process.");
             }
             return;
         }
 
-        if ( log.isTraceEnabled() ) {
-            log.trace("Before url scanning." );
+        if (log.isTraceEnabled()) {
+            log.trace("Before url scanning.");
         }
 
         Scanner scanner = new Scanner(this.urls);
@@ -171,10 +279,9 @@ public class JSecurityFilter extends SecurityManagerFilter {
             String path = pathValue[0];
             String value = pathValue[1];
 
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Processing path [" + path + "] with value [" + value + "]" );
+            if (log.isDebugEnabled()) {
+                log.debug("Processing path [" + path + "] with value [" + value + "]");
             }
-
 
             //parse the value by tokenizing it to get the resulting interceptor-specific config entries
             //
@@ -203,12 +310,12 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
                 //now we have the interceptor name, path and (possibly null) path-specific config.  Let's apply them:
                 Object interceptor = this.filtersAndInterceptors.get(name);
-                if (interceptor instanceof MatchingWebInterceptor) {
+                if (interceptor instanceof PathConfigWebInterceptor) {
                     if (log.isDebugEnabled()) {
                         log.debug("Applying path [" + path + "] to interceptor [" + name + "] " +
                                 "with config [" + config + "]");
                     }
-                    ((MatchingWebInterceptor) interceptor).processPathConfig(path, config);
+                    ((PathConfigWebInterceptor) interceptor).processPathConfig(path, config);
                 }
             }
         }
@@ -256,18 +363,18 @@ public class JSecurityFilter extends SecurityManagerFilter {
     }
 
     public void destroy() {
-        if ( this.filters != null && !this.filters.isEmpty() ) {
-            for( Filter filter : filters ) {
+        if (this.filters != null && !this.filters.isEmpty()) {
+            for (Filter filter : filters) {
                 try {
                     filter.destroy();
                 } catch (Exception e) {
-                    if ( log.isWarnEnabled() ) {
-                        log.warn("Unable to cleanly destroy filter [" + filter + "].  Ignoring (shutting down)...", e );
+                    if (log.isWarnEnabled()) {
+                        log.warn("Unable to cleanly destroy filter [" + filter + "].  Ignoring (shutting down)...", e);
                     }
                 }
             }
         }
-        
+
         super.destroy();
     }
 }

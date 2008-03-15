@@ -26,7 +26,7 @@
 package org.jsecurity.web.interceptor.authc;
 
 import org.jsecurity.subject.Subject;
-import org.jsecurity.web.interceptor.AbstractWebInterceptor;
+import org.jsecurity.web.interceptor.PathMatchingWebInterceptor;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,7 +39,7 @@ import javax.servlet.ServletResponse;
  * @author Allan Ditzel
  * @since 0.9
  */
-public abstract class AuthenticationWebInterceptor extends AbstractWebInterceptor {
+public abstract class AuthenticationWebInterceptor extends PathMatchingWebInterceptor {
 
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         //mapped value is ignored - not needed for most (if not all) authc interceptors.
