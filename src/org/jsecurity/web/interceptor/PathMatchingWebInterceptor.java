@@ -106,7 +106,7 @@ public abstract class PathMatchingWebInterceptor extends RedirectingWebIntercept
         return true;
     }
 
-    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue ) throws Exception {
+    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object configValue ) throws Exception {
         return true;
     }
 
