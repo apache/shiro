@@ -24,7 +24,7 @@
  */
 package org.jsecurity.session.mgt.eis;
 
-import org.jsecurity.cache.HashtableCacheProvider;
+import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SimpleSession;
 import org.jsecurity.util.ClassUtils;
@@ -35,18 +35,18 @@ import java.util.Random;
 
 /**
  * Simple memory-based implementation of the SessionDAO that relies on its configured
- * {@link #setCacheProvider CacheProvider} for Session caching and in-memory persistence.
+ * {@link #setCacheManager CacheManager} for Session caching and in-memory persistence.
  *
- * <p><b>PLEASE NOTE</b> the default CacheProvider internal to this implementation is a
- * {@link org.jsecurity.cache.HashtableCacheProvider HashtableCacheProvider}, which IS NOT RECOMMENDED for production environments.
+ * <p><b>PLEASE NOTE</b> the default CacheManager internal to this implementation is a
+ * {@link org.jsecurity.cache.HashtableCacheManager HashtableCacheManager}, which IS NOT RECOMMENDED for production environments.
  *
  * <p>If you
  * want to use the MemorySessionDAO in production environments, such as those that require session data to be
  * recoverable in case of a server restart, you should do one of two things (or both):
  *
  * <ul>
- *   <li>Configure it with a production-quality CacheProvider. The
- * {@link org.jsecurity.cache.ehcache.EhCacheProvider EhCacheProvider} is one such provider.  It is not used by default
+ *   <li>Configure it with a production-quality CacheManager. The
+ * {@link org.jsecurity.cache.ehcache.EhCacheManager EhCacheManager} is one such implementation.  It is not used by default
  * to prevent a forced runtime dependency on ehcache.jar that may not be required in many environments)</li><br/>
  *   <li>If you need session information beyond their transient start/stop lifetimes, you should subclass this one and
  * override the <tt>do*</tt> methods to perform CRUD operations using an EIS-tier API (e.g. Hibernate/JPA/JCR/etc).
@@ -65,7 +65,7 @@ public class MemorySessionDAO extends CachingSessionDAO {
     private Random randomNumberGenerator = null;
 
     public MemorySessionDAO() {
-        setCacheProvider( new HashtableCacheProvider() );
+        setCacheManager( new HashtableCacheManager() );
     }
 
     private Random getRandomNumberGenerator() {

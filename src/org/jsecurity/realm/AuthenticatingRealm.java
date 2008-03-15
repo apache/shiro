@@ -4,7 +4,7 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.credential.SimpleCredentialsMatcher;
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheManager;
 
 /**
  * A top-level abstract implementation of the <tt>Realm</tt> interface that only implements authentication support
@@ -47,16 +47,16 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
     public AuthenticatingRealm() {
     }
 
-    public AuthenticatingRealm( CacheProvider cacheProvider ) {
-        setCacheProvider(cacheProvider);
+    public AuthenticatingRealm( CacheManager cacheManager) {
+        setCacheManager(cacheManager);
     }
 
     public AuthenticatingRealm( CredentialsMatcher matcher ) {
         setCredentialsMatcher( matcher );
     }
 
-    public AuthenticatingRealm( CacheProvider cacheProvider, CredentialsMatcher matcher ) {
-        setCacheProvider( cacheProvider );
+    public AuthenticatingRealm( CacheManager cacheManager, CredentialsMatcher matcher ) {
+        setCacheManager(cacheManager);
         setCredentialsMatcher( matcher );
     }
 

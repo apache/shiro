@@ -36,7 +36,7 @@ Some notes:
 
 * ehcache/ehcache.jar
 - ehcache 1.3.0 (http://ehcache.sourceforge.net/)
-- Required for compiling, using ehcache cache provider, and for runtime session management
+- Required for compiling, using ehcache cache manager, and for runtime session management
 
 * google-collections/google-collect.jar
 - Google Collections Snapshot 20071022

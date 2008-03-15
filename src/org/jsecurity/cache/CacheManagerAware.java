@@ -25,16 +25,16 @@
 package org.jsecurity.cache;
 
 /**
- * Interface implemented by components that utilize a CacheProvider and wish that CacheProvider to be supplied if
+ * Interface implemented by components that utilize a CacheManager and wish that CacheManager to be supplied if
  * one is available.
  *
- * <p>This is used so internal security components that use a CacheProvider can be injected with it instead of having
+ * <p>This is used so internal security components that use a CacheManager can be injected with it instead of having
  * to create one on their own.
  *
  * @author Les Hazlewood
  * @since 0.2
  */
-public interface CacheProviderAware {
+public interface CacheManagerAware {
 
-    void setCacheProvider( CacheProvider cacheProvider );
+    void setCacheManager( CacheManager cacheManager);
 }

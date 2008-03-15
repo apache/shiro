@@ -32,8 +32,8 @@ import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.HashtableCacheProvider;
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.LifecycleUtils;
@@ -47,7 +47,7 @@ import java.util.Set;
  * specifies the username, password, and roles for a user.  Roles can also be mapped
  * to permissions and associated with users.</p>
  *
- * <p>User accounts and roles are stored in two {@link Cache cache}s, so it is the Cache provider implementation that
+ * <p>User accounts and roles are stored in two {@link Cache cache}s, so it is the Cache manager implementation that
  * determines if this class stores all data in memory or spools to disk or clusters it, etc.
  *
  * @author Jeremy Haile
@@ -93,11 +93,11 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     public void afterRoleCacheSet(){}
 
     protected void initRoleCache() {
-        CacheProvider provider = getCacheProvider();
+        CacheManager manager = getCacheManager();
 
-        if ( provider == null ) {
-            provider = new HashtableCacheProvider();
-            setCacheProvider( provider );
+        if ( manager == null ) {
+            manager = new HashtableCacheManager();
+            setCacheManager(manager);
         }
 
         if ( getAccountCache() == null ) {
@@ -109,7 +109,7 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
             roleCacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_ROLE_CACHE_POSTFIX;
             setRoleCacheName( roleCacheName );
         }
-        Cache roleCache = provider.buildCache( roleCacheName );
+        Cache roleCache = manager.buildCache( roleCacheName );
         setRoleCache(roleCache);
 
         userAndRoleCachesCreated();
@@ -163,11 +163,5 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
 
     protected AuthorizingAccount doGetAccount(Object principal) {
         return (SimpleAuthorizingAccount)getAccountCache().get(principal);
-    }
-
-    public void onLogout(Object accountPrincipal) {
-        //override parent method of removing user from cache
-        //we don't want that to happen on cache-only realm since that would permanently
-        //remove the user from the realm.
     }
 }

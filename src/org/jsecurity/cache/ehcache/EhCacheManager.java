@@ -24,12 +24,11 @@
 */
 package org.jsecurity.cache.ehcache;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
-import org.jsecurity.cache.CacheProvider;
+import org.jsecurity.cache.CacheManager;
 import org.jsecurity.session.mgt.eis.CachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
@@ -37,9 +36,9 @@ import org.jsecurity.util.Initializable;
 import java.io.InputStream;
 
 /**
- * <p>JSecurity {@link CacheProvider} for ehcache 1.2 and above.</p>
+ * <p>JSecurity {@link org.jsecurity.cache.CacheManager} for ehcache 1.2 and above.</p>
  *
- * <p>This provider requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
+ * <p>This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
  *
  * <p>See http://ehcache.sf.net for documentation on EhCache</p>
@@ -48,7 +47,7 @@ import java.io.InputStream;
  * @author Jeremy Haile
  * @author Les Hazlewood
  */
-public class EhCacheProvider implements CacheProvider, Initializable, Destroyable {
+public class EhCacheManager implements CacheManager, Initializable, Destroyable {
 
     public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
     public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
@@ -60,20 +59,20 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
     protected final transient Log log = LogFactory.getLog( getClass() );
 
     /**
-     * The EhCache cache manager used by this provider to create caches.
+     * The EhCache cache manager used by this implementation to create caches.
      */
-    protected CacheManager manager;
+    protected net.sf.ehcache.CacheManager manager;
     private boolean cacheManagerImplicitlyCreated = false;
     /**
      * Classpath file location - without a leading slash, it is relative to the current class.
      */
     private String cacheManagerConfigFile = "ehcache.xml";
 
-    public CacheManager getCacheManager() {
+    public net.sf.ehcache.CacheManager getCacheManager() {
         return manager;
     }
 
-    public void setCacheManager( CacheManager manager ) {
+    public void setCacheManager( net.sf.ehcache.CacheManager manager ) {
         this.manager = manager;
     }
 
@@ -146,7 +145,7 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
     }
 
     /**
-     * Initializes this cache provider.
+     * Initializes this instance.
      * <p/>
      * <p>If a {@link #setCacheManager CacheManager} has been
      * explicitly set (e.g. via Dependency Injection or programatically) prior to calling this
@@ -161,11 +160,11 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
      *
      * @throws org.jsecurity.cache.CacheException
      *          if there are any CacheExceptions thrown by EhCache.
-     * @see CacheManager#create
+     * @see net.sf.ehcache.CacheManager#create
      */
     public final void init() throws CacheException {
         try {
-            CacheManager cacheMgr = getCacheManager();
+            net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
             if ( cacheMgr == null ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "cacheManager property not set.  Constructing CacheManager instance... " );
@@ -173,9 +172,9 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
                 //using the CacheManager constructor, the resulting instance is _not_ a VM singleton
                 //(as would be the case by calling CacheManager.getInstance().  We do not use the getInstance here
                 //because we need to know if we need to destroy the CacheManager instance - using the static call,
-                //we don't know which component is responsible for shutting it down.  By using a single EhCacheProvider,
+                //we don't know which component is responsible for shutting it down.  By using a single EhCacheManager,
                 //it will always know to shut down the instance if it was responsible for creating it.
-                cacheMgr = new CacheManager( getCacheManagerConfigFileInputStream() );
+                cacheMgr = new net.sf.ehcache.CacheManager( getCacheManagerConfigFileInputStream() );
                 cacheManagerImplicitlyCreated = true;
                 setCacheManager( cacheMgr );
             }
@@ -187,7 +186,7 @@ public class EhCacheProvider implements CacheProvider, Initializable, Destroyabl
     public void destroy() {
         if ( cacheManagerImplicitlyCreated ) {
             try {
-                CacheManager cacheMgr = getCacheManager();
+                net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
                 cacheMgr.shutdown();
             } catch ( Exception e ) {
                 if ( log.isWarnEnabled() ) {

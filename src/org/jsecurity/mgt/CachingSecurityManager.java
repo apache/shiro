@@ -26,10 +26,10 @@ package org.jsecurity.mgt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.cache.CacheProvider;
-import org.jsecurity.cache.CacheProviderAware;
-import org.jsecurity.cache.HashtableCacheProvider;
-import org.jsecurity.cache.ehcache.EhCacheProvider;
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.CacheManagerAware;
+import org.jsecurity.cache.HashtableCacheManager;
+import org.jsecurity.cache.ehcache.EhCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
@@ -39,17 +39,17 @@ import org.jsecurity.util.LifecycleUtils;
  * A very basic extension point for the SecurityManager interface that merely provides logging and caching
  * support.  All <tt>SecurityManager</tt> method implementations are left to subclasses.
  *
- * <p>Upon {@link #init() initialization}, a sensible default <tt>CacheProvider</tt> will be created automatically
+ * <p>Upon {@link #init() initialization}, a sensible default <tt>CacheManager</tt> will be created automatically
  * if one has not been provided.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class CachingSecurityManager implements SecurityManager, Initializable, Destroyable, CacheProviderAware {
+public abstract class CachingSecurityManager implements SecurityManager, Initializable, Destroyable, CacheManagerAware {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected CacheProvider cacheProvider;
+    protected CacheManager cacheManager;
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
@@ -59,75 +59,75 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
     }
 
     /**
-     * Returns the default CacheProvider used by this SecurityManager.
+     * Returns the default CacheManager used by this SecurityManager.
      *
-     * @return the cacheProvider used by this SecurityManager
+     * @return the cacheManager used by this SecurityManager
      */
-    public CacheProvider getCacheProvider() {
-        return cacheProvider;
+    public CacheManager getCacheManager() {
+        return cacheManager;
     }
 
-    public void setCacheProvider(CacheProvider cacheProvider) {
-        this.cacheProvider = cacheProvider;
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 
     public void init() {
-        ensureCacheProvider();
-        afterCacheProviderSet();
+        ensureCacheManager();
+        afterCacheManagerSet();
     }
 
-    protected void ensureCacheProvider() {
-        CacheProvider cacheProvider = getCacheProvider();
-        if (cacheProvider == null) {
+    protected void ensureCacheManager() {
+        CacheManager cacheManager = getCacheManager();
+        if (cacheManager == null) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "No CacheProvider has been configured.  Attempting to create a default one..." );
+                log.debug( "No CacheManager has been configured.  Attempting to create a default one..." );
             }
-            CacheProvider provider = createCacheProvider();
-            setCacheProvider(provider);
+            CacheManager manager = createCacheManager();
+            setCacheManager(manager);
         } else {
             if ( log.isInfoEnabled() ) {
-                log.info( "Using configured CacheProvider [" + cacheProvider + "]" );
+                log.info( "Using configured CacheManager [" + cacheManager + "]" );
             }
         }
     }
 
-    protected CacheProvider createCacheProvider() {
-        CacheProvider provider;
+    protected CacheManager createCacheManager() {
+        CacheManager manager;
 
         if (JavaEnvironment.isEhcacheAvailable()) {
             if (log.isDebugEnabled()) {
-                String msg = "Initializing default CacheProvider using EhCache.";
+                String msg = "Initializing default CacheManager using EhCache.";
                 log.debug(msg);
             }
-            EhCacheProvider ehCacheProvider = new EhCacheProvider();
-            ehCacheProvider.init();
-            provider = ehCacheProvider;
+            EhCacheManager ehCacheManager = new EhCacheManager();
+            ehCacheManager.init();
+            manager = ehCacheManager;
         } else {
             if (log.isWarnEnabled()) {
-                String msg = "Ehcache was not found in the classpath.  Reverting to failsafe CacheProvider which will " +
+                String msg = "Ehcache was not found in the classpath.  Reverting to failsafe CacheManager which will " +
                         "create in-memory HashTable caches.  This is NOT RECOMMENDED for production environments.  " +
                         "Please ensure ehcache.jar is in the classpath and JSecurity will automatically use a " +
-                        "production-quality CacheProvider implementation, or you may alternatively provide your " +
-                        "own via the " + getClass().getName() + "#setCacheProvider method.";
+                        "production-quality CacheManager implementation, or you may alternatively provide your " +
+                        "own via the " + getClass().getName() + "#setCacheManager method.";
                 log.warn(msg);
             }
-            provider = new HashtableCacheProvider();
+            manager = new HashtableCacheManager();
         }
 
-        return provider;
+        return manager;
     }
 
-    protected void afterCacheProviderSet(){}
+    protected void afterCacheManagerSet(){}
 
     public void destroy() {
-        beforeCacheProviderDestroyed();
-        destroyCacheProvider();
+        beforeCacheManagerDestroyed();
+        destroyCacheManager();
     }
 
-    protected void beforeCacheProviderDestroyed(){}    
+    protected void beforeCacheManagerDestroyed(){}
 
-    protected void destroyCacheProvider() {
-        LifecycleUtils.destroy( getCacheProvider() );
-        this.cacheProvider = null;
+    protected void destroyCacheManager() {
+        LifecycleUtils.destroy( getCacheManager() );
+        this.cacheManager = null;
     }
 }

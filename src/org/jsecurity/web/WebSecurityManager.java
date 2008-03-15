@@ -79,7 +79,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
             return scsm;
         } else {
             WebSessionManager wsm = new WebSessionManager();
-            wsm.setCacheProvider(getCacheProvider());
+            wsm.setCacheManager(getCacheManager());
             wsm.setSessionEventListeners(getSessionEventListeners());
             wsm.init();
             return wsm;
