@@ -47,7 +47,7 @@
             #
             # Each interceptor is configured based on its functionality and/or protocol.  You should read each
             # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
-            # effect the user experience.
+            # affect the user experience.
             #
             # Http BASIC Authentication interceptor: requires the requesting user to be authenticated for the request
             # to continue, and if they're not, forces login via an Http BASIC browser dialog.  Upon successful login,
