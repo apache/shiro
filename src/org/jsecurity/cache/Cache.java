@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
+* Copyright (C) 2005-2008 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -24,41 +24,34 @@
 */
 package org.jsecurity.cache;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
- * A Cache instance maintains objects for performance enhancements.
+ * A Cache efficiently stores temporary objects primarily to improve an application's performance.
  *
- * <p>It is really a wrapper API around the underlying cache subsystem's cache instance
- * (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence, GigaSpaces, etc, etc), allowing a
- * JSecurity user to configure any cache framework they choose.
+ * <p>JSecurity doesn't implement a full Cache mechanism itself, since that is outside the core competency of a 
+ * Security framework.  Instead, this interface provides an abstraction (wrapper) API on top of an underlying
+ * cache framework's cache instance (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
+ * GigaSpaces, etc, etc), allowing a JSecurity user to configure any cache mechanism they choose.
  *
- * @since 0.2
- * @author Jeremy Haile
  * @author Les Hazlewood
+ * @author Jeremy Haile
+ * @since 0.2
  */
 public interface Cache {
 
     /**
-     * The name associated with this cache.  This should usually be
-     * unique for all caches associated with a particular
-     * {@link CacheManager}
+     * Returns the Cached value stored under the specified <code>key</code> or
+     * <code>null</code> if there is no Cache entry for that <code>key</code>.
      *
-     * @return the unique name of this cache.
-     */
-    public String getName();
-
-    /**
-     * Get an item from the cache.
-     *
-     * @param key the key that the item was previous stored with.
-     * @return the cached object or <tt>null</tt>
+     * @param key the key that the value was previous added with
+     * @return the cached object or <tt>null</tt> if there is no Cache entry for the specified <code>key</code>
      * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public Object get( Object key ) throws CacheException;
 
     /**
-     * Add an item to the cache.
+     * Adds a Cache entry.
      *
      * @param key   the key used to identify the object being stored.
      * @param value the value to be stored in the cache.
@@ -67,31 +60,34 @@ public interface Cache {
     public void put( Object key, Object value ) throws CacheException;
 
     /**
-     * Remove an item from the cache.
+     * Remove the cache entry corresponding to the specified key.
      *
-     * @param key the key of the item to be removed.
+     * @param key the key of the entry to be removed.
      * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public void remove( Object key ) throws CacheException;
 
     /**
-     * Clear all objects from the cache.
+     * Clear all entries from the cache.
      * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public void clear() throws CacheException;
 
     /**
-     * Returns the number of cache entries currently contained in the cache.
-     *
-     * @return the number of cache entries currently contained in the cache.
+     * Returns the number of entries in the cache.
+     * @return the number of entries in the cache.
      */
-    public long getSize();
+    public int size();
 
     /**
-     * Converts the contents of this cache to a map for debugging or
-     * reporting purposes.
-     *
-     * @return the contents of this cache as a map.
+     * Returns a view of all the keys for entries contained in this cache.
+     * @return a view of all the keys for entries contained in this cache.
      */
-    public Map toMap();
+    public Set keys();
+
+    /**
+     * Returns a view of all of the values contained in this cache.
+     * @return a view of all of the values contained in this cache.
+     */
+    public Set values();
 }

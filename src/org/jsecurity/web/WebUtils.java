@@ -167,6 +167,7 @@ public class WebUtils {
      * @see java.net.URLDecoder#decode(String, String)
      * @see java.net.URLDecoder#decode(String)
      */
+    @SuppressWarnings({"deprecation"})
     public static String decodeRequestString(HttpServletRequest request, String source) {
         String enc = determineEncoding(request);
         try {

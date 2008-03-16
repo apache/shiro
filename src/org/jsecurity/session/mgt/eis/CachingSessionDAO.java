@@ -36,7 +36,6 @@ import org.jsecurity.util.Initializable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * An CachingSessionDAO is a SessionDAO that provides a transparent caching layer between the components that
@@ -312,11 +311,9 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     public Collection<Session> getActiveSessions() {
         Cache cache = getActiveSessionsCache();
         if ( cache != null ) {
-            Map sessionsMap = cache.toMap();
-            if (sessionsMap != null && !sessionsMap.isEmpty()) {
-                return Collections.unmodifiableCollection(sessionsMap.values());
-            }
+            return cache.values();
+        } else {
+            return Collections.EMPTY_LIST;
         }
-        return Collections.EMPTY_LIST;
     }
 }

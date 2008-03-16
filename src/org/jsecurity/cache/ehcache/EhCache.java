@@ -31,9 +31,9 @@ import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache}.
@@ -66,10 +66,6 @@ public class EhCache implements Cache {
         this.cache = cache;
     }
 
-    public String getName() {
-        return cache.getName();
-    }
-
     /**
      * Gets a value of an element which matches the given key.
      *
@@ -79,7 +75,7 @@ public class EhCache implements Cache {
     public Object get(Object key) throws CacheException {
         try {
             if (logger.isTraceEnabled()) {
-                logger.trace("Getting object from cache [" + getName() + "] for key [" + key + "]");
+                logger.trace("Getting object from cache [" + cache.getName() + "] for key [" + key + "]");
             }
             if (key == null) {
                 return null;
@@ -109,7 +105,7 @@ public class EhCache implements Cache {
     public void put(Object key, Object value) throws CacheException {
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Putting object in cache [" + getName() + "] for key [" + key + "]");
+            logger.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
         }
 
         try {
@@ -131,7 +127,7 @@ public class EhCache implements Cache {
     public void remove(Object key) throws CacheException {
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Removing object from cache [" + getName() + "] for key [" + key + "]");
+            logger.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
             cache.remove(key);
@@ -148,7 +144,7 @@ public class EhCache implements Cache {
     public void clear() throws CacheException {
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Clearing all objects from cache [" + getName() + "]");
+            logger.trace("Clearing all objects from cache [" + cache.getName() + "]");
         }
         try {
             cache.removeAll();
@@ -157,9 +153,39 @@ public class EhCache implements Cache {
         }
     }
 
-    public long getSize() {
+    public int size() {
         try {
             return cache.getSize();
+        } catch (Throwable t) {
+            throw new CacheException(t);
+        }
+    }
+
+    public Set keys() {
+        try {
+            List keys = cache.getKeys();
+            if ( keys != null && !keys.isEmpty() ) {
+                return Collections.unmodifiableSet( new LinkedHashSet( keys ) );
+            } else {
+                return Collections.EMPTY_SET;
+            }
+        } catch (Throwable t) {
+            throw new CacheException(t);
+        }
+    }
+
+    public Set values() {
+        try {
+            List keys = cache.getKeys();
+            if ( keys != null && !keys.isEmpty() ) {
+                Set values = new LinkedHashSet(keys.size());
+                for( Object key : keys ) {
+                    values.add( cache.get(key) );
+                }
+                return Collections.unmodifiableSet( values );
+            } else {
+                return Collections.EMPTY_SET;
+            }
         } catch (Throwable t) {
             throw new CacheException(t);
         }
@@ -191,29 +217,7 @@ public class EhCache implements Cache {
         }
     }
 
-    public Map toMap() {
-        try {
-            Map result = new HashMap();
-            if (cache != null) {
-                List keys = cache.getKeys();
-                for (Object key : keys) {
-                    Element cacheElement = cache.get(key);
-                    if (cacheElement != null) {
-                        Object value = cacheElement.getValue();
-                        if (value != null) {
-                            result.put(key, value);
-                        }
-                    }
-                }
-            }
-            return Collections.unmodifiableMap(result);
-        }
-        catch ( Throwable t ) {
-            throw new CacheException(t);
-        }
-    }
-
     public String toString() {
-        return "EhCache [" + getName() + "]";
+        return "EhCache [" + cache.getName() + "]";
     }
 }

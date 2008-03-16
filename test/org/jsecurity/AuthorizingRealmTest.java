@@ -60,7 +60,6 @@ public class AuthorizingRealmTest {
     public void tearDown() {
         securityManager.destroy();
         securityManager = null;
-        realm.destroy();
         realm = null;
     }
 
