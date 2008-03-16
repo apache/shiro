@@ -31,7 +31,7 @@ import java.util.*;
  * @since 0.2
  * @author Les Hazlewood
  */
-@SuppressWarnings("deprecated")
+@SuppressWarnings({"deprecated", "deprecation"})
 public class JSecurityHttpSession implements HttpSession {
 
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
@@ -127,6 +127,7 @@ public class JSecurityHttpSession implements HttpSession {
         return getAttribute( s );
     }
 
+    @SuppressWarnings({"unchecked"})
     protected Set<String> getKeyNames() {
         Collection<Object> keySet = null;
         try {

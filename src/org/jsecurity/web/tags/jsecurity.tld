@@ -104,14 +104,36 @@
         <name>authenticated</name>
         <tag-class>org.jsecurity.web.tags.AuthenticatedTag</tag-class>
         <body-content>JSP</body-content>
-        <description>Displays body content only if the current user is authenticated.</description>
+        <description>Displays body content only if the current user has successfully authenticated
+            _during their current session_.  It is more restrictive than the 'user' tag.
+            It is logically opposite to the 'notAuthenticated' tag.</description>
     </tag>
 
     <tag>
         <name>notAuthenticated</name>
         <tag-class>org.jsecurity.web.tags.NotAuthenticatedTag</tag-class>
         <body-content>JSP</body-content>
-        <description>Displays body content only if the current user is not authenticated.</description>
+        <description>Displays body content only if the current user has NOT succesfully authenticated
+            _during their current session_.  It is logically opposite to the 'authenticated' tag.</description>
+    </tag>
+
+    <tag>
+        <name>user</name>
+        <tag-class>org.jsecurity.web.tags.UserTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current Subject has a known identity, either
+            from a previous login or from 'RememberMe' services.  Note that this is semantically different
+            from the 'authenticated' tag, which is more restrictive.  It is logically
+            opposite to the 'guest' tag.</description>
+    </tag>
+
+    <tag>
+        <name>guest</name>
+        <tag-class>org.jsecurity.web.tags.GuestTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>Displays body content only if the current Subject IS NOT known to the system, either
+            because they have not logged in or they have no corresponding 'RememberMe' identity.  It is logically
+            opposite to the 'user' tag.</description>
     </tag>
 
     <tag>

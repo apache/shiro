@@ -19,8 +19,10 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
- * JSP tag that renders the tag body if the current user is not authenticated.  If the
- * user is authenticated, the tag body is skipped.
+ * JSP tag that renders the tag body only if the current user has <em>not</em> executed a successful authentication
+ * attempt <em>during their current session</em>.
+ *
+ * <p>The logically opposite tag of this one is the {@link AuthenticatedTag}.
  *
  * @since 0.2
  * @author Jeremy Haile
@@ -30,14 +32,12 @@ public class NotAuthenticatedTag extends SecureTag {
     public int onDoStartTag() throws JspException {
         if ( getSubject() == null || !getSubject().isAuthenticated() ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Subject does not exist or is not authenticated.  'notAuthenticated' tag body " +
-                    "will be evaluated." );
+                log.trace( "Subject does not exist or is not authenticated.  Tag body will be evaluated." );
             }
             return TagSupport.EVAL_BODY_INCLUDE;
         } else {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Subject exists and is authenticated.  'notAuthenticated' tag body " +
-                    "will not be evaluated." );
+                log.trace( "Subject exists and is authenticated.  Tag body will not be evaluated." );
             }
             return TagSupport.SKIP_BODY;
         }

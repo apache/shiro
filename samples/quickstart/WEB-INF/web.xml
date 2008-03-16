@@ -16,7 +16,6 @@
             # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
             
             [main]
-            sessionMode = jsecurity
             [interceptors]
 
             [urls]

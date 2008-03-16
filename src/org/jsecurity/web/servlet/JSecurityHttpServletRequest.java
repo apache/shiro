@@ -31,6 +31,7 @@ import java.security.Principal;
  * @author Les Hazlewood
  * @since 0.2
  */
+@SuppressWarnings({"deprecated", "deprecation"})
 public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     //The following 7 constants support the JSecurity's implementation of the Servlet Specification
