@@ -1,26 +1,17 @@
 /*
- * Copyright (C) 2005-2007 Les Hazlewood, Jeremy Haile
+ * Copyright 2005-2008 Les Hazlewood, Jeremy Haile
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
- * Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the
- *
- * Free Software Foundation, Inc.
- * 59 Temple Place, Suite 330
- * Boston, MA 02111-1307
- * USA
- *
- * Or, you may view it online at
- * http://www.opensource.org/licenses/lgpl-license.php
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.jsecurity.realm;
 
@@ -142,8 +133,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * the {@link #setCacheManager cacheManager} property will be checked.
      * If a <tt>cacheManager</tt> has been set, it will be used to create an Account
      * <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
-     * <li>If neither the {@link #setAccountCache (org.jsecurity.cache.Cache) cache}
-     * or {@link # setCacheManager (org.jsecurity.cache.CacheManager) cacheManager}
+     * <li>If neither the {@link #setAccountCache(org.jsecurity.cache.Cache) cache}
+     * or {@link #setCacheManager(org.jsecurity.cache.CacheManager) cacheManager}
      * properties are set, caching will be disabled and Account lookups will be delegated to
      * subclass implementations for each authorization check.</li>
      * </ol>
