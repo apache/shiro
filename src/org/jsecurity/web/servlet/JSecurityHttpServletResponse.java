@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
+ * Copyright 2005-2008 Les Hazlewood and the original authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,17 +26,23 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 /**
- * TODO class JavaDoc
+ * HttpServletResponse implementation to support URL Encoding of JSecurity Session IDs.
+ *
+ * It is only used when using JSecurity's native Session Management configuration (and not when using the Servlet
+ * Container session configuration, which is JSecurity's default in a web environment).  Because the servlet container
+ * already performs url encoding of its own session ids, instances of this class are only needed when using JSecurity
+ * native sessions.
+ *
  * <p>Note that this implementation relies in part on source code from the Tomcat 6.x distribution for
- * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  As such, it is dual licensed
- * under both the LGPL and Apache 2.0 license to conform to and respect the original authors' licensing intent.
+ * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since JSecurity is also
+ * Apache 2.0 license, all regular licenses and conditions have remained in tact.
  *
  * @author Les Hazlewood
  * @since 0.2
  */
 public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
 
-    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME.toLowerCase();
+    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;
 
     private ServletContext context = null;
     //the associated request
