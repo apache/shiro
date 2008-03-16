@@ -24,10 +24,13 @@
  */
 package org.jsecurity.authc.pam;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UnknownAccountException;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.Realm;
 
 import java.util.Collection;
@@ -45,11 +48,13 @@ import java.util.Collection;
  */
 public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthenticationStrategy {
 
-    public void beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
-        //does nothing - here to satisfy the interface requirements
+    protected transient final Log log = LogFactory.getLog( getClass() );
+
+    public Account beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
+        return new SimpleAuthorizingAccount();
     }
 
-    public void beforeAttempt( Realm realm, AuthenticationToken token ) throws AuthenticationException {
+    public Account beforeAttempt( Realm realm, AuthenticationToken token, Account account ) throws AuthenticationException {
         if ( !realm.supports( token ) ) {
             String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support " +
                 " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName() +
@@ -57,9 +62,11 @@ public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthen
                 "AuthenticationToken.";
             throw new UnsupportedTokenException( msg );
         }
+
+        return account;
     }
 
-    public void afterAttempt( Realm realm, AuthenticationToken token, Account account, Throwable t )
+    public Account afterAttempt( Realm realm, AuthenticationToken token, Account account, Account aggregate, Throwable t )
         throws AuthenticationException {
         if( t != null ) {
             if ( t instanceof AuthenticationException ) {
@@ -79,12 +86,21 @@ public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthen
                 "log-in process.";
             throw new UnknownAccountException( msg );
         }
+
+        // If non-null account is returned, then the realm was able to authenticate the
+        // user - so merge the account with any accumulated before:
+        if (log.isDebugEnabled()) {
+            log.debug("Account successfully authenticated using realm of type [" + realm.getClass().getName() + "]");
+        }
+        ((SimpleAuthorizingAccount)aggregate).merge(account);
+
+        return aggregate;
     }
 
-    public void afterAllAttempts( AuthenticationToken token, Account aggregated )
-        throws AuthenticationException {
+    public Account afterAllAttempts( AuthenticationToken token, Account aggregate ) throws AuthenticationException {
         //if the authentication process made it this far (because of the potential exceptions that could have been
         //thrown from the other two methods in this class), then the authentication attempt was successful across all
-        //configured realms, so do nothing - allow to continue
+        //configured realms, so just return the aggregate argument
+        return aggregate;
     }
 }

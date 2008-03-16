@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.EventObject;
 
 /**
- * Parent class of all events triggered by JSecurity.
+ * Root class of all events triggered by JSecurity.
  *
  * @since 0.9
  * @author Les Hazlewood
