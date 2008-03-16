@@ -39,7 +39,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     private static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    /** Default global session timeout value (30 * 60 * 1000 milliseconds = 30 minutes). */
+    /** Default main session timeout value (30 * 60 * 1000 milliseconds = 30 minutes). */
     public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
 
     /**
@@ -78,7 +78,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     /**
      * Returns the time in milliseconds that any session may remain idle before expiring.  This
-     * value is just a global default for all sessions and may be overridden by subclasses on a
+     * value is just a main default for all sessions and may be overridden by subclasses on a
      * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
      * so desired.
      *
@@ -98,7 +98,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     /**
      * Sets the time in milliseconds that any session may remain idle before expiring.  This
-     * value is just a global default for all sessions.  Subclasses may override the
+     * value is just a main default for all sessions.  Subclasses may override the
      * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
      *
      * @param globalSessionTimeout the time in milliseconds any session may remain idle before

@@ -39,16 +39,16 @@ import java.util.Scanner;
  * The following is a fully commented example that documents how to configure it:
  *
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
- * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
- *
- * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
- * #       Everything else is just commented to explain things in-depth. Feel free to delete any
-   #       comments that you don't want to read ;)
+   &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
+   &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
+   &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
+
+   #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
+   #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
+   #       comments that you don't want to read from your own configuration ;)
    #
-   # All defaults are listed below but commented out.  If you want to change any value, you only
-   # need to uncomment the line you want to change.
+   # Any commented values below are JSecurity's defaults.  If you want to change any values, you only
+   # need to uncomment the lines you want to change.
 
    [main]
    # The 'main' section defines JSecurity-wide configuration.
@@ -63,46 +63,49 @@ import java.util.Scanner;
    #sessionMode = http
 
    [interceptors]
-
-   # This section defines a 'pool' of all the available interceptors that are available to the url path
+   # This section defines the 'pool' of all the available interceptors that are available to the url path
    # definitions below in the [urls] section.
    #
-   # The commented values are provided by JSecurity by default.  You can uncomment any line that you wish
-   # to override.  It is not necessary to uncomment all of an interceptor's properties or even the main
-   # name to class definition itself - you only need to uncomment the lines you want to override.
+   # The following commented values are already provided by JSecurity by default and are immediately usable
+   # in the [urls] definitions below.  If you like, you may override any values by uncommenting only the lines
+   # you need to change.
    #
    # Each interceptor is configured based on its functionality and/or protocol.  You should read each
    # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
    # affect the user experience.
    #
    # Http BASIC Authentication interceptor: requires the requesting user to be authenticated for the request
-   # to continue, and if they're not, forces login via an Http BASIC browser dialog.  Upon successful login,
-   # they're allowed to continue on to the requested resource/url.
+   # to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
+   # Upon successful login, they're allowed to continue on to the requested resource/url.
    #authcBasic = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
    #authcBasic.applicationName = JSecurity Quickstart
    #
-   # Roles interceptor: requires the requesting user to have one or more roles for the request to continue
-   # and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
+   # Roles interceptor: requires the requesting user to have one or more roles for the request to continue.
+   # If they do not have the specified roles, they are redirected to the specified URL.
    #roles = org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor
+   #roles.url =
+   # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
+   # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.
    #
    # Permissions interceptor: requires the requesting user to have one or more permissions for the request to
-   # continue, and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
+   # continue, and if they do not, redirects them to the 'unauthorizedPage' defined in the [main] section.
    #perms = org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor
-   #
+   #perms.url =
+   # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
+   # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.  Many
+   # applications like to use the same url specified in roles.url above.
    #
    #
    # Define your own interceptors here.  To properly handle path matching, all interceptor implementations
    # should extend the org.jsecurity.web.interceptor.PathMatchingWebInterceptor abstract class.
 
    [urls]
-
-   # This section defines url path mappings.
-   #
-   # Each mapping entry must be on a single line and conform to the following format:
+   # This section defines url path mappings.  Each mapping entry must be on a single line and conform to the
+   # following representation:
    #
    # ant_path_expression = path_specific_interceptor_chain_definition
    #
-   # For each request that matches a specified path, the corresponding value defines a comma-delimited chain of
+   # For any request that matches a specified path, the corresponding value defines a comma-delimited chain of
    # filters/interceptors to execute for that request.
    #
    # This is incredibly powerful in that you can define arbitrary filter chains for any given request pattern
@@ -113,32 +116,30 @@ import java.util.Scanner;
    # interceptor1[optional_config1], interceptor2[optional_config2], ..., interceptorN[optional_configN]
    #
    # where 'interceptorN' is the name of an interceptor defined above in the [interceptors] section and
-   # optional_config is any (optional) string that has meaning for that particular interceptor for
-   # _that particular path_.
+   # '[optional_configN]' is an optional bracketed string that has meaning for that particular interceptor for
+   # _that particular path_.  If the interceptor does not need specific config for that url path, you may
+   # discard the brackets - that is, interceptorN[] just becomes interceptorN.
    #
-   # And because tokens define chains, order matters!  Define the interceptor tokens for each url path pattern
-   # in the order you want them to filter.
+   # And because interceptor tokens define chains, order matters!  Define the tokens for each path pattern
+   # in the order you want them to filter (comma-delimited).
    #
    # Finally, each interceptor is free to handle the response however it wants if its necessary
-   # conditions are not met (redirect, HTTP error code, direct rendering, etc).  Otherwise, it is expected
-   # that the request will continue on to its destination page.
+   # conditions are not met (redirect, HTTP error code, direct rendering, etc).  Otherwise, it is expected to allow
+   # the request to continue through the chain on to the final destination view.
    #
    # Examples:
    #
    # To illustrate chain configuration, look at the /account/** mapping below.  This says
-   # "apply the above 'authc' interceptor to any request matching the '/account/**' pattern".  Since the
-   # 'authc' interceptor does not need any path-specific config, it doesn't have any extra config brackets [].
-   # (the 'authc' interceptor will force a login for unauthenticated users and then send them to the
-   #  originally requested URL).
+   # &quot;apply the above 'authcBasic' interceptor to any request matching the '/account/**' pattern&quot;.  Since the
+   # 'authcBasic' interceptor does not need any path-specific config, it doesn't have any config brackets [].
    #
    # The /remoting/** definition on the other hand uses the 'roles' and 'perms' interceptors which do use
    # bracket notation.  That definition says:
    #
-   # "To access /remoting/** urls, ensure that the user is first authenticated ('authc'), then that user must
-   # be verified to have the 'b2bClient' role, and then finally they must have the
-   # 'remote:invoke:lan,wan' permission."
+   # &quot;To access /remoting/** urls, ensure that the user is first authenticated ('authcBasic'), then ensure that user
+   # has the 'b2bClient' role, and then finally ensure that they have the 'remote:invoke:lan,wan' permission.&quot;
    #
-   # (Note that because elements within brackets [ ] are comma-delimited, we needed to escape the permission
+   # (Note that because elements within brackets [ ] are comma-delimited themselves, we needed to escape the permission
    # actions of 'lan,wan' with quotes.  If we didn't do that, the permission interceptor would interpret
    # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
    # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
@@ -162,10 +163,10 @@ import java.util.Scanner;
  */
 public class JSecurityFilter extends SecurityManagerFilter {
 
-    private static final String[] CONFIG_SECTIONS = {"[global]", "[interceptors]", "[urls]"};
+    private static final String[] CONFIG_SECTIONS = {"[main]", "[interceptors]", "[urls]"};
 
     protected String config = null;
-    protected String global = null;
+    protected String main = null;
     protected String interceptors = null;
     protected String urls = null;
     protected String unauthorizedPage;
@@ -192,12 +193,12 @@ public class JSecurityFilter extends SecurityManagerFilter {
         this.config = config;
     }
 
-    public String getGlobal() {
-        return global;
+    public String getMain() {
+        return main;
     }
 
-    public void setGlobal(String global) {
-        this.global = global;
+    public void setMain(String main) {
+        this.main = main;
     }
 
     public String getInterceptors() {
@@ -224,12 +225,36 @@ public class JSecurityFilter extends SecurityManagerFilter {
         this.unauthorizedPage = unauthorizedPage;
     }
 
-    protected void afterSecurityManagerSet() throws Exception {
+    protected void onFilterConfigSet() throws Exception {
         applyInitParams();
         applyConfig();
         ensureWebInterceptors();
         applyUrlMappings();
         applyWebInterceptorFilters();
+        super.onFilterConfigSet();
+    }
+
+    protected void applySessionMode() {
+        String main = getMain();
+        if ( main != null ) {
+            Scanner scanner = new Scanner(main);
+            while( scanner.hasNextLine() ) {
+                String line = scanner.nextLine();
+                //we only process sessionMode so far:
+                String[] nameAndValue;
+                try {
+                    nameAndValue = splitKeyValue(line);
+                } catch (ParseException e) {
+                    throw new IllegalStateException(e);
+                }
+                String name = nameAndValue[0];
+                String value = nameAndValue[1];
+                if ( SESSION_MODE_CONTEXT_PARAM_NAME.equals(name) && value != null ) {
+                    setSessionMode(value);
+                    break;
+                }
+            }
+        }
     }
 
     protected void applyConfig() throws Exception {
@@ -238,13 +263,13 @@ public class JSecurityFilter extends SecurityManagerFilter {
         //The following 3 values will be non-null if they have been overidden.
         //If they are overridden, we don't set them in the scanning below so that we
         //retain user-configured values.
-        String global = getGlobal();
+        String main = getMain();
         String interceptors = getInterceptors();
         String urls = getUrls();
 
         if (config != null) {
 
-            boolean inGlobal = false;
+            boolean inMain = false;
             boolean inInterceptors = false;
 
             StringBuffer section = new StringBuffer();
@@ -259,19 +284,19 @@ public class JSecurityFilter extends SecurityManagerFilter {
                 
                 if (line != null) {
                     if (CONFIG_SECTIONS[0].equals(line.toLowerCase())) {
-                        inGlobal = true;
+                        inMain = true;
                         if ( log.isDebugEnabled() ) {
                             log.debug( "Parsing " + CONFIG_SECTIONS[0] );
                         }
                     } else if (CONFIG_SECTIONS[1].equals(line.toLowerCase())) {
-                        if (inGlobal) {
-                            if (global == null && section.length() > 0) { //only set if not set previously by the user
-                                global = section.toString();
-                                setGlobal(global);
+                        if (inMain) {
+                            if (main == null && section.length() > 0) { //only set if not set previously by the user
+                                main = section.toString();
+                                setMain(main);
                             }
                         }
                         section = new StringBuffer();
-                        inGlobal = false;
+                        inMain = false;
                         inInterceptors = true;
                         if ( log.isDebugEnabled() ) {
                             log.debug( "Parsing " + CONFIG_SECTIONS[1] );
@@ -285,7 +310,7 @@ public class JSecurityFilter extends SecurityManagerFilter {
                         }
                         section = new StringBuffer();
                         inInterceptors = false;
-                        inGlobal = false;
+                        inMain = false;
                         if ( log.isDebugEnabled() ) {
                             log.debug( "Parsing " + CONFIG_SECTIONS[2] );
                         }

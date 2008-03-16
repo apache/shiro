@@ -92,7 +92,7 @@ public class ServletContextSupport {
             mode = mode.trim();
             if (!mode.equalsIgnoreCase(HTTP_SESSION_MODE) &&
                 !mode.equalsIgnoreCase(JSECURITY_SESSION_MODE)) {
-                String msg = "Unknown '" + SESSION_MODE_CONTEXT_PARAM_NAME + "' context-param value [" +
+                String msg = "Unknown '" + SESSION_MODE_CONTEXT_PARAM_NAME + "' value [" +
                     mode + "].  Recognized values are '" +
                         HTTP_SESSION_MODE + "' and '" + JSECURITY_SESSION_MODE +
                     "' (without quotes).  Please check your configuration and/or spelling.";

@@ -88,11 +88,18 @@ public class WebSecurityManager extends DefaultSecurityManager {
     }
 
     protected SessionManager createSessionManager() {
+
         if (isHttpSessionMode()) {
+            if ( log.isInfoEnabled() ) {
+                log.info( HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (Http Sessions)" );
+            }
             ServletContainerSessionManager scsm = new ServletContainerSessionManager();
             scsm.setSessionEventListeners(getSessionEventListeners());
             return scsm;
         } else {
+            if ( log.isInfoEnabled() ) {
+                log.info( JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
+            }
             WebSessionManager wsm = new WebSessionManager();
             wsm.setCacheManager(getCacheManager());
             wsm.setSessionEventListeners(getSessionEventListeners());
