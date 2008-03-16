@@ -66,6 +66,7 @@ import java.util.Map;
  * @author Juergen Hoeller
  * @author Colin Sampaleanu
  */
+@SuppressWarnings({"deprecation"})
 public class RedirectView {
 
 	/** The default encoding scheme: UTF-8 */
@@ -245,14 +246,12 @@ public class RedirectView {
 	 * @see java.net.URLEncoder#encode(String, String)
 	 * @see java.net.URLEncoder#encode(String)
 	 */
-    @SuppressWarnings("deprecated")
     protected String urlEncode(String input, String encodingScheme) throws UnsupportedEncodingException {
         if ( !JavaEnvironment.isAtLeastVersion14() ) {
 			if (log.isDebugEnabled()) {
 				log.debug("Only JDK 1.3 URLEncoder available: using platform default encoding " +
 						"instead of the requested scheme '" + encodingScheme + "'");
 			}
-            //noinspection deprecation
             return URLEncoder.encode(input);
 		}
 		return URLEncoder.encode(input, encodingScheme);

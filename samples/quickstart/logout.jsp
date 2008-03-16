@@ -45,7 +45,7 @@
 
 <h2>Log out</h2>
 
-<p>You have succesfully logged out.</p>
+<p>You have succesfully logged out.  <a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>
 
 </body>
 </html>

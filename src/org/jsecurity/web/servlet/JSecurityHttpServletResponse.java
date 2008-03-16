@@ -40,6 +40,7 @@ import java.net.URLEncoder;
  * @author Les Hazlewood
  * @since 0.2
  */
+@SuppressWarnings({"deprecated", "deprecation"})
 public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
 
     private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;

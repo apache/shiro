@@ -1,7 +1,7 @@
 body {
-    margin: 1px;
+    margin: 15px 0 0 15px;
     padding: 1px;
-    background: #2370cf;
+    /*background: #2370cf;*/
     font: 12px 'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
     color: #000;
 }

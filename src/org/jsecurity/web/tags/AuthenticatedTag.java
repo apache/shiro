@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Jeremy Haile
+ * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,31 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
- * JSP tag that renders the tag body if the current user is authenticated.  If the
- * user is not authenticated, the tag body is skipped.
+ * JSP tag that renders the tag body only if the current user has executed a <b>successful</b> authentication attempt
+ * <em>during their current session</em>.
+ *
+ * <p>This is more restrictive than the {@link UserTag}, which only
+ * ensures the current user is known to the system, either via a current login or from Remember Me services,
+ * which only makes the assumption that the current user is who they say they are, and does not guarantee it like
+ * this tag does.
+ *
+ * <p>The logically opposite tag of this one is the {@link NotAuthenticatedTag}
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class AuthenticatedTag extends SecureTag {
 
     public int onDoStartTag() throws JspException {
         if ( getSubject() != null && getSubject().isAuthenticated() ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Subject exists and is authenticated.  'authenticated tag body will be evaluated." );
+                log.trace( "Subject exists and is authenticated.  Tag body will be evaluated." );
             }
             return TagSupport.EVAL_BODY_INCLUDE;
         } else {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Subject does not exist or is not authenticated.  'authenticated' tag " +
-                    "body will not be evaluated." );
+                log.trace( "Subject does not exist or is not authenticated.  Tag body will not be evaluated." );
             }
             return TagSupport.SKIP_BODY;
         }
