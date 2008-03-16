@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.Realm;
 
 import java.util.Collection;
@@ -48,29 +49,33 @@ public class AtLeastOneSuccessfulModularAuthenticationStrategy implements Modula
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    public void beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
-        //nothing necessary
+    public Account beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
+        return new SimpleAuthorizingAccount();
     }
 
-    public void beforeAttempt( Realm realm, AuthenticationToken token ) throws AuthenticationException {
-        //nothing necessary
+    public Account beforeAttempt( Realm realm, AuthenticationToken token, Account aggregate ) throws AuthenticationException {
+        return aggregate;
     }
 
-    public void afterAttempt( Realm realm, AuthenticationToken token, Account account, Throwable t )
+    public Account afterAttempt( Realm realm, AuthenticationToken token, Account account, Account aggregate, Throwable t )
         throws AuthenticationException {
-        //nothing necessary
+        if ( account != null ) {
+            ((SimpleAuthorizingAccount)aggregate).merge(account);
+        }
+        return aggregate;
     }
 
-    public void afterAllAttempts( AuthenticationToken token, Account aggregated ) throws AuthenticationException {
+    public Account afterAllAttempts( AuthenticationToken token, Account aggregate ) throws AuthenticationException {
         //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
-
-        boolean oneOrMoreSuccessful = aggregated != null && (aggregated.getPrincipal() != null );
+        boolean oneOrMoreSuccessful = aggregate != null && (aggregate.getPrincipal() != null );
 
         if ( !oneOrMoreSuccessful ) {
             throw new AuthenticationException( "Authentication token of type [" + token.getClass() + "] " +
                 "could not be authenticated by any configured realms.  Please ensure that at least one realm can " +
                 "authenticate these tokens." );
         }
+
+        return aggregate;
     }
 }

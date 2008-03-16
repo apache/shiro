@@ -26,7 +26,6 @@ package org.jsecurity.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.pam.AggregateAccount;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -37,7 +36,7 @@ import java.util.HashSet;
  * contains principal and credential information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * <p>Realm implementations can use this for simple principal/credential accounts, but note:  
+ * <p>Realm implementations can use this for simple principal/credential accounts, but note:
  *
  * <p>This class cannot perform its own authorization checks for roles and permissions.  It is therefore not sufficient
  * to use to back a Realm's {@link org.jsecurity.authz.Authorizer Authorizer} method implementations.  If you need
@@ -54,26 +53,34 @@ import java.util.HashSet;
  * @see org.jsecurity.authz.SimpleAuthorizingAccount
  * @since 0.1
  */
-public class SimpleAccount implements AggregateAccount, Serializable {
+public class SimpleAccount implements Account, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    protected transient final Log logger = LogFactory.getLog( getClass() );
+    protected transient final Log logger = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /** The principal that apply to the authenticated Subject/user. */
+    /**
+     * The principal that apply to the authenticated Subject/user.
+     */
     private Object principal = null;
 
-    /** Credentials that were used to authenticate the user. */
+    /**
+     * Credentials that were used to authenticate the user.
+     */
     private Object credentials = null;
 
-    /** True if the account is locked, false otherwise. */
+    /**
+     * True if the account is locked, false otherwise.
+     */
     private boolean locked = false;
 
-    /** True if the user's credentials are expired, false otherwise. */
+    /**
+     * True if the user's credentials are expired, false otherwise.
+     */
     private boolean credentialsExpired = false;
 
     /*--------------------------------------------
@@ -133,9 +140,17 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     |               M E T H O D S               |
     ============================================*/
     /**
-     * Merges the specified argument into this instance.
+     * Merges (adds) the specified Account data into this instance.
      *
-     * @param otherAccount the otherAccount to merge into this instance.
+     * This allows an instance of this class to be an <em>aggregation</em>, or <em>composition</em> of account data
+     * from across multiple <code>Realm</code>s <tt>Realm</tt>s, not just one realm.
+     *
+     * <p>This is useful in a multi-realm authentication configuration - the individual <tt>Account</tt>
+     * objects obtained from each realm can be {@link #merge merged} into this object.  This single object can then be
+     * returned at the end of the authentication process, giving the impression of a single underlying
+     * realm/data source.
+     *
+     * @param otherAccount the account whos data will be merged (added) into this instance.
      */
     @SuppressWarnings({"unchecked"})
     public void merge(Account otherAccount) {
@@ -154,21 +169,35 @@ public class SimpleAccount implements AggregateAccount, Serializable {
         } else {
             HashSet set = new HashSet();
             if (thisPrincipal instanceof Collection) {
-                set.addAll((Collection)thisPrincipal);
+                set.addAll((Collection) thisPrincipal);
             } else {
-                set.add( thisPrincipal );
+                set.add(thisPrincipal);
             }
             if (otherPrincipal instanceof Collection) {
-                set.addAll((Collection)otherPrincipal);
+                set.addAll((Collection) otherPrincipal);
             } else {
                 set.add(otherPrincipal);
             }
             this.principal = set;
         }
 
-
-        if (this.credentials == null) {
-            setCredentials(otherAccount.getCredentials());
+        Object otherCredentials = otherAccount.getCredentials();
+        Object thisCredentials = getCredentials();
+        if ( thisCredentials == null ) {
+            this.credentials = otherCredentials;
+        } else {
+            HashSet set = new HashSet();
+            if (thisCredentials instanceof Collection) {
+                set.addAll((Collection) thisCredentials);
+            } else {
+                set.add(thisCredentials);
+            }
+            if (otherCredentials instanceof Collection) {
+                set.addAll((Collection) otherCredentials);
+            } else {
+                set.add(otherCredentials);
+            }
+            this.credentials = set;
         }
 
         if (otherAccount.isLocked()) {
@@ -181,17 +210,17 @@ public class SimpleAccount implements AggregateAccount, Serializable {
     }
 
     public int hashCode() {
-        return ( getPrincipal() != null ? getPrincipal().hashCode() : 0 );
+        return (getPrincipal() != null ? getPrincipal().hashCode() : 0);
     }
 
-    public boolean equals( Object o ) {
-        if ( o == this ) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if ( o instanceof SimpleAccount ) {
-            SimpleAccount sa = (SimpleAccount)o;
+        if (o instanceof SimpleAccount) {
+            SimpleAccount sa = (SimpleAccount) o;
             //principal should be unique across the application, so only check this for equality:
-            return ( getPrincipal() != null ? getPrincipal().equals( sa.getPrincipal() ) : sa.getPrincipal() == null );
+            return (getPrincipal() != null ? getPrincipal().equals(sa.getPrincipal()) : sa.getPrincipal() == null);
         }
         return false;
     }

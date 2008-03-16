@@ -52,11 +52,10 @@ public interface Account {
     /**
      * Returns the account's identifying principal, such as a user id or username.
      *
-     * <p>In a multi-realm configuration, if this instance is an
-     * {@link org.jsecurity.authc.pam.AggregateAccount AggregateAccount}, the object returned from this method
+     * <p>In a multi-realm configuration, the object returned from this method
      * might be an implementation-specific object representing multiple principals.  This might be an instance of
-     * java.util.Collection, but it does not have to be - it is up to the Authenticator and Realm implementations as to
-     * what is returned.
+     * java.util.Collection, but it does not have to be - it is up to the Authenticator's modular authentication
+     * strategy as to exactly what is returned.
      *
      * @return the account's primary principal, such as a user id or username, or in a multi-realm configuration, maybe
      * more than one principal encapsulated by an implementation-specific instance.
