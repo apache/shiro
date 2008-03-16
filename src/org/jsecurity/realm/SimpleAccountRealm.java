@@ -46,7 +46,8 @@ import java.util.Set;
  * to permissions and associated with users.</p>
  *
  * <p>User accounts and roles are stored in two {@link Cache cache}s, so it is the Cache manager implementation that
- * determines if this class stores all data in memory or spools to disk or clusters it, etc.
+ * determines if this class stores all data in memory or spools to disk or clusters it, etc based on the
+ * Caches it creates.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

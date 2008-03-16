@@ -75,16 +75,16 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
      * definition with double quotes (&quot;) to avoid parsing errors (e.g.
      * <code>&quot;printer:5thFloor:print,info&quot;</code>).
      *
-     * <p>Finally, if you have roles that don't require permission associations, don't include them in this
+     * <p><b>NOTE:</b> if you have roles that don't require permission associations, don't include them in this
      * definition - just defining the role name in the {@link #setUserDefinitions(String) userDefinitions} is
-     * enough to create the role if it does not yet exist.
+     * enough to create the role if it does not yet exist.  This property is really only for configuring realms that
+     * have one or more assigned Permission.
      *
      * @param roleDefinitions the role definitions to be parsed at initialization
      */
     public void setRoleDefinitions(String roleDefinitions) {
         this.roleDefinitions = roleDefinitions;
     }
-
 
     protected void userAndRoleCachesCreated() {
         processDefinitions();
