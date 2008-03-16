@@ -101,6 +101,7 @@ public class StringUtils {
      *
      * @param str    the String to check
      * @param prefix the prefix to look for
+     * @return <code>true</code> starts with the specified prefix (ignoring case), <code>false</code> if it does not.
      * @see java.lang.String#startsWith
      */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
@@ -173,7 +174,8 @@ public class StringUtils {
 	 * @see java.util.StringTokenizer
 	 * @see java.lang.String#trim()
 	 */
-	public static String[] tokenizeToStringArray(
+	@SuppressWarnings({"unchecked"})
+    public static String[] tokenizeToStringArray(
 			String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
 
 		if (str == null) {
@@ -203,11 +205,12 @@ public class StringUtils {
 	 * @return the String array (<code>null</code> if the passed-in
 	 * Collection was <code>null</code>)
 	 */
-	public static String[] toStringArray(Collection collection) {
+	@SuppressWarnings({"unchecked"})
+    public static String[] toStringArray(Collection collection) {
 		if (collection == null) {
 			return null;
 		}
-		return (String[]) collection.toArray(new String[collection.size()]);
+		return (String[])collection.toArray(new String[collection.size()]);
 	}
 
     public static String[] splitKeyValue(String aLine) throws ParseException {

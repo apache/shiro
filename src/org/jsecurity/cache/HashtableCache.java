@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile
+* Copyright (C) 2005-2008 Jeremy Haile, Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -24,9 +24,7 @@
 */
 package org.jsecurity.cache;
 
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An implementation of the JSecurity {@link Cache} interface that uses a
@@ -36,6 +34,7 @@ import java.util.Map;
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 @SuppressWarnings( "unchecked" )
 public class HashtableCache implements Cache {
@@ -48,19 +47,15 @@ public class HashtableCache implements Cache {
     /**
      * The name of this cache.
      */
-    private final String cacheName;
+    private final String name;
 
     /**
      * Creates a new cache with the given name.
      *
-     * @param cacheName the name of this cache.
+     * @param name the name of this cache.
      */
-    public HashtableCache( String cacheName ) {
-        this.cacheName = cacheName;
-    }
-
-    public String getName() {
-        return cacheName;
+    public HashtableCache( String name) {
+        this.name = name;
     }
 
     public Object read( Object key ) throws CacheException {
@@ -83,15 +78,32 @@ public class HashtableCache implements Cache {
         hashtable.clear();
     }
 
-    public long getSize() {
+    public int size() {
         return hashtable.size();
     }
 
-    public Map toMap() {
-        return Collections.unmodifiableMap( hashtable );
+    public Set keys() {
+        if ( !hashtable.isEmpty() ) {
+            return Collections.unmodifiableSet( hashtable.keySet() );
+        } else {
+            return Collections.EMPTY_SET;
+        }
+    }
+
+    public Set values() {
+        if ( !hashtable.isEmpty() ) {
+            Collection values = hashtable.values();
+            if ( values instanceof Set ) {
+                return Collections.unmodifiableSet( (Set)values );
+            } else {
+                return Collections.unmodifiableSet( new LinkedHashSet( values ) );
+            }
+        } else {
+            return Collections.EMPTY_SET;
+        }
     }
 
     public String toString() {
-        return "HashtableCache [" + cacheName + "]";
+        return "HashtableCache [" + name + "]";
     }
 }

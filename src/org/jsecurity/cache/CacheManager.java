@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2005-2007 Jeremy Haile, Les Hazlewood
+* Copyright (C) 2005-2007 Les Hazlewood
 *
 * This library is free software; you can redistribute it and/or modify it
 * under the terms of the GNU Lesser General Public License as published
@@ -27,23 +27,23 @@ package org.jsecurity.cache;
 /**
  * A CacheManager provides and maintains the lifecycles of {@link Cache Cache} instances.
  *
- * <p>It is really a wrapper API around the underlying cache subsystem's central cache manager component.
- * (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence, GigaSpaces, etc, etc), allowing a
- * JSecurity user to configure any cache framework they choose.
+ * <p>JSecurity doesn't implement a full Cache mechanism itself, since that is outside the core competency of a
+ * Security framework.  Instead, this interface provides an abstraction (wrapper) API on top of an underlying
+ * cache framework's main Manager component (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
+ * GigaSpaces, etc, etc), allowing a JSecurity user to configure any cache mechanism they choose.
  *
- * @author Jeremy Haile
  * @author Les Hazlewood
- * @since 0.2
+ * @since 0.9
  */
 public interface CacheManager {
 
     /**
-     * Acquires the cache with name <code>cacheName</code>.  If a cache does not yet exist with that name, a new one
+     * Acquires the cache with the specified <code>name</code>.  If a cache does not yet exist with that name, a new one
      * will be created with that name and returned.
      *
-     * @param cacheName the name of the cache to acquire.
+     * @param name the name of the cache to acquire.
      * @return the Cache with the given name
      * @throws CacheException if there is an error acquiring the Cache instance.
      */
-    public Cache getCache( String cacheName ) throws CacheException;
+    public Cache getCache( String name ) throws CacheException;
 }
