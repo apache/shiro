@@ -10,114 +10,21 @@
         <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
         <init-param><param-name>config</param-name><param-value>
 
-            #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
-            #       Everything else is just commented to explain things in-depth. Feel free to delete any
-            #       comments that you don't want to read ;)
+            # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
             #
-            # All defaults are listed below but commented out.  If you want to change any value, you only
-            # need to uncomment the line you want to change.
+            # Comments on how to configure this filter have been removed for brevity, but you should
+            # _really_ read the comprehensive example, with full comments, in the JavaDoc:
+            #
+            # http://jsecurity.svn.sourceforge.net/viewvc/jsecurity/trunk/src/org/jsecurity/web/servlet/JSecurityFilter.java?view=markup
+            #
+            # This fully explains what the configuration options are as well as how to configure it with your own
+            # options.
 
             [global]
 
-            # The global section defines JSecurity-wide configuration or properties that can be shared across any
-            # configured interceptor (below).
-            #
-            # For example, the 'roles' and 'perms' interceptors below use the following property to redirect
-            # to when a user does not have the required respective roles or permissions needed to access a url path.
-            #
-            #unauthorizedPage = /unauthorized.jsp
-            #
-            # Session Mode: By default, JSecurity's Session infrastructure in a web environment will use the
-            # Servlet container's HttpSession.  However, if you need to share session state across client types
-            # (e.g. Web MVC plus Java Web Start or Flash), or are doing distributed/shared Sessions for
-            # Single Sign On, HttpSessions aren't good enough.  You'll need to use JSecurity's more powerful
-            # (and client-agnostic) session management.  You can enable this by uncommenting the following line
-            # and changing 'http' to 'jsecurity'
-            #
-            #sessionMode = http
-
             [interceptors]
 
-            # This section defines a 'pool' of all the available interceptors that are available to the url path
-            # definitions below in the [urls] section.
-            #
-            # The commented values are provided by JSecurity by default.  You can uncomment any line that you wish
-            # to override.  It is not necessary to uncomment all of an interceptor's properties or even the main
-            # name to class definition itself - you only need to uncomment the lines you want to override.
-            #
-            # Each interceptor is configured based on its functionality and/or protocol.  You should read each
-            # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
-            # affect the user experience.
-            #
-            # Http BASIC Authentication interceptor: requires the requesting user to be authenticated for the request
-            # to continue, and if they're not, forces login via an Http BASIC browser dialog.  Upon successful login,
-            # they're allowed to continue on to the requested resource/url.
-            #authcBasic = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
-            #authcBasic.applicationName = JSecurity Quickstart
-            #
-            # Roles interceptor: requires the requesting user to have one or more roles for the request to continue
-            # and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
-            #roles = org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor
-            #
-            # Permissions interceptor: requires the requesting user to have one or more permissions for the request to
-            # continue, and if they do not, redirects them to the 'unauthorizedPage' defined in the [global] section.
-            #perms = org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor
-            #
-            #
-            #
-            # Define your own interceptors here.  To properly handle path matching, all interceptor implementations
-            # should extend the org.jsecurity.web.interceptor.PathMatchingWebInterceptor abstract class.
-
             [urls]
-
-            # This section defines url path mappings.
-            #
-            # Each mapping entry must be on a single line and conform to the following format:
-            #
-            # ant_path_expression = path_specific_interceptor_chain_definition
-            #
-            # For each request that matches a specified path, the corresponding value defines a comma-delimited chain of
-            # filters/interceptors to execute for that request.
-            #
-            # This is incredibly powerful in that you can define arbitrary filter chains for any given request pattern
-            # to greatly customize the security experience.
-            #
-            # The path_specific_interceptor_chain_definition must match the following format:
-            #
-            # interceptor1[optional_config1], interceptor2[optional_config2], ..., interceptorN[optional_configN]
-            #
-            # where 'interceptorN' is the name of an interceptor defined above in the [interceptors] section and
-            # optional_config is any (optional) string that has meaning for that particular interceptor for
-            # _that particular path_.
-            #
-            # And because tokens define chains, order matters!  Define the interceptor tokens for each url path pattern
-            # in the order you want them to filter.
-            #
-            # Finally, each interceptor is free to handle the response however it wants if its necessary
-            # conditions are not met (redirect, HTTP error code, direct rendering, etc).  Otherwise, it is expected
-            # that the request will continue on to its destination page.
-            #
-            # Examples:
-            #
-            # To illustrate chain configuration, look at the /account/** mapping below.  This says
-            # "apply the above 'authc' interceptor to any request matching the '/account/**' pattern".  Since the
-            # 'authc' interceptor does not need any path-specific config, it doesn't have any extra config brackets [].
-            # (the 'authc' interceptor will force a login for unauthenticated users and then send them to the
-            #  originally requested URL).
-            #
-            # The /remoting/** definition on the other hand uses the 'roles' and 'perms' interceptors which do use
-            # bracket notation.  That definition says:
-            #
-            # "To access /remoting/** urls, ensure that the user is first authenticated ('authc'), then that user must
-            # be verified to have the 'b2bClient' role, and then finally they must have the
-            # 'remote:invoke:lan,wan' permission."
-            #
-            # (Note that because elements within brackets [ ] are comma-delimited, we needed to escape the permission
-            # actions of 'lan,wan' with quotes.  If we didn't do that, the permission interceptor would interpret
-            # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
-            # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
-            # commas.)
-
             /account/** = authcBasic
             /remoting/** = authcBasic, roles[b2bClient], perms[remote:invoke:"lan,wan"]
 
