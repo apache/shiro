@@ -118,8 +118,8 @@
             # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
             # commas.)
 
-            /account/** = authc
-            /remoting/** = authc, roles[b2bClient], perms[remote:invoke:"lan,wan"]
+            /account/** = authcBasic
+            /remoting/** = authcBasic, roles[b2bClient], perms[remote:invoke:"lan,wan"]
 
         </param-value></init-param>
     </filter>
