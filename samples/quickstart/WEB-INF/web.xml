@@ -11,17 +11,12 @@
         <init-param><param-name>config</param-name><param-value>
 
             # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
+            # Please read the comprehensive example, with full comments and explaination, in the JavaDoc:
             #
-            # Comments on how to configure this filter have been removed for brevity, but you should
-            # _really_ read the comprehensive example, with full comments, in the JavaDoc:
-            #
-            # http://jsecurity.svn.sourceforge.net/viewvc/jsecurity/trunk/src/org/jsecurity/web/servlet/JSecurityFilter.java?view=markup
-            #
-            # This fully explains what the configuration options are as well as how to configure it with your own
-            # options.
-
-            [global]
-
+            # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
+            
+            [main]
+            sessionMode = jsecurity
             [interceptors]
 
             [urls]

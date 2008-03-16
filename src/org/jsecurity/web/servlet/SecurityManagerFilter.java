@@ -38,6 +38,7 @@ public abstract class SecurityManagerFilter extends OncePerRequestFilter {
         if ( securityManager == null ) {
             securityManagerListener = new SecurityManagerListener();
             securityManagerListener.setServletContext( getServletContext() );
+            securityManagerListener.setSessionMode( getSessionMode() );
             securityManagerListener.init();
         }
         afterSecurityManagerSet();
