@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor;
+import org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor;
 import org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor;
 import org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor;
 
@@ -37,6 +38,7 @@ public class DefaultInterceptorBuilder implements InterceptorBuilder {
 
     public Map<String, Object> buildDefaultInterceptors() {
         Map<String, Object> interceptors = new LinkedHashMap<String, Object>();
+        interceptors.put("authc", new FormAuthenticationWebInterceptor());
         interceptors.put("authcBasic", new BasicHttpAuthenticationWebInterceptor());
         interceptors.put("roles", new RolesAuthorizationWebInterceptor());
         interceptors.put("perms", new PermissionsAuthorizationWebInterceptor());

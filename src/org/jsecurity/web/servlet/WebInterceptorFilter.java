@@ -104,6 +104,7 @@ public class WebInterceptorFilter implements Filter {
         if (interceptor == null) {
             throw new IllegalStateException("WebInterceptor property must be set.");
         }
+        LifecycleUtils.init(interceptor);
     }
 
     public void destroy() {

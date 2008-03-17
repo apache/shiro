@@ -213,8 +213,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
         Account account = null;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Retrieving Account for principal [" + principal + "]");
+        if (log.isTraceEnabled()) {
+            log.trace("Retrieving Account for principal [" + principal + "]");
         }
 
         Cache accountCache = getAccountCache();

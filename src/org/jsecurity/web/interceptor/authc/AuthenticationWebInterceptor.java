@@ -61,5 +61,5 @@ public abstract class AuthenticationWebInterceptor extends PathMatchingWebInterc
      * @return true if the request should continue to be processed; false if the subclass will handle/render 
      * the response directly.
      */
-    protected abstract boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response);
+    protected abstract boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception;
 }
