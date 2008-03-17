@@ -11,16 +11,16 @@
         <init-param><param-name>config</param-name><param-value>
 
             # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
-            # Please read the comprehensive example, with full comments and explaination, in the JavaDoc:
+            # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
             #
             # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
-            
-            [main]
-            [interceptors]
 
+            [interceptors]
+            authc.successUrl = /index.jsp
+            
             [urls]
-            /account/** = authcBasic
-            /remoting/** = authcBasic, roles[b2bClient], perms[remote:invoke:"lan,wan"]
+            /account/** = authc
+            /remoting/** = authc, roles[b2bClient], perms[remote:invoke:"lan,wan"]
 
         </param-value></init-param>
     </filter>

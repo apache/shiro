@@ -74,6 +74,19 @@ import java.util.Scanner;
    # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
    # affect the user experience.
    #
+   # Form Authentication interceptor: requires the requestiing user to be authenticated for the request to continue
+   # and if they are not, forces the user to login via a login page that you specify.  If the login attempt fails
+   # the AuthenticationException fully qualified class name will be placed as a request attribute under the
+   # 'failureKeyAttribute' name below.  This FQCN can then be used as an i18n key or lookup mechanism that can then
+   # be used to show the user why their login attempt failed (e.g. no account, incorrect password, etc).
+   #authc = org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor
+   #authc.url = /login.jsp
+   #authc.usernameParam = username
+   #authc.passwordParam = password
+   #authc.rememberMeParam = rememberMe
+   #authc.successUrl = /login.jsp
+   #authc.failureKeyAttribute = org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor_AUTHC_FAILURE_KEY
+   #
    # Http BASIC Authentication interceptor: requires the requesting user to be authenticated for the request
    # to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
    # Upon successful login, they're allowed to continue on to the requested resource/url.
