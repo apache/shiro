@@ -44,7 +44,6 @@
     <property name="ivy.home" value="${user.home}/.ant" />
     <property name="ivy.jar.dir" value="${ivy.home}/lib" />
     <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
-    <property name="ivy.lib.dir" value="${basedir}/ivy"/> <!-- Simple Test -->
 
     <!-- version of the product, see http://apr.apache.org/versioning.html
          for details on this convention -->
@@ -121,7 +120,7 @@
     </target>
 
     <target name="resolve-dependencies" depends="load-ivy">
-        <ivy:retrieve/>
+        <ivy:retrieve pattern="${lib.dir}/ivy/[conf]/[artifact].[ext]" sync="true" />
     </target>
 
     <!-- ===================================================================
