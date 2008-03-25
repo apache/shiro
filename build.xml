@@ -233,14 +233,13 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
             </manifest>
         </jar>
 
-        <!-- TODO - re-enable retroweaver
         <path id="retroweaver.path">
-            <fileset dir="${lib.dir}/ivy/compile" includes="*.jar"/>
+            <fileset dir="${lib.dir}/ivy/compile" includes="**/*"/>
         </path>
 
         <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask" classpathref="retroweaver.path"/>
         <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
-        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/> -->
+        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
 
     </target>
 
