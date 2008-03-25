@@ -56,6 +56,12 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.retroweaver</groupId>
+      <artifactId>retroweaver</artifactId>
+      <version>2.0.5</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.retroweaver</groupId>
       <artifactId>retroweaver-rt</artifactId>
       <version>2.0.5</version>
       <optional>true</optional>
