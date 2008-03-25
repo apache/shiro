@@ -233,14 +233,14 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
             </manifest>
         </jar>
 
-        <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
-            <classpath>
-                <fileset dir="${lib.dir}/ivy/compile" includes="*.jar"/>
-            </classpath>
-        </taskdef>
+        <!-- TODO - re-enable retroweaver
+        <path id="retroweaver.path">
+            <fileset dir="${lib.dir}/ivy/compile" includes="*.jar"/>
+        </path>
 
+        <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask" classpathref="retroweaver.path"/>
         <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
-        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
+        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/> -->
 
     </target>
 
@@ -252,7 +252,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         <ant dir="samples/spring"/>
     </target>
 
-    <target name="samples" depends="samples.quickstart,samples.spring"/>
+    <target name="samples" depends="samples.quickstart"/>
 
     <target name="samples.quickstart.deploy" depends="samples.quickstart">
         <ant dir="samples/quickstart" target="deploy"/>

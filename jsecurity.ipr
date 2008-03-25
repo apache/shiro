@@ -336,31 +336,31 @@
   <component name="libraryTable">
     <library name="j2ee">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/j2ee/jsp-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/j2ee/jstl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/j2ee/servlet-api.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/jstl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/servlet-api.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/jsp-api.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="ehcache">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ehcache/ehcache.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/compile/ehcache.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="jakarta-commons">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-beanutils-core.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-logging.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/compile/commons-beanutils.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/compile/commons-logging.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="jakarta-taglibs">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jakarta-taglibs/standard.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/samples/standard.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
@@ -374,21 +374,21 @@
     </library>
     <library name="log4j">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/log4j/log4j.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/log4j.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="quartz">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/quartz/quartz.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/quartz.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="spring">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/spring/spring.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/spring.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
@@ -397,27 +397,24 @@
     </library>
     <library name="easymock">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/easymock/easymock.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/easymock/easymockclassextension.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/easymockclassextension.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/easymock.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="junit">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/junit/junit.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/junit.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
     </library>
     <library name="retroweaver">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/retroweaver/asm-util-3.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/retroweaver/asm-3.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/retroweaver/asm-commons-3.0.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/retroweaver/backport-util-concurrent.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/retroweaver/retroweaver-rt.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/retroweaver/retroweaver.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/backport-util-concurrent.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/retroweaver-rt.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ivy/test/asm.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
