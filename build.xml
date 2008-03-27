@@ -118,7 +118,8 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
     </target>
 
     <target name="retrieve-dependencies" depends="load-ivy">
-        <ivy:retrieve pattern="${lib.dir}/ivy/[conf]/[artifact].[ext]" sync="true"/>
+        <mkdir dir="${lib.dir}"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true"/>
     </target>
 
     <!-- ===================================================================
@@ -186,34 +187,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         </copy>
     </target>
 
-    <target name="compile.jboss" depends="compile.core" description="Build 3rd party JBoss support">
-        <javac destdir="${classes.dir}"
-               debug="${compile.debug}"
-               deprecation="${compile.deprecation}"
-               optimize="${compile.optimize}"
-               failonerror="true">
-            <classpath refid="all.libs"/>
-            <classpath location="${classes.dir}"/>
-            <src path="${root.base.dir}/support/jboss/src"/>
-        </javac>
-
-        <copy todir="${classes.dir}" preservelastmodified="true">
-            <fileset dir="${root.base.dir}/support/jboss/src">
-                <include name="**/*.properties"/>
-                <include name="**/*.xml"/>
-                <include name="**/*.dtd"/>
-                <include name="**/*.xsd"/>
-            </fileset>
-        </copy>
-
-        <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${root.base.dir}/support/jboss/src">
-                <include name="**/*.tld"/>
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="compile" depends="compile.core, compile.spring, compile.jboss"/>
+    <target name="compile" depends="compile.core, compile.spring"/>
 
     <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
 
@@ -238,7 +212,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         </jar>
 
         <path id="retroweaver.path">
-            <fileset dir="${lib.dir}/ivy/compile" includes="**/*"/>
+            <fileset dir="${lib.dir}" includes="**/*"/>
         </path>
 
         <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask" classpathref="retroweaver.path"/>
