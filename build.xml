@@ -113,10 +113,6 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-    <target name="ivy-settings" depends="load-ivy" description="--> load JSecurity-specific ivy settings">
-        <ivy:settings file="ivysettings.xml"/>
-    </target>
-
     <target name="retrieve-dependencies" depends="load-ivy">
         <mkdir dir="${lib.dir}"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true"/>
