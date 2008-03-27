@@ -38,7 +38,7 @@
         <dependency org="javax.servlet" name="servlet-api" rev="2.5" transitive="false" conf="compile"/>
         <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.1" transitive="false" conf="compile"/>
         <dependency org="org.safehaus.jug" name="jug" rev="2.0.0" transitive="false" conf="compile">
-            <artifact name="jug-2.0.0-asl" type="jar" ext="jar" url="http://repo1.maven.org/maven2/org/safehaus/jug/jug/2.0.0/jug-2.0.0-asl.jar"/>
+            <artifact name="jug" url="http://repo1.maven.org/maven2/org/safehaus/jug/jug/2.0.0/jug-2.0.0-asl.jar"/>
         </dependency>
 
         <!-- Sample application dependencies: -->
