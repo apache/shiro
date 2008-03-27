@@ -15,7 +15,7 @@ Feature-based dependencies
 --------------------------
 - If you want to use JSecurity's enterprise session management:
   . JDK 1.5+: include ehcache.jar
-  . JDK 1.3 or 1.4: include ehcache.jar, jug.jar and jug-native.zip
+  . JDK 1.3 or 1.4: include ehcache.jar and jug.jar
 
 - JSecurity Web Filter text-based config ('config' init param) in web.xml:
 - JSecurity code Annotations:

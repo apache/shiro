@@ -37,6 +37,9 @@
         <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile"/>
         <dependency org="javax.servlet" name="servlet-api" rev="2.5" transitive="false" conf="compile"/>
         <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.1" transitive="false" conf="compile"/>
+        <dependency org="org.safehaus.jug" name="jug" rev="2.0.0" transitive="false" conf="compile">
+            <artifact name="jug-2.0.0-asl" type="jar" ext="jar" url="http://repo1.maven.org/maven2/org/safehaus/jug/jug/2.0.0/jug-2.0.0-asl.jar"/>
+        </dependency>
 
         <!-- Sample application dependencies: -->
         <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>
@@ -50,7 +53,7 @@
         <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
 
         <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
-            <artifact name="docbook-libs" ext="zip"/>
+            <artifact name="docbook-libs" type="zip" ext="zip"/>
         </dependency>
 
         <!-- Not in maven repository: jboss-aop.jar, jug.jar, jug-native.zip -->
