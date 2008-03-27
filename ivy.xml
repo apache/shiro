@@ -15,12 +15,12 @@
     </info>
 
     <configurations defaultconfmapping="*->default">
-        
         <conf name="runtime" description="Minimum required runtime dependencies."/>
         <conf name="runtime-web" extends="runtime" description="Minimum required runtime dependencies when running a web application."/>
         <conf name="compile" extends="runtime-web" description="Required dependencies when building JSecurity from scratch."/>
         <conf name="samples" extends="runtime-web" description="Required dependencies when running one of the sample web applications."/>
         <conf name="test" extends="*" description="Any and all dependencies so all functionality can be tested."/>
+        <conf name="docbook"/>
     </configurations>
 
     <dependencies>
@@ -48,6 +48,10 @@
         <dependency org="org.easymock" name="easymock" rev="2.3" transitive="false" conf="test"/>
         <dependency org="org.easymock" name="easymockclassextension" rev="2.3" transitive="false" conf="test"/>
         <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
+
+        <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
+            <artifact name="docbook-libs" ext="zip"/>
+        </dependency>
 
         <!-- Not in maven repository: jboss-aop.jar, jug.jar, jug-native.zip -->
 

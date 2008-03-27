@@ -113,7 +113,11 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-    <target name="resolve-dependencies" depends="load-ivy">
+    <target name="ivy-settings" depends="load-ivy" description="--> load JSecurity-specific ivy settings">
+        <ivy:settings file="ivysettings.xml"/>
+    </target>
+
+    <target name="retrieve-dependencies" depends="load-ivy">
         <ivy:retrieve pattern="${lib.dir}/ivy/[conf]/[artifact].[ext]" sync="true"/>
     </target>
 
@@ -125,7 +129,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         <ant dir="samples/spring" target="clean"/>
     </target>
 
-    <target name="compile.core" depends="resolve-dependencies">
+    <target name="compile.core" depends="retrieve-dependencies">
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${classes.dir}/META-INF"/>
 
