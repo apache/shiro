@@ -23,7 +23,7 @@
     <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
 
     <path id="compile.path">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}/samples" includes="**/*.jar"/>
     </path>
 
     <!-- ===================================================================
@@ -48,7 +48,7 @@
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
                failonerror="true"
-               classpathref="all.libs">
+               classpathref="compile.path">
 			<src path="${src.dir}"/>
             <classpath location="${root.dist.dir}/jsecurity.jar"/>
         </javac>
@@ -88,8 +88,8 @@
         <copy todir="${webstart.lib.dir}" preservelastmodified="true" flatten="true">
             <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
             <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
-            <fileset dir="${lib.dir}/spring" includes="spring.jar"/>
-            <fileset dir="${lib.dir}/jakarta-commons" includes="commons-logging.jar"/>
+            <fileset dir="${lib.dir}/samples" includes="spring.jar"/>
+            <fileset dir="${lib.dir}/samples" includes="commons-logging.jar"/>
         </copy>
         <signjar keystore="${etc.dir}/jsecurity-sample.jks"
                  alias="jsecurity"
@@ -99,13 +99,7 @@
         </signjar>
 
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
-            <lib dir="${lib.dir}/ehcache" includes="*.jar"/>
-            <lib dir="${lib.dir}/j2ee" includes="jstl.jar"/>
-            <lib dir="${lib.dir}/hsqldb" includes="hsqldb.jar"/>
-            <lib dir="${lib.dir}/spring" includes="*.jar"/>
-            <lib dir="${lib.dir}/jakarta-taglibs" includes="*.jar"/>
-            <lib dir="${lib.dir}/quartz" includes="*.jar"/>
-            <lib dir="${lib.dir}/jakarta-commons" includes="*.jar"/>
+            <lib dir="${lib.dir}/samples" includes="*.jar"/>
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>

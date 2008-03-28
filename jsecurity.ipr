@@ -334,119 +334,15 @@
     </option>
   </component>
   <component name="libraryTable">
-    <library name="j2ee">
+    <library name="all-libs">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/jstl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/servlet-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/jsp-api.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="ehcache">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/compile/ehcache.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="jakarta-commons">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/compile/commons-beanutils.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ivy/compile/commons-logging.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="jakarta-taglibs">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/samples/standard.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="jboss-aop">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jboss/jboss-aop.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="log4j">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/log4j.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="quartz">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/quartz.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="spring">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/spring.jar!/" />
+        <root url="file://$PROJECT_DIR$/lib/test" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar:///usr/local/java/tools/spring/current/dist/spring-sources.jar!/" />
+        <root url="jar:///usr/local/java/tools/spring/spring-framework-2.5.2/dist/spring-sources.jar!/" />
       </SOURCES>
-    </library>
-    <library name="easymock">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/easymockclassextension.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/easymock.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="junit">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/junit.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="retroweaver">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/backport-util-concurrent.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/retroweaver-rt.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ivy/test/asm.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="jug">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jug/jug.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="atunit">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/atunit/atunit.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$PROJECT_DIR$/lib/atunit/atunit.javadoc.jar!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/lib/atunit/atunit.src.jar!/" />
-      </SOURCES>
-    </library>
-    <library name="google-collections">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/google-collections/google-collect.jar!/" />
-      </CLASSES>
-      <JAVADOC>
-        <root url="jar://$PROJECT_DIR$/lib/google-collections/google-collect.javadoc.zip!/" />
-      </JAVADOC>
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/lib/google-collections/google-collect.src.zip!/" />
-      </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/lib/test" recursive="false" />
     </library>
   </component>
 </project>

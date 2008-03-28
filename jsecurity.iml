@@ -24,15 +24,9 @@
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/etc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/support/jboss/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/.clover" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
-      <excludeFolder url="file://$MODULE_DIR$/classes" />
-      <excludeFolder url="file://$MODULE_DIR$/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/support/jboss/build" />
-      <excludeFolder url="file://$MODULE_DIR$/support/spring/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -52,6 +46,7 @@
     <orderEntry type="library" name="jug" level="project" />
     <orderEntry type="library" name="atunit" level="project" />
     <orderEntry type="library" name="google-collections" level="project" />
+    <orderEntry type="library" name="all-libs" level="project" />
     <orderEntryProperties />
   </component>
 </module>

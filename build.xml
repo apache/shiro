@@ -225,7 +225,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         <ant dir="samples/spring"/>
     </target>
 
-    <target name="samples" depends="samples.quickstart"/>
+    <target name="samples" depends="samples.quickstart,samples.spring"/>
 
     <target name="samples.quickstart.deploy" depends="samples.quickstart">
         <ant dir="samples/quickstart" target="deploy"/>
