@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
+ * Copyright 2005-2008 Les Hazlewood, Peter Ledbrook
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.beans.PropertyEditor;
  * A <tt>CookieAttribute</tt> stores an object as a {@link Cookie} for access on later requests.
  *
  * @author Les Hazlewood
+ * @author Peter Ledbrook
  * @since 0.2
  */
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
@@ -208,33 +209,34 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         HttpServletResponse response = toHttp( servletResponse );
 
         String name = getName();
-        String path = getPath();
         int maxAge = getMaxAge();
-
-        if ( path == null ) {
-            path = request.getContextPath();
-        }
+        String path = getPath() != null ? getPath() : request.getContextPath();
 
         String stringValue = toStringValue( value );
-        Cookie idCookie = new Cookie( name, stringValue );
-        idCookie.setMaxAge( maxAge );
-        idCookie.setPath( path );
+        Cookie cookie = new Cookie( name, stringValue );
+        cookie.setMaxAge( maxAge );
+        cookie.setPath( path );
         if ( isSecure() ) {
-            idCookie.setSecure( true );
+            cookie.setSecure( true );
         }
 
-        response.addCookie( idCookie );
+        response.addCookie( cookie );
         if ( log.isTraceEnabled() ) {
             log.trace( "Added Cookie [" + name + "] to path [" + path + "] with value [" +
                 stringValue + "] to the HttpServletResponse." );
         }
     }
 
-    public void removeValue(ServletRequest request, ServletResponse response) {
-        Cookie cookie = getCookie( toHttp(request), getName() );
+    public void removeValue(ServletRequest servletRequest, ServletResponse response) {
+        HttpServletRequest request = toHttp(servletRequest);
+        Cookie cookie = getCookie( request, getName() );
         if ( cookie != null ) {
             cookie.setMaxAge( 0 );
-            toHttp( response ).addCookie( cookie );
+            //JSEC-94: Must set the path on the outgoing cookie (some browsers don't retain it from the
+            //retrieved cookie?)
+            cookie.setPath( getPath() == null ? request.getContextPath() : getPath() );
+            cookie.setSecure( isSecure() );
+            toHttp(response).addCookie( cookie );
         }
     }
 }

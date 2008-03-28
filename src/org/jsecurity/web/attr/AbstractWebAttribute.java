@@ -52,7 +52,7 @@ public abstract class AbstractWebAttribute<T> extends SecurityWebSupport impleme
     protected boolean mutable = true;
 
     /**
-     * Property editor class to use to convert IDs to and from strings.
+     * Property editor class to use to convert attributes to and from strings.
      */
     private Class<? extends PropertyEditor> editorClass = null;
 
@@ -164,6 +164,7 @@ public abstract class AbstractWebAttribute<T> extends SecurityWebSupport impleme
     protected String toStringValue( T value ) {
         Class clazz = getEditorClass();
         if ( clazz == null ) {
+            
             if ( log.isDebugEnabled() ) {
                 log.debug( "No 'editorClass' property set - returning value.toString() as the string value for " +
                     "method argument." );
