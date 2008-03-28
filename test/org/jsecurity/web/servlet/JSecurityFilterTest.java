@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 /**
  * @author Les Hazlewood
@@ -73,32 +72,17 @@ public class JSecurityFilterTest {
 
     @Test
     public void testDefaultConfig() throws Exception {
-        expect(mockFilterConfig.getInitParameter("interceptors")).andReturn(null);
-        expect(mockFilterConfig.getInitParameter("urls")).andReturn(null);
-        expect(mockFilterConfig.getInitParameter("unauthorizedPage")).andReturn(null);
+        expect(mockFilterConfig.getInitParameter("config")).andReturn(null);
         replayAndVerify();
     }
 
     @Test
     public void testCustomInterceptorConfig() throws Exception {
-        String interceptors = "authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor\n" +
-                "              authc.applicationName = JSecurity Quickstart";
-
-        expect(mockFilterConfig.getInitParameter("interceptors")).andReturn(interceptors);
-        expect(mockFilterConfig.getInitParameter("urls")).andReturn(null);
-        expect(mockFilterConfig.getInitParameter("unauthorizedPage")).andReturn(null);
-        replayAndVerify();
-    }
-
-    //TODO - make this exception a subclass of ServletException to indicate invalid configuration?
-    @Test(expected = ServletException.class)
-    public void testCustomInterceptorConfigInvalidKeyValuePair() throws Exception {
-        String interceptors = "authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor\n" +
-                "              authc.applicationName JSecurity Quickstart";
-
-        expect(mockFilterConfig.getInitParameter("interceptors")).andReturn(interceptors);
-        expect(mockFilterConfig.getInitParameter("urls")).andReturn(null);
-        expect(mockFilterConfig.getInitParameter("unauthorizedPage")).andReturn(null);
+        String interceptors = "[interceptors]\n" +
+                "authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor\n" +
+                "authc.applicationName = JSecurity Quickstart";
+        
+        expect(mockFilterConfig.getInitParameter("config")).andReturn(interceptors);
         replayAndVerify();
     }
 
