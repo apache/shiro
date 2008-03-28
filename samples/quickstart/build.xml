@@ -84,11 +84,11 @@
     <target name="dist">
         <war warfile="${dist.war}" webxml="WEB-INF/web.xml">
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
-            <lib dir="${lib.dir}/ivy/test" includes="jstl.jar"/>
-            <lib dir="${lib.dir}/ivy/test" includes="standard.jar"/>
-            <lib dir="${lib.dir}/ivy/test" includes="log4j.jar"/>
-            <lib dir="${lib.dir}/ivy/test" includes="commons-*.jar"/>
-            <lib dir="${lib.dir}/ivy/test" includes="ehcache.jar"/>
+            <lib dir="${lib.dir}/test" includes="jstl.jar"/>
+            <lib dir="${lib.dir}/test" includes="standard.jar"/>
+            <lib dir="${lib.dir}/test" includes="log4j.jar"/>
+            <lib dir="${lib.dir}/test" includes="commons-*.jar"/>
+            <lib dir="${lib.dir}/test" includes="ehcache.jar"/>
             <fileset dir="${module.base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
             <!-- <lib dir="${dist.dir}" includes="*.jar"/> -->
         </war>
