@@ -238,7 +238,6 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
 
         <path id="javadocSrcPath">
             <pathelement location="${src.dir}"/>
-            <pathelement location="${root.base.dir}/support/jboss/src"/>
             <pathelement location="${root.base.dir}/support/spring/src"/>
         </path>
 
@@ -261,9 +260,6 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
                 <![CDATA[<i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-3614410-1"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]></bottom>
             <classpath refid="all.libs"/>
             <packageset dir="${src.dir}">
-                <include name="org/jsecurity/**"/>
-            </packageset>
-            <packageset dir="${root.base.dir}/support/jboss/src">
                 <include name="org/jsecurity/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/spring/src">
@@ -361,9 +357,6 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
                 <include name="org/jsecurity/**"/>
             </fileset>
             <fileset dir="${root.base.dir}/support/spring/src">
-                <include name="org/jsecurity/**"/>
-            </fileset>
-            <fileset dir="${root.base.dir}/support/jboss/src">
                 <include name="org/jsecurity/**"/>
             </fileset>
         </zip>
