@@ -17,7 +17,7 @@
 
     <!-- JSecurity's main business-tier object:  -->
     <bean id="securityManager" class="org.jsecurity.mgt.DefaultSecurityManager">
-        <property name="realm" ref="activeDirectoryRealm"/>
+        <property name="realm" ref="jdbcRealm"/>
     </bean>
 
 
@@ -57,13 +57,15 @@
       -  Active Directory Realm - to use, inject ldapRealm into the securityManager and update
       -  settings to match your active directory server, domain, etc.
       ============================================================ -->
+    <!--
     <bean id="activeDirectoryRealm" class="org.jsecurity.realm.activedirectory.ActiveDirectoryRealm">
-        <property name="principalSuffix" value="@Solad.local"/>
-        <property name="searchBase" value="OU=SolTech,DC=Solad,DC=local"/>
-        <property name="url" value="ldap://mail.soltech.net:389"/>
-        <property name="systemUsername" value="jhaile"/>
-        <property name="systemPassword" value="jha1le4"/>
+        <property name="principalSuffix" value=""/>
+        <property name="searchBase" value=""/>
+        <property name="url" value=""/>
+        <property name="systemUsername" value=""/>
+        <property name="systemPassword" value=""/>
     </bean>
+    -->
 
 
     <!-- =========================================================

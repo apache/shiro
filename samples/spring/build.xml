@@ -35,6 +35,12 @@
         <delete dir="${build.dir}"/>
     </target>
 
+    <target name="clean-deploy-dir">
+        <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
+        <delete file="${deploy.dir}/${dist.war.name}"/>
+        <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
+    </target>
+
     <!-- ===================================================================
       -  compile - compile Java source files
       -  =================================================================== -->
