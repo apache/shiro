@@ -44,8 +44,8 @@
 
     <bean id="indexController" class="org.jsecurity.samples.spring.web.IndexController">
         <property name="commandClass" value="org.jsecurity.samples.spring.web.SessionValueCommand"/>
-        <property name="formView" value="index"/>
-        <property name="successView" value="index"/>
+        <property name="formView" value="sampleIndex"/>
+        <property name="successView" value="sampleIndex"/>
     </bean>
 
     <bean name="urlController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
