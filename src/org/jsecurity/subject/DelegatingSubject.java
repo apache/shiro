@@ -334,7 +334,7 @@ public class DelegatingSubject implements Subject {
 
     public Session getSession(boolean create) {
         assertValid();
-        if (this.session == null && create) {
+        if ((this.session == null || this.session.getId() == null) && create) {
             this.session = securityManager.start(getInetAddress());
         }
         return this.session;

@@ -18,6 +18,7 @@
     <!-- JSecurity's main business-tier object:  -->
     <bean id="securityManager" class="org.jsecurity.web.WebSecurityManager">
         <property name="realm" ref="jdbcRealm"/>
+        <property name="sessionMode" value="jsecurity"/>
     </bean>
 
 

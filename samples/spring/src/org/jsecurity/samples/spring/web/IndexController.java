@@ -16,6 +16,7 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.SecurityUtils;
+import org.jsecurity.samples.spring.SampleManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.springframework.validation.BindException;
@@ -32,8 +33,8 @@ import java.util.Map;
  * Spring MVC controller responsible for rendering the JSecurity Spring sample
  * application index page.
  *
- * @since 0.1
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class IndexController extends SimpleFormController {
 
@@ -45,6 +46,8 @@ public class IndexController extends SimpleFormController {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
 
+    private SampleManager sampleManager;
+
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -53,6 +56,10 @@ public class IndexController extends SimpleFormController {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
+    public void setSampleManager(SampleManager sampleManager) {
+        this.sampleManager = sampleManager;
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -60,30 +67,28 @@ public class IndexController extends SimpleFormController {
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        Session session = SecurityUtils.getSubject().getSession();
-        command.setValue( (String) session.getAttribute( "value" ) );
+        command.setValue(sampleManager.getValue());
         return command;
     }
 
-    protected Map<String,Object> referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
+    protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         Subject subject = SecurityUtils.getSubject();
-        boolean hasRole1 = subject.hasRole( "role1" );
-        boolean hasRole2 = subject.hasRole( "role2" );
+        boolean hasRole1 = subject.hasRole("role1");
+        boolean hasRole2 = subject.hasRole("role2");
 
-        Map<String,Object> refData = new HashMap<String,Object>();
-        refData.put( "hasRole1", hasRole1 );
-        refData.put( "hasRole2", hasRole2 );
-        refData.put( "sessionId", subject.getSession().getId() );
+        Map<String, Object> refData = new HashMap<String, Object>();
+        refData.put("hasRole1", hasRole1);
+        refData.put("hasRole2", hasRole2);
+        refData.put("sessionId", subject.getSession().getId());
         return refData;
     }
 
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
         SessionValueCommand command = (SessionValueCommand) obj;
 
-        Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute( "value", command.getValue() );
+        sampleManager.setValue(command.getValue());
 
-        return showForm( request, response, errors );
+        return showForm(request, response, errors);
     }
 
 }
