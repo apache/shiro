@@ -14,6 +14,7 @@
                 <prop key="jsecurity.jnlp">jnlpController</prop>
                 <prop key="login">loginController</prop>
                 <prop key="logout">logoutController</prop>
+                <prop key="unauthorized">loginController</prop>
             </props>
         </property>
     </bean>

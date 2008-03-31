@@ -10,7 +10,7 @@
 
     <div id="contentBox">
         <img src="<c:url value="/logo.png"/>" style="margin-top:20px; border:0"/><br/>
-        <h3>You have successfully logged in.</h3>
+        <h3>You have successfully logged in as <jsecurity:principal />.</h3>
 
         <p style="font-weight: bold;" >
             <jsecurity:hasRole name="role1">You have role 1.<br/></jsecurity:hasRole>
