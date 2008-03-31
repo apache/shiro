@@ -40,18 +40,27 @@
     <filter>
         <filter-name>JSecurityFilter</filter-name>
         <filter-class>org.jsecurity.spring.SpringJSecurityFilter</filter-class>
-        <init-param>
-            <param-name>unauthorizedPage</param-name>
-            <param-value>/s/unauthorized</param-value>
-        </init-param>
-        <init-param>
-            <param-name>urls</param-name>
+
+        <!--  <init-param>
+            <param-name>config</param-name>
             <param-value>
+
+                # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
+                # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
+                #
+                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
+
+                [interceptors]
+                authc.url = /s/login
+                authc.successUrl = /s/index
+
+
+                [urls]
                 /s/index=authc
                 /s/jsecurity.jnlp=authc|user
                 /remoting/**=authenticated|permission.remote:invoke
             </param-value>
-        </init-param>
+        </init-param>-->
 
     </filter>
 
