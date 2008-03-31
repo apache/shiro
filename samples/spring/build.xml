@@ -5,7 +5,7 @@
     <property name="root.base.dir" value="../.."/>
 
     <!-- "extend" parent build definition -->
-    <import file="../../build.xml" />
+    <import file="../../build.xml"/>
 
     <property name="module.name" value="spring"/>
     <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
@@ -47,15 +47,15 @@
     <target name="compile">
 
         <mkdir dir="${classes.dir}"/>
-		<mkdir dir="${classes.dir}/META-INF"/>
+        <mkdir dir="${classes.dir}/META-INF"/>
 
-		<javac destdir="${classes.dir}"
+        <javac destdir="${classes.dir}"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
                failonerror="true"
                classpathref="compile.path">
-			<src path="${src.dir}"/>
+            <src path="${src.dir}"/>
             <classpath location="${root.dist.dir}/jsecurity.jar"/>
         </javac>
 
@@ -71,9 +71,11 @@
             </fileset>
             <fileset dir="${etc.dir}">
                 <include name="*.xml"/>
-                <include name="*.gif"/>
-                <include name="*.jpg"/>                
-                <include name="*.properties"/>                
+                <include name="*.properties"/>
+            </fileset>
+            <!-- grabbing logo from webroot-->
+            <fileset dir="webroot">
+                <include name="logo.png"/>
             </fileset>
             <manifest>
                 <attribute name="Implementation-Title"
@@ -117,7 +119,7 @@
         </war>
     </target>
 
-    <target name="deploy" depends="dist" >
+    <target name="deploy" depends="dist">
         <copy file="${dist.war}" todir="${deploy.dir}" preservelastmodified="true" overwrite="true"/>
     </target>
 
