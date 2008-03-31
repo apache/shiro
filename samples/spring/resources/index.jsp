@@ -34,7 +34,7 @@
 
 
         <p>
-            Click <a href="<c:url value="/s/logout"/>>here</a> to logout.
+            Click <a href="<c:url value="/s/logout"/>">here</a> to logout.
         </p>
     </div>
 </body>

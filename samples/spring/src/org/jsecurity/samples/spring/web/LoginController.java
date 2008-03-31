@@ -18,6 +18,7 @@ package org.jsecurity.samples.spring.web;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.mgt.DefaultSecurityManager;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -28,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Spring MVC controller responsible for authenticating the user.
  *
- * @since 0.1
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class LoginController extends SimpleFormController {
 
@@ -40,7 +41,7 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private Authenticator authenticator;
+    private DefaultSecurityManager securityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -51,13 +52,14 @@ public class LoginController extends SimpleFormController {
     ============================================*/
 
     /**
-     * Sets the authenticator that should be used to login the user.
-     * @param authenticator the authenticator used to perform the login.
+     * Sets the security manager that should be used to login the user.
+     *
+     * @param securityManager the security manager used to perform the login.
      */
-    public void setAuthenticator(Authenticator authenticator) {
-        this.authenticator = authenticator;
-    }
 
+    public void setSecurityManager(DefaultSecurityManager securityManager) {
+        this.securityManager = securityManager;
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -68,20 +70,23 @@ public class LoginController extends SimpleFormController {
 
         LoginCommand command = (LoginCommand) cmd;
 
-        UsernamePasswordToken token = new UsernamePasswordToken( command.getUsername(), command.getPassword() );
+        UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(), command.getPassword());
+
+        securityManager.init();
+
         try {
-            authenticator.authenticate( token );
+            securityManager.login(token);
         } catch (AuthenticationException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Error authenticating.", e);
             }
-            errors.reject( "error.invalidLogin", "The username or password was not correct." );
+            errors.reject("error.invalidLogin", "The username or password was not correct.");
         }
 
-        if( errors.hasErrors() ) {
-            return showForm( request, response, errors );
+        if (errors.hasErrors()) {
+            return showForm(request, response, errors);
         } else {
-            return new ModelAndView( getSuccessView() );
+            return new ModelAndView(getSuccessView());
         }
     }
 }
