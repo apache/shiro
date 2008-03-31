@@ -70,7 +70,7 @@ public class WebStartView implements ActionListener, InitializingBean {
     |               M E T H O D S               |
     ============================================*/
     public void afterPropertiesSet() throws Exception {
-        ClassPathResource resource = new ClassPathResource( "webstartTitle.gif" );
+        ClassPathResource resource = new ClassPathResource( "logo.png" );
         ImageIcon icon = new ImageIcon( resource.getURL() );
         JLabel logo = new JLabel( icon );
 
@@ -99,7 +99,7 @@ public class WebStartView implements ActionListener, InitializingBean {
         methodPanel.add( secureMethod2Button );
 
         frame = new JFrame( "JSecurity Sample Application" );
-        frame.setSize( 300, 200 );
+        frame.setSize( 500, 200 );
 
         Container panel = frame.getContentPane();
         panel.setLayout( new BorderLayout() );
