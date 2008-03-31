@@ -16,7 +16,7 @@
     <bean class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
 
     <!-- JSecurity's main business-tier object:  -->
-    <bean id="securityManager" class="org.jsecurity.mgt.DefaultSecurityManager">
+    <bean id="securityManager" class="org.jsecurity.web.WebSecurityManager">
         <property name="realm" ref="jdbcRealm"/>
     </bean>
 

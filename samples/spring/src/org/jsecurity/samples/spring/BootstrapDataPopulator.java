@@ -35,10 +35,8 @@ public class BootstrapDataPopulator implements InitializingBean {
         "\n" +
         "create table roles_permissions (\n" +
         "    role_name varchar(255) not null,\n" +
-        "    permission_class varchar(255) not null,\n" +
-        "    permission_target varchar(255) not null,\n" +
-        "    permission_actions varchar(255),\n" +
-        "    primary key (role_name, permission_class, permission_target, permission_actions)\n" +
+        "    permission varchar(255) not null,\n" +
+        "    primary key (role_name, permission)\n" +
         ");";
 
     protected transient final Log log = LogFactory.getLog( getClass() );
