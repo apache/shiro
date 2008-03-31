@@ -1,4 +1,4 @@
-<%@ include file="include.jsp"%>
+<%@ include file="include.jsp" %>
 
 <html>
 
@@ -18,16 +18,16 @@
                 ${status.errorMessage}
             </spring:bind>
         </span>
-        </p>
+    </p>
 
-        <form action="login" method="POST">
-            Username: <input id="username" name="username" type="text"/><br/>
-            Password: <input name="password" type="password"/><br/><br/>
-            <input type="submit" value="Login"/>
-        </form>
+    <form action="login" method="POST">
+        Username: <input id="username" name="username" type="text"/><br/><br/>
+        Password: <input name="password" type="password"/><br/><br/>
+        <input type="submit" value="Login"/>
+    </form>
 
-        <p>Try logging in with username/passwords: user1/user1 and user2/user2.</p>
-    </div>
+    <p>Try logging in with username/passwords: user1/user1 and user2/user2.</p>
+</div>
 </body>
 
 </html>
