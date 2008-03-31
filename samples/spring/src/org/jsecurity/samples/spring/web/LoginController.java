@@ -16,10 +16,8 @@
 package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.mgt.DefaultSecurityManager;
-import org.jsecurity.subject.Subject;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -76,7 +74,7 @@ public class LoginController extends SimpleFormController {
         securityManager.init();
 
         try {
-           Subject subject = securityManager.login(token);
+           securityManager.login(token);
         } catch (AuthenticationException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Error authenticating.", e);

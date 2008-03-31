@@ -25,8 +25,8 @@ import org.jsecurity.subject.Subject;
  * Default implementation of the {@link SampleManager} interface that stores
  * and retrieves a value from the user's session.
  *
- * @since 0.1
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class DefaultSampleManager implements SampleManager {
 
@@ -36,7 +36,7 @@ public class DefaultSampleManager implements SampleManager {
     /**
      * Key used to store the value in the user's session.
      */
-    private static final String VALUE_KEY = "value";
+    private static final String VALUE_KEY = "sample_value";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -44,7 +44,7 @@ public class DefaultSampleManager implements SampleManager {
     /**
      * Commons-logger.
      */
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -60,29 +60,29 @@ public class DefaultSampleManager implements SampleManager {
 
     public String getValue() {
         Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession( false );
-        if( session != null ) {
+        Session session = subject.getSession(false);
+        if (session != null) {
             return (String) session.getAttribute(VALUE_KEY);
         } else {
             return null;
         }
     }
 
-    public void setValue( String newValue ) {
+    public void setValue(String newValue) {
         Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        session.setAttribute(VALUE_KEY, newValue );
+        Session session = subject.getSession(false);
+        session.setAttribute(VALUE_KEY, newValue);
     }
 
     public void secureMethod1() {
-        if( log.isInfoEnabled() ) {
-            log.info( "Secure method 1 called..." );
+        if (log.isInfoEnabled()) {
+            log.info("Secure method 1 called...");
         }
     }
 
     public void secureMethod2() {
-        if( log.isInfoEnabled() ) {
-            log.info( "Secure method 2 called..." );
+        if (log.isInfoEnabled()) {
+            log.info("Secure method 2 called...");
         }
     }
 

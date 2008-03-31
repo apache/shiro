@@ -46,6 +46,7 @@
         <property name="commandClass" value="org.jsecurity.samples.spring.web.SessionValueCommand"/>
         <property name="formView" value="sampleIndex"/>
         <property name="successView" value="sampleIndex"/>
+        <property name="sampleManager" ref="sampleManager"/>
     </bean>
 
     <bean name="urlController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>

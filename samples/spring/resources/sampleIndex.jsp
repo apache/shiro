@@ -9,7 +9,7 @@
 <body>
 
     <div id="contentBox">
-        <img src="<c:url value="/bigLogo.jpg"/>"/><br/>
+        <img src="<c:url value="/logo.png"/>" style="margin-top:20px; border:0"/><br/>
         <h3>You have successfully logged in.</h3>
 
         <p style="font-weight: bold;" >

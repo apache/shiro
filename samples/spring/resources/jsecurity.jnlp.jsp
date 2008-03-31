@@ -11,8 +11,7 @@
         <description>JSecurity Sample Application</description>
         <description kind="short">A webstart application used to demonstrate JSecurity session and security
             management.</description>
-        <icon href="logo.gif"/>
-        <icon kind="splash" href="webstartSplash.jpg"/>
+        <icon kind="splash" href="logo.png"/>
         <offline-allowed/>
     </information>
     <security>
