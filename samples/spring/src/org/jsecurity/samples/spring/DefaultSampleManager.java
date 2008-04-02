@@ -59,18 +59,32 @@ public class DefaultSampleManager implements SampleManager {
     ============================================*/
 
     public String getValue() {
+        String value = null;
+
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession(false);
         if (session != null) {
-            return (String) session.getAttribute(VALUE_KEY);
-        } else {
-            return null;
+
+
+            value = (String) session.getAttribute(VALUE_KEY);
+
+            if (log.isDebugEnabled()) {
+                log.debug("retrieving session key [" + VALUE_KEY + "] with value [" + value + "] on session with id [" + session.getId() + "]");
+            }
+
         }
+
+        return value;
     }
 
     public void setValue(String newValue) {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession(false);
+
+        if (log.isDebugEnabled()) {
+            log.debug("saving session key [" + VALUE_KEY + "] with value [" + newValue + "] on session with id [" + session.getId() + "]");
+        }
+
         session.setAttribute(VALUE_KEY, newValue);
     }
 

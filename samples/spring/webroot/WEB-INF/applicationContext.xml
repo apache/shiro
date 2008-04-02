@@ -75,10 +75,10 @@
       -  JSecurity annotation support
       ============================================================ -->
     <!-- Enable JSecurity Annotations for Spring-configured beans: -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+<!--    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
     <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
-    </bean>
+    </bean>-->
 
 
     <!-- =========================================================

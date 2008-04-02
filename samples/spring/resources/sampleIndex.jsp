@@ -11,7 +11,16 @@
     <div id="contentBox">
         <img src="<c:url value="/logo.png"/>" style="margin-top:20px; border:0"/><br/>
 
-        <h3>You have successfully logged in as <jsecurity:principal/>.</h3>
+        <h2>You have successfully logged in as <jsecurity:principal/>.</h3>
+
+        Session ID: ${subjectSession.id}
+
+        <h3>Session Attribute Keys</h3>
+        <ul>
+        <c:forEach items="${subjectSession.attributeKeys}" var="key">
+                  <li>${key}</li>
+        </c:forEach>
+        </ul>
 
         <p style="font-weight: bold;">
             <jsecurity:hasRole name="role1">You have role 1.<br/></jsecurity:hasRole>
@@ -28,7 +37,7 @@
 
 
         <p>
-            Click <a href="<c:url value="/s/jsecurity.jnlp?sessionId=${sessionId}"/>">here</a> to launch webstart application.
+            Click <a href="<c:url value="/s/jsecurity.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart application.
         </p>
 
 
