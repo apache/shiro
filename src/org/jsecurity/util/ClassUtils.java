@@ -67,7 +67,25 @@ public class ClassUtils {
         }
     }
 
-    public static Object instantiate( Constructor ctor, Object[] args ) {
+    public static Object newInstance( Class clazz, Object... args ) {
+        Class[] argTypes = new Class[args.length];
+        for( int i = 0; i < args.length; i++ ) {
+            argTypes[i] = args[i].getClass();
+        }
+        Constructor ctor = getConstructor(clazz,argTypes);
+        return instantiate(ctor, args);
+    }
+
+    public static Constructor getConstructor( Class clazz, Class... argTypes ) {
+        try {
+            return clazz.getConstructor(argTypes);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+
+    }
+
+    public static Object instantiate( Constructor ctor, Object... args ) {
         try {
             return ctor.newInstance( args );
         } catch ( Exception e ) {

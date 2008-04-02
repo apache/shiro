@@ -19,6 +19,7 @@ import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.realm.SimpleAccountRealm;
+import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.StringUtils;
 
@@ -158,9 +159,11 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
             String[] passwordAndRolesArray = StringUtils.split(value);
 
             String password = passwordAndRolesArray[0];
-            SimpleAuthorizingAccount user = getUser(username);
+
+            SimplePrincipalCollection principals = new SimplePrincipalCollection(getName(), username );
+            SimpleAuthorizingAccount user = getUser(principals);
             if (user == null) {
-                user = new SimpleAuthorizingAccount(username, password);
+                user = new SimpleAuthorizingAccount(principals, password);
                 add(user);
             }
             user.setCredentials(password);

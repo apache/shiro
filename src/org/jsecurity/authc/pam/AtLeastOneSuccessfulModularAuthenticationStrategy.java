@@ -59,7 +59,7 @@ public class AtLeastOneSuccessfulModularAuthenticationStrategy implements Modula
     public Account afterAllAttempts( AuthenticationToken token, Account aggregate ) throws AuthenticationException {
         //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
-        boolean oneOrMoreSuccessful = aggregate != null && (aggregate.getPrincipal() != null );
+        boolean oneOrMoreSuccessful = aggregate != null && (aggregate.getPrincipals() != null );
 
         if ( !oneOrMoreSuccessful ) {
             throw new AuthenticationException( "Authentication token of type [" + token.getClass() + "] " +

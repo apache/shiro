@@ -28,9 +28,7 @@ import org.jsecurity.session.Session;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,7 +60,7 @@ public class DelegatingSubject implements Subject {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected Object principal = null;
+    protected PrincipalCollection principals = new SimplePrincipalCollection();
     protected boolean authenticated = false;
     protected InetAddress inetAddress = null;
     protected Session session = null;
@@ -82,18 +80,14 @@ public class DelegatingSubject implements Subject {
         this(null, false, getLocalHost(), null, securityManager);
     }
 
-    public DelegatingSubject(Object principal, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, InetAddress inetAddress,
                              Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
         this.securityManager = securityManager;
-        this.principal = principal;
-        if (principal instanceof Collection) {
-            //noinspection unchecked
-            this.principal = Collections.unmodifiableCollection((Collection) principal);
-        }
-
+        this.principals = principals;
+       
         this.authenticated = authenticated;
 
         if (inetAddress != null) {
@@ -141,57 +135,15 @@ public class DelegatingSubject implements Subject {
      * @see Subject#getPrincipal()
      */
     public Object getPrincipal() {
-        return this.principal;
+        PrincipalCollection principals = getPrincipals();
+        if ( principals.isEmpty() ) {
+            return null;
+        }
+        return principals.asSet().iterator().next();
     }
 
-    /**
-     * @see Subject#getPrincipalByType(Class) ()
-     */
-    public <T> T getPrincipalByType(Class<T> principalType) {
-        assertValid();
-        if (this.principal instanceof Collection) {
-            Collection c = (Collection) this.principal;
-            for (Object o : c) {
-                if (principalType.isAssignableFrom(o.getClass())) {
-                    //noinspection unchecked
-                    return (T) o;
-                }
-            }
-        } else {
-            if (principalType.isAssignableFrom(this.principal.getClass())) {
-                //noinspection unchecked
-                return (T) this.principal;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @see Subject#getAllPrincipalsByType(Class)()
-     */
-    public <T> Collection<T> getAllPrincipalsByType(Class<T> principalType) {
-        assertValid();
-        List<T> principalsOfType = new ArrayList<T>();
-
-        if (principal != null) {
-            if (principal instanceof Collection) {
-                Collection c = (Collection) principal;
-                if (!c.isEmpty()) {
-                    for (Object o : c) {
-                        if (principalType.isAssignableFrom(o.getClass())) {
-                            //noinspection unchecked
-                            principalsOfType.add((T) o);
-                        }
-                    }
-                }
-            } else {
-                if (principalType.isAssignableFrom(principal.getClass())) {
-                    //noinspection unchecked
-                    principalsOfType.add((T) principal);
-                }
-            }
-        }
-        return principalsOfType;
+    public PrincipalCollection getPrincipals() {
+        return this.principals;
     }
 
     public boolean isPermitted(String permission) {
@@ -302,18 +254,15 @@ public class DelegatingSubject implements Subject {
     public void login(AuthenticationToken token) throws AuthenticationException {
         assertValid();
         Subject authcSecCtx = securityManager.login(token);
-        Object principals = authcSecCtx.getPrincipal();
-        if (principals instanceof Collection && ((Collection) principals).isEmpty()) {
-            principals = null;
-        }
-        if (principals == null) {
+        PrincipalCollection principals = authcSecCtx.getPrincipals();
+        if (principals == null || principals.isEmpty() ) {
             String msg = "Principals returned from securityManager.login( token ) returned a null or " +
                     "empty value.  This value must be non null, and if a collection, the collection must " +
                     "be populated with one or more elements.  Please check the SecurityManager " +
                     "implementation to ensure this happens after a successful login attempt.";
             throw new IllegalStateException(msg);
         }
-        this.principal = principals;
+        this.principals = principals;
         this.authenticated = true;
         if (token instanceof InetAuthenticationToken) {
             InetAddress addy = ((InetAuthenticationToken) token).getInetAddress();
@@ -357,11 +306,11 @@ public class DelegatingSubject implements Subject {
         }
 
         try {
-            this.securityManager.logout(getPrincipal());
+            this.securityManager.logout(getPrincipals());
         } finally {
             setInvalidated(true);
             this.session = null;
-            this.principal = null;
+            this.principals = null;
             this.authenticated = false;
             this.inetAddress = null;
             this.securityManager = null;

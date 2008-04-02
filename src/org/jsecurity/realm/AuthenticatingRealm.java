@@ -20,6 +20,7 @@ import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authc.credential.SimpleCredentialsMatcher;
 import org.jsecurity.cache.CacheManager;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * A top-level abstract implementation of the <tt>Realm</tt> interface that only implements authentication support
@@ -217,7 +218,9 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      *
      * <p>In a single-realm JSecurity configuration (most applications), the <code>accountPrincipal</code> method
      * argument will be the same as that which is contained in the <code>Account</code> object returned by the
-     * {@link #doGetAccount} method (that is, {@link Account#getPrincipal account.getPrincipal()}).
+     * {@link #doGetAccount} method (that is, {@link Account#getPrincipals account.getPrincipals()}).
+     *
+     * //TODO update
      *
      * <p>In a multi-realm JSecurity configuration, the given <code>accountPrincipal</code> method
      * argument could contain principals returned by many realms.  Therefore the subclass implementation would need
@@ -225,7 +228,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      *
      * @param accountPrincipal the application-specific Subject/user identifier that is logging out.
      */
-    public void onLogout( Object accountPrincipal ) {
+    public void onLogout( PrincipalCollection accountPrincipal ) {
         //no-op, here for subclass override if desired.
     }
 

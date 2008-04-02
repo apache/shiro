@@ -115,6 +115,7 @@ public class PrincipalTag extends SecureTag {
     ============================================*/
 
 
+    @SuppressWarnings({"unchecked"})
     public int onDoStartTag() throws JspException {
         String strValue = null;
 
@@ -125,7 +126,7 @@ public class PrincipalTag extends SecureTag {
             if( type == null ) {
                 principal = getSubject().getPrincipal();
             } else {
-                principal = getSubject().getPrincipalByType( type );
+                principal = getSubject().getPrincipals().oneByType( type );
             }
 
             // Get the string value of the principal

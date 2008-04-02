@@ -81,12 +81,12 @@ public class ActiveDirectoryRealmTest {
 
 
 
-        UsernamePrincipal usernamePrincipal = subject.getPrincipalByType(UsernamePrincipal.class);
+        UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
 
 
 
-        UserIdPrincipal userIdPrincipal = subject.getPrincipalByType(UserIdPrincipal.class);
+        UserIdPrincipal userIdPrincipal = subject.getPrincipals().oneByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
         Object principals = subject.getPrincipal();
@@ -134,11 +134,9 @@ public class ActiveDirectoryRealmTest {
         }
 
         protected AuthorizingAccount doGetAccount(Object principal) {
-            UserIdPrincipal userIdPrincipal = (UserIdPrincipal) principal;
-            assertTrue(userIdPrincipal.getUserId() == USER_ID);
             Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(userIdPrincipal, null, roles, null);
+            return new SimpleAuthorizingAccount(principal, null, roles, null);
         }
 
         // override ldap query because i don't care about testing that piece in this case

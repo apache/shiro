@@ -20,6 +20,7 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.session.SessionFactory;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
 
 /**
@@ -86,7 +87,7 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      * @see #getSubject()
      * @since 0.9
      */
-    void logout( Object subjectIdentifier );
+    void logout( PrincipalCollection subjectIdentifier );
 
     /**
      * Returns the <tt>Subject</tt> instance representing the currently executing user.

@@ -18,9 +18,9 @@ package org.jsecurity.authc.support;
 import static org.easymock.EasyMock.*;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.event.AuthenticationEvent;
+import org.jsecurity.authc.event.AuthenticationEventListener;
 import org.jsecurity.authc.event.FailedAuthenticationEvent;
 import org.jsecurity.authc.event.SuccessfulAuthenticationEvent;
-import org.jsecurity.authc.event.mgt.AuthenticationEventFactory;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,13 +68,6 @@ public class AbstractAuthenticatorTest {
         };
     }
 
-    /**
-     * Tests that the authenticate() method fails if the instance's init() method wasn't called.
-     */
-    @Test(expected=IllegalStateException.class)
-    public void authenticateWithoutFirstCallingInit() {
-        abstractAuthenticator.authenticate( newToken() );
-    }
 
     /**
      * Ensures that the authenticate() method proactively fails if a <tt>null</tt> AuthenticationToken is passed as an
@@ -127,54 +120,35 @@ public class AbstractAuthenticatorTest {
     }
 
     @Test
-    public void sendWithSenderThrowingException() {
-        AuthenticationEventFactory mockFactory = createMock( AuthenticationEventFactory.class );
-        AuthenticationToken token = newToken();
-        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( token, account );
-        expect( mockFactory.createSuccessEvent( token, account) ).andReturn( successEvent );
-        expectLastCall().andThrow( new RuntimeException() );
-        replay( mockFactory );
-        verify( mockFactory );
-    }
-
-    @Test(expected=AuthenticationException.class)
-    public void sendWithSenderThrowingExceptionFailingAuthentication() {
-        AuthenticationEventFactory mockFactory = createMock( AuthenticationEventFactory.class );
-        AuthenticationToken token = newToken();
-        SuccessfulAuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( token, account );
-        expect( mockFactory.createSuccessEvent( token, account) ).andReturn( successEvent );
-        expectLastCall().andThrow( new RuntimeException() );
-        replay( mockFactory );
-        verify( mockFactory );
-    }
-
-    @Test
     public void sendSuccessEventAfterDoAuthenticate() {
-        AuthenticationEventFactory mockEvtFactory = createMock( AuthenticationEventFactory.class );
+        AuthenticationEventListener mockListener = createMock( AuthenticationEventListener.class );
+        abstractAuthenticator.add(mockListener);
         AuthenticationToken token = newToken();
         AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent( token, account );
-        expect( mockEvtFactory.createSuccessEvent( token, account) ).andReturn( successEvent );
-        replay( mockEvtFactory );
+
+        mockListener.onEvent(isA(SuccessfulAuthenticationEvent.class));
+
+        replay( mockListener );
         abstractAuthenticator.authenticate( token );
-        verify( mockEvtFactory );
+        verify( mockListener );
     }
 
     @Test
     public void sendFailedEventAfterDoAuthenticateThrowsAuthenticationException() {
-        AuthenticationEventFactory mockEvtFactory = createMock( AuthenticationEventFactory.class );
+        AuthenticationEventListener mockListener = createMock( AuthenticationEventListener.class );
         AuthenticationToken token = newToken();
 
         final AuthenticationException ae = new AuthenticationException( "dummy exception to test event sending" );
-        final AuthenticationEvent failedEvent = new FailedAuthenticationEvent( token, ae );
 
         abstractAuthenticator = new AbstractAuthenticator() {
             protected Account doAuthenticate( AuthenticationToken token ) throws AuthenticationException {
                 throw ae;
             }
         };
+        abstractAuthenticator.add(mockListener);
 
-        expect( mockEvtFactory.createFailureEvent( token, ae ) ).andReturn( failedEvent );
-        replay( mockEvtFactory );
+        mockListener.onEvent(isA(FailedAuthenticationEvent.class));
+        replay(mockListener);
 
         boolean exceptionThrown = false;
         try {
@@ -183,7 +157,7 @@ public class AbstractAuthenticatorTest {
             exceptionThrown = true;
             assertEquals( e, ae );
         }
-        verify( mockEvtFactory );
+        verify( mockListener );
 
         if ( !exceptionThrown ) {
             fail( "An AuthenticationException should have been thrown during the sendFailedEvent test case." );

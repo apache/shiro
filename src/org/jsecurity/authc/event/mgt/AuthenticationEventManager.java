@@ -18,6 +18,7 @@ package org.jsecurity.authc.event.mgt;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * @author Les Hazlewood
@@ -49,5 +50,5 @@ public interface AuthenticationEventManager extends AuthenticationEventFactory, 
      *
      * @param subjectPrincipal the application-specific Subject/user identifier.
      */
-    void sendLogoutEvent(Object subjectPrincipal);
+    void sendLogoutEvent(PrincipalCollection subjectPrincipal);
 }

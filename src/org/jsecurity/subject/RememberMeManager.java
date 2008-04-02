@@ -28,11 +28,11 @@ import org.jsecurity.authc.AuthenticationToken;
  */
 public interface RememberMeManager {
 
-    Object getRememberedIdentity();
+    PrincipalCollection getRememberedPrincipals();
 
     void onSuccessfulLogin( AuthenticationToken token, Account account );
 
     void onFailedLogin( AuthenticationToken token, AuthenticationException ae );
 
-    void onLogout( Object subjectPrincipals );
+    void onLogout(PrincipalCollection subjectPrincipals );
 }

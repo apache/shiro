@@ -20,6 +20,7 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SessionManager;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.session.ServletContainerSessionManager;
@@ -108,16 +109,16 @@ public class WebSecurityManager extends DefaultSecurityManager {
         }
     }
 
-    protected Object getPrincipals(Session session) {
-        Object principals = null;
+    protected PrincipalCollection getPrincipals(Session session) {
+        PrincipalCollection principals = null;
         if (session != null) {
-            principals = session.getAttribute(PRINCIPALS_SESSION_KEY);
+            principals = (PrincipalCollection)session.getAttribute(PRINCIPALS_SESSION_KEY);
         }
         return principals;
     }
 
-    protected Object getPrincipals(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
-        Object principals = getPrincipals(existing);
+    protected PrincipalCollection getPrincipals(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
+        PrincipalCollection principals = getPrincipals(existing);
         if (principals == null) {
             //check remember me:
             principals = getRememberedIdentity();
@@ -161,7 +162,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
     }
 
     public Subject createSubject(Session existing, ServletRequest request, ServletResponse response) {
-        Object principals = getPrincipals(existing, request, response);
+        PrincipalCollection principals = getPrincipals(existing, request, response);
         boolean authenticated = isAuthenticated(request, response, existing);
         return createSubject(request, response, existing, principals, authenticated);
     }
@@ -169,7 +170,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
     protected Subject createSubject(ServletRequest request,
                                     ServletResponse response,
                                     Session existing,
-                                    Object principals,
+                                    PrincipalCollection principals,
                                     boolean authenticated) {
         InetAddress inetAddress = SecurityWebSupport.getInetAddress(request);
         return createSubject(principals, existing, authenticated, inetAddress);
@@ -183,11 +184,9 @@ public class WebSecurityManager extends DefaultSecurityManager {
     }
 
     protected void bind(Subject subject, ServletRequest request, ServletResponse response) {
-        Object principals = subject.getPrincipal();
-        if ((principals instanceof Collection) && ((Collection) principals).isEmpty()) {
-            principals = null;
-        }
-        if (principals != null) {
+
+        PrincipalCollection principals = subject.getPrincipals();
+        if (principals != null && !principals.isEmpty()) {
             Session session = subject.getSession();
             session.setAttribute(PRINCIPALS_SESSION_KEY, principals);
         } else {

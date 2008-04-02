@@ -174,6 +174,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      */
     public UsernamePasswordToken( final String username, final char[] password,
                                   final boolean rememberMe, final InetAddress inetAddress ) {
+
         this.username = username;
         this.password = password;
         this.rememberMe = rememberMe;

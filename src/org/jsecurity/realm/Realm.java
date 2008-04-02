@@ -62,6 +62,8 @@ import org.jsecurity.authz.Authorizer;
  */
 public interface Realm extends Authorizer {
 
+    String getName();
+
     /**
      * Returns <tt>true</tt> if this realm wishes to authenticate the Subject represented by the given
      * {@link org.jsecurity.authc.AuthenticationToken AuthenticationToken} instance, <tt>false</tt> otherwise.

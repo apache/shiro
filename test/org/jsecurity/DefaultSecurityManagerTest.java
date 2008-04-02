@@ -17,6 +17,7 @@ package org.jsecurity;
 
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.mgt.DefaultSecurityManager;
+import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
 import org.junit.Before;
@@ -54,11 +55,13 @@ public class DefaultSecurityManagerTest {
         } catch ( UnknownHostException e ) {
             e.printStackTrace();  
         }
-        Subject subject = sm.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
+        Subject subject = sm.getSubject();
+        subject.login( new UsernamePasswordToken( "guest", "guest", localhost ) );
         assert subject.isAuthenticated();
         assert "guest".equals( subject.getPrincipal() );
         assert subject.hasRole( "guest" );
-        subject.getSession();
+        Session session = subject.getSession();
+        session.setAttribute("key", "value");
         subject.logout();
     }
 }

@@ -15,6 +15,8 @@
  */
 package org.jsecurity.authc;
 
+import org.jsecurity.subject.PrincipalCollection;
+
 /**
  * <p>An <tt>Account</tt> represents system-specific account/user information
  * in an application-independent manner.  Instead of forcing a JSecurity user to
@@ -29,7 +31,7 @@ package org.jsecurity.authc;
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
  * out for any reason.  If you're using JSecurity's default implementations of this interface, they only ever print the
- * account {@link #getPrincipal() principal}, so you do not need to do anything additional.</p>
+ * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
  *
  * @see SimpleAccount
  * @see org.jsecurity.authz.SimpleAuthorizingAccount
@@ -41,28 +43,29 @@ package org.jsecurity.authc;
 public interface Account {
 
     /**
-     * Returns the account's identifying principal, such as a user id or username.
+     * Returns the account's identifying principals, such as a user id or username.
      *
-     * <p>In a multi-realm configuration, the object returned from this method
-     * might be an implementation-specific object representing multiple principals.  This might be an instance of
-     * java.util.Collection, but it does not have to be - it is up to the Authenticator's modular authentication
-     * strategy as to exactly what is returned.
+     * <p>In most simple and single-realm configurations, the returned collection contains only a single principal,
+     * such as a user id or username.</p>
+     *
+     * //TODO - update JavaDoc for multi-realm scenario.
+     *
      *
      * @return the account's primary principal, such as a user id or username, or in a multi-realm configuration, maybe
      * more than one principal encapsulated by an implementation-specific instance.
      */
-    Object getPrincipal();
+    PrincipalCollection getPrincipals();
 
     /**
      * The account's credentials as stored in the system associated with the
-     * {@link #getPrincipal() account identifier}, such as a password or private key.
+     * {@link #getPrincipals() account identifier}, such as a password or private key.
      *
      * <p>It could be encrypted in which case an
      * {@link org.jsecurity.realm.Realm Realm}
      * must be aware of the fact (e.g. via configuration) in order to interpret and compare
      * the credentials value.
      *
-     * @return the account's credentials verifying the {@link #getPrincipal() identifier}
+     * @return the account's credentials verifying the {@link #getPrincipals() identifiers}
      */
     Object getCredentials();
 
