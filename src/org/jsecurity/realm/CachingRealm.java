@@ -30,6 +30,8 @@ import org.jsecurity.cache.CacheManagerAware;
  */
 public abstract class CachingRealm implements Realm, CacheManagerAware {
 
+    private static int INSTANCE_COUNT = 0;
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
@@ -38,6 +40,8 @@ public abstract class CachingRealm implements Realm, CacheManagerAware {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private String name = getClass().getName() + "_" + INSTANCE_COUNT;
+
     private CacheManager cacheManager;
 
     public CachingRealm(){}
@@ -66,5 +70,13 @@ public abstract class CachingRealm implements Realm, CacheManagerAware {
      */
     public CacheManager getCacheManager() {
         return this.cacheManager;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

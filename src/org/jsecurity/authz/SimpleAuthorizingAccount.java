@@ -17,6 +17,7 @@ package org.jsecurity.authz;
 
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.SimpleAccount;
+import org.jsecurity.subject.PrincipalCollection;
 
 import java.util.*;
 
@@ -39,16 +40,16 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     public SimpleAuthorizingAccount() {
     }
 
-    public SimpleAuthorizingAccount(Object principal, Object credentials) {
+    public SimpleAuthorizingAccount(PrincipalCollection principal, Object credentials) {
         super(principal, credentials);
     }
 
-    public SimpleAuthorizingAccount(Object principal, Object credentials, Set<String> roleNames) {
+    public SimpleAuthorizingAccount(PrincipalCollection principal, Object credentials, Set<String> roleNames) {
         super(principal, credentials);
         addRoles(roleNames);
     }
 
-    public SimpleAuthorizingAccount(Object principal, Object credentials,
+    public SimpleAuthorizingAccount(PrincipalCollection principal, Object credentials,
                                     Set<String> roleNames, Set<Permission> permissions) {
         this(principal, credentials, roleNames);
         //only create a private role if there are permissions:

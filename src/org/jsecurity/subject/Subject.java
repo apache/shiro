@@ -70,27 +70,9 @@ public interface Subject {
      */
     Object getPrincipal();
 
-    /**
-     * Returns a single principal assignable from the specified type, or <tt>null</tt> if there are none of the
-     * specified type.
-     *
-     * <p>If multiple principals of this type are associated with this Subject, it is up to the specific implementation
-     * as to which principal will be returned.
-     *
-     * @param principalType the type of the principal that should be returned.
-     * @return a principal of the specified type or <tt>null</tt> if there isn't one of the specified type.
-     */
-    <T> T getPrincipalByType(Class<T> principalType);
 
-    /**
-     * Returns all principals assignable from the specified type that is associated with this <tt>Subject</tt>, or an
-     * empty Collection if no principals are associated.
-     *
-     * @param principalType the principal type that should be returned.
-     * @return a Collection of principals that are assignable from the specified type, or
-     * an empty Collection if no principals of this type are associated.
-     */
-    <T> Collection<T> getAllPrincipalsByType(Class<T> principalType);
+    PrincipalCollection getPrincipals();
+
 
     /**
      * Returns <tt>true</tt> if this Subject is permitted to perform an action or access a resource summarized by the

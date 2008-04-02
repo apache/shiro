@@ -21,6 +21,7 @@ import org.jsecurity.authc.event.AuthenticationEventListener;
 import org.jsecurity.authc.event.mgt.AuthenticationEventListenerRegistrar;
 import org.jsecurity.authc.event.mgt.AuthenticationEventManager;
 import org.jsecurity.authc.event.mgt.DefaultAuthenticationEventManager;
+import org.jsecurity.subject.PrincipalCollection;
 
 import java.util.Collection;
 
@@ -107,12 +108,12 @@ public abstract class AbstractAuthenticator
         this.authcEventManager.sendSuccessEvent(token, account);
     }
 
-    protected void sendLogoutEvent(Object subjectPrincipal) {
+    protected void sendLogoutEvent(PrincipalCollection subjectPrincipal) {
         this.authcEventManager.sendLogoutEvent(subjectPrincipal);
     }
 
-    public void onLogout(Object accountPrincipal) {
-        sendLogoutEvent(accountPrincipal);
+    public void onLogout(PrincipalCollection principals) {
+        sendLogoutEvent(principals);
     }
 
 

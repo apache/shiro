@@ -15,6 +15,8 @@
  */
 package org.jsecurity.authc;
 
+import org.jsecurity.subject.PrincipalCollection;
+
 /**
  * An SPI interface allowing cleanup logic to be executed during logout of a previously authenticated Subject/user.
  *
@@ -32,7 +34,7 @@ public interface LogoutAware {
      * Callback allowing logout logic if so desired for a previously
      * authenticated Subject/user.
      *
-     * @param accountPrincipal the application-specific Subject/user identifier that is logging out.
+     * @param principals the application-specific Subject/user identifiers that is logging out.
      */
-    public void onLogout( Object accountPrincipal );
+    public void onLogout( PrincipalCollection principals );
 }

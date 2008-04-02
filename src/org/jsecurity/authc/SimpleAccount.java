@@ -17,6 +17,8 @@ package org.jsecurity.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.subject.PrincipalCollection;
+import org.jsecurity.subject.SimplePrincipalCollection;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -55,9 +57,9 @@ public class SimpleAccount implements Account, Serializable {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * The principal that apply to the authenticated Subject/user.
+     * The principals that apply to the authenticated Subject/user.
      */
-    private Object principal = null;
+    private PrincipalCollection principals = null;
 
     /**
      * Credentials that were used to authenticate the user.
@@ -79,13 +81,21 @@ public class SimpleAccount implements Account, Serializable {
     ============================================*/
     public SimpleAccount() {
     }
+    
+    public SimpleAccount( Object principal, Object credentials ) {
+        this( new SimplePrincipalCollection("simpleAccount",principal),credentials);
+    }
 
-    public SimpleAccount(Object principal, Object credentials) {
+    public SimpleAccount( Collection principals, Object credentials ) {
+        this( new SimplePrincipalCollection("simpleAccount",principals), credentials );
+    }
+
+    public SimpleAccount(PrincipalCollection principal, Object credentials) {
         this(principal, credentials, false, false);
     }
 
-    public SimpleAccount(Object principal, Object credentials, boolean locked, boolean credentialsExpired) {
-        this.principal = principal;
+    public SimpleAccount(PrincipalCollection principal, Object credentials, boolean locked, boolean credentialsExpired) {
+        this.principals = principal;
         this.credentials = credentials;
         this.locked = locked;
         this.credentialsExpired = credentialsExpired;
@@ -95,12 +105,12 @@ public class SimpleAccount implements Account, Serializable {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public Object getPrincipal() {
-        return this.principal;
+    public PrincipalCollection getPrincipals() {
+        return this.principals;
     }
 
-    public void setPrincipal(Object principal) {
-        this.principal = principal;
+    public void setPrincipals(PrincipalCollection principals) {
+        this.principals = principals;
     }
 
     public Object getCredentials() {
@@ -149,14 +159,14 @@ public class SimpleAccount implements Account, Serializable {
             return;
         }
 
-        Object otherPrincipal = otherAccount.getPrincipal();
+        PrincipalCollection otherPrincipal = otherAccount.getPrincipals();
         if (otherPrincipal == null) {
             return;
         }
 
-        Object thisPrincipal = getPrincipal();
+        PrincipalCollection thisPrincipal = getPrincipals();
         if (thisPrincipal == null) {
-            this.principal = otherPrincipal;
+            this.principals = otherPrincipal;
         } else {
             HashSet set = new HashSet();
             if (thisPrincipal instanceof Collection) {
@@ -169,7 +179,7 @@ public class SimpleAccount implements Account, Serializable {
             } else {
                 set.add(otherPrincipal);
             }
-            this.principal = set;
+            this.principals = set;
         }
 
         Object otherCredentials = otherAccount.getCredentials();
@@ -201,7 +211,7 @@ public class SimpleAccount implements Account, Serializable {
     }
 
     public int hashCode() {
-        return (getPrincipal() != null ? getPrincipal().hashCode() : 0);
+        return (getPrincipals() != null ? getPrincipals().hashCode() : 0);
     }
 
     public boolean equals(Object o) {
@@ -211,12 +221,12 @@ public class SimpleAccount implements Account, Serializable {
         if (o instanceof SimpleAccount) {
             SimpleAccount sa = (SimpleAccount) o;
             //principal should be unique across the application, so only check this for equality:
-            return (getPrincipal() != null ? getPrincipal().equals(sa.getPrincipal()) : sa.getPrincipal() == null);
+            return (getPrincipals() != null ? getPrincipals().equals(sa.getPrincipals()) : sa.getPrincipals() == null);
         }
         return false;
     }
 
     public String toString() {
-        return getPrincipal() != null ? getPrincipal().toString() : "empty";
+        return getPrincipals() != null ? getPrincipals().toString() : "empty";
     }
 }

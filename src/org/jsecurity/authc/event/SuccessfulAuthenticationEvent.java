@@ -32,7 +32,8 @@ public class SuccessfulAuthenticationEvent extends AttemptedAuthenticationEvent 
     private Account account = null;
 
     public SuccessfulAuthenticationEvent( AuthenticationToken token, Account account ) {
-        this( token, account, null );
+        super(token,account);
+        this.account = account;
     }
 
     public SuccessfulAuthenticationEvent( AuthenticationToken token, Account account, Object source ) {

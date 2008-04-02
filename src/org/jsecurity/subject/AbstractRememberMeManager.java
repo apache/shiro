@@ -86,12 +86,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     public void rememberIdentity(Account successfullyAuthenticated) {
-        Object identityToRemember = getIdentityToRemember(successfullyAuthenticated);
-        rememberIdentity(identityToRemember);
+        PrincipalCollection principals = getIdentityToRemember(successfullyAuthenticated);
+        rememberIdentity(principals);
     }
 
-    protected Object getIdentityToRemember(Account account) {
-        return account.getPrincipal();
+    protected PrincipalCollection getIdentityToRemember(Account account) {
+        return account.getPrincipals();
     }
 
     protected byte[] encrypt(byte[] serialized) {
@@ -111,7 +111,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         return serialized;
     }
 
-    protected void rememberIdentity(Object accountPrincipals) {
+    protected void rememberIdentity(PrincipalCollection accountPrincipals) {
         byte[] bytes = serialize(accountPrincipals);
         if (getCipher() != null) {
             bytes = encrypt(bytes);
@@ -119,13 +119,13 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         rememberSerializedIdentity(bytes);
     }
 
-    protected byte[] serialize(Object accountPrincipals) {
-        return getSerializer().serialize(accountPrincipals);
+    protected byte[] serialize(PrincipalCollection principals) {
+        return getSerializer().serialize(principals);
     }
 
     protected abstract void rememberSerializedIdentity(byte[] serialized);
 
-    public Object getRememberedIdentity() {
+    public PrincipalCollection getRememberedPrincipals() {
         byte[] bytes = getSerializedRememberedIdentity();
         if (bytes != null) {
             if (getCipher() != null) {
@@ -136,8 +136,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         return null;
     }
 
-    protected Object deserialize(byte[] serializedIdentity) {
-        return getSerializer().deserialize(serializedIdentity);
+    protected PrincipalCollection deserialize(byte[] serializedIdentity) {
+        return (PrincipalCollection)getSerializer().deserialize(serializedIdentity);
     }
 
     protected abstract byte[] getSerializedRememberedIdentity();
@@ -146,8 +146,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         forgetIdentity(token, ae);
     }
 
-    public void onLogout(Object subjectPrincipals) {
-        forgetIdentity(subjectPrincipals);
+    public void onLogout(PrincipalCollection subjectPrincipals) {
+        forgetIdentity();
     }
 
     protected void forgetIdentity(AuthenticationToken token, AuthenticationException ae) {
@@ -155,10 +155,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     protected void forgetIdentity(AuthenticationToken token) {
-        forgetIdentity(token.getPrincipal());
-    }
-
-    public void forgetIdentity(Object principals) {
         forgetIdentity();
     }
 

@@ -23,6 +23,7 @@ import org.jsecurity.authz.permission.PermissionResolverAware;
 import org.jsecurity.authz.permission.WildcardPermissionResolver;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheManager;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.Initializable;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.List;
  * (access control) support via the use of {@link AuthorizingAccount AuthorizingAccount} instances.
  *
  * <p>This implementation can only support Authorization operations if the subclass implementation's
- * {@link #getAccount(Object) getAccount(principal)} method returns an {@link AuthorizingAccount AuthorizingAccount}.
+ * {@link #getAccount(PrincipalCollection) getAccount(principals)} method returns an {@link AuthorizingAccount AuthorizingAccount}.
  * <p>If it does not, subclasses <em>must</em> override all {@link org.jsecurity.authz.Authorizer Authorizer} methods,
  * since the JSecurity default implementations cannot infer Role/Permission assignments via anything but
  * <tt>AuthorizingAccount</tt> instances.
@@ -190,31 +191,31 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @param principal the primary identifying principal of the Account that should be retrieved.
      * @return the Account associated with this principal.
      */
-    protected abstract AuthorizingAccount doGetAccount(Object principal);
+    protected abstract AuthorizingAccount doGetAccount(PrincipalCollection principal);
 
     /**
-     * <p>Retrieves Account information for the given account principal.
+     * <p>Retrieves Account information for the given account principals.
      *
      * <p>If caching is enabled, the account cache will be checked first and if found, will return the cached account.
      * If caching is disabled, or there is a cache miss from the cache lookup, the Account will be looked up from
-     * the underlying data store via the {@link #doGetAccount(Object)} method, which must be implemented by subclasses.
+     * the underlying data store via the {@link #doGetAccount(PrincipalCollection)} method, which must be implemented by subclasses.
      *
      * <p>If caching is enabled, the retrieved Account from <tt>doGetAccount</tt> will be added to the account cache
      * first and then returned.
      *
-     * @param principal the primary identifying principal of the Account that should be retrieved.
+     * @param principals the primary identifying principals of the Account that should be retrieved.
      * @return the Account associated with this princpal.
      */
-    protected Account getAccount(Object principal) {
+    protected Account getAccount(PrincipalCollection principals) {
 
-        if (principal == null) {
+        if (principals == null) {
             return null;
         }
 
         Account account = null;
 
         if (log.isTraceEnabled()) {
-            log.trace("Retrieving Account for principal [" + principal + "]");
+            log.trace("Retrieving Account for principals [" + principals + "]");
         }
 
         Cache accountCache = getAccountCache();
@@ -222,12 +223,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             if (log.isTraceEnabled()) {
                 log.trace("Attempting to retrieve the Account from cache.");
             }
-            account = (Account) accountCache.get(principal);
+            account = (Account) accountCache.get(principals);
             if (log.isTraceEnabled()) {
                 if (account == null) {
-                    log.trace("No Account found in cache for principal [" + principal + "]");
+                    log.trace("No Account found in cache for principals [" + principals + "]");
                 } else {
-                    log.trace("Account found in cache for principal [" + principal + "]");
+                    log.trace("Account found in cache for principals [" + principals + "]");
                 }
             }
         }
@@ -235,25 +236,25 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
         if (account == null) {
             // Call template method if tbe Account was not found in a cache
-            account = doGetAccount(principal);
+            account = doGetAccount(principals);
             // If the account is not null and the cache has been created, then cache the account.
             if (account != null && accountCache != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Caching Account [" + principal + "].");
+                    log.trace("Caching Account [" + principals + "].");
                 }
-                accountCache.put(principal, account);
+                accountCache.put(principals, account);
             }
         }
 
         return account;
     }
 
-    protected AuthorizingAccount getAuthorizingAccount(Object principal) {
+    protected AuthorizingAccount getAuthorizingAccount(PrincipalCollection principal) {
         if (principal == null) {
             throw new AuthorizationException("Specified principal argument is null and authorization checks cannot " +
                     "occur without a known account identity.");
         }
-        Account account = getAccount(principal);
+        Account account = getAccount(principals);
         assertNotNullAccount(principal, account);
         assertAuthorizingAccount(account);
         return (AuthorizingAccount) account;

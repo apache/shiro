@@ -21,6 +21,7 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.RememberMeManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
@@ -103,31 +104,31 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     private void assertPrincipals(Account account) {
-        Object principal = account.getPrincipal();
-        if (principal == null) {
-            String msg = "Account returned from Authenticator must have an associated principal.";
+        PrincipalCollection principals = account.getPrincipals();
+        if (principals == null || principals.isEmpty()) {
+            String msg = "Account returned from Authenticator must have non null and non empty principals.";
             throw new IllegalArgumentException(msg);
         }
     }
 
     protected Subject createSubject() {
-        Object principals = getRememberedIdentity();
+        PrincipalCollection principals = getRememberedIdentity();
         return createSubject(principals);
     }
 
-    protected Subject createSubject(Object subjectPrincipals) {
+    protected Subject createSubject(PrincipalCollection subjectPrincipals) {
         return createSubject(subjectPrincipals, null);
     }
 
-    protected Subject createSubject(Object principals, Session existing) {
+    protected Subject createSubject(PrincipalCollection principals, Session existing) {
         return createSubject(principals, existing, false);
     }
 
-    protected Subject createSubject(Object principals, Session existing, boolean authenticated) {
+    protected Subject createSubject(PrincipalCollection principals, Session existing, boolean authenticated) {
         return createSubject(principals, existing, authenticated, null);
     }
 
-    protected Subject createSubject(Object principals, Session existing,
+    protected Subject createSubject(PrincipalCollection principals, Session existing,
                                     boolean authenticated, InetAddress inetAddress) {
         return new DelegatingSubject(principals, authenticated, inetAddress, existing, this);
     }
@@ -159,7 +160,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             authcSourceIP = ThreadContext.getInetAddress();
         }
 
-        return createSubject(account.getPrincipal(), session, true, authcSourceIP);
+        return createSubject(account.getPrincipals(), session, true, authcSourceIP);
     }
 
     /**
@@ -225,7 +226,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    protected void rememberMeLogout(Object subjectPrincipals) {
+    protected void rememberMeLogout(PrincipalCollection subjectPrincipals) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
@@ -282,19 +283,19 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         rememberMeFailedLogin(token, ae);
     }
 
-    protected void beforeLogout(Object subjectIdentifier) {
+    protected void beforeLogout(PrincipalCollection subjectIdentifier) {
         rememberMeLogout(subjectIdentifier);
     }
 
-    public void logout(Object subjectIdentifier) {
+    public void logout(PrincipalCollection principals) {
 
-        if (subjectIdentifier != null) {
+        if (principals != null) {
             
-            beforeLogout(subjectIdentifier);
+            beforeLogout(principals);
 
             Authenticator authc = getAuthenticator();
             if (authc instanceof LogoutAware) {
-                ((LogoutAware) authc).onLogout(subjectIdentifier);
+                ((LogoutAware) authc).onLogout(principals);
             }
         }
 
@@ -341,15 +342,15 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         ThreadContext.unbindSubject();
     }
 
-    protected Object getRememberedIdentity() {
+    protected PrincipalCollection getRememberedIdentity() {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
-                return rmm.getRememberedIdentity();
+                return rmm.getRememberedPrincipals();
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
-                            "] threw an exception during getRememberedIdentity().";
+                            "] threw an exception during getRememberedPrincipals().";
                     log.warn(msg, e);
                 }
             }
