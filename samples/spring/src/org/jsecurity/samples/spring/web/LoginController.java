@@ -17,7 +17,7 @@ package org.jsecurity.samples.spring.web;
 
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.mgt.DefaultSecurityManager;
+import org.jsecurity.mgt.SecurityManager;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -40,7 +40,7 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private DefaultSecurityManager securityManager;
+    private SecurityManager securityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -56,7 +56,7 @@ public class LoginController extends SimpleFormController {
      * @param securityManager the security manager used to perform the login.
      */
 
-    public void setSecurityManager(DefaultSecurityManager securityManager) {
+    public void setSecurityManager(SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
 
@@ -70,8 +70,6 @@ public class LoginController extends SimpleFormController {
         LoginCommand command = (LoginCommand) cmd;
 
         UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(), command.getPassword());
-
-        securityManager.init();
 
         try {
            securityManager.login(token);

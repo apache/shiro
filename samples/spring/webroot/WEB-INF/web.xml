@@ -41,7 +41,7 @@
         <filter-name>JSecurityFilter</filter-name>
         <filter-class>org.jsecurity.spring.SpringJSecurityFilter</filter-class>
 
-        <!--  <init-param>
+        <init-param>
             <param-name>config</param-name>
             <param-value>
 
@@ -60,7 +60,7 @@
                 /s/jsecurity.jnlp=authc|user
                 /remoting/**=authenticated|permission.remote:invoke
             </param-value>
-        </init-param>-->
+        </init-param>
 
     </filter>
 
