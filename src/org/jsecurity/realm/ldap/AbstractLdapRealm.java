@@ -21,6 +21,7 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.Initializable;
 
 import javax.naming.NamingException;
@@ -33,7 +34,7 @@ import javax.naming.NamingException;
  *
  * <p>Implementations would need to implement the
  * {@link #queryForLdapAccount(org.jsecurity.authc.AuthenticationToken,LdapContextFactory) queryForLdapAccount} and
- * {@link #queryForLdapAccount(Object,LdapContextFactory) queryForLdapAccount} abstract methods.</p>
+ * {@link #queryForLdapAccount(PrincipalCollection,LdapContextFactory) queryForLdapAccount} abstract methods.</p>
  *
  * <p>By default, this implementation will create an instance of {@link DefaultLdapContextFactory} to use for
  * creating LDAP connections using the principalSuffix, searchBase, url, systemUsername, and systemPassword properties
@@ -190,12 +191,12 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
 
 
 
-    protected AuthorizingAccount doGetAccount( Object principal ) {
+    protected AuthorizingAccount doGetAccount( PrincipalCollection principals ) {
         AuthorizingAccount authorizingAccount = null;
         try {
-            authorizingAccount = queryForLdapAccount( principal, this.ldapContextFactory );
+            authorizingAccount = queryForLdapAccount( principals, this.ldapContextFactory );
         } catch( NamingException e ) {
-            final String message = "LDAP naming error while attempting to retrieve authorization for user [" + principal + "].";
+            final String message = "LDAP naming error while attempting to retrieve authorization for user [" + principals + "].";
             if ( log.isErrorEnabled() ) {
                 log.error( message, e );
             }
@@ -228,6 +229,6 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
      * @return an {@link org.jsecurity.authz.SimpleAuthorizingAccount} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected abstract AuthorizingAccount queryForLdapAccount( Object principal, LdapContextFactory ldapContextFactory) throws NamingException;
+    protected abstract AuthorizingAccount queryForLdapAccount( PrincipalCollection principal, LdapContextFactory ldapContextFactory) throws NamingException;
 
 }

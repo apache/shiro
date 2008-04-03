@@ -18,6 +18,7 @@ package org.jsecurity.authz;
 import org.jsecurity.authz.permission.PermissionResolver;
 import org.jsecurity.authz.permission.PermissionResolverAware;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.Initializable;
 
 import java.util.Collection;
@@ -76,41 +77,41 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
     }
 
 
-    public boolean isPermitted(Object subjectIdentifier, String permission) {
+    public boolean isPermitted(PrincipalCollection principals, String permission) {
         for (Realm realm : getRealms()) {
-            if (realm.isPermitted(subjectIdentifier, permission)) {
+            if (realm.isPermitted(principals, permission)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean isPermitted(Object subjectIdentifier, Permission permission) {
+    public boolean isPermitted(PrincipalCollection principals, Permission permission) {
         for (Realm realm : getRealms()) {
-            if (realm.isPermitted(subjectIdentifier, permission)) {
+            if (realm.isPermitted(principals, permission)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean[] isPermitted(Object subjectIdentifier, String... permissions) {
+    public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
         if (permissions != null && permissions.length > 0) {
             boolean[] isPermitted = new boolean[permissions.length];
             for (int i = 0; i < permissions.length; i++) {
-                isPermitted[i] = isPermitted(subjectIdentifier, permissions[i]);
+                isPermitted[i] = isPermitted(principals, permissions[i]);
             }
             return isPermitted;
         }
         return new boolean[0];
     }
 
-    public boolean[] isPermitted(Object subjectIdentifier, List<Permission> permissions) {
+    public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
         if (permissions != null && !permissions.isEmpty()) {
             boolean[] isPermitted = new boolean[permissions.size()];
             int i = 0;
             for (Permission p : permissions) {
-                isPermitted[i++] = isPermitted(subjectIdentifier, p);
+                isPermitted[i++] = isPermitted(principals, p);
             }
             return isPermitted;
         }
@@ -118,10 +119,10 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
         return new boolean[0];
     }
 
-    public boolean isPermittedAll(Object subjectIdentifier, String... permissions) {
+    public boolean isPermittedAll(PrincipalCollection principals, String... permissions) {
         if (permissions != null && permissions.length > 0) {
             for (String perm : permissions) {
-                if (!isPermitted(subjectIdentifier, perm)) {
+                if (!isPermitted(principals, perm)) {
                     return false;
                 }
             }
@@ -129,10 +130,10 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
         return true;
     }
 
-    public boolean isPermittedAll(Object subjectIdentifier, Collection<Permission> permissions) {
+    public boolean isPermittedAll(PrincipalCollection principals, Collection<Permission> permissions) {
         if (permissions != null && !permissions.isEmpty()) {
             for (Permission permission : permissions) {
-                if (!isPermitted(subjectIdentifier, permission)) {
+                if (!isPermitted(principals, permission)) {
                     return false;
                 }
             }
@@ -140,49 +141,49 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
         return true;
     }
 
-    public void checkPermission(Object subjectIdentifier, String permission) throws AuthorizationException {
-        if (!isPermitted(subjectIdentifier, permission)) {
+    public void checkPermission(PrincipalCollection principals, String permission) throws AuthorizationException {
+        if (!isPermitted(principals, permission)) {
             throw new UnauthorizedException("Subject does not have permission [" + permission + "]");
         }
     }
 
-    public void checkPermission(Object subjectIdentifier, Permission permission) throws AuthorizationException {
-        if (!isPermitted(subjectIdentifier, permission)) {
+    public void checkPermission(PrincipalCollection principals, Permission permission) throws AuthorizationException {
+        if (!isPermitted(principals, permission)) {
             throw new UnauthorizedException("Subject does not have permission [" + permission + "]");
         }
     }
 
-    public void checkPermissions(Object subjectIdentifier, String... permissions) throws AuthorizationException {
+    public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
         if (permissions != null && permissions.length > 0) {
             for (String perm : permissions) {
-                checkPermission(subjectIdentifier, perm);
+                checkPermission(principals, perm);
             }
         }
     }
 
-    public void checkPermissions(Object subjectIdentifier, Collection<Permission> permissions) throws AuthorizationException {
+    public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions) throws AuthorizationException {
         if (permissions != null) {
             for (Permission permission : permissions) {
-                checkPermission(subjectIdentifier, permission);
+                checkPermission(principals, permission);
             }
         }
     }
 
-    public boolean hasRole(Object subjectIdentifier, String roleIdentifier) {
+    public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
         for (Realm realm : getRealms()) {
-            if (realm.hasRole(subjectIdentifier, roleIdentifier)) {
+            if (realm.hasRole(principals, roleIdentifier)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean[] hasRoles(Object subjectIdentifier, List<String> roleIdentifiers) {
+    public boolean[] hasRoles(PrincipalCollection principals, List<String> roleIdentifiers) {
         if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
             boolean[] isPermitted = new boolean[roleIdentifiers.size()];
             int i = 0;
             for (String roleId : roleIdentifiers) {
-                isPermitted[i++] = hasRole(subjectIdentifier, roleId);
+                isPermitted[i++] = hasRole(principals, roleId);
             }
             return isPermitted;
         }
@@ -191,25 +192,25 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
     }
 
 
-    public boolean hasAllRoles(Object subjectIdentifier, Collection<String> roleIdentifiers) {
+    public boolean hasAllRoles(PrincipalCollection principals, Collection<String> roleIdentifiers) {
         for (String roleIdentifier : roleIdentifiers) {
-            if (!hasRole(subjectIdentifier, roleIdentifier)) {
+            if (!hasRole(principals, roleIdentifier)) {
                 return false;
             }
         }
         return true;
     }
 
-    public void checkRole(Object subjectIdentifier, String role) throws AuthorizationException {
-        if (!hasRole(subjectIdentifier, role)) {
+    public void checkRole(PrincipalCollection principals, String role) throws AuthorizationException {
+        if (!hasRole(principals, role)) {
             throw new UnauthorizedException("Subject does not have role [" + role + "]");
         }
     }
 
-    public void checkRoles(Object subjectIdentifier, Collection<String> roles) throws AuthorizationException {
+    public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
         if (roles != null) {
             for (String role : roles) {
-                checkRole(subjectIdentifier, role);
+                checkRole(principals, role);
             }
         }
     }

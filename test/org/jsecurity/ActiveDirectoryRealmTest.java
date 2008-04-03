@@ -23,6 +23,7 @@ import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
+import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
 import static org.junit.Assert.assertTrue;
@@ -32,7 +33,9 @@ import org.junit.Test;
 import javax.naming.NamingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Simple test case for ActiveDirectoryRealm.
@@ -123,10 +126,10 @@ public class ActiveDirectoryRealmTest {
             SimpleAccount account = (SimpleAccount) super.doGetAccount(token);
 
             if (account != null) {
-                List<Object> principals = new ArrayList<Object>();
-                principals.add(new UserIdPrincipal(USER_ID));
-                principals.add(new UsernamePrincipal(USERNAME));
-                account.setPrincipal( principals );
+                SimplePrincipalCollection principals = new SimplePrincipalCollection();
+                principals.add( getName(), new UserIdPrincipal(USER_ID));
+                principals.add( getName(), new UsernamePrincipal(USERNAME));
+                account.setPrincipals( principals );
             }
 
             return account;
