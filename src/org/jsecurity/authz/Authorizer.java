@@ -15,6 +15,8 @@
  */
 package org.jsecurity.authz;
 
+import org.jsecurity.subject.PrincipalCollection;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -51,13 +53,13 @@ public interface Authorizer {
      * <p>This is an overloaded method for the corresponding type-safe {@link Permission Permission} variant.
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
-     * @param subjectPrincipal the application-specific subject/user identifier.
+     * @param principals the application-specific subject/user identifier.
      * @param permission the String representation of a Permission that is being checked.
      * @return true if the corresponding Subject/user is permitted, false otherwise.
      * @since 0.9
-     * @see #isPermitted(Object subjectPrincipal,Permission permission)
+     * @see #isPermitted(PrincipalCollection principals,Permission permission)
      */
-    boolean isPermitted( Object subjectPrincipal, String permission );
+    boolean isPermitted( PrincipalCollection principals, String permission );
 
     /**
      * Returns <tt>true</tt> if the corresponding subject/user is permitted to perform an action or access a resource
@@ -70,7 +72,7 @@ public interface Authorizer {
      * @param permission the permission that is being checked.
      * @return true if the corresponding Subject/user is permitted, false otherwise.
      */
-    boolean isPermitted( Object subjectPrincipal, Permission permission );
+    boolean isPermitted( PrincipalCollection subjectPrincipal, Permission permission );
 
     /**
      * Checks if the corresponding Subject implies the given permission strings and returns a boolean array
@@ -87,7 +89,7 @@ public interface Authorizer {
      * indicates otherwise.
      * @since 0.9
      */
-    boolean[] isPermitted( Object subjectPrincipal, String... permissions );
+    boolean[] isPermitted( PrincipalCollection subjectPrincipal, String... permissions );
 
     /**
      * Checks if the corresponding Subject/user implies the given Permissions and returns a boolean array indicating
@@ -107,7 +109,7 @@ public interface Authorizer {
      * for the associated <tt>Permission</tt> object in the list.  A false value at an index
      * indicates otherwise.
      */
-    boolean[] isPermitted( Object subjectPrincipal, List<Permission> permissions );
+    boolean[] isPermitted( PrincipalCollection subjectPrincipal, List<Permission> permissions );
 
     /**
      * Returns <tt>true</tt> if the corresponding Subject/user implies all of the specified permission strings,
@@ -119,10 +121,10 @@ public interface Authorizer {
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permissions the String representations of the Permissions that are being checked.
      * @return true if the user has all of the specified permissions, false otherwise.
-     * @see #isPermittedAll(Object,Collection)
+     * @see #isPermittedAll(PrincipalCollection,Collection)
      * @since 0.9
      */
-    boolean isPermittedAll( Object subjectPrincipal, String... permissions );
+    boolean isPermittedAll( PrincipalCollection subjectPrincipal, String... permissions );
 
     /**
      * Returns <tt>true</tt> if the corresponding Subject/user implies all of the specified permissions, <tt>false</tt>
@@ -135,7 +137,7 @@ public interface Authorizer {
      * @param permissions the permissions to check.
      * @return true if the user has all of the specified permissions, false otherwise.
      */
-    boolean isPermittedAll( Object subjectPrincipal, Collection<Permission> permissions );
+    boolean isPermittedAll( PrincipalCollection subjectPrincipal, Collection<Permission> permissions );
 
     /**
      * Ensures the corresponding Subject/user implies the specified permission String.
@@ -151,7 +153,7 @@ public interface Authorizer {
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
      * @since 0.9
      */
-    void checkPermission( Object subjectPrincipal, String permission ) throws AuthorizationException;
+    void checkPermission( PrincipalCollection subjectPrincipal, String permission ) throws AuthorizationException;
 
     /**
      * Ensures a subject/user {@link Permission#implies(Permission)} implies} the specified <tt>Permission</tt>.
@@ -162,7 +164,7 @@ public interface Authorizer {
      * @param permission the Permission to check.
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
      */
-    void checkPermission( Object subjectPrincipal, Permission permission ) throws AuthorizationException;
+    void checkPermission( PrincipalCollection subjectPrincipal, Permission permission ) throws AuthorizationException;
 
     /**
      * Ensures the corresponding Subject/user
@@ -181,7 +183,7 @@ public interface Authorizer {
      * @throws AuthorizationException if the user does not have all of the given permissions.
      * @since 0.9
      */
-    void checkPermissions( Object subjectPrincipal, String... permissions ) throws AuthorizationException;
+    void checkPermissions( PrincipalCollection subjectPrincipal, String... permissions ) throws AuthorizationException;
 
     /**
      * Ensures the corresponding Subject/user
@@ -196,7 +198,7 @@ public interface Authorizer {
      * @param permissions the Permissions to check.
      * @throws AuthorizationException if the user does not have all of the given permissions.
      */
-    void checkPermissions( Object subjectPrincipal, Collection<Permission> permissions ) throws AuthorizationException;
+    void checkPermissions( PrincipalCollection subjectPrincipal, Collection<Permission> permissions ) throws AuthorizationException;
 
     /**
      * Returns <tt>true</tt> if the corresponding Subject/user has the specified role, <tt>false</tt> otherwise.
@@ -205,7 +207,7 @@ public interface Authorizer {
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name).
      * @return <tt>true</tt> if the corresponding subject has the specified role, <tt>false</tt> otherwise.
      */
-    boolean hasRole( Object subjectPrincipal, String roleIdentifier );
+    boolean hasRole( PrincipalCollection subjectPrincipal, String roleIdentifier );
 
     /**
      * Checks if the corresponding Subject/user has the specified roles, returning a boolean array indicating
@@ -220,7 +222,7 @@ public interface Authorizer {
      * roles in the given identifiers.  A true value indicates the user has the
      * role at that index.  False indicates the user does not have the role at that index.
      */
-    boolean[] hasRoles( Object subjectPrincipal, List<String> roleIdentifiers );
+    boolean[] hasRoles( PrincipalCollection subjectPrincipal, List<String> roleIdentifiers );
 
     /**
      * Returns <tt>true</tt> if the corresponding Subject/user has all of the specified roles, <tt>false</tt> otherwise.
@@ -229,7 +231,7 @@ public interface Authorizer {
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @return true if the user has all the roles, false otherwise.
      */
-    boolean hasAllRoles( Object subjectPrincipal, Collection<String> roleIdentifiers );
+    boolean hasAllRoles( PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers );
 
     /**
      * Asserts the corresponding Subject/user has the specified role by returning quietly if they do or throwing an
@@ -239,7 +241,7 @@ public interface Authorizer {
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name ).
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have the role.
      */
-    void checkRole( Object subjectPrincipal, String roleIdentifier ) throws AuthorizationException;
+    void checkRole( PrincipalCollection subjectPrincipal, String roleIdentifier ) throws AuthorizationException;
 
     /**
      * Asserts the corresponding Subject/user has all of the specified roles by returning quietly if they do or
@@ -249,7 +251,7 @@ public interface Authorizer {
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @throws org.jsecurity.authz.AuthorizationException if the user does not have all of the specified roles.
      */
-    void checkRoles( Object subjectPrincipal, Collection<String> roleIdentifiers ) throws AuthorizationException;
+    void checkRoles( PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers ) throws AuthorizationException;
 
 }
 

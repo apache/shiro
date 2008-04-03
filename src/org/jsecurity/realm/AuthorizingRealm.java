@@ -249,21 +249,21 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return account;
     }
 
-    protected AuthorizingAccount getAuthorizingAccount(PrincipalCollection principal) {
-        if (principal == null) {
-            throw new AuthorizationException("Specified principal argument is null and authorization checks cannot " +
+    protected AuthorizingAccount getAuthorizingAccount(PrincipalCollection principals) {
+        if (principals == null) {
+            throw new AuthorizationException("Specified principals argument is null and authorization checks cannot " +
                     "occur without a known account identity.");
         }
         Account account = getAccount(principals);
-        assertNotNullAccount(principal, account);
+        assertNotNullAccount(principals, account);
         assertAuthorizingAccount(account);
         return (AuthorizingAccount) account;
     }
 
-    protected void assertNotNullAccount(Object subjectPrincipal, Account account) {
+    protected void assertNotNullAccount(PrincipalCollection principals, Account account) {
         if (account == null) {
-            throw new MissingAccountException("No Account found for Subject principal [" +
-                    subjectPrincipal + "]");
+            throw new MissingAccountException("No Account found for Subject principals [" +
+                    principals + "]");
         }
     }
 
@@ -283,17 +283,17 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
 
-    public boolean isPermitted(Object subjectIdentifier, String permission) {
+    public boolean isPermitted(PrincipalCollection principals, String permission) {
         Permission p = getPermissionResolver().resolvePermission(permission);
-        return isPermitted(subjectIdentifier, p);
+        return isPermitted(principals, p);
     }
 
-    public boolean isPermitted(Object principal, Permission permission) {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
+    public boolean isPermitted(PrincipalCollection principals, Permission permission) {
+        AuthorizingAccount account = getAuthorizingAccount(principals);
         return account.isPermitted(permission);
     }
 
-    public boolean[] isPermitted(Object subjectIdentifier, String... permissions) {
+    public boolean[] isPermitted(PrincipalCollection subjectIdentifier, String... permissions) {
         List<Permission> perms = new ArrayList<Permission>(permissions.length);
         for (String permString : permissions) {
             perms.add(getPermissionResolver().resolvePermission(permString));
@@ -301,12 +301,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return isPermitted(subjectIdentifier, perms);
     }
 
-    public boolean[] isPermitted(Object principal, List<Permission> permissions) {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
+    public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
+        AuthorizingAccount account = getAuthorizingAccount(principals);
         return account.isPermitted(permissions);
     }
 
-    public boolean isPermittedAll(Object subjectIdentifier, String... permissions) {
+    public boolean isPermittedAll(PrincipalCollection subjectIdentifier, String... permissions) {
         if (permissions != null && permissions.length > 0) {
             Collection<Permission> perms = new ArrayList<Permission>(permissions.length);
             for (String permString : permissions) {
@@ -317,22 +317,22 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return false;
     }
 
-    public boolean isPermittedAll(Object principal, Collection<Permission> permissions) {
+    public boolean isPermittedAll(PrincipalCollection principal, Collection<Permission> permissions) {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         return account != null && account.isPermittedAll(permissions);
     }
 
-    public void checkPermission(Object subjectIdentifier, String permission) throws AuthorizationException {
+    public void checkPermission(PrincipalCollection subjectIdentifier, String permission) throws AuthorizationException {
         Permission p = getPermissionResolver().resolvePermission(permission);
         checkPermission(subjectIdentifier, p);
     }
 
-    public void checkPermission(Object principal, Permission permission) throws AuthorizationException {
+    public void checkPermission(PrincipalCollection principal, Permission permission) throws AuthorizationException {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         account.checkPermission(permission);
     }
 
-    public void checkPermissions(Object subjectIdentifier, String... permissions) throws AuthorizationException {
+    public void checkPermissions(PrincipalCollection subjectIdentifier, String... permissions) throws AuthorizationException {
         if (permissions != null) {
             for (String permString : permissions) {
                 checkPermission(subjectIdentifier, permString);
@@ -340,17 +340,17 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         }
     }
 
-    public void checkPermissions(Object principal, Collection<Permission> permissions) throws AuthorizationException {
+    public void checkPermissions(PrincipalCollection principal, Collection<Permission> permissions) throws AuthorizationException {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         account.checkPermissions(permissions);
     }
 
-    public boolean hasRole(Object principal, String roleIdentifier) {
+    public boolean hasRole(PrincipalCollection principal, String roleIdentifier) {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         return account.hasRole(roleIdentifier);
     }
 
-    public boolean[] hasRoles(Object principal, List<String> roleIdentifiers) {
+    public boolean[] hasRoles(PrincipalCollection principal, List<String> roleIdentifiers) {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         boolean[] result = new boolean[roleIdentifiers != null ? roleIdentifiers.size() : 0];
         if (account != null) {
@@ -359,17 +359,17 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         return result;
     }
 
-    public boolean hasAllRoles(Object principal, Collection<String> roleIdentifiers) {
+    public boolean hasAllRoles(PrincipalCollection principal, Collection<String> roleIdentifiers) {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         return account != null && account.hasAllRoles(roleIdentifiers);
     }
 
-    public void checkRole(Object principal, String role) throws AuthorizationException {
+    public void checkRole(PrincipalCollection principal, String role) throws AuthorizationException {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         account.checkRole(role);
     }
 
-    public void checkRoles(Object principal, Collection<String> roles) throws AuthorizationException {
+    public void checkRoles(PrincipalCollection principal, Collection<String> roles) throws AuthorizationException {
         AuthorizingAccount account = getAuthorizingAccount(principal);
         account.checkRoles(roles);
     }
@@ -380,7 +380,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      *
      * @param accountPrincipal the application-specific Subject/user identifier.
      */
-    public void onLogout(Object accountPrincipal) {
+    public void onLogout(PrincipalCollection accountPrincipal) {
         Cache cache = getAccountCache();
         //cache instance will be non-null if caching is enabled:
         if (cache != null && accountPrincipal != null) {

@@ -148,18 +148,18 @@ public class DelegatingSubject implements Subject {
 
     public boolean isPermitted(String permission) {
         assertValid();
-        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
+        return hasPrincipal() && securityManager.isPermitted(getPrincipals(), permission);
     }
 
     public boolean isPermitted(Permission permission) {
         assertValid();
-        return hasPrincipal() && securityManager.isPermitted(getPrincipal(), permission);
+        return hasPrincipal() && securityManager.isPermitted(getPrincipals(), permission);
     }
 
     public boolean[] isPermitted(String... permissions) {
         assertValid();
         if (hasPrincipal()) {
-            return securityManager.isPermitted(getPrincipal(), permissions);
+            return securityManager.isPermitted(getPrincipals(), permissions);
         } else {
             return new boolean[permissions.length];
         }
@@ -168,7 +168,7 @@ public class DelegatingSubject implements Subject {
     public boolean[] isPermitted(List<Permission> permissions) {
         assertValid();
         if (hasPrincipal()) {
-            return securityManager.isPermitted(getPrincipal(), permissions);
+            return securityManager.isPermitted(getPrincipals(), permissions);
         } else {
             return new boolean[permissions.size()];
         }
@@ -176,12 +176,12 @@ public class DelegatingSubject implements Subject {
 
     public boolean isPermittedAll(String... permissions) {
         assertValid();
-        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+        return hasPrincipal() && securityManager.isPermittedAll(getPrincipals(), permissions);
     }
 
     public boolean isPermittedAll(Collection<Permission> permissions) {
         assertValid();
-        return hasPrincipal() && securityManager.isPermittedAll(getPrincipal(), permissions);
+        return hasPrincipal() && securityManager.isPermittedAll(getPrincipals(), permissions);
     }
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
@@ -197,38 +197,38 @@ public class DelegatingSubject implements Subject {
     public void checkPermission(String permission) throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
-        securityManager.checkPermission(getPrincipal(), permission);
+        securityManager.checkPermission(getPrincipals(), permission);
     }
 
     public void checkPermission(Permission permission) throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
-        securityManager.checkPermission(getPrincipal(), permission);
+        securityManager.checkPermission(getPrincipals(), permission);
     }
 
     public void checkPermissions(String... permissions)
             throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
-        securityManager.checkPermissions(getPrincipal(), permissions);
+        securityManager.checkPermissions(getPrincipals(), permissions);
     }
 
     public void checkPermissions(Collection<Permission> permissions)
             throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
-        securityManager.checkPermissions(getPrincipal(), permissions);
+        securityManager.checkPermissions(getPrincipals(), permissions);
     }
 
     public boolean hasRole(String roleIdentifier) {
         assertValid();
-        return hasPrincipal() && securityManager.hasRole(getPrincipal(), roleIdentifier);
+        return hasPrincipal() && securityManager.hasRole(getPrincipals(), roleIdentifier);
     }
 
     public boolean[] hasRoles(List<String> roleIdentifiers) {
         assertValid();
         if (hasPrincipal()) {
-            return securityManager.hasRoles(getPrincipal(), roleIdentifiers);
+            return securityManager.hasRoles(getPrincipals(), roleIdentifiers);
         } else {
             return new boolean[roleIdentifiers.size()];
         }
@@ -236,19 +236,19 @@ public class DelegatingSubject implements Subject {
 
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
         assertValid();
-        return hasPrincipal() && securityManager.hasAllRoles(getPrincipal(), roleIdentifiers);
+        return hasPrincipal() && securityManager.hasAllRoles(getPrincipals(), roleIdentifiers);
     }
 
     public void checkRole(String role) throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
-        securityManager.checkRole(getPrincipal(), role);
+        securityManager.checkRole(getPrincipals(), role);
     }
 
     public void checkRoles(Collection<String> roles) throws AuthorizationException {
         assertValid();
         assertAuthzCheckPossible();
-        securityManager.checkRoles(getPrincipal(), roles);
+        securityManager.checkRoles(getPrincipals(), roles);
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {

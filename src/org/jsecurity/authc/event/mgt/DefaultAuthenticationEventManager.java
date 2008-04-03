@@ -22,6 +22,7 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventListener;
+import org.jsecurity.subject.PrincipalCollection;
 
 import java.util.Collection;
 
@@ -100,7 +101,7 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
      *
      * @param subjectPrincipal the application-specific Subject/user identifier.
      */
-    public void sendLogoutEvent(Object subjectPrincipal) {
+    public void sendLogoutEvent(PrincipalCollection subjectPrincipal) {
         if (isSendingEvents()) {
             AuthenticationEvent event = createLogoutEvent(subjectPrincipal);
             send(event);

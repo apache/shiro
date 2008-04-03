@@ -24,6 +24,8 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.ldap.AbstractLdapRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
 import org.jsecurity.realm.ldap.LdapUtils;
+import org.jsecurity.subject.PrincipalCollection;
+import org.jsecurity.subject.SimplePrincipalCollection;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -107,7 +109,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     }
 
     protected Account createAccount( String username, char[] password ) {
-        return new SimpleAuthorizingAccount( username, password );
+        SimplePrincipalCollection principals = new SimplePrincipalCollection(getName(),username);
+        return new SimpleAuthorizingAccount( principals, password );
     }
 
 
@@ -121,16 +124,16 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * <p>Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
      * complex way.  Note that this default implementation does not support permissions, only roles.</p>
      *
-     * @param principal the principal of the Subject whose Account is being retrieved.
+     * @param principals the principal of the Subject whose Account is being retrieved.
      * @param ldapContextFactory the factory used to create LDAP connections.
      * @return the Account for the given Subject principal.
      * @throws NamingException if an error occurs when searching the LDAP server.
      */
-    protected AuthorizingAccount queryForLdapAccount( Object principal, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthorizingAccount queryForLdapAccount( PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
 
         String username = null;
 
-        if ( !(principal instanceof String ) ) {
+        if ( !(principals instanceof String ) ) {
             String msg = "This implementation expects the principal argument to be a String.";
             throw new IllegalArgumentException( msg );
         }
@@ -148,7 +151,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext( ldapContext );
         }
 
-        return new SimpleAuthorizingAccount( principal, null, roleNames, null );
+        SimplePrincipalCollection principals = new SimplePrincipalCollection(getName(),username);
+        return new SimpleAuthorizingAccount( principals, null, roleNames, null );
     }
 
     private Set<String> getRoleNamesForUser( String username, LdapContext ldapContext) throws NamingException {

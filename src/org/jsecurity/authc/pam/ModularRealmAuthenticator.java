@@ -17,6 +17,7 @@ package org.jsecurity.authc.pam;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.subject.PrincipalCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -268,22 +269,22 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
     /**
-     * First calls <code>super.onLogout(accountPrincipal)</code> to ensure a logout event is sent, and for each
+     * First calls <code>super.onLogout(principals)</code> to ensure a logout event is sent, and for each
      * wrapped <tt>Realm</tt> that implements the {@link LogoutAware LogoutAware} interface, calls
-     * <code>((LogoutAware)realm).onLogout(accountPrincipal)</code> to allow each realm the opportunity to perform
+     * <code>((LogoutAware)realm).onLogout(principals)</code> to allow each realm the opportunity to perform
      * logout/cleanup operations during an user-logout.
      *
      * <p>JSecurity's Realm implementations all implement the <tt>LogoutAware</tt> interface by default and can be
      * overridden for realm-specific logout logic.
      *
-     * @param accountPrincipal the application-specific Subject/user identifier.
+     * @param principals the application-specific Subject/user identifier.
      */
-    public void onLogout(Object accountPrincipal) {
-        super.onLogout(accountPrincipal);
+    public void onLogout(PrincipalCollection principals) {
+        super.onLogout(principals);
         if ( realms != null && !realms.isEmpty() ) {
             for( Realm realm : realms ) {
                 if ( realm instanceof LogoutAware ) {
-                    ((LogoutAware)realm).onLogout( accountPrincipal );
+                    ((LogoutAware)realm).onLogout(principals);
                 }
             }
         }
