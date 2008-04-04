@@ -102,7 +102,7 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         if ( typed.isEmpty() ) {
             return Collections.EMPTY_SET;
         }
-        return typed;
+        return Collections.unmodifiableSet(typed);
     }
 
     public List asList() {
@@ -110,7 +110,7 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         if ( all.isEmpty() ) {
             return Collections.EMPTY_LIST;
         }
-        return new ArrayList(all);
+        return Collections.unmodifiableList( new ArrayList(all) );
     }
 
     public Set asSet() {
@@ -125,18 +125,10 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         if ( aggregated.isEmpty() ) {
             return Collections.EMPTY_SET;
         }
-        return aggregated;
+        return Collections.unmodifiableSet(aggregated);
     }
 
-    public List asRealmList(String realmName) {
-        Set realmSet = asRealmSet(realmName);
-        if ( realmSet.isEmpty() ) {
-            return Collections.EMPTY_LIST;
-        }
-        return new ArrayList(realmSet);
-    }
-
-    public Set asRealmSet(String realmName) {
+    public Collection fromRealm(String realmName) {
         if ( realmPrincipals == null || realmPrincipals.isEmpty() ) {
             return Collections.EMPTY_SET;
         }
@@ -144,7 +136,7 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         if ( principals == null || principals.isEmpty() ) {
             principals = Collections.EMPTY_SET;
         }
-        return principals;
+        return Collections.unmodifiableSet(principals);
     }
 
     public boolean isEmpty() {
@@ -155,6 +147,29 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         if ( realmPrincipals != null ) {
             realmPrincipals.clear();
             realmPrincipals = null;
+        }
+    }
+
+    public Iterator iterator() {
+        return asSet().iterator();
+    }
+
+    public void merge( SimplePrincipalCollection principals ) {
+        if ( principals == null || principals.isEmpty() ) {
+            return;
+        }
+        if ( this.realmPrincipals == null || this.realmPrincipals.isEmpty() ) {
+            this.realmPrincipals = principals.realmPrincipals;
+            return;
+        }
+
+        for( String realmName : principals.realmPrincipals.keySet() ) {
+            Collection realmPrincipals = principals.realmPrincipals.get(realmName);
+            if ( realmPrincipals != null && !realmPrincipals.isEmpty() ) {
+                for( Object principal : realmPrincipals ) {
+                    add( realmName, principal );
+                }
+            }
         }
     }
 }

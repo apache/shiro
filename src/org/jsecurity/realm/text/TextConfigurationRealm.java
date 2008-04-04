@@ -19,7 +19,7 @@ import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.realm.SimpleAccountRealm;
-import org.jsecurity.subject.SimplePrincipalCollection;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.PermissionUtils;
 import org.jsecurity.util.StringUtils;
 
@@ -160,10 +160,9 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
             String password = passwordAndRolesArray[0];
 
-            SimplePrincipalCollection principals = new SimplePrincipalCollection(getName(), username );
-            SimpleAuthorizingAccount user = getUser(principals);
+            SimpleAuthorizingAccount user = getUser(username);
             if (user == null) {
-                user = new SimpleAuthorizingAccount(principals, password);
+                user = new SimpleAuthorizingAccount(username, password, getName());
                 add(user);
             }
             user.setCredentials(password);
@@ -207,7 +206,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         return pairs;
     }
 
-    public void onLogout(Object accountPrincipal) {
+    public void onLogout(PrincipalCollection accountPrincipal) {
         //override parent method of removing user from cache
         //we don't want that to happen on cache-only realm since that would permanently
         //remove the user from the realm.

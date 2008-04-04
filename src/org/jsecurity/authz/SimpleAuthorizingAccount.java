@@ -40,21 +40,29 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     public SimpleAuthorizingAccount() {
     }
 
-    public SimpleAuthorizingAccount(PrincipalCollection principal, Object credentials) {
-        super(principal, credentials);
+    public SimpleAuthorizingAccount( Object principal, Object credentials, String realmName ) {
+        super( principal,credentials, realmName);
     }
 
-    public SimpleAuthorizingAccount(PrincipalCollection principal, Object credentials, Set<String> roleNames) {
-        super(principal, credentials);
+    public SimpleAuthorizingAccount( Collection principals, Object credentials, String realmName ) {
+        super( principals, credentials, realmName );
+    }
+
+    public SimpleAuthorizingAccount( Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions ) {
+        this(principal,credentials,realmName);
         addRoles(roleNames);
+        //only create a private role if there are permissions
+        if ( permissions != null && !permissions.isEmpty() ) {
+            addPrivateRole( getPrincipals(), permissions );
+        }
     }
 
-    public SimpleAuthorizingAccount(PrincipalCollection principal, Object credentials,
-                                    Set<String> roleNames, Set<Permission> permissions) {
-        this(principal, credentials, roleNames);
+    public SimpleAuthorizingAccount(Collection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+        this(principals,credentials,realmName);
+        addRoles(roleNames);
         //only create a private role if there are permissions:
         if ( permissions != null && !permissions.isEmpty() ) {
-            addPrivateRole(principal,permissions);
+            addPrivateRole(getPrincipals(),permissions);
         }
     }
 
@@ -87,20 +95,20 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         }
     }
 
-    protected void addPrivateRole(Object principal, Collection<Permission> perms) {
-        SimpleRole privateRole = createPrivateRole( principal );
+    protected void addPrivateRole(PrincipalCollection principals, Collection<Permission> perms) {
+        SimpleRole privateRole = createPrivateRole( principals );
         if ( perms != null && !perms.isEmpty() ) {
             privateRole.addAll(perms);
         }
         add(privateRole);
     }
 
-    protected String getPrivateRoleName( Object principal ) {
-        return getClass().getName() + "_PRIVATE_ROLE_" + principal;
+    protected String getPrivateRoleName( PrincipalCollection principals ) {
+        return getClass().getName() + "_PRIVATE_ROLE_" + PrincipalCollection.class.getName();
     }
 
-    protected SimpleRole createPrivateRole( Object principal ) {
-        String privateRoleName = getPrivateRoleName(principal);
+    protected SimpleRole createPrivateRole( PrincipalCollection principals ) {
+        String privateRoleName = getPrivateRoleName(principals);
         return new SimpleRole(privateRoleName);    
     }
 

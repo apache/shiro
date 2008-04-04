@@ -43,8 +43,9 @@ import javax.naming.NamingException;
  * will cause these properties specified on the realm to be ignored.</p>
  *
  * @author Jeremy Haile
- * @see #queryForLdapAccount (org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
- * @see #queryForLdapAccount (Object, LdapContextFactory)
+ * @author Les Hazlewood
+ * @see #queryForLdapAccount(org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
+ * @see #queryForLdapAccount(PrincipalCollection, LdapContextFactory)
  * @since 0.1
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm implements Initializable {
@@ -179,8 +180,8 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
         try {
             account = queryForLdapAccount( token, this.ldapContextFactory );
         } catch ( NamingException e ) {
-            final String message = "LDAP naming error while attempting to authenticate user.";
             if ( log.isErrorEnabled() ) {
+                final String message = "LDAP naming error while attempting to authenticate user.";                
                 log.error( message, e );
             }
         }
@@ -196,8 +197,8 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
         try {
             authorizingAccount = queryForLdapAccount( principals, this.ldapContextFactory );
         } catch( NamingException e ) {
-            final String message = "LDAP naming error while attempting to retrieve authorization for user [" + principals + "].";
             if ( log.isErrorEnabled() ) {
+                final String message = "LDAP naming error while attempting to retrieve authorization for user [" + principals + "].";
                 log.error( message, e );
             }
         }

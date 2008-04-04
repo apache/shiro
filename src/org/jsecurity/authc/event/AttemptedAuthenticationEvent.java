@@ -60,7 +60,6 @@ public abstract class AttemptedAuthenticationEvent extends AuthenticationEvent {
             String msg = "AuthenticationToken argument cannot be null";
             throw new IllegalArgumentException( msg );
         }
-        this.principals = token.getPrincipal();
         this.token = token;
     }
 

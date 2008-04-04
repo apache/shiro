@@ -40,7 +40,7 @@ public abstract class CachingRealm implements Realm, CacheManagerAware {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private String name = getClass().getName() + "_" + INSTANCE_COUNT;
+    private String name = getClass().getName() + "_" + INSTANCE_COUNT++;
 
     private CacheManager cacheManager;
 

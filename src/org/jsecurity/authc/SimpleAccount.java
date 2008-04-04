@@ -82,23 +82,14 @@ public class SimpleAccount implements Account, Serializable {
     public SimpleAccount() {
     }
     
-    public SimpleAccount( Object principal, Object credentials ) {
-        this( new SimplePrincipalCollection("simpleAccount",principal),credentials);
-    }
-
-    public SimpleAccount( Collection principals, Object credentials ) {
-        this( new SimplePrincipalCollection("simpleAccount",principals), credentials );
-    }
-
-    public SimpleAccount(PrincipalCollection principal, Object credentials) {
-        this(principal, credentials, false, false);
-    }
-
-    public SimpleAccount(PrincipalCollection principal, Object credentials, boolean locked, boolean credentialsExpired) {
-        this.principals = principal;
+    public SimpleAccount( Object principal, Object credentials, String realmName ) {
+        this.principals = new SimplePrincipalCollection(realmName, principal );
         this.credentials = credentials;
-        this.locked = locked;
-        this.credentialsExpired = credentialsExpired;
+    }
+
+    public SimpleAccount( Collection principals, Object credentials, String realmName ) {
+        this.principals = new SimplePrincipalCollection( realmName, principals );
+        this.credentials = credentials;
     }
 
     /*--------------------------------------------
@@ -159,33 +150,35 @@ public class SimpleAccount implements Account, Serializable {
             return;
         }
 
-        PrincipalCollection otherPrincipal = otherAccount.getPrincipals();
-        if (otherPrincipal == null) {
+        PrincipalCollection otherPrincipals = otherAccount.getPrincipals();
+        if (otherPrincipals == null) {
             return;
         }
 
-        PrincipalCollection thisPrincipal = getPrincipals();
-        if (thisPrincipal == null) {
-            this.principals = otherPrincipal;
+        PrincipalCollection thisPrincipals = getPrincipals();
+        if (thisPrincipals == null) {
+            setPrincipals(otherPrincipals);
         } else {
-            HashSet set = new HashSet();
-            if (thisPrincipal instanceof Collection) {
-                set.addAll((Collection) thisPrincipal);
-            } else {
-                set.add(thisPrincipal);
+            //TODO - I don't like these checks - should be interface-based - Les.
+            if ( !(thisPrincipals instanceof SimplePrincipalCollection) ) {
+                throw new IllegalStateException( "The " + getClass().getName() + " class expects its internal " +
+                        PrincipalCollection.class.getName() + " instance to be an instance of the " +
+                        SimplePrincipalCollection.class.getName() + " class." );
             }
-            if (otherPrincipal instanceof Collection) {
-                set.addAll((Collection) otherPrincipal);
-            } else {
-                set.add(otherPrincipal);
+            if ( !(otherPrincipals instanceof SimplePrincipalCollection) ) {
+                throw new IllegalArgumentException( "The " + getClass().getName() + " class expects the " +
+                        "account argument's internal " +
+                        PrincipalCollection.class.getName() + " instance to be an instance of the " +
+                        SimplePrincipalCollection.class.getName() + " class." );
             }
-            this.principals = set;
+            ((SimplePrincipalCollection)thisPrincipals).merge((SimplePrincipalCollection)otherPrincipals);
+            setPrincipals(thisPrincipals);
         }
 
         Object otherCredentials = otherAccount.getCredentials();
         Object thisCredentials = getCredentials();
         if ( thisCredentials == null ) {
-            this.credentials = otherCredentials;
+            setCredentials(otherCredentials);
         } else {
             HashSet set = new HashSet();
             if (thisCredentials instanceof Collection) {
@@ -198,7 +191,7 @@ public class SimpleAccount implements Account, Serializable {
             } else {
                 set.add(otherCredentials);
             }
-            this.credentials = set;
+            setCredentials(set);
         }
 
         if (otherAccount.isLocked()) {

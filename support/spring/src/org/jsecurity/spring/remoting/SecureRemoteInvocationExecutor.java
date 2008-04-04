@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.WebSecurityManager;
@@ -84,19 +85,23 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
         }
     }
 
-    protected Object getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
-        return session.getAttribute( WebSecurityManager.PRINCIPALS_SESSION_KEY );
+    protected PrincipalCollection getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
+        return (PrincipalCollection)session.getAttribute( WebSecurityManager.PRINCIPALS_SESSION_KEY );
     }
 
-    protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, Object principals ) {
-        return principals != null;
+    protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, PrincipalCollection principals ) {
+        if ( principals != null ) {
+            Boolean authc = (Boolean)session.getAttribute(WebSecurityManager.AUTHENTICATED_SESSION_KEY);
+            return authc != null && authc;
+        }
+        return false;
     }
 
     @SuppressWarnings( { "unchecked" } )
     public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
-            Object principals = null;
+            PrincipalCollection principals = null;
             boolean authenticated = false;
             InetAddress inetAddress = getInetAddress( invocation, targetObject );
             Session session = null;
@@ -116,8 +121,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 }
             }
 
-            Subject subject =
-                new DelegatingSubject( principals, authenticated, inetAddress, session, securityManager );
+            Subject subject = new DelegatingSubject( principals, authenticated, inetAddress, session, securityManager );
 
             ThreadContext.bind(subject);
 

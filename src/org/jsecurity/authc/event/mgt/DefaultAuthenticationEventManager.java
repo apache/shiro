@@ -63,8 +63,8 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
         return this.authenticationEventFactory.createSuccessEvent(token,account);
     }
 
-    public AuthenticationEvent createLogoutEvent(Object subjectPrincipal) {
-        return this.authenticationEventFactory.createLogoutEvent(subjectPrincipal);
+    public AuthenticationEvent createLogoutEvent(PrincipalCollection principals) {
+        return this.authenticationEventFactory.createLogoutEvent(principals);
     }
 
     /**

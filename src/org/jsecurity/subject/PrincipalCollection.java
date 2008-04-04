@@ -24,7 +24,7 @@ import java.util.Set;
  * @since 0.9
  * @author Les Hazlewood
  */
-public interface PrincipalCollection extends Serializable {
+public interface PrincipalCollection extends Iterable, Serializable {
 
     /**
      * Returns a single principal assignable from the specified type, or <tt>null</tt> if there are none of the
@@ -70,28 +70,16 @@ public interface PrincipalCollection extends Serializable {
     Set asSet();
 
     /**
-     * Returns a single Subject's principals retrieved from the specified Realm <em>only</em> as a List, or an empty
-     * List if there are not any principals from that realm.
+     * Returns a single Subject's principals retrieved from the specified Realm <em>only</em> as a Collection, or an empty
+     * Collection if there are not any principals from that realm.
      *
-     * <p>Note that this would return an empty List always if the corresponding subject has not logged in.</p>
-     *
-     * @param realmName the name of the Realm from which the principals were retrieved.
-     * @return the Subject's principals from the specified Realm only as a List or an empty List if there are not any
-     * principals from that realm.
-     */
-    List asRealmList( String realmName );
-
-    /**
-     * Returns a single Subject's principals retrieved from the specified Realm <em>only</em> as a Set, or an empty
-     * Set if there are not any principals from that realm.
-     *
-     * <p>Note that this would return an empty Set always if the corresponding subject has not logged in.</p>
+     * <p>Note that this would return an empty Collection always if the corresponding subject has not logged in.</p>
      *
      * @param realmName the name of the Realm from which the principals were retrieved.
-     * @return the Subject's principals from the specified Realm only as a Set or an empty Set if there are not any
-     * principals from that realm.
+     * @return the Subject's principals from the specified Realm only as a Collection or an empty Collection if there
+     * are not any principals from that realm.
      */
-    Set asRealmSet( String realmName );
+    Collection fromRealm( String realmName );
 
     public boolean isEmpty();
 
