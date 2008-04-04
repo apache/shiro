@@ -49,7 +49,7 @@
 for details on this convention -->
     <property name="major.version" value="0"/>
     <property name="minor.version" value="9"/>
-    <property name="patch.version" value="0-alpha"/>
+    <property name="patch.version" value="0-beta"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
     <property name="release.name" value="${project.name}-${version}"/>
 
@@ -269,6 +269,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
             <!-- Jakarta Commons -->
             <link href="http://jakarta.apache.org/commons/collections/apidocs/"/>
+            <link href="http://commons.apache.org/beanutils/commons-beanutils-1.7.0/docs/api/"/>
             <link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
             <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
             <link href="http://quartz.sourceforge.net/javadoc/"/>

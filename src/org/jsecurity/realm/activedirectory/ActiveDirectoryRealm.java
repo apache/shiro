@@ -25,7 +25,6 @@ import org.jsecurity.realm.ldap.AbstractLdapRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
 import org.jsecurity.realm.ldap.LdapUtils;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.SimplePrincipalCollection;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -109,8 +108,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     }
 
     protected Account createAccount( String username, char[] password ) {
-        SimplePrincipalCollection principals = new SimplePrincipalCollection(getName(),username);
-        return new SimpleAuthorizingAccount( principals, password );
+        return new SimpleAuthorizingAccount( username, password, getName() );
     }
 
 
@@ -131,14 +129,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      */
     protected AuthorizingAccount queryForLdapAccount( PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
 
-        String username = null;
+        String username;
 
-        if ( !(principals instanceof String ) ) {
-            String msg = "This implementation expects the principal argument to be a String.";
-            throw new IllegalArgumentException( msg );
-        }
 
-        username = (String)principal;
+        username = (String)principals.fromRealm( getName() ).iterator().next();
 
         // Perform context search
         LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
@@ -151,8 +145,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext( ldapContext );
         }
 
-        SimplePrincipalCollection principals = new SimplePrincipalCollection(getName(),username);
-        return new SimpleAuthorizingAccount( principals, null, roleNames, null );
+        return new SimpleAuthorizingAccount(username, null, getName(), roleNames, null);
     }
 
     private Set<String> getRoleNamesForUser( String username, LdapContext ldapContext) throws NamingException {

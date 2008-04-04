@@ -19,6 +19,7 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.event.AuthenticationEvent;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * An AuthenticationEventFactory functions as its name implies - a Factory design pattern
@@ -52,9 +53,9 @@ public interface AuthenticationEventFactory {
     /**
      * Creates an AuthenticationEvent in response to a Subject logging out.
      *
-     * @param subjectPrincipal the application-specific Subject/account identifier.
+     * @param principals the application-specific Subject/account identifier(s).
      * @return an AuthenticationEvent to send due to the Subject logging out.
      * @see org.jsecurity.authc.event.LogoutEvent
      */
-    AuthenticationEvent createLogoutEvent(Object subjectPrincipal);
+    AuthenticationEvent createLogoutEvent(PrincipalCollection principals);
 }

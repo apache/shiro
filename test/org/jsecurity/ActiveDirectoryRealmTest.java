@@ -23,6 +23,7 @@ import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
@@ -33,7 +34,6 @@ import org.junit.Test;
 import javax.naming.NamingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -87,16 +87,12 @@ public class ActiveDirectoryRealmTest {
         UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
 
-
-
         UserIdPrincipal userIdPrincipal = subject.getPrincipals().oneByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
 
         Object principals = subject.getPrincipal();
 
-        assertTrue( principals instanceof Collection && ((Collection)principals).size() == 2);
-
-        assertTrue(realm.hasRole(userIdPrincipal, ROLE));
+        assertTrue(realm.hasRole(subject.getPrincipals(), ROLE));
 
         subject.logout();
     }
@@ -136,15 +132,15 @@ public class ActiveDirectoryRealmTest {
 
         }
 
-        protected AuthorizingAccount doGetAccount(Object principal) {
+        protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
             Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(principal, null, roles, null);
+            return new SimpleAuthorizingAccount(principals.fromRealm(getName()), null, getName(), roles, null);
         }
 
         // override ldap query because i don't care about testing that piece in this case
         protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
-            return new SimpleAccount(token.getPrincipal(), token.getPrincipal());
+            return new SimpleAccount(token.getPrincipal(), token.getPrincipal(), getName());
         }
 
     }

@@ -22,6 +22,7 @@ import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.FailedAuthenticationEvent;
 import org.jsecurity.authc.event.LogoutEvent;
 import org.jsecurity.authc.event.SuccessfulAuthenticationEvent;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * Simple principal-based implementation of the AuthenticationEventFactory interface.
@@ -52,7 +53,7 @@ public class DefaultAuthenticationEventFactory implements AuthenticationEventFac
         return new SuccessfulAuthenticationEvent( token, account );
     }
 
-    public AuthenticationEvent createLogoutEvent(Object subjectPrincipal) {
-        return new LogoutEvent( subjectPrincipal );
+    public AuthenticationEvent createLogoutEvent(PrincipalCollection principals) {
+        return new LogoutEvent( principals );
     }
 }

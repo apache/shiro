@@ -15,6 +15,8 @@
  */
 package org.jsecurity.authc.event;
 
+import org.jsecurity.subject.PrincipalCollection;
+
 /**
  * Event triggered when an authenticated subject (user, account, etc) logs out of the system.
  *
@@ -23,22 +25,29 @@ package org.jsecurity.authc.event;
  */
 public class LogoutEvent extends AuthenticationEvent {
 
+    private PrincipalCollection principals;
+
     /**
      * Creates a LogoutEvent for the specified subject logging out of the system.
-     * @param principal the subject identifier of the subject logging out.
+     * @param principals the subject identifier(s) of the subject logging out.
      */
-    public LogoutEvent( Object principal ) {
-        super( principal );
+    public LogoutEvent( PrincipalCollection principals ) {
+        super( principals );
+        this.principals = principals;
     }
 
     /**
      * Creates a LogoutEvent for the specified subject logging out of the system, generated or caused by the
      * specified <tt>source</tt> argument.
      * @param source the component that generated or caused the event.
-     * @param principal the subject identifier of the subject logging out.
+     * @param principals the subject identifier(s) of the subject logging out.
      */
-    public LogoutEvent( Object source, Object principal ) {
-        super( source, principal );
+    public LogoutEvent( Object source, PrincipalCollection principals ) {
+        super(source);
+        this.principals = principals;
     }
 
+    public PrincipalCollection getPrincipals() {
+        return principals;
+    }
 }

@@ -21,6 +21,7 @@ import org.jsecurity.authz.AuthorizingAccount;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.AuthorizingRealm;
+import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.JdbcUtils;
 
 import javax.sql.DataSource;
@@ -122,7 +123,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * Overrides the default query used to retrieve a user's roles during authorization.  When using the default
      * implementation, this query must take the user's username as a single parameter and return a row
      * per role with a single column containing the role name.  If you require a solution that does not match this query
-     * structure, you can override {@link #doGetAccount(Object)} or just
+     * structure, you can override {@link #doGetAccount(PrincipalCollection)} or just
      * {@link #getRoleNamesForUser(java.sql.Connection,String)}
      *
      * @param userRolesQuery the query to use for retrieving a user's roles.
@@ -138,7 +139,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * implementation, this query must take a role name as the single parameter and return a row
      * per permission with three columns containing the fully qualified name of the permission class, the permission
      * name, and the permission actions (in that order).  If you require a solution that does not match this query
-     * structure, you can override {@link #doGetAccount(Object)} or just
+     * structure, you can override {@link #doGetAccount(PrincipalCollection)} or just
      * {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}</p>
      *
      * <p><b>Permissions are only retrieved if you set {@link #permissionsLookupEnabled} to true.  Otherwise,
@@ -210,7 +211,7 @@ public class JdbcRealm extends AuthorizingRealm {
     }
 
     protected Account createAccount( String username, char[] password ) {
-        return new SimpleAuthorizingAccount( username, password );
+        return new SimpleAuthorizingAccount( username, password, getName() );
     }
 
     private String getPasswordForUser( Connection conn, String username ) throws SQLException {
@@ -247,24 +248,20 @@ public class JdbcRealm extends AuthorizingRealm {
     }
 
     /**
-     * This implementation of the interface expects the <tt>argument</tt> to be a String username.
+     * This implementation of the interface expects the principals collection to return a String username keyed off of
+     * this realm's {@link #getName() name}
      *
-     * @see AuthorizingRealm#getAccount(Object)
+     * @see AuthorizingRealm#getAccount(PrincipalCollection)
      */
     @Override
-    protected AuthorizingAccount doGetAccount( Object principal ) {
+    protected AuthorizingAccount doGetAccount( PrincipalCollection principals) {
 
         //null usernames are invalid
-        if ( principal == null ) {
-            throw new AuthorizationException( "Null usernames are not allowed by this realm implementation." );
+        if ( principals == null ) {
+            throw new AuthorizationException( "PrincipalCollection method argument cannot be null.");
         }
 
-        if ( !( principal instanceof String ) ) {
-            String msg = "This implementation expects the principal argument to be a String.";
-            throw new IllegalArgumentException( msg );
-        }
-
-        String username = (String)principal;
+        String username = (String)principals.fromRealm( getName() ).iterator().next();
 
         Connection conn = null;
         Set<String> roleNames = null;
@@ -288,7 +285,7 @@ public class JdbcRealm extends AuthorizingRealm {
             JdbcUtils.closeConnection( conn );
         }
 
-        return new SimpleAuthorizingAccount( principal, null, roleNames, permissions );
+        return new SimpleAuthorizingAccount(principals, null, getName(), roleNames, permissions );
     }
 
     protected Set<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {

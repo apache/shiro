@@ -19,7 +19,6 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.AuthorizingAccount;
-import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
@@ -33,6 +32,7 @@ import org.junit.Before;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -115,8 +115,7 @@ public class AuthorizingRealmTest {
             protected Account createAccount(Object principal, Object credentials) {
                 String username = (String) principal;
                 UsernamePrincipal customPrincipal = new UsernamePrincipal( username );
-                SimplePrincipalCollection principals = new SimplePrincipalCollection("allowAll",customPrincipal);
-                return new SimpleAuthorizingAccount( principals, credentials );
+                return new SimpleAuthorizingAccount( customPrincipal, credentials, getName() );
             }
         };
 
@@ -150,15 +149,15 @@ public class AuthorizingRealmTest {
         protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
             Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(principals, null, roles, new HashSet<Permission>());
+            return new SimpleAuthorizingAccount(principals, null, getName(), roles, null);
         }
 
         protected Account createAccount(Object principal, Object credentials) {
-            SimplePrincipalCollection principals = new SimplePrincipalCollection();
-            principals.add( "allowAll", new UserIdPrincipal(USER_ID));
-            principals.add( "allowAll", new UsernamePrincipal(USERNAME));
-            principals.add( "allowAll", USER_ID + USERNAME );
-            return new SimpleAccount(principals,PASSWORD);
+            Collection<Object> principals = new ArrayList<Object>(3);
+            principals.add( new UserIdPrincipal(USER_ID));
+            principals.add( new UsernamePrincipal(USERNAME));
+            principals.add( USER_ID + USERNAME );
+            return new SimpleAccount(principals,PASSWORD, getName() );
         }
     }
 

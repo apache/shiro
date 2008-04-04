@@ -32,7 +32,7 @@ import org.junit.Test;
 public class AbstractAuthenticatorTest {
 
     AbstractAuthenticator abstractAuthenticator;
-    private final SimpleAccount account = new SimpleAccount( "user1", "secret" );
+    private final SimpleAccount account = new SimpleAccount( "user1", "secret", "realmName" );
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {

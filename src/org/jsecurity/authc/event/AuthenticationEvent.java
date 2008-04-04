@@ -25,41 +25,12 @@ import org.jsecurity.SecurityEvent;
  */
 public abstract class AuthenticationEvent extends SecurityEvent {
 
-    protected Object principals = null;
-
     /**
-     * Creates a new <tt>AuthenticationEvent</tt> based on the Subject identified by the given principals.
-     * @param principals the identifiying data for the Subject associated with this event.
+     * Creates a new <tt>AuthenticationEvent</tt>.
+     * @param source the source of the event.
      */
-    public AuthenticationEvent( Object principals ) {
-        this( principals, principals );
-    }
-
-
-    /**
-     * Creates a new authentication event with the given source and the given <tt>AuthenticationToken</tt> submitted
-     * for the Authentication attempt.
-     *
-     * @param principals the identifiying data for the Subject associated with this event.
-     * @param source the component responsible for generating the event.
-     * associated with the authentication attempt
-     */
-    public AuthenticationEvent( Object principals, Object source ) {
+    public AuthenticationEvent( Object source ) {
         super( source );
-        if ( principals == null ) {
-            String msg = "principals argument cannot be null";
-            throw new IllegalArgumentException( msg );
-        }
-        this.principals = principals;
-    }
-
-    /**
-     * Returns the principals (aka Subject identity) associated with the authentication event.
-     *
-     * @return the the principals (aka subject identity) associated with the authentication event.
-     */
-    public Object getPrincipals() {
-        return this.principals;
     }
 
 }
