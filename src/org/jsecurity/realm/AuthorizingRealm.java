@@ -185,13 +185,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         }
     }
 
-    /**
-     * Template-pattern method to be implemented by subclasses to retrieve the Account for the given principal.
-     *
-     * @param principal the primary identifying principal of the Account that should be retrieved.
-     * @return the Account associated with this principal.
-     */
-    protected abstract AuthorizingAccount doGetAccount(PrincipalCollection principal);
+
 
     /**
      * <p>Retrieves Account information for the given account principals.
@@ -223,7 +217,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             if (log.isTraceEnabled()) {
                 log.trace("Attempting to retrieve the Account from cache.");
             }
-            account = (Account) accountCache.get(principals);
+            Object key = getAccountCacheKey(principals);
+            account = (Account) accountCache.get(key);
             if (log.isTraceEnabled()) {
                 if (account == null) {
                     log.trace("No Account found in cache for principals [" + principals + "]");
@@ -242,12 +237,25 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 if (log.isTraceEnabled()) {
                     log.trace("Caching Account [" + principals + "].");
                 }
-                accountCache.put(principals, account);
+                Object key = getAccountCacheKey(principals);
+                accountCache.put(key, account);
             }
         }
 
         return account;
     }
+
+    protected Object getAccountCacheKey( PrincipalCollection principals ) {
+        return principals;
+    }
+
+    /**
+     * Template-pattern method to be implemented by subclasses to retrieve the Account for the given principal.
+     *
+     * @param principal the primary identifying principal of the Account that should be retrieved.
+     * @return the Account associated with this principal.
+     */
+    protected abstract AuthorizingAccount doGetAccount(PrincipalCollection principal);
 
     protected AuthorizingAccount getAuthorizingAccount(PrincipalCollection principals) {
         if (principals == null) {
@@ -384,7 +392,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         Cache cache = getAccountCache();
         //cache instance will be non-null if caching is enabled:
         if (cache != null && accountPrincipal != null) {
-            cache.remove(accountPrincipal);
+            Object key = getAccountCacheKey(accountPrincipal);
+            cache.remove(key);
         }
     }
 }

@@ -26,7 +26,6 @@ import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.util.Initializable;
 
 import java.util.HashSet;
@@ -111,7 +110,8 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     }
 
     protected void add( SimpleAuthorizingAccount user ) {
-        getAccountCache().put( user.getPrincipals(), user );
+        Object key = getAccountCacheKey(user.getPrincipals());
+        getAccountCache().put( key, user );
     }
 
     protected SimpleRole getRole( String rolename ) {
@@ -143,11 +143,14 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
 
     protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;
-        SimplePrincipalCollection principals = new SimplePrincipalCollection( "simple", upToken.getUsername() );
-        return doGetAccount( principals );
+        return (SimpleAuthorizingAccount)getAccountCache().get(upToken.getUsername());
     }
 
-    protected AuthorizingAccount doGetAccount(PrincipalCollection principal) {
-        return (SimpleAuthorizingAccount)getAccountCache().get(principal);
+    protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
+        return (SimpleAuthorizingAccount)getAccountCache().get(getAccountCacheKey(principals));
+    }
+
+    protected Object getAccountCacheKey(PrincipalCollection principals) {
+        return principals.fromRealm(getName()).iterator().next(); //returns the username
     }
 }

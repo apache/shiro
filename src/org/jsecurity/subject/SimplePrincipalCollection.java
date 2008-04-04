@@ -172,4 +172,22 @@ public class SimplePrincipalCollection implements PrincipalCollection {
             }
         }
     }
+
+    public boolean equals( Object o ) {
+        if ( o == this ) {
+            return true;
+        }
+        if ( o instanceof SimplePrincipalCollection ) {
+            SimplePrincipalCollection other = (SimplePrincipalCollection)o;
+            return this.realmPrincipals != null ? this.realmPrincipals.equals(other.realmPrincipals) : other.realmPrincipals == null;    
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        if ( this.realmPrincipals != null && !realmPrincipals.isEmpty() ) {
+            return realmPrincipals.hashCode();
+        }
+        return 0;
+    }
 }
