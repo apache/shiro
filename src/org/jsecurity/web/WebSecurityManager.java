@@ -17,7 +17,6 @@ package org.jsecurity.web;
 
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.subject.PrincipalCollection;
@@ -148,14 +147,11 @@ public class WebSecurityManager extends DefaultSecurityManager {
     }
 
     public Subject createSubject(ServletRequest request, ServletResponse response) {
-        Session session = null; 
-        try {
-            session = getSession(null);
-        } catch (InvalidSessionException ignored) {
+        Session session = ((WebSessionManager)getSessionManager()).getSession(request, response);
+        if ( session == null ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "No Session exists for the incoming request and is therefore not available to use to " +
-                        "construct a Subject instance.  This is perfectly ok and a new Subject instance will be " +
-                        "created.  This exception can be ignored - logging for traceability only.", ignored );
+                log.trace( "No session found for the incoming request.  The Subject instance created for " +
+                        "the incoming request will not have an associated Session." );
             }
         }
         return createSubject(session, request, response);
