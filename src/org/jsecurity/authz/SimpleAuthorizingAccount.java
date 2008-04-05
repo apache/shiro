@@ -48,6 +48,10 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         super( principals, credentials, realmName );
     }
 
+    public SimpleAuthorizingAccount(PrincipalCollection principals, Object credentials) {
+        super(principals, credentials);
+    }
+
     public SimpleAuthorizingAccount( Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions ) {
         this(principal,credentials,realmName);
         addRoles(roleNames);

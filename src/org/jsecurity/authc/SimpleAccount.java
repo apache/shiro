@@ -83,12 +83,15 @@ public class SimpleAccount implements Account, Serializable {
     }
     
     public SimpleAccount( Object principal, Object credentials, String realmName ) {
-        this.principals = new SimplePrincipalCollection(realmName, principal );
-        this.credentials = credentials;
+        this( principal instanceof PrincipalCollection ? (PrincipalCollection)principal : new SimplePrincipalCollection(realmName, principal), credentials );
     }
 
     public SimpleAccount( Collection principals, Object credentials, String realmName ) {
-        this.principals = new SimplePrincipalCollection( realmName, principals );
+        this( new SimplePrincipalCollection( realmName, principals ), credentials );
+    }
+
+    public SimpleAccount( PrincipalCollection principals, Object credentials ) {
+        this.principals = principals;
         this.credentials = credentials;
     }
 
