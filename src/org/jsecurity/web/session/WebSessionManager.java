@@ -47,26 +47,26 @@ public class WebSessionManager extends DefaultSessionManager {
      */
     private boolean validateRequestOrigin = false; //default
 
-    protected CookieAttribute<Serializable> sessionIdCookieValue = null;
-    protected RequestParamAttribute<Serializable> sessionIdRequestParamValue = null;
+    protected CookieAttribute<Serializable> sessionIdCookieAttribute = null;
+    protected RequestParamAttribute<Serializable> sessionIdRequestParamAttribute = null;
 
     public WebSessionManager() {
     }
 
-    public CookieAttribute<Serializable> getSessionIdCookieValue() {
-        return sessionIdCookieValue;
+    public CookieAttribute<Serializable> getSessionIdCookieAttribute() {
+        return sessionIdCookieAttribute;
     }
 
-    public void setSessionIdCookieValue( CookieAttribute<Serializable> sessionIdCookieValue) {
-        this.sessionIdCookieValue = sessionIdCookieValue;
+    public void setSessionIdCookieAttribute( CookieAttribute<Serializable> sessionIdCookieAttribute) {
+        this.sessionIdCookieAttribute = sessionIdCookieAttribute;
     }
 
-    public RequestParamAttribute<Serializable> getSessionIdRequestParamValue() {
-        return sessionIdRequestParamValue;
+    public RequestParamAttribute<Serializable> getSessionIdRequestParamAttribute() {
+        return sessionIdRequestParamAttribute;
     }
 
-    public void setSessionIdRequestParamValue( RequestParamAttribute<Serializable> sessionIdRequestParamValue) {
-        this.sessionIdRequestParamValue = sessionIdRequestParamValue;
+    public void setSessionIdRequestParamAttribute( RequestParamAttribute<Serializable> sessionIdRequestParamAttribute) {
+        this.sessionIdRequestParamAttribute = sessionIdRequestParamAttribute;
     }
 
     /**
@@ -117,19 +117,19 @@ public class WebSessionManager extends DefaultSessionManager {
     }
 
     protected void ensureCookieSessionIdStore() {
-        CookieAttribute<Serializable> cookieStore = getSessionIdCookieValue();
+        CookieAttribute<Serializable> cookieStore = getSessionIdCookieAttribute();
         if ( cookieStore == null ) {
             cookieStore = new CookieAttribute<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
             cookieStore.setCheckRequestParams( false );
-            setSessionIdCookieValue( cookieStore );
+            setSessionIdCookieAttribute( cookieStore );
         }
     }
 
     protected void ensureRequestParamSessionIdStore() {
-        RequestParamAttribute<Serializable> reqParamStore = getSessionIdRequestParamValue();
+        RequestParamAttribute<Serializable> reqParamStore = getSessionIdRequestParamAttribute();
         if ( reqParamStore == null ) {
             reqParamStore = new RequestParamAttribute<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
-            setSessionIdRequestParamValue( reqParamStore );
+            setSessionIdRequestParamAttribute( reqParamStore );
         }
     }
 
@@ -175,18 +175,18 @@ public class WebSessionManager extends DefaultSessionManager {
         //'real' session value:
         Serializable existingId = retrieveSessionId( request, response );
         if ( existingId == null || !currentId.equals( existingId ) ) {
-            getSessionIdCookieValue().storeValue( currentId, request, response );
+            getSessionIdCookieAttribute().storeValue( currentId, request, response );
         }
     }
 
     protected Serializable retrieveSessionId( ServletRequest request, ServletResponse response ) {
-        WebAttribute<Serializable> cookieSessionIdAttribute = getSessionIdCookieValue();
+        WebAttribute<Serializable> cookieSessionIdAttribute = getSessionIdCookieAttribute();
         Serializable id = cookieSessionIdAttribute.retrieveValue( request, response );
         if ( id != null ) {
             request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 JSecurityHttpServletRequest.COOKIE_SESSION_ID_SOURCE );
         } else {
-            id = getSessionIdRequestParamValue().retrieveValue( request, response );
+            id = getSessionIdRequestParamAttribute().retrieveValue( request, response );
             if ( id != null ) {
                 request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                     JSecurityHttpServletRequest.URL_SESSION_ID_SOURCE );
@@ -237,8 +237,12 @@ public class WebSessionManager extends DefaultSessionManager {
             session = doGetSession( request, response );
         } catch ( InvalidSessionException ise ) {
             if ( log.isTraceEnabled() ) {
-                log.trace( "Request Session is invalid, message: [" + ise.getMessage() + "]." );
+                log.trace( "Request Session is invalid, message: [" + ise.getMessage() + "].  Removing any " +
+                        "associated session cookie..." );
             }
+            getSessionIdCookieAttribute().removeValue(request,response);
+
+            //give subclass a chance to do something additional if necessary.  Otherwise returning null is just fine:
             session = handleInvalidSession( request, response, ise );
         }
 
@@ -252,7 +256,7 @@ public class WebSessionManager extends DefaultSessionManager {
 
         if ( sessionId != null ) {
             request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
-            session = getSession( sessionId );
+            session = super.doGetSession( sessionId );
             if ( isValidateRequestOrigin() ) {
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Validating request origin against session origin" );
@@ -281,4 +285,8 @@ public class WebSessionManager extends DefaultSessionManager {
         return null;
     }
 
+    protected void onStop(Session session) {
+        super.onStop(session);
+        getSessionIdCookieAttribute().removeValue(ThreadContext.getServletRequest(), ThreadContext.getServletResponse());
+    }
 }

@@ -136,7 +136,7 @@ public class DelegatingSubject implements Subject {
      */
     public Object getPrincipal() {
         PrincipalCollection principals = getPrincipals();
-        if ( principals.isEmpty() ) {
+        if ( principals == null || principals.isEmpty() ) {
             return null;
         }
         return principals.asSet().iterator().next();

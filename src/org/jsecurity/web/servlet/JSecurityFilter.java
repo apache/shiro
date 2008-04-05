@@ -501,7 +501,8 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
         ThreadContext.bind(request);
         ThreadContext.bind(response);
-        ThreadContext.bind(getSecurityManager().getSubject());
+        getSecurityManager().getSubject();
+        //ThreadContext.bind(getSecurityManager().getSubject());
 
         try {
             chain.doFilter(request, response);

@@ -119,8 +119,12 @@
         </war>
     </target>
 
-    <target name="deploy" depends="dist">
-        <copy file="${dist.war}" todir="${deploy.dir}" preservelastmodified="true" overwrite="true"/>
+    <target name="quick-deploy">
+        <echo>Deploying application to Tomcat...</echo>
+        <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
+        <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
+
+    <target name="deploy" depends="dist,quick-deploy"/>
 
 </project>
