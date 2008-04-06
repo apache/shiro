@@ -83,7 +83,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
         this.sessionMode = sessionMode;
     }
 
-    protected boolean isHttpSessionMode() {
+    public boolean isHttpSessionMode() {
         return this.sessionMode.equals(HTTP_SESSION_MODE);
     }
 

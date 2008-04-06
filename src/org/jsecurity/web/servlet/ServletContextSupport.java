@@ -36,7 +36,7 @@ public class ServletContextSupport {
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     private ServletContext servletContext = null;
-    private String sessionMode = HTTP_SESSION_MODE; //default
+    private String sessionMode = null;
 
     public ServletContext getServletContext() {
         return servletContext;
@@ -89,9 +89,8 @@ public class ServletContextSupport {
 
     public void setSessionMode(String mode) {
         if (mode != null) {
-            mode = mode.trim();
-            if (!mode.equalsIgnoreCase(HTTP_SESSION_MODE) &&
-                !mode.equalsIgnoreCase(JSECURITY_SESSION_MODE)) {
+            mode = mode.trim().toLowerCase();
+            if (!mode.equals(HTTP_SESSION_MODE) && !mode.equals(JSECURITY_SESSION_MODE)) {
                 String msg = "Unknown '" + SESSION_MODE_CONTEXT_PARAM_NAME + "' value [" +
                     mode + "].  Recognized values are '" +
                         HTTP_SESSION_MODE + "' and '" + JSECURITY_SESSION_MODE +
@@ -107,6 +106,7 @@ public class ServletContextSupport {
     }
 
     protected boolean isHttpSessions() {
-        return getSessionMode().equals(HTTP_SESSION_MODE);
+        String sessionMode = getSessionMode();
+        return sessionMode == null || sessionMode.equals(HTTP_SESSION_MODE);
     }
 }
