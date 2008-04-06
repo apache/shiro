@@ -11,7 +11,7 @@
     <div id="contentBox">
         <img src="<c:url value="/logo.png"/>" style="margin-top:20px; border:0"/><br/>
 
-        <h2>You have successfully logged in as <jsecurity:principal/>.</h3>
+        <h2>You have successfully logged in as <jsecurity:principal/>.</h2>
 
         Session ID: ${subjectSession.id}
 
