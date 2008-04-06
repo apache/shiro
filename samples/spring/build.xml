@@ -29,7 +29,7 @@
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
-    <target name="clean">
+    <target name="clean" depends="clean-deploy-dir">
         <echo message="cleaning ${module.name} module"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
