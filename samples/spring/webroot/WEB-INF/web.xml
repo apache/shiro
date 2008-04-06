@@ -49,10 +49,7 @@
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
                 # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
-
-                [main]
-                sessionMode = jsecurity
-
+                
                 [interceptors]
                 authc.url = /s/login
                 authc.successUrl = /s/index

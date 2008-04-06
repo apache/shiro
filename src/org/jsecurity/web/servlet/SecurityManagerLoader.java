@@ -76,7 +76,10 @@ public class SecurityManagerLoader extends ServletContextSupport {
     protected SecurityManager createSecurityManager() {
         WebSecurityManager defaultSecMgr = new WebSecurityManager();
 
-        defaultSecMgr.setSessionMode( getSessionMode() );
+        String mode = getSessionMode();
+        if ( mode != null ) {
+            defaultSecMgr.setSessionMode( mode );
+        }
 
         List<Realm> realms = getRealms();
 
@@ -95,7 +98,7 @@ public class SecurityManagerLoader extends ServletContextSupport {
     }
 
     public void ensureSecurityManager() {
-        org.jsecurity.mgt.SecurityManager securityManager = getSecurityManager();
+        SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
             securityManager = createSecurityManager();
             if (securityManager == null) {

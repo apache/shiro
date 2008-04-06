@@ -33,7 +33,7 @@ public abstract class SecurityManagerFilter extends OncePerRequestFilter {
 
     protected void onFilterConfigSet() throws Exception {
         applySessionMode();
-        org.jsecurity.mgt.SecurityManager securityManager = getSecurityManager();
+        SecurityManager securityManager = getSecurityManager();
         //not using the loader explicitly or not overridden, so lets start one:
         if ( securityManager == null ) {
             securityManagerListener = new SecurityManagerListener();
