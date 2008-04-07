@@ -29,6 +29,14 @@
             <jsecurity:lacksRole name="role2">You do not have role 2.<br/></jsecurity:lacksRole>
         </p>
 
+        <p style="font-weight: bold;">
+            <jsecurity:hasPermission name="permission1">You have permission 1.<br/></jsecurity:hasPermission>
+            <jsecurity:lacksPermission name="permission1">You do not have permission 1.<br/></jsecurity:lacksPermission>
+            <jsecurity:hasPermission name="permission2">You have permission 2.<br/></jsecurity:hasPermission>
+            <jsecurity:lacksPermission name="permission2">You do not have permission 2.<br/></jsecurity:lacksPermission>
+        </p>
+
+
         <form action="<c:url value="/s/index"/>" method="POST">
             Enter value here to store in session: <input type="text" name="value" value="${command.value}" size="30"/>
             <input type="submit" value="Save"/>

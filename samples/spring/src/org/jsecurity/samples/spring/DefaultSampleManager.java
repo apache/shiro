@@ -100,4 +100,9 @@ public class DefaultSampleManager implements SampleManager {
         }
     }
 
+    public void secureMethod3() {
+        if (log.isInfoEnabled()) {
+            log.info("Secure method 3 called...");
+        }
+    }
 }
