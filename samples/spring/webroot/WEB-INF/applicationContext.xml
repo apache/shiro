@@ -13,7 +13,10 @@
          Spring-configured JSecurity objects so you don't have to 1) specify an init-method and destroy-method 
          attributes for every bean definition and 2) even know which JSecurity objects require these methods to be
          called. -->
-    <bean class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
+    <bean id="lifecycleBeanPostProcessor" class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- Enable JSecurity Annotations for Spring-configured beans: -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
 
     <!-- JSecurity's main business-tier object:  -->
     <bean id="securityManager" class="org.jsecurity.web.WebSecurityManager">
@@ -74,11 +77,10 @@
     <!-- =========================================================
       -  JSecurity annotation support
       ============================================================ -->
-    <!-- Enable JSecurity Annotations for Spring-configured beans: -->
-<!--    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
     <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
-    </bean>-->
+    </bean>
 
 
     <!-- =========================================================
