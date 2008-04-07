@@ -45,7 +45,7 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
         return this.annotationClass;
     }
 
-    protected boolean supports(MethodInvocation mi) {
+    public boolean supports(MethodInvocation mi) {
         return getAnnotation( mi ) != null;
     }
 

@@ -24,11 +24,11 @@ import java.util.Collection;
 /**
  * An <tt>AnnotationsAuthorizingMethodInterceptor</tt> is a MethodInterceptor that asserts a given method is authorized
  * to execute based on one or more configured <tt>AuthorizingAnnotationMethodInterceptor</tt>s.
- *
+ * <p/>
  * <p>This allows multiple annotations on a method to be processed before the method
  * executes, and if any of the <tt>AuthorizingAnnotationMethodInterceptor</tt>s indicate that the method should not be
  * executed, an <tt>AuthorizationException</tt> will be thrown, otherwise the method will be invoked as expected.
- *
+ * <p/>
  * <p>It is essentially a convenience mechanism to allow multiple annotations to be processed in a single method
  * interceptor.
  *
@@ -41,14 +41,14 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
 
     public void init() {
         super.init();
-        if ( methodInterceptors == null ) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "No methodAuthorizers configured.  " +
-                          "Enabling default Role and Permission annotation support..." );
+        if (methodInterceptors == null) {
+            if (log.isInfoEnabled()) {
+                log.info("No methodAuthorizers configured.  " +
+                        "Enabling default Role and Permission annotation support...");
             }
             methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(2);
-            methodInterceptors.add( new RoleAnnotationMethodInterceptor( getSecurityManager() ) );
-            methodInterceptors.add( new PermissionAnnotationMethodInterceptor( getSecurityManager() ) );
+            methodInterceptors.add(new RoleAnnotationMethodInterceptor(getSecurityManager()));
+            methodInterceptors.add(new PermissionAnnotationMethodInterceptor(getSecurityManager()));
         }
 
     }
@@ -64,9 +64,11 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
     protected void assertAuthorized(MethodInvocation methodInvocation) throws AuthorizationException {
         //default implementation just ensures no deny votes are cast:
         Collection<AuthorizingAnnotationMethodInterceptor> aamis = getMethodInterceptors();
-        if ( aamis != null && !aamis.isEmpty() ) {
-            for( AuthorizingAnnotationMethodInterceptor aami : aamis ) {
-                aami.assertAuthorized( methodInvocation );
+        if (aamis != null && !aamis.isEmpty()) {
+            for (AuthorizingAnnotationMethodInterceptor aami : aamis) {
+                if (aami.supports(methodInvocation)) {
+                    aami.assertAuthorized(methodInvocation);
+                }
             }
         }
     }
