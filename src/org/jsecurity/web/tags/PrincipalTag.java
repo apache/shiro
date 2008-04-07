@@ -58,7 +58,7 @@ public class PrincipalTag extends SecureTag {
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.
      */
-    private Class type;
+    private String type;
 
     /**
      * The property name to retrieve of the principal, or null if the <tt>toString()</tt> value should be used.
@@ -80,12 +80,12 @@ public class PrincipalTag extends SecureTag {
     ============================================*/
 
 
-    public Class getType() {
+    public String getType() {
         return type;
     }
 
 
-    public void setType(Class type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -123,10 +123,11 @@ public class PrincipalTag extends SecureTag {
 
             // Get the principal to print out
             Object principal;
+            
             if( type == null ) {
                 principal = getSubject().getPrincipal();
             } else {
-                principal = getSubject().getPrincipals().oneByType( type );
+                principal = getPrincipalFromClassName();
             }
 
             // Get the string value of the principal
@@ -150,6 +151,20 @@ public class PrincipalTag extends SecureTag {
         }
 
         return SKIP_BODY;
+    }
+
+    private Object getPrincipalFromClassName() {
+        Object principal = null;
+        
+        try {
+            Class cls = Class.forName(type);
+            principal = getSubject().getPrincipals().oneByType( cls );
+        } catch (ClassNotFoundException e) {
+           if (logger.isErrorEnabled()) {
+               logger.error("Unable to find class for name [" + type + "]");
+           }
+        }
+        return principal;
     }
 
 
