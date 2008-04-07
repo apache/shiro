@@ -72,6 +72,18 @@ public class BootstrapDataPopulator implements InitializingBean {
         jdbcTemplate.execute( query );
         log.debug( "Created role2" );
 
+        query = "insert into roles_permissions values ( 'role1', 'permission1')";
+        jdbcTemplate.execute( query );
+        log.debug( "Created permission 1 for role 1" );
+
+        query = "insert into roles_permissions values ( 'role1', 'permission2')";
+        jdbcTemplate.execute( query );
+        log.debug( "Created permission 2 for role 1" );
+
+        query = "insert into roles_permissions values ( 'role2', 'permission1')";
+        jdbcTemplate.execute( query );
+        log.debug( "Created permission 1 for role 2" );        
+
         query = "insert into user_roles values ( 'user1', 'role1' )";
         jdbcTemplate.execute( query );
         query = "insert into user_roles values ( 'user1', 'role2' )";

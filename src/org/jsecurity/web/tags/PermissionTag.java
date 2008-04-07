@@ -25,31 +25,31 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class PermissionTag extends SecureTag {
 
-    private String permission = null;
+    private String name = null;
 
     public PermissionTag() {
     }
 
-    public String getPermission() {
-        return permission;
+    public String getName() {
+        return name;
     }
 
-    public void setPermission(String permission) {
-        this.permission = permission;
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected void verifyAttributes() throws JspException {
-        String permission = getPermission();
+        String permission = getName();
 
         if ( permission == null || permission.length() == 0 ) {
-            String msg = "The 'permission' tag attribute must be set.";
+            String msg = "The 'name' tag attribute must be set.";
             throw new JspException( msg );
         }
     }
 
     public int onDoStartTag() throws JspException {
 
-        String p = getPermission();
+        String p = getName();
 
         boolean show = showTagBody( p );
         if ( show ) {
