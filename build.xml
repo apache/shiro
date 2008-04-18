@@ -189,8 +189,6 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
 
         <mkdir dir="${root.dist.dir}"/>
 
-        <delete file="${dist.jar}"/>
-
         <jar jarfile="${dist.jar}">
             <fileset dir="${classes.dir}">
                 <include name="org/jsecurity/**"/>

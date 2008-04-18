@@ -107,7 +107,7 @@
         </signjar>
 
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
-            <lib dir="${lib.dir}/samples" includes="*.jar"/>
+            <lib dir="${lib.dir}/samples" includes="*.jar" excludes="servlet-api.jar"/>
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>

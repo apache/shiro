@@ -2,8 +2,7 @@
 
 <?xml version="1.0" encoding="utf-8"?>
 <!-- JNLP File for JSecurity Sample Application -->
-<jnlp spec="1.0+"
-      codebase="${codebaseUrl}">
+<jnlp spec="1.0+" codebase="${codebaseUrl}">
     <information>
         <title>JSecurity Sample Application</title>
         <vendor>JSecurity</vendor>
