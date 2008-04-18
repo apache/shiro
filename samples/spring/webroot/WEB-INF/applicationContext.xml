@@ -1,101 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<!--
-  - Application context definition global to all servlet configurations.
-  -->
 <beans>
 
-    <!-- =========================================================
-      -  JSecurity configuration
-      ============================================================ -->
-    <!-- JSecurity post processor that automatically invokes init() and destroy() methods for
-         Spring-configured JSecurity objects so you don't have to 1) specify an init-method and destroy-method 
-         attributes for every bean definition and 2) even know which JSecurity objects require these methods to be
-         called. -->
-    <bean id="lifecycleBeanPostProcessor" class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
-
-    <!-- Enable JSecurity Annotations for Spring-configured beans: -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
-
-    <!-- JSecurity's main business-tier object:  -->
-    <bean id="securityManager" class="org.jsecurity.web.WebSecurityManager">
-        <property name="realm" ref="jdbcRealm"/>
-        <property name="sessionMode" value="jsecurity"/>
-    </bean>
-
-
-    <!-- =========================================================
-      -  JDBC Realm - to use, inject jdbcRealm into the securityManager
-      ============================================================ -->
-    <!-- JdbcRealm used to access sample database -->
-    <bean id="jdbcRealm" class="org.jsecurity.realm.jdbc.JdbcRealm">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="credentialsMatcher">
-            <bean class="org.jsecurity.authc.credential.Sha1CredentialsMatcher">
-                <property name="storedCredentialsHexEncoded" value="false"/>
-            </bean>
-        </property>
-    </bean>
-
-    <!-- Data source used by sample app JdbcRealm -->
+    <!-- Sample RDBMS data source that would exist in any application - not JSecurity related. -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:mem:jsecurity-spring"/>
         <property name="username" value="sa"/>
     </bean>
-
-    <!-- Populates the sample database with sample users and roles.  This would not exist in a real application -->
+    <!-- Populates the sample database with sample users and roles. This would probably not exist
+         in a real application: -->
     <bean id="bootstrapDataPopulator" class="org.jsecurity.samples.spring.BootstrapDataPopulator">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <!-- Simulated business-tier "Manager", not JSecurity related, just an example -->
+    <bean id="sampleManager" class="org.jsecurity.samples.spring.DefaultSampleManager"/>
 
     <!-- =========================================================
-      -  Property File Realm - to use, inject propertyFileRealm into the securityManager
-      ============================================================ -->
-    <!--<bean id="propertyFileRealm" class="org.jsecurity.realm.text.PropertiesRealm">
-        <property name="filePath" value="classpath:sample-users.properties"/>
-    </bean>-->
-
-
-    <!-- =========================================================
-      -  Active Directory Realm - to use, inject ldapRealm into the securityManager and update
-      -  settings to match your active directory server, domain, etc.
-      ============================================================ -->
-    <!--
-    <bean id="activeDirectoryRealm" class="org.jsecurity.realm.activedirectory.ActiveDirectoryRealm">
-        <property name="principalSuffix" value=""/>
-        <property name="searchBase" value=""/>
-        <property name="url" value=""/>
-        <property name="systemUsername" value=""/>
-        <property name="systemPassword" value=""/>
+         JSecurity Core Components - Not Spring Specific
+         ========================================================= -->
+    <!-- JSecurity's main business-tier object for web-enabled applications
+         (use org.jsecurity.mgt.DefaultSecurityManager instead when there is no web environment)-->
+    <bean id="securityManager" class="org.jsecurity.web.WebSecurityManager">
+        <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
+        <property name="realm" ref="jdbcRealm"/>
+        <property name="sessionMode" value="jsecurity"/>
     </bean>
-    -->
 
+    <!-- Used by the SecurityManager to access security data (users, roles, etc).
+         Many other realm implementations can be used too (PropertiesRealm,
+         LdapRealm, etc. -->
+    <bean id="jdbcRealm" class="org.jsecurity.realm.jdbc.JdbcRealm">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="credentialsMatcher">
+            <bean class="org.jsecurity.authc.credential.Sha1CredentialsMatcher">
+                <!-- true means hex encoded, false means base64 encoded -->
+                <property name="storedCredentialsHexEncoded" value="false"/>
+            </bean>
+        </property>
+    </bean>
 
     <!-- =========================================================
-      -  JSecurity annotation support
-      ============================================================ -->
+         JSecurity Spring-specific integration
+         ========================================================= -->
+    <!-- Post processor that automatically invokes init() and destroy() methods
+         for Spring-configured JSecurity objects so you don't have to
+         1) specify an init-method and destroy-method attributes for every bean
+            definition and
+         2) even know which JSecurity objects require these methods to be
+            called. -->
+    <bean id="lifecycleBeanPostProcessor" class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
 
+    <!-- Enable JSecurity Annotations for Spring-configured beans.  Only run after
+         the lifecycleBeanProcessor has run: -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
     <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
-
-    <!-- =========================================================
-      -  JSecurity Spring Remoting support
-      ============================================================ -->
-    <!-- Ensure any Spring-based remote method invocations can be associated with a Subject and a Session -->
+    <!-- Secure Spring remoting:  Ensure any Spring Remoting method invocations can be associated
+         with a Subject for security checks. -->
     <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
-
-    <!-- =========================================================
-      -  Sample App Objects
-      ============================================================ -->
-
-    <!-- Sample application-level business Managers -->
-    <bean id="sampleManager" class="org.jsecurity.samples.spring.DefaultSampleManager"/>
 
 </beans>
