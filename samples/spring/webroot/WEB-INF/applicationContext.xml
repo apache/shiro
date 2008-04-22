@@ -23,7 +23,7 @@
          ========================================================= -->
     <!-- JSecurity's main business-tier object for web-enabled applications
          (use org.jsecurity.mgt.DefaultSecurityManager instead when there is no web environment)-->
-    <bean id="securityManager" class="org.jsecurity.web.WebSecurityManager">
+    <bean id="securityManager" class="org.jsecurity.web.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
         <property name="realm" ref="jdbcRealm"/>
         <property name="sessionMode" value="jsecurity"/>

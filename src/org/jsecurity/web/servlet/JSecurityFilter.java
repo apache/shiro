@@ -18,8 +18,8 @@ package org.jsecurity.web.servlet;
 import org.jsecurity.mgt.SecurityManager;
 import static org.jsecurity.util.StringUtils.*;
 import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.DefaultWebSecurityManager;
 import org.jsecurity.web.SecurityWebSupport;
-import org.jsecurity.web.WebSecurityManager;
 import org.jsecurity.web.interceptor.DefaultInterceptorBuilder;
 import org.jsecurity.web.interceptor.InterceptorBuilder;
 import org.jsecurity.web.interceptor.PathConfigWebInterceptor;
@@ -476,8 +476,8 @@ public class JSecurityFilter extends SecurityManagerFilter {
 
     protected boolean isHttpSessions() {
         SecurityManager secMgr = getSecurityManager();
-        if ( secMgr instanceof WebSecurityManager) {
-            return ((WebSecurityManager)secMgr).isHttpSessionMode();
+        if ( secMgr instanceof DefaultWebSecurityManager) {
+            return ((DefaultWebSecurityManager)secMgr).isHttpSessionMode();
         } else {
             return super.isHttpSessions();
         }

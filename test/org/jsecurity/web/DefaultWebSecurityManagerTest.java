@@ -21,11 +21,21 @@ import org.junit.Test;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class WebSecurityManagerTest {
+public class DefaultWebSecurityManagerTest {
 
     @Test
     public void simpleWebSecurityManagerInit() {
-        new WebSecurityManager().init();
+        DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
+        dwsm.init();
+        dwsm.destroy();
+    }
+
+    @Test
+    public void jsecuritySessionModeWebSecurityManagerInit() {
+        DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
+        dwsm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE );
+        dwsm.init();
+        dwsm.destroy();
     }
 
 }

@@ -16,7 +16,7 @@
 package org.jsecurity.web.servlet;
 
 import static org.easymock.EasyMock.*;
-import org.jsecurity.web.WebSecurityManager;
+import org.jsecurity.web.DefaultWebSecurityManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class JSecurityFilterTest {
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
         expect(mockServletContext.getInitParameter(ServletContextSupport.SESSION_MODE_CONTEXT_PARAM_NAME)).andReturn(null).atLeastOnce();
         expect(mockServletContext.getAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY)).andReturn(null).atLeastOnce();
-        mockServletContext.setAttribute(eq(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY),isA(WebSecurityManager.class));
+        mockServletContext.setAttribute(eq(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY),isA(DefaultWebSecurityManager.class));
     }
 
     @After
