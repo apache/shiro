@@ -43,23 +43,23 @@ import java.net.InetAddress;
  * based clients.
  *
  * <p>Therefore, if you need heterogenous Session support across multiple client mediums (e.g. web pages,
- * Flash applets, Java Web Start applications, etc.), use the {@link WebSessionManager WebSessionManager} instead.  The
+ * Flash applets, Java Web Start applications, etc.), use the {@link DefaultWebSessionManager WebSessionManager} instead.  The
  * <tt>WebSessionManager</tt> supports both traditional web-based access as well as non web-based clients.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ServletContainerSessionManager extends AbstractSessionManager {
+public class ServletContainerSessionManager extends AbstractSessionManager implements WebSessionManager {
 
     protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
         //Ignore session id since there is no way to acquire a session based on an id in a servlet container
         //(that is implementation agnostic)
         ServletRequest request = ThreadContext.getServletRequest();
         ServletResponse response = ThreadContext.getServletResponse();
-        return doGetSession( request, response );
+        return getSession( request, response );
     }
 
-    public Session doGetSession(ServletRequest request, ServletResponse response) throws AuthorizationException {
+    public Session getSession(ServletRequest request, ServletResponse response) throws AuthorizationException {
         Session session = null;
         HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
         if (httpSession != null) {
