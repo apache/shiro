@@ -23,7 +23,7 @@ import org.jsecurity.subject.DelegatingSubject;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.WebSecurityManager;
+import org.jsecurity.web.DefaultWebSecurityManager;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -86,12 +86,12 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     }
 
     protected PrincipalCollection getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
-        return (PrincipalCollection)session.getAttribute( WebSecurityManager.PRINCIPALS_SESSION_KEY );
+        return (PrincipalCollection)session.getAttribute( DefaultWebSecurityManager.PRINCIPALS_SESSION_KEY );
     }
 
     protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, PrincipalCollection principals ) {
         if ( principals != null ) {
-            Boolean authc = (Boolean)session.getAttribute(WebSecurityManager.AUTHENTICATED_SESSION_KEY);
+            Boolean authc = (Boolean)session.getAttribute(DefaultWebSecurityManager.AUTHENTICATED_SESSION_KEY);
             return authc != null && authc;
         }
         return false;
