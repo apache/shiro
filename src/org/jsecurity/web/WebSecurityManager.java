@@ -22,6 +22,7 @@ import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
+import org.jsecurity.web.session.DefaultWebSessionManager;
 import org.jsecurity.web.session.ServletContainerSessionManager;
 import org.jsecurity.web.session.WebSessionManager;
 
@@ -100,7 +101,7 @@ public class WebSecurityManager extends DefaultSecurityManager {
             if ( log.isInfoEnabled() ) {
                 log.info( JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
             }
-            WebSessionManager wsm = new WebSessionManager();
+            DefaultWebSessionManager wsm = new DefaultWebSessionManager();
             wsm.setCacheManager(getCacheManager());
             wsm.setSessionEventListeners(getSessionEventListeners());
             wsm.init();
