@@ -23,8 +23,9 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.RememberMeAuthenticationToken;
 import org.jsecurity.crypto.BlowfishCipher;
 import org.jsecurity.crypto.Cipher;
-import org.jsecurity.util.Serializer;
-import org.jsecurity.util.XmlSerializer;
+import org.jsecurity.io.DefaultSerializer;
+import org.jsecurity.io.SerializationException;
+import org.jsecurity.io.Serializer;
 
 /**
  * @author Les Hazlewood
@@ -34,19 +35,10 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    private Serializer serializer = new XmlSerializer();
+    private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();
 
     public AbstractRememberMeManager() {
-    }
-
-    public AbstractRememberMeManager(Serializer serializer) {
-        setSerializer(serializer);
-    }
-
-    public AbstractRememberMeManager(Serializer serializer, Cipher cipher) {
-        setSerializer(serializer);
-        setCipher(cipher);
     }
 
     public Serializer getSerializer() {
@@ -95,11 +87,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     protected byte[] encrypt(byte[] serialized) {
+        byte[] value = serialized;
         Cipher cipher = getCipher();
         if (cipher != null) {
-            return cipher.encrypt(serialized, null);
+            value = cipher.encrypt(serialized, null);
         }
-        return serialized;
+        return value;
     }
 
     protected byte[] decrypt(byte[] encrypted) {
@@ -112,11 +105,20 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     protected void rememberIdentity(PrincipalCollection accountPrincipals) {
-        byte[] bytes = serialize(accountPrincipals);
-        if (getCipher() != null) {
-            bytes = encrypt(bytes);
+        try {
+            byte[] bytes = serialize(accountPrincipals);
+            if (getCipher() != null) {
+                bytes = encrypt(bytes);
+            }
+            rememberSerializedIdentity(bytes);
+        } catch (SerializationException se) {
+            if ( log.isWarnEnabled() ) {
+                log.warn("Unable to serialize account principals [" + accountPrincipals + "].  Identity " +
+                    "cannot be remembered!  This is a non fatal exception as RememberMe identity services " +
+                    "are not considered critical and execution can continue as normal.  But please " +
+                    "investigate and resolve to prevent seeing this message again.", se );
+            }
         }
-        rememberSerializedIdentity(bytes);
     }
 
     protected byte[] serialize(PrincipalCollection principals) {
@@ -126,14 +128,24 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     protected abstract void rememberSerializedIdentity(byte[] serialized);
 
     public PrincipalCollection getRememberedPrincipals() {
+        PrincipalCollection principals = null;
         byte[] bytes = getSerializedRememberedIdentity();
         if (bytes != null) {
             if (getCipher() != null) {
                 bytes = decrypt(bytes);
             }
-            return deserialize(bytes);
+            try {
+                principals = deserialize(bytes);
+            } catch (SerializationException e) {
+                if ( log.isWarnEnabled() ) {
+                    log.warn("Unable to deserialize stored identity byte array.  Remembered identity " +
+                        "cannot be reconstituted!  This is a non fatal exception as RememberMe identity services " +
+                        "are not considered critical and execution can continue as normal, but please " +
+                        "investigate and resolve to prevent seeing this message again.", e );
+                }
+            }
         }
-        return null;
+        return principals;
     }
 
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {

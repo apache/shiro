@@ -16,9 +16,7 @@
 package org.jsecurity.web;
 
 import org.jsecurity.codec.Base64;
-import org.jsecurity.crypto.Cipher;
 import org.jsecurity.subject.AbstractRememberMeManager;
-import org.jsecurity.util.Serializer;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.attr.CookieAttribute;
 import org.jsecurity.web.attr.WebAttribute;
@@ -38,14 +36,6 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     public WebRememberMeManager() {
         super();
-    }
-
-    public WebRememberMeManager(Serializer serializer) {
-        super(serializer);
-    }
-
-    public WebRememberMeManager(Serializer serializer, Cipher cipher) {
-        super(serializer, cipher);    
     }
 
     public WebAttribute<String> getIdentityAttribute() {

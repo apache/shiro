@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.util;
+package org.jsecurity.io;
 
 /**
  * @author Les Hazlewood
@@ -21,7 +21,7 @@ package org.jsecurity.util;
  */
 public interface Serializer {
 
-    byte[] serialize( Object o );
+    byte[] serialize( Object o ) throws SerializationException;
 
-    Object deserialize( byte[] serialized );
+    Object deserialize( byte[] serialized ) throws SerializationException;
 }
