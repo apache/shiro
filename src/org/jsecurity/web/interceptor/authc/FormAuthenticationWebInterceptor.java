@@ -108,6 +108,13 @@ public class FormAuthenticationWebInterceptor extends AuthenticationWebIntercept
         }
     }
 
+    protected void saveRequest(ServletRequest servletRequest, ServletResponse response ) {
+        //save the page they were trying to visit so we can redirect them back to this location after
+        //a successful login:
+
+        //TODO - JSEC-92
+    }
+
     protected boolean isLoginSubmission(ServletRequest servletRequest, ServletResponse response ) {
         return toHttp(servletRequest).getMethod().equalsIgnoreCase("POST");
     }

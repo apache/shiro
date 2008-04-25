@@ -366,16 +366,17 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
     </target>
 
     <target name="makepom" depends="load-ivy">
-        <ivy:makepom ivyfile="${root.base.dir}/ivy.xml" pomfile="${build.dir}/${release.name}.pom">
+        <ivy:makepom ivyfile="${root.base.dir}/ivy.xml" pomfile="${build.dir}/${project.name}.pom">
             <mapping conf="runtime" scope="compile"/>
             <mapping conf="runtime-web" scope="compile"/>
             <mapping conf="test" scope="test"/>
         </ivy:makepom>
     </target>
 
-    <target name="release" depends="jar,samples,src.zip,javadoc">
+    <target name="release" depends="jar,samples,src.zip,javadoc,makepom">
         <property name="release.dir.name" value="${project.name}-${version}"/>
-        <property name="release.zip.name" value="${release.dir.name}-with-dependencies.zip"/>
+        <property name="release.zip.name" value="${release.dir.name}.zip"/>
+        <property name="release.depzip.name" value="${release.dir.name}-with-dependencies.zip"/>
         <copy todir="${root.dist.dir}">
             <fileset dir="${root.base.dir}">
                 <type type="file"/>
@@ -387,7 +388,12 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
         <zip destfile="${build.dir}/${release.zip.name}"
              basedir="${build.dir}"
              includes="${release.dir.name}/**"
+             excludes="**/${release.zip.name},**/lib/**"/>
+        <zip destfile="${build.dir}/${release.depzip.name}"
+             basedir="${build.dir}"
+             includes="${release.dir.name}/**"
              excludes="**/${release.zip.name}"/>
+
     </target>
 
     <!-- ===================================================================
