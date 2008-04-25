@@ -98,15 +98,15 @@ relative to where the build is being executed -->
     </target>
 
     <!-- =================================
-    target: load-ivy
-      This target is not necessary if you put ivy.jar in your ant lib directory.
-      If you already have ivy in your ant lib, you can simply remove this target.
-   ================================= -->
+         target: load-ivy
+         This target is not necessary if you put ivy.jar in your ant lib directory.
+         If you already have ivy in your ant lib, you can simply remove this target.
+         ================================= -->
     <target name="load-ivy" depends="download-ivy" description="--> install ivy">
         <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
-it into ant's lib dir (note that the latter copy will always take precedence).
-We will not fail as long as local lib dir exists (it may be empty) and
-ivy is in at least one of ant's lib dir or the local lib dir. -->
+             it into ant's lib dir (note that the latter copy will always take precedence).
+             We will not fail as long as local lib dir exists (it may be empty) and
+             ivy is in at least one of ant's lib dir or the local lib dir. -->
         <path id="ivy.lib.path">
             <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
         </path>
@@ -258,8 +258,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
             <!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
           <arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
             <doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
-            <bottom>
-                <![CDATA[<i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-3614410-1"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]></bottom>
+            <bottom><![CDATA[<i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i> <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> var pageTracker = _gat._getTracker("UA-3614410-1"); pageTracker._initData(); pageTracker._trackPageview(); </script>]]></bottom>
             <classpath refid="all.libs"/>
             <packageset dir="${src.dir}">
                 <include name="org/jsecurity/**"/>
@@ -382,6 +381,7 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
                 <type type="file"/>
                 <exclude name="build/**"/>
                 <exclude name="**/.svn/**"/>
+                <exclude name="**/lib/**"/>
                 <exclude name="${release.dir.name}"/>
             </fileset>
         </copy>
@@ -389,10 +389,21 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
              basedir="${build.dir}"
              includes="${release.dir.name}/**"
              excludes="**/${release.zip.name},**/lib/**"/>
+
+        <!-- Our ivy config puts copies of jars under lib directory according to the multiple build
+             configuration targets.  We don't want multiple copies in the dependency lib, because it would
+             make the download size larger.  Instead, just include one copy of each: -->
+        <mkdir dir="${root.dist.dir}/lib"/>
+        <copy todir="${root.dist.dir}/lib" overwrite="true" flatten="true">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
         <zip destfile="${build.dir}/${release.depzip.name}"
              basedir="${build.dir}"
              includes="${release.dir.name}/**"
              excludes="**/${release.zip.name}"/>
+        <delete dir="${root.dist.dir}/lib"/>
 
     </target>
 

@@ -336,13 +336,13 @@
   <component name="libraryTable">
     <library name="all-libs">
       <CLASSES>
-        <root url="file://$PROJECT_DIR$/lib" />
+        <root url="file://$PROJECT_DIR$/lib/test" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
         <root url="jar:///usr/local/java/tools/spring/spring-framework-2.5.2/dist/spring-sources.jar!/" />
       </SOURCES>
-      <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/lib/test" recursive="false" />
     </library>
   </component>
 </project>
