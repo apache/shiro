@@ -17,23 +17,18 @@
 
             [interceptors]
             authc.successUrl = /index.jsp
-            
+
             [urls]
             /account/** = authc
             /remoting/** = authc, roles[b2bClient], perms[remote:invoke:"lan,wan"]
-
         </param-value></init-param>
     </filter>
-
 
     <filter-mapping>
         <filter-name>JSecurityFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- ===================================================================
-	 -  Welcome file list
-	 -  =================================================================== -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

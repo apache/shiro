@@ -23,7 +23,9 @@ import org.jsecurity.cache.CacheManager;
 import org.jsecurity.session.mgt.eis.CachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.jsecurity.util.ResourceUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -55,9 +57,9 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     protected net.sf.ehcache.CacheManager manager;
     private boolean cacheManagerImplicitlyCreated = false;
     /**
-     * Classpath file location - without a leading slash, it is relative to the current class.
+     * Classpath file location.
      */
-    private String cacheManagerConfigFile = "ehcache.xml";
+    private String cacheManagerConfigFile = "classpath:org/jsecurity/cache/ehcache/ehcache.xml";
 
     public net.sf.ehcache.CacheManager getCacheManager() {
         return manager;
@@ -76,8 +78,12 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     }
 
     protected InputStream getCacheManagerConfigFileInputStream() {
-        String classpathLocation = getCacheManagerConfigFile();
-        return getClass().getResourceAsStream( classpathLocation );
+        String configFile = getCacheManagerConfigFile();
+        try {
+            return ResourceUtils.getInputStreamForPath(configFile);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to obtain input stream for cacheManagerConfigFile.", e);
+        }
     }
 
     /**
@@ -166,10 +172,17 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
                 //we don't know which component is responsible for shutting it down.  By using a single EhCacheManager,
                 //it will always know to shut down the instance if it was responsible for creating it.
                 cacheMgr = new net.sf.ehcache.CacheManager( getCacheManagerConfigFileInputStream() );
+                if ( log.isTraceEnabled()) {
+                    log.trace("instantiated Ehcache CacheManager instance." );
+                }
                 cacheManagerImplicitlyCreated = true;
                 setCacheManager( cacheMgr );
+                if ( log.isDebugEnabled() ) {
+                    log.debug("implicit cacheManager created successfully.");
+                }
             }
         } catch ( Exception e ) {
+            log.error(e);
             throw new CacheException( e );
         }
     }
