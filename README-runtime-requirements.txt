@@ -8,15 +8,14 @@ Required jars
 Ensure jsecurity.jar and Apache commons-logging.jar are in your application's classpath.
 
 JDK 1.3 and 1.4 only: you must include retroweaver.jar and its associated dependendencies
-(they can be found in this distro's lib/retroweaver directory).
+(they can be found in this distro's lib directory).
 
 
 Feature-based dependencies
 --------------------------
 - If you want to use JSecurity's enterprise session management:
-  . JDK 1.5+: include ehcache.jar
-  . JDK 1.3 or 1.4: include ehcache.jar and jug.jar
+  . JDK 1.5+: include ehcache.jar and backport-util-concurrent.jar
+  . JDK 1.3 or 1.4: include ehcache.jar, backport-util-concurrent.jar and jug.jar
 
-- JSecurity Web Filter text-based config ('config' init param) in web.xml:
-- JSecurity code Annotations:
+- JSecurity Web Filter text-based config ('config' init param) in web.xml or JSecurity code Annotations:
   . include Jakarta commons-beanutils-core.jar
