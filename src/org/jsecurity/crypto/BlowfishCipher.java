@@ -97,7 +97,7 @@ public class BlowfishCipher implements Cipher {
             cipher.init(mode, key);
         } catch (InvalidKeyException e) {
             String msg = "Unable to init cipher.";
-            throw new IllegalStateException(msg);
+            throw new IllegalStateException(msg,e);
         }
     }
 
@@ -106,7 +106,7 @@ public class BlowfishCipher implements Cipher {
             return cipher.doFinal(bytes);
         } catch (Exception e) {
             String msg = "Unable to crypt bytes with cipher [" + cipher + "].";
-            throw new IllegalStateException(msg);
+            throw new IllegalStateException(msg,e);
         }
     }
 
