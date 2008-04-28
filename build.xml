@@ -260,13 +260,13 @@ relative to where the build is being executed -->
             <doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
             <bottom>
                 <![CDATA[
-                <i>Copyright &copy; 2004-2008 <a href=\"http://www.jsecurity.org/\" target=\"_top\">JSecurity</a>.</i>
-                <script type=\"text/javascript\">
-                    var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");
-                    document.write(unescape(\"%3Cscript src=%22\" + gaJsHost + \"google-analytics.com/ga.js%22 type=%22text/javascript%22%3E%3C/script%3E\"));
+                <i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i>
+                <script type="text/javascript">
+                    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+                    document.write(unescape("%3Cscript src=%22" + gaJsHost + "google-analytics.com/ga.js%22 type=%22text/javascript%22%3E%3C/script%3E"));
                 </script>
-                <script type=\"text/javascript\">
-                    var pageTracker = _gat._getTracker(\"UA-3614410-1\");
+                <script type="text/javascript">
+                    var pageTracker = _gat._getTracker("UA-3614410-1");
                     pageTracker._initData();
                     pageTracker._trackPageview();
                 </script>
@@ -417,10 +417,6 @@ relative to where the build is being executed -->
              includes="${release.dir.name}/**"
              excludes="**/${release.zip.name}"/>
         <delete dir="${root.dist.dir}/lib"/>
-
-        <!-- zip up the api docs to make transfer to the web server easy: -->
-        <!-- <zip destfile="${build.dir}/jsecurity.docs.zip"
-             basedir="${build.dir}/" -->
 
     </target>
 
