@@ -66,8 +66,15 @@ import org.jsecurity.crypto.hash.Hash;
  * <p>If you hash your users' credentials multiple times before persisting to the data store, you will also need to
  * set this class's {@link #setHashIterations(int) hashIterations} property.</p>
  *
+ * <p><b>Note:</b> <a href="http://en.wikipedia.org/wiki/MD5">MD5</a> and
+ * <a href="http://en.wikipedia.org/wiki/SHA_hash_functions">SHA-1</a> algorithms are now known to be vulnerable to
+ * compromise and/or collisions (read the linked pages for more).  While most applications are ok with either of these
+ * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
+ * supporting <code>CredentialsMatcher</code> implementations.</p>
+ *
  * @see org.jsecurity.crypto.hash.Md5Hash
  * @see org.jsecurity.crypto.hash.Sha1Hash
+ * @see org.jsecurity.crypto.hash.Sha256Hash
  *
  * @author Les Hazlewood
  * @since 0.9

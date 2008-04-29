@@ -61,18 +61,48 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      */
     private String cacheManagerConfigFile = "classpath:org/jsecurity/cache/ehcache/ehcache.xml";
 
+    /**
+     * Returns the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     * @return the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     */
     public net.sf.ehcache.CacheManager getCacheManager() {
         return manager;
     }
 
+    /**
+     * Sets the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     * @param manager the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     */
     public void setCacheManager( net.sf.ehcache.CacheManager manager ) {
         this.manager = manager;
     }
 
+    /**
+     * Returns the resource location of the config file used to initialize a new
+     * EhCache CacheManager instance.  The string can be any resource path supported by the
+     * {@link ResourceUtils#getInputStreamForPath(String)} call.
+     *
+     * <p>This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
+     * lazily create a CacheManager if one is not already provided.</p>
+     *
+     * @return the resource location of the config file used to initialize the wrapped
+     * EhCache CacheManager instance.
+     */
     public String getCacheManagerConfigFile() {
         return this.cacheManagerConfigFile;
     }
 
+    /**
+     * Sets the resource location of the config file used to initialize the wrapped
+     * EhCache CacheManager instance.  The string can be any resource path supported by the
+     * {@link ResourceUtils#getInputStreamForPath(String)} call.
+     *
+     * <p>This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
+     * lazily create a CacheManager if one is not already provided.</p>
+     *
+     * @param classpathLocation resource location of the config file used to create the wrapped
+     * EhCache CacheManager instance.
+     */
     public void setCacheManagerConfigFile( String classpathLocation ) {
         this.cacheManagerConfigFile = classpathLocation;
     }
@@ -130,6 +160,13 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         }
     }
 
+    /**
+     * Builds the default cache instance to use for JSecurity's Session Cache when enterprise Sessions are
+     * enabled.
+     * @return the default cache instance to use for JSecurity's Session Cache when enterprise Sessions are
+     * enabled.
+     * @throws CacheException if there is a problem constructing the Cache instance.
+     */
     private net.sf.ehcache.Cache buildDefaultActiveSessionsCache() throws CacheException {
         return new net.sf.ehcache.Cache( DEFAULT_ACTIVE_SESSIONS_CACHE_NAME,
             DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM,
@@ -143,14 +180,15 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
 
     /**
      * Initializes this instance.
-     * <p/>
+     *
      * <p>If a {@link #setCacheManager CacheManager} has been
      * explicitly set (e.g. via Dependency Injection or programatically) prior to calling this
-     * method, this method does nothing.
+     * method, this method does nothing.</p>
+     *
      * <p>However, if no <tt>CacheManager</tt> has been set, the default Ehcache singleton will be initialized, where
      * Ehcache will look for an <tt>ehcache.xml</tt> file at the root of the classpath.  If one is not found,
-     * Ehcache will use its own failsafe configuration file.
-     * <p/>
+     * Ehcache will use its own failsafe configuration file.</p>
+     *
      * <p>Because JSecurity cannot use the failsafe defaults (failsafe expunges cached objects after 2 minutes,
      * something not desireable for JSecurity sessions), this class manages an internal default configuration for
      * this case.</p>
@@ -187,6 +225,13 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         }
     }
 
+    /**
+     * Shuts-down the wrapped Ehcache CacheManager <b>only if implicitly created</b>.
+     *
+     * <p>If another component injected
+     * a non-null CacheManager into this instace before calling {@link #init() init}, this instance expects that same
+     * component to also destroy the CacheManager instance, and it will not attempt to do so. 
+     */
     public void destroy() {
         if ( cacheManagerImplicitlyCreated ) {
             try {

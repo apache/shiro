@@ -13,23 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.cache;
-
 /**
- * Interface implemented by components that utilize a CacheManager and wish that CacheManager to be supplied if
- * one is available.
+ * <p>Contains <a href="http://ehcache.sourceforge.net" target="_blank">Ehcache</a>-based implementations of
+ * the JSecurity {@link CacheManager CacheManager} and {@link Cache Cache} interfaces via the
+ * {@link EhCacheManager EhCacheManager} and {@link EhCache EhCache} classes, respectively.
  *
- * <p>This is used so internal security components that use a CacheManager can be injected with it instead of having
- * to create one on their own.
- *
- * @since 0.9
- * @author Les Hazlewood
+ * <p>This package also contains a fail-safe <code>ehcache.xml</code> file that will be loaded by JSecurity when
+ * ehcache components are used but no <code>ehcache.xml</code> file is located in the classpath (as would be
+ * customary for ehcache usage).</p>
  */
-public interface CacheManagerAware {
-
-    /**
-     * Sets the available CacheManager instance on this component.
-     * @param cacheManager the CacheManager instance to set on this component.
-     */
-    void setCacheManager( CacheManager cacheManager);
-}
+package org.jsecurity.cache.ehcache;

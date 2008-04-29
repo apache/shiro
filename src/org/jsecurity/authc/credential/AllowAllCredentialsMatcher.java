@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2008 Jeremy Haile
+ * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,17 @@ import org.jsecurity.authc.AuthenticationToken;
  *
  * @since 0.2
  * @author Jeremy Haile
+ * @author Les Hazlewood
  */
 public class AllowAllCredentialsMatcher implements CredentialsMatcher {
 
+    /**
+     * Returns <code>true</code> <em>always</em> no matter what the method arguments are.
+     *
+     * @param token the token submitted for authentication.
+     * @param account the account being verified for access
+     * @return <code>true</code> <em>always</em>.
+     */
     public boolean doCredentialsMatch(AuthenticationToken token, Account account) {
         return true;
     }

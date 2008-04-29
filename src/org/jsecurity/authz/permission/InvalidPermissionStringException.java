@@ -15,13 +15,15 @@
  */
 package org.jsecurity.authz.permission;
 
+import org.jsecurity.JSecurityException;
+
 /**
  * Thrown by {@link PermissionResolver#resolvePermission(String)} when the String being parsed is not
  * valid for that resolver.
  * @author Jeremy Haile
  * @since 0.9 
  */
-public class InvalidPermissionStringException extends RuntimeException {
+public class InvalidPermissionStringException extends JSecurityException {
 
     private String permissionString;
 

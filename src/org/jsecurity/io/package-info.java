@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.authc.event;
-
-import org.jsecurity.SecurityEvent;
-
 /**
- * General event concerning the authentication of a particular Subject (aka Application user).
- *
- * @since 0.1
- * @author Les Hazlewood
+ * Simple IO (input/output) extensions useful to JSecurity, such as {@link Serializer Serializer}s for simplified
+ * serialization in a stateless programming environment.
  */
-public abstract class AuthenticationEvent extends SecurityEvent {
-
-    /**
-     * Creates a new <tt>AuthenticationEvent</tt>.
-     * @param source the source of the event.
-     */
-    public AuthenticationEvent( Object source ) {
-        super( source );
-    }
-
-}
+package org.jsecurity.io;

@@ -25,7 +25,7 @@ package org.jsecurity.codec;
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>
  *
- * @since 1.1
+ * @since 0.9
  * @author Apache Software Foundation
  * @author Les Hazlewood
  */
@@ -39,6 +39,12 @@ public class Hex {
            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
 
+    /**
+     * Encodes the specifed byte array to a character array and then returns that character array
+     * as a String.
+     * @param bytes the byte array to Hex-encode.
+     * @return A String representation of the resultant hex-encoded char array.
+     */
     public static String encodeToString( byte[] bytes ) {
         char[] encodedChars = encode( bytes );
         return new String( encodedChars );
@@ -86,6 +92,13 @@ public class Hex {
         return decode(s);
 	}
 
+    /**
+     * Converts the specified Hex-encoded String into a raw byte array.  This is a
+     * convenience method that merely delegates to {@link #decode(char[])} using the
+     * argument's hex.toCharArray() value.
+     * @param hex a Hex-encoded String.
+     * @return A byte array containing binary data decoded from the supplied String's char array.
+     */
     public static byte[] decode( String hex ) {
         return decode( hex.toCharArray() );
     }

@@ -19,7 +19,7 @@ import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
 /**
- * Accesses the currently accessible <tt>Subject</tt> for the calling code.
+ * Accesses the currently accessible <tt>Subject</tt> for the calling code depending on runtime environment.
  *
  * @since 0.2
  * @author Les Hazlewood
@@ -27,7 +27,8 @@ import org.jsecurity.util.ThreadContext;
 public abstract class SecurityUtils {
 
     /**
-     * Returns the currently accessible <tt>Subject</tt> available to the calling code.
+     * Returns the currently accessible <tt>Subject</tt> available to the calling code depending on
+     * runtime environment.
      *
      * <p>This method is provided as a way of obtaining a <tt>Subject</tt> without having to resort to
      * implementation-specific methods.  It also allows the JSecurity team to change the underlying implementation of
