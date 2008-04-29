@@ -31,8 +31,8 @@ import java.beans.PropertyEditor;
  */
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
-    protected static final int ONE_YEAR = 60 * 60 * 24 * 365;
-    protected static final int INDEFINITE = Integer.MAX_VALUE;
+    public static final int ONE_YEAR = 60 * 60 * 24 * 365;
+    public static final int INDEFINITE = Integer.MAX_VALUE;
 
     private String path = null; //null means set it on the request context root
     private int maxAge = -1; //expire on browser close

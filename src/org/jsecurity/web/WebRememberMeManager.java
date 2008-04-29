@@ -38,6 +38,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         super();
         CookieAttribute<String> attr = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
         attr.setCheckRequestParams(false);
+        attr.setMaxAge(CookieAttribute.INDEFINITE);
         this.identityAttribute = attr;
     }
 
