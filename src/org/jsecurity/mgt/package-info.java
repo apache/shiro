@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.authc.event;
-
-import org.jsecurity.SecurityEvent;
-
 /**
- * General event concerning the authentication of a particular Subject (aka Application user).
- *
- * @since 0.1
- * @author Les Hazlewood
+ * Provides JSecurity's core {@link SecurityManager SecurityManager} interface and a default flexible implementation
+ * class hierarchy to support it in all runtime environments.
  */
-public abstract class AuthenticationEvent extends SecurityEvent {
-
-    /**
-     * Creates a new <tt>AuthenticationEvent</tt>.
-     * @param source the source of the event.
-     */
-    public AuthenticationEvent( Object source ) {
-        super( source );
-    }
-
-}
+package org.jsecurity.mgt;

@@ -94,11 +94,9 @@ public class EhCache implements Cache {
      * @param value the value.
      */
     public void put(Object key, Object value) throws CacheException {
-
         if (logger.isTraceEnabled()) {
             logger.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
         }
-
         try {
             Element element = new Element(key, value);
             cache.put(element);
@@ -110,30 +108,26 @@ public class EhCache implements Cache {
 
     /**
      * Removes the element which matches the key.
-     * <p/>
-     * If no element matches, nothing is removed and no Exception is thrown.
+     *
+     * <p>If no element matches, nothing is removed and no Exception is thrown.</p>
      *
      * @param key the key of the element to remove
      */
     public void remove(Object key) throws CacheException {
-
         if (logger.isTraceEnabled()) {
             logger.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
             cache.remove(key);
-        }
-        catch ( Throwable t) {
+        } catch ( Throwable t) {
             throw new CacheException(t);
         }
     }
 
     /**
-     * Remove all elements in the cache, but leave the cache
-     * in a useable state.
+     * Removes all elements in the cache, but leaves the cache in a useable state.
      */
     public void clear() throws CacheException {
-
         if (logger.isTraceEnabled()) {
             logger.trace("Clearing all objects from cache [" + cache.getName() + "]");
         }
@@ -182,6 +176,12 @@ public class EhCache implements Cache {
         }
     }
 
+    /**
+     * Returns the size (in bytes) that this EhCache is using in memory (RAM), or <code>-1</code> if that
+     * number is unknown or cannot be calculated.
+     * @return the size (in bytes) that this EhCache is using in memory (RAM), or <code>-1</code> if that
+     * number is unknown or cannot be calculated.
+     */
     public long getMemoryUsage() {
         try {
             return cache.calculateInMemorySize();
@@ -191,6 +191,12 @@ public class EhCache implements Cache {
         }
     }
 
+    /**
+     * Returns the size (in bytes) that this EhCache's memory store is using (RAM), or <code>-1</code> if
+     * that number is unknown or cannot be calculated.
+     * @return the size (in bytes) that this EhCache's memory store is using (RAM), or <code>-1</code> if
+     * that number is unknown or cannot be calculated.
+     */
     public long getMemoryStoreSize() {
         try {
             return cache.getMemoryStoreSize();
@@ -200,6 +206,12 @@ public class EhCache implements Cache {
         }
     }
 
+    /**
+     * Returns the size (in bytes) that this EhCache's disk store is consuming or <code>-1</code> if
+     * that number is unknown or cannot be calculated.
+     * @return the size (in bytes) that this EhCache's disk store is consuming or <code>-1</code> if 
+     * that number is unknown or cannot be calculated.
+     */
     public long getDiskStoreSize() {
         try {
             return cache.getDiskStoreSize();
@@ -208,6 +220,10 @@ public class EhCache implements Cache {
         }
     }
 
+    /**
+     * Returns &quot;EhCache [&quot; + cache.getName() + &quot;]&quot;
+     * @return &quot;EhCache [&quot; + cache.getName() + &quot;]&quot;
+     */
     public String toString() {
         return "EhCache [" + cache.getName() + "]";
     }

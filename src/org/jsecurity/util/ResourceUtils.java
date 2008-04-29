@@ -31,8 +31,11 @@ import java.net.URL;
  */
 public class ResourceUtils {
 
+    /** Resource path prefix that specifies to load from a classpath location, value is <b><code>classpath:</code></b> */
     public static final String CLASSPATH_PREFIX = "classpath:";
+    /** Resource path prefix that specifies to load from a url location, value is <b><code>url:</code></b> */
     public static final String URL_PREFIX = "url:";
+    /** Resource path prefix that specifies to load from a file location, value is <b><code>file:</code></b> */
     public static final String FILE_PREFIX = "file:";
 
     /**
@@ -47,6 +50,15 @@ public class ResourceUtils {
     private ResourceUtils() { }
 
 
+    /**
+     * Returns the InputStream for the resource represented by the specified path.
+     *
+     * <p>The supporting prefixes are defined as as *_PREFIX constants in this class.</p>
+     *
+     * @param resourcePath the String path representing the resource to obtain.
+     * @return the InputStraem for the specified resource.
+     * @throws IOException if there is a problem acquiring the resource at the specified path.
+     */
     public static InputStream getInputStreamForPath(String resourcePath) throws IOException {
 
         InputStream is;

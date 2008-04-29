@@ -29,18 +29,44 @@ import org.jsecurity.authc.AuthenticationToken;
  */
 public class SuccessfulAuthenticationEvent extends AttemptedAuthenticationEvent {
 
+    /**
+     * The account object returned from the Authenticator as a result of the successful
+     * authentication attempt.
+     */
     private Account account = null;
 
+    /**
+     * Constructs a SuccessfulAuthenticationEvent in response to the successful authentication from
+     * the submitted <code>token</code> resulting in the returned <code>account</code> instance.
+     * @param token the <code>token</code> submitted that resulted in a successful authentication/log-in.
+     * @param account the <code>Account</code> object returned by the <tt>Authenticator</tt> as a result of
+     * the successful authentication/log-in.
+     */
     public SuccessfulAuthenticationEvent( AuthenticationToken token, Account account ) {
         super(token,account);
         this.account = account;
     }
 
+    /**
+     * Constructs a SuccessfulAuthenticationEvent in response to the successful authentication from
+     * the submitted <code>token</code> resulting in the returned <code>Account</code> instance, triggered
+     * by the specified <code>source</code.
+     * @param token the <code>token</code> submitted that resulted in a successful authentication/log-in.
+     * @param account the <code>Account</code> object returned by the <tt>Authenticator</tt> as a result of
+     * the successful authentication/log-in.
+     * @param source the source component responsible for triggering the event.
+     */
     public SuccessfulAuthenticationEvent( AuthenticationToken token, Account account, Object source ) {
         super( token, source );
         this.account = account;
     }
 
+    /**
+     * Returns the <code>Account</code> object returned as a result of the successful authentication/log-in
+     * attempt.
+     * @return the <code>Account</code> object returned as a result of the successful authentication/log-in
+     * attempt.
+     */
     public Account getAccount() {
         return this.account;
     }

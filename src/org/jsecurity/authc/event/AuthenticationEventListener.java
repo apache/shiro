@@ -16,8 +16,8 @@
 package org.jsecurity.authc.event;
 
 /**
- * Listener interface to be implemented by objects to be notified of
- * events related to account authentication.
+ * Listener interface implemented by objects that wish to be notified of
+ * {@link AuthenticationEvent}s.
  *
  * @since 0.1
  * @author Jeremy Haile

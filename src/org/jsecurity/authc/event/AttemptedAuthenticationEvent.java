@@ -30,10 +30,12 @@ import org.jsecurity.authc.AuthenticationToken;
  * @see FailedAuthenticationEvent
  *
  * @since 0.9
+ * @author Les Hazlewood
  */
 public abstract class AttemptedAuthenticationEvent extends AuthenticationEvent {
 
-    protected final AuthenticationToken token; //authentication token submitted during the authentication attempt.
+    /** authentication token submitted during the authentication attempt. */
+    protected final AuthenticationToken token;
 
     /**
      * Creates a new event triggered during an authentication attempt based on the submitted

@@ -219,6 +219,13 @@ public class Base64 {
         return packedData;
     }
 
+    /**
+     * Base64 encodes the specified byte array and then encodes it as a String using JSecurity's preferred character
+     * encoding (UTF-8).
+     *
+     * @param bytes the byte array to Base64 encode.
+     * @return a UTF-8 encoded String of the resulting Base64 encoded byte array.
+     */
     public static String encodeToString( byte[] bytes ) {
         byte[] encoded = encode( bytes );
         return CodecSupport.toString( encoded );
@@ -371,16 +378,31 @@ public class Base64 {
         return encodedData;
     }
 
+    /**
+     * Converts the specified UTF-8 Base64 encoded String and decodes it to a resultant UTF-8 encoded string.
+     * @param base64Encoded a UTF-8 Base64 encoded String
+     * @return the decoded String, UTF-8 encoded.
+     */
     public static String decodeToString( String base64Encoded ) {
         byte[] encodedBytes = CodecSupport.toBytes( base64Encoded );
         return decodeToString( encodedBytes );
     }
 
+    /**
+     * Decodes the specified Base64 encoded byte array and returns the decoded result as a UTF-8 encoded.
+     * @param base64Encoded a Base64 encoded byte array
+     * @return the decoded String, UTF-8 encoded.
+     */
     public static String decodeToString( byte[] base64Encoded ) {
         byte[] decoded = decode( base64Encoded );
         return CodecSupport.toString( decoded );
     }
 
+    /**
+     * Converts the specified UTF-8 Base64 encoded String and decodes it to a raw Base64 decoded byte array.
+     * @param base64Encoded a UTF-8 Base64 encoded String
+     * @return the raw Base64 decoded byte array.
+     */
     public static byte[] decode( String base64Encoded ) {
         byte[] bytes = CodecSupport.toBytes( base64Encoded );
         return decode( bytes );

@@ -25,24 +25,63 @@ import java.io.UnsupportedEncodingException;
  * @since 0.9
  */
 public abstract class CodecSupport {
-    
+
+    /** Jakarta Commons Logger. */
     protected transient final Log log = LogFactory.getLog( getClass() );
 
+    /** JSecurity's default preferred Character encoding, equal to <b><code>UTF-8</code></b>. */
     public static final String PREFERRED_ENCODING = "UTF-8";
 
+    /**
+     * Converts the specified character array to a byte array using the JSecurity's preferred encoding (UTF-8).
+     *
+     * <p>This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
+     * a wrapping String and {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}, i.e.
+     * <pre><code>toBytes( new String(chars), {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING} );</code></pre>
+     * </p>
+     *
+     * @param chars the character array to be converted to a byte array.
+     * @return the byte array of the UTF-8 encoded character array.
+     */
     public static byte[] toBytes( char[] chars ) {
         return toBytes( new String( chars ), PREFERRED_ENCODING );
     }
 
-    public static byte[] toBytes( char[] chars, String encoding ) {
+    /**
+     * Converts the specified character array into a byte array using the specified character encoding.
+     *
+     * <p>This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
+     * a wrapping String and the specified encoding, i.e.
+     * <pre><code>toBytes( new String(chars), encoding );</code></pre>
+     * </p>
+     * @param chars the character array to be converted to a byte array
+     * @param encoding the character encoding to use to when converting to bytes.
+     * @return the bytes of the specified character array under the specified encoding.
+     * @throws CodecException if the JVM does not support the specified encoding.
+     */
+    public static byte[] toBytes( char[] chars, String encoding ) throws CodecException {
         return toBytes( new String( chars ), encoding );
     }
 
+    /**
+     * Converts the specified source argument to a byte array with JSecurity's
+     * {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * @param source the string to convert to a byte array.
+     * @return the bytes representing the specified string under JSecurity's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     */
     public static byte[] toBytes( String source ) {
         return toBytes( source, PREFERRED_ENCODING );
     }
 
-    public static byte[] toBytes( String source, String encoding ) {
+    /**
+     * Converts the specified source to a byte array via the specified encoding, throwing a
+     * {@link CodecException CodecException} if the encoding fails.
+     * @param source the source string to convert to a byte array.
+     * @param encoding the encoding to use to use.
+     * @return the byte array of the specified source with the given encoding.
+     * @throws CodecException if the JVM does not support the specified encoding.
+     */
+    public static byte[] toBytes( String source, String encoding ) throws CodecException {
         try {
             return source.getBytes( encoding );
         } catch (UnsupportedEncodingException e) {
@@ -52,11 +91,23 @@ public abstract class CodecSupport {
         }
     }
 
+    /**
+     * Converts the specified byte array to a string using JSecurity's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * @param bytes the byte array to turn into a String.
+     * @return the specified byte array as an encoded String ({@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}).
+     */
     public static String toString( byte[] bytes ) {
         return toString( bytes, PREFERRED_ENCODING );
     }
 
-    public static String toString( byte[] bytes, String encoding ) {
+    /**
+     * Converts the specified byte array to a String using the specified character encoding.
+     * @param bytes the byte array to convert to a String
+     * @param encoding the character encoding used to encode the String.
+     * @return the specified byte array as an encoded String
+     * @throws CodecException if the JVM does not support the specified encoding.
+     */
+    public static String toString( byte[] bytes, String encoding ) throws CodecException {
         try {
             return new String( bytes, encoding );
         } catch (UnsupportedEncodingException e) {
@@ -65,11 +116,23 @@ public abstract class CodecSupport {
         }
     }
 
+    /**
+     * Returns the specified byte array as a character array using JSecurity's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * @param bytes the byte array to convert to a char array
+     * @return the specified byte array encoded as a character array ({@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}).
+     */
     public static char[] toChars( byte[] bytes ) {
         return toChars( bytes, PREFERRED_ENCODING );
     }
 
-    public static char[] toChars( byte[] bytes, String encoding ) {
+    /**
+     * Converts the specified byte array to a character array using the specified character encoding.
+     * @param bytes the byte array to convert to a String
+     * @param encoding the character encoding used to encode the bytes.
+     * @return the specified byte array as an encoded char array
+     * @throws CodecException if the JVM does not support the specified encoding.
+     */
+    public static char[] toChars( byte[] bytes, String encoding ) throws CodecException {
         return toString( bytes, encoding ).toCharArray();
     }
 

@@ -25,10 +25,11 @@ import org.jsecurity.subject.PrincipalCollection;
  */
 public class LogoutEvent extends AuthenticationEvent {
 
+    /** The principals of the Subject logging out. */
     private PrincipalCollection principals;
 
     /**
-     * Creates a LogoutEvent for the specified subject logging out of the system.
+     * Creates a LogoutEvent for the Subject logging out of the system.
      * @param principals the subject identifier(s) of the subject logging out.
      */
     public LogoutEvent( PrincipalCollection principals ) {
@@ -37,7 +38,7 @@ public class LogoutEvent extends AuthenticationEvent {
     }
 
     /**
-     * Creates a LogoutEvent for the specified subject logging out of the system, generated or caused by the
+     * Creates a LogoutEvent for the Subject logging out of the system, generated or caused by the
      * specified <tt>source</tt> argument.
      * @param source the component that generated or caused the event.
      * @param principals the subject identifier(s) of the subject logging out.
@@ -47,6 +48,10 @@ public class LogoutEvent extends AuthenticationEvent {
         this.principals = principals;
     }
 
+    /**
+     * The identifier(s) of the Subject logging out.
+     * @return the identifier(s) of the Subject logging out.
+     */
     public PrincipalCollection getPrincipals() {
         return principals;
     }

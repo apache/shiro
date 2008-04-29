@@ -19,7 +19,7 @@ package org.jsecurity.authc;
  * An Authenticator is responsible for authenticating accounts in an application.  It
  * is one of the primary entry points into the JSecurity API.
  *
- * <p>Although not a requirement, there is usually only a single Authenticator configured for
+ * <p>Although not a requirement, there is usually a single 'master' Authenticator configured for
  * an application.  Enabling Pluggable Authentication Module (PAM) behavior
  * (Two Phase Commit, etc.) is usually achieved by the single <tt>Authenticator</tt> coordinating
  * and interacting with an application-configured set of

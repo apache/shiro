@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.cache;
-
 /**
- * Interface implemented by components that utilize a CacheManager and wish that CacheManager to be supplied if
- * one is available.
+ * Classes used to support JSecurity's event driven design during the authentication process.
  *
- * <p>This is used so internal security components that use a CacheManager can be injected with it instead of having
- * to create one on their own.
+ * <p>Events are triggered based on something notable occurring during an authentication attempt,
+ * such as a failed log-in attempt, an account being locked due to a failure, a successful
+ * authentication, and more.</p>
  *
- * @since 0.9
- * @author Les Hazlewood
+ * @see AuthenticationEvent
+ * @see AuthenticationEventListener
  */
-public interface CacheManagerAware {
-
-    /**
-     * Sets the available CacheManager instance on this component.
-     * @param cacheManager the CacheManager instance to set on this component.
-     */
-    void setCacheManager( CacheManager cacheManager);
-}
+package org.jsecurity.authc.event;

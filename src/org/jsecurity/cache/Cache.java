@@ -25,9 +25,9 @@ import java.util.Set;
  * cache framework's cache instance (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
  * GigaSpaces, etc, etc), allowing a JSecurity user to configure any cache mechanism they choose.
  *
+ * @since 0.2
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @since 0.2
  */
 public interface Cache {
 

@@ -23,8 +23,8 @@ package org.jsecurity.cache;
  * cache framework's main Manager component (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
  * GigaSpaces, etc, etc), allowing a JSecurity user to configure any cache mechanism they choose.
  *
- * @author Les Hazlewood
  * @since 0.9
+ * @author Les Hazlewood
  */
 public interface CacheManager {
 
