@@ -15,6 +15,8 @@
  */
 package org.jsecurity.crypto;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.CodecSupport;
 
@@ -59,6 +61,8 @@ public class BlowfishCipher implements Cipher {
     private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
+    private transient final Log log = LogFactory.getLog( getClass() );
+
     private Key key = DEFAULT_CIPHER_KEY;
 
     public BlowfishCipher() {
@@ -73,10 +77,19 @@ public class BlowfishCipher implements Cipher {
     }
 
     public byte[] encrypt(byte[] raw, Key key) {
-        return crypt(raw, javax.crypto.Cipher.ENCRYPT_MODE, key);
+        byte[] encrypted = crypt(raw, javax.crypto.Cipher.ENCRYPT_MODE, key);
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Incoming byte array of size " + (raw != null ? raw.length : 0) + ".  Encrypted " +
+                "byte array is size " + (encrypted != null ? encrypted.length : 0) );
+        }
+        return encrypted;
     }
 
     public byte[] decrypt(byte[] encrypted, Key key) {
+        if ( log.isTraceEnabled() ) {
+            log.trace( "Attempting to decrypt incoming byte array of length " +
+                (encrypted != null ? encrypted.length : 0) );
+        }
         return crypt(encrypted, javax.crypto.Cipher.DECRYPT_MODE, key);
     }
 
