@@ -161,9 +161,11 @@ public class FormAuthenticationWebInterceptor extends AuthenticationWebIntercept
         String rememberMe = StringUtils.clean(request.getParameter(getRememberMeParam()));
         return rememberMe != null &&
                 (rememberMe.equalsIgnoreCase("true") ||
+                 rememberMe.equalsIgnoreCase("t") ||
                  rememberMe.equalsIgnoreCase("1") ||
                  rememberMe.equalsIgnoreCase("y") || 
-                 rememberMe.equalsIgnoreCase("yes" ) );
+                 rememberMe.equalsIgnoreCase("yes") ||
+                 rememberMe.equalsIgnoreCase("on") );
     }
 
     protected InetAddress getInetAddress( ServletRequest request, ServletResponse response ) {

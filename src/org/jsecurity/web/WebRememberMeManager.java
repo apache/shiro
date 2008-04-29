@@ -32,10 +32,13 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
 
-    protected WebAttribute<String> identityAttribute = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
+    protected WebAttribute<String> identityAttribute = null;
 
     public WebRememberMeManager() {
         super();
+        CookieAttribute<String> attr = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
+        attr.setCheckRequestParams(false);
+        this.identityAttribute = attr;
     }
 
     public WebAttribute<String> getIdentityAttribute() {
