@@ -15,7 +15,7 @@
  */
 /**
  * Contains interfaces and support implementations for performing credentials comparisons during an authentication
- * attempt.  {@link CredentialsMatcher} interface and its supporting implementations are the primary focus of this
- * package.
+ * attempt.  {@link org.jsecurity.authc.credential.CredentialsMatcher CredentialsMatcher} interface and its
+ * supporting implementations are the primary focus of this package.
  */
 package org.jsecurity.authc.credential;

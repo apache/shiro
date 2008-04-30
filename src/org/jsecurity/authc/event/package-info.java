@@ -20,7 +20,7 @@
  * such as a failed log-in attempt, an account being locked due to a failure, a successful
  * authentication, and more.</p>
  *
- * @see AuthenticationEvent
- * @see AuthenticationEventListener
+ * @see org.jsecurity.authc.event.AuthenticationEvent
+ * @see org.jsecurity.authc.event.AuthenticationEventListener
  */
 package org.jsecurity.authc.event;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Simple IO (input/output) extensions useful to JSecurity, such as {@link Serializer Serializer}s for simplified
- * serialization in a stateless programming environment.
+ * Simple IO (input/output) extensions useful to JSecurity, such as {@link org.jsecurity.io.Serializer Serializer}s 
+ * for simplified serialization in a stateless programming environment.
  */
 package org.jsecurity.io;

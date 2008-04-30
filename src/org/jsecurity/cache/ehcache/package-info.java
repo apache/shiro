@@ -15,8 +15,9 @@
  */
 /**
  * <p>Contains <a href="http://ehcache.sourceforge.net" target="_blank">Ehcache</a>-based implementations of
- * the JSecurity {@link CacheManager CacheManager} and {@link Cache Cache} interfaces via the
- * {@link EhCacheManager EhCacheManager} and {@link EhCache EhCache} classes, respectively.
+ * the JSecurity {@link org.jsecurity.cache.Cache CacheManager} and {@link org.jsecurity.cache.Cache Cache}
+ * interfaces via the {@link org.jsecurity.cache.ehcache.EhCacheManager EhCacheManager} and
+ * {@link org.jsecurity.cache.ehcache.EhCache EhCache} classes, respectively.
  *
  * <p>This package also contains a fail-safe <code>ehcache.xml</code> file that will be loaded by JSecurity when
  * ehcache components are used but no <code>ehcache.xml</code> file is located in the classpath (as would be
