@@ -49,7 +49,7 @@
 for details on this convention -->
     <property name="major.version" value="0"/>
     <property name="minor.version" value="9"/>
-    <property name="patch.version" value="0-beta"/>
+    <property name="patch.version" value="0-beta2"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
     <property name="release.name" value="${project.name}-${version}"/>
 

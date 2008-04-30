@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Provides JSecurity's core {@link SecurityManager SecurityManager} interface and a default flexible implementation
- * class hierarchy to support it in all runtime environments.
+ * Provides JSecurity's core {@link org.jsecurity.mgt.SecurityManager SecurityManager} interface and a default
+ * flexible implementation class hierarchy to support it in all runtime environments.
  */
 package org.jsecurity.mgt;

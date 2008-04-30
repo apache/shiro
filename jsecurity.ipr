@@ -341,8 +341,6 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar:///usr/local/java/tools/spring/spring-framework-2.5.2/dist/spring-sources.jar!/" />
-        <root url="file://C:/java/tools/spring/spring-framework-2.5.1/tiger/src" />
-        <root url="file://C:/java/tools/spring/spring-framework-2.5.1/src" />
       </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/lib/test" recursive="false" />
     </library>

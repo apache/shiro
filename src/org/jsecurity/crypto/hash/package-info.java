@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /**
- * Contains the {@link Hash Hash} interface and all of its abstract and concrete implementations,
- * providing a greatly simplified and more intuitive and Object-Oriented approach to cryptographic hashing than
+ * Contains the {@link org.jsecurity.crypto.hash.Hash Hash} interface and all of its abstract and concrete
+ * implementations, providing a simplified, more intuitive and Object-Oriented approach to cryptographic hashing than
  * what is provided in Java by default.
  */
 package org.jsecurity.crypto.hash;
