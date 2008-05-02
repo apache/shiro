@@ -40,22 +40,23 @@
     &terminology;
     &overview;
 	<part id="jsecurity-core">
-		<title>Core Components</title>
+		<title>JSecurity Core</title>
 		<partintro id="jsecurity-core-intro">
 			<para>
                 This initial part of the reference documentation covers
                 JSecurity's core architectural components that support
-                all functionality.
+                all functionality across all environments, from
+                constrained Applets and cell phones to full n-tier
+                enterprise clustered applications.
             </para>
 			<para>
-				Foremost amongst these is the Spring Framework's
-				Inversion of Control (IoC) container. A thorough treatment
-				of the Spring Framework's IoC container is closely followed
-				by comprehensive coverage of Spring's Aspect-Oriented
-				Programming (AOP) technologies. The Spring Framework has
-				its own AOP	framework, which is conceptually easy to understand,
-				and	which successfully addresses the 80% sweet spot of AOP
-				requirements in Java enterprise programming.
+                Most important among these are the Subject and
+                SecurityManager components.  These are then followed
+                by comprehensive coverage of the supporting compnents
+                responsiple for handling logging in, called an
+                <interfacename>Authenticator</interfacename>
+                and access control, called an
+                <interfacename>Authorizer</interfacename>.
 			</para>
 			<para>
 				Coverage of Spring's integration with AspectJ (currently
