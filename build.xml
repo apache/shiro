@@ -49,7 +49,7 @@
 for details on this convention -->
     <property name="major.version" value="0"/>
     <property name="minor.version" value="9"/>
-    <property name="patch.version" value="0-beta2"/>
+    <property name="patch.version" value="0-RC1"/>
     <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
     <property name="release.name" value="${project.name}-${version}"/>
 
@@ -71,7 +71,12 @@ relative to where the build is being executed -->
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="test.classes.dir" value="${build.dir}/test-classes"/>
     <!-- <property name="dist.dir" value="${build.dir}/dist"/> -->
+
+    
     <property name="docs.dir" value="${root.dist.dir}/docs"/>
+    <property name="src.ref.dir" value="${root.base.dir}/docs/reference"/>
+    <property name="dist.ref.dir" value="${docs.dir}/reference"/>
+    <property name="double.sided" value="0"/> <!-- default to single-sided style -->
     <property name="api.dir" value="${docs.dir}/api"/>
     <property name="test.docs.dir" value="${docs.dir}/test-reports"/>
 
@@ -209,7 +214,8 @@ relative to where the build is being executed -->
             <fileset dir="${lib.dir}" includes="**/*"/>
         </path>
 
-        <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask" classpathref="retroweaver.path"/>
+        <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask"
+                 classpathref="retroweaver.path"/>
         <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
         <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
 
@@ -292,6 +298,206 @@ relative to where the build is being executed -->
         </javadoc>
 
     </target>
+
+    <!-- ===================================================================
+ -  Reference documentation
+ -  =================================================================== -->
+    <target name="doc.prepare" depends="retrieve-dependencies" description="Extra preparation for the documentation">
+
+        <!-- unzip the docbook-libs.zip file containing the necessary jars: -->
+        <unzip src="${lib.dir}/docbook/docbook-libs.zip" dest="${lib.dir}/docbook"/>
+
+        <!-- <antcall target="tld.to.docbook"/> -->
+
+	</target>
+
+
+	<target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
+
+		<mkdir dir="${dist.ref.dir}/pdf/images"/>
+
+		<copy todir="${dist.ref.dir}/pdf/images">
+			<fileset dir="${src.ref.dir}/images">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}">
+			<classpath>
+				<fileset dir="${lib.dir}/docbook">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<jvmarg value="-Xmx256M"/>
+			<jvmarg value="-XX:MaxPermSize=128m"/>
+			<arg value="-o"/>
+			<arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+			<arg value="${src.ref.dir}/src/index.xml"/>
+			<arg value="${src.ref.dir}/styles/fopdf.xsl"/>
+			<!-- controls the double sided pagination style -->
+			<arg value="double.sided=${double.sided}"/>
+		</java>
+
+		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${dist.ref.dir}">
+			<classpath>
+				<fileset dir="${lib.dir}/docbook">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+			<arg value="${dist.ref.dir}/pdf/jsecurity-reference.pdf"/>
+		</java>
+
+		<delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+
+	</target>
+
+
+	<!-- Start of TLD => DocBook targets -->
+	<!-- <target name="tld.to.docbook" depends="original.tld.to.docbook,forms.tld.to.docbook"/>
+
+
+	<target name="original.tld.to.docbook">
+
+		<antcall target="hack.DOCTYPE">
+			<param name="doctype.input.file" value="src/org/springframework/web/servlet/tags/spring.tld"/>
+			<param name="doctype.scrubbed.file" value="${doc.ref.dir}/src/spring.tld"/>
+		</antcall>
+
+		<antcall target="private.tld.to.docbook">
+			<param name="input.tld" value="spring.tld"/>
+			<param name="input.tld.file" value="${doc.ref.dir}/src/spring.tld"/>
+		</antcall>
+
+	</target>
+
+
+	<target name="forms.tld.to.docbook">
+
+		<antcall target="hack.DOCTYPE">
+			<param name="doctype.input.file" value="src/org/springframework/web/servlet/tags/form/spring-form.tld"/>
+			<param name="doctype.scrubbed.file" value="${doc.ref.dir}/src/spring-form.tld"/>
+		</antcall>
+
+		<antcall target="private.tld.to.docbook">
+			<param name="input.tld" value="spring-form.tld"/>
+			<param name="input.tld.file" value="${doc.ref.dir}/src/spring-form.tld"/>
+		</antcall>
+
+	</target>
+
+
+	<target name="private.tld.to.docbook" if="input.tld">
+
+		<property name="out.file" value="${doc.ref.dir}/src/${input.tld}.xml"/>
+
+		<xslt processor="trax" in="${input.tld.file}" out="${out.file}"
+					style="${doc.ref.dir}/styles/tld.to.docbook.xsl">
+			<param name="title" expression="${input.tld}"/>
+		</xslt>
+
+		<antcall target="hack.CDATA">
+			<param name="target.file" value="${out.file}"/>
+		</antcall>
+
+		<delete file="${input.tld.file}"/>
+
+	</target>
+
+
+	<target name="hack.CDATA" if="target.file">
+
+		<replace file="${target.file}">
+			<replacetoken><![CDATA[&lt;]]></replacetoken>
+			<replacevalue><![CDATA[<]]></replacevalue>
+		</replace>
+
+		<replace file="${target.file}">
+			<replacetoken><![CDATA[&gt;]]></replacetoken>
+			<replacevalue><![CDATA[>]]></replacevalue>
+		</replace>
+
+	</target>
+
+
+	<target name="hack.DOCTYPE" if="doctype.input.file">
+
+		<!- -
+		Removes the TLD DTD decl. from the TLD files as this messes
+		up the transform (feel free to fix this more elegantly)
+		- ->
+		<copy file="${doctype.input.file}" tofile="${doctype.scrubbed.file}" overwrite="true"/>
+
+		<replace file="${doctype.scrubbed.file}" value="">
+			<replacetoken><![CDATA[<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">]]></replacetoken>
+		</replace>
+
+	</target>
+	<!- - End of TLD => DocBook targets -->
+
+
+	<target name="doc.html" depends="doc.prepare"
+			description="Compile reference documentation to chunked html">
+
+		<mkdir dir="${dist.ref.dir}/html/images"/>
+
+		<copy todir="${dist.ref.dir}/html/images">
+			<fileset dir="${src.ref.dir}/images">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.ref.dir}/html/" failonerror="false">
+			<fileset dir="${src.ref.dir}/styles/">
+				<include name="*.css"/>
+				<include name="*.js"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
+			<classpath>
+				<fileset dir="${lib.dir}/docbook">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<jvmarg value="-Xmx256M"/>
+			<jvmarg value="-XX:MaxPermSize=128m"/>
+			<arg value="${src.ref.dir}/src/index.xml"/>
+			<arg value="${src.ref.dir}/styles/html_chunk.xsl"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.htmlsingle" depends="doc.prepare" description="Compile reference documentation to single html">
+
+		<mkdir dir="${dist.ref.dir}/html_single/images"/>
+
+		<copy todir="${dist.ref.dir}/html_single/images">
+			<fileset dir="${src.ref.dir}/images">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${dist.ref.dir}/html_single/" file="${src.ref.dir}/styles/html.css" failonerror="false"/>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}">
+			<classpath>
+				<fileset dir="${lib.dir}/docbook">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<jvmarg value="-Xmx256M"/>
+			<jvmarg value="-XX:MaxPermSize=128m"/>
+			<arg value="-o"/>
+			<arg value="${dist.ref.dir}/html_single/index.html"/>
+			<arg value="${src.ref.dir}/src/index.xml"/>
+			<arg value="${src.ref.dir}/styles/html.xsl"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf" description="Generate reference documentation"/>
 
     <!-- <name name="junit.check.warning" if="tests.failed">
        <echo>
@@ -385,7 +591,7 @@ relative to where the build is being executed -->
         </ivy:makepom>
     </target>
 
-    <target name="release" depends="jar,samples,src.zip,javadoc,makepom">
+    <target name="release" depends="jar,samples,src.zip,makepom,javadoc,doc.all">
         <property name="release.dir.name" value="${project.name}-${version}"/>
         <property name="release.zip.name" value="${release.dir.name}.zip"/>
         <property name="release.depzip.name" value="${release.dir.name}-with-dependencies.zip"/>
@@ -410,12 +616,13 @@ relative to where the build is being executed -->
         <copy todir="${root.dist.dir}/lib" overwrite="true" flatten="true">
             <fileset dir="${lib.dir}">
                 <include name="**/*.jar"/>
+                <exclude name="**/docbook/*.jar"/>
             </fileset>
         </copy>
         <zip destfile="${build.dir}/${release.depzip.name}"
              basedir="${build.dir}"
              includes="${release.dir.name}/**"
-             excludes="**/${release.zip.name}"/>
+             excludes="**/${release.zip.name}, **/lib/docbook/docbook-dtd/**, **/lib/docbook/docbook-xsl/**, **/lib/docbook/*.jar"/>
         <delete dir="${root.dist.dir}/lib"/>
 
     </target>

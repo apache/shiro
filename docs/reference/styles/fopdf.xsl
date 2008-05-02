@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 
 <!--
-    This is the XSL FO (PDF) stylesheet for the Spring reference
+    This is the XSL FO (PDF) stylesheet for the JSecurity reference
     documentation.
 
     Thanks are due to Christian Bauer of the Hibernate project team
-    and Jeurgen Hoeller of the Spring Framework for writing the
-    original stylesheets upon which this one is based.
+    and Juergen Hoeller of the Spring Framework team
+    for writing the original stylesheet(s) upon which this one is based.
 -->
 
 <!DOCTYPE xsl:stylesheet [
-    <!ENTITY db_xsl_path        "../lib/docbook-xsl/">
+    <!ENTITY db_xsl_path        "../../../lib/docbook/docbook-xsl/">
     <!ENTITY admon_gfx_path     "../images/admons/">
     <!ENTITY copyright "&#xA9;">
 ]>
@@ -34,9 +34,10 @@
                 <fo:table-body>
                     <fo:table-row>
                         <fo:table-cell text-align="center">
+                            <!-- TODO: re-enable
                             <fo:block>
                                 <fo:external-graphic src="file:images/logo.jpg"/>
-                            </fo:block>
+                            </fo:block> -->
                             <fo:block font-family="Helvetica" font-size="22pt" padding-before="10mm">
                                 <xsl:value-of select="bookinfo/subtitle"/>
                             </fo:block>
