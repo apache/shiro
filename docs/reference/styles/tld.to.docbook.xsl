@@ -48,9 +48,9 @@
             </xsl:element>
 
             <xsl:element name="para">
-                <xsl:text>One of the view technologies you can use with the Spring Framework
-			    is Java Server Pages (JSPs). To help you implement views using Java Server Pages
-			    the Spring Framework provides you with some tags for evaluating errors, setting
+                <xsl:text>One of the view technologies you can use with JSecurity
+			    is Java Server Pages (JSPs). To help you implement views using Java Server Pages, 
+			    JSecurity provides you with some tags for evaluating errors, setting
 			    themes and outputting internationalized messages.</xsl:text>
             </xsl:element>
 

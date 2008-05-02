@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <!--
-    This is the XSL HTML configuration file for the Spring
+    This is the XSL HTML configuration file for the JSecurity
     Reference Documentation.
 -->
 <!DOCTYPE xsl:stylesheet [
-    <!ENTITY db_xsl_path        "../lib/docbook-xsl/">
+    <!ENTITY db_xsl_path        "../../../lib/docbook/docbook-xsl/">
     <!ENTITY callout_gfx_path   "../images/callouts/">
     <!ENTITY admon_gfx_path     "../images/admons/">
 ]>

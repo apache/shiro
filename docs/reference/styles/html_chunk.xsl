@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <!--
-    This is the XSL HTML configuration file for the Spring Reference Documentation.
+    This is the XSL HTML configuration file for the JSecurity Reference Documentation.
 -->
 <!DOCTYPE xsl:stylesheet [
-    <!ENTITY db_xsl_path        "../lib/docbook-xsl/">
+    <!ENTITY db_xsl_path        "../../../lib/docbook/docbook-xsl/">
     <!ENTITY callout_gfx_path   "../images/callouts/">
     <!ENTITY admon_gfx_path     "../images/admons/">
 ]>
@@ -84,21 +84,21 @@
     <!--###################################################
                      Headers and Footers
     ################################################### -->
-    <!-- let's have a Spring and SpringSource banner across the top of each page -->
+    <!-- let's have a JSecurity and Anjin banner across the top of each page -->
     <xsl:template name="user.header.navigation">
         <div style="background-color:white;border:none;height:73px;border:1px solid black;">
-            <a style="border:none;" href="http://www.springframework.org/" title="The Spring Framework">
-                <img style="border:none;" alt="xdev-spring-logo.jpg" src="images/xdev-spring_logo.jpg" />
+            <a style="border:none;" href="http://www.jsecurity.org/" title="JSecurity">
+                <img style="border:none;" src="images/xdev-jsecurity_logo.jpg" />
             </a>
-            <a style="border:none;" href="http://www.springsource.com/" title="SpringSource">
-                <img style="border:none;position:absolute;padding-top:5px;right:42px;" alt="springsource-banner-rhs.png" src="images/springsource-banner-rhs.png" />
-            </a>
+            <!--  <a style="border:none;" href="http://www.anjinllc.com/" title="AnjinLLC">
+                <img style="border:none;position:absolute;padding-top:5px;right:42px;" src="images/anjin-banner-rhs.png" />
+            </a> -->
         </div>
     </xsl:template>
     <!-- no other header navigation (prev, next, etc.) -->
     <xsl:template name="header.navigation" />
     <xsl:param name="navig.showtitles">1</xsl:param>
-    <!-- let's have a 'Sponsored by SpringSource' strapline (or somesuch) across the bottom of each page -->
+    <!-- let's have a 'Sponsored by Anjin LLC' strapline (or somesuch) across the bottom of each page -->
     <xsl:template name="footer.navigation">
         <xsl:param name="prev" select="/foo" />
         <xsl:param name="next" select="/foo" />
@@ -200,7 +200,7 @@
                                 </td>
                                 <td width="20%" align="center">
                                     <span style="color:white;font-size:90%;">
-                                        <a href="http://www.springsource.com/" title="SpringSource">Sponsored by SpringSource</a>
+                                        <a href="http://www.anjinllc.com/" title="Anjin, LLC.">Sponsored by Anjin, LLC.</a>
                                     </span>
                                 </td>
                                 <td width="40%" align="right" valign="top">
