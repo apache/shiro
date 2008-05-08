@@ -18,7 +18,6 @@ package org.jsecurity.session.mgt.eis;
 import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SimpleSession;
-import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.JavaEnvironment;
 
 import java.io.Serializable;
@@ -51,7 +50,6 @@ import java.util.Random;
  */
 public class MemorySessionDAO extends CachingSessionDAO {
 
-    private static final String VALID_JUG_CLASS_NAME = "org.safehaus.uuid.UUIDGenerator";
     private static final String RANDOM_NUM_GENERATOR_ALGORITHM_NAME = "SHA1PRNG";
     private Random randomNumberGenerator = null;
 
@@ -61,11 +59,14 @@ public class MemorySessionDAO extends CachingSessionDAO {
 
     private Random getRandomNumberGenerator() {
         if ( randomNumberGenerator == null ) {
-            if ( log.isWarnEnabled() ) {
-                String msg = "On JDK 1.4 platforms and below, please ensure the JUG jar file is in the classpath for " +
-                    "valid Session ID generation.  Defaulting to SecureRandom based id generation for now " +
-                    "(NOT recommended for production systems - please add the JUG jar as soon as convenient).";
-                log.warn( msg );
+            if ( log.isInfoEnabled() ) {
+                String msg = "On Java 1.4 platforms and below, there is no built-in UUID class (Java 1.5 and above " +
+                        "only) to use for Session ID generation - reverting to SecureRandom number generator.  " +
+                        "Although this is probably sufficient for all but high user volume applications, if you " +
+                        "see ID collision, you will want to upgrade to JDK 1.5 or better as soon as possible, or " +
+                        "subclass the " + getClass().getName() + " class and override the #generateNewSessionId() " +
+                        "method to use a better algorithm.";
+                log.info( msg );
             }
 
             try {
@@ -80,9 +81,6 @@ public class MemorySessionDAO extends CachingSessionDAO {
     protected Serializable generateNewSessionId() {
         if ( JavaEnvironment.isAtLeastVersion15() ) {
             return java.util.UUID.randomUUID().toString();
-        } else if ( ClassUtils.isAvailable( VALID_JUG_CLASS_NAME ) ) {
-            //JUG library is available, lets use it to generate an ID:
-            return org.safehaus.uuid.UUIDGenerator.getInstance().generateRandomBasedUUID().toString();
         } else {
             return Long.toString( getRandomNumberGenerator().nextLong() );
         }
