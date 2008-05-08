@@ -94,7 +94,8 @@ relative to where the build is being executed -->
         </fileset>
     </path>
 
-    <target name="download-ivy" unless="offline">
+    <!-- To disable this task (maybe behind a firewall?), use the -Doffline=true command-line switch -->
+    <target name="download-ivy" unless="offline" description="Ensures Ivy exists for automatic dependency mgt">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
         <echo message="Installing Ivy for automated dependecy management..."/>
@@ -107,7 +108,7 @@ relative to where the build is being executed -->
          This target is not necessary if you put ivy.jar in your ant lib directory.
          If you already have ivy in your ant lib, you can simply remove this target.
          ================================= -->
-    <target name="load-ivy" depends="download-ivy" description="--> install ivy">
+    <target name="load-ivy" depends="download-ivy" description="Ensures Ivy ant tasks are loaded">
         <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
              it into ant's lib dir (note that the latter copy will always take precedence).
              We will not fail as long as local lib dir exists (it may be empty) and
@@ -118,7 +119,7 @@ relative to where the build is being executed -->
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-    <target name="retrieve-dependencies" depends="load-ivy">
+    <target name="retrieve-dependencies" depends="load-ivy" description="Ensures all build dependencies have been downloaded">
         <mkdir dir="${lib.dir}"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true"/>
     </target>
@@ -126,12 +127,12 @@ relative to where the build is being executed -->
     <!-- ===================================================================
  -  Clean all local and children build files
  -  =================================================================== -->
-    <target name="clean">
+    <target name="clean" description="Cleans the entire project">
         <delete dir="${build.dir}"/>
         <ant dir="samples/spring" target="clean"/>
     </target>
 
-    <target name="compile.core" depends="retrieve-dependencies">
+    <target name="compile.core" depends="retrieve-dependencies" description="Compiles JSecurity core API only">
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${classes.dir}/META-INF"/>
 
@@ -161,7 +162,7 @@ relative to where the build is being executed -->
     </target>
 
 
-    <target name="compile.spring" depends="compile.core" description="Build 3rd party Spring Framework support">
+    <target name="compile.spring" depends="compile.core" description="Compiles Spring Framework support">
         <javac destdir="${classes.dir}"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
@@ -188,7 +189,7 @@ relative to where the build is being executed -->
         </copy>
     </target>
 
-    <target name="compile" depends="compile.core, compile.spring"/>
+    <target name="compile" depends="compile.core, compile.spring" description="Compiles all classes"/>
 
     <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
 
@@ -221,21 +222,23 @@ relative to where the build is being executed -->
 
     </target>
 
-    <target name="samples.quickstart" depends="jar">
+    <target name="samples.quickstart" depends="jar" description="Creates the JSecurity quickstart .war">
         <ant dir="samples/quickstart"/>
     </target>
 
-    <target name="samples.spring" depends="jar">
+    <target name="samples.spring" depends="jar" description="Creates the sample JSecurity/Spring .war">
         <ant dir="samples/spring"/>
     </target>
 
-    <target name="samples" depends="samples.quickstart,samples.spring"/>
+    <target name="samples" depends="samples.quickstart,samples.spring" description="Creates all sample applications"/>
 
-    <target name="samples.quickstart.deploy" depends="samples.quickstart">
+    <target name="samples.quickstart.deploy" depends="samples.quickstart"
+            description="Deploys the JSecurity quickstart .war">
         <ant dir="samples/quickstart" target="deploy"/>
     </target>
 
-    <target name="samples.spring.deploy" depends="samples.spring">
+    <target name="samples.spring.deploy" depends="samples.spring"
+            description="Deploys the sample JSecurity/Spring .war">
         <ant dir="samples/spring" target="deploy"/>
     </target>
 
@@ -583,7 +586,7 @@ relative to where the build is being executed -->
         </zip>
     </target>
 
-    <target name="makepom" depends="load-ivy">
+    <target name="makepom" depends="load-ivy" description="Use Ivy to generate a Maven 2 pom.xml file">
         <ivy:makepom ivyfile="${root.base.dir}/ivy.xml" pomfile="${build.dir}/${project.name}.pom">
             <mapping conf="runtime" scope="compile"/>
             <mapping conf="runtime-web" scope="compile"/>
@@ -591,7 +594,8 @@ relative to where the build is being executed -->
         </ivy:makepom>
     </target>
 
-    <target name="release" depends="jar,samples,src.zip,makepom,javadoc,doc.all">
+    <target name="release" depends="jar,samples,src.zip,makepom,javadoc,doc.all"
+            description="Create all artifacts for a JSecurity release">
         <property name="release.dir.name" value="${project.name}-${version}"/>
         <property name="release.zip.name" value="${release.dir.name}.zip"/>
         <property name="release.depzip.name" value="${release.dir.name}-with-dependencies.zip"/>
@@ -630,7 +634,7 @@ relative to where the build is being executed -->
     <!-- ===================================================================
  -  all - everything
  -  =================================================================== -->
-    <target name="all" depends="release"/>
+    <target name="all" depends="release" description="Do everything"/>
 
 </project>
 
