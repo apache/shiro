@@ -53,7 +53,6 @@ public class WebRememberMeManagerTest {
             new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCBlowfishBase64 )
         };
 
-        expect(mockRequest.getParameter("rememberMe")).andReturn(null);
         expect(mockRequest.getCookies()).andReturn(cookies);
         replay(mockRequest);
 
