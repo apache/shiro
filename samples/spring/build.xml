@@ -29,13 +29,13 @@
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
-    <target name="clean" depends="clean-deploy-dir">
+    <target name="clean" depends="clean-deploy-dir" description="Cleans the Spring build">
         <echo message="cleaning ${module.name} module"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="clean-deploy-dir">
+    <target name="clean-deploy-dir" description="Removes the deployed war directory">
         <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
         <delete file="${deploy.dir}/${dist.war.name}"/>
         <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
@@ -44,7 +44,7 @@
     <!-- ===================================================================
       -  compile - compile Java source files
       -  =================================================================== -->
-    <target name="compile">
+    <target name="compile" description="Compiles the Spring sample app classes">
 
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${classes.dir}/META-INF"/>
@@ -61,7 +61,7 @@
 
     </target>
 
-    <target name="jar" depends="compile">
+    <target name="jar" depends="compile" description="Creates a .jar of the Spring sample app classes">
 
         <mkdir dir="${dist.dir}"/>
 
@@ -89,7 +89,7 @@
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist" depends="compile,jar">
+    <target name="dist" depends="compile,jar" description="Creates the sample Spring application .war">
 
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
         <mkdir dir="${webstart.lib.dir}"/>
@@ -119,12 +119,12 @@
         </war>
     </target>
 
-    <target name="quick-deploy">
+    <target name="quick-deploy" description="Blindly deploys the sample Spring .war to Tomcat">
         <echo>Deploying application to Tomcat...</echo>
         <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
         <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
 
-    <target name="deploy" depends="dist,quick-deploy"/>
+    <target name="deploy" depends="dist,quick-deploy" description="Creates and deploys the sample Spring .war to Tomcat"/>
 
 </project>

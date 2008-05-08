@@ -30,7 +30,7 @@
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
-    <target name="clean">
+    <target name="clean" description="Cleans the quickstart build">
         <echo message="cleaning ${module.name} module"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
@@ -39,7 +39,7 @@
     <!-- ===================================================================
       -  compile - compile Java source files
       -  =================================================================== -->
-    <target name="compile">
+    <target name="compile" description="Compiles the quickstart classes">
 
         <!-- <mkdir dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}/META-INF"/>
@@ -56,7 +56,7 @@
 
     </target>
 
-    <target name="jar" depends="compile">
+    <target name="jar" depends="compile" description="Creates a jar of the quickstart classes">
 
         <!-- <mkdir dir="${dist.dir}"/>
 
@@ -81,7 +81,7 @@
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist">
+    <target name="dist" description="Creates the quickstart .war">
         <war warfile="${dist.war}" webxml="WEB-INF/web.xml">
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
             <lib dir="${lib.dir}/samples" includes="jstl.jar"/>
@@ -95,12 +95,12 @@
         </war>
     </target>
 
-    <target name="quick-deploy">
+    <target name="quick-deploy" description="Blindly deploys the quickstart .war to Tomcat">
         <echo>Deploying application to Tomcat...</echo>
         <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
         <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
 
-    <target name="deploy" depends="dist,quick-deploy"/>
+    <target name="deploy" depends="dist,quick-deploy" description="Creates and deploys the quickstart .war to Tomcat"/>
 
 </project>
