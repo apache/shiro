@@ -25,6 +25,7 @@ import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.Session;
+import org.jsecurity.util.ThreadContext;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -263,6 +264,7 @@ public class DelegatingSubject implements Subject {
             throw new IllegalStateException(msg);
         }
         this.principals = principals;
+        this.session = authcSecCtx.getSession(false);
         this.authenticated = true;
         if (token instanceof InetAuthenticationToken) {
             InetAddress addy = ((InetAuthenticationToken) token).getInetAddress();
@@ -270,6 +272,7 @@ public class DelegatingSubject implements Subject {
                 this.inetAddress = addy;
             }
         }
+        ThreadContext.bind(this);
     }
 
     public boolean isAuthenticated() {

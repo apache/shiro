@@ -45,7 +45,7 @@
 			<para>
                 This initial part of the reference documentation covers
                 JSecurity's core architectural components that support
-                all functionality across all environments, from
+                functionality in all environments, from
                 constrained Applets and cell phones to full n-tier
                 enterprise clustered applications.
             </para>
@@ -111,7 +111,7 @@
 		<partintro id="jsecurity-web-intro">
 			<para>
 				This part of the reference documentation covers
-                JSecurity's web support, specificly using JSecurity in
+                JSecurity's web support, specifically using JSecurity in
                 a Servlet container for web-based applications.
 			</para>
 			<para>

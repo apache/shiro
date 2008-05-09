@@ -15,6 +15,7 @@
  */
 package org.jsecurity;
 
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
@@ -27,6 +28,12 @@ import org.jsecurity.util.ThreadContext;
 public abstract class SecurityUtils {
 
     /**
+     * ONLY used as a 'backup' in VM Singleton environments (that is, standalone environments), since the
+     * ThreadContext should always be the primary source for Subject instances when possible.
+     */
+    private static SecurityManager securityManager;
+
+    /**
      * Returns the currently accessible <tt>Subject</tt> available to the calling code depending on
      * runtime environment.
      *
@@ -37,6 +44,19 @@ public abstract class SecurityUtils {
      * @return the currently accessible <tt>Subject</tt> accessible to the calling code.
      */
     public static Subject getSubject() {
-        return ThreadContext.getSubject();
+        Subject subject = ThreadContext.getSubject();
+        //try from VM singleton if there is one:
+        if ( subject == null && SecurityUtils.securityManager != null ) {
+            subject = SecurityUtils.securityManager.getSubject();
+        }
+        return subject;
+    }
+
+    public static void setSecurityManager( SecurityManager securityManager ) {
+        SecurityUtils.securityManager = securityManager;
+    }
+
+    public static SecurityManager getSecurityManager() {
+        return SecurityUtils.securityManager;
     }
 }
