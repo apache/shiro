@@ -70,12 +70,18 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Returns <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
+     * Returns <tt>true</tt> if the <tt>tokenCredentials</tt> argument is logically equal to the
+     * <tt>accountCredentials</tt> argument.
      *
-     * <p>This default implementation merely performs an Object equality check,
-     * that is <code>accountCredentials.equals(tokenCredentials)</code>.  It primarily exists as a template hook
-     * if subclasses wish to determine equality in another way.
+     * <p>If both arguments are either a byte array (byte[]), char array (char[]) or String, they will be both be
+     * converted to raw byte arrays via the {@link #toBytes toBytes} method first, and then resulting byte arrays
+     * are compared via {@link Arrays#equals(byte[], byte[]) Arrays.equals(byte[],byte[])}.</p>
      *
+     * <p>If either argument cannot be converted to a byte array as described, a simple Object <code>equals</code>
+     * comparison is made.</p>
+     *
+     * <p>Subclasses should override this method for more explicit equality checks.
+     * 
      * @param tokenCredentials the <tt>AuthenticationToken</tt>'s associated credentials.
      * @param accountCredentials the <tt>Account</tt>'s stored credentials.
      * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
@@ -101,7 +107,8 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Acquires the <tt>token</tt>'s credentials (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
+     * This implementation acquires the <tt>token</tt>'s credentials
+     * (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
      * and then the <tt>account</tt>'s credentials
      * (via {@link #getCredentials(Account) getCredentials(account)}) and then passes both of
      * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
