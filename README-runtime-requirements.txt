@@ -1,14 +1,16 @@
 JSecurity Runtime Requirements
 ------------------------------
 
-All 3rd party libraries mentioned below are in this distro's lib directory if you don't already have them.
+All 3rd party dependencies mentioned below are accessible in two ways:
+1) In the jsecurity-<version>-with-dependencies.zip distribution's lib directory
+2) After downloading jsecurity-<version>.zip (no dependencies), run 'ant retrieve-dependencies'.  This will download
+the dependencies to a lib directory (peer to the build.xml).
 
-Required jars
+
+Minimal required dependencies
 -------------
-Ensure jsecurity.jar and Apache commons-logging.jar are in your application's classpath.
-
-JDK 1.3 and 1.4 only: you must additionally include retroweaver.jar and its associated dependendencies
-(they can be found in this distro's lib directory).
+Java 1.5 and later: Ensure jsecurity.jar and Apache commons-logging.jar are in your application's classpath.
+Java 1.3 and 1.4 only: jsecurity.jar, commons-logging.jar and retroweaver.jar and its associated dependendencies
 
 
 Feature-based dependencies
