@@ -33,8 +33,8 @@ package org.jsecurity.authz.annotation;
  * 'aRoleName' role.
  *
  * <p><b>*Usage Note*:</b> Be careful using this annotation if your application has a <em>dynamic</em>
- * security model and the annotated role might be deleted.  If your application allowed the
- * annotated role to be deleted <em>during runtime</em>, the method would not be able to
+ * security model where roles can be added and deleted at runtime.  If your application allowed the
+ * annotated role to be deleted during runtime, the method would not be able to
  * be executed by anyone (at least until a new role with the same name was created again).
  *
  * <p>If you require such dynamic functionality, only the
