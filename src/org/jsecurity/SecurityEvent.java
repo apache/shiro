@@ -28,7 +28,7 @@ import java.util.EventObject;
 public abstract class SecurityEvent extends EventObject {
 
     /**
-     * The time at which this event took place.
+     * The timestamp at which this event took place.
      */
     protected Date timestamp = new Date();
 
@@ -49,11 +49,27 @@ public abstract class SecurityEvent extends EventObject {
     public Date getTimestamp() {
         return timestamp;
     }
-    
+
+    /**
+     * A final method which just returns <code>toStringBuffer().toString();</code>, forcing subclasses to utilize the
+     * more efficient StringBuffer class for String output.
+     * @return <code>toStringBuffer().toString()</code>, a more performant way of representing String output.
+     */
     public final String toString() {
         return toStringBuffer().toString();
     }
 
+    /**
+     * Returns the <code>toString()</code> representation of the event, only utilizing a
+     * {@link StringBuffer StringBuffer} for better performance.
+     *
+     * <p>The default implementation only returns a StringBuffer with the locale-specific
+     * {@link #getTimestamp() timestamp} string:
+     * 
+     * <pre><code>return new StringBuffer( DateFormat.getInstance().format( getTimestamp() ) );</code></pre>.
+     *
+     * @return the <code>toString()</code> representation of this object via a more efficient StringBuffer instance.
+     */
     protected StringBuffer toStringBuffer() {
         return new StringBuffer( DateFormat.getInstance().format(getTimestamp()) );
     }
