@@ -24,9 +24,6 @@ import org.jsecurity.subject.PrincipalCollection;
  * data model, the application instead returns instances of this interface to represent such data.  This enables a
  * cleaner pluggable implementation and abstracts an application's core classes away from JSecurity.</p>
  *
- * <p>In fact, JSecurity's default implementations of this interface are usually good for the majority of applications
- * and no additional implementation is required.
- *
  * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
