@@ -230,7 +230,11 @@ relative to where the build is being executed -->
         <ant dir="samples/spring"/>
     </target>
 
-    <target name="samples" depends="samples.quickstart,samples.spring" description="Creates all sample applications"/>
+    <target name="samples.spring-hibernate" depends="jar" description="Creates the sample JSecurity Spring/Hibernate .war">
+        <ant dir="samples/spring-hibernate"/>
+    </target>
+
+    <target name="samples" depends="samples.quickstart,samples.spring,samples.spring-hibernate" description="Creates all sample applications"/>
 
     <target name="samples.quickstart.deploy" depends="samples.quickstart"
             description="Deploys the JSecurity quickstart .war">
@@ -240,6 +244,11 @@ relative to where the build is being executed -->
     <target name="samples.spring.deploy" depends="samples.spring"
             description="Deploys the sample JSecurity/Spring .war">
         <ant dir="samples/spring" target="deploy"/>
+    </target>
+
+    <target name="samples.spring-hibernate.deploy" depends="samples.spring-hibernate"
+            description="Deploys the sample JSecurity Spring/Hibernate .war">
+        <ant dir="samples/spring-hibernate" target="deploy"/>
     </target>
 
     <!-- =================================================================== -->

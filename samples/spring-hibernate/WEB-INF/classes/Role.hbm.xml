@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="org.jsecurity.samples.sprhib.security.Role" table="roles">
+
+        <!-- Roles, once created, hardly ever change, so the cache policy can be relaxed a bit: -->
+        <cache usage="nonstrict-read-write"/>
+
+        <id name="id" column="role_id">
+            <generator class="native"/>
+        </id>
+
+        <version name="entityVersion" column="entity_version" unsaved-value="negative"/>
+
+        <property name="name" not-null="true" unique-key="roles_name_owner_uq" index="role_name_idx"/>
+
+        <property name="description"/>
+
+        <property name="private" column="is_private" not-null="true"/>
+
+        <many-to-one name="owner" class="org.jsecurity.samples.sprhib.party.User"
+                     column="owner_user_id"
+                     foreign-key="roles_owner_user_id_fk"
+                     unique-key="roles_name_owner_uq"
+                     index="roles_owner_user_id_idx"/>
+
+        <!--  Sample app permission relationships not enabled yet:
+        <set name="permissions" inverse="false" cascade="all,delete-orphan">
+            <cache usage="read-write"/>
+            <key column="role_id" foreign-key="permissions_role_id_fk"/>
+       		<one-to-many class="org.jsecurity.samples.sprhib.security.EntityPermission"/>
+        </set> -->
+
+    </class>
+
+</hibernate-mapping>

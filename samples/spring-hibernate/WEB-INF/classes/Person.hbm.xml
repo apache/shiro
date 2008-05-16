@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="org.jsecurity.samples.sprhib.party.Person" table="people">
+
+        <cache usage="read-write"/>
+
+        <id name="id" column="person_id">
+            <generator class="native"/>
+        </id>
+
+        <version name="entityVersion" column="entity_version" unsaved-value="negative"/>
+
+        <property name="gender" length="1">
+            <column name="gender" sql-type="char" length="1"/>
+            <type name="org.jsecurity.samples.sprhib.eis.hibernate.GenericEnumUserType">
+                <param name="enumClass">org.jsecurity.samples.sprhib.party.Gender</param>
+                <param name="identifierMethod">toInitial</param>
+                <param name="valueOfMethod">fromInitial</param>
+            </type>
+        </property>
+
+        <property name="nameSalutation" column="name_salutation"/>
+
+        <property name="givenName" column="given_name" not-null="true"/>
+
+        <property name="middleNames" column="middle_names"/>
+
+        <property name="surname" not-null="true"/>
+
+        <property name="nameSuffix" column="name_suffix"/>
+
+        <property name="dateOfBirth" column="date_of_birth"/>
+
+        <property name="title"/>
+
+    </class>
+
+</hibernate-mapping>

@@ -31,7 +31,7 @@
 
         <!-- Feature-based dependencies: -->
         <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
-        <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile,samples"/>        
+        <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>        
         <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
         <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
         <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
@@ -44,6 +44,12 @@
         <dependency org="javax.servlet" name="jstl" rev="1.2" transitive="false" conf="samples"/>
         <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>
         <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" transitive="false" conf="samples"/>
+        <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="samples">
+            <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so 
+                 we have to download it explictly from another location (we use Geronimo's version) -->
+            <exclude org="javax.transaction"/>
+        </dependency>
+        <dependency org="org.apache.geronimo.specs" name="geronimo-jta_1.0.1B_spec" rev="1.1.1" conf="samples"/>
 
         <!-- Testing -->
         <dependency org="org.easymock" name="easymock" rev="2.3" transitive="false" conf="test"/>
@@ -53,8 +59,6 @@
         <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
             <artifact name="docbook-libs" type="zip" ext="zip"/>
         </dependency>
-
-        <!-- Not in maven repository: jboss-aop.jar, jug.jar, jug-native.zip -->
 
             <!-- TODO: move these contents (old library_versions.txt file) into appropriate places in this document. -->
     <!-- This file lists all 3rd party libraries (and their versions!!!) that

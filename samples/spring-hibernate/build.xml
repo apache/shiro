@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 
-<project name="quickstart" default="dist">
+<project name="spring-hibernate" default="dist">
 
     <property name="root.base.dir" value="../.."/>
 
     <!-- "extend" parent build definition -->
     <import file="../../build.xml" />
 
-    <property name="module.name" value="quickstart"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/quickstart"/>
+    <property name="module.name" value="spring-hibernate"/>
+    <property name="module.base.dir" value="${root.base.dir}/samples/spring-hibernate"/>
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
-    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
+    <property name="dist.jar" value="${dist.dir}/${dist.jar.name}"/>
 
     <!-- Module properties -->
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
@@ -28,18 +28,24 @@
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
-    <target name="clean" description="Cleans the quickstart build">
+    <target name="clean" depends="clean-deploy-dir" description="Cleans the spring-hibernate sample application build">
         <echo message="cleaning ${module.name} module"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
     </target>
 
+    <target name="clean-deploy-dir" description="Removes the deployed war directory">
+        <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
+        <delete file="${deploy.dir}/${dist.war.name}"/>
+        <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
+    </target>
+
     <!-- ===================================================================
       -  compile - compile Java source files
       -  =================================================================== -->
-    <target name="compile" description="Compiles the quickstart classes">
+    <target name="compile" description="Compiles the sample spring-hibernate app classes">
 
-        <!-- <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}/META-INF"/>
 
 		<javac destdir="${classes.dir}"
@@ -50,55 +56,65 @@
                classpathref="all.libs">
 			<src path="${src.dir}"/>
             <classpath location="${root.dist.dir}/jsecurity.jar"/>
-        </javac> -->
+        </javac>
 
     </target>
 
-    <target name="jar" depends="compile" description="Creates a jar of the quickstart classes">
+    <target name="jar" depends="compile" description="Creates a jar of the spring-hibernate sample app classes">
 
-        <!-- <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}"/>
 
-        <jar jarfile="${dist.jar}">
+        <jar jarfile="${dist.dir}/${dist.jar.name}">
             <fileset dir="${classes.dir}">
                 <include name="**/*.class"/>
-            </fileset>
-            <fileset dir="${etc.dir}">
-                <include name="*.xml"/>
-                <include name="*.gif"/>
-                <include name="*.jpg"/>
-                <include name="*.properties"/>
             </fileset>
             <manifest>
                 <attribute name="Implementation-Title" value="${project.name}-${module.name}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="${project.name}-Version" value="${version}"/>
             </manifest>
-        </jar> -->
+        </jar>
     </target>
 
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist" description="Creates the quickstart .war">
+    <target name="dist" depends="compile,jar" description="Creates the quickstart .war">
         <war warfile="${dist.war}" webxml="WEB-INF/web.xml">
+            <lib dir="${dist.dir}" includes="*.jar"/>
             <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
-            <lib dir="${lib.dir}/samples" includes="jstl.jar"/>
-            <lib dir="${lib.dir}/samples" includes="standard.jar"/>
-            <lib dir="${lib.dir}/samples" includes="log4j.jar"/>
-            <lib dir="${lib.dir}/samples" includes="commons-*.jar"/>
-            <lib dir="${lib.dir}/samples" includes="ehcache.jar"/>
-            <lib dir="${lib.dir}/samples" includes="backport-util-concurrent.jar"/>
+            <lib dir="${lib.dir}/samples">
+                <include name="jstl.jar"/>
+                <include name="standard.jar"/>
+                <include name="log4j.jar"/>
+                <include name="commons-*.jar"/>
+                <include name="ehcache.jar"/>
+                <include name="backport-util-concurrent.jar"/>
+                <include name="hsqldb.jar"/>
+                <include name="spring.jar"/>
+            </lib>
+            <!-- Hibernate libs: -->
+            <lib dir="${lib.dir}/samples">
+                <include name="hibernate.jar"/>
+                <include name="antlr.jar"/>
+                <include name="asm-attrs.jar"/>
+                <include name="asm.jar"/>
+                <include name="cglib.jar"/>
+                <include name="geronimo-jta_1.0.1B_spec.jar"/>
+                <include name="dom4j.jar"/>
+                <include name="commons-collections.jar"/>
+            </lib>
             <fileset dir="${module.base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
             <!-- <lib dir="${dist.dir}" includes="*.jar"/> -->
         </war>
     </target>
 
-    <target name="quick-deploy" description="Blindly deploys the quickstart .war to Tomcat">
+    <target name="quick-deploy" description="Blindly deploys the spring-hibernate sample app .war to Tomcat">
         <echo>Deploying application to Tomcat...</echo>
         <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
         <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
 
-    <target name="deploy" depends="dist,quick-deploy" description="Creates and deploys the quickstart .war to Tomcat"/>
+    <target name="deploy" depends="dist,quick-deploy" description="Creates and deploys the spring-hibernate sample app .war to Tomcat"/>
 
 </project>

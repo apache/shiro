@@ -21,6 +21,8 @@
     <output url="file://$MODULE_DIR$/build/classes" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/samples/spring-hibernate/WEB-INF/classes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/samples/spring-hibernate/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/etc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
