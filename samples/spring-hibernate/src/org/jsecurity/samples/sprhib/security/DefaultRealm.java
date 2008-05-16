@@ -63,8 +63,8 @@ public class DefaultRealm extends AuthorizingRealm implements InitializingBean {
 
 
     protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
-        String username = (String)principals.fromRealm( getName() ).iterator().next();
-        return userDAO.findUser( username );
+        Long userId = (Long)principals.fromRealm( getName() ).iterator().next();
+        return userDAO.getUser( userId );
     }
 
 }
