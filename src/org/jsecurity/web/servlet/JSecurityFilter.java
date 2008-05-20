@@ -20,6 +20,7 @@ import static org.jsecurity.util.StringUtils.*;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
 import org.jsecurity.web.SecurityWebSupport;
+import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.interceptor.DefaultInterceptorBuilder;
 import org.jsecurity.web.interceptor.InterceptorBuilder;
 import org.jsecurity.web.interceptor.PathConfigWebInterceptor;
@@ -510,16 +511,15 @@ public class JSecurityFilter extends SecurityManagerFilter {
             response = new JSecurityHttpServletResponse(response, getServletContext(), (JSecurityHttpServletRequest) request);
         }
 
-        ThreadContext.bind(request);
-        ThreadContext.bind(response);
-        getSecurityManager().getSubject();
-        //ThreadContext.bind(getSecurityManager().getSubject());
+        WebUtils.bind(request);
+        WebUtils.bind(response);
+        ThreadContext.bind(getSecurityManager().getSubject());
 
         try {
             chain.doFilter(request, response);
         } finally {
-            ThreadContext.unbindServletRequest();
-            ThreadContext.unbindServletResponse();
+            WebUtils.unbindServletRequest();
+            WebUtils.unbindServletResponse();
             ThreadContext.unbindInetAddress();
             ThreadContext.unbindSubject();
         }

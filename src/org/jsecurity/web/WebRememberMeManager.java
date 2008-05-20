@@ -17,7 +17,6 @@ package org.jsecurity.web;
 
 import org.jsecurity.codec.Base64;
 import org.jsecurity.subject.AbstractRememberMeManager;
-import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.attr.CookieAttribute;
 import org.jsecurity.web.attr.WebAttribute;
 
@@ -184,16 +183,16 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     }
 
     protected void rememberSerializedIdentity(byte[] serialized) {
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         //base 64 encode it and store as a cookie:
         String base64 = Base64.encodeToString(serialized);
         getIdentityAttribute().storeValue(base64, request, response);
     }
 
     protected byte[] getSerializedRememberedIdentity() {
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         String base64 = getIdentityAttribute().retrieveValue(request, response);
         if (base64 != null) {
             return Base64.decode(base64);
@@ -204,8 +203,8 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     }
 
     protected void forgetIdentity() {
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         getIdentityAttribute().removeValue(request, response);
     }
 }

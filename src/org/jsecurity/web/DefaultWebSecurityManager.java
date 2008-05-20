@@ -21,7 +21,6 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
-import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.session.DefaultWebSessionManager;
 import org.jsecurity.web.session.ServletContainerSessionManager;
 import org.jsecurity.web.session.WebSessionManager;
@@ -146,8 +145,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     public Subject createSubject() {
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         return createSubject(request, response);
     }
 
@@ -179,8 +178,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     protected void bind(Subject subject) {
         super.bind(subject);
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         bind(subject, request, response);
     }
 

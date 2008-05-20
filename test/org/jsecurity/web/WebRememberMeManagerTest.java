@@ -6,7 +6,6 @@ import org.jsecurity.authc.SimpleAccount;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
-import org.jsecurity.util.ThreadContext;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -27,9 +26,9 @@ public class WebRememberMeManagerTest {
     @Test
     public void onSuccessfulLogin() {
         ServletRequest mockRequest = createMock(HttpServletRequest.class);
-        ThreadContext.bind(mockRequest);
+        WebUtils.bind(mockRequest);
         ServletResponse mockResponse = createMock(HttpServletResponse.class);
-        ThreadContext.bind(mockResponse);
+        WebUtils.bind(mockResponse);
 
         WebRememberMeManager mgr = new WebRememberMeManager();
         UsernamePasswordToken token = new UsernamePasswordToken( "user", "secret" );
@@ -42,9 +41,9 @@ public class WebRememberMeManagerTest {
     @Test
     public void getRememberedPrincipals() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
-        ThreadContext.bind(mockRequest);
+        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        ThreadContext.bind(mockResponse);
+        WebUtils.bind(mockResponse);
 
         //The following base64 string was determined from the log output of the above test.
         //This may have to change if the VM changes - not sure. L.H.
@@ -68,9 +67,9 @@ public class WebRememberMeManagerTest {
     @Test
     public void onLogout() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
-        ThreadContext.bind(mockRequest);
+        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        ThreadContext.bind(mockResponse);
+        WebUtils.bind(mockResponse);
 
         Cookie cookie = new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME,"");
         cookie.setMaxAge(0);
