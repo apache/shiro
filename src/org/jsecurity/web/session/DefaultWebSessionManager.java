@@ -20,8 +20,8 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.DefaultSessionManager;
-import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
+import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.attr.CookieAttribute;
 import org.jsecurity.web.attr.RequestParamAttribute;
 import org.jsecurity.web.attr.WebAttribute;
@@ -196,8 +196,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     }
 
     public Serializable start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         return start( request, response, hostAddress );
     }
 
@@ -213,8 +213,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if ( sessionId != null ) {
             return super.doGetSession( sessionId );
         } else {
-            ServletRequest request = ThreadContext.getServletRequest();
-            ServletResponse response = ThreadContext.getServletResponse();
+            ServletRequest request = WebUtils.getServletRequest();
+            ServletResponse response = WebUtils.getServletResponse();
             return getSession( request, response );
         }
     }
@@ -287,6 +287,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     protected void onStop(Session session) {
         super.onStop(session);
-        getSessionIdCookieAttribute().removeValue(ThreadContext.getServletRequest(), ThreadContext.getServletResponse());
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
+        getSessionIdCookieAttribute().removeValue(request, response);
     }
 }

@@ -20,8 +20,8 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.AbstractSessionManager;
-import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.SecurityWebSupport;
+import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -54,8 +54,8 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
     protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
         //Ignore session id since there is no way to acquire a session based on an id in a servlet container
         //(that is implementation agnostic)
-        ServletRequest request = ThreadContext.getServletRequest();
-        ServletResponse response = ThreadContext.getServletResponse();
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
         return getSession( request, response );
     }
 
@@ -69,7 +69,7 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
     }
 
     protected Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
-        ServletRequest request = ThreadContext.getServletRequest();
+        ServletRequest request = WebUtils.getServletRequest();
         HttpSession httpSession = ((HttpServletRequest)request).getSession();
         return createSession( httpSession, originatingHost );
     }

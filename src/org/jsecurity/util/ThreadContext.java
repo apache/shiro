@@ -19,8 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.subject.Subject;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +47,6 @@ public abstract class ThreadContext {
 
     public static final String SUBJECT_KEY = Subject.class.getName() + "_THREAD_CONTEXT_KEY";
     public static final String INET_ADDRESS_KEY = InetAddress.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
-    public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXST_KEY";
-    public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =
         new InheritableThreadLocal<Map<Object, Object>>() {
@@ -288,122 +284,5 @@ public abstract class ThreadContext {
     public static InetAddress unbindInetAddress() {
         return (InetAddress)remove( INET_ADDRESS_KEY );
     }
-
-    /**
-     * Convenience method that simplifies retrieval of a thread-bound ServletRequest.  If there is no
-     * ServletRequest bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
-     * for the following:
-     * <pre>
-     * return (ServletRequest)get( SERVLET_REQUEST_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
-     * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
-     *
-     * @return the ServletRequest bound to the thread, or <tt>null</tt> if there isn't one bound.
-     * @since 0.2
-     */
-    public static ServletRequest getServletRequest() {
-        return (ServletRequest)get( SERVLET_REQUEST_KEY );
-    }
-
-    /**
-     * Convenience method that simplifies binding a ServletRequest to the ThreadContext.
-     *
-     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
-     * ThreadContext key names.  The implementation is simple in that, if the servletRequest is not <tt>null</tt>,
-     * it binds it to the thread, i.e.:
-     *
-     * <pre>
-     * if (servletRequest != null) {
-     *     put( SERVLET_REQUEST_KEY, session );
-     * }</pre>
-     *
-     * @param servletRequest the ServletRequest object to bind to the thread.  If the argument is null, nothing will be done.
-     * @since 0.2
-     */
-    public static void bind( ServletRequest servletRequest ) {
-        if ( servletRequest != null ) {
-            put( SERVLET_REQUEST_KEY, servletRequest );
-        }
-    }
-
-    /**
-     * Convenience method that simplifies removal of a thread-local ServletRequest from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (ServletRequest)remove( SERVLET_REQUEST_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
-     * thread execution), you should use the {@link #getServletRequest() getServletRequest()} method for that purpose.
-     *
-     * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     * @since 0.2
-     */
-    public static ServletRequest unbindServletRequest() {
-        return (ServletRequest)remove( SERVLET_REQUEST_KEY );
-    }
-
-    /**
-     * Convenience method that simplifies retrieval of a thread-bound ServletResponse.  If there is no
-     * ServletResponse bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
-     * for the following:
-     * <pre>
-     * return (ServletResponse)get( SERVLET_RESPONSE_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
-     * from the thread.  To remove it, one must call {@link #unbindServletResponse() unbindServletResponse} instead.
-     *
-     * @return the ServletResponse bound to the thread, or <tt>null</tt> if there isn't one bound.
-     * @since 0.2
-     */
-    public static ServletResponse getServletResponse() {
-        return (ServletResponse)get( SERVLET_RESPONSE_KEY );
-    }
-
-    /**
-     * Convenience method that simplifies binding a ServletResponse to the ThreadContext.
-     *
-     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
-     * ThreadContext key names.  The implementation is simple in that, if the servletResponse is not <tt>null</tt>,
-     * it binds it to the thread, i.e.:
-     *
-     * <pre>
-     * if (servletResponse != null) {
-     *     put( SERVLET_RESPONSE_KEY, session );
-     * }</pre>
-     *
-     * @param servletResponse the ServletResponse object to bind to the thread.  If the argument is null, nothing will be done.
-     * @since 0.2
-     */
-    public static void bind( ServletResponse servletResponse ) {
-        if ( servletResponse != null ) {
-            put( SERVLET_RESPONSE_KEY, servletResponse );
-        }
-    }
-
-    /**
-     * Convenience method that simplifies removal of a thread-local ServletResponse from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (ServletResponse)remove( SERVLET_RESPONSE_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
-     * thread execution), you should use the {@link #getServletResponse() getServletResponse()} method for that purpose.
-     *
-     * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     * @since 0.2
-     */
-    public static ServletResponse unbindServletResponse() {
-        return (ServletResponse)remove( SERVLET_RESPONSE_KEY );
-    }
-
-
-
 }
 
