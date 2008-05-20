@@ -31,6 +31,7 @@ import java.beans.PropertyEditor;
  */
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
+    /** The number of seconds in one year (= 60 * 60 * 24 * 365). */
     public static final int ONE_YEAR = 60 * 60 * 24 * 365;
     /**
      * This is the same value as Integer.MAX_VALUE, and while Tomcat does fine with cookie max age with this value,
