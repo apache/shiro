@@ -219,7 +219,6 @@ public class WebUtils {
      * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
      *
      * @return the ServletRequest bound to the thread, or <tt>null</tt> if there isn't one bound.
-     * @since 0.2
      */
     public static ServletRequest getServletRequest() {
         return (ServletRequest) ThreadContext.get( SERVLET_REQUEST_KEY );
@@ -238,7 +237,6 @@ public class WebUtils {
      * }</pre>
      *
      * @param servletRequest the ServletRequest object to bind to the thread.  If the argument is null, nothing will be done.
-     * @since 0.2
      */
     public static void bind( ServletRequest servletRequest ) {
         if ( servletRequest != null ) {
@@ -259,7 +257,6 @@ public class WebUtils {
      * thread execution), you should use the {@link #getServletRequest() getServletRequest()} method for that purpose.
      *
      * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     * @since 0.2
      */
     public static ServletRequest unbindServletRequest() {
         return (ServletRequest)ThreadContext.remove( SERVLET_REQUEST_KEY );
@@ -276,7 +273,6 @@ public class WebUtils {
      * from the thread.  To remove it, one must call {@link #unbindServletResponse() unbindServletResponse} instead.
      *
      * @return the ServletResponse bound to the thread, or <tt>null</tt> if there isn't one bound.
-     * @since 0.2
      */
     public static ServletResponse getServletResponse() {
         return (ServletResponse)ThreadContext.get( SERVLET_RESPONSE_KEY );
@@ -295,7 +291,6 @@ public class WebUtils {
      * }</pre>
      *
      * @param servletResponse the ServletResponse object to bind to the thread.  If the argument is null, nothing will be done.
-     * @since 0.2
      */
     public static void bind( ServletResponse servletResponse ) {
         if ( servletResponse != null ) {
@@ -316,7 +311,6 @@ public class WebUtils {
      * thread execution), you should use the {@link #getServletResponse() getServletResponse()} method for that purpose.
      *
      * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     * @since 0.2
      */
     public static ServletResponse unbindServletResponse() {
         return (ServletResponse)ThreadContext.remove( SERVLET_RESPONSE_KEY );
