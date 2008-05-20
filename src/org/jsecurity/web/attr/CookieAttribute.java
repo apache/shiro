@@ -32,11 +32,23 @@ import java.beans.PropertyEditor;
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
     public static final int ONE_YEAR = 60 * 60 * 24 * 365;
+    /**
+     * This is the same value as Integer.MAX_VALUE, and while Tomcat does fine with cookie max age with this value,
+     * Jetty apparently has problems with it.  If you're using Jetty, you might want to use the
+     * {@link #ONE_YEAR ONE_YEAR} constant or another value.
+     */
     public static final int INDEFINITE = Integer.MAX_VALUE;
+    
+    /** <code>null</code>, indicating the cookie should be set on the request context root. */
+    public static final String DEFAULT_PATH = null;
+    /** <code>-1</code>, indicating the cookie should expire when the browser closes. */
+    public static final int DEFAULT_MAX_AGE = -1;
+    /** Default value is <code>false</code>. */
+    public static final boolean DEFAULT_SECURE = false;
 
-    private String path = null; //null means set it on the request context root
-    private int maxAge = -1; //expire on browser close
-    private boolean secure = false;
+    private String path = DEFAULT_PATH;
+    private int maxAge = DEFAULT_MAX_AGE;
+    private boolean secure = DEFAULT_SECURE;
 
     public CookieAttribute() {
     }
@@ -119,6 +131,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Returns the Cookie's {@link Cookie#getPath() path} setting.  If <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
+     *
+     * <p>The default is <code>null</code>.</p>
+     *
      * @return the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
      * cookie is created.
      */
@@ -129,6 +144,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Sets the Cookie's {@link Cookie#getPath() path} setting.  If the argument is <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
+     *
+     * <p>The default is <code>null</code>.</p>
+     *
      * @param path the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
      * cookie is created.
      */
@@ -139,6 +157,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Returns the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
+     *
+     * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
+     *
      * @return the Cookie's {@link Cookie#setMaxAge(int) maxAge}
      */
     public int getMaxAge() {
@@ -148,6 +169,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Sets the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
+     *
+     * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
+     *
      * @param maxAge the Cookie's {@link Cookie#setMaxAge(int) maxAge}
      */
     public void setMaxAge( int maxAge ) {
