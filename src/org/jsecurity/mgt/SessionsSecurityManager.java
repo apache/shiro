@@ -37,7 +37,7 @@ import java.util.Collection;
  * JSecurity support of a {@link SecurityManager} class hierarchy that delegates all
  * {@link org.jsecurity.session.Session session} operations to a wrapped {@link SessionManager SessionManager}
  * instance.  That is, this class implements the methods in the
- * {@link SecurityManager SecurityManager} interface, but in reality, those methods are merely passthrough calls to
+ * {@link SessionManager SessionManager} interface, but in reality, those methods are merely passthrough calls to
  * the underlying 'real' <tt>SessionManager</tt> instance.
  *
  * <p>The remaining <tt>SecurityManager</tt> methods not implemented by this class or its parents are left to be

@@ -104,7 +104,7 @@ import java.util.Scanner;
    # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.
    #
    # Permissions interceptor: requires the requesting user to have one or more permissions for the request to
-   # continue, and if they do not, redirects them to the 'unauthorizedPage' defined in the [main] section.
+   # continue, and if they do not, redirects them to the specified URL.
    #perms = org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor
    #perms.url =
    # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
