@@ -132,7 +132,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     }
 
     /**
-     * Sets the raw bytes stored by this hash instance instance.
+     * Sets the raw bytes stored by this hash instance.
      *
      * <p>The bytes are kept in raw form - they will not be hashed/changed.  This is primarily a utility method for
      * constructing a Hash instance when the hashed value is already known.
