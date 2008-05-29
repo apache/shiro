@@ -22,6 +22,7 @@ import java.util.Scanner;
 
 /**
  * @since 0.9
+ * @author Les Hazlewood
  */
 public abstract class TextConfiguration extends ResourceConfiguration {
 

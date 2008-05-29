@@ -25,6 +25,7 @@ import java.io.InputStream;
 
 /**
  * @since 0.9
+ * @author Les Hazlewood
  */
 public abstract class ResourceConfiguration implements Configuration {
 
