@@ -185,7 +185,9 @@ public class IniConfiguration extends TextConfiguration {
             String name = entry.getKey();
             Object value = entry.getValue();
             if ( value instanceof RealmFactory ) {
-                Collection<Realm> factoryRealms = ((RealmFactory)value).getRealms();
+                RealmFactory factory = (RealmFactory)value;
+                LifecycleUtils.init(factory);
+                Collection<Realm> factoryRealms = factory.getRealms();
                 if ( factoryRealms != null && !factoryRealms.isEmpty() ) {
                     realms.addAll( factoryRealms );
                 }
@@ -202,15 +204,14 @@ public class IniConfiguration extends TextConfiguration {
             }
         }
 
-        //now init any realm objects that require initialization:
-        LifecycleUtils.init(realms);
-
         //set them on the SecurityManager
         if ( !realms.isEmpty() ) {
             securityManager.setRealms(realms);
         }
 
         securityManager.init();
+
+        LifecycleUtils.init(realms);
 
         return securityManager;
     }
