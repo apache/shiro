@@ -19,6 +19,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 
+import java.util.Collection;
+
 /**
  * @author Les Hazlewood
  * @since 0.2
@@ -37,6 +39,22 @@ public abstract class LifecycleUtils {
         initializable.init();
     }
 
+    /**
+     *
+     * @param c
+     * @throws JSecurityException
+     *
+     * @since 0.9
+     */
+    public static void init( Collection c ) throws JSecurityException {
+        if ( c == null || c.isEmpty() ) {
+            return;
+        }
+        for( Object o : c ) {
+            init( o );
+        }
+    }
+
     public static void destroy(Object o) {
         if (o instanceof Destroyable) {
             destroy((Destroyable) o);
@@ -53,6 +71,21 @@ public abstract class LifecycleUtils {
                     log.debug(msg, t);
                 }
             }
+        }
+    }
+
+    /**
+     *
+     * @param c
+     * @since 0.9
+     */
+    public static void destroy( Collection c ) {
+        if ( c == null || c.isEmpty() ) {
+            return;
+        }
+
+        for ( Object o : c ) {
+            destroy( o );
         }
     }
 }

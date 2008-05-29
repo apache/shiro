@@ -15,6 +15,7 @@
  */
 package org.jsecurity.util;
 
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 
 /**
@@ -29,6 +30,17 @@ public class ClassUtils {
             cl = ClassUtils.class.getClassLoader();
         }
         return cl;
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     * @since 0.9
+     */
+    public static InputStream getResourceAsStream( String name ) {
+        ClassLoader cl = getDefaultClassLoader();
+        return cl.getResourceAsStream(name);
     }
 
     public static Class forName( String fullyQualified ) throws UnknownClassException {

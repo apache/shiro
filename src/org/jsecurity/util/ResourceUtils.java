@@ -49,6 +49,45 @@ public class ResourceUtils {
      */
     private ResourceUtils() { }
 
+    /**
+     * 
+     * @param resourcePath
+     * @return
+     * @since 0.9
+     */
+    public static boolean hasResourcePrefix( String resourcePath ) {
+        return resourcePath != null &&
+               (resourcePath.startsWith(CLASSPATH_PREFIX) ||
+                resourcePath.startsWith(URL_PREFIX) ||
+                resourcePath.startsWith(FILE_PREFIX));
+    }
+
+    /**
+     *
+     * @param resourcePath
+     * @return
+     * @since 0.9
+     */
+    public static boolean resourceExists( String resourcePath ) {
+        InputStream stream = null;
+        boolean exists = false;
+
+        try {
+            stream = getInputStreamForPath(resourcePath);
+            exists = true;
+        } catch (IOException e) {
+            stream = null;
+        } finally {
+            if ( stream != null ) {
+                try {
+                    stream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+
+        return exists;
+    }
+
 
     /**
      * Returns the InputStream for the resource represented by the specified path.
@@ -102,18 +141,11 @@ public class ResourceUtils {
     }
 
     private static InputStream loadFromClassPath(String path) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        // Fall back to class loader for this class if no context class loader
-        if( classLoader == null ) {
-            classLoader = ResourceUtils.class.getClassLoader();
-        }
-
         if( logger.isDebugEnabled() ) {
             logger.debug( "Opening resource from class path [" + path + "]..." );
         }
 
-        return classLoader.getResourceAsStream( path );
+        return ClassUtils.getResourceAsStream(path);
     }
 
     private static String stripPrefix(String resourcePath) {
