@@ -15,19 +15,22 @@
  */
 package org.jsecurity.config;
 
+import org.jsecurity.mgt.DefaultSecurityManager;
+import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.mgt.SecurityManager;
+import org.jsecurity.realm.Realm;
+import org.jsecurity.realm.RealmFactory;
+import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.util.ResourceUtils;
 import static org.jsecurity.util.StringUtils.clean;
 import static org.jsecurity.util.StringUtils.splitKeyValue;
-import org.jsecurity.web.DefaultWebSecurityManager;
 
 import java.text.ParseException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @since 0.9
+ * @author Les Hazlewood
  */
 public class IniConfiguration extends TextConfiguration {
 
@@ -158,29 +161,58 @@ public class IniConfiguration extends TextConfiguration {
         return null;
     }
 
-    protected SecurityManager createSecurityManager( String mainSection ) {
-        DefaultWebSecurityManager sm = new DefaultWebSecurityManager();
+    protected RealmSecurityManager newSecurityManagerInstance() {
+        return new DefaultSecurityManager();
+    }
 
-        String mode = getSessionMode( mainSection );
-        if ( mode != null ) {
-            sm.setSessionMode( mode );
+    protected SecurityManager createSecurityManager( String mainSection ) {
+
+        Map<String,Object> defaults = new LinkedHashMap<String,Object>();
+
+        RealmSecurityManager securityManager = newSecurityManagerInstance();
+        defaults.put( "securityManager", securityManager );
+        ReflectionBuilder builder = new ReflectionBuilder(defaults);
+        Map<String,Object> objects = builder.buildObjects(mainSection);
+
+        //realms and realm factory might have been created - pull them out first so we can
+        //initialize the securityManager:
+
+        List<Realm> realms = new ArrayList<Realm>();
+
+        //iterate over the map entries to pull out the realm factory(s):
+
+        for( Map.Entry<String,Object> entry : objects.entrySet() ) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if ( value instanceof RealmFactory ) {
+                Collection<Realm> factoryRealms = ((RealmFactory)value).getRealms();
+                if ( factoryRealms != null && !factoryRealms.isEmpty() ) {
+                    realms.addAll( factoryRealms );
+                }
+            } else if ( value instanceof Realm ) {
+                Realm realm = (Realm)value;
+                //set the name if null:
+                String existingName = realm.getName();
+                if ( existingName == null || existingName.startsWith( realm.getClass().getName() ) ) {
+                    try {
+                        builder.applyProperty( realm, "name", name );
+                    } catch ( Exception ignored ) {}
+                }
+                realms.add( realm );
+            }
         }
 
-        //TODO - work in progress
-        /*List<Realm> realms = getRealms();
+        //now init any realm objects that require initialization:
+        LifecycleUtils.init(realms);
 
-        if (realms != null && !realms.isEmpty()) {
-            sm.setRealms(realms);
-        } else {
-            Realm realm = getRealm();
-            if (realm != null) {
-                sm.setRealm(realm);
-            }
-        }*/
+        //set them on the SecurityManager
+        if ( !realms.isEmpty() ) {
+            securityManager.setRealms(realms);
+        }
 
-        sm.init();
+        securityManager.init();
 
-        return sm;
+        return securityManager;
     }
 
     protected void afterSecurityManagerSet( Map<String,String> sections ) {}

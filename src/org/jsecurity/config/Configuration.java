@@ -19,6 +19,7 @@ import org.jsecurity.mgt.SecurityManagerFactory;
 
 /**
  * @since 0.9
+ * @author Les Hazlewood
  */
 public interface Configuration extends SecurityManagerFactory {
 }

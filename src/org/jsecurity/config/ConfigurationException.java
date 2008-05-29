@@ -19,6 +19,7 @@ import org.jsecurity.JSecurityException;
 
 /**
  * @since 0.9
+ * @author Les Hazlewood
  */
 public class ConfigurationException extends JSecurityException {
 
