@@ -15,6 +15,7 @@
  */
 package org.jsecurity.config;
 
+import org.jsecurity.io.IniResource;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.mgt.SecurityManager;
@@ -22,10 +23,9 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.RealmFactory;
 import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.util.ResourceUtils;
-import static org.jsecurity.util.StringUtils.clean;
-import static org.jsecurity.util.StringUtils.splitKeyValue;
 
-import java.text.ParseException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.*;
 
 /**
@@ -42,88 +42,69 @@ public class IniConfiguration extends TextConfiguration {
 
     public static final String SESSION_MODE_PROPERTY_NAME = "sessionMode";
 
-    private static final String HEADER_PREFIX = "[";
-    private static final String HEADER_SUFFIX = "]";
-
-    private static final String[] SECTION_HEADERS = {
-            HEADER_PREFIX + MAIN + HEADER_SUFFIX,
-            HEADER_PREFIX + INTERCEPTORS + HEADER_SUFFIX,
-            HEADER_PREFIX + URLS + HEADER_SUFFIX
-    };
-
-    protected Map<String, String> sections = new LinkedHashMap<String, String>();
+    protected IniResource iniResource = null;
 
     public IniConfiguration() {
         if ( ResourceUtils.resourceExists( DEFAULT_INI_RESOURCE_PATH ) ) {
-            load( DEFAULT_INI_RESOURCE_PATH, null );
+            load(DEFAULT_INI_RESOURCE_PATH);
         }
         //else defaults are fine
     }
 
     public IniConfiguration(String configBodyOrResourcePath) {
-        super(configBodyOrResourcePath);
+        load(configBodyOrResourcePath);
     }
 
     public IniConfiguration(String configBodyOrResourcePath, String charsetName) {
-        super(configBodyOrResourcePath, charsetName);
-    }
-
-    protected static boolean isSectionHeader(String name) {
-        for (String s : SECTION_HEADERS) {
-            if (s.equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected static String getSectionName(String header) {
-        if ( isSectionHeader( header ) ) {
-            return header.substring(1, header.length() - 1 );
-        }
-        return null;
-    }
-
-    protected void doLoad(Scanner scanner) throws Exception {
-
-        String currSectionName = null;
-
-        StringBuffer section = new StringBuffer();
-        
-        while (scanner.hasNextLine()) {
-
-            String line = clean(scanner.nextLine());
-
-            if (line == null || line.startsWith("#")) {
-                //skip empty lines and comments:
-                continue;
-            }
-
-            String sectionName = getSectionName( line.toLowerCase() );
-            if ( sectionName != null ) {
-                String sectionBody = clean( section.toString() );
-                if ( sectionBody != null ) {
-                    sections.put( currSectionName, sectionBody );
-                }    
-                currSectionName = sectionName;
-                section = new StringBuffer();
-                if (log.isDebugEnabled()) {
-                    log.debug("Parsing " + HEADER_PREFIX + currSectionName + HEADER_SUFFIX );
-                }
-            } else {
-                section.append(line).append("\n");
-            }
-        }
-
-        if ( section.length() > 0 ) {
-            String sectionBody = clean( section.toString() );
-            if ( sectionBody != null ) {
-                sections.put( currSectionName, sectionBody );
-            }
+        try {
+            this.iniResource = new IniResource(configBodyOrResourcePath, charsetName);
+            process(this.iniResource);
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
         }
     }
 
-    protected void processSections( Map<String,String> sections ) {
+    protected void load(Reader r) throws ConfigurationException {
+        try {
+            this.iniResource = new IniResource(r);
+            process(this.iniResource);
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
+    }
+
+    protected void load(Scanner s) throws ConfigurationException {
+        try {
+            this.iniResource = new IniResource(s);
+            process(this.iniResource);
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
+    }
+
+    public void load(String path) throws ConfigurationException {
+        try {
+            this.iniResource = new IniResource(path);
+            process(this.iniResource);
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
+    }
+
+    public void load(InputStream is) throws ConfigurationException {
+        try {
+            this.iniResource = new IniResource(is);
+            process(this.iniResource);
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
+    }
+
+    protected void process( IniResource ini ) {
+        processIni( ini.getSections() );
+    }
+
+    protected void processIni( Map<String,Map<String,String>> sections ) {
         SecurityManager securityManager = createSecurityManager( sections );
         if ( securityManager == null ) {
             String msg = "A " + SecurityManager.class + " instance must be created at startup.";
@@ -134,38 +115,16 @@ public class IniConfiguration extends TextConfiguration {
         afterSecurityManagerSet( sections );
     }
 
-    protected SecurityManager createSecurityManager( Map<String,String> sections ) {
-        String mainSectionBody = sections.get( MAIN );
-        return createSecurityManager( mainSectionBody );
-    }
-
-    protected String getSessionMode( String main ) {
-        if ( main != null ) {
-            Scanner scanner = new Scanner(main);
-            while( scanner.hasNextLine() ) {
-                String line = scanner.nextLine();
-                //we only process sessionMode so far:
-                String[] nameAndValue;
-                try {
-                    nameAndValue = splitKeyValue(line);
-                } catch (ParseException e) {
-                    throw new ConfigurationException(e);
-                }
-                String name = nameAndValue[0];
-                String value = nameAndValue[1];
-                if ( SESSION_MODE_PROPERTY_NAME.equalsIgnoreCase(name) && value != null ) {
-                    return value;
-                }
-            }
-        }
-        return null;
+    protected SecurityManager createSecurityManager( Map<String,Map<String,String>> sections ) {
+        Map<String,String> mainSection = sections.get( MAIN );
+        return doCreateSecurityManager( mainSection );
     }
 
     protected RealmSecurityManager newSecurityManagerInstance() {
         return new DefaultSecurityManager();
     }
 
-    protected SecurityManager createSecurityManager( String mainSection ) {
+    protected SecurityManager doCreateSecurityManager( Map<String,String> mainSection ) {
 
         Map<String,Object> defaults = new LinkedHashMap<String,Object>();
 
@@ -216,5 +175,5 @@ public class IniConfiguration extends TextConfiguration {
         return securityManager;
     }
 
-    protected void afterSecurityManagerSet( Map<String,String> sections ) {}
+    protected void afterSecurityManagerSet( Map<String,Map<String,String>> sections ) {}
 }

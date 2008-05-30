@@ -93,6 +93,17 @@ public class ReflectionBuilder {
         return objects;
     }
 
+    public Map<String,Object> buildObjects( Map<String,String> kvPairs ) {
+        if ( kvPairs == null || kvPairs.isEmpty() ) {
+            return null;
+        }
+        for( Map.Entry<String,String> entry : kvPairs.entrySet() ) {
+            applyProperty(entry.getKey(), entry.getValue(), objects );
+        }
+
+        return objects;
+    }
+
     public void applyProperty(String key, String value, Map<String, Object> objects) {
 
         int index = key.indexOf('.');
@@ -139,6 +150,16 @@ public class ReflectionBuilder {
             }
             BeanUtils.setProperty(object, propertyName, value);
         } catch (Exception e) {
+            //perhaps the value was a reference to an object already defined:
+
+            Object o = ( objects != null && !objects.isEmpty() ? objects.get(value) : null );
+            if ( o != null ) {
+                try {
+                    BeanUtils.setProperty(object, propertyName, o );
+                    return;
+                } catch (Exception ignored) {}
+            }
+
             String msg = "Unable to set property [" + propertyName + "] with value [" + value + "]";
             throw new ConfigurationException(msg, e);
         }

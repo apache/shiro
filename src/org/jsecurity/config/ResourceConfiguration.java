@@ -18,34 +18,21 @@ package org.jsecurity.config;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
-import org.jsecurity.util.ResourceUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 /**
  * @since 0.9
  * @author Les Hazlewood
  */
-public abstract class ResourceConfiguration implements Configuration {
+public abstract class ResourceConfiguration implements Configuration, Serializable {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
-    protected SecurityManager securityManager = null;
+    protected transient SecurityManager securityManager = null;
 
     public ResourceConfiguration(){}
-
-    public ResourceConfiguration( String resourcePath ) {
-        load(resourcePath);
-    }
-
-    protected void load( String resourcePath ) {
-        if ( resourcePath == null ) {
-            throw new IllegalArgumentException( "resourcePath argument cannot be null." );
-        }
-        InputStream is = getPathInputStream(resourcePath);
-        loadFromStream(is);
-    }
 
     public SecurityManager getSecurityManager() {
         return securityManager;
@@ -55,23 +42,7 @@ public abstract class ResourceConfiguration implements Configuration {
         this.securityManager = securityManager;
     }
 
-    protected InputStream getPathInputStream( String path ) throws ConfigurationException {
-        try {
-            return ResourceUtils.getInputStreamForPath( path );
-        } catch (IOException e) {
-            String msg = "Unable to create input stream from resource path [" + path + "].";
-            throw new ConfigurationException(msg, e);
-        }
-    }
+    public abstract void load( String path ) throws ConfigurationException;
 
-    protected void loadFromStream( InputStream is ) throws ConfigurationException {
-        try {
-            doLoadFromStream( is );
-        } catch (Exception e) {
-            String msg = "Unable to load data from input stream [" + is + "].";
-            throw new ConfigurationException( msg, e );
-        }
-    }
-
-    protected abstract void doLoadFromStream( InputStream is ) throws Exception;
+    public abstract void load( InputStream is ) throws ConfigurationException;
 }
