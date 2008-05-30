@@ -13,20 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.config;
+package org.jsecurity.io;
 
-import java.io.Reader;
-import java.util.Scanner;
+import org.jsecurity.JSecurityException;
 
 /**
  * @since 0.9
  * @author Les Hazlewood
  */
-public abstract class TextConfiguration extends ResourceConfiguration {
+public class ResourceException extends JSecurityException {
 
-    public TextConfiguration(){}
+    public ResourceException() {
+        super();
+    }
 
-    protected abstract void load( Reader r ) throws ConfigurationException;
-    
-    protected abstract void load( Scanner s ) throws ConfigurationException;
+    public ResourceException(String message) {
+        super(message);
+    }
+
+    public ResourceException(Throwable cause) {
+        super(cause);
+    }
+
+    public ResourceException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
