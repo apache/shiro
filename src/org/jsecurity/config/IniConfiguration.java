@@ -37,8 +37,6 @@ public class IniConfiguration extends TextConfiguration {
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:jsecurity.ini";
    
     public static final String MAIN = "main";
-    public static final String INTERCEPTORS = "interceptors";
-    public static final String URLS = "urls";
 
     public static final String SESSION_MODE_PROPERTY_NAME = "sessionMode";
 
@@ -130,6 +128,8 @@ public class IniConfiguration extends TextConfiguration {
 
         RealmSecurityManager securityManager = newSecurityManagerInstance();
         defaults.put( "securityManager", securityManager );
+        //convenient alias:
+        defaults.put( "sm", securityManager );
         ReflectionBuilder builder = new ReflectionBuilder(defaults);
         Map<String,Object> objects = builder.buildObjects(mainSection);
 

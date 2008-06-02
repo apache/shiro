@@ -60,6 +60,11 @@ public abstract class SecurityManagerFilter extends OncePerRequestFilter {
         }
     }
 
+    protected void setSecurityManager( SecurityManager sm ) {
+        ServletContext servletContext = getServletContext();
+        servletContext.setAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY, sm );
+    }
+
     protected SecurityManager getSecurityManager() {
         ServletContext servletContext = getServletContext();
         return (SecurityManager)servletContext.getAttribute( SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY);
