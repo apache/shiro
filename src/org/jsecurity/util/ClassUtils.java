@@ -67,6 +67,10 @@ public class ClassUtils {
         return newInstance( forName( fqcn ) );
     }
 
+    public static Object newInstance( String fqcn, Object... args ) {
+        return newInstance( forName(fqcn), args );
+    }
+
     public static Object newInstance( Class clazz ) {
         if ( clazz == null ) {
             String msg = "Class method parameter cannot be null.";
