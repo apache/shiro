@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
-import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.cache.ehcache.EhCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
@@ -40,7 +39,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected CacheManager cacheManager;
+    protected CacheManager cacheManager = null;
 
     /**
      * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
@@ -74,7 +73,19 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
                 log.debug( "No CacheManager has been configured.  Attempting to create a default one..." );
             }
             CacheManager manager = createCacheManager();
-            setCacheManager(manager);
+            if ( manager != null ) {
+                setCacheManager(manager);
+            } else {
+                if (log.isInfoEnabled()) {
+                    String msg = "No explicit CacheManager has been configured/injected and Ehcache was not found in " +
+                            "the classpath with which to create a default CacheManager.  Caching is disabled for " +
+                            "this SecurityManager instance and any of its implicitly created children objects. \n\n" +
+                            "If you wish to enhance application performance, you should inject your own " +
+                            CacheManager.class.getName() + " instance via the setCacheManager method, or simply " +
+                            "include ehcache.jar in the classpath to use a suitable default.";
+                    log.info(msg);
+                }
+            }
         } else {
             if ( log.isInfoEnabled() ) {
                 log.info( "Using configured CacheManager [" + cacheManager + "]" );
@@ -83,7 +94,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
     }
 
     protected CacheManager createCacheManager() {
-        CacheManager manager;
+        CacheManager manager = null;
 
         if (JavaEnvironment.isEhcacheAvailable()) {
             if (log.isDebugEnabled()) {
@@ -94,15 +105,9 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
             ehCacheManager.init();
             manager = ehCacheManager;
         } else {
-            if (log.isWarnEnabled()) {
-                String msg = "Ehcache was not found in the classpath.  Reverting to failsafe CacheManager which will " +
-                        "create in-memory HashTable caches.  This is NOT RECOMMENDED for production environments.  " +
-                        "Please ensure ehcache.jar is in the classpath and JSecurity will automatically use a " +
-                        "production-quality CacheManager implementation, or you may alternatively provide your " +
-                        "own via the " + getClass().getName() + "#setCacheManager method.";
-                log.warn(msg);
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Ehcache was not found in the classpath. A default EhCacheManager cannot be created.");
             }
-            manager = new HashtableCacheManager();
         }
 
         return manager;

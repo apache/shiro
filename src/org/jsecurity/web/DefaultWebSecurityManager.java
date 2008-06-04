@@ -15,6 +15,7 @@
  */
 package org.jsecurity.web;
 
+import org.jsecurity.cache.CacheManager;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
@@ -89,11 +90,16 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     protected SessionManager createSessionManager() {
 
+        CacheManager cacheManager = getCacheManager();
+
         if (isHttpSessionMode()) {
             if ( log.isInfoEnabled() ) {
                 log.info( HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (Http Sessions)" );
             }
             ServletContainerSessionManager scsm = new ServletContainerSessionManager();
+            if ( cacheManager != null ) {
+                scsm.setCacheManager(cacheManager);
+            }
             scsm.setSessionEventListeners(getSessionEventListeners());
             return scsm;
         } else {
@@ -101,7 +107,9 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
                 log.info( JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
             }
             DefaultWebSessionManager wsm = new DefaultWebSessionManager();
-            wsm.setCacheManager(getCacheManager());
+            if ( cacheManager != null ) {
+                wsm.setCacheManager(cacheManager);
+            }
             wsm.setSessionEventListeners(getSessionEventListeners());
             wsm.init();
             return wsm;

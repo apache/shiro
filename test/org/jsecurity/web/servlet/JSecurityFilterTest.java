@@ -16,8 +16,6 @@
 package org.jsecurity.web.servlet;
 
 import static org.easymock.EasyMock.*;
-import org.jsecurity.web.DefaultWebSecurityManager;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,22 +38,24 @@ public class JSecurityFilterTest {
         mockServletContext = createMock(ServletContext.class);
 
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
-        expect(mockServletContext.getInitParameter(ServletContextSupport.SESSION_MODE_CONTEXT_PARAM_NAME)).andReturn(null).atLeastOnce();
-        expect(mockServletContext.getAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY)).andReturn(null).atLeastOnce();
-        mockServletContext.setAttribute(eq(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY),isA(DefaultWebSecurityManager.class));
+        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
+        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null).once();
+
+        //expect(mockServletContext.getAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY)).andReturn(null).atLeastOnce();
+        mockServletContext.setAttribute(eq(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY),isA(SecurityManager.class));
     }
 
-    @After
     public void tearDown() throws Exception {
         reset(mockServletContext);
         reset(mockFilterConfig);
 
-        mockServletContext.removeAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY);
+        //mockServletContext.removeAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY);
         replay(mockServletContext);
 
-        filter.destroy();
+        //this.filter.destroy();
 
         verify(mockServletContext);
+        verify(mockFilterConfig);
     }
 
     protected void replayAndVerify() throws Exception {
@@ -65,6 +65,7 @@ public class JSecurityFilterTest {
         this.filter = new JSecurityFilter();
         this.filter.init(mockFilterConfig);
 
+
         verify(mockFilterConfig);
         verify(mockServletContext);
     }
@@ -72,18 +73,6 @@ public class JSecurityFilterTest {
 
     @Test
     public void testDefaultConfig() throws Exception {
-        expect(mockFilterConfig.getInitParameter("config")).andReturn(null);
         replayAndVerify();
     }
-
-    @Test
-    public void testCustomInterceptorConfig() throws Exception {
-        String interceptors = "[interceptors]\n" +
-                "authc = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor\n" +
-                "authc.applicationName = JSecurity Quickstart";
-        
-        expect(mockFilterConfig.getInitParameter("config")).andReturn(interceptors);
-        replayAndVerify();
-    }
-
 }

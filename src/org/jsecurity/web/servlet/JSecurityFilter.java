@@ -176,6 +176,9 @@ import java.util.List;
  */
 public class JSecurityFilter extends SecurityManagerFilter {
 
+    public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";
+    public static final String CONFIG_INIT_PARAM_NAME = "config";
+
     protected String config = null;
     protected String configClassName = WebIniConfiguration.class.getName();
 
@@ -191,7 +194,7 @@ public class JSecurityFilter extends SecurityManagerFilter {
     protected void applyInitParams() {
         FilterConfig config = getFilterConfig();
 
-        String configCN = clean(config.getInitParameter("configClassName"));
+        String configCN = clean(config.getInitParameter(CONFIG_CLASS_NAME_INIT_PARAM_NAME));
         if (configCN != null) {
             if (ClassUtils.isAvailable(configCN)) {
                 this.configClassName = configCN;
@@ -203,17 +206,17 @@ public class JSecurityFilter extends SecurityManagerFilter {
             }
         }
 
-        this.config = clean(config.getInitParameter("config"));
+        this.config = clean(config.getInitParameter(CONFIG_INIT_PARAM_NAME));
     }
 
     protected WebConfiguration configure() {
 
-        WebConfiguration config = (WebConfiguration) ClassUtils.newInstance(this.configClassName, getFilterConfig());
+        WebConfiguration config = (WebConfiguration) ClassUtils.newInstance(this.configClassName);
 
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             String msg = "Attempting to inject the FilterConfig (using 'setFilterConfig' method) into the " +
                     "instantiated WebConfiguration for any wrapped Filter initialization...";
-            log.info(msg);
+            log.debug(msg);
         }
         try {
             BeanUtils.setProperty(config, "filterConfig", getFilterConfig());
@@ -229,6 +232,11 @@ public class JSecurityFilter extends SecurityManagerFilter {
             }
         }
 
+        //apply any in-line config:
+        if ( config instanceof WebIniConfiguration && this.config != null ) {
+            ((WebIniConfiguration)config).load(this.config);
+        }
+        
         return config;
     }
 
