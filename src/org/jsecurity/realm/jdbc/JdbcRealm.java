@@ -168,10 +168,6 @@ public class JdbcRealm extends AuthorizingRealm {
     |               M E T H O D S               |
     ============================================*/
 
-    public void afterAccountCacheSet() {
-        setAuthenticationTokenClass( UsernamePasswordToken.class );
-    }
-
     protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
 
         UsernamePasswordToken upToken = (UsernamePasswordToken)token;

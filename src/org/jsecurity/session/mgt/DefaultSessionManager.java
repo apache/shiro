@@ -68,9 +68,9 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
      * not already been explicitly set via {@link #setSessionDAO}, relying upon the configured
      * {@link #setCacheManager cacheManager} to determine caching strategies.
      *
-     * <p><b>N.B.</b> This implementation constructs a {@link org.jsecurity.session.mgt.eis.MemorySessionDAO} instance, relying on a configured
-     * {@link #setCacheManager cacheManager} to provide production-quality cache management.  Please ensure that
-     * the <tt>CacheManager</tt> property is configured for production environments, since the
+     * <p><b>N.B.</b> This implementation constructs a {@link org.jsecurity.session.mgt.eis.MemorySessionDAO} instance,
+     * relying on a configured {@link #setCacheManager cacheManager} to provide production-quality cache management.
+     * Please ensure that the <tt>CacheManager</tt> property is configured for production environments, since the
      * <tt>MemorySessionDAO</tt> implementation defaults to a
      * {@link org.jsecurity.cache.HashtableCacheManager HashtableCacheManager}
      * (the <tt>HashtableCacheManager</tt> is NOT RECOMMENDED for production environments).
