@@ -16,6 +16,7 @@
 package org.jsecurity.web.servlet;
 
 import static org.easymock.EasyMock.*;
+import org.jsecurity.mgt.SecurityManager;
 import org.junit.Before;
 import org.junit.Test;
 

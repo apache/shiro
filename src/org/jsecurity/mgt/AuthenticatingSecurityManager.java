@@ -140,6 +140,9 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         if (getAuthenticator() == null) {
             Authenticator authc = createAuthenticator();
             setAuthenticator(authc);
+            if ( log.isDebugEnabled() ) {
+                log.debug("Set implicitly created Authenticator" );
+            }
         }
     }
 

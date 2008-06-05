@@ -188,6 +188,6 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         if ( this.realmPrincipals != null && !realmPrincipals.isEmpty() ) {
             return realmPrincipals.hashCode();
         }
-        return 0;
+        return super.hashCode();
     }
 }

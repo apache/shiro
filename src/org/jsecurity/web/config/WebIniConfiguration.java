@@ -51,8 +51,9 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
     protected FilterConfig filterConfig = null;
 
     protected List<Filter> filters = null;
-    
-    public WebIniConfiguration(){}
+
+    public WebIniConfiguration() {
+    }
 
     public FilterConfig getFilterConfig() {
         return filterConfig;
@@ -74,12 +75,13 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
      * 1.  First builds the interceptor and/or filter instances.
      * 2.  Applys url mappings to these interceptors and/or filters
      * 3.  Creates a collection of Filter objects that will be used by the JSecurityFilter.
+     *
      * @param sections
      */
     protected void afterSecurityManagerSet(Map<String, Map<String, String>> sections) {
         //interceptors section:
-        Map<String,String> section = sections.get(INTERCEPTORS);
-        Map<String,Object> interceptors = ensureWebInterceptors(section);
+        Map<String, String> section = sections.get(INTERCEPTORS);
+        Map<String, Object> interceptors = getWebInterceptors(section);
 
         //urls section:
         section = sections.get(URLS);
@@ -88,11 +90,11 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
         this.filters = convertToFilters(interceptors);
     }
 
-    protected Map<String,Object> ensureWebInterceptors( Map<String,String> interceptorsSection ) {
+    protected Map<String, Object> getWebInterceptors(Map<String, String> interceptorsSection) {
 
         Map<String, Object> interceptors = buildDefaultInterceptors();
 
-        if ( interceptorsSection != null && !interceptorsSection.isEmpty() ) {
+        if (interceptorsSection != null && !interceptorsSection.isEmpty()) {
             ReflectionBuilder builder = new ReflectionBuilder(interceptors);
             interceptors = builder.buildObjects(interceptorsSection);
         }
@@ -109,21 +111,20 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
         return interceptors;
     }
 
-    public Map<String,Object> applyUrls( Map<String,Object> interceptors, Map<String,String> urls ) {
+    public Map<String, Object> applyUrls(Map<String, Object> interceptors, Map<String, String> urls) {
 
-        if ( urls == null || urls.isEmpty() || interceptors == null || interceptors.isEmpty() ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No urls or filters/interceptors to process." );
+        if (urls == null || urls.isEmpty() ) {
+            if (log.isDebugEnabled()) {
+                log.debug("No urls to process.");
             }
             return interceptors;
         }
-
 
         if (log.isTraceEnabled()) {
             log.trace("Before url processing.");
         }
 
-        for( Map.Entry<String,String> entry : urls.entrySet() ) {
+        for (Map.Entry<String, String> entry : urls.entrySet()) {
             String path = entry.getKey();
             String value = entry.getValue();
 
@@ -171,53 +172,49 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
         return interceptors;
     }
 
-    protected List<Filter> convertToFilters( Map<String,Object> interceptors ) throws ConfigurationException {
+    protected List<Filter> convertToFilters(Map<String, Object> interceptors) throws ConfigurationException {
+
+        if (interceptors == null || interceptors.isEmpty()) {
+            return null;
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Interceptors configured: " + interceptors.size());
         }
 
-        List<Filter> filters = null;
+        List<Filter> filters = new ArrayList<Filter>(interceptors.size());
 
-        if (interceptors != null && !interceptors.isEmpty()) {
+        for (String key : interceptors.keySet()) {
+            Object value = interceptors.get(key);
+            Filter filter = null;
 
-            filters = new ArrayList<Filter>(interceptors.size());
+            if (value instanceof Filter) {
+                filter = (Filter) value;
+            } else if (value instanceof WebInterceptor) {
+                WebInterceptor interceptor = (WebInterceptor) value;
+                WebInterceptorFilter wiFilter = new WebInterceptorFilter();
+                wiFilter.setWebInterceptor(interceptor);
+                filter = wiFilter;
+            } else if (value != null) {
+                String msg = "filtersAndInterceptors collection contains an object of type [" +
+                        value.getClass().getName() + "].  This instance does not implement " +
+                        Filter.class.getName() + " or the " + WebInterceptor.class.getName() + " interfaces.  " +
+                        "Only filters and interceptors may be configured.";
+                throw new ConfigurationException(msg);
+            }
 
-            for (String key : interceptors.keySet()) {
-
-                Object value = interceptors.get(key);
-
-                Filter filter = null;
-
-                if ( value instanceof Filter ) {
-                    filter = (Filter)value;
-                } else if ( value instanceof WebInterceptor) {
-                    WebInterceptor interceptor = (WebInterceptor) value;
-                    WebInterceptorFilter wiFilter = new WebInterceptorFilter();
-                    wiFilter.setWebInterceptor(interceptor);
-                    filter = wiFilter;
-                } else if ( value != null ) {
-                    String msg = "filtersAndInterceptors collection contains an object of type [" +
-                            value.getClass().getName() + "].  This instance does not implement " +
-                            Filter.class.getName() + " or the " + WebInterceptor.class.getName() + " interfaces.  " +
-                            "Only filters and interceptors should be configured.";
-                    throw new ConfigurationException(msg);
-
+            if (filter != null) {
+                try {
+                    filter.init(getFilterConfig());
+                } catch (ServletException e) {
+                    throw new ConfigurationException(e);
                 }
-
-                if (filter != null) {
-                    try {
-                        filter.init(getFilterConfig());
-                    } catch (ServletException e) {
-                        throw new ConfigurationException(e);
-                    }
-                    filters.add(filter);
-                }
+                filters.add(filter);
             }
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Configured and/or wrapped " + (filters != null ? filters.size() : 0) + " filters.");
+            log.debug("Configured and/or wrapped " + filters.size() + " filters.");
         }
 
         return filters;
