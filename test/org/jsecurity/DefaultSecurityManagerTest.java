@@ -19,6 +19,7 @@ import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
+import org.jsecurity.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,11 +40,13 @@ public class DefaultSecurityManagerTest {
     @Before
     public void setup() {
         sm = new DefaultSecurityManager();
+        ThreadContext.clear();
     }
 
     @After
     public void tearDown() {
         sm.destroy();
+        ThreadContext.clear();
     }
 
     @Test

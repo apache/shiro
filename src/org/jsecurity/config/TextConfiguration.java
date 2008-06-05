@@ -15,6 +15,10 @@
  */
 package org.jsecurity.config;
 
+import org.jsecurity.JSecurityException;
+import org.jsecurity.mgt.SecurityManager;
+import org.jsecurity.util.Initializable;
+
 import java.io.Reader;
 import java.util.Scanner;
 
@@ -22,11 +26,34 @@ import java.util.Scanner;
  * @since 0.9
  * @author Les Hazlewood
  */
-public abstract class TextConfiguration extends ResourceConfiguration {
+public abstract class TextConfiguration extends ResourceConfiguration implements Initializable {
+
+    private String config = null;
 
     public TextConfiguration(){}
+
+    public String getConfig() {
+        return config;
+    }
+
+    public void setConfig(String config) {
+        this.config = config;
+    }
 
     protected abstract void load( Reader r ) throws ConfigurationException;
     
     protected abstract void load( Scanner s ) throws ConfigurationException;
+
+    public void init() throws JSecurityException {
+        SecurityManager securityManager = getSecurityManager();
+        if ( securityManager == null ) {
+            String config = getConfig();
+            if ( config != null ) {
+                if ( log.isInfoEnabled() ) {
+                    log.info( "Attempting to load Configuration based on 'config' property." );
+                }
+                load(config);
+            }
+        }
+    }
 }

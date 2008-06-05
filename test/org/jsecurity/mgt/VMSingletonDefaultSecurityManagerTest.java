@@ -19,7 +19,10 @@ import org.jsecurity.SecurityUtils;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.subject.Subject;
+import org.jsecurity.util.ThreadContext;
+import org.junit.After;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -29,6 +32,16 @@ import org.junit.Test;
  * @since May 8, 2008 12:26:23 AM
  */
 public class VMSingletonDefaultSecurityManagerTest {
+
+    @Before
+    public void setUp() {
+        ThreadContext.clear();
+    }
+
+    @After
+    public void tearDown() {
+        ThreadContext.clear();    
+    }
 
     @Test
     public void testVMSingleton() {

@@ -143,7 +143,9 @@ public class IniConfiguration extends TextConfiguration {
         for( Map.Entry<String,Object> entry : objects.entrySet() ) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            if ( value instanceof RealmFactory ) {
+            if ( value instanceof RealmSecurityManager ) {
+                securityManager = (RealmSecurityManager)value;
+            } else if ( value instanceof RealmFactory ) {
                 RealmFactory factory = (RealmFactory)value;
                 LifecycleUtils.init(factory);
                 Collection<Realm> factoryRealms = factory.getRealms();

@@ -19,6 +19,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.jsecurity.config.ConfigurationException;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.util.ClassUtils;
+import org.jsecurity.util.LifecycleUtils;
 import static org.jsecurity.util.StringUtils.clean;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
@@ -187,7 +188,16 @@ public class JSecurityFilter extends SecurityManagerFilter {
     protected void onFilterConfigSet() throws Exception {
         applyInitParams();
         WebConfiguration config = configure();
-        setSecurityManager(config.getSecurityManager());
+        SecurityManager sm = config.getSecurityManager();
+        if ( sm == null ) {
+            if ( log.isInfoEnabled() ) {
+                log.info("Configuration instance [" + config + "] did not provide a SecurityManager.  No config " +
+                        "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");   
+            }
+            sm = new DefaultWebSecurityManager();
+            LifecycleUtils.init(sm);
+        }
+        setSecurityManager(sm);
         this.filters = config.getFilters();
     }
 
@@ -232,11 +242,20 @@ public class JSecurityFilter extends SecurityManagerFilter {
             }
         }
 
-        //apply any in-line config:
-        if ( config instanceof WebIniConfiguration && this.config != null ) {
-            ((WebIniConfiguration)config).load(this.config);
+        if ( this.config != null ) {
+            try {
+                BeanUtils.setProperty(config, "config", this.config );
+            } catch (Exception e) {
+                String msg = "The 'config' filter param was specified, but there is no " +
+                        "'setConfig(String)' method on the Configuration instance [" + config + "].  If you do " +
+                        "not require the 'config' filter param, please comment it out, or if you do need it, " +
+                        "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
+                throw new ConfigurationException(msg);
+            }
         }
-        
+
+        LifecycleUtils.init(config);
+
         return config;
     }
 
