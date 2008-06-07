@@ -30,7 +30,6 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
     protected Class<? extends Annotation> annotationClass;
 
     public void init() {
-        super.init();
         if (annotationClass == null) {
             String msg = "annotationClass property must be set";
             throw new IllegalStateException(msg);

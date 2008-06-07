@@ -25,7 +25,7 @@ import org.jsecurity.subject.Subject;
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
  * leaves AOP implementation specifics to be handled by subclass implementations.  This implementation primarily
  * enables a <tt>Log</tt> and makes available the application's {@link org.jsecurity.mgt.SecurityManager SecurityManager}
- * for use by subclasses.
+ * for use by subclasses, if one is provided (otherwise the subject will be retrieved using SecurityUtils).
  *
  * @since 0.2
  * @author Les Hazlewood
