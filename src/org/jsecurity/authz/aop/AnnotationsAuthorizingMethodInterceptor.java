@@ -40,7 +40,6 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
     protected Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors = null;
 
     public void init() {
-        super.init();
         if (methodInterceptors == null) {
             if (log.isInfoEnabled()) {
                 log.info("No methodAuthorizers configured.  " +

@@ -67,10 +67,6 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     public void afterPropertiesSet() throws Exception {
-        if ( getSecurityManager() == null ) {
-            String msg = "SecurityManager property must be set";
-            throw new IllegalStateException( msg );
-        }
         if( getAdvice() == null ) {
             if ( log.isTraceEnabled() ) {
                 log.trace( "No authorization advice explicitly configured via the 'advice' " +

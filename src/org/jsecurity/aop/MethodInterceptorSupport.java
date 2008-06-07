@@ -17,9 +17,9 @@ package org.jsecurity.aop;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
-import org.jsecurity.util.Initializable;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -30,19 +30,13 @@ import org.jsecurity.util.Initializable;
  * @since 0.2
  * @author Les Hazlewood
  */
-public abstract class MethodInterceptorSupport implements MethodInterceptor, Initializable {
+public abstract class MethodInterceptorSupport implements MethodInterceptor {
 
     protected transient final Log log = LogFactory.getLog( getClass() );
 
     protected org.jsecurity.mgt.SecurityManager securityManager = null;
 
     public MethodInterceptorSupport(){}
-
-    public void init() {
-        if ( securityManager == null ) {
-            throw new IllegalStateException( "SecurityManager property must be set." );
-        }
-    }
 
     public SecurityManager getSecurityManager() {
         return securityManager;
@@ -53,6 +47,10 @@ public abstract class MethodInterceptorSupport implements MethodInterceptor, Ini
     }
 
     protected Subject getSubject() {
-        return getSecurityManager().getSubject();
+        if( getSecurityManager() != null ) {
+            return getSecurityManager().getSubject();
+        } else {
+            return SecurityUtils.getSubject();
+        }
     }
 }

@@ -70,6 +70,15 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         }
     }
 
+    public SimpleAuthorizingAccount(PrincipalCollection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+        this(principals,credentials,realmName);
+        addRoles(roleNames);
+        //only create a private role if there are permissions:
+        if ( permissions != null && !permissions.isEmpty() ) {
+            addPrivateRole(getPrincipals(),permissions);
+        }
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
