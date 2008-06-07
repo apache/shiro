@@ -130,7 +130,13 @@ public class FormAuthenticationWebInterceptor extends AuthenticationWebIntercept
         String password = getPassword(request,response);
         boolean rememberMe = isRememberMe(request,response);
         InetAddress inet = getInetAddress(request,response);
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password.toCharArray(), rememberMe, inet );
+
+        char[] passwordChars = null;
+        if( password != null ) {
+            passwordChars = password.toCharArray();
+        }
+
+        UsernamePasswordToken token = new UsernamePasswordToken(username, passwordChars, rememberMe, inet );
 
         try {
             getSubject(request,response).login(token);
