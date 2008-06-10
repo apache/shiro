@@ -38,26 +38,28 @@ public class IniResource extends TextResource {
 
     protected Map<String, Map<String,String>> sections = new LinkedHashMap<String, Map<String,String>>();
 
-    public IniResource(){}
+    public IniResource(){
+    }
 
     public IniResource(String configBodyOrResourcePath) {
-        super(configBodyOrResourcePath);
+        load(configBodyOrResourcePath);
     }
 
     public IniResource(String configBodyOrResourcePath, String charsetName) {
-        super(configBodyOrResourcePath, charsetName);
+        setCharsetName(charsetName);
+        load( configBodyOrResourcePath );
     }
 
     public IniResource(InputStream is) {
-        super(is);
+        load(is);
     }
 
     public IniResource(Reader r) {
-        super(r);
+        load(r);
     }
 
     public IniResource(Scanner s) {
-        super(s);
+        load(s);
     }
 
     public Map<String, Map<String, String>> getSections() {

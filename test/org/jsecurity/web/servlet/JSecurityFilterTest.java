@@ -17,7 +17,6 @@ package org.jsecurity.web.servlet;
 
 import static org.easymock.EasyMock.*;
 import org.jsecurity.mgt.SecurityManager;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.FilterConfig;
@@ -33,16 +32,14 @@ public class JSecurityFilterTest {
     private FilterConfig mockFilterConfig;
     private ServletContext mockServletContext;
 
-    @Before
-    public void setUp() throws Exception {
+    protected void setUp(String config) {
         mockFilterConfig = createMock(FilterConfig.class);
         mockServletContext = createMock(ServletContext.class);
 
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
-        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null).once();
+        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
 
-        //expect(mockServletContext.getAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY)).andReturn(null).atLeastOnce();
         mockServletContext.setAttribute(eq(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY),isA(SecurityManager.class));
     }
 
@@ -74,6 +71,14 @@ public class JSecurityFilterTest {
 
     @Test
     public void testDefaultConfig() throws Exception {
+        setUp(null);
+        replayAndVerify();
+    }
+
+    @Test
+    public void testSimpleConfig() throws Exception {
+        setUp("[interceptors]\n" +
+                "authc.successUrl = /index.jsp");
         replayAndVerify();
     }
 }

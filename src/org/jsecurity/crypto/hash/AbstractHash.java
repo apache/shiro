@@ -32,7 +32,7 @@ import java.util.Arrays;
  * can be useful.
  * 
  * <p>This class and its subclasses support hashing with additional capabilities of salting and multiple iterations via
- * overloaded constructors</tt>.
+ * overloaded constructors</p>.
  *
  * @author Les Hazlewood
  * @since 0.9

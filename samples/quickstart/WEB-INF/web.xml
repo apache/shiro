@@ -8,7 +8,7 @@
     <filter>
         <filter-name>JSecurityFilter</filter-name>
         <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
-        <init-param><param-name>config</param-name><param-value>
+        <!-- <init-param><param-name>config</param-name><param-value>
 
             # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
             # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
@@ -21,7 +21,7 @@
             [urls]
             /account/** = authc
             /remoting/** = authc, roles[b2bClient], perms[remote:invoke:"lan,wan"]
-        </param-value></init-param>
+        </param-value></init-param> -->
     </filter>
 
     <filter-mapping>
