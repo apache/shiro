@@ -64,8 +64,8 @@ public abstract class TextResource extends AbstractResource {
         try {
             super.load(configBodyOrResourcePath);
         } catch ( Exception e ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Unable to load text resource from the string argument.  Attempting to use the string " +
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Unable to load text resource from the string argument.  Attempting to use the string " +
                         "argument as the text resource itself...", e );
             }
             StringReader sr = new StringReader(configBodyOrResourcePath);

@@ -33,6 +33,7 @@
         <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
         <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>        
         <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
+        <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" transitive="false" conf="samples"/>
         <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
         <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
         <dependency org="org.springframework" name="spring-webmvc" rev="2.5.1" transitive="false" conf="samples"/>

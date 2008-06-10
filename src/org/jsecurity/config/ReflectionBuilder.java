@@ -27,18 +27,20 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 public class ReflectionBuilder {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected Map<String,Object> objects = new LinkedHashMap<String,Object>();
+    protected Map<String, Object> objects;
 
-    public ReflectionBuilder(){}
+    public ReflectionBuilder() {
+        setObjects(new LinkedHashMap<String, Object>());
+    }
 
-    public ReflectionBuilder( Map<String,Object> defaults ) {
+    public ReflectionBuilder(Map<String, Object> defaults) {
         setObjects(defaults);
     }
 
@@ -50,7 +52,7 @@ public class ReflectionBuilder {
         this.objects = objects;
     }
 
-    private static String[] splitKeyValue( String line ) {
+    private static String[] splitKeyValue(String line) {
         try {
             return StringUtils.splitKeyValue(line);
         } catch (ParseException e) {
@@ -93,12 +95,11 @@ public class ReflectionBuilder {
         return objects;
     }
 
-    public Map<String,Object> buildObjects( Map<String,String> kvPairs ) {
-        if ( kvPairs == null || kvPairs.isEmpty() ) {
-            return null;
-        }
-        for( Map.Entry<String,String> entry : kvPairs.entrySet() ) {
-            applyProperty(entry.getKey(), entry.getValue(), objects );
+    public Map<String, Object> buildObjects(Map<String, String> kvPairs) {
+        if (kvPairs != null && !kvPairs.isEmpty()) {
+            for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
+                applyProperty(entry.getKey(), entry.getValue(), objects);
+            }
         }
 
         return objects;
@@ -152,12 +153,13 @@ public class ReflectionBuilder {
         } catch (Exception e) {
             //perhaps the value was a reference to an object already defined:
 
-            Object o = ( objects != null && !objects.isEmpty() ? objects.get(value) : null );
-            if ( o != null ) {
+            Object o = (objects != null && !objects.isEmpty() ? objects.get(value) : null);
+            if (o != null) {
                 try {
-                    BeanUtils.setProperty(object, propertyName, o );
+                    BeanUtils.setProperty(object, propertyName, o);
                     return;
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
             String msg = "Unable to set property [" + propertyName + "] with value [" + value + "]";
