@@ -15,9 +15,9 @@
  */
 package org.jsecurity.spring;
 
-import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.web.DefaultWebSecurityManager;
 import org.jsecurity.web.servlet.JSecurityFilter;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * <p>Relies on Spring to define and initialize the JSecurity SecurityManager instance (and all of its dependencies)
  * and makes it avaialble to this filter by performing a Spring bean lookup.</p>
- *
+ * <p/>
  * <p>The behavior used by this filter is as follow:
  * <ol>
  * <li>If a 'securityManagerBeanName' init-param is set, retrieve that sec manager from Spring.</li>
@@ -75,23 +75,23 @@ public class SpringJSecurityFilter extends JSecurityFilter {
         String beanName = getSecurityManagerBeanName();
 
         SecurityManager securityManager = null;
-        if( beanName != null ) {
+        if (beanName != null) {
             securityManager = (SecurityManager) appCtx.getBean(beanName, SecurityManager.class);
         }
 
-        if( securityManager == null ) {
+        if (securityManager == null) {
             securityManager = getSecurityManagerByType(appCtx);
         }
 
-        if( securityManager == null ) {
+        if (securityManager == null) {
             securityManager = createDefaultSecurityManagerFromRealms(appCtx);
         }
 
         if (securityManager == null) {
             String msg = "There is no " + SecurityManager.class.getName() + " instance available in the " +
-                "Spring WebApplicationContext.  A bean of type " + SecurityManager.class.getName() + " would be " +
-                "automatically detected.  You can also specify which bean is retrieved by " +
-                "setting this filter's 'securityManagerBeanName' init-param.";
+                    "Spring WebApplicationContext.  A bean of type " + SecurityManager.class.getName() + " would be " +
+                    "automatically detected.  You can also specify which bean is retrieved by " +
+                    "setting this filter's 'securityManagerBeanName' init-param.";
             throw new ApplicationContextException(msg);
         }
         Object retrieved = appCtx.getBean(beanName);
@@ -103,12 +103,12 @@ public class SpringJSecurityFilter extends JSecurityFilter {
 
     @SuppressWarnings("unchecked")
     private SecurityManager createDefaultSecurityManagerFromRealms(ApplicationContext appCtx) {
-        DefaultSecurityManager securityManager = null;
+        DefaultWebSecurityManager securityManager = null;
 
         Collection<Realm> realms = appCtx.getBeansOfType(Realm.class).values();
-        if( !realms.isEmpty() ) {
-            securityManager = new DefaultSecurityManager();
-            securityManager.setRealms( realms );
+        if (!realms.isEmpty()) {
+            securityManager = new DefaultWebSecurityManager();
+            securityManager.setRealms(realms);
             securityManager.init();
         }
 
@@ -120,22 +120,22 @@ public class SpringJSecurityFilter extends JSecurityFilter {
 
         SecurityManager securityManager = null;
 
-        Map<String,SecurityManager> securityManagers = appCtx.getBeansOfType( SecurityManager.class );
+        Map<String, SecurityManager> securityManagers = appCtx.getBeansOfType(SecurityManager.class);
 
-        if( securityManagers.size() > 1 ) {
+        if (securityManagers.size() > 1) {
 
             // If more than one are declared, see if one is named "securityManager"
-            securityManager = securityManagers.get( DEFAULT_SECURITY_MANAGER_BEAN_ID );
+            securityManager = securityManagers.get(DEFAULT_SECURITY_MANAGER_BEAN_ID);
 
-            if( securityManager == null ) {
+            if (securityManager == null) {
                 String msg = "There is more than one bean of type " + SecurityManager.class.getName() + " available in the " +
-                    "Spring WebApplicationContext.  Please specify which bean should be used by " +
-                    "setting this filter's 'securityManagerBeanName' init-param or by naming one of the " +
-                    "security managers '" + DEFAULT_SECURITY_MANAGER_BEAN_ID + "'.";
+                        "Spring WebApplicationContext.  Please specify which bean should be used by " +
+                        "setting this filter's 'securityManagerBeanName' init-param or by naming one of the " +
+                        "security managers '" + DEFAULT_SECURITY_MANAGER_BEAN_ID + "'.";
                 throw new ApplicationContextException(msg);
             }
 
-        } else if( securityManagers.size() == 1 ) {
+        } else if (securityManagers.size() == 1) {
 
             securityManager = securityManagers.values().iterator().next();
         }
@@ -146,7 +146,7 @@ public class SpringJSecurityFilter extends JSecurityFilter {
     protected org.jsecurity.mgt.SecurityManager getSecurityManager() {
         ServletContext sc = getFilterConfig().getServletContext();
         ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
-        return getSecurityManager( appCtx );
+        return getSecurityManager(appCtx);
     }
 
 }

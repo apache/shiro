@@ -18,7 +18,9 @@ package org.jsecurity.web.config;
 import org.jsecurity.config.Configuration;
 
 import javax.servlet.Filter;
-import java.util.List;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * TODO - Class JavaDoc
@@ -28,6 +30,18 @@ import java.util.List;
  */
 public interface WebConfiguration extends Configuration {
 
-    public List<Filter> getFilters();
- 
+    /**
+     * Returns the filter chain that should be executed for the given request, or <code>null</code> if the
+     * original chain should be used.
+     * <p/>
+     * <p>This method allows a Configuration implementation to define arbitrary security {@link Filter Filter}
+     * chains for any given request or URL pattern.
+     *
+     * @param request       the incoming ServletRequest
+     * @param response      the outgoing ServletResponse
+     * @param originalChain the original <code>FilterChain</code> intercepted by the JSecurityFilter.
+     * @return the filter chain that should be executed for the given request, or <code>null</code> if the
+     *         original chain should be used.
+     */
+    FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain);
 }

@@ -32,25 +32,24 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Main ServletFilter that configures and enables all JSecurity functions within a web application.
- *
+ * <p/>
  * The following is a fully commented example that documents how to configure it:
- *
+ * <p/>
  * <pre>&lt;filter&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
- *
+ * <p/>
  * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
  * # Any commented values below are JSecurity's defaults.  If you want to change any values, you only
  * # need to uncomment the lines you want to change.
- *
+ * <p/>
  * [main]
  * # The 'main' section defines JSecurity-wide configuration.
  * #
@@ -61,8 +60,9 @@ import java.util.List;
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
  * # and changing 'http' to 'jsecurity'
  * #
- * #sessionMode = http
- *
+ * #securityManager = {@link org.jsecurity.web.DefaultWebSecurityManager org.jsecurity.web.DefaultWebSecurityManager}
+ * #securityManager.{@link org.jsecurity.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
+ * <p/>
  * [interceptors]
  * # This section defines the 'pool' of all the available interceptors that are available to the url path
  * # definitions below in the [urls] section.
@@ -75,44 +75,38 @@ import java.util.List;
  * # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
  * # affect the user experience.
  * #
- * # Form Authentication interceptor: requires the requestiing user to be authenticated for the request to continue
- * # and if they are not, forces the user to login via a login page that you specify.  If the login attempt fails
- * # the AuthenticationException fully qualified class name will be placed as a request attribute under the
- * # 'failureKeyAttribute' name below.  This FQCN can then be used as an i18n key or lookup mechanism that can then
- * # be used to show the user why their login attempt failed (e.g. no account, incorrect password, etc).
- * #authc = org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor
- * #authc.url = /login.jsp
- * #authc.usernameParam = username
- * #authc.passwordParam = password
- * #authc.rememberMeParam = rememberMe
- * #authc.successUrl = /login.jsp
- * #authc.failureKeyAttribute = org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor_AUTHC_FAILURE_KEY
+ * # Form-based Authentication interceptor:
+ * #<a name="authc"></a>authc = {@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor}
+ * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setUrl(String) url} = /login.jsp
+ * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setUsernameParam(String) usernameParam} = username
+ * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setPasswordParam(String) passwordParam} = password
+ * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setRememberMeParam(String) rememberMeParam} = rememberMe
+ * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setSuccessUrl(String) successUrl}  = /login.jsp
+ * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setFailureKeyAtribute(String) failureKeyAttribute} = {@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#DEFAULT_ERROR_KEY_ATTRIBUTE_NAME}
  * #
- * # Http BASIC Authentication interceptor: requires the requesting user to be authenticated for the request
- * # to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
- * # Upon successful login, they're allowed to continue on to the requested resource/url.
- * #authcBasic = org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor
- * #authcBasic.applicationName = JSecurity Quickstart
+ * # Http BASIC Authentication interceptor:
+ * #<a name="authcBasic"></a>authcBasic = {@link org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor}
+ * #authcBasic.{@link org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor#setApplicationName(String) applicationName} = application
  * #
  * # Roles interceptor: requires the requesting user to have one or more roles for the request to continue.
  * # If they do not have the specified roles, they are redirected to the specified URL.
- * #roles = org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor
- * #roles.url =
+ * #<a name="roles"></a>roles = {@link org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor}
+ * #roles.{@link org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor#setUrl(String) url} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.
  * #
  * # Permissions interceptor: requires the requesting user to have one or more permissions for the request to
  * # continue, and if they do not, redirects them to the specified URL.
- * #perms = org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor
- * #perms.url =
+ * #<a name="perms"></a>perms = {@link org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor}
+ * #perms.{@link org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor#setUrl(String) url} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.  Many
  * # applications like to use the same url specified in roles.url above.
  * #
  * #
- * # Define your own interceptors here.  To properly handle path matching, all interceptor implementations
- * # should extend the org.jsecurity.web.interceptor.PathMatchingWebInterceptor abstract class.
- *
+ * # Define your own interceptors here.  To properly handle url path matching (see the [urls] section below), your
+ * # interceptor should extend the {@link org.jsecurity.web.interceptor.PathMatchingWebInterceptor PathMatchingWebInterceptor} abstract class.
+ * <p/>
  * [urls]
  * # This section defines url path mappings.  Each mapping entry must be on a single line and conform to the
  * # following representation:
@@ -158,14 +152,14 @@ import java.util.List;
  * # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
  * # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
  * # commas.)
- *
- * /account/** = authcBasic
- * /remoting/** = authcBasic, roles[b2bClient], perms[remote:invoke:"lan,wan"]
- *
+ * <p/>
+ * /account/** = <a href="#authcBasic">authcBasic</a>
+ * /remoting/** = <a href="#authcBasic">authcBasic</a>, <a href="#roles">roles</a>[b2bClient], <a href="#perms">perms</a>[remote:invoke:"lan,wan"]
+ * <p/>
  * &lt;/param-value&gt;&lt;/init-param&gt;
  * &lt;/filter&gt;
- *
- *
+ * <p/>
+ * <p/>
  * &lt;filter-mapping&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
@@ -175,30 +169,53 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class JSecurityFilter extends SecurityManagerFilter {
+public class JSecurityFilter extends OncePerRequestFilter {
+
+    public static final String SECURITY_MANAGER_CONTEXT_KEY = SecurityManager.class.getName() + "_SERVLET_CONTEXT_KEY";
 
     public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";
     public static final String CONFIG_INIT_PARAM_NAME = "config";
 
-    protected String config = null;
-    protected String configClassName = WebIniConfiguration.class.getName();
+    protected String config;
+    protected String configClassName;
+    protected WebConfiguration configuration;
 
-    private List<Filter> filters;
+    public JSecurityFilter() {
+        this.configClassName = WebIniConfiguration.class.getName();
+    }
+
+    public WebConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(WebConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     protected void onFilterConfigSet() throws Exception {
         applyInitParams();
         WebConfiguration config = configure();
         SecurityManager sm = config.getSecurityManager();
-        if ( sm == null ) {
-            if ( log.isInfoEnabled() ) {
+        if (sm == null) {
+            if (log.isInfoEnabled()) {
                 log.info("Configuration instance [" + config + "] did not provide a SecurityManager.  No config " +
-                        "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");   
+                        "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
             }
             sm = new DefaultWebSecurityManager();
             LifecycleUtils.init(sm);
         }
         setSecurityManager(sm);
-        this.filters = config.getFilters();
+        setConfiguration(config);
+    }
+
+    protected void setSecurityManager(SecurityManager sm) {
+        ServletContext servletContext = getServletContext();
+        servletContext.setAttribute(SECURITY_MANAGER_CONTEXT_KEY, sm);
+    }
+
+    protected SecurityManager getSecurityManager() {
+        ServletContext servletContext = getServletContext();
+        return (SecurityManager) servletContext.getAttribute(SECURITY_MANAGER_CONTEXT_KEY);
     }
 
     protected void applyInitParams() {
@@ -242,9 +259,9 @@ public class JSecurityFilter extends SecurityManagerFilter {
             }
         }
 
-        if ( this.config != null ) {
+        if (this.config != null) {
             try {
-                BeanUtils.setProperty(config, "config", this.config );
+                BeanUtils.setProperty(config, "config", this.config);
             } catch (Exception e) {
                 String msg = "The 'config' filter param was specified, but there is no " +
                         "'setConfig(String)' method on the Configuration instance [" + config + "].  If you do " +
@@ -265,23 +282,12 @@ public class JSecurityFilter extends SecurityManagerFilter {
         if (secMgr instanceof DefaultWebSecurityManager) {
             return ((DefaultWebSecurityManager) secMgr).isHttpSessionMode();
         } else {
-            return super.isHttpSessions();
+            return true;
         }
     }
 
     protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,
                                     FilterChain origChain) throws ServletException, IOException {
-        FilterChain chain = origChain;
-        if (this.filters != null && !this.filters.isEmpty()) {
-            if (log.isTraceEnabled()) {
-                log.trace("Filters and/or WebInterceptors configured - wrapping FilterChain.");
-            }
-            chain = new FilterChainWrapper(chain, this.filters);
-        } else {
-            if (log.isTraceEnabled()) {
-                log.trace("No Filters or WebInterceptors configured - FilterChain will not be wrapped.");
-            }
-        }
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -300,6 +306,18 @@ public class JSecurityFilter extends SecurityManagerFilter {
         WebUtils.bind(response);
         ThreadContext.bind(getSecurityManager().getSubject());
 
+        FilterChain chain = getConfiguration().getChain(request, response, origChain);
+        if (chain == null) {
+            chain = origChain;
+            if (log.isTraceEnabled()) {
+                log.trace("No security filter chain configured for the current request.  Using default.");
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                log.trace(" Using configured filter chain for the current request.");
+            }
+        }
+
         try {
             chain.doFilter(request, response);
         } finally {
@@ -311,19 +329,6 @@ public class JSecurityFilter extends SecurityManagerFilter {
     }
 
     public void destroy() {
-        if (filters == null || filters.isEmpty()) {
-            return;
-        }
-        for (Filter filter : filters) {
-            try {
-                filter.destroy();
-            } catch (Exception e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to cleanly destroy filter [" + filter + "].  Ignoring (shutting down)...", e);
-                }
-            }
-        }
-
-        super.destroy();
+        LifecycleUtils.destroy(getConfiguration());
     }
 }

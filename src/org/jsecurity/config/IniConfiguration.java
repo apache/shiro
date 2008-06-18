@@ -29,21 +29,21 @@ import java.io.Reader;
 import java.util.*;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 public class IniConfiguration extends TextConfiguration {
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:jsecurity.ini";
-   
+
     public static final String MAIN = "main";
 
     public static final String SESSION_MODE_PROPERTY_NAME = "sessionMode";
 
-    protected IniResource iniResource = null;
+    protected IniResource iniResource;
 
     public IniConfiguration() {
-        if ( ResourceUtils.resourceExists( DEFAULT_INI_RESOURCE_PATH ) ) {
+        if (ResourceUtils.resourceExists(DEFAULT_INI_RESOURCE_PATH)) {
             load(DEFAULT_INI_RESOURCE_PATH);
         }
         //else defaults are fine
@@ -98,40 +98,40 @@ public class IniConfiguration extends TextConfiguration {
         }
     }
 
-    protected void process( IniResource ini ) {
-        processIni( ini.getSections() );
+    protected void process(IniResource ini) {
+        processIni(ini.getSections());
     }
 
-    protected void processIni( Map<String,Map<String,String>> sections ) {
-        SecurityManager securityManager = createSecurityManager( sections );
-        if ( securityManager == null ) {
+    protected void processIni(Map<String, Map<String, String>> sections) {
+        SecurityManager securityManager = createSecurityManager(sections);
+        if (securityManager == null) {
             String msg = "A " + SecurityManager.class + " instance must be created at startup.";
-            throw new ConfigurationException( msg );
+            throw new ConfigurationException(msg);
         }
-        setSecurityManager( securityManager );
+        setSecurityManager(securityManager);
 
-        afterSecurityManagerSet( sections );
+        afterSecurityManagerSet(sections);
     }
 
-    protected SecurityManager createSecurityManager( Map<String,Map<String,String>> sections ) {
-        Map<String,String> mainSection = sections.get( MAIN );
-        return doCreateSecurityManager( mainSection );
+    protected SecurityManager createSecurityManager(Map<String, Map<String, String>> sections) {
+        Map<String, String> mainSection = sections.get(MAIN);
+        return doCreateSecurityManager(mainSection);
     }
 
     protected RealmSecurityManager newSecurityManagerInstance() {
         return new DefaultSecurityManager();
     }
 
-    protected SecurityManager doCreateSecurityManager( Map<String,String> mainSection ) {
+    protected SecurityManager doCreateSecurityManager(Map<String, String> mainSection) {
 
-        Map<String,Object> defaults = new LinkedHashMap<String,Object>();
+        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 
         RealmSecurityManager securityManager = newSecurityManagerInstance();
-        defaults.put( "securityManager", securityManager );
+        defaults.put("securityManager", securityManager);
         //convenient alias:
-        defaults.put( "sm", securityManager );
+        defaults.put("sm", securityManager);
         ReflectionBuilder builder = new ReflectionBuilder(defaults);
-        Map<String,Object> objects = builder.buildObjects(mainSection);
+        Map<String, Object> objects = builder.buildObjects(mainSection);
 
         //realms and realm factory might have been created - pull them out first so we can
         //initialize the securityManager:
@@ -140,33 +140,34 @@ public class IniConfiguration extends TextConfiguration {
 
         //iterate over the map entries to pull out the realm factory(s):
 
-        for( Map.Entry<String,Object> entry : objects.entrySet() ) {
+        for (Map.Entry<String, Object> entry : objects.entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            if ( value instanceof RealmSecurityManager ) {
-                securityManager = (RealmSecurityManager)value;
-            } else if ( value instanceof RealmFactory ) {
-                RealmFactory factory = (RealmFactory)value;
+            if (value instanceof RealmSecurityManager) {
+                securityManager = (RealmSecurityManager) value;
+            } else if (value instanceof RealmFactory) {
+                RealmFactory factory = (RealmFactory) value;
                 LifecycleUtils.init(factory);
                 Collection<Realm> factoryRealms = factory.getRealms();
-                if ( factoryRealms != null && !factoryRealms.isEmpty() ) {
-                    realms.addAll( factoryRealms );
+                if (factoryRealms != null && !factoryRealms.isEmpty()) {
+                    realms.addAll(factoryRealms);
                 }
-            } else if ( value instanceof Realm ) {
-                Realm realm = (Realm)value;
+            } else if (value instanceof Realm) {
+                Realm realm = (Realm) value;
                 //set the name if null:
                 String existingName = realm.getName();
-                if ( existingName == null || existingName.startsWith( realm.getClass().getName() ) ) {
+                if (existingName == null || existingName.startsWith(realm.getClass().getName())) {
                     try {
-                        builder.applyProperty( realm, "name", name );
-                    } catch ( Exception ignored ) {}
+                        builder.applyProperty(realm, "name", name);
+                    } catch (Exception ignored) {
+                    }
                 }
-                realms.add( realm );
+                realms.add(realm);
             }
         }
 
         //set them on the SecurityManager
-        if ( !realms.isEmpty() ) {
+        if (!realms.isEmpty()) {
             securityManager.setRealms(realms);
         }
 
@@ -177,5 +178,6 @@ public class IniConfiguration extends TextConfiguration {
         return securityManager;
     }
 
-    protected void afterSecurityManagerSet( Map<String,Map<String,String>> sections ) {}
+    protected void afterSecurityManagerSet(Map<String, Map<String, String>> sections) {
+    }
 }
