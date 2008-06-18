@@ -23,14 +23,15 @@ import java.io.Reader;
 import java.util.Scanner;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 public abstract class TextConfiguration extends ResourceConfiguration implements Initializable {
 
-    private String config = null;
+    private String config;
 
-    public TextConfiguration(){}
+    public TextConfiguration() {
+    }
 
     public String getConfig() {
         return config;
@@ -40,17 +41,17 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
         this.config = config;
     }
 
-    protected abstract void load( Reader r ) throws ConfigurationException;
-    
-    protected abstract void load( Scanner s ) throws ConfigurationException;
+    protected abstract void load(Reader r) throws ConfigurationException;
+
+    protected abstract void load(Scanner s) throws ConfigurationException;
 
     public void init() throws JSecurityException {
         SecurityManager securityManager = getSecurityManager();
-        if ( securityManager == null ) {
+        if (securityManager == null) {
             String config = getConfig();
-            if ( config != null ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "Attempting to load Configuration based on 'config' property." );
+            if (config != null) {
+                if (log.isInfoEnabled()) {
+                    log.info("Attempting to load Configuration based on 'config' property.");
                 }
                 load(config);
             }

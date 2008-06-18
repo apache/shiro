@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 public class IniResource extends TextResource {
 
@@ -36,9 +36,9 @@ public class IniResource extends TextResource {
     public static final String HEADER_PREFIX = "[";
     public static final String HEADER_SUFFIX = "]";
 
-    protected Map<String, Map<String,String>> sections = new LinkedHashMap<String, Map<String,String>>();
+    protected Map<String, Map<String, String>> sections = new LinkedHashMap<String, Map<String, String>>();
 
-    public IniResource(){
+    public IniResource() {
     }
 
     public IniResource(String configBodyOrResourcePath) {
@@ -47,7 +47,7 @@ public class IniResource extends TextResource {
 
     public IniResource(String configBodyOrResourcePath, String charsetName) {
         setCharsetName(charsetName);
-        load( configBodyOrResourcePath );
+        load(configBodyOrResourcePath);
     }
 
     public IniResource(InputStream is) {
@@ -74,7 +74,7 @@ public class IniResource extends TextResource {
 
         String currSectionName = null;
 
-        Map<String,String> section = new LinkedHashMap<String,String>();
+        Map<String, String> section = new LinkedHashMap<String, String>();
 
         while (scanner.hasNextLine()) {
 
@@ -85,43 +85,43 @@ public class IniResource extends TextResource {
                 continue;
             }
 
-            String sectionName = getSectionName( line.toLowerCase() );
-            if ( sectionName != null ) {
-                if ( !section.isEmpty() ) {
-                    sections.put( currSectionName, section );
+            String sectionName = getSectionName(line.toLowerCase());
+            if (sectionName != null) {
+                if (!section.isEmpty()) {
+                    sections.put(currSectionName, section);
                 }
                 currSectionName = sectionName;
-                section = new LinkedHashMap<String,String>();
+                section = new LinkedHashMap<String, String>();
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Parsing " + HEADER_PREFIX + currSectionName + HEADER_SUFFIX );
+                    log.debug("Parsing " + HEADER_PREFIX + currSectionName + HEADER_SUFFIX);
                 }
             } else {
                 //normal line - split it into Key Value pairs and add it to the section:
                 try {
                     String[] keyValue = splitKeyValue(line);
-                    section.put( keyValue[0], keyValue[1] );
+                    section.put(keyValue[0], keyValue[1]);
                 } catch (ParseException e) {
                     String msg = "Unable to read key value pair for line [" + line + "].";
-                    throw new ResourceException(msg,e);
+                    throw new ResourceException(msg, e);
                 }
             }
         }
 
-        if ( !section.isEmpty() ) {
-            sections.put( currSectionName, section );
+        if (!section.isEmpty()) {
+            sections.put(currSectionName, section);
         }
     }
 
     protected static boolean isSectionHeader(String line) {
         String s = clean(line);
-        return s != null && s.startsWith( HEADER_PREFIX ) && s.endsWith(HEADER_SUFFIX);
+        return s != null && s.startsWith(HEADER_PREFIX) && s.endsWith(HEADER_SUFFIX);
     }
 
     protected static String getSectionName(String line) {
         String s = clean(line);
-        if ( isSectionHeader( s ) ) {
-            return clean( s.substring(1, s.length() - 1 ) );
+        if (isSectionHeader(s)) {
+            return clean(s.substring(1, s.length() - 1));
         }
         return null;
     }

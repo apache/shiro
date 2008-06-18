@@ -34,21 +34,21 @@ public class ReflectionBuilder {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected Map<String, Object> objects;
+    protected Map objects;
 
     public ReflectionBuilder() {
         setObjects(new LinkedHashMap<String, Object>());
     }
 
-    public ReflectionBuilder(Map<String, Object> defaults) {
+    public ReflectionBuilder(Map defaults) {
         setObjects(defaults);
     }
 
-    public Map<String, Object> getObjects() {
+    public Map getObjects() {
         return objects;
     }
 
-    public void setObjects(Map<String, Object> objects) {
+    public void setObjects(Map objects) {
         this.objects = objects;
     }
 
@@ -60,7 +60,7 @@ public class ReflectionBuilder {
         }
     }
 
-    public Map<String, Object> buildObjects(String config) {
+    public Map buildObjects(String config) {
 
         if (config == null) {
             return objects;
@@ -95,7 +95,7 @@ public class ReflectionBuilder {
         return objects;
     }
 
-    public Map<String, Object> buildObjects(Map<String, String> kvPairs) {
+    public Map buildObjects(Map<String, String> kvPairs) {
         if (kvPairs != null && !kvPairs.isEmpty()) {
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
                 applyProperty(entry.getKey(), entry.getValue(), objects);
@@ -105,7 +105,7 @@ public class ReflectionBuilder {
         return objects;
     }
 
-    public void applyProperty(String key, String value, Map<String, Object> objects) {
+    public void applyProperty(String key, String value, Map objects) {
 
         int index = key.indexOf('.');
 

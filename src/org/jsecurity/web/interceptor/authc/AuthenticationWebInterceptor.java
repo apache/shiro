@@ -16,6 +16,7 @@
 package org.jsecurity.web.interceptor.authc;
 
 import org.jsecurity.subject.Subject;
+import static org.jsecurity.web.WebUtils.getSubject;
 import org.jsecurity.web.interceptor.PathMatchingWebInterceptor;
 
 import javax.servlet.ServletRequest;
@@ -58,8 +59,8 @@ public abstract class AuthenticationWebInterceptor extends PathMatchingWebInterc
      *
      * @param request
      * @param response
-     * @return true if the request should continue to be processed; false if the subclass will handle/render 
-     * the response directly.
+     * @return true if the request should continue to be processed; false if the subclass will handle/render
+     *         the response directly.
      */
     protected abstract boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception;
 }

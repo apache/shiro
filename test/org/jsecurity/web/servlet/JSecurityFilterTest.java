@@ -40,14 +40,13 @@ public class JSecurityFilterTest {
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
 
-        mockServletContext.setAttribute(eq(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY),isA(SecurityManager.class));
+        mockServletContext.setAttribute(eq(JSecurityFilter.SECURITY_MANAGER_CONTEXT_KEY), isA(SecurityManager.class));
     }
 
     public void tearDown() throws Exception {
         reset(mockServletContext);
         reset(mockFilterConfig);
 
-        //mockServletContext.removeAttribute(SecurityManagerListener.SECURITY_MANAGER_CONTEXT_KEY);
         replay(mockServletContext);
 
         //this.filter.destroy();

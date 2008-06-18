@@ -24,9 +24,10 @@ import java.util.Scanner;
  */
 public abstract class TextResource extends AbstractResource {
 
-    protected String charsetName = null;
+    protected String charsetName;
 
-    public TextResource(){}
+    public TextResource() {
+    }
 
     public TextResource(String configBodyOrResourcePath) {
         load(configBodyOrResourcePath);
@@ -34,18 +35,18 @@ public abstract class TextResource extends AbstractResource {
 
     public TextResource(String configBodyOrResourcePath, String charsetName) {
         setCharsetName(charsetName);
-        load( configBodyOrResourcePath );
+        load(configBodyOrResourcePath);
     }
 
     public TextResource(InputStream is) {
         super(is);
     }
 
-    public TextResource(Reader r ) {
+    public TextResource(Reader r) {
         load(r);
     }
 
-    public TextResource(Scanner s ) {
+    public TextResource(Scanner s) {
         load(s);
     }
 
@@ -57,23 +58,23 @@ public abstract class TextResource extends AbstractResource {
         this.charsetName = charsetName;
     }
 
-    public void load( String configBodyOrResourcePath ) {
-        if ( configBodyOrResourcePath == null ) {
-            throw new IllegalArgumentException( "'configBodyOrResourcePath' argument cannot be null." );
+    public void load(String configBodyOrResourcePath) {
+        if (configBodyOrResourcePath == null) {
+            throw new IllegalArgumentException("'configBodyOrResourcePath' argument cannot be null.");
         }
         try {
             super.load(configBodyOrResourcePath);
-        } catch ( Exception e ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Unable to load text resource from the string argument.  Attempting to use the string " +
-                        "argument as the text resource itself...", e );
+        } catch (Exception e) {
+            if (log.isTraceEnabled()) {
+                log.trace("Unable to load text resource from the string argument.  Attempting to use the string " +
+                        "argument as the text resource itself...", e);
             }
             StringReader sr = new StringReader(configBodyOrResourcePath);
             try {
                 load(sr);
             } catch (Exception e2) {
                 String msg = "Unable to load from configBody method argument.";
-                throw new ResourceException(msg, e2 );
+                throw new ResourceException(msg, e2);
             }
         }
     }
@@ -110,7 +111,7 @@ public abstract class TextResource extends AbstractResource {
         }
     }
 
-    protected void doLoad(Reader reader) {
+    protected void doLoad(BufferedReader reader) {
         Scanner s = new Scanner(reader);
         try {
             load(s);

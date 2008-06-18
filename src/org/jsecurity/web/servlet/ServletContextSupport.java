@@ -33,10 +33,9 @@ public class ServletContextSupport {
     public static final String HTTP_SESSION_MODE = DefaultWebSecurityManager.HTTP_SESSION_MODE;
     public static final String JSECURITY_SESSION_MODE = DefaultWebSecurityManager.JSECURITY_SESSION_MODE;
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private ServletContext servletContext = null;
-    private String sessionMode = null;
 
     public ServletContext getServletContext() {
         return servletContext;
@@ -59,16 +58,16 @@ public class ServletContextSupport {
         return servletContext;
     }
 
-    protected void setAttribute( String key, Object value ) {
-        getServletContextNullCheck().setAttribute( key, value );
+    protected void setAttribute(String key, Object value) {
+        getServletContextNullCheck().setAttribute(key, value);
     }
 
-    protected Object getAttribute( String key ) {
-        return getServletContextNullCheck().getAttribute( key );
+    protected Object getAttribute(String key) {
+        return getServletContextNullCheck().getAttribute(key);
     }
 
-    protected void removeAttribute( String key ) {
-        getServletContextNullCheck().removeAttribute( key );
+    protected void removeAttribute(String key) {
+        getServletContextNullCheck().removeAttribute(key);
     }
 
     protected void bind(String name, String key, Object value) {
@@ -81,32 +80,5 @@ public class ServletContextSupport {
             throw new IllegalStateException(msg);
         }
         setAttribute(key, value);
-    }
-
-    public String getSessionMode() {
-        return sessionMode;
-    }
-
-    public void setSessionMode(String mode) {
-        if (mode != null) {
-            mode = mode.trim().toLowerCase();
-            if (!mode.equals(HTTP_SESSION_MODE) && !mode.equals(JSECURITY_SESSION_MODE)) {
-                String msg = "Unknown '" + SESSION_MODE_CONTEXT_PARAM_NAME + "' value [" +
-                    mode + "].  Recognized values are '" +
-                        HTTP_SESSION_MODE + "' and '" + JSECURITY_SESSION_MODE +
-                    "' (without quotes).  Please check your configuration and/or spelling.";
-                throw new IllegalArgumentException(msg);
-            }
-            this.sessionMode = mode;
-        }
-    }
-
-    protected void applySessionMode() {
-        setSessionMode( getContextInitParam(SESSION_MODE_CONTEXT_PARAM_NAME) );
-    }
-
-    protected boolean isHttpSessions() {
-        String sessionMode = getSessionMode();
-        return sessionMode == null || sessionMode.equals(HTTP_SESSION_MODE);
     }
 }

@@ -15,9 +15,9 @@
  */
 package org.jsecurity.web.interceptor;
 
-import org.jsecurity.JSecurityException;
 import org.jsecurity.web.RedirectView;
-import org.jsecurity.web.SecurityWebSupport;
+import static org.jsecurity.web.WebUtils.toHttp;
+import org.jsecurity.web.servlet.AdviceFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,15 +31,16 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class RedirectingWebInterceptor extends SecurityWebSupport implements WebInterceptor {
+public abstract class RedirectingWebInterceptor extends AdviceFilter {
 
     private String url;
     private boolean contextRelative = true;
-	private boolean http10Compatible = true;
-	private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
+    private boolean http10Compatible = true;
+    private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
     private Map queryParams = new HashMap();
 
-    public RedirectingWebInterceptor(){}
+    public RedirectingWebInterceptor() {
+    }
 
     public String getUrl() {
         return url;
@@ -81,16 +82,8 @@ public abstract class RedirectingWebInterceptor extends SecurityWebSupport imple
         this.queryParams = queryParams;
     }
 
-    /**
-     * Default implementation does nothing - can be overridden by subclasses if needed.
-     *
-     * @throws org.jsecurity.JSecurityException
-     */
-    public void init() throws JSecurityException {
-    }
-
-    protected void issueRedirect(ServletRequest request, ServletResponse response ) throws IOException {
-        RedirectView view = new RedirectView( getUrl(), isContextRelative(), isHttp10Compatible() );
-        view.renderMergedOutputModel(getQueryParams(), toHttp(request), toHttp(response) );
+    protected void issueRedirect(ServletRequest request, ServletResponse response) throws IOException {
+        RedirectView view = new RedirectView(getUrl(), isContextRelative(), isHttp10Compatible());
+        view.renderMergedOutputModel(getQueryParams(), toHttp(request), toHttp(response));
     }
 }

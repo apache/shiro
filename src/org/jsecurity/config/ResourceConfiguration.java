@@ -23,16 +23,17 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 public abstract class ResourceConfiguration implements Configuration, Serializable {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected transient SecurityManager securityManager = null;
+    protected transient SecurityManager securityManager;
 
-    public ResourceConfiguration(){}
+    public ResourceConfiguration() {
+    }
 
     public SecurityManager getSecurityManager() {
         return securityManager;
@@ -42,7 +43,7 @@ public abstract class ResourceConfiguration implements Configuration, Serializab
         this.securityManager = securityManager;
     }
 
-    public abstract void load( String path ) throws ConfigurationException;
+    public abstract void load(String path) throws ConfigurationException;
 
-    public abstract void load( InputStream is ) throws ConfigurationException;
+    public abstract void load(InputStream is) throws ConfigurationException;
 }

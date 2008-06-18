@@ -17,6 +17,7 @@ package org.jsecurity.web.interceptor.authz;
 
 import org.jsecurity.subject.Subject;
 import static org.jsecurity.util.StringUtils.split;
+import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,10 +32,10 @@ import java.util.Set;
 public class RolesAuthorizationWebInterceptor extends AuthorizationWebInterceptor {
 
     public void processPathConfig(String path, String config) {
-        if ( config != null ) {
+        if (config != null) {
             String[] values = split(config);
-            if ( values != null ) {
-                Set<String> set = new LinkedHashSet<String>( Arrays.asList(values) );
+            if (values != null) {
+                Set<String> set = new LinkedHashSet<String>(Arrays.asList(values));
                 this.appliedPaths.put(path, set);
             }
         }
@@ -43,17 +44,17 @@ public class RolesAuthorizationWebInterceptor extends AuthorizationWebIntercepto
     @SuppressWarnings({"unchecked"})
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
 
-        Subject subject = getSubject(request, response);
-        Set<String> roles = (Set<String>)mappedValue;
+        Subject subject = WebUtils.getSubject(request, response);
+        Set<String> roles = (Set<String>) mappedValue;
 
-        if ( roles != null && !roles.isEmpty() ) {
-            if ( roles.size() == 1 ) {
-                if ( !subject.hasRole(roles.iterator().next()) ) {
-                    issueRedirect(request,response);
+        if (roles != null && !roles.isEmpty()) {
+            if (roles.size() == 1) {
+                if (!subject.hasRole(roles.iterator().next())) {
+                    issueRedirect(request, response);
                 }
             } else {
-                if ( !subject.hasAllRoles(roles) ) {
-                    issueRedirect(request,response);
+                if (!subject.hasAllRoles(roles)) {
+                    issueRedirect(request, response);
                 }
             }
         }

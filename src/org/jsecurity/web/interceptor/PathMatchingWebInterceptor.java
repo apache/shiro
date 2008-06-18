@@ -17,7 +17,8 @@ package org.jsecurity.web.interceptor;
 
 import org.jsecurity.util.AntPathMatcher;
 import static org.jsecurity.util.StringUtils.split;
-import org.jsecurity.web.WebUtils;
+import static org.jsecurity.web.WebUtils.getPathWithinApplication;
+import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 /**
  * <p>Base class for web interceptors that will filter only specified paths and allow all others to pass through.</p>
- * 
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
@@ -37,21 +38,21 @@ public abstract class PathMatchingWebInterceptor extends RedirectingWebIntercept
     /**
      * A collection of path-to-config entries where the key is a path which this interceptor should filter and
      * the value is the (possibly null) configuration element specific to this WebInterceptor for that specific path.
-     *
-     * <p>To put it another way, the keys are the paths that this Interceptor will filter.
+     * <p/>
+     * <p>To put it another way, the keys are the paths (urls) that this Interceptor will filter.
      * <p>The values are interceptor-specific objects that this filter should use when processing the corresponding
      * key (path).  The values can be null if no interceptor-specific config was specified for that url.
      */
-    protected Map<String,Object> appliedPaths = new LinkedHashMap<String,Object>();
-    
+    protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
+
 
     public void processPathConfig(String path, String config) {
         String[] values = null;
-        if ( config != null ) {
+        if (config != null) {
             values = split(config);
         }
 
-        this.appliedPaths.put(path,values);
+        this.appliedPaths.put(path, values);
     }
 
     /**
@@ -66,7 +67,7 @@ public abstract class PathMatchingWebInterceptor extends RedirectingWebIntercept
 
         if (this.appliedPaths != null && !this.appliedPaths.isEmpty()) {
 
-            String requestURI = WebUtils.getPathWithinApplication(toHttp(request));
+            String requestURI = getPathWithinApplication(toHttp(request));
 
             // If URL path isn't matched, we allow the request to go through so default to true
             boolean continueChain = true;
@@ -74,50 +75,29 @@ public abstract class PathMatchingWebInterceptor extends RedirectingWebIntercept
 
                 // If the path does match, then pass on to the subclass implementation for specific checks:
                 if (pathMatcher.match(path, requestURI)) {
-                    if ( log.isTraceEnabled() ) {
-                        log.trace( "matched path [" + path + "] for requestURI [" + requestURI + "].  " +
-                                "Performing onPreHandle check..." );
+                    if (log.isTraceEnabled()) {
+                        log.trace("matched path [" + path + "] for requestURI [" + requestURI + "].  " +
+                                "Performing onPreHandle check...");
                     }
                     Object config = this.appliedPaths.get(path);
-                    continueChain = onPreHandle( request, response, config );
+                    continueChain = onPreHandle(request, response, config);
                 }
 
-                if ( !continueChain ) {
+                if (!continueChain) {
                     //it is expected the subclass renders the response directly, so just return false
                     return false;
                 }
             }
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "appliedPaths property is null or empty.  This interceptor will passthrough immediately." );
+            if (log.isTraceEnabled()) {
+                log.trace("appliedPaths property is null or empty.  This interceptor will passthrough immediately.");
             }
         }
 
         return true;
     }
 
-    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object configValue ) throws Exception {
+    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object configValue) throws Exception {
         return true;
-    }
-
-    /**
-     * Default implementation of this method does nothing - subclasses may override for postHandle logic.
-     *
-     * @param request
-     * @param response
-     * @throws Exception
-     */
-    public void postHandle(ServletRequest request, ServletResponse response) throws Exception {
-    }
-
-    /**
-     * Default implementation of this method does nothing - subclasses may override for afterCompletion logic.
-     *
-     * @param request
-     * @param response
-     * @param exception
-     * @throws Exception
-     */
-    public void afterCompletion(ServletRequest request, ServletResponse response, Exception exception) throws Exception {
     }
 }
