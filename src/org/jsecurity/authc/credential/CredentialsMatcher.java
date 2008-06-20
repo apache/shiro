@@ -19,20 +19,22 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
- * Interface that can be implemented by classes that can determine if an AuthenticationToken's provided
+ * Interface implemented by classes that can determine if an AuthenticationToken's provided
  * credentials matches a corresponding account's credentials stored in the system.
+ * <p/>
+ * <p>Simple direct comparisons are handled well by the
+ * {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher SimpleCredentialsMatcher}.  If you
+ * hash user's credentials before storing them in a realm (a common practice), look at the
+ * {@link org.jsecurity.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher} implementations,
+ * as they support this scenario.
  *
- * <p>As a common example, an implementation of this interface might verify a user-submitted
- * text password with a corresponding account password stored in the system.
- *
+ * @author Jeremy Haile
+ * @author Les Hazlewood
  * @see SimpleCredentialsMatcher
  * @see AllowAllCredentialsMatcher
  * @see Md5CredentialsMatcher
  * @see Sha1CredentialsMatcher
- *
  * @since 0.1
- * @author Jeremy Haile
- * @author Les Hazlewood
  */
 public interface CredentialsMatcher {
 
@@ -40,11 +42,11 @@ public interface CredentialsMatcher {
      * Returns <tt>true</tt> if the provided token credentials match the stored account credentials,
      * <tt>false</tt> otherwise.
      *
-     * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt
+     * @param token   the <tt>AuthenticationToken</tt> submitted during the authentication attempt
      * @param account the <tt>Account</tt> stored in the system.
      * @return <tt>true</tt> if the provided token credentials match the stored account credentials,
-     * <tt>false</tt> otherwise.
+     *         <tt>false</tt> otherwise.
      */
-    boolean doCredentialsMatch( AuthenticationToken token, Account account );
+    boolean doCredentialsMatch(AuthenticationToken token, Account account);
 
 }
