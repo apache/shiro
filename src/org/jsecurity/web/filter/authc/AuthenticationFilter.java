@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.web.interceptor.authc;
+package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.subject.Subject;
 import static org.jsecurity.web.WebUtils.getSubject;
-import org.jsecurity.web.interceptor.PathMatchingWebInterceptor;
+import org.jsecurity.web.filter.PathMatchingFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * <p>Base class for all web interceptors that require authentication. This class encapsulates the logic of checking
- * whether a user is already authenticated in the system. If the user is not authenticated, we use the template
- * method pattern to delegate the processing of an unauthenticated request to sub classes.</p>
+ * <p>Base class for all Filters that require the current user to be authenticated. This class encapsulates the
+ * logic of checking whether a user is already authenticated in the system. If the user is not authenticated, we use
+ * the template method pattern to delegate the processing of an unauthenticated request to sub classes.</p>
  *
  * @author Allan Ditzel
  * @since 0.9
  */
-public abstract class AuthenticationWebInterceptor extends PathMatchingWebInterceptor {
+public abstract class AuthenticationFilter extends PathMatchingFilter {
 
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-        //mapped value is ignored - not needed for most (if not all) authc interceptors.
+        //mapped value is ignored - not needed for most (if not all) authc Filters.
         if (isSubjectAuthenticated(request, response)) {
             return true;
         } else {

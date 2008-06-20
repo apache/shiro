@@ -122,6 +122,7 @@ public class IniConfiguration extends TextConfiguration {
         return new DefaultSecurityManager();
     }
 
+    @SuppressWarnings({"unchecked"})
     protected SecurityManager doCreateSecurityManager(Map<String, String> mainSection) {
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();

@@ -63,92 +63,92 @@ import java.io.IOException;
  * #securityManager = {@link org.jsecurity.web.DefaultWebSecurityManager org.jsecurity.web.DefaultWebSecurityManager}
  * #securityManager.{@link org.jsecurity.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
  * <p/>
- * [interceptors]
- * # This section defines the 'pool' of all the available interceptors that are available to the url path
+ * [filters]
+ * # This section defines the 'pool' of all the available Filters that are available to the url path
  * # definitions below in the [urls] section.
  * #
  * # The following commented values are already provided by JSecurity by default and are immediately usable
  * # in the [urls] definitions below.  If you like, you may override any values by uncommenting only the lines
  * # you need to change.
  * #
- * # Each interceptor is configured based on its functionality and/or protocol.  You should read each
- * # interceptor's JavaDoc to fully understand what each does and how it works as well as how it would
+ * # Each Filter is configured based on its functionality and/or protocol.  You should read each
+ * # Filter's JavaDoc to fully understand what each does and how it works as well as how it would
  * # affect the user experience.
  * #
- * # Form-based Authentication interceptor:
- * #<a name="authc"></a>authc = {@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor}
- * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setUrl(String) url} = /login.jsp
- * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setUsernameParam(String) usernameParam} = username
- * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setPasswordParam(String) passwordParam} = password
- * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setRememberMeParam(String) rememberMeParam} = rememberMe
- * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setSuccessUrl(String) successUrl}  = /login.jsp
- * #authc.{@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#setFailureKeyAtribute(String) failureKeyAttribute} = {@link org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor#DEFAULT_ERROR_KEY_ATTRIBUTE_NAME}
+ * # Form-based Authentication filter:
+ * #<a name="authc"></a>authc = {@link org.jsecurity.web.filter.authc.FormAuthenticationFilter}
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setUrl(String) url} = /login.jsp
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setUsernameParam(String) usernameParam} = username
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setPasswordParam(String) passwordParam} = password
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setRememberMeParam(String) rememberMeParam} = rememberMe
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setSuccessUrl(String) successUrl}  = /login.jsp
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setFailureKeyAtribute(String) failureKeyAttribute} = {@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#DEFAULT_ERROR_KEY_ATTRIBUTE_NAME}
  * #
- * # Http BASIC Authentication interceptor:
- * #<a name="authcBasic"></a>authcBasic = {@link org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor}
- * #authcBasic.{@link org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor#setApplicationName(String) applicationName} = application
+ * # Http BASIC Authentication filter:
+ * #<a name="authcBasic"></a>authcBasic = {@link org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter}
+ * #authcBasic.{@link org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter#setApplicationName(String) applicationName} = application
  * #
- * # Roles interceptor: requires the requesting user to have one or more roles for the request to continue.
+ * # Roles filter: requires the requesting user to have one or more roles for the request to continue.
  * # If they do not have the specified roles, they are redirected to the specified URL.
- * #<a name="roles"></a>roles = {@link org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor}
- * #roles.{@link org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor#setUrl(String) url} =
+ * #<a name="roles"></a>roles = {@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter}
+ * #roles.{@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter#setUrl(String) url} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.
  * #
- * # Permissions interceptor: requires the requesting user to have one or more permissions for the request to
+ * # Permissions filter: requires the requesting user to have one or more permissions for the request to
  * # continue, and if they do not, redirects them to the specified URL.
- * #<a name="perms"></a>perms = {@link org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor}
- * #perms.{@link org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor#setUrl(String) url} =
+ * #<a name="perms"></a>perms = {@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter}
+ * #perms.{@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter#setUrl(String) url} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.  Many
  * # applications like to use the same url specified in roles.url above.
  * #
  * #
- * # Define your own interceptors here.  To properly handle url path matching (see the [urls] section below), your
- * # interceptor should extend the {@link org.jsecurity.web.interceptor.PathMatchingWebInterceptor PathMatchingWebInterceptor} abstract class.
+ * # Define your own filters here.  To properly handle url path matching (see the [urls] section below), your
+ * # filter should extend the {@link org.jsecurity.web.filter.PathMatchingFilter PathMatchingFilter} abstract class.
  * <p/>
  * [urls]
  * # This section defines url path mappings.  Each mapping entry must be on a single line and conform to the
  * # following representation:
  * #
- * # ant_path_expression = path_specific_interceptor_chain_definition
+ * # ant_path_expression = path_specific_filter_chain_definition
  * #
  * # For any request that matches a specified path, the corresponding value defines a comma-delimited chain of
- * # filters/interceptors to execute for that request.
+ * # filters to execute for that request.
  * #
  * # This is incredibly powerful in that you can define arbitrary filter chains for any given request pattern
  * # to greatly customize the security experience.
  * #
- * # The path_specific_interceptor_chain_definition must match the following format:
+ * # The path_specific_filter_chain_definition must match the following format:
  * #
- * # interceptor1[optional_config1], interceptor2[optional_config2], ..., interceptorN[optional_configN]
+ * # filter1[optional_config1], filter2[optional_config2], ..., filterN[optional_configN]
  * #
- * # where 'interceptorN' is the name of an interceptor defined above in the [interceptors] section and
- * # '[optional_configN]' is an optional bracketed string that has meaning for that particular interceptor for
- * # _that particular path_.  If the interceptor does not need specific config for that url path, you may
- * # discard the brackets - that is, interceptorN[] just becomes interceptorN.
+ * # where 'filterN' is the name of an filter defined above in the [filters] section and
+ * # '[optional_configN]' is an optional bracketed string that has meaning for that particular filter for
+ * # _that particular path_.  If the filter does not need specific config for that url path, you may
+ * # discard the brackets - that is, filterN[] just becomes filterN.
  * #
- * # And because interceptor tokens define chains, order matters!  Define the tokens for each path pattern
+ * # And because filter tokens define chains, order matters!  Define the tokens for each path pattern
  * # in the order you want them to filter (comma-delimited).
  * #
- * # Finally, each interceptor is free to handle the response however it wants if its necessary
+ * # Finally, each filter is free to handle the response however it wants if its necessary
  * # conditions are not met (redirect, HTTP error code, direct rendering, etc).  Otherwise, it is expected to allow
  * # the request to continue through the chain on to the final destination view.
  * #
  * # Examples:
  * #
  * # To illustrate chain configuration, look at the /account/** mapping below.  This says
- * # &quot;apply the above 'authcBasic' interceptor to any request matching the '/account/**' pattern&quot;.  Since the
- * # 'authcBasic' interceptor does not need any path-specific config, it doesn't have any config brackets [].
+ * # &quot;apply the above 'authcBasic' filter to any request matching the '/account/**' pattern&quot;.  Since the
+ * # 'authcBasic' filter does not need any path-specific config, it doesn't have any config brackets [].
  * #
- * # The /remoting/** definition on the other hand uses the 'roles' and 'perms' interceptors which do use
+ * # The /remoting/** definition on the other hand uses the 'roles' and 'perms' filters which do use
  * # bracket notation.  That definition says:
  * #
  * # &quot;To access /remoting/** urls, ensure that the user is first authenticated ('authcBasic'), then ensure that user
  * # has the 'b2bClient' role, and then finally ensure that they have the 'remote:invoke:lan,wan' permission.&quot;
  * #
  * # (Note that because elements within brackets [ ] are comma-delimited themselves, we needed to escape the permission
- * # actions of 'lan,wan' with quotes.  If we didn't do that, the permission interceptor would interpret
+ * # actions of 'lan,wan' with quotes.  If we didn't do that, the permission filter would interpret
  * # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
  * # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
  * # commas.)

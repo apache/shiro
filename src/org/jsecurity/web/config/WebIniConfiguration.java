@@ -24,11 +24,11 @@ import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.DefaultWebSecurityManager;
 import static org.jsecurity.web.WebUtils.getPathWithinApplication;
 import static org.jsecurity.web.WebUtils.toHttp;
-import org.jsecurity.web.interceptor.PathConfigWebInterceptor;
-import org.jsecurity.web.interceptor.authc.BasicHttpAuthenticationWebInterceptor;
-import org.jsecurity.web.interceptor.authc.FormAuthenticationWebInterceptor;
-import org.jsecurity.web.interceptor.authz.PermissionsAuthorizationWebInterceptor;
-import org.jsecurity.web.interceptor.authz.RolesAuthorizationWebInterceptor;
+import org.jsecurity.web.filter.PathConfigProcessor;
+import org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.jsecurity.web.filter.authc.FormAuthenticationFilter;
+import org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter;
+import org.jsecurity.web.filter.authz.RolesAuthorizationFilter;
 import org.jsecurity.web.servlet.FilterChainWrapper;
 
 import javax.servlet.*;
@@ -42,7 +42,7 @@ import java.util.*;
  */
 public class WebIniConfiguration extends IniConfiguration implements WebConfiguration {
 
-    public static final String INTERCEPTORS = "interceptors";
+    public static final String FILTERS = "filters";
     public static final String URLS = "urls";
 
     protected FilterConfig filterConfig;
@@ -93,20 +93,20 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
     }
 
     /**
-     * 1.  First builds the interceptor and/or filter instances.
-     * 2.  Applys url mappings to these interceptors and/or filters
-     * 3.  Creates a collection of Filter objects that will be used by the JSecurityFilter.
+     * 1.  First builds the filter instances.
+     * 2.  Applys url mappings to these filters
+     * 3.  Creates a collection of Filter chains (list of Filter objects) that will be used by the JSecurityFilter.
      *
      * @param sections
      */
     protected void afterSecurityManagerSet(Map<String, Map<String, String>> sections) {
-        //interceptors section:
-        Map<String, String> section = sections.get(INTERCEPTORS);
+        //filters section:
+        Map<String, String> section = sections.get(FILTERS);
         Map<String, Filter> filters = getFilters(section);
 
         //urls section:
         section = sections.get(URLS);
-        this.chains = prepareChains(section, filters);
+        this.chains = createChains(section, filters);
 
         initFilters(this.chains);
     }
@@ -115,32 +115,40 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
         if (chains == null || chains.isEmpty()) {
             return;
         }
-        //add 'em to a set so we only initialize once:
+
+        //add 'em to a set so we only initialize each one once:
         Set<Filter> filters = new LinkedHashSet<Filter>();
         for (List<Filter> pathFilters : chains.values()) {
             filters.addAll(pathFilters);
         }
+
+        //now initialize each one:
         for (Filter filter : filters) {
             initFilter(filter);
         }
     }
 
-    protected void initFilter(Filter f) {
+    /**
+     * Initializes the filter by calling <code>filter.init( {@link #getFilterConfig() getFilterConfig()} );</code>.
+     *
+     * @param filter the filter to initialize with the <code>FilterConfig</code>.
+     */
+    protected void initFilter(Filter filter) {
         try {
-            f.init(getFilterConfig());
+            filter.init(getFilterConfig());
         } catch (ServletException e) {
             throw new ConfigurationException(e);
         }
     }
 
     @SuppressWarnings({"unchecked"})
-    protected Map<String, Filter> getFilters(Map<String, String> interceptorsSection) {
+    protected Map<String, Filter> getFilters(Map<String, String> section) {
 
-        Map<String, Filter> filters = buildDefaultInterceptors();
+        Map<String, Filter> filters = createDefaultFilters();
 
-        if (interceptorsSection != null && !interceptorsSection.isEmpty()) {
+        if (section != null && !section.isEmpty()) {
             ReflectionBuilder builder = new ReflectionBuilder(filters);
-            Map built = builder.buildObjects(interceptorsSection);
+            Map built = builder.buildObjects(section);
             assertFilters(built);
             filters = (Map<String, Filter>) built;
         }
@@ -161,23 +169,23 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
 
     protected void assertFilter(String name, Object o) throws ConfigurationException {
         if (!(o instanceof Filter)) {
-            String msg = "[interceptors] section specified a filter named '" + name + "', which does not " +
+            String msg = "[" + FILTERS + "] section specified a filter named '" + name + "', which does not " +
                     "implement the " + Filter.class.getName() + " interface.  Only Filter implementations may be " +
-                    "can be interceptors.";
+                    "defined.";
             throw new ConfigurationException(msg);
         }
     }
 
-    protected Map<String, Filter> buildDefaultInterceptors() {
-        Map<String, Filter> interceptors = new LinkedHashMap<String, Filter>();
-        interceptors.put("authc", new FormAuthenticationWebInterceptor());
-        interceptors.put("authcBasic", new BasicHttpAuthenticationWebInterceptor());
-        interceptors.put("roles", new RolesAuthorizationWebInterceptor());
-        interceptors.put("perms", new PermissionsAuthorizationWebInterceptor());
-        return interceptors;
+    protected Map<String, Filter> createDefaultFilters() {
+        Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
+        filters.put("authc", new FormAuthenticationFilter());
+        filters.put("authcBasic", new BasicHttpAuthenticationFilter());
+        filters.put("roles", new RolesAuthorizationFilter());
+        filters.put("perms", new PermissionsAuthorizationFilter());
+        return filters;
     }
 
-    public Map<String, List<Filter>> prepareChains(Map<String, String> urls, Map<String, Filter> filters) {
+    public Map<String, List<Filter>> createChains(Map<String, String> urls, Map<String, Filter> filters) {
         if (urls == null || urls.isEmpty()) {
             if (log.isDebugEnabled()) {
                 log.debug("No urls to process.");
@@ -207,7 +215,7 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
 
             List<Filter> pathFilters = new ArrayList<Filter>();
 
-            //parse the value by tokenizing it to get the resulting interceptor-specific config entries
+            //parse the value by tokenizing it to get the resulting filter-specific config entries
             //
             //e.g. for a value of
             //
@@ -217,11 +225,11 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
             //
             //     { "authc", "roles[admin,user]", "perms[file:edit]" }
             //
-            String[] interceptorTokens = split(value, ',', '[', ']', true, true);
+            String[] filterTokens = split(value, ',', '[', ']', true, true);
 
-            //each token is specific to each web interceptor.
-            //strip the name and extract any interceptor-specific config between brackets [ ]
-            for (String token : interceptorTokens) {
+            //each token is specific to each filter.
+            //strip the name and extract any filter-specific config between brackets [ ]
+            for (String token : filterTokens) {
                 String[] nameAndConfig = token.split("\\[", 2);
                 String name = nameAndConfig[0];
                 String config = null;
@@ -232,19 +240,19 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
                     config = config.substring(0, config.length() - 1);
                 }
 
-                //now we have the interceptor name, path and (possibly null) path-specific config.  Let's apply them:
+                //now we have the filter name, path and (possibly null) path-specific config.  Let's apply them:
                 Filter filter = filters.get(name);
                 if (filter == null) {
-                    String msg = "Path [" + path + "] specified an interceptor named '" + name + "', but that " +
-                            "interceptor has not been specified in the [interceptors] section.";
+                    String msg = "Path [" + path + "] specified a filter named '" + name + "', but that " +
+                            "filter has not been specified in the [" + FILTERS + "] section.";
                     throw new ConfigurationException(msg);
                 }
-                if (filter instanceof PathConfigWebInterceptor) {
+                if (filter instanceof PathConfigProcessor) {
                     if (log.isDebugEnabled()) {
                         log.debug("Applying path [" + path + "] to filter [" + name + "] " +
                                 "with config [" + config + "]");
                     }
-                    ((PathConfigWebInterceptor) filter).processPathConfig(path, config);
+                    ((PathConfigProcessor) filter).processPathConfig(path, config);
                 }
 
                 pathFilters.add(filter);

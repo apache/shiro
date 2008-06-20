@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.web.interceptor;
+package org.jsecurity.web.filter;
 
 import org.jsecurity.web.RedirectView;
 import static org.jsecurity.web.WebUtils.toHttp;
@@ -26,12 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A WebInterceptor that has the ability to redirect web requests if necessary.
+ * A Filter that has the ability to redirect web requests if necessary.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class RedirectingWebInterceptor extends AdviceFilter {
+public abstract class RedirectingFilter extends AdviceFilter {
 
     private String url;
     private boolean contextRelative = true;
@@ -39,7 +39,7 @@ public abstract class RedirectingWebInterceptor extends AdviceFilter {
     private String encodingScheme = RedirectView.DEFAULT_ENCODING_SCHEME;
     private Map queryParams = new HashMap();
 
-    public RedirectingWebInterceptor() {
+    public RedirectingFilter() {
     }
 
     public String getUrl() {
