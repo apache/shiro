@@ -1,4 +1,19 @@
-package org.jsecurity.web.interceptor.authc;
+/*
+ * Copyright 2005-2008 Les Hazlewood
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
@@ -24,9 +39,9 @@ import java.net.InetAddress;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class FormAuthenticationWebInterceptor extends AuthenticationWebInterceptor {
+public class FormAuthenticationFilter extends AuthenticationFilter {
 
-    public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = FormAuthenticationWebInterceptor.class.getName() + "_AUTHC_FAILURE_KEY";
+    public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = FormAuthenticationFilter.class.getName() + "_AUTHC_FAILURE_KEY";
 
     public static final String DEFAULT_LOGIN_URL = "/login.jsp";
     public static final String DEFAULT_USERNAME_PARAM = "username";
@@ -40,7 +55,7 @@ public class FormAuthenticationWebInterceptor extends AuthenticationWebIntercept
     private String successUrl = DEFAULT_LOGIN_URL;
     private String failureKeyAtribute = DEFAULT_ERROR_KEY_ATTRIBUTE_NAME;
 
-    public FormAuthenticationWebInterceptor() {
+    public FormAuthenticationFilter() {
         setUrl(DEFAULT_LOGIN_URL);
     }
 

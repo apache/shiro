@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.web.interceptor.authc;
+package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
@@ -28,39 +28,38 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Requires the requesting user to be authenticated for the request to continue, and if they're not, forces the user to
- * login via the HTTP Basic protocol-specific challenge.  Upon successful login, they're allowed to continue on to the
- * requested resource/url.
+ * Requires the requesting user to be {@link org.jsecurity.subject.Subject#isAuthenticated() authenticated} for the
+ * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
+ * Upon successful login, they're allowed to continue on to the requested resource/url.
  * <p/>
  * <p>Supports Basic HTTP Authentication as specified in
  * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
  * <p/>
  * <p>Basic authentication works as follows:</p>
  * <p/>
- * <p>A request comes in for a resource that requires authentication. The server replies with a 401 response
- * code, a <code>WWW-Authenticate</code> header, and the contents of a page informing the user that the incoming resource
- * requires authentication.</p>
+ * <ol>
+ * <li>A request comes in for a resource that requires authentication.</li>
+ * <li>The server replies with a 401 response code, a <code>WWW-Authenticate</code> header, and the contents of a
+ * page informing the user that the incoming resource requires authentication.</li>
+ * <li>Upon receiving this <code>WWW-Authenticate</code> challenge from the server, the client then takes a
+ * username and a password and puts them in the following format:<p/>
+ * <p><code>username:password</code></p><p/></li>
  * <p/>
- * <p>Upon receiving the <code>WWW-Authenticate</code> challenge from the server, the client then takes a username and a password
- * and puts them in the following format:</p>
+ * <li>This token is then base 64 encoded.</li>
+ * <li>The client then sends another request for the same resource with the following header:<p/>
+ * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
+ * </ol>
  * <p/>
- * <p><code>username:password</code></p>
- * <p/>
- * <p>This token is then base 64 encoded.</p>
- * <p/>
- * <p>The client then sends another request for the same resource with the following header:</p>
- * <p/>
- * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p>
- * <p/>
- * <p>In the case of this interceptor, the onUnauthenticatedRequest(ServletRequest request, ServletResponse response) method will only be called if the subject making
- * the request is not authenticated.</p>
+ * <p>The {@link #onUnauthenticatedRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
+ * only be called if the subject making the request is not
+ * {@link org.jsecurity.subject.Subject#isAuthenticated() authenticated} </p>
  *
  * @author Allan Ditzel
  * @author Les Hazlewood
  * @see <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>
  * @since 0.9
  */
-public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInterceptor {
+public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
     protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
@@ -81,8 +80,8 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
     /**
      * Method processes unauthenticated requests. It handles the two-stage request/challenge authentication request.
      *
-     * @param request
-     * @param response
+     * @param request  incoming ServletRequest
+     * @param response outgoing ServletResponse
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
     protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) {
@@ -96,8 +95,8 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
     /**
      * Determines whether the incoming request is an attempt to log in.
      *
-     * @param request
-     * @param response
+     * @param request  incoming ServletRequest
+     * @param response outgoing ServletResponse
      * @return true if the incoming request is an attempt to log in, false otherwise
      */
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
@@ -109,8 +108,8 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
     /**
      * Builds the challenge for authorization.
      *
-     * @param request
-     * @param response
+     * @param request  incoming ServletRequest
+     * @param response outgoing ServletResponse
      * @return false - this sends the challenge to be sent back
      */
     protected boolean sendChallenge(ServletRequest request, ServletResponse response) {
@@ -127,8 +126,8 @@ public class BasicHttpAuthenticationWebInterceptor extends AuthenticationWebInte
     /**
      * Initiates a login attempt with the provided credentials in the http header.
      *
-     * @param request
-     * @param response
+     * @param request  incoming ServletRequest
+     * @param response outgoing ServletResponse
      * @return true if the subject was successfully logged in, false otherwise
      */
     protected boolean executeLogin(ServletRequest request, ServletResponse response) {

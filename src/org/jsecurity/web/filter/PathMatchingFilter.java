@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.web.interceptor;
+package org.jsecurity.web.filter;
 
 import org.jsecurity.util.AntPathMatcher;
 import static org.jsecurity.util.StringUtils.split;
@@ -26,22 +26,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * <p>Base class for web interceptors that will filter only specified paths and allow all others to pass through.</p>
+ * <p>Base class for Filters that will process only specified paths and allow all others to pass through.</p>
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class PathMatchingWebInterceptor extends RedirectingWebInterceptor implements PathConfigWebInterceptor {
+public abstract class PathMatchingFilter extends RedirectingFilter implements PathConfigProcessor {
 
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
 
     /**
-     * A collection of path-to-config entries where the key is a path which this interceptor should filter and
-     * the value is the (possibly null) configuration element specific to this WebInterceptor for that specific path.
+     * A collection of path-to-config entries where the key is a path which this filter should process and
+     * the value is the (possibly null) configuration element specific to this Filter for that specific path.
      * <p/>
-     * <p>To put it another way, the keys are the paths (urls) that this Interceptor will filter.
-     * <p>The values are interceptor-specific objects that this filter should use when processing the corresponding
-     * key (path).  The values can be null if no interceptor-specific config was specified for that url.
+     * <p>To put it another way, the keys are the paths (urls) that this Filter will process.
+     * <p>The values are filter-specific data that this Filter should use when processing the corresponding
+     * key (path).  The values can be null if no Filter-specific config was specified for that url.
      */
     protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
 
@@ -90,7 +90,7 @@ public abstract class PathMatchingWebInterceptor extends RedirectingWebIntercept
             }
         } else {
             if (log.isTraceEnabled()) {
-                log.trace("appliedPaths property is null or empty.  This interceptor will passthrough immediately.");
+                log.trace("appliedPaths property is null or empty.  This Filter will passthrough immediately.");
             }
         }
 

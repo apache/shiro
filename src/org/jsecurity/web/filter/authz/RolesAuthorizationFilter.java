@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.web.interceptor.authz;
+package org.jsecurity.web.filter.authz;
 
 import org.jsecurity.subject.Subject;
 import static org.jsecurity.util.StringUtils.split;
@@ -21,34 +21,39 @@ import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public class PermissionsAuthorizationWebInterceptor extends AuthorizationWebInterceptor {
+public class RolesAuthorizationFilter extends AuthorizationFilter {
 
     public void processPathConfig(String path, String config) {
         if (config != null) {
             String[] values = split(config);
             if (values != null) {
-                this.appliedPaths.put(path, values);
+                Set<String> set = new LinkedHashSet<String>(Arrays.asList(values));
+                this.appliedPaths.put(path, set);
             }
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
 
         Subject subject = WebUtils.getSubject(request, response);
-        String[] perms = (String[]) mappedValue;
+        Set<String> roles = (Set<String>) mappedValue;
 
-        if (perms != null && perms.length > 0) {
-            if (perms.length == 1) {
-                if (!subject.isPermitted(perms[0])) {
+        if (roles != null && !roles.isEmpty()) {
+            if (roles.size() == 1) {
+                if (!subject.hasRole(roles.iterator().next())) {
                     issueRedirect(request, response);
                 }
             } else {
-                if (!subject.isPermittedAll(perms)) {
+                if (!subject.hasAllRoles(roles)) {
                     issueRedirect(request, response);
                 }
             }

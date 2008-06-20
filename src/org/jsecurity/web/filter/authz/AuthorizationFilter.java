@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jsecurity.web.interceptor;
+package org.jsecurity.web.filter.authz;
+
+import org.jsecurity.web.filter.PathMatchingFilter;
 
 /**
- * A PathConfigWebInterceptor is a <code>WebInterceptor</code> that can process configuration entries on a
- * per path (per url) basis.
- *
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface PathConfigWebInterceptor {
+public abstract class AuthorizationFilter extends PathMatchingFilter {
 
-    void processPathConfig(String path, String config);
+    public AuthorizationFilter() {
+    }
+
 }
