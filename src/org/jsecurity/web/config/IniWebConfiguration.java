@@ -40,7 +40,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since Jun 1, 2008 11:02:44 PM
  */
-public class WebIniConfiguration extends IniConfiguration implements WebConfiguration {
+public class IniWebConfiguration extends IniConfiguration implements WebConfiguration {
 
     public static final String FILTERS = "filters";
     public static final String URLS = "urls";
@@ -51,7 +51,7 @@ public class WebIniConfiguration extends IniConfiguration implements WebConfigur
 
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
 
-    public WebIniConfiguration() {
+    public IniWebConfiguration() {
         chains = new LinkedHashMap<String, List<Filter>>();
     }
 

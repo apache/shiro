@@ -25,8 +25,8 @@ import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
 import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.WebUtils;
+import org.jsecurity.web.config.IniWebConfiguration;
 import org.jsecurity.web.config.WebConfiguration;
-import org.jsecurity.web.config.WebIniConfiguration;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -181,7 +181,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
     protected WebConfiguration configuration;
 
     public JSecurityFilter() {
-        this.configClassName = WebIniConfiguration.class.getName();
+        this.configClassName = IniWebConfiguration.class.getName();
     }
 
     public WebConfiguration getConfiguration() {
