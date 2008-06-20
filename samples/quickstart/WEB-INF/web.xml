@@ -5,32 +5,35 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-    <filter>
-        <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
-        <init-param><param-name>config</param-name><param-value>
+  <filter>
+    <filter-name>JSecurityFilter</filter-name>
+    <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
+    <init-param>
+      <param-name>config</param-name>
+      <param-value>
 
-            # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
-            # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
-            #
-            # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
+        # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
+        # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
+        #
+        # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
 
-            [interceptors]
-            authc.successUrl = /index.jsp
+        [filters]
+        authc.successUrl = /index.jsp
 
-            [urls]
-            /account/** = authc
-            /remoting/** = authc, roles[b2bClient], perms[remote:invoke:"lan,wan"]
-        </param-value></init-param>
-    </filter>
+        [urls]
+        /account/** = authc
+        /remoting/** = authc, roles[b2bClient], perms[remote:invoke:"lan,wan"]
+      </param-value>
+    </init-param>
+  </filter>
 
-    <filter-mapping>
-        <filter-name>JSecurityFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+  <filter-mapping>
+    <filter-name>JSecurityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
 
 </web-app>
