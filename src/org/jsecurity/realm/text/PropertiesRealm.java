@@ -16,8 +16,8 @@
 package org.jsecurity.realm.text;
 
 import org.jsecurity.JSecurityException;
+import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.util.Destroyable;
-import org.jsecurity.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;

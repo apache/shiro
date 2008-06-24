@@ -73,6 +73,10 @@ public abstract class PathMatchingFilter extends RedirectingFilter implements Pa
             boolean continueChain = true;
             for (String path : this.appliedPaths.keySet()) {
 
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Attempting to match path [" + path + "] against current requestURI [" + requestURI + "]..." );
+                }
+
                 // If the path does match, then pass on to the subclass implementation for specific checks:
                 if (pathMatcher.match(path, requestURI)) {
                     if (log.isTraceEnabled()) {

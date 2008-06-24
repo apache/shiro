@@ -29,6 +29,7 @@ import org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.jsecurity.web.filter.authc.FormAuthenticationFilter;
 import org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter;
 import org.jsecurity.web.filter.authz.RolesAuthorizationFilter;
+import org.jsecurity.web.servlet.AdviceFilter;
 import org.jsecurity.web.servlet.FilterChainWrapper;
 
 import javax.servlet.*;
@@ -178,10 +179,27 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
 
     protected Map<String, Filter> createDefaultFilters() {
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
-        filters.put("authc", new FormAuthenticationFilter());
-        filters.put("authcBasic", new BasicHttpAuthenticationFilter());
-        filters.put("roles", new RolesAuthorizationFilter());
-        filters.put("perms", new PermissionsAuthorizationFilter());
+
+        String name = "authc";
+        AdviceFilter filter = new FormAuthenticationFilter();
+        filter.setName(name);
+        filters.put(name, filter );
+        
+        name = "authcBasic";
+        filter = new BasicHttpAuthenticationFilter();
+        filter.setName(name);
+        filters.put(name,filter);
+
+        name = "roles";
+        filter = new RolesAuthorizationFilter();
+        filter.setName(name);
+        filters.put(name,filter);
+
+        name = "perms";
+        filter = new PermissionsAuthorizationFilter();
+        filter.setName(name);
+        filters.put(name,filter);
+
         return filters;
     }
 
