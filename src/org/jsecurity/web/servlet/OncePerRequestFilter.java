@@ -15,6 +15,8 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.jsecurity.util.Nameable;
+
 import javax.servlet.*;
 import java.io.IOException;
 
@@ -33,7 +35,7 @@ import java.io.IOException;
  * @author Juergen Hoeller
  * @since 06.12.2003
  */
-public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter {
+public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter, Nameable {
 
     /**
      * Suffix that gets appended to the filter name for the
@@ -44,6 +46,8 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
     public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
 
     protected FilterConfig filterConfig = null;
+
+    private String name = null;
 
     public FilterConfig getFilterConfig() {
         return filterConfig;
@@ -70,8 +74,18 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      * @see javax.servlet.GenericServlet#getServletName()
      * @see javax.servlet.FilterConfig#getFilterName()
      */
-    protected final String getFilterName() {
-        return (this.filterConfig != null ? this.filterConfig.getFilterName() : null);
+    protected String getName() {
+        if ( this.name == null ) {
+            if ( this.filterConfig != null ) {
+                this.name = this.filterConfig.getFilterName();
+            }
+        }
+
+        return this.name;
+    }
+
+    public void setName( String name ) {
+        this.name = name;
     }
 
     public final void init(FilterConfig filterConfig) throws ServletException {
@@ -107,10 +121,16 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
 
         String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
         if (request.getAttribute(alreadyFilteredAttributeName) != null || shouldNotFilter(request)) {
+            if ( log.isTraceEnabled() ) {
+                log.trace( "Filter already executed.  Proceeding without invoking this filter." );
+            }
             // Proceed without invoking this filter...
             filterChain.doFilter(request, response);
         } else {
             // Do invoke this filter...
+            if ( log.isTraceEnabled() ) {
+                log.trace("Filter not yet executed.  Executing now." );
+            }
             request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);
             doFilterInternal(request, response, filterChain);
         }
@@ -123,11 +143,11 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      * instance and appends ".FILTERED". If the filter is not fully initialized,
      * it falls back to its class name.
      *
-     * @see #getFilterName
+     * @see #getName
      * @see #ALREADY_FILTERED_SUFFIX
      */
     protected String getAlreadyFilteredAttributeName() {
-        String name = getFilterName();
+        String name = getName();
         if (name == null) {
             name = getClass().getName();
         }

@@ -19,6 +19,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
+import org.jsecurity.util.Nameable;
 import org.jsecurity.util.StringUtils;
 
 import java.text.ParseException;
@@ -116,6 +117,9 @@ public class ReflectionBuilder {
             if (instance == null) {
                 if (property.equals("class")) {
                     instance = ClassUtils.newInstance(value);
+                    if ( instance instanceof Nameable) {
+                        ((Nameable)instance).setName(name);
+                    }
                     objects.put(name, instance);
                 } else {
                     String msg = "Configuration error.  Specified object [" + name + "] with property [" +
@@ -134,6 +138,9 @@ public class ReflectionBuilder {
                 //name with no property, assume right hand side of equals sign is the class name:
                 try {
                     instance = ClassUtils.newInstance(value);
+                    if ( instance instanceof Nameable ) {
+                        ((Nameable)instance).setName(key);
+                    }
                 } catch (Exception e) {
                     String msg = "Unable to instantiate class [" + value + "] for object named '" + key + "'.  " +
                             "Please ensure you've specified the fully qualified class name correctly.";

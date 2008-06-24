@@ -16,13 +16,13 @@
 package org.jsecurity.config;
 
 import org.jsecurity.io.IniResource;
+import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.RealmFactory;
 import org.jsecurity.util.LifecycleUtils;
-import org.jsecurity.util.ResourceUtils;
 
 import java.io.InputStream;
 import java.io.Reader;

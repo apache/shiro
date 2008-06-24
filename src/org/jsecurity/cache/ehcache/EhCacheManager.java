@@ -20,10 +20,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheManager;
+import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.session.mgt.eis.CachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
-import org.jsecurity.util.ResourceUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,7 +95,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Sets the resource location of the config file used to initialize the wrapped
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.jsecurity.io.ResourceUtils#getInputStreamForPath(String)} call.
      *
      * <p>This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.</p>
