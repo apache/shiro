@@ -26,6 +26,7 @@
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/etc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/support/jee/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build" />

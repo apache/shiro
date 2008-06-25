@@ -47,7 +47,6 @@ public class JndiTemplate {
 
     private Properties environment;
 
-
     /**
      * Create a new JndiTemplate instance.
      */
@@ -56,26 +55,30 @@ public class JndiTemplate {
 
     /**
      * Create a new JndiTemplate instance, using the given environment.
+     *
+     * @param environment the Properties to initialize with
      */
     public JndiTemplate(Properties environment) {
         this.environment = environment;
     }
 
-
     /**
      * Set the environment for the JNDI InitialContext.
+     *
+     * @param environment the Properties to initialize with
      */
     public void setEnvironment(Properties environment) {
         this.environment = environment;
     }
 
     /**
-     * Return the environment for the JNDI InitialContext, if any.
+     * Return the environment for the JNDI InitialContext, or <code>null</code> if none should be used.
+     *
+     * @return the environment for the JNDI InitialContext, or <code>null</code> if none should be used.
      */
     public Properties getEnvironment() {
         return this.environment;
     }
-
 
     /**
      * Execute the given JNDI context callback implementation.
@@ -108,6 +111,7 @@ public class JndiTemplate {
      * @return the initial Context instance
      * @throws NamingException in case of initialization errors
      */
+    @SuppressWarnings({"unchecked"})
     protected Context createInitialContext() throws NamingException {
         Properties env = getEnvironment();
         Hashtable icEnv = null;
