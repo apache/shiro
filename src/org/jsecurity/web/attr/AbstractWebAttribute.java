@@ -138,6 +138,7 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T>, Initia
     public void init() {
     }
 
+    @SuppressWarnings({"unchecked"})
     protected T fromStringValue(String stringValue) {
         Class clazz = getEditorClass();
         if (clazz == null) {

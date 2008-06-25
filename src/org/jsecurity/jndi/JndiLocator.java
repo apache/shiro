@@ -133,10 +133,10 @@ public class JndiLocator {
      */
     protected Object lookup(String jndiName, Class requiredType) throws NamingException {
         if (jndiName == null) {
-            throw new IllegalArgumentException("'jndiName' must not be null");
+            throw new IllegalArgumentException("jndiName argument must not be null");
         }
         String convertedName = convertJndiName(jndiName);
-        Object jndiObject = null;
+        Object jndiObject;
         try {
             jndiObject = getJndiTemplate().lookup(convertedName, requiredType);
         }

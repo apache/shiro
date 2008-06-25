@@ -20,7 +20,6 @@ import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.RealmFactory;
 import org.jsecurity.util.StringUtils;
 
-import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,19 +33,38 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
 
     Collection<String> jndiNames = null;
 
+    public Collection<String> getJndiNames() {
+        return jndiNames;
+    }
+
+    public void setJndiNames(Collection<String> jndiNames) {
+        this.jndiNames = jndiNames;
+    }
+
     public void setJndiNames(String commaDelimited) {
         String arg = StringUtils.clean(commaDelimited);
+        if (arg == null) {
+            String msg = "One or more comma-delimited jndi names must be specified for the " +
+                    getClass().getName() + " to locate Realms.";
+            throw new IllegalStateException(msg);
+        }
         String[] names = StringUtils.tokenizeToStringArray(arg, ",");
-        this.jndiNames = Arrays.asList(names);
+        setJndiNames(Arrays.asList(names));
     }
 
     public Collection<Realm> getRealms() {
-        List<Realm> realms = new ArrayList<Realm>();
+        Collection<String> jndiNames = getJndiNames();
+        if (jndiNames == null || jndiNames.isEmpty()) {
+            String msg = "One or more jndi names must be specified for the " +
+                    getClass().getName() + " to locate Realms.";
+            throw new IllegalStateException(msg);
+        }
+        List<Realm> realms = new ArrayList<Realm>(this.jndiNames.size());
         for (String name : this.jndiNames) {
             try {
                 Realm realm = (Realm) lookup(name, Realm.class);
                 realms.add(realm);
-            } catch (NamingException e) {
+            } catch (Exception e) {
                 throw new IllegalStateException("Unable to look up realm with jndi name '" + name + "'.", e);
             }
         }
