@@ -39,7 +39,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     private static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    /** Default main session timeout value (30 * 60 * 1000 milliseconds = 30 minutes). */
+    /**
+     * Default main session timeout value (30 * 60 * 1000 milliseconds = 30 minutes).
+     */
     public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
 
     /**
@@ -68,7 +70,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         this.sessionValidationSchedulerEnabled = sessionValidationSchedulerEnabled;
     }
 
-    public void setSessionValidationScheduler( SessionValidationScheduler sessionValidationScheduler ) {
+    public void setSessionValidationScheduler(SessionValidationScheduler sessionValidationScheduler) {
         this.sessionValidationScheduler = sessionValidationScheduler;
     }
 
@@ -81,12 +83,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * value is just a main default for all sessions and may be overridden by subclasses on a
      * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
      * so desired.
-     *
+     * <p/>
      * <ul>
-     *     <li>A negative return value means sessions never expire.</li>
-     *     <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
+     * <li>A negative return value means sessions never expire.</li>
+     * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
      * </ul>
-     *
+     * <p/>
      * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
      * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
      *
@@ -102,9 +104,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
      *
      * @param globalSessionTimeout the time in milliseconds any session may remain idle before
-     * expiring.
+     *                             expiring.
      */
-    public void setGlobalSessionTimeout( int globalSessionTimeout ) {
+    public void setGlobalSessionTimeout(int globalSessionTimeout) {
         this.globalSessionTimeout = globalSessionTimeout;
     }
 
@@ -114,14 +116,15 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * never called) , this method allows one to specify how
      * frequently session should be validated (to check for orphans).  The default value is
      * {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
-     *
+     * <p/>
      * <p>If you override the default scheduler, it is assumed that overriding instance 'knows' how often to
      * validate sessions, and this attribute will be ignored.
-     *
+     * <p/>
      * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
+     *
      * @param sessionValidationInterval the time in milliseconds between checking for valid sessions to reap orphans.
      */
-    public void setSessionValidationInterval( long sessionValidationInterval ) {
+    public void setSessionValidationInterval(long sessionValidationInterval) {
         this.sessionValidationInterval = sessionValidationInterval;
     }
 
@@ -157,7 +160,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
         //check for stopped (but not expired):
         if (session.getStopTimestamp() != null) {
-            //destroy timestamp is set, so the session is considered stopped:
+            //timestamp is set, so the session is considered stopped:
             String msg = "Session with id [" + session.getId() + "] has been " +
                     "explicitly stopped.  No further interaction under this session is " +
                     "allowed.";
@@ -183,41 +186,33 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             return true;
         }
 
-        if (isExpirationEnabled(session)) {
+        long timeout = getTimeout(session);
 
-            long timeout = getTimeout(session);
+        if (timeout >= 0l) {
 
-            if (timeout >= 0l) {
+            Date lastAccessTime = session.getLastAccessTime();
 
-                Date lastAccessTime = session.getLastAccessTime();
-
-                if (lastAccessTime == null) {
-                    String msg = "session.lastAccessTime for session with id [" +
-                            session.getId() + "] is null.  This value must be set at " +
-                            "least once.  Please check the " +
-                            session.getClass().getName() + " implementation and ensure " +
-                            "this value will be set (perhaps in the constructor?)";
-                    throw new IllegalStateException(msg);
-                }
-
-                // Calculate at what time a session would have been last accessed
-                // for it to be expired at this point.  In other words, subtract
-                // from the current time the amount of time that a session can
-                // be inactive before expiring.  If the session was last accessed
-                // before this time, it is expired.
-                long expireTimeMillis = System.currentTimeMillis() - timeout;
-                Date expireTime = new Date(expireTimeMillis);
-                return lastAccessTime.before(expireTime);
-            } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("No timeout for session with id [" + session.getId() +
-                            "].  Session is not considered expired.");
-                }
+            if (lastAccessTime == null) {
+                String msg = "session.lastAccessTime for session with id [" +
+                        session.getId() + "] is null.  This value must be set at " +
+                        "least once, preferably at least upon instantiation.  Please check the " +
+                        session.getClass().getName() + " implementation and ensure " +
+                        "this value will be set (perhaps in the constructor?)";
+                throw new IllegalStateException(msg);
             }
+
+            // Calculate at what time a session would have been last accessed
+            // for it to be expired at this point.  In other words, subtract
+            // from the current time the amount of time that a session can
+            // be inactive before expiring.  If the session was last accessed
+            // before this time, it is expired.
+            long expireTimeMillis = System.currentTimeMillis() - timeout;
+            Date expireTime = new Date(expireTimeMillis);
+            return lastAccessTime.before(expireTime);
         } else {
             if (log.isTraceEnabled()) {
-                log.trace("Time-out is disabled for Session with id [" + session.getId() +
-                        "].  Session is not expired.");
+                log.trace("No timeout for session with id [" + session.getId() +
+                        "].  Session is not considered expired.");
             }
         }
 
@@ -225,31 +220,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     }
 
     /**
-     * Returns whether or not a particular session can expire.
-     *
-     * <p>Default implementation always returns <tt>true</tt>.
-     *
-     * <p>Overriding this method can be particularly useful in some circumstances.  For example,
-     * daemon users (background process users) can be configured in a system like any other user.
-     * It is much easier to define a daemon account and use the same session and security framework
-     * that supports normal human users, rather than program special-case logic.  Daemon accounts
-     * are often expected to interact with the system at any time, regardless of (in)activity.
-     * This method provides a means to disable session expiration in such cases.
-     *
-     * <p>Most overriding implementations usually infer a user or user id from the specified
-     * <tt>Session</tt> and determine per-user timeout settings in a specific manner.
-     *
-     * @param session the session for which to determine if timeout expiration is enabled.
-     * @return true if expiration is enabled for the specified session, false otherwise.
-     */
-    protected boolean isExpirationEnabled(Session session) {
-        return getTimeout(session) >= 0l;
-    }
-
-    /**
      * Subclass template hook in case per-session timeout is not based on
      * {@link org.jsecurity.session.Session#getTimeout()}.
-     *
+     * <p/>
      * <p>This implementation merely returns {@link org.jsecurity.session.Session#getTimeout()}</p>
      *
      * @param session the session for which to determine session timeout.
@@ -262,38 +235,38 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected SessionValidationScheduler createSessionValidationScheduler() {
         SessionValidationScheduler scheduler;
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "No sessionValidationScheduler set.  Attempting to create default instance." );
+        if (log.isDebugEnabled()) {
+            log.debug("No sessionValidationScheduler set.  Attempting to create default instance.");
         }
-        scheduler = new ExecutorServiceSessionValidationScheduler( this );
-        ((ExecutorServiceSessionValidationScheduler)scheduler).setInterval(getSessionValidationInterval());
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "]." );
+        scheduler = new ExecutorServiceSessionValidationScheduler(this);
+        ((ExecutorServiceSessionValidationScheduler) scheduler).setInterval(getSessionValidationInterval());
+        if (log.isTraceEnabled()) {
+            log.trace("Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "].");
         }
         return scheduler;
     }
 
     protected void startSessionValidation() {
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
-        if ( scheduler == null ) {
+        if (scheduler == null) {
             scheduler = createSessionValidationScheduler();
-            setSessionValidationScheduler( scheduler );
+            setSessionValidationScheduler(scheduler);
         }
-        if ( log.isInfoEnabled() ) {
-            log.info( "Starting session validation scheduler..." );
+        if (log.isInfoEnabled()) {
+            log.info("Starting session validation scheduler...");
         }
         scheduler.startSessionValidation();
     }
 
     protected void stopSessionValidation() {
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
-        if ( scheduler != null ) {
+        if (scheduler != null) {
             try {
                 scheduler.stopSessionValidation();
-            } catch ( Exception e ) {
-                if ( log.isDebugEnabled() ) {
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
                     String msg = "Unable to stop SessionValidationScheduler.  Ignoring (shutting down)...";
-                    log.debug( msg, e );
+                    log.debug(msg, e);
                 }
             }
             LifecycleUtils.destroy(scheduler);
@@ -308,58 +281,60 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         afterSessionValidationStarted();
     }
 
-    protected void afterSessionValidationStarted(){}
+    protected void afterSessionValidationStarted() {
+    }
 
     public void destroy() {
         beforeSessionValidationStopped();
         stopSessionValidation();
     }
 
-    protected void beforeSessionValidationStopped(){}
+    protected void beforeSessionValidationStopped() {
+    }
 
 
     /**
      * @see ValidatingSessionManager#validateSessions()
      */
     public void validateSessions() {
-        if ( log.isInfoEnabled() ) {
-            log.info( "Validating all active sessions..." );
+        if (log.isInfoEnabled()) {
+            log.info("Validating all active sessions...");
         }
 
         int invalidCount = 0;
 
         Collection<Session> activeSessions = getActiveSessions();
 
-        if ( activeSessions != null && !activeSessions.isEmpty() ) {
-            for ( Session s : activeSessions ) {
+        if (activeSessions != null && !activeSessions.isEmpty()) {
+            for (Session s : activeSessions) {
                 try {
-                    validate( s );
-                } catch ( InvalidSessionException e ) {
-                    if ( log.isDebugEnabled() ) {
-                        boolean expired = ( e instanceof ExpiredSessionException );
+                    validate(s);
+                } catch (InvalidSessionException e) {
+                    if (log.isDebugEnabled()) {
+                        boolean expired = (e instanceof ExpiredSessionException);
                         String msg = "Invalidated session with id [" + s.getId() + "]" +
-                            ( expired ? " (expired)" : " (stopped)" );
-                        log.debug( msg );
+                                (expired ? " (expired)" : " (stopped)");
+                        log.debug(msg);
                     }
                     invalidCount++;
                 }
             }
         }
 
-        if ( log.isInfoEnabled() ) {
+        if (log.isInfoEnabled()) {
             String msg = "Finished session validation.";
-            if ( invalidCount > 0 ) {
+            if (invalidCount > 0) {
                 msg += "  [" + invalidCount + "] sessions were stopped.";
             } else {
                 msg += "  No sessions were stopped.";
             }
-            log.info( msg );
+            log.info(msg);
         }
     }
 
     protected abstract Collection<Session> getActiveSessions();
 
-    public void validateSession( Serializable sessionId ) {
+    public void validateSession(Serializable sessionId) {
         //standard getSession call will validate, so just call the method:
         getSession(sessionId);
     }

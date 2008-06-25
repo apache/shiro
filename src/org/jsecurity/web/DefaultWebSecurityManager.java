@@ -34,19 +34,23 @@ import java.util.Collection;
 /**
  * SecurityManager implementation that should be used in web-based applications or any application that requires
  * HTTP connectivity (SOAP, http remoting, etc).
- * 
+ *
  * @author Les Hazlewood
  * @since 0.2
  */
-public class DefaultWebSecurityManager extends DefaultSecurityManager implements WebSecurityManager {
+public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public static final String HTTP_SESSION_MODE = "http";
     public static final String JSECURITY_SESSION_MODE = "jsecurity";
 
-    /** The key that is used to store subject principals in the session. */
+    /**
+     * The key that is used to store subject principals in the session.
+     */
     public static final String PRINCIPALS_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_PRINCIPALS_SESSION_KEY";
 
-    /** The key that is used to store whether or not the user is authenticated in the session. */
+    /**
+     * The key that is used to store whether or not the user is authenticated in the session.
+     */
     public static final String AUTHENTICATED_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
     private String sessionMode = HTTP_SESSION_MODE; //default
@@ -73,13 +77,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     public void setSessionMode(String sessionMode) {
-        if ( sessionMode == null ||
-             (!sessionMode.equals(HTTP_SESSION_MODE) && !sessionMode.equals(JSECURITY_SESSION_MODE ) ) ) {
+        if (sessionMode == null ||
+                (!sessionMode.equals(HTTP_SESSION_MODE) && !sessionMode.equals(JSECURITY_SESSION_MODE))) {
             String msg = "Invalid sessionMode [" + sessionMode + "].  Allowed values are " +
-                    "public static final String constants in the " + getClass().getName() + " class: '" 
+                    "public static final String constants in the " + getClass().getName() + " class: '"
                     + HTTP_SESSION_MODE + "' or '" + JSECURITY_SESSION_MODE + "', with '" +
                     HTTP_SESSION_MODE + "' being the default.";
-            throw new IllegalArgumentException(msg );
+            throw new IllegalArgumentException(msg);
         }
         this.sessionMode = sessionMode;
     }
@@ -93,21 +97,21 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         CacheManager cacheManager = getCacheManager();
 
         if (isHttpSessionMode()) {
-            if ( log.isInfoEnabled() ) {
-                log.info( HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (Http Sessions)" );
+            if (log.isInfoEnabled()) {
+                log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (Http Sessions)");
             }
             ServletContainerSessionManager scsm = new ServletContainerSessionManager();
-            if ( cacheManager != null ) {
+            if (cacheManager != null) {
                 scsm.setCacheManager(cacheManager);
             }
             scsm.setSessionEventListeners(getSessionEventListeners());
             return scsm;
         } else {
-            if ( log.isInfoEnabled() ) {
-                log.info( JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
+            if (log.isInfoEnabled()) {
+                log.info(JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
             }
             DefaultWebSessionManager wsm = new DefaultWebSessionManager();
-            if ( cacheManager != null ) {
+            if (cacheManager != null) {
                 wsm.setCacheManager(cacheManager);
             }
             wsm.setSessionEventListeners(getSessionEventListeners());
@@ -119,7 +123,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     protected PrincipalCollection getPrincipals(Session session) {
         PrincipalCollection principals = null;
         if (session != null) {
-            principals = (PrincipalCollection)session.getAttribute(PRINCIPALS_SESSION_KEY);
+            principals = (PrincipalCollection) session.getAttribute(PRINCIPALS_SESSION_KEY);
         }
         return principals;
     }
@@ -148,10 +152,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         return isAuthenticated(existing);
     }
 
-    public Subject getSubject(ServletRequest request, ServletResponse response) {
-        return getSubject();
-    }
-
     public Subject createSubject() {
         ServletRequest request = WebUtils.getServletRequest();
         ServletResponse response = WebUtils.getServletResponse();
@@ -159,11 +159,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     public Subject createSubject(ServletRequest request, ServletResponse response) {
-        Session session = ((WebSessionManager)getSessionManager()).getSession(request, response);
-        if ( session == null ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No session found for the incoming request.  The Subject instance created for " +
-                        "the incoming request will not have an associated Session." );
+        Session session = ((WebSessionManager) getSessionManager()).getSession(request, response);
+        if (session == null) {
+            if (log.isTraceEnabled()) {
+                log.trace("No session found for the incoming request.  The Subject instance created for " +
+                        "the incoming request will not have an associated Session.");
             }
         }
         return createSubject(session, request, response);
@@ -180,7 +180,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
                                     Session existing,
                                     PrincipalCollection principals,
                                     boolean authenticated) {
-        InetAddress inetAddress = SecurityWebSupport.getInetAddress(request);
+        InetAddress inetAddress = WebUtils.getInetAddress(request);
         return createSubject(principals, existing, authenticated, inetAddress);
     }
 

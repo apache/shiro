@@ -23,7 +23,6 @@ import org.jsecurity.util.LifecycleUtils;
 import static org.jsecurity.util.StringUtils.clean;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
-import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.config.IniWebConfiguration;
 import org.jsecurity.web.config.WebConfiguration;
@@ -292,7 +291,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        ThreadContext.bind(SecurityWebSupport.getInetAddress(request));
+        ThreadContext.bind(WebUtils.getInetAddress(request));
 
         boolean httpSessions = isHttpSessions();
         request = new JSecurityHttpServletRequest(request, getServletContext(), httpSessions);

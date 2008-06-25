@@ -20,7 +20,6 @@ import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.DefaultSessionManager;
-import org.jsecurity.web.SecurityWebSupport;
 import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.attr.CookieAttribute;
 import org.jsecurity.web.attr.RequestParamAttribute;
@@ -57,7 +56,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return sessionIdCookieAttribute;
     }
 
-    public void setSessionIdCookieAttribute( CookieAttribute<Serializable> sessionIdCookieAttribute) {
+    public void setSessionIdCookieAttribute(CookieAttribute<Serializable> sessionIdCookieAttribute) {
         this.sessionIdCookieAttribute = sessionIdCookieAttribute;
     }
 
@@ -65,7 +64,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return sessionIdRequestParamAttribute;
     }
 
-    public void setSessionIdRequestParamAttribute( RequestParamAttribute<Serializable> sessionIdRequestParamAttribute) {
+    public void setSessionIdRequestParamAttribute(RequestParamAttribute<Serializable> sessionIdRequestParamAttribute) {
         this.sessionIdRequestParamAttribute = sessionIdRequestParamAttribute;
     }
 
@@ -106,7 +105,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      *                              a session.
      * @see #isValidateRequestOrigin
      */
-    public void setValidateRequestOrigin( boolean validateRequestOrigin ) {
+    public void setValidateRequestOrigin(boolean validateRequestOrigin) {
         this.validateRequestOrigin = validateRequestOrigin;
     }
 
@@ -118,78 +117,78 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     protected void ensureCookieSessionIdStore() {
         CookieAttribute<Serializable> cookieStore = getSessionIdCookieAttribute();
-        if ( cookieStore == null ) {
-            cookieStore = new CookieAttribute<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
-            cookieStore.setCheckRequestParams( false );
-            setSessionIdCookieAttribute( cookieStore );
+        if (cookieStore == null) {
+            cookieStore = new CookieAttribute<Serializable>(JSecurityHttpSession.DEFAULT_SESSION_ID_NAME);
+            cookieStore.setCheckRequestParams(false);
+            setSessionIdCookieAttribute(cookieStore);
         }
     }
 
     protected void ensureRequestParamSessionIdStore() {
         RequestParamAttribute<Serializable> reqParamStore = getSessionIdRequestParamAttribute();
-        if ( reqParamStore == null ) {
-            reqParamStore = new RequestParamAttribute<Serializable>( JSecurityHttpSession.DEFAULT_SESSION_ID_NAME );
-            setSessionIdRequestParamAttribute( reqParamStore );
+        if (reqParamStore == null) {
+            reqParamStore = new RequestParamAttribute<Serializable>(JSecurityHttpSession.DEFAULT_SESSION_ID_NAME);
+            setSessionIdRequestParamAttribute(reqParamStore);
         }
     }
 
-    protected void validateSessionOrigin( ServletRequest request, Session session )
-        throws HostUnauthorizedException {
-        InetAddress requestIp = SecurityWebSupport.getInetAddress( request );
+    protected void validateSessionOrigin(ServletRequest request, Session session)
+            throws HostUnauthorizedException {
+        InetAddress requestIp = WebUtils.getInetAddress(request);
         InetAddress originIp = session.getHostAddress();
         Serializable sessionId = session.getId();
 
-        if ( originIp == null ) {
-            if ( requestIp != null ) {
+        if (originIp == null) {
+            if (requestIp != null) {
                 String msg = "No IP Address was specified when creating session with id [" +
-                    sessionId + "].  Attempting to access session from " +
-                    "IP [" + requestIp + "].  Origin IP and request IP must match.";
-                throw new HostUnauthorizedException( msg );
+                        sessionId + "].  Attempting to access session from " +
+                        "IP [" + requestIp + "].  Origin IP and request IP must match.";
+                throw new HostUnauthorizedException(msg);
             }
         } else {
-            if ( requestIp != null ) {
-                if ( !requestIp.equals( originIp ) ) {
+            if (requestIp != null) {
+                if (!requestIp.equals(originIp)) {
                     String msg = "Session with id [" + sessionId + "] originated from [" +
-                        originIp + "], but the current HttpServletRequest originated " +
-                        "from [" + requestIp + "].  Disallowing session access: " +
-                        "session origin and request origin must match to allow access.";
-                    throw new HostUnauthorizedException( msg );
+                            originIp + "], but the current HttpServletRequest originated " +
+                            "from [" + requestIp + "].  Disallowing session access: " +
+                            "session origin and request origin must match to allow access.";
+                    throw new HostUnauthorizedException(msg);
                 }
 
             } else {
                 String msg = "No IP Address associated with the current HttpServletRequest.  " +
-                    "Session with id [" + sessionId + "] originated from " +
-                    "[" + originIp + "].  Request IP must match the session's origin " +
-                    "IP in order to gain access to that session.";
-                throw new HostUnauthorizedException( msg );
+                        "Session with id [" + sessionId + "] originated from " +
+                        "[" + originIp + "].  Request IP must match the session's origin " +
+                        "IP in order to gain access to that session.";
+                throw new HostUnauthorizedException(msg);
             }
         }
     }
 
-    protected void storeSessionId( Serializable currentId, ServletRequest request, ServletResponse response ) {
-        if ( currentId == null ) {
+    protected void storeSessionId(Serializable currentId, ServletRequest request, ServletResponse response) {
+        if (currentId == null) {
             String msg = "sessionId cannot be null when persisting for subsequent requests.";
-            throw new IllegalArgumentException( msg );
+            throw new IllegalArgumentException(msg);
         }
         //ensure that the id has been set in the idStore, or if it already has, that it is not different than the
         //'real' session value:
-        Serializable existingId = retrieveSessionId( request, response );
-        if ( existingId == null || !currentId.equals( existingId ) ) {
-            getSessionIdCookieAttribute().storeValue( currentId, request, response );
+        Serializable existingId = retrieveSessionId(request, response);
+        if (existingId == null || !currentId.equals(existingId)) {
+            getSessionIdCookieAttribute().storeValue(currentId, request, response);
         }
     }
 
-    protected Serializable retrieveSessionId( ServletRequest request, ServletResponse response ) {
+    protected Serializable retrieveSessionId(ServletRequest request, ServletResponse response) {
         WebAttribute<Serializable> cookieSessionIdAttribute = getSessionIdCookieAttribute();
-        Serializable id = cookieSessionIdAttribute.retrieveValue( request, response );
-        if ( id != null ) {
-            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
-                JSecurityHttpServletRequest.COOKIE_SESSION_ID_SOURCE );
+        Serializable id = cookieSessionIdAttribute.retrieveValue(request, response);
+        if (id != null) {
+            request.setAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
+                    JSecurityHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         } else {
-            id = getSessionIdRequestParamAttribute().retrieveValue( request, response );
-            if ( id != null ) {
-                request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
-                    JSecurityHttpServletRequest.URL_SESSION_ID_SOURCE );
+            id = getSessionIdRequestParamAttribute().retrieveValue(request, response);
+            if (id != null) {
+                request.setAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
+                        JSecurityHttpServletRequest.URL_SESSION_ID_SOURCE);
             }
         }
         return id;
@@ -198,24 +197,24 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     public Serializable start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
         ServletRequest request = WebUtils.getServletRequest();
         ServletResponse response = WebUtils.getServletResponse();
-        return start( request, response, hostAddress );
+        return start(request, response, hostAddress);
     }
 
-    protected Serializable start( ServletRequest request, ServletResponse response, InetAddress inetAddress ) {
-        Serializable sessionId = super.start( inetAddress );
-        storeSessionId( sessionId, request, response );
-        request.removeAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE );
-        request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+    protected Serializable start(ServletRequest request, ServletResponse response, InetAddress inetAddress) {
+        Serializable sessionId = super.start(inetAddress);
+        storeSessionId(sessionId, request, response);
+        request.removeAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
+        request.setAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
         return sessionId;
     }
 
     public Session doGetSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        if ( sessionId != null ) {
-            return super.doGetSession( sessionId );
+        if (sessionId != null) {
+            return super.doGetSession(sessionId);
         } else {
             ServletRequest request = WebUtils.getServletRequest();
             ServletResponse response = WebUtils.getServletResponse();
-            return getSession( request, response );
+            return getSession(request, response);
         }
     }
 
@@ -226,61 +225,63 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * @param request  incoming servlet request
      * @param response outgoing servlet response
      * @return the Session associated with the incoming request or <tt>null</tt> if one does not exist.
-     * @throws org.jsecurity.session.InvalidSessionException if the associated Session has expired prior to invoking this method.
-     * @throws org.jsecurity.authz.AuthorizationException  if the caller is not authorized to access the session associated with the request.
+     * @throws org.jsecurity.session.InvalidSessionException
+     *          if the associated Session has expired prior to invoking this method.
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if the caller is not authorized to access the session associated with the request.
      */
-    public final Session getSession( ServletRequest request, ServletResponse response )
-        throws InvalidSessionException, AuthorizationException {
+    public final Session getSession(ServletRequest request, ServletResponse response)
+            throws InvalidSessionException, AuthorizationException {
 
         Session session;
         try {
-            session = doGetSession( request, response );
-        } catch ( InvalidSessionException ise ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Request Session is invalid, message: [" + ise.getMessage() + "].  Removing any " +
-                        "associated session cookie..." );
+            session = doGetSession(request, response);
+        } catch (InvalidSessionException ise) {
+            if (log.isTraceEnabled()) {
+                log.trace("Request Session is invalid, message: [" + ise.getMessage() + "].  Removing any " +
+                        "associated session cookie...");
             }
-            getSessionIdCookieAttribute().removeValue(request,response);
+            getSessionIdCookieAttribute().removeValue(request, response);
 
             //give subclass a chance to do something additional if necessary.  Otherwise returning null is just fine:
-            session = handleInvalidSession( request, response, ise );
+            session = handleInvalidSession(request, response, ise);
         }
 
         return session;
     }
 
-    protected Session doGetSession( ServletRequest request, ServletResponse response ) {
+    protected Session doGetSession(ServletRequest request, ServletResponse response) {
 
         Session session = null;
-        Serializable sessionId = retrieveSessionId( request, response );
+        Serializable sessionId = retrieveSessionId(request, response);
 
-        if ( sessionId != null ) {
-            request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId );
-            session = super.doGetSession( sessionId );
-            if ( isValidateRequestOrigin() ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Validating request origin against session origin" );
+        if (sessionId != null) {
+            request.setAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId);
+            session = super.doGetSession(sessionId);
+            if (isValidateRequestOrigin()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Validating request origin against session origin");
                 }
-                validateSessionOrigin( request, session );
+                validateSessionOrigin(request, session);
             }
-            if ( session != null ) {
-                request.setAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE );
+            if (session != null) {
+                request.setAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
             }
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No JSecurity session id associated with the given " +
-                    "HttpServletRequest.  A Session will not be returned." );
+            if (log.isTraceEnabled()) {
+                log.trace("No JSecurity session id associated with the given " +
+                        "HttpServletRequest.  A Session will not be returned.");
             }
         }
 
         return session;
     }
 
-    protected Session handleInvalidSession( ServletRequest request,
-                                            ServletResponse response,
-                                            InvalidSessionException ise ) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Sesssion associated with the current request is nonexistent or invalid.  Returning null.");
+    protected Session handleInvalidSession(ServletRequest request,
+                                           ServletResponse response,
+                                           InvalidSessionException ise) {
+        if (log.isTraceEnabled()) {
+            log.trace("Sesssion associated with the current request is nonexistent or invalid.  Returning null.");
         }
         return null;
     }
