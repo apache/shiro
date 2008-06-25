@@ -15,9 +15,9 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
-import org.jsecurity.util.ThreadContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -53,9 +53,9 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     protected HttpSession session = null;
     protected boolean httpSessions = true;
 
-    public JSecurityHttpServletRequest( HttpServletRequest wrapped, ServletContext servletContext,
-                                        boolean httpSessions ) {
-        super( wrapped );
+    public JSecurityHttpServletRequest(HttpServletRequest wrapped, ServletContext servletContext,
+                                       boolean httpSessions) {
+        super(wrapped);
         this.servletContext = servletContext;
         this.httpSessions = httpSessions;
     }
@@ -67,11 +67,11 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     public String getRemoteUser() {
         String remoteUser;
         Object scPrincipal = getSubjectPrincipal();
-        if ( scPrincipal != null ) {
-            if ( scPrincipal instanceof String ) {
-                return (String)scPrincipal;
-            } else if ( scPrincipal instanceof Principal ) {
-                remoteUser = ( (Principal)scPrincipal ).getName();
+        if (scPrincipal != null) {
+            if (scPrincipal instanceof String) {
+                return (String) scPrincipal;
+            } else if (scPrincipal instanceof Principal) {
+                remoteUser = ((Principal) scPrincipal).getName();
             } else {
                 remoteUser = scPrincipal.toString();
             }
@@ -82,23 +82,23 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     protected Subject getSubject() {
-        return ThreadContext.getSubject();
+        return SecurityUtils.getSubject();
     }
 
     protected Object getSubjectPrincipal() {
         Object userPrincipal = null;
-        Subject sc = getSubject();
-        if ( sc != null ) {
-            userPrincipal = sc.getPrincipal();
+        Subject subject = getSubject();
+        if (subject != null) {
+            userPrincipal = subject.getPrincipal();
         }
         return userPrincipal;
     }
 
-    public boolean isUserInRole( String s ) {
-        Subject sc = getSubject();
-        boolean inRole = ( sc != null && sc.hasRole( s ) );
-        if ( !inRole ) {
-            inRole = super.isUserInRole( s );
+    public boolean isUserInRole(String s) {
+        Subject subject = getSubject();
+        boolean inRole = (subject != null && subject.hasRole(s));
+        if (!inRole) {
+            inRole = super.isUserInRole(s);
         }
         return inRole;
     }
@@ -106,11 +106,11 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     public Principal getUserPrincipal() {
         Principal userPrincipal;
         Object scPrincipal = getSubjectPrincipal();
-        if ( scPrincipal != null ) {
-            if ( scPrincipal instanceof Principal ) {
-                userPrincipal = (Principal)scPrincipal;
+        if (scPrincipal != null) {
+            if (scPrincipal instanceof Principal) {
+                userPrincipal = (Principal) scPrincipal;
             } else {
-                userPrincipal = new ObjectPrincipal( scPrincipal );
+                userPrincipal = new ObjectPrincipal(scPrincipal);
             }
         } else {
             userPrincipal = super.getUserPrincipal();
@@ -120,11 +120,11 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     public String getRequestedSessionId() {
         String requestedSessionId = null;
-        if ( isHttpSessions() ) {
+        if (isHttpSessions()) {
             requestedSessionId = super.getRequestedSessionId();
         } else {
-            Object sessionId = getAttribute( REFERENCED_SESSION_ID );
-            if ( sessionId != null ) {
+            Object sessionId = getAttribute(REFERENCED_SESSION_ID);
+            if (sessionId != null) {
                 requestedSessionId = sessionId.toString();
             }
         }
@@ -132,22 +132,22 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
         return requestedSessionId;
     }
 
-    public HttpSession getSession( boolean create ) {
+    public HttpSession getSession(boolean create) {
 
         HttpSession httpSession;
 
-        if ( isHttpSessions() ) {
-            httpSession = super.getSession( create );
+        if (isHttpSessions()) {
+            httpSession = super.getSession(create);
         } else {
-            if ( this.session == null ) {
+            if (this.session == null) {
 
-                boolean existing = getSubject().getSession( false ) != null;
+                boolean existing = getSubject().getSession(false) != null;
 
-                Session jsecSession = getSubject().getSession( create );
-                if ( jsecSession != null ) {
-                    this.session = new JSecurityHttpSession( jsecSession, this, this.servletContext );
-                    if ( !existing ) {
-                        setAttribute( REFERENCED_SESSION_IS_NEW, Boolean.TRUE );
+                Session jsecSession = getSubject().getSession(create);
+                if (jsecSession != null) {
+                    this.session = new JSecurityHttpSession(jsecSession, this, this.servletContext);
+                    if (!existing) {
+                        setAttribute(REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
                     }
                 }
             }
@@ -159,33 +159,33 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
 
     public HttpSession getSession() {
-        return getSession( true );
+        return getSession(true);
     }
 
     public boolean isRequestedSessionIdValid() {
-        if ( isHttpSessions() ) {
+        if (isHttpSessions()) {
             return super.isRequestedSessionIdValid();
         } else {
-            Boolean value = (Boolean)getAttribute( REFERENCED_SESSION_ID_IS_VALID );
-            return ( value != null && value.equals( Boolean.TRUE ) );
+            Boolean value = (Boolean) getAttribute(REFERENCED_SESSION_ID_IS_VALID);
+            return (value != null && value.equals(Boolean.TRUE));
         }
     }
 
     public boolean isRequestedSessionIdFromCookie() {
-        if ( isHttpSessions() ) {
+        if (isHttpSessions()) {
             return super.isRequestedSessionIdFromCookie();
         } else {
-            String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
-            return value != null && value.equals( COOKIE_SESSION_ID_SOURCE );
+            String value = (String) getAttribute(REFERENCED_SESSION_ID_SOURCE);
+            return value != null && value.equals(COOKIE_SESSION_ID_SOURCE);
         }
     }
 
     public boolean isRequestedSessionIdFromURL() {
-        if ( isHttpSessions() ) {
+        if (isHttpSessions()) {
             return super.isRequestedSessionIdFromURL();
         } else {
-            String value = (String)getAttribute( REFERENCED_SESSION_ID_SOURCE );
-            return value != null && value.equals( URL_SESSION_ID_SOURCE );
+            String value = (String) getAttribute(REFERENCED_SESSION_ID_SOURCE);
+            return value != null && value.equals(URL_SESSION_ID_SOURCE);
         }
     }
 
@@ -196,7 +196,7 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     private class ObjectPrincipal implements java.security.Principal {
         private Object object = null;
 
-        public ObjectPrincipal( Object object ) {
+        public ObjectPrincipal(Object object) {
             this.object = object;
         }
 
@@ -212,10 +212,10 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
             return object.hashCode();
         }
 
-        public boolean equals( Object o ) {
-            if ( o instanceof ObjectPrincipal ) {
-                ObjectPrincipal op = (ObjectPrincipal)o;
-                return getObject().equals( op.getObject() );
+        public boolean equals(Object o) {
+            if (o instanceof ObjectPrincipal) {
+                ObjectPrincipal op = (ObjectPrincipal) o;
+                return getObject().equals(op.getObject());
             }
             return false;
         }

@@ -222,7 +222,7 @@ public class WebUtils {
             clientAddress = InetAddress.getByName(addrString);
         } catch (UnknownHostException e) {
             if (log.isInfoEnabled()) {
-                log.info("Unable to acquire InetAddress from HttpServletRequest", e);
+                log.info("Unable to acquire InetAddress from ServletRequest", e);
             }
         }
 

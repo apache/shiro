@@ -144,8 +144,8 @@ public class SpringJSecurityFilter extends JSecurityFilter {
     }
 
     protected org.jsecurity.mgt.SecurityManager getSecurityManager() {
-        ServletContext sc = getFilterConfig().getServletContext();
-        ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+        ServletContext servletContext = getFilterConfig().getServletContext();
+        ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
         return getSecurityManager(appCtx);
     }
 
