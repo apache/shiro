@@ -31,12 +31,12 @@ import java.util.Collections;
 /**
  * An CachingSessionDAO is a SessionDAO that provides a transparent caching layer between the components that
  * use it and the underlying EIS (Enterprise Information System) for enhanced performance.
- *
+ * <p/>
  * <p>This implementation caches all active sessions in a cache created by a required
  * {@link org.jsecurity.cache.CacheManager}.  All <tt>SessionDAO</tt> methods are implemented by this class to employ
  * caching behavior and delegates the actual EIS operations to respective do* methods to be implemented by
  * subclasses (doCreate, doRead, etc).
- *
+ * <p/>
  * <p>After instantiating an instance of this class (or subclass) and setting the <tt>CacheManager</tt> property,
  * the {@link #init} method must be called to properly initialize the cache.
  *
@@ -247,16 +247,16 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     public void update(Session session) throws UnknownSessionException {
 
         doUpdate(session);
-        
+
         Cache cache = getActiveSessionsCache();
         Serializable id = session.getId();
 
-        if ( session.getStopTimestamp() != null || session.isExpired() ) {
-            if ( cache != null ) {
+        if (session.getStopTimestamp() != null || session.isExpired()) {
+            if (cache != null) {
                 cache.remove(id);
             }
         } else {
-            getActiveSessionsCacheLazy().put(id,session);
+            getActiveSessionsCacheLazy().put(id, session);
         }
     }
 
@@ -275,11 +275,11 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      */
     public void delete(Session session) {
         Serializable id = session.getId();
+        doDelete(session);
         Cache cache = getActiveSessionsCache();
-        if ( cache != null ) {
+        if (cache != null) {
             cache.remove(id);
         }
-        doDelete(session);
     }
 
     /**
@@ -291,7 +291,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
     /**
      * Returns all active sessions in the system.
-     *
+     * <p/>
      * <p>This implementation merely returns the sessions found in the activeSessions cache.  Subclass implementations
      * may wish to override this method to retrieve them in a different way, perhaps by an RDBMS query or by other
      * means.
@@ -301,7 +301,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     @SuppressWarnings({"unchecked"})
     public Collection<Session> getActiveSessions() {
         Cache cache = getActiveSessionsCache();
-        if ( cache != null ) {
+        if (cache != null) {
             return cache.values();
         } else {
             return Collections.EMPTY_LIST;
