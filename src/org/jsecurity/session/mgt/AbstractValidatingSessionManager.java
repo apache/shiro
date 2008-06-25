@@ -83,12 +83,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * value is just a main default for all sessions and may be overridden by subclasses on a
      * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
      * so desired.
-     * <p/>
+     *
      * <ul>
      * <li>A negative return value means sessions never expire.</li>
      * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
      * </ul>
-     * <p/>
+     *
      * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
      * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
      *
@@ -116,10 +116,10 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * never called) , this method allows one to specify how
      * frequently session should be validated (to check for orphans).  The default value is
      * {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
-     * <p/>
+     *
      * <p>If you override the default scheduler, it is assumed that overriding instance 'knows' how often to
      * validate sessions, and this attribute will be ignored.
-     * <p/>
+     *
      * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
      *
      * @param sessionValidationInterval the time in milliseconds between checking for valid sessions to reap orphans.
@@ -222,7 +222,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     /**
      * Subclass template hook in case per-session timeout is not based on
      * {@link org.jsecurity.session.Session#getTimeout()}.
-     * <p/>
+     *
      * <p>This implementation merely returns {@link org.jsecurity.session.Session#getTimeout()}</p>
      *
      * @param session the session for which to determine session timeout.

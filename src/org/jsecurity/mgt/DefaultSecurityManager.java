@@ -35,28 +35,28 @@ import java.util.Collection;
  * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
  * {@link org.jsecurity.session.mgt.SessionManager SessionManager} instances respectively via superclass
  * implementation.</p>
- * <p/>
+ *
  * <p>To greatly reduce and simplify configuration, this implementation (and its superclasses) will
  * create suitable defaults for <em>all</em> of its required dependencies.  Therefore, you only need to override
  * attributes for custom behavior.  But, note the following:</p>
- * <p/>
+ *
  * <p>Unless you're happy with the default simple {@link org.jsecurity.realm.text.PropertiesRealm properties file}-based realm, which may or
  * may not be flexible enough for enterprise applications, you might want to specify at least one custom
  * <tt>Realm</tt> implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.
  * All other attributes have suitable defaults for most enterprise applications.</p>
- * <p/>
+ *
  * <p><b>RememberMe notice</b>: This class supports the ability to configure a
  * {@link #setRememberMeManager RememberMeManager}
  * for <tt>RememberMe</tt> identity services for login/logout, BUT, a default instance <em>will not</em> be created
  * for this attribute at startup.
- * <p/>
+ *
  * <p>Because RememberMe services are inherently client tier-specific and
  * therefore aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an
  * instance yourself before calling {@link #init() init()}.  However if you're reading this JavaDoc with the
  * expectation of operating in a Web environment, take a look at the
  * {@link org.jsecurity.web.DefaultWebSecurityManager DefaultWebSecurityManager} implementation, which
  * <em>does</em> support <tt>RememberMe</tt> services by default at startup.
- * <p/>
+ *
  * <p>Finally, the only absolute requirement for a <tt>DefaultSecurityManager</tt> instance to function properly is
  * that its {@link #init() init()} method must be called before it is used.  Even this is called automatically if
  * you use one of the overloaded constructors with one or more arguments.</p>
@@ -165,7 +165,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     /**
      * Binds a <tt>Subject</tt> instance created after authentication to the application for later use.
-     * <p/>
+     *
      * <p>The default implementation merely binds the argument to the thread local via the {@link ThreadContext}.
      * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
      *
@@ -245,7 +245,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     /**
      * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
      * <tt>Subject</tt> instance representing the authenticated account's identity.
-     * <p/>
+     *
      * <p>Once constructed, the <tt>Subject</tt> instance is then {@link #bind bound} to the application for
      * subsequent access before being returned to the caller.
      *

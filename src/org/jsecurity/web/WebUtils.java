@@ -34,7 +34,7 @@ import java.net.UnknownHostException;
 
 /**
  * Simple utility class for operations used across multiple class hierarchies in the web framework code.
- * <p/>
+ *
  * <p>Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
  * and in these cases, we have retained all license, copyright and author information.
  *
@@ -54,7 +54,7 @@ public class WebUtils {
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
      * <p>If included via a RequestDispatcher, the current resource will see the
      * originating request. Its own URI and paths are exposed as request attributes.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = "javax.servlet.include.request_uri";
@@ -67,7 +67,7 @@ public class WebUtils {
      * Standard Servlet 2.4+ spec request attributes for forward URI and paths.
      * <p>If forwarded to via a RequestDispatcher, the current resource will see its
      * own URI and paths. The originating URI and paths are exposed as request attributes.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     public static final String FORWARD_REQUEST_URI_ATTRIBUTE = "javax.servlet.forward.request_uri";
@@ -79,7 +79,7 @@ public class WebUtils {
     /**
      * Default character encoding to use when <code>request.getCharacterEncoding</code>
      * returns <code>null</code>, according to the Servlet spec.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @see javax.servlet.ServletRequest#getCharacterEncoding
@@ -89,7 +89,7 @@ public class WebUtils {
     /**
      * Return the path within the web application for the given request.
      * <p>Detects include request URL if called within a RequestDispatcher include.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
@@ -116,7 +116,7 @@ public class WebUtils {
      * <p>The URI that the web container resolves <i>should</i> be correct, but some
      * containers like JBoss/Jetty incorrectly include ";" strings like ";jsessionid"
      * in the URI. This method cuts off such incorrect appendices.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
@@ -132,7 +132,7 @@ public class WebUtils {
 
     /**
      * Decode the supplied URI string and strips any extraneous portion after a ';'.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     private static String decodeAndCleanUriString(HttpServletRequest request, String uri) {
@@ -146,7 +146,7 @@ public class WebUtils {
      * URL if called within a RequestDispatcher include.
      * <p>As the value returned by <code>request.getContextPath()</code> is <i>not</i>
      * decoded by the servlet container, this method will decode it.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
@@ -168,7 +168,7 @@ public class WebUtils {
      * Decode the given source string with a URLDecoder. The encoding will be taken
      * from the request, falling back to the default "ISO-8859-1".
      * <p>The default implementation uses <code>URLDecoder.decode(input, enc)</code>.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
@@ -199,7 +199,7 @@ public class WebUtils {
      * Can be overridden in subclasses.
      * <p>The default implementation checks the request encoding,
      * falling back to the default encoding specified for this resolver.
-     * <p/>
+     *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
@@ -271,7 +271,7 @@ public class WebUtils {
      * for the following:
      * <pre>
      * return (ServletRequest)get( SERVLET_REQUEST_KEY );</pre>
-     * <p/>
+     *
      * <p>This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
      *
@@ -283,11 +283,11 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies binding a ServletRequest to the current thread (via the ThreadContext).
-     * <p/>
+     *
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the servletRequest is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     * <p/>
+     *
      * <pre>
      * if (servletRequest != null) {
      *     ThreadContext.put( SERVLET_REQUEST_KEY, session );
@@ -303,13 +303,13 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies removal of a thread-local ServletRequest from the thread.
-     * <p/>
+     *
      * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     * <p/>
+     *
      * <pre>
      * return (ServletRequest)ThreadContext.remove( SERVLET_REQUEST_KEY );</pre>
-     * <p/>
+     *
      * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
      * thread execution), you should use the {@link #getServletRequest() getServletRequest()} method for that purpose.
      *
@@ -325,7 +325,7 @@ public class WebUtils {
      * for the following:
      * <pre>
      * return (ServletResponse)ThreadContext.get( SERVLET_RESPONSE_KEY );</pre>
-     * <p/>
+     *
      * <p>This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindServletResponse() unbindServletResponse} instead.
      *
@@ -337,11 +337,11 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies binding a ServletResponse to the thread via the ThreadContext.
-     * <p/>
+     *
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the servletResponse is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     * <p/>
+     *
      * <pre>
      * if (servletResponse != null) {
      *     ThreadContext.put( SERVLET_RESPONSE_KEY, session );
@@ -357,13 +357,13 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies removal of a thread-local ServletResponse from the thread.
-     * <p/>
+     *
      * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     * <p/>
+     *
      * <pre>
      * return (ServletResponse)ThreadContext.remove( SERVLET_RESPONSE_KEY );</pre>
-     * <p/>
+     *
      * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
      * thread execution), you should use the {@link #getServletResponse() getServletResponse()} method for that purpose.
      *

@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * Convenient superclass for JNDI accessors, providing "jndiTemplate"
  * and "jndiEnvironment" bean properties.
- * <p/>
+ *
  * <p>Note that this implementation is an almost exact combined copy of the Spring Framework's 'JndiAccessor' and
  * 'JndiLocatorSupport' classes from their 2.5.4 distribution - we didn't want to re-invent the wheel, but not require
  * a full dependency on the Spring framework, nor does Spring make available only its JNDI classes in a small jar, or
@@ -171,9 +171,9 @@ public class JndiLocator {
     protected String convertJndiName(String jndiName) {
         // Prepend container prefix if not already specified and no other scheme given.
         if (isResourceRef() && !jndiName.startsWith(CONTAINER_PREFIX) && jndiName.indexOf(':') == -1) {
-			jndiName = CONTAINER_PREFIX + jndiName;
-		}
-		return jndiName;
-	}
+            jndiName = CONTAINER_PREFIX + jndiName;
+        }
+        return jndiName;
+    }
 
 }

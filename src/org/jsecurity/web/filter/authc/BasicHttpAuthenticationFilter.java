@@ -31,25 +31,25 @@ import javax.servlet.http.HttpServletResponse;
  * Requires the requesting user to be {@link org.jsecurity.subject.Subject#isAuthenticated() authenticated} for the
  * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
- * <p/>
+ *
  * <p>Supports Basic HTTP Authentication as specified in
  * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
- * <p/>
+ *
  * <p>Basic authentication works as follows:</p>
- * <p/>
+ *
  * <ol>
  * <li>A request comes in for a resource that requires authentication.</li>
  * <li>The server replies with a 401 response code, a <code>WWW-Authenticate</code> header, and the contents of a
  * page informing the user that the incoming resource requires authentication.</li>
  * <li>Upon receiving this <code>WWW-Authenticate</code> challenge from the server, the client then takes a
- * username and a password and puts them in the following format:<p/>
- * <p><code>username:password</code></p><p/></li>
- * <p/>
+ * username and a password and puts them in the following format:
+ * <p><code>username:password</code></p></li>
+ *
  * <li>This token is then base 64 encoded.</li>
  * <li>The client then sends another request for the same resource with the following header:<p/>
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
  * </ol>
- * <p/>
+ *
  * <p>The {@link #onUnauthenticatedRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
  * only be called if the subject making the request is not
  * {@link org.jsecurity.subject.Subject#isAuthenticated() authenticated} </p>

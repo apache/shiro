@@ -8,11 +8,11 @@ import javax.naming.NamingException;
  * operation (such as a lookup) in a JNDI context. This callback approach
  * is valuable in simplifying error handling, which is performed by the
  * JndiTemplate class. This is a similar to JdbcTemplate's approach.
- * <p/>
+ *
  * <p>Note that there is hardly any need to implement this callback
  * interface, as JndiTemplate provides all usual JNDI operations via
  * convenience methods.
- * <p/>
+ *
  * <p>Note that this interface is an exact copy of the Spring Framework's identically named interface from
  * their 2.5.4 distribution - we didn't want to re-invent the wheel, but not require a full dependency on the
  * Spring framework, nor does Spring make available only its JNDI classes in a small jar, or we would have used that.

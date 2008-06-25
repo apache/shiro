@@ -21,7 +21,7 @@ import org.jsecurity.authc.AuthenticationToken;
 /**
  * Interface implemented by classes that can determine if an AuthenticationToken's provided
  * credentials matches a corresponding account's credentials stored in the system.
- * <p/>
+ *
  * <p>Simple direct comparisons are handled well by the
  * {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher SimpleCredentialsMatcher}.  If you
  * hash user's credentials before storing them in a realm (a common practice), look at the

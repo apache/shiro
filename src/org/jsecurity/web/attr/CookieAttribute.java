@@ -78,9 +78,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Constructs a <tt>CookieAttribute</tt> using a {@link Cookie Cookie} with the specified
      * {@link Cookie#getName() name} and {@link Cookie#getPath() path}.
-     * <p/>
+     *
      * <p>A <tt>null</tt> <tt>path</tt> value means the request context's path will be used by default.
-     * <p/>
+     *
      * <p>The Cookie's {@link Cookie#getMaxAge() maxAge} will be <tt>-1</tt>, indicating the Cookie will persist until
      * browser shutdown.
      *
@@ -95,7 +95,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Constructs a <tt>CookieAttribute</tt> using a {@link Cookie Cookie} with the specified
      * {@link Cookie#getName() name} and {@link Cookie#getMaxAge() maxAge}.
-     * <p/>
+     *
      * <p>The Cookie's {@link javax.servlet.http.Cookie#getPath() path} will be the <tt>Request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}.
      *
@@ -142,7 +142,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Returns the Cookie's {@link Cookie#getPath() path} setting.  If <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
-     * <p/>
+     *
      * <p>The default is <code>null</code>.</p>
      *
      * @return the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
@@ -155,7 +155,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Sets the Cookie's {@link Cookie#getPath() path} setting.  If the argument is <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
-     * <p/>
+     *
      * <p>The default is <code>null</code>.</p>
      *
      * @param path the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
@@ -168,7 +168,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Returns the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
-     * <p/>
+     *
      * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
      *
      * @return the Cookie's {@link Cookie#setMaxAge(int) maxAge}
@@ -180,7 +180,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Sets the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
-     * <p/>
+     *
      * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
      *
      * @param maxAge the Cookie's {@link Cookie#setMaxAge(int) maxAge}
