@@ -32,15 +32,15 @@ import java.net.InetAddress;
 /**
  * SessionManager implementation providing Session implementations that are merely wrappers for the
  * Servlet container's HttpSession.
- * <p/>
+ *
  * <p>Despite its name, this implementation <em>does not</em> itself manage Sessions since the Servlet container
  * provides the actual management support.  This class mainly exists to 'impersonate' a regular JSecurity
  * <tt>SessionManager</tt> so it can be pluggable into a normal JSecurity configuration in a pure web application.
- * <p/>
+ *
  * <p>Note that because this implementation relies on the <tt>HttpSession</tt>, it is only functional in a servlet
  * container.  I.e. it is <em>NOT</em> capable of supporting Sessions any clients other than HttpRequest/HttpResponse
  * based clients.
- * <p/>
+ *
  * <p>Therefore, if you need heterogenous Session support across multiple client mediums (e.g. web pages,
  * Flash applets, Java Web Start applications, etc.), use the {@link DefaultWebSessionManager WebSessionManager} instead.  The
  * <tt>WebSessionManager</tt> supports both traditional web-based access as well as non web-based clients.

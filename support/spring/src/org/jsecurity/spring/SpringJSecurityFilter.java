@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * <p>Relies on Spring to define and initialize the JSecurity SecurityManager instance (and all of its dependencies)
  * and makes it avaialble to this filter by performing a Spring bean lookup.</p>
- * <p/>
+ *
  * <p>The behavior used by this filter is as follow:
  * <ol>
  * <li>If a 'securityManagerBeanName' init-param is set, retrieve that sec manager from Spring.</li>

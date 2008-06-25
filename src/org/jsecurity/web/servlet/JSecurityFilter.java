@@ -34,21 +34,21 @@ import java.io.IOException;
 
 /**
  * Main ServletFilter that configures and enables all JSecurity functions within a web application.
- * <p/>
+ *
  * The following is a fully commented example that documents how to configure it:
- * <p/>
+ *
  * <pre>&lt;filter&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
- * <p/>
+ *
  * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
  * # Any commented values below are JSecurity's defaults.  If you want to change any values, you only
  * # need to uncomment the lines you want to change.
- * <p/>
+ *
  * [main]
  * # The 'main' section defines JSecurity-wide configuration.
  * #
@@ -61,7 +61,7 @@ import java.io.IOException;
  * #
  * #securityManager = {@link org.jsecurity.web.DefaultWebSecurityManager org.jsecurity.web.DefaultWebSecurityManager}
  * #securityManager.{@link org.jsecurity.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
- * <p/>
+ *
  * [filters]
  * # This section defines the 'pool' of all the available Filters that are available to the url path
  * # definitions below in the [urls] section.
@@ -105,7 +105,7 @@ import java.io.IOException;
  * #
  * # Define your own filters here.  To properly handle url path matching (see the [urls] section below), your
  * # filter should extend the {@link org.jsecurity.web.filter.PathMatchingFilter PathMatchingFilter} abstract class.
- * <p/>
+ *
  * [urls]
  * # This section defines url path mappings.  Each mapping entry must be on a single line and conform to the
  * # following representation:
@@ -151,14 +151,14 @@ import java.io.IOException;
  * # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
  * # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
  * # commas.)
- * <p/>
+ *
  * /account/** = <a href="#authcBasic">authcBasic</a>
  * /remoting/** = <a href="#authcBasic">authcBasic</a>, <a href="#roles">roles</a>[b2bClient], <a href="#perms">perms</a>[remote:invoke:"lan,wan"]
- * <p/>
+ *
  * &lt;/param-value&gt;&lt;/init-param&gt;
  * &lt;/filter&gt;
- * <p/>
- * <p/>
+ *
+ *
  * &lt;filter-mapping&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;

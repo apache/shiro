@@ -30,7 +30,7 @@ import java.util.Properties;
  * Helper class that simplifies JNDI operations. It provides methods to lookup and
  * bind objects, and allows implementations of the {@link JndiCallback} interface
  * to perform any operation they like with a JNDI naming context provided.
- * <p/>
+ *
  * <p>Note that this implementation is an almost exact copy of the Spring Framework's identically named class from
  * their 2.5.4 distribution - we didn't want to re-invent the wheel, but not require a full dependency on the
  * Spring framework, nor does Spring make available only its JNDI classes in a small jar, or we would have used that.
@@ -219,12 +219,12 @@ public class JndiTemplate {
         if (logger.isDebugEnabled()) {
             logger.debug("Unbinding JNDI object with name [" + name + "]");
         }
-		execute(new JndiCallback() {
-			public Object doInContext(Context ctx) throws NamingException {
-				ctx.unbind(name);
-				return null;
-			}
-		});
-	}
+        execute(new JndiCallback() {
+            public Object doInContext(Context ctx) throws NamingException {
+                ctx.unbind(name);
+                return null;
+            }
+        });
+    }
 
 }

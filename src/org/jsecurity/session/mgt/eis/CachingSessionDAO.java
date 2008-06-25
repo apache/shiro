@@ -31,12 +31,12 @@ import java.util.Collections;
 /**
  * An CachingSessionDAO is a SessionDAO that provides a transparent caching layer between the components that
  * use it and the underlying EIS (Enterprise Information System) for enhanced performance.
- * <p/>
+ *
  * <p>This implementation caches all active sessions in a cache created by a required
  * {@link org.jsecurity.cache.CacheManager}.  All <tt>SessionDAO</tt> methods are implemented by this class to employ
  * caching behavior and delegates the actual EIS operations to respective do* methods to be implemented by
  * subclasses (doCreate, doRead, etc).
- * <p/>
+ *
  * <p>After instantiating an instance of this class (or subclass) and setting the <tt>CacheManager</tt> property,
  * the {@link #init} method must be called to properly initialize the cache.
  *
@@ -189,7 +189,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
     /**
      * Retrieves the Session object from the underlying EIS identified by <tt>sessionId</tt>.
-     * <p/>
+     *
      * <p>Upon receiving the Session object from the subclass's {@link #doReadSession} implementation, it will be
      * cached first and then returned to the caller.
      *
@@ -230,14 +230,14 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
     /**
      * Updates the state of the given session to the EIS.
-     * <p/>
+     *
      * <p>If the specified session was previously cached, and the session is now
      * {@link org.jsecurity.session.Session#getStopTimestamp() stopped} or
      * {@link org.jsecurity.session.Session#isExpired() expired}, it will be removed from the cache.
-     * <p/>
+     *
      * <p>If the specified session is not stopped or expired, and was not yet in the cache, it will be added to the
      * cache.
-     * <p/>
+     *
      * <p>Finally, this method calls {@link #doUpdate} for the subclass to actually push the object state to the EIS.
      *
      * @param session the session object to update in the EIS.
@@ -291,7 +291,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
     /**
      * Returns all active sessions in the system.
-     * <p/>
+     *
      * <p>This implementation merely returns the sessions found in the activeSessions cache.  Subclass implementations
      * may wish to override this method to retrieve them in a different way, perhaps by an RDBMS query or by other
      * means.

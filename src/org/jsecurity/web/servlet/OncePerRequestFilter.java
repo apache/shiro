@@ -24,11 +24,11 @@ import java.io.IOException;
  * Filter base class that guarantees to be just executed once per request,
  * on any servlet container. It provides a {@link #doFilterInternal}
  * method with HttpServletRequest and HttpServletResponse arguments.
- * <p/>
+ *
  * <p>The {@link #getAlreadyFilteredAttributeName} method determines how
  * to identify that a request is already filtered. The default implementation
  * is based on the configured name of the concrete filter instance.
- * <p/>
+ *
  * <p><b>NOTE</b> This class was borrowed from the Spring framework, and as such,
  * all copyright notices and author names have remained in tact.
  *
@@ -75,8 +75,8 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      * @see javax.servlet.FilterConfig#getFilterName()
      */
     protected String getName() {
-        if ( this.name == null ) {
-            if ( this.filterConfig != null ) {
+        if (this.name == null) {
+            if (this.filterConfig != null) {
                 this.name = this.filterConfig.getFilterName();
             }
         }
@@ -84,7 +84,7 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
         return this.name;
     }
 
-    public void setName( String name ) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -121,15 +121,15 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
 
         String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
         if (request.getAttribute(alreadyFilteredAttributeName) != null || shouldNotFilter(request)) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Filter already executed.  Proceeding without invoking this filter." );
+            if (log.isTraceEnabled()) {
+                log.trace("Filter already executed.  Proceeding without invoking this filter.");
             }
             // Proceed without invoking this filter...
             filterChain.doFilter(request, response);
         } else {
             // Do invoke this filter...
-            if ( log.isTraceEnabled() ) {
-                log.trace("Filter not yet executed.  Executing now." );
+            if (log.isTraceEnabled()) {
+                log.trace("Filter not yet executed.  Executing now.");
             }
             request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);
             doFilterInternal(request, response, filterChain);
@@ -176,7 +176,8 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      */
     protected abstract void doFilterInternal(
             ServletRequest request, ServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException;
-    
-    public void destroy(){}
+            throws ServletException, IOException;
+
+    public void destroy() {
+    }
 }

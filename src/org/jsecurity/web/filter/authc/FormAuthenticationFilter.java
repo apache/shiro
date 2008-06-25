@@ -30,7 +30,7 @@ import java.net.InetAddress;
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
  * to login via by redirecting them to the {@link #setUrl(String) login page} you configure.
- * <p/>
+ *
  * <p>If the login attempt fails the AuthenticationException fully qualified class name will be placed as a request
  * attribute under the {@link #setFailureKeyAtribute(String) failureKeyAttribute} key.  This FQCN can then be used as
  * an i18n key or lookup mechanism that can then  be used to show the user why their login attempt failed

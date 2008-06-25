@@ -38,7 +38,7 @@ public abstract class PathMatchingFilter extends RedirectingFilter implements Pa
     /**
      * A collection of path-to-config entries where the key is a path which this filter should process and
      * the value is the (possibly null) configuration element specific to this Filter for that specific path.
-     * <p/>
+     *
      * <p>To put it another way, the keys are the paths (urls) that this Filter will process.
      * <p>The values are filter-specific data that this Filter should use when processing the corresponding
      * key (path).  The values can be null if no Filter-specific config was specified for that url.
@@ -73,8 +73,8 @@ public abstract class PathMatchingFilter extends RedirectingFilter implements Pa
             boolean continueChain = true;
             for (String path : this.appliedPaths.keySet()) {
 
-                if ( log.isTraceEnabled() ) {
-                    log.trace( "Attempting to match path [" + path + "] against current requestURI [" + requestURI + "]..." );
+                if (log.isTraceEnabled()) {
+                    log.trace("Attempting to match path [" + path + "] against current requestURI [" + requestURI + "]...");
                 }
 
                 // If the path does match, then pass on to the subclass implementation for specific checks:

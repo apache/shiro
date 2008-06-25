@@ -111,7 +111,7 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T>, Initia
      * when reading and populating values in
      * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}s, {@link javax.servlet.http.Cookie Cookie}s or
      * {@link javax.servlet.http.HttpSession HttpSession}s.
-     * <p/>
+     *
      * <p>If not set, the string itself will be used.
      *
      * @param editorClass {@link PropertyEditor PropertyEditor} implementation used to

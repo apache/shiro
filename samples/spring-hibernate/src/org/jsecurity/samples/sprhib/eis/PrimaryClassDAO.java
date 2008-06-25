@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A convenience behavioral specification for DataAccessObjects that primarily work with one
  * Object/Class type.
- * <p/>
+ *
  * Implementations of this interface are by no means restricted to working with their primary type
  * only; indeed they may &quot;know&quot; about any Class needed to accomplish their tasks.  This
  * interface is merely intended to specify convenience behaviors common to all DAO's that
@@ -47,22 +47,19 @@ public interface PrimaryClassDAO extends DataAccessObject {
      * Reads/retrieves the object of type <code>getPrimaryClass()</code> with the specified id.
      *
      * @param entityId the id identifying the object to retrieve.
-     *
      * @return the object with the given entityId
-     *
      * @throws org.springframework.dao.DataAccessException
      *          if there is an error accessing the EIS, or if no object of type
      *          <code>getPrimaryClass()</code> with an id of <code>entityId</code> exists in the
      *          EIS.
      */
-    Object read( Serializable entityId ) throws DataAccessException;
+    Object read(Serializable entityId) throws DataAccessException;
 
     /**
      * Retrieves all instances of type <code>getPrimaryClass()</code> found in the EIS.  Use this
      * method judiciously as a very large result set will no doubt incur a performance penalty.
      *
      * @return a List of instances of type <code>getPriamaryClass()</code> found in the EIS.
-     *
      * @throws DataAccessException if an error occurs accessing the EIS.
      */
     List readAll() throws DataAccessException;
@@ -73,10 +70,9 @@ public interface PrimaryClassDAO extends DataAccessObject {
      * EIS is configured to do so.
      *
      * @param entityId the EIS id of the record to delete.
-     *
      * @throws DataAccessException if there is an error accessing the EIS.
      */
-    void deleteById( Serializable entityId ) throws DataAccessException;
+    void deleteById(Serializable entityId) throws DataAccessException;
 
     /**
      * Deletes <b>all</b> instances of type <code>getPrimaryClass()</code> found in the EIS.

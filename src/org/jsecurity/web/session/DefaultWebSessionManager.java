@@ -73,14 +73,14 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * <tt>HttpRequest</tt> attempting
      * to join a session (i.e. via {@link #getSession getSession} must have the same
      * IP Address of the <tt>HttpRequest</tt> that started the session.
-     * <p/>
+     *
      * <p> If set to <tt>false</tt>, any <tt>HttpRequest</tt> with a reference to a valid
      * session id may acquire that <tt>Session</tt>.
-     * <p/>
+     *
      * <p>Although convenient, this should only be enabled in environments where the
      * system can <em>guarantee</em> that each IP address represents one and only one
      * machine accessing the system.
-     * <p/>
+     *
      * <p>Public websites are not good candidates for enabling this
      * feature since many browser clients often sit behind NAT routers (in
      * which case many machines are viewed to come from the same IP, thereby making this
@@ -88,7 +88,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * client's IP in mid-session, making subsequent requests appear to come from a different
      * location.  Again, this feature should only be enabled where IP Addresses can be guaranteed a
      * 1-to-1 relationship with a user's session.
-     * <p/>
+     *
      * <p>For the reasons specified above, this property is <tt>false</tt> by default.
      *
      * @return true if this factory will verify each HttpRequest joining a session

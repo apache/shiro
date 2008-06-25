@@ -33,7 +33,7 @@ public interface WebConfiguration extends Configuration {
     /**
      * Returns the filter chain that should be executed for the given request, or <code>null</code> if the
      * original chain should be used.
-     * <p/>
+     *
      * <p>This method allows a Configuration implementation to define arbitrary security {@link Filter Filter}
      * chains for any given request or URL pattern.
      *

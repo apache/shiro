@@ -24,11 +24,11 @@ import java.util.Collection;
 /**
  * An <tt>AnnotationsAuthorizingMethodInterceptor</tt> is a MethodInterceptor that asserts a given method is authorized
  * to execute based on one or more configured <tt>AuthorizingAnnotationMethodInterceptor</tt>s.
- * <p/>
+ *
  * <p>This allows multiple annotations on a method to be processed before the method
  * executes, and if any of the <tt>AuthorizingAnnotationMethodInterceptor</tt>s indicate that the method should not be
  * executed, an <tt>AuthorizationException</tt> will be thrown, otherwise the method will be invoked as expected.
- * <p/>
+ *
  * <p>It is essentially a convenience mechanism to allow multiple annotations to be processed in a single method
  * interceptor.
  *

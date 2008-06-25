@@ -30,8 +30,8 @@ import java.util.Properties;
 
 /**
  * Implements a generic enum user type identified / represented by a single identifier / column.
- * <p/>
- * <p/>
+ *
+ *
  * <ul> <li>The enum type being represented by the certain user type must be set by using the
  * 'enumClass' property.</li> <li>The identifier representing a enum value is retrieved by the
  * identifierMethod. The name of the identifier method can be specified by the 'identifierMethod'
@@ -56,7 +56,7 @@ import java.util.Properties;
  *         }
  *     }
  * }</pre></code>
- * <p/>
+ *
  * <p>The Mapping would look like this:
  * <code><pre>&lt;typedef name=&quot;SimpleNumber&quot; class=&quot;GenericEnumUserType&quot;&gt;
  * &lt;param name="enumClass">SimpleNumber&lt;/param&gt;
@@ -73,7 +73,7 @@ import java.util.Properties;
  * @author Les Hazlewood
  * @since 05.05.2005
  */
-@SuppressWarnings(value="unchecked")
+@SuppressWarnings(value = "unchecked")
 public class GenericEnumUserType implements EnhancedUserType, ParameterizedType {
 
     private Class<? extends Enum> enumClass;
@@ -89,45 +89,45 @@ public class GenericEnumUserType implements EnhancedUserType, ParameterizedType 
     private static final char SINGLE_QUOTE = '\'';
 
     private NullableType type;
-    private int [] sqlTypes;
+    private int[] sqlTypes;
 
-    public void setParameterValues( Properties parameters ) {
-        String enumClassName = parameters.getProperty( "enumClass" );
+    public void setParameterValues(Properties parameters) {
+        String enumClassName = parameters.getProperty("enumClass");
         try {
-            enumClass = Class.forName( enumClassName ).asSubclass( Enum.class );
+            enumClass = Class.forName(enumClassName).asSubclass(Enum.class);
         }
-        catch ( ClassNotFoundException exception ) {
-            throw new HibernateException( "Enum class not found", exception );
+        catch (ClassNotFoundException exception) {
+            throw new HibernateException("Enum class not found", exception);
         }
 
         String identifierMethodName =
-            parameters.getProperty( "identifierMethod", defaultIdentifierMethodName );
+                parameters.getProperty("identifierMethod", defaultIdentifierMethodName);
 
         Class<?> identifierType;
         try {
-            identifierMethod = enumClass.getMethod( identifierMethodName, NULL_CLASS_VARARG );
+            identifierMethod = enumClass.getMethod(identifierMethodName, NULL_CLASS_VARARG);
             identifierType = identifierMethod.getReturnType();
         }
-        catch ( Exception exception ) {
-            throw new HibernateException( "Failed to obtain identifier method", exception );
+        catch (Exception exception) {
+            throw new HibernateException("Failed to obtain identifier method", exception);
         }
 
-        type = (NullableType) TypeFactory.basic( identifierType.getName() );
+        type = (NullableType) TypeFactory.basic(identifierType.getName());
 
-        if ( type == null ) {
-            throw new HibernateException( "Unsupported identifier type " + identifierType.getName() );
+        if (type == null) {
+            throw new HibernateException("Unsupported identifier type " + identifierType.getName());
         }
 
-        sqlTypes = new int []{type.sqlType()};
+        sqlTypes = new int[]{type.sqlType()};
 
         String valueOfMethodName =
-            parameters.getProperty( "valueOfMethod", defaultValueOfMethodName );
+                parameters.getProperty("valueOfMethod", defaultValueOfMethodName);
 
         try {
-            valueOfMethod = enumClass.getMethod( valueOfMethodName, identifierType);
+            valueOfMethod = enumClass.getMethod(valueOfMethodName, identifierType);
         }
-        catch ( Exception exception ) {
-            throw new HibernateException( "Failed to obtain valueOf method", exception );
+        catch (Exception exception) {
+            throw new HibernateException("Failed to obtain valueOf method", exception);
         }
     }
 
@@ -135,35 +135,35 @@ public class GenericEnumUserType implements EnhancedUserType, ParameterizedType 
         return enumClass;
     }
 
-    public Object nullSafeGet( ResultSet rs, String[] names, Object owner )
-        throws HibernateException, SQLException {
-        Object identifier = type.get( rs, names[0] );
-        if ( identifier == null || rs.wasNull() ) {
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
+            throws HibernateException, SQLException {
+        Object identifier = type.get(rs, names[0]);
+        if (identifier == null || rs.wasNull()) {
             return null;
         }
         try {
-            return valueOfMethod.invoke( enumClass, identifier );
-        } catch ( Exception exception ) {
+            return valueOfMethod.invoke(enumClass, identifier);
+        } catch (Exception exception) {
             String msg = "Exception while invoking valueOfMethod [" + valueOfMethod.getName() +
-                "] of Enum class [" + enumClass.getName() + "] with argument of type [" +
-                identifier.getClass().getName() + "], value=[" + identifier + "]";
-            throw new HibernateException( msg, exception );
+                    "] of Enum class [" + enumClass.getName() + "] with argument of type [" +
+                    identifier.getClass().getName() + "], value=[" + identifier + "]";
+            throw new HibernateException(msg, exception);
         }
     }
 
-    public void nullSafeSet( PreparedStatement st, Object value, int index )
-        throws HibernateException, SQLException {
-        if ( value == null ) {
-            st.setNull( index, sqlTypes[0] );
+    public void nullSafeSet(PreparedStatement st, Object value, int index)
+            throws HibernateException, SQLException {
+        if (value == null) {
+            st.setNull(index, sqlTypes[0]);
         } else {
             try {
-                Object identifier = identifierMethod.invoke( value, NULL_OBJECT_VARARG );
-                type.set( st, identifier, index );
-            } catch ( Exception exception ) {
-                String msg = "Exception while invoking identifierMethod [" +  identifierMethod.getName() +
-                    "] of Enum class [" + enumClass.getName() +
-                    "] with argument of type [" + value.getClass().getName() + "], value=[" + value + "]";
-                throw new HibernateException( msg, exception );
+                Object identifier = identifierMethod.invoke(value, NULL_OBJECT_VARARG);
+                type.set(st, identifier, index);
+            } catch (Exception exception) {
+                String msg = "Exception while invoking identifierMethod [" + identifierMethod.getName() +
+                        "] of Enum class [" + enumClass.getName() +
+                        "] with argument of type [" + value.getClass().getName() + "], value=[" + value + "]";
+                throw new HibernateException(msg, exception);
             }
         }
     }
@@ -172,35 +172,35 @@ public class GenericEnumUserType implements EnhancedUserType, ParameterizedType 
         return sqlTypes;
     }
 
-    public Object assemble( Serializable cached, Object owner ) throws HibernateException {
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
         return cached;
     }
 
-    public Object deepCopy( Object value ) throws HibernateException {
+    public Object deepCopy(Object value) throws HibernateException {
         return value;
     }
 
-    public Serializable disassemble( Object value ) throws HibernateException {
-        return (Serializable)value;
+    public Serializable disassemble(Object value) throws HibernateException {
+        return (Serializable) value;
     }
 
-    public String objectToSQLString( Object value ) {
-        return SINGLE_QUOTE + ( (Enum)value ).name() + SINGLE_QUOTE;
+    public String objectToSQLString(Object value) {
+        return SINGLE_QUOTE + ((Enum) value).name() + SINGLE_QUOTE;
     }
 
-    public String toXMLString( Object value ) {
-        return ( (Enum)value ).name();
+    public String toXMLString(Object value) {
+        return ((Enum) value).name();
     }
 
-    public Object fromXMLString( String xmlValue ) {
-        return Enum.valueOf( enumClass, xmlValue );
+    public Object fromXMLString(String xmlValue) {
+        return Enum.valueOf(enumClass, xmlValue);
     }
 
-    public boolean equals( Object x, Object y ) throws HibernateException {
+    public boolean equals(Object x, Object y) throws HibernateException {
         return x == y;
     }
 
-    public int hashCode( Object x ) throws HibernateException {
+    public int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
 
@@ -208,8 +208,8 @@ public class GenericEnumUserType implements EnhancedUserType, ParameterizedType 
         return false;
     }
 
-    public Object replace( Object original, Object target, Object owner )
-        throws HibernateException {
+    public Object replace(Object original, Object target, Object owner)
+            throws HibernateException {
         return original;
     }
 }
