@@ -26,13 +26,14 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Looks up one or more Realm instances from JNDI using the specified {@link #setJndiNames jndiNames}.
+ * Looks up one or more Realm instances from JNDI using specified {@link #setJndiNames jndiNames}.
  *
- * <p>This is primarily provided to support JEE and EJB environments, but will work in any environment where
- * {@link Realm Realm} instances are bound in JNDI instead of using programmatic or text-based configuration.
+ * <p>This is primarily provided to support Realm instances configured in JEE and EJB environments, but will
+ * work in any environment where {@link Realm Realm} instances are bound in JNDI instead of using
+ * programmatic or text-based configuration.
  *
  * @author Les Hazlewood
- * @since Jun 24, 2008 5:11:28 PM
+ * @since 0.9
  */
 public class JndiRealmFactory extends JndiLocator implements RealmFactory {
 
