@@ -26,6 +26,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Looks up one or more Realm instances from JNDI using the specified {@link #setJndiNames jndiNames}.
+ *
+ * <p>This is primarily provided to support JEE and EJB environments, but will work in any environment where
+ * {@link Realm Realm} instances are bound in JNDI instead of using programmatic or text-based configuration.
+ *
  * @author Les Hazlewood
  * @since Jun 24, 2008 5:11:28 PM
  */
@@ -33,15 +38,37 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
 
     Collection<String> jndiNames = null;
 
+    /**
+     * Returns the JNDI names that will be used to look up Realm(s) from JNDI.
+     *
+     * @return the JNDI names that will be used to look up Realm(s) from JNDI.
+     */
     public Collection<String> getJndiNames() {
         return jndiNames;
     }
 
+    /**
+     * Sets the JNDI names that will be used to look up Realm(s) from JNDI.
+     *
+     * If you find it easier to specify these names, you may use the {@link #setJndiNames(String)} method instead.
+     *
+     * @param jndiNames the JNDI names that will be used to look up Realm(s) from JNDI.
+     * @see #setJndiNames(String)
+     */
     public void setJndiNames(Collection<String> jndiNames) {
         this.jndiNames = jndiNames;
     }
 
-    public void setJndiNames(String commaDelimited) {
+    /**
+     * Specifies a comma-delimited list of JNDI names to lookup, one each corresponding to a jndi-bound
+     * {@link Realm Realm}.  The Realms will be made available to the SecurityManager in the order
+     * they are defined.
+     *
+     * @param commaDelimited a comma-delimited list of JNDI names, each representing the JNDI name used to
+     *                       look up a corresponding jndi-bound Realm.
+     * @throws IllegalStateException if the specified argument is null or the empty string.
+     */
+    public void setJndiNames(String commaDelimited) throws IllegalStateException {
         String arg = StringUtils.clean(commaDelimited);
         if (arg == null) {
             String msg = "One or more comma-delimited jndi names must be specified for the " +
@@ -52,7 +79,14 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
         setJndiNames(Arrays.asList(names));
     }
 
-    public Collection<Realm> getRealms() {
+    /**
+     * Performs the JNDI lookups for each {@link #getJndiNames() JNDI name} specified and returns all
+     * discovered Realms in an ordered collection.
+     *
+     * @return an ordered collection of the {@link #setJndiNames(java.util.Collection) specified Realms} found in JNDI.
+     * @throws IllegalStateException if any of the JNDI names fails to successfully look up a Realm instance.
+     */
+    public Collection<Realm> getRealms() throws IllegalStateException {
         Collection<String> jndiNames = getJndiNames();
         if (jndiNames == null || jndiNames.isEmpty()) {
             String msg = "One or more jndi names must be specified for the " +
