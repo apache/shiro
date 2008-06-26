@@ -46,8 +46,8 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
                         "Enabling default Role and Permission annotation support...");
             }
             methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(2);
-            methodInterceptors.add(new RoleAnnotationMethodInterceptor(getSecurityManager()));
-            methodInterceptors.add(new PermissionAnnotationMethodInterceptor(getSecurityManager()));
+            methodInterceptors.add(new RoleAnnotationMethodInterceptor());
+            methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
         }
 
     }

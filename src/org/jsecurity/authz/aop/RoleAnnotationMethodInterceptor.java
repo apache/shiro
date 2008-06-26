@@ -19,47 +19,41 @@ import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RequiresRoles;
-import org.jsecurity.mgt.SecurityManager;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
     public RoleAnnotationMethodInterceptor() {
-        setAnnotationClass( RequiresRoles.class );
-    }
-
-    public RoleAnnotationMethodInterceptor( SecurityManager securityManager ) {
-        this();
-        setSecurityManager( securityManager );
+        setAnnotationClass(RequiresRoles.class);
         init();
     }
 
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
-        RequiresRoles rrAnnotation = (RequiresRoles)getAnnotation( mi );
+        RequiresRoles rrAnnotation = (RequiresRoles) getAnnotation(mi);
 
         String roleId = rrAnnotation.value();
 
         String[] roles = roleId.split(",");
 
-        if ( roles.length == 1 ) {
-            if ( !getSubject().hasRole(roles[0])) {
+        if (roles.length == 1) {
+            if (!getSubject().hasRole(roles[0])) {
                 String msg = "Calling Subject does not have required role [" + roleId + "].  " +
-                         "MethodInvocation denied.";
-                throw new UnauthorizedException( msg );
+                        "MethodInvocation denied.";
+                throw new UnauthorizedException(msg);
             }
         } else {
-            Set<String> rolesSet = new LinkedHashSet<String>( Arrays.asList(roles));
-            if ( !getSubject().hasAllRoles(rolesSet)) {
+            Set<String> rolesSet = new LinkedHashSet<String>(Arrays.asList(roles));
+            if (!getSubject().hasAllRoles(rolesSet)) {
                 String msg = "Calling Subject does not have required roles [" + roleId + "].  " +
-                         "MethodInvocation denied.";
-                throw new UnauthorizedException( msg );
+                        "MethodInvocation denied.";
+                throw new UnauthorizedException(msg);
             }
         }
     }
