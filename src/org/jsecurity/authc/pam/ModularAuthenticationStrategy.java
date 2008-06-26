@@ -30,11 +30,10 @@ import java.util.Collection;
  * interaction with the configured Realms.  This allows a pluggable strategy of whether or not an authentication
  * attempt must be successful for all realms, only 1 or more realms, no realms, etc.
  *
+ * @author Les Hazlewood
  * @see AllSuccessfulModularAuthenticationStrategy
  * @see AtLeastOneSuccessfulModularAuthenticationStrategy
- *
  * @since 0.2
- * @author Les Hazlewood
  */
 public interface ModularAuthenticationStrategy {
 
@@ -49,11 +48,11 @@ public interface ModularAuthenticationStrategy {
      * multi-realm authentication, allowing any logic to be executed accordingly.
      *
      * @param realms the Realms that will be consulted during the authentication process for the specified token.
-     * @param token the Principal/Credential representation to be used during authentication for a corresponding subject.
+     * @param token  the Principal/Credential representation to be used during authentication for a corresponding subject.
      * @return an empty Account object that will populated with data from multiple realms.
      * @throws AuthenticationException if the strategy implementation does not wish the Authentication attempt to execute.
      */
-    Account beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException;
+    Account beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator just prior to the realm being consulted for account data,
@@ -63,15 +62,15 @@ public interface ModularAuthenticationStrategy {
      * implementations will merely return the <code>aggregate</code> method argument if they don't have a need to
      * manipulate it.
      *
-     * @param realm the realm that will be consulted for <tt>Account</tt> for the specified <tt>token</tt>.
-     * @param token the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
+     * @param realm     the realm that will be consulted for <tt>Account</tt> for the specified <tt>token</tt>.
+     * @param token     the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
      * @param aggregate the aggregated Account object being used across the multi-realm authentication attempt
      * @return the Account object that will be presented to further realms in the authentication process - returning
      *         the <code>aggregate</code> method argument is the normal case if no special action needs to be taken.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login
-     * process for the associated subject (user) to stop immediately.
+     *                                 process for the associated subject (user) to stop immediately.
      */
-    Account beforeAttempt( Realm realm, AuthenticationToken token, Account aggregate ) throws AuthenticationException;
+    Account beforeAttempt(Realm realm, AuthenticationToken token, Account aggregate) throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator just after the given realm has been consulted for authentication,
@@ -80,20 +79,20 @@ public interface ModularAuthenticationStrategy {
      * <p>This method returns an <code>Account</code> object that will be used for further interaction with realms.  Most
      * implementations will merge the <code>singleRealmAccount</code> into the <code>aggregateAccount</code> and
      * just return the <code>aggregateAccount</code> for continued use throughout the authentication process.</p>
-     * 
-     * @param realm the realm that was just consulted for <tt>Account</tt> for the given <tt>token</tt>.
-     * @param token the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
+     *
+     * @param realm              the realm that was just consulted for <tt>Account</tt> for the given <tt>token</tt>.
+     * @param token              the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
      * @param singleRealmAccount the <tt>Account</tt> object returned by the realm during the consultation process, or
-     * <tt>null</tt> if the realm was unable to acquire account data based on the given <tt>token</tt>.
-     * @param aggregateAccount the Account object being populated with data across multiple realms.
-     * @param t the Throwable thrown by the Realm during the attempt, or <tt>null</tt> if the method returned normally.
+     *                           <tt>null</tt> if the realm was unable to acquire account data based on the given <tt>token</tt>.
+     * @param aggregateAccount   the Account object being populated with data across multiple realms.
+     * @param t                  the Throwable thrown by the Realm during the attempt, or <tt>null</tt> if the method returned normally.
      * @return the Account object that will be presented to further realms in the authentication process - returning
-     *         the <code>aggregateAccount</code> method argumen is the normal case if no special action needs to be taken.
+     *         the <code>aggregateAccount</code> method argument is the normal case if no special action needs to be taken.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login process
-     * for the associated subject (user) to stop immediately.
+     *                                 for the associated subject (user) to stop immediately.
      */
-    Account afterAttempt( Realm realm, AuthenticationToken token, Account singleRealmAccount, Account aggregateAccount, Throwable t )
-        throws AuthenticationException;
+    Account afterAttempt(Realm realm, AuthenticationToken token, Account singleRealmAccount, Account aggregateAccount, Throwable t)
+            throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted
@@ -103,10 +102,10 @@ public interface ModularAuthenticationStrategy {
      * This is most likely the aggregate Account object that has been populated by many realms, but the actual return value is
      * always up to the implementation.
      *
-     * @param token the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
+     * @param token     the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
      * @param aggregate the aggregate <tt>Account</tt> instance populated by all realms during the log-in attempt.
      * @return the final <code>Account</code> object to return to the Authenticator.authenticate() caller.
      * @throws AuthenticationException if the Strategy implementation wishes to fail the authentication attempt.
      */
-    Account afterAllAttempts( AuthenticationToken token, Account aggregate ) throws AuthenticationException;
+    Account afterAllAttempts(AuthenticationToken token, Account aggregate) throws AuthenticationException;
 }

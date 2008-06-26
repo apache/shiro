@@ -15,16 +15,12 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.Realm;
-
-import java.util.Collection;
 
 /**
  * <tt>ModularAuthenticationStrategy</tt> implementation that requires <em>all</em> configured realms to
@@ -34,48 +30,42 @@ import java.util.Collection;
  * <tt>Account</tt> for the token, this implementation will immediately fail the log-in attempt for the
  * associated subject (user).
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
-public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthenticationStrategy {
+public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
-    public Account beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
-        return new SimpleAuthorizingAccount();
-    }
-
-    public Account beforeAttempt( Realm realm, AuthenticationToken token, Account account ) throws AuthenticationException {
-        if ( !realm.supports( token ) ) {
+    public Account beforeAttempt(Realm realm, AuthenticationToken token, Account account) throws AuthenticationException {
+        if (!realm.supports(token)) {
             String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support " +
-                " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName() +
-                "] implementation requires all configured realm(s) to support and be able to process the submitted " +
-                "AuthenticationToken.";
-            throw new UnsupportedTokenException( msg );
+                    " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName() +
+                    "] implementation requires all configured realm(s) to support and be able to process the submitted " +
+                    "AuthenticationToken.";
+            throw new UnsupportedTokenException(msg);
         }
 
         return account;
     }
 
-    public Account afterAttempt( Realm realm, AuthenticationToken token, Account account, Account aggregate, Throwable t )
-        throws AuthenticationException {
-        if( t != null ) {
-            if ( t instanceof AuthenticationException ) {
+    public Account afterAttempt(Realm realm, AuthenticationToken token, Account account, Account aggregate, Throwable t)
+            throws AuthenticationException {
+        if (t != null) {
+            if (t instanceof AuthenticationException) {
                 //propagate:
-                throw ((AuthenticationException)t);
+                throw ((AuthenticationException) t);
             } else {
                 String msg = "Unable to acquire account data from realm [" + realm + "].  The [" +
-                    getClass().getName() + " implementation requires all configured realm(s) to operate successfully " +
-                    "for a successful authentication.";
-                throw new AuthenticationException( msg, t );
+                        getClass().getName() + " implementation requires all configured realm(s) to operate successfully " +
+                        "for a successful authentication.";
+                throw new AuthenticationException(msg, t);
             }
         }
-        if ( account == null ) {
+        if (account == null) {
             String msg = "Realm [" + realm + "] could not find any associated account data for the submitted " +
-                "AuthenticationToken [" + token + "].  The [" + getClass().getName() + "] implementation requires " +
-                "all configured realm(s) to acquire valid account data for a submitted token during the " +
-                "log-in process.";
-            throw new UnknownAccountException( msg );
+                    "AuthenticationToken [" + token + "].  The [" + getClass().getName() + "] implementation requires " +
+                    "all configured realm(s) to acquire valid account data for a submitted token during the " +
+                    "log-in process.";
+            throw new UnknownAccountException(msg);
         }
 
         // If non-null account is returned, then the realm was able to authenticate the
@@ -83,15 +73,8 @@ public class AllSuccessfulModularAuthenticationStrategy implements ModularAuthen
         if (log.isDebugEnabled()) {
             log.debug("Account successfully authenticated using realm of type [" + realm.getClass().getName() + "]");
         }
-        ((SimpleAuthorizingAccount)aggregate).merge(account);
+        ((SimpleAuthorizingAccount) aggregate).merge(account);
 
-        return aggregate;
-    }
-
-    public Account afterAllAttempts( AuthenticationToken token, Account aggregate ) throws AuthenticationException {
-        //if the authentication process made it this far (because of the potential exceptions that could have been
-        //thrown from the other two methods in this class), then the authentication attempt was successful across all
-        //configured realms, so just return the aggregate argument
         return aggregate;
     }
 }

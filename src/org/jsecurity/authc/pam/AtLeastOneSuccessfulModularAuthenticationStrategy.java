@@ -15,15 +15,9 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
-import org.jsecurity.realm.Realm;
-
-import java.util.Collection;
 
 /**
  * <tt>ModularAuthenticationStrategy</tt> implementation that requires <em>at least one</em> configured realm to
@@ -33,38 +27,26 @@ import java.util.Collection;
  * be unable to acquire <tt>Account</tt> for the token, but as long as at least one can do both, this
  * Strategy implementation will allow the log-in process to be successful.
  *
- * @since 0.2
+ * <p>Note that this implementation will aggregate the account data from <em>all</em> successfully consulted
+ * realms during the authentication attempt. If you want only the account data from the first successfully
+ * consulted realm and want to ignore all subsequent realms, use the
+ * {@link org.jsecurity.authc.pam.FirstSuccessfulStrategy FirstSuccessfulStrategy} instead.
+ *
  * @author Les Hazlewood
+ * @see org.jsecurity.authc.pam.FirstSuccessfulStrategy FirstSuccessfulStrategy
+ * @since 0.2
  */
-public class AtLeastOneSuccessfulModularAuthenticationStrategy implements ModularAuthenticationStrategy {
+public class AtLeastOneSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
-
-    public Account beforeAllAttempts( Collection<? extends Realm> realms, AuthenticationToken token ) throws AuthenticationException {
-        return new SimpleAuthorizingAccount();
-    }
-
-    public Account beforeAttempt( Realm realm, AuthenticationToken token, Account aggregate ) throws AuthenticationException {
-        return aggregate;
-    }
-
-    public Account afterAttempt( Realm realm, AuthenticationToken token, Account account, Account aggregate, Throwable t )
-        throws AuthenticationException {
-        if ( account != null ) {
-            ((SimpleAuthorizingAccount)aggregate).merge(account);
-        }
-        return aggregate;
-    }
-
-    public Account afterAllAttempts( AuthenticationToken token, Account aggregate ) throws AuthenticationException {
+    public Account afterAllAttempts(AuthenticationToken token, Account aggregate) throws AuthenticationException {
         //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
-        boolean oneOrMoreSuccessful = aggregate != null && (aggregate.getPrincipals() != null );
+        boolean oneOrMoreSuccessful = aggregate != null && (aggregate.getPrincipals() != null);
 
-        if ( !oneOrMoreSuccessful ) {
-            throw new AuthenticationException( "Authentication token of type [" + token.getClass() + "] " +
-                "could not be authenticated by any configured realms.  Please ensure that at least one realm can " +
-                "authenticate these tokens." );
+        if (!oneOrMoreSuccessful) {
+            throw new AuthenticationException("Authentication token of type [" + token.getClass() + "] " +
+                    "could not be authenticated by any configured realms.  Please ensure that at least one realm can " +
+                    "authenticate these tokens.");
         }
 
         return aggregate;
