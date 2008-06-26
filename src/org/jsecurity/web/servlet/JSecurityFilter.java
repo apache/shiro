@@ -303,6 +303,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
 
         WebUtils.bind(request);
         WebUtils.bind(response);
+        ThreadContext.bind(getSecurityManager());
         ThreadContext.bind(getSecurityManager().getSubject());
 
         FilterChain chain = getConfiguration().getChain(request, response, origChain);
@@ -320,10 +321,11 @@ public class JSecurityFilter extends OncePerRequestFilter {
         try {
             chain.doFilter(request, response);
         } finally {
-            WebUtils.unbindServletRequest();
-            WebUtils.unbindServletResponse();
-            ThreadContext.unbindInetAddress();
             ThreadContext.unbindSubject();
+            ThreadContext.unbindSecurityManager();
+            WebUtils.unbindServletResponse();
+            WebUtils.unbindServletRequest();
+            ThreadContext.unbindInetAddress();
         }
     }
 

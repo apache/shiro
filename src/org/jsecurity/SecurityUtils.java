@@ -44,10 +44,16 @@ public abstract class SecurityUtils {
      * @return the currently accessible <tt>Subject</tt> accessible to the calling code.
      */
     public static Subject getSubject() {
-        Subject subject = ThreadContext.getSubject();
-        //try from VM singleton if there is one:
-        if (subject == null && SecurityUtils.securityManager != null) {
-            subject = SecurityUtils.securityManager.getSubject();
+        Subject subject;
+        SecurityManager securityManager = ThreadContext.getSecurityManager();
+        if (securityManager != null) {
+            subject = securityManager.getSubject();
+        } else {
+            subject = ThreadContext.getSubject();
+            if (subject == null && SecurityUtils.securityManager != null) {
+                //fall back to the VM singleton if one exists:
+                subject = SecurityUtils.securityManager.getSubject();
+            }
         }
         return subject;
     }

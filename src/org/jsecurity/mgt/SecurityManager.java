@@ -43,7 +43,7 @@ import org.jsecurity.subject.Subject;
  * <p><b>Usage Note</b>: In actuality the large majority of application programmers won't interact with a SecurityManager
  * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently
  * executing user.
- * 
+ *
  * <p>In that case, the application programmer can call the
  * {@link #getSubject() getSubject()} method and then use that returned instance for continued interaction with
  * JSecurity.  If your application code does not have a direct handle to the application's
@@ -52,11 +52,9 @@ import org.jsecurity.subject.Subject;
  *
  * <p>Framework developers on the other hand might find working with an actual SecurityManager useful.
  *
- * @see DefaultSecurityManager
- *
- * @since 0.2
- * 
  * @author Les Hazlewood
+ * @see DefaultSecurityManager
+ * @since 0.2
  */
 public interface SecurityManager extends Authenticator, Authorizer, SessionFactory {
 
@@ -74,7 +72,7 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      * @throws AuthenticationException if the login attempt failed.
      * @since 0.9
      */
-    Subject login( AuthenticationToken authenticationToken ) throws AuthenticationException;
+    Subject login(AuthenticationToken authenticationToken) throws AuthenticationException;
 
     /**
      * Logs out the specified Subject from the system.
@@ -87,14 +85,13 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      * @see #getSubject()
      * @since 0.9
      */
-    void logout( PrincipalCollection subjectIdentifier );
+    void logout(PrincipalCollection subjectIdentifier);
 
     /**
      * Returns the <tt>Subject</tt> instance representing the currently executing user.
+     *
      * @return the <tt>Subject</tt> instance representing the currently executing user.
      * @since 0.9
      */
     Subject getSubject();
-
-
 }

@@ -26,13 +26,13 @@ import org.springframework.beans.factory.InitializingBean;
 import java.lang.reflect.Method;
 
 /**
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor
         implements InitializingBean {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected SecurityManager securityManager = null;
 
@@ -53,32 +53,32 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     /**
      * Returns <tt>true</tt> if the method has a JSecurity <tt>RequiresRoles</tt> or
      * <tt>RequiresPermissions</tt> annotation, false otherwise.
-     * @param method the method to check for a JSecurity annotation
+     *
+     * @param method      the method to check for a JSecurity annotation
      * @param targetClass the class potentially declaring JSecurity annotations
      * @return <tt>true</tt> if the method has a JSecurity <tt>RequiresRoles</tt> or
-     * <tt>RequiresPermissions</tt> annotation, false otherwise.
+     *         <tt>RequiresPermissions</tt> annotation, false otherwise.
      * @see org.jsecurity.authz.annotation.RequiresRoles
      * @see org.jsecurity.authz.annotation.RequiresPermissions
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
-    public boolean matches( Method method, Class targetClass) {
-        return ( (method.getAnnotation( RequiresPermissions.class ) != null ) ||
-                 (method.getAnnotation( RequiresRoles.class ) != null ) );
+    public boolean matches(Method method, Class targetClass) {
+        return ((method.getAnnotation(RequiresPermissions.class) != null) ||
+                (method.getAnnotation(RequiresRoles.class) != null));
     }
 
     public void afterPropertiesSet() throws Exception {
-        if( getAdvice() == null ) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "No authorization advice explicitly configured via the 'advice' " +
+        if (getAdvice() == null) {
+            if (log.isTraceEnabled()) {
+                log.trace("No authorization advice explicitly configured via the 'advice' " +
                         "property.  Attempting to set " +
                         "default instance of type [" +
                         AopAllianceAnnotationsAuthorizingMethodInterceptor.class.getName() + "]");
             }
             AopAllianceAnnotationsAuthorizingMethodInterceptor interceptor = new AopAllianceAnnotationsAuthorizingMethodInterceptor();
-            interceptor.setSecurityManager( getSecurityManager() );
             interceptor.init();
 
-            setAdvice( interceptor );
+            setAdvice(interceptor);
         }
     }
 }
