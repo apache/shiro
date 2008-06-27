@@ -24,17 +24,29 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * <p>Filter that grants access to a resource regardless of whether they are authenticated, remembered, or
- * completely unknown.  Essentially if this filter is applied to a resource, any user can access it.</p>
+ * <p>Filter that allows access to a path immeidately without performing security checks of any kind.</p>
+ * <p/>
+ * This filter is useful primarily in exclusionary policies, where you have defined a url pattern
+ * to require a certain security level, but maybe only subset of urls in that pattern should allow any access.
+ * <p/>
+ * For example, if you had a user-only section of a website, you might want to require that access to
+ * any url in that section must be from an authenticated user.
+ * <p/>Here is how that would look in the JSecurityFilter configuration:
  *
- * <p>This filter is intended to be used as an exclusionary measure only, since the default behavior of the
- * {@link org.jsecurity.web.servlet.JSecurityFilter} is to grant anonymous access.  So for example if
- * a web application restricted access to <tt>/myapp/**</tt> to authenticated users but wanted to have one URL
- * <tt>/myapp/checkMeOut</tt> to be available for anyone, the anonymous filter could be applied to that
- * URL prior to an authentication filter to exclude it from requiring authenticated access.</p>
-
+ * <pre>   [urls]
+ * /user/** = authc</pre>
+ * <p/>
+ * But if you wanted <code>/user/signup/**</code> to be available to anyone, you have to exclude that path since
+ * it is a subset of the first.  This is where the AnonymousFilter ('anon') is useful:
+ * <pre>   [urls]
+ * /user/signup/** = anon
+ * /user/** = authc</pre>
+ * <p/>
+ * Since the url pattern definitions follow a 'first match wins' paradigm, the <code>anon</code> filter will
+ * match the <code>/user/signup/**</code> paths and the <code>/user/**</code> path chain will not be evaluated.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @since 0.9
  */
 public class AnonymousFilter extends PathMatchingFilter {
@@ -43,6 +55,6 @@ public class AnonymousFilter extends PathMatchingFilter {
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) {
         // Always return true since we allow access to anyone
         return true;
-     }
+    }
 
 }
