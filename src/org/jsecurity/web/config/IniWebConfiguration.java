@@ -28,6 +28,7 @@ import org.jsecurity.web.DefaultWebSecurityManager;
 import static org.jsecurity.web.WebUtils.getPathWithinApplication;
 import static org.jsecurity.web.WebUtils.toHttp;
 import org.jsecurity.web.filter.PathConfigProcessor;
+import org.jsecurity.web.filter.authc.AnonymousFilter;
 import org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.jsecurity.web.filter.authc.FormAuthenticationFilter;
 import org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter;
@@ -183,8 +184,13 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     protected Map<String, Filter> createDefaultFilters() {
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
 
-        String name = "authc";
-        AdviceFilter filter = new FormAuthenticationFilter();
+        String name = "anon";
+        AdviceFilter filter = new AnonymousFilter();
+        filter.setName(name);
+        filters.put(name, filter);
+
+        name = "authc";
+        filter = new FormAuthenticationFilter();
         filter.setName(name);
         filters.put(name, filter);
 

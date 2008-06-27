@@ -35,6 +35,7 @@
   <property name="root.base.dir" value="${basedir}"/>
 
   <!-- Allow override of default build properties from properties file. -->
+  <property file="${user.home}/.jsecurity/build.properties"/>
   <property file="build.properties"/>
 
   <!-- Environment variables (e.g. to pickup CATALINA_HOME for test deployment) -->
@@ -225,6 +226,14 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
     <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
     <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
 
+  </target>
+
+  <target name="jar.deploy" depends="jar,src.zip" description="Copies the jar and src.zip files to a local directory specified by build properties.  Requires creation of .jsecurity/build.properties file to specify the deploy dir.">
+      <fail unless="jar.deploy.dir" message="jar.deploy.dir property is not set. Please create ${user.home}/.jsecurity/build.properties and specify this property before running this task."/>
+      <copy todir="${jar.deploy.dir}" preservelastmodified="true">
+          <fileset file="${dist.jar}"/>
+          <fileset file="${root.dist.dir}/${project.name}.src.zip"/>
+      </copy>
   </target>
 
   <target name="samples.quickstart" depends="jar" description="Creates the JSecurity quickstart .war">
