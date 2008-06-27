@@ -205,15 +205,19 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
             throw new IllegalStateException("An LDAP URL must be specified of the form ldap://<hostname>:<port>");
         }
 
-        if (principalSuffix != null) {
+        if (username != null && principalSuffix != null) {
             username += principalSuffix;
         }
 
         Hashtable<String, String> env = new Hashtable<String, String>();
 
         env.put(Context.SECURITY_AUTHENTICATION, authentication);
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, password);
+        if (username != null) {
+            env.put(Context.SECURITY_PRINCIPAL, username);
+        }
+        if (password != null) {
+            env.put(Context.SECURITY_CREDENTIALS, password);
+        }
         env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName);
         env.put(Context.PROVIDER_URL, url);
         env.put(Context.REFERRAL, referral);
