@@ -18,31 +18,28 @@
  */
 package org.jsecurity.web.filter.authc;
 
+import org.jsecurity.subject.Subject;
+import static org.jsecurity.web.WebUtils.getSubject;
 import org.jsecurity.web.filter.PathMatchingFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * <p>Filter that grants access to a resource regardless of whether they are authenticated, remembered, or
- * completely unknown.  Essentially if this filter is applied to a resource, any user can access it.</p>
- *
- * <p>This filter is intended to be used as an exclusionary measure only, since the default behavior of the
- * {@link org.jsecurity.web.servlet.JSecurityFilter} is to grant anonymous access.  So for example if
- * a web application restricted access to <tt>/myapp/**</tt> to authenticated users but wanted to have one URL
- * <tt>/myapp/checkMeOut</tt> to be available for anyone, the anonymous filter could be applied to that
- * URL prior to an authentication filter to exclude it from requiring authenticated access.</p>
-
+ * <p>Filter that allows access to resources if the accessor is a known user, which is defined as
+ * having a known principal.  This means that any user who is authenticated or remembered via a
+ * 'remember me' feature will be allowed access from this filter.</p>
  *
  * @author Jeremy Haile
  * @since 0.9
  */
-public class AnonymousFilter extends PathMatchingFilter {
+public class UserFilter extends PathMatchingFilter {
 
     @Override
-    public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) {
-        // Always return true since we allow access to anyone
-        return true;
-     }
+    public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+        Subject subject = getSubject(request, response);
 
+        // If principal is not null, then the user is known and should be allowed access.
+        return subject.getPrincipal() != null;
+    }
 }
