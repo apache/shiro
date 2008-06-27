@@ -31,6 +31,7 @@ import org.jsecurity.web.filter.PathConfigProcessor;
 import org.jsecurity.web.filter.authc.AnonymousFilter;
 import org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.jsecurity.web.filter.authc.FormAuthenticationFilter;
+import org.jsecurity.web.filter.authc.UserFilter;
 import org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter;
 import org.jsecurity.web.filter.authz.RolesAuthorizationFilter;
 import org.jsecurity.web.servlet.AdviceFilter;
@@ -186,6 +187,11 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
 
         String name = "anon";
         AdviceFilter filter = new AnonymousFilter();
+        filter.setName(name);
+        filters.put(name, filter);
+
+        name = "user";
+        filter = new UserFilter();
         filter.setName(name);
         filters.put(name, filter);
 
