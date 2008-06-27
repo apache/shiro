@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
@@ -12,91 +30,90 @@ import javax.sql.DataSource;
  * A data populator that creates a set of security tables and test data that can be used by the
  * JSecurity Spring sample application to demonstrate the use of the {@link org.jsecurity.realm.jdbc.JdbcRealm}
  * The tables created by this class follow the default table and column names that {@link org.jsecurity.realm.jdbc.JdbcRealm} uses.
- *  
  *
  * @author Les Hazlewood
  */
 public class BootstrapDataPopulator implements InitializingBean {
 
     private static final String CREATE_TABLES = "create table users (\n" +
-        "    username varchar(255) primary key,\n" +
-        "    password varchar(255) not null\n" +
-        ");\n" +
-        "\n" +
-        "create table roles (\n" +
-        "    role_name varchar(255) primary key\n" +
-        ");\n" +
-        "\n" +
-        "create table user_roles (\n" +
-        "    username varchar(255) not null,\n" +
-        "    role_name varchar(255) not null,\n" +
-        "    constraint user_roles_uq unique ( username, role_name )\n" +
-        ");\n" +
-        "\n" +
-        "create table roles_permissions (\n" +
-        "    role_name varchar(255) not null,\n" +
-        "    permission varchar(255) not null,\n" +
-        "    primary key (role_name, permission)\n" +
-        ");";
+            "    username varchar(255) primary key,\n" +
+            "    password varchar(255) not null\n" +
+            ");\n" +
+            "\n" +
+            "create table roles (\n" +
+            "    role_name varchar(255) primary key\n" +
+            ");\n" +
+            "\n" +
+            "create table user_roles (\n" +
+            "    username varchar(255) not null,\n" +
+            "    role_name varchar(255) not null,\n" +
+            "    constraint user_roles_uq unique ( username, role_name )\n" +
+            ");\n" +
+            "\n" +
+            "create table roles_permissions (\n" +
+            "    role_name varchar(255) not null,\n" +
+            "    permission varchar(255) not null,\n" +
+            "    primary key (role_name, permission)\n" +
+            ");";
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected DataSource dataSource = null;
 
-    public void setDataSource( DataSource dataSource ) {
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     public void afterPropertiesSet() throws Exception {
         //because we're using an in-memory hsqldb for the sample app, a new one will be created each time the
         //app starts, so create the tables and insert the 2 sample users on bootstrap:
-        
-        JdbcTemplate jdbcTemplate = new JdbcTemplate( this.dataSource );
-        jdbcTemplate.execute( CREATE_TABLES );
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dataSource);
+        jdbcTemplate.execute(CREATE_TABLES);
 
         //password is 'user1' SHA hashed and base64 encoded:
         String query = "insert into users values ('user1', 's9qne0wEqVUbh4HQMZH+CY8yXmc=')";
-        jdbcTemplate.execute( query );
-        log.debug( "Created user1." );
+        jdbcTemplate.execute(query);
+        log.debug("Created user1.");
 
         //password is 'user2' SHA hashed and base64 encoded:
         query = "insert into users values ( 'user2', 'oYgcBu7JbbmQHHu/5BxCo/COnLQ=' )";
-        jdbcTemplate.execute( query );
-        log.debug( "Created user2." );
+        jdbcTemplate.execute(query);
+        log.debug("Created user2.");
 
         query = "insert into roles values ( 'role1' )";
-        jdbcTemplate.execute( query );
-        log.debug( "Created role1" );
+        jdbcTemplate.execute(query);
+        log.debug("Created role1");
 
         query = "insert into roles values ( 'role2' )";
-        jdbcTemplate.execute( query );
-        log.debug( "Created role2" );
+        jdbcTemplate.execute(query);
+        log.debug("Created role2");
 
         query = "insert into roles_permissions values ( 'role1', 'permission1')";
-        jdbcTemplate.execute( query );
-        log.debug( "Created permission 1 for role 1" );
+        jdbcTemplate.execute(query);
+        log.debug("Created permission 1 for role 1");
 
         query = "insert into roles_permissions values ( 'role1', 'permission2')";
-        jdbcTemplate.execute( query );
-        log.debug( "Created permission 2 for role 1" );
+        jdbcTemplate.execute(query);
+        log.debug("Created permission 2 for role 1");
 
         query = "insert into roles_permissions values ( 'role2', 'permission1')";
-        jdbcTemplate.execute( query );
-        log.debug( "Created permission 1 for role 2" );        
+        jdbcTemplate.execute(query);
+        log.debug("Created permission 1 for role 2");
 
         query = "insert into user_roles values ( 'user1', 'role1' )";
-        jdbcTemplate.execute( query );
+        jdbcTemplate.execute(query);
         query = "insert into user_roles values ( 'user1', 'role2' )";
-        jdbcTemplate.execute( query );
-        log.debug( "Assigned user1 roles role1 and role2" );
+        jdbcTemplate.execute(query);
+        log.debug("Assigned user1 roles role1 and role2");
 
         query = "insert into user_roles values ( 'user2', 'role2' )";
-        jdbcTemplate.execute( query );
-        log.debug( "Assigned user2 role role2" );
+        jdbcTemplate.execute(query);
+        log.debug("Assigned user2 role role2");
     }
 
-    public static void main( String[] args ) {
-        System.out.println( "value [user1] sha hashed and base64 encoded is [" + new Sha1Hash("user1" ).toBase64() + "]" );
-        System.out.println( "value [user2] sha hashed and base64 encoded is [" + new Sha1Hash("user2" ).toBase64() + "]" );
+    public static void main(String[] args) {
+        System.out.println("value [user1] sha hashed and base64 encoded is [" + new Sha1Hash("user1").toBase64() + "]");
+        System.out.println("value [user2] sha hashed and base64 encoded is [" + new Sha1Hash("user2").toBase64() + "]");
     }
 }

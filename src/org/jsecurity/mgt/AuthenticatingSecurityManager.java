@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.mgt;
 
@@ -140,8 +143,8 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         if (getAuthenticator() == null) {
             Authenticator authc = createAuthenticator();
             setAuthenticator(authc);
-            if ( log.isDebugEnabled() ) {
-                log.debug("Set implicitly created Authenticator" );
+            if (log.isDebugEnabled()) {
+                log.debug("Set implicitly created Authenticator");
             }
         }
     }
@@ -149,14 +152,14 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     protected Authenticator createAuthenticator() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator();
         mra.setRealms(getRealms());
-        if ( getAuthenticationEventManager() != null ) {
-            mra.setAuthenticationEventManager( getAuthenticationEventManager());
+        if (getAuthenticationEventManager() != null) {
+            mra.setAuthenticationEventManager(getAuthenticationEventManager());
         }
-        if ( getAuthenticationEventListeners() != null ) {
+        if (getAuthenticationEventListeners() != null) {
             mra.setAuthenticationEventListeners(getAuthenticationEventListeners());
         }
-        if ( getModularAuthenticationStrategy() != null ) {
-            mra.setModularAuthenticationStrategy( getModularAuthenticationStrategy() );
+        if (getModularAuthenticationStrategy() != null) {
+            mra.setModularAuthenticationStrategy(getModularAuthenticationStrategy());
         }
         return mra;
     }
@@ -181,9 +184,9 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     private void assertAuthenticatorEventListenerSupport(Authenticator authc) {
         if (!(authc instanceof AuthenticationEventListenerRegistrar)) {
             String msg = "AuthenticationEventListener registration failed:  The underlying Authenticator instance of " +
-                "type [" + authc.getClass().getName() + "] does not implement the " +
-                AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                "runtime registration of AuthenticationEventListeners.";
+                    "type [" + authc.getClass().getName() + "] does not implement the " +
+                    AuthenticationEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                    "runtime registration of AuthenticationEventListeners.";
             throw new IllegalStateException(msg);
         }
     }
@@ -197,10 +200,12 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     public boolean remove(AuthenticationEventListener listener) {
         Authenticator authc = getAuthenticator();
         return (authc instanceof AuthenticationEventListenerRegistrar) &&
-            ((AuthenticationEventListenerRegistrar) authc).remove(listener);
+                ((AuthenticationEventListenerRegistrar) authc).remove(listener);
     }
 
-    /** Delegates to the authenticator for authentication. */
+    /**
+     * Delegates to the authenticator for authentication.
+     */
     public Account authenticate(AuthenticationToken token) throws AuthenticationException {
         return getRequiredAuthenticator().authenticate(token);
     }
@@ -209,7 +214,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         Authenticator authc = getAuthenticator();
         if (authc == null) {
             String msg = "No authenticator attribute configured for this SecurityManager instance.  Please ensure " +
-                "the init() method is called prior to using this instance and a default one will be created.";
+                    "the init() method is called prior to using this instance and a default one will be created.";
             throw new IllegalStateException(msg);
         }
         return authc;

@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session.mgt;
 
@@ -30,15 +33,16 @@ import java.util.Date;
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager
-    implements Destroyable {
+        implements Destroyable {
 
     protected SessionDAO sessionDAO = null;
 
-    public DefaultSessionManager() {}
+    public DefaultSessionManager() {
+    }
 
     public void setSessionDAO(SessionDAO sessionDAO) {
         this.sessionDAO = sessionDAO;
@@ -54,12 +58,12 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
 
     protected void ensureSessionDAO() {
         SessionDAO sessionDAO = getSessionDAO();
-        if ( sessionDAO == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No sessionDAO set.  Attempting to create default instance." );
+        if (sessionDAO == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No sessionDAO set.  Attempting to create default instance.");
             }
             sessionDAO = createSessionDAO();
-            setSessionDAO( sessionDAO );
+            setSessionDAO(sessionDAO);
         }
     }
 
@@ -79,14 +83,14 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
      */
     protected SessionDAO createSessionDAO() {
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "No sessionDAO set.  Creating default instance..." );
+        if (log.isDebugEnabled()) {
+            log.debug("No sessionDAO set.  Creating default instance...");
         }
 
         MemorySessionDAO dao = new MemorySessionDAO();
 
         CacheManager cacheManager = getCacheManager();
-        if ( cacheManager != null ) {
+        if (cacheManager != null) {
             dao.setCacheManager(cacheManager);
         }
 
@@ -119,16 +123,16 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
     }
 
     protected void onStop(Session session) {
-        if ( session instanceof SimpleSession ) {
+        if (session instanceof SimpleSession) {
             Date stopTs = session.getStopTimestamp();
-            ((SimpleSession)session).setLastAccessTime(stopTs);
+            ((SimpleSession) session).setLastAccessTime(stopTs);
         }
         onChange(session);
     }
 
     protected void onExpiration(Session session) {
-        if ( session instanceof SimpleSession ) {
-            ((SimpleSession)session).setExpired(true);
+        if (session instanceof SimpleSession) {
+            ((SimpleSession) session).setExpired(true);
         }
         onChange(session);
     }

@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.config;
 
@@ -117,8 +120,8 @@ public class ReflectionBuilder {
             if (instance == null) {
                 if (property.equals("class")) {
                     instance = ClassUtils.newInstance(value);
-                    if ( instance instanceof Nameable) {
-                        ((Nameable)instance).setName(name);
+                    if (instance instanceof Nameable) {
+                        ((Nameable) instance).setName(name);
                     }
                     objects.put(name, instance);
                 } else {
@@ -138,8 +141,8 @@ public class ReflectionBuilder {
                 //name with no property, assume right hand side of equals sign is the class name:
                 try {
                     instance = ClassUtils.newInstance(value);
-                    if ( instance instanceof Nameable ) {
-                        ((Nameable)instance).setName(key);
+                    if (instance instanceof Nameable) {
+                        ((Nameable) instance).setName(key);
                     }
                 } catch (Exception e) {
                     String msg = "Unable to instantiate class [" + value + "] for object named '" + key + "'.  " +

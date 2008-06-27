@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.realm;
 
@@ -39,8 +42,8 @@ import org.jsecurity.subject.PrincipalCollection;
  * to subclasses, a top-level abstract class for most common authentication behavior is more useful as an extension
  * point for most applications.
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {
 
@@ -63,17 +66,17 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
     public AuthenticatingRealm() {
     }
 
-    public AuthenticatingRealm( CacheManager cacheManager) {
+    public AuthenticatingRealm(CacheManager cacheManager) {
         setCacheManager(cacheManager);
     }
 
-    public AuthenticatingRealm( CredentialsMatcher matcher ) {
-        setCredentialsMatcher( matcher );
+    public AuthenticatingRealm(CredentialsMatcher matcher) {
+        setCredentialsMatcher(matcher);
     }
 
-    public AuthenticatingRealm( CacheManager cacheManager, CredentialsMatcher matcher ) {
+    public AuthenticatingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
         setCacheManager(cacheManager);
-        setCredentialsMatcher( matcher );
+        setCredentialsMatcher(matcher);
     }
 
     /*--------------------------------------------
@@ -82,12 +85,12 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
     /**
      * Returns the <code>CredentialsMatcher</code> used during an authentication attempt to verify submitted
      * credentials with those stored in the system.
-     * 
+     *
      * <p>Unless overridden by the {@link #setCredentialsMatcher setCredentialsMatcher} method, the default
      * value is a {@link org.jsecurity.authc.credential.SimpleCredentialsMatcher SimpleCredentialsMatcher} instance.
-     * 
+     *
      * @return the <code>CredentialsMatcher</code> used during an authentication attempt to verify submitted
-     * credentials with those stored in the system.
+     *         credentials with those stored in the system.
      */
     public CredentialsMatcher getCredentialsMatcher() {
         return credentialsMatcher;
@@ -119,7 +122,6 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      * <tt>UsernamePasswordToken</tt> authentication token submissions.
      *
      * @return the authenticationToken class supported by this realm.
-     *
      * @see #setAuthenticationTokenClass
      */
     public Class getAuthenticationTokenClass() {
@@ -133,7 +135,6 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      * {@link UsernamePasswordToken UsernamePasswordToken.class} to support the majority of applications.
      *
      * @param authenticationTokenClass the class of authentication token instances supported by this realm.
-     *
      * @see #getAuthenticationTokenClass getAuthenticationTokenClass() for more explanation.
      */
     public void setAuthenticationTokenClass(Class<? extends AuthenticationToken> authenticationTokenClass) {
@@ -157,38 +158,38 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
         return token != null && getAuthenticationTokenClass().isAssignableFrom(token.getClass());
     }
 
-    public final Account getAccount( AuthenticationToken token ) throws AuthenticationException {
+    public final Account getAccount(AuthenticationToken token) throws AuthenticationException {
 
-        Account account = doGetAccount( token );
+        Account account = doGetAccount(token);
 
-        if( account == null ) {
-            if ( log.isDebugEnabled() ) {
+        if (account == null) {
+            if (log.isDebugEnabled()) {
                 String msg = "No account information found for submitted authentication token [" + token + "].  " +
-                "Returning null.";
-                log.debug( msg );
+                        "Returning null.";
+                log.debug(msg);
             }
             return null;
         }
 
-        if ( account.isLocked() ) {
-            throw new LockedAccountException( "Account [" + account + "] is locked." );
+        if (account.isLocked()) {
+            throw new LockedAccountException("Account [" + account + "] is locked.");
         }
-        if ( account.isCredentialsExpired() ) {
+        if (account.isCredentialsExpired()) {
             String msg = "The credentials for account [" + account + "] are expired";
-            throw new ExpiredCredentialsException( msg );
+            throw new ExpiredCredentialsException(msg);
         }
 
         CredentialsMatcher cm = getCredentialsMatcher();
-        if ( cm != null ) {
-            if ( !cm.doCredentialsMatch( token, account ) ) {
+        if (cm != null) {
+            if (!cm.doCredentialsMatch(token, account)) {
                 String msg = "The credentials provided for account [" + token +
-                             "] did not match the expected credentials.";
-                throw new IncorrectCredentialsException( msg );
+                        "] did not match the expected credentials.";
+                throw new IncorrectCredentialsException(msg);
             }
         } else {
-            throw new AuthenticationException( "A CredentialsMatcher must be configured in order to verify " +
+            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify " +
                     "credentials during authentication.  If you do not wish for credentials to be examined, you " +
-                    "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance." );
+                    "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
         }
 
         return account;
@@ -206,11 +207,12 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      *
      * @param token the authentication token containing the user's principal and credentials.
      * @return an {@link org.jsecurity.authc.Account} containing account data resulting from the
-     * authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
-     * @throws org.jsecurity.authc.AuthenticationException if there is an error acquiring data or performing
-     * realm-specific authentication logic for the specified <tt>token</tt>
+     *         authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
+     * @throws org.jsecurity.authc.AuthenticationException
+     *          if there is an error acquiring data or performing
+     *          realm-specific authentication logic for the specified <tt>token</tt>
      */
-    protected abstract Account doGetAccount( AuthenticationToken token ) throws AuthenticationException;
+    protected abstract Account doGetAccount(AuthenticationToken token) throws AuthenticationException;
 
     /**
      * Default implementation that does nothing (no-op) and exists as a convenience mechanism in case subclasses
@@ -228,7 +230,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      *
      * @param accountPrincipal the application-specific Subject/user identifier that is logging out.
      */
-    public void onLogout( PrincipalCollection accountPrincipal ) {
+    public void onLogout(PrincipalCollection accountPrincipal) {
         //no-op, here for subclass override if desired.
     }
 

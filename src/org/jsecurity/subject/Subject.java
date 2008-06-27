@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood, Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.subject;
 
@@ -39,9 +42,9 @@ import java.util.List;
  * <p>These overloaded *Permission methods <em>do</em> forego type-saftey for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
- * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @since 0.1
  */
 public interface Subject {
 
@@ -57,7 +60,7 @@ public interface Subject {
      * return values since they are rarely guaranteed to be unique.</p>
      *
      * <p>Most single-Realm applications would return from this method a single unique principal as noted above
-     * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large 
+     * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large
      * majority of JSecurity applications.</p>
      *
      * <p>However, in <em>multi</em>-Realm configurations, which are fully supported by JSecurity as well, it is
@@ -83,10 +86,10 @@ public interface Subject {
      *
      * @param permission the String representation of a Permission that is being checked.
      * @return true if this Subject is permitted, false otherwise.
-     * @since 0.9
      * @see #isPermitted(Permission permission)
+     * @since 0.9
      */
-    boolean isPermitted( String permission );
+    boolean isPermitted(String permission);
 
     /**
      * Returns <tt>true</tt> if this Subject is permitted to perform an action or access a resource summarized by the
@@ -98,7 +101,7 @@ public interface Subject {
      * @param permission the permission that is being checked.
      * @return true if this Subject is permitted, false otherwise.
      */
-    boolean isPermitted( Permission permission );
+    boolean isPermitted(Permission permission);
 
     /**
      * Checks if this Subject implies the given permission strings and returns a boolean array indicating which
@@ -109,12 +112,12 @@ public interface Subject {
      *
      * @param permissions the String representations of the Permissions that are being checked.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value at an index indicates this Subject is permitted for
-     * for the associated <tt>Permission</tt> string in the list.  A false value at an index
-     * indicates otherwise.
+     *         permissions in the given list.  A true value at an index indicates this Subject is permitted for
+     *         for the associated <tt>Permission</tt> string in the list.  A false value at an index
+     *         indicates otherwise.
      * @since 0.9
      */
-    boolean[] isPermitted( String... permissions );
+    boolean[] isPermitted(String... permissions);
 
     /**
      * Checks if this Subject implies the given Permissions and returns a boolean array indicating which permissions
@@ -129,11 +132,11 @@ public interface Subject {
      *
      * @param permissions the permissions that are being checked.
      * @return an array of booleans whose indices correspond to the index of the
-     * permissions in the given list.  A true value at an index indicates this Subject is permitted for
-     * for the associated <tt>Permission</tt> object in the list.  A false value at an index
-     * indicates otherwise.
+     *         permissions in the given list.  A true value at an index indicates this Subject is permitted for
+     *         for the associated <tt>Permission</tt> object in the list.  A false value at an index
+     *         indicates otherwise.
      */
-    boolean[] isPermitted( List<Permission> permissions );
+    boolean[] isPermitted(List<Permission> permissions);
 
     /**
      * Returns <tt>true</tt> if this Subject implies all of the specified permission strings, <tt>false</tt> otherwise.
@@ -146,7 +149,7 @@ public interface Subject {
      * @see #isPermittedAll(Collection)
      * @since 0.9
      */
-    boolean isPermittedAll( String... permissions );
+    boolean isPermittedAll(String... permissions);
 
     /**
      * Returns <tt>true</tt> if this Subject implies all of the specified permissions, <tt>false</tt> otherwise.
@@ -157,7 +160,7 @@ public interface Subject {
      * @param permissions the permissions to check.
      * @return true if this Subject has all of the specified permissions, false otherwise.
      */
-    boolean isPermittedAll( Collection<Permission> permissions );
+    boolean isPermittedAll(Collection<Permission> permissions);
 
     /**
      * Ensures this Subject implies the specified permission String.
@@ -169,10 +172,11 @@ public interface Subject {
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
      * @param permission the String representation of the Permission to check.
-     * @throws org.jsecurity.authz.AuthorizationException if the user does not have the permission.
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if the user does not have the permission.
      * @since 0.9
      */
-    void checkPermission( String permission ) throws AuthorizationException;
+    void checkPermission(String permission) throws AuthorizationException;
 
     /**
      * Ensures this Subject {@link Permission#implies(Permission) implies} the specified <tt>Permission</tt>.
@@ -181,9 +185,10 @@ public interface Subject {
      * the given permission, an {@link org.jsecurity.authz.AuthorizationException} will be thrown.
      *
      * @param permission the Permission to check.
-     * @throws org.jsecurity.authz.AuthorizationException if this Subject does not have the permission.
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if this Subject does not have the permission.
      */
-    void checkPermission( Permission permission ) throws AuthorizationException;
+    void checkPermission(Permission permission) throws AuthorizationException;
 
     /**
      * Ensures this Subject
@@ -201,10 +206,10 @@ public interface Subject {
      * @throws AuthorizationException if this Subject does not have all of the given permissions.
      * @since 0.9
      */
-    void checkPermissions( String... permissions ) throws AuthorizationException;
+    void checkPermissions(String... permissions) throws AuthorizationException;
 
     /**
-     * Ensures this Subject 
+     * Ensures this Subject
      * {@link org.jsecurity.authz.Permission#implies(org.jsecurity.authz.Permission) implies} all of the
      * specified permission strings.
      *
@@ -215,7 +220,7 @@ public interface Subject {
      * @param permissions the Permissions to check.
      * @throws AuthorizationException if this Subject does not have all of the given permissions.
      */
-    void checkPermissions( Collection<Permission> permissions ) throws AuthorizationException;
+    void checkPermissions(Collection<Permission> permissions) throws AuthorizationException;
 
     /**
      * Returns <tt>true</tt> if this Subject has the specified role, <tt>false</tt> otherwise.
@@ -223,7 +228,7 @@ public interface Subject {
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name).
      * @return <tt>true</tt> if this Subject has the specified role, <tt>false</tt> otherwise.
      */
-    boolean hasRole( String roleIdentifier );
+    boolean hasRole(String roleIdentifier);
 
     /**
      * Checks if this Subject has the specified roles, returning a boolean array indicating
@@ -234,10 +239,10 @@ public interface Subject {
      *
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @return an array of booleans whose indices correspond to the index of the
-     * roles in the given identifiers.  A true value indicates this Subject has the
-     * role at that index.  False indicates this Subject does not have the role at that index.
+     *         roles in the given identifiers.  A true value indicates this Subject has the
+     *         role at that index.  False indicates this Subject does not have the role at that index.
      */
-    boolean[] hasRoles( List<String> roleIdentifiers );
+    boolean[] hasRoles(List<String> roleIdentifiers);
 
     /**
      * Returns <tt>true</tt> if this Subject has all of the specified roles, <tt>false</tt> otherwise.
@@ -245,25 +250,27 @@ public interface Subject {
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @return true if this Subject has all the roles, false otherwise.
      */
-    boolean hasAllRoles( Collection<String> roleIdentifiers );
+    boolean hasAllRoles(Collection<String> roleIdentifiers);
 
     /**
      * Asserts this Subject has the specified role by returning quietly if they do or throwing an
      * {@link org.jsecurity.authz.AuthorizationException} if they do not.
      *
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name ).
-     * @throws org.jsecurity.authz.AuthorizationException if this Subject does not have the role.
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if this Subject does not have the role.
      */
-    void checkRole( String roleIdentifier ) throws AuthorizationException;
+    void checkRole(String roleIdentifier) throws AuthorizationException;
 
     /**
      * Asserts this Subject has all of the specified roles by returning quietly if they do or throwing an
      * {@link org.jsecurity.authz.AuthorizationException} if they do not.
      *
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
-     * @throws org.jsecurity.authz.AuthorizationException if this Subject does not have all of the specified roles.
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if this Subject does not have all of the specified roles.
      */
-    void checkRoles( Collection<String> roleIdentifiers ) throws AuthorizationException;
+    void checkRoles(Collection<String> roleIdentifiers) throws AuthorizationException;
 
     /**
      * Performs a login attempt for this Subject/user.  If unsuccessful,
@@ -276,24 +283,24 @@ public interface Subject {
      * {@link #isAuthenticated() isAuthenticated()} will be <tt>true</tt>.
      *
      * @param token the token encapsulating the subject's principals and credentials to be passed to the
-     * Authentication subsystem for verification.
+     *              Authentication subsystem for verification.
      * @throws AuthenticationException if the authentication attempt fails.
      * @since 0.9
      */
-    void login( AuthenticationToken token ) throws AuthenticationException;
+    void login(AuthenticationToken token) throws AuthenticationException;
 
     /**
      * Returns <tt>true</tt> if this Subject/user has proven their identity <em>during their current session</em>
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
-     * 
+     *
      * <p>Note that even if this Subject's identity has been remembered via 'remember me' services, this method will
      * still return <tt>false</tt> unless the user has actually logged in with proper credentials <em>during their
      * current session</em>.  See the
      * {@link org.jsecurity.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} class JavaDoc for why
      * this would occur.</p>
      *
-     * @return <tt>true</tt> if this Subject has proven their identity during their current session 
-     * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
+     * @return <tt>true</tt> if this Subject has proven their identity during their current session
+     *         by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
      * @since 0.9
      */
     boolean isAuthenticated();
@@ -301,9 +308,9 @@ public interface Subject {
     /**
      * Returns the application <tt>Session</tt> associated with this Subject.  If no session exists when this
      * method is called, a new session will be created, associated with this Subject, and then returned.
-     * 
-     * @see #getSession(boolean)
+     *
      * @return the application <tt>Session</tt> associated with this Subject.
+     * @see #getSession(boolean)
      * @since 0.2
      */
     Session getSession();
@@ -313,19 +320,19 @@ public interface Subject {
      * this method functions as follows:
      *
      * <ul>
-     *   <li>If there is already an existing session associated with this <tt>Subject</tt>, it is returned and
+     * <li>If there is already an existing session associated with this <tt>Subject</tt>, it is returned and
      * the <tt>create</tt> argument is ignored.</li>
-     *   <li>If no session exists and <tt>create</tt> is <tt>true</tt>, a new session will be created, associated with
+     * <li>If no session exists and <tt>create</tt> is <tt>true</tt>, a new session will be created, associated with
      * this <tt>Subject</tt> and then returned.</li>
-     *   <li>If no session exists and <tt>create</tt> is <tt>false</tt>, <tt>null</tt> is returned.</li>
+     * <li>If no session exists and <tt>create</tt> is <tt>false</tt>, <tt>null</tt> is returned.</li>
      * </ul>
      *
      * @param create boolean argument determining if a new session should be created or not if there is no existing session.
      * @return the application <tt>Session</tt> associated with this <tt>Subject</tt> or <tt>null</tt> based
-     * on the above described logic.
+     *         on the above described logic.
      * @since 0.2
      */
-    Session getSession( boolean create );
+    Session getSession(boolean create);
 
     /**
      * Logs out this Subject and invalidates and/or removes any associated entities

@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.cache.ehcache;
 
@@ -29,9 +32,9 @@ import java.util.Set;
 /**
  * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache}.
  *
- * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @since 0.2
  */
 @SuppressWarnings("unchecked")
 public class EhCache implements Cache {
@@ -48,11 +51,12 @@ public class EhCache implements Cache {
 
     /**
      * Constructs a new EhCache instance with the given cache.
+     *
      * @param cache - delegate EhCache instance this JSecurity cache instance will wrap.
      */
-    public EhCache(net.sf.ehcache.Cache cache ) {
-        if ( cache == null ) {
-            throw new IllegalArgumentException( "Cache argument cannot be null." );
+    public EhCache(net.sf.ehcache.Cache cache) {
+        if (cache == null) {
+            throw new IllegalArgumentException("Cache argument cannot be null.");
         }
         this.cache = cache;
     }
@@ -119,7 +123,7 @@ public class EhCache implements Cache {
         }
         try {
             cache.remove(key);
-        } catch ( Throwable t) {
+        } catch (Throwable t) {
             throw new CacheException(t);
         }
     }
@@ -133,8 +137,8 @@ public class EhCache implements Cache {
         }
         try {
             cache.removeAll();
-        } catch ( Throwable t ) {
-            throw new CacheException( t );
+        } catch (Throwable t) {
+            throw new CacheException(t);
         }
     }
 
@@ -149,8 +153,8 @@ public class EhCache implements Cache {
     public Set keys() {
         try {
             List keys = cache.getKeys();
-            if ( keys != null && !keys.isEmpty() ) {
-                return Collections.unmodifiableSet( new LinkedHashSet( keys ) );
+            if (keys != null && !keys.isEmpty()) {
+                return Collections.unmodifiableSet(new LinkedHashSet(keys));
             } else {
                 return Collections.EMPTY_SET;
             }
@@ -162,12 +166,12 @@ public class EhCache implements Cache {
     public Set values() {
         try {
             List keys = cache.getKeys();
-            if ( keys != null && !keys.isEmpty() ) {
+            if (keys != null && !keys.isEmpty()) {
                 Set values = new LinkedHashSet(keys.size());
-                for( Object key : keys ) {
-                    values.add( cache.get(key) );
+                for (Object key : keys) {
+                    values.add(cache.get(key));
                 }
-                return Collections.unmodifiableSet( values );
+                return Collections.unmodifiableSet(values);
             } else {
                 return Collections.EMPTY_SET;
             }
@@ -179,8 +183,9 @@ public class EhCache implements Cache {
     /**
      * Returns the size (in bytes) that this EhCache is using in memory (RAM), or <code>-1</code> if that
      * number is unknown or cannot be calculated.
+     *
      * @return the size (in bytes) that this EhCache is using in memory (RAM), or <code>-1</code> if that
-     * number is unknown or cannot be calculated.
+     *         number is unknown or cannot be calculated.
      */
     public long getMemoryUsage() {
         try {
@@ -194,8 +199,9 @@ public class EhCache implements Cache {
     /**
      * Returns the size (in bytes) that this EhCache's memory store is using (RAM), or <code>-1</code> if
      * that number is unknown or cannot be calculated.
+     *
      * @return the size (in bytes) that this EhCache's memory store is using (RAM), or <code>-1</code> if
-     * that number is unknown or cannot be calculated.
+     *         that number is unknown or cannot be calculated.
      */
     public long getMemoryStoreSize() {
         try {
@@ -209,19 +215,21 @@ public class EhCache implements Cache {
     /**
      * Returns the size (in bytes) that this EhCache's disk store is consuming or <code>-1</code> if
      * that number is unknown or cannot be calculated.
-     * @return the size (in bytes) that this EhCache's disk store is consuming or <code>-1</code> if 
-     * that number is unknown or cannot be calculated.
+     *
+     * @return the size (in bytes) that this EhCache's disk store is consuming or <code>-1</code> if
+     *         that number is unknown or cannot be calculated.
      */
     public long getDiskStoreSize() {
         try {
             return cache.getDiskStoreSize();
-        } catch ( Throwable t ) {
+        } catch (Throwable t) {
             throw new CacheException(t);
         }
     }
 
     /**
      * Returns &quot;EhCache [&quot; + cache.getName() + &quot;]&quot;
+     *
      * @return &quot;EhCache [&quot; + cache.getName() + &quot;]&quot;
      */
     public String toString() {

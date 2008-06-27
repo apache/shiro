@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authc.pam;
 
@@ -51,13 +54,12 @@ import java.util.List;
  * <p>For greater security in a multi-realm configuration, unless overridden, the default implementation is the
  * {@link AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy}
  *
+ * @author Jeremy Haile
+ * @author Les Hazlewood
  * @see #setRealms
  * @see AllSuccessfulModularAuthenticationStrategy
  * @see AtLeastOneSuccessfulModularAuthenticationStrategy
- *
  * @since 0.1
- * @author Jeremy Haile
- * @author Les Hazlewood
  */
 public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
@@ -74,7 +76,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     private Collection<? extends Realm> realms;
 
     private ModularAuthenticationStrategy modularAuthenticationStrategy =
-        new AllSuccessfulModularAuthenticationStrategy();
+            new AllSuccessfulModularAuthenticationStrategy();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -83,12 +85,12 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         super();
     }
 
-    public ModularRealmAuthenticator( Realm realm ) {
-        setRealm( realm );
+    public ModularRealmAuthenticator(Realm realm) {
+        setRealm(realm);
     }
 
-    public ModularRealmAuthenticator( List<Realm> realms ) {
-        setRealms( realms );
+    public ModularRealmAuthenticator(List<Realm> realms) {
+        setRealms(realms);
     }
 
     /*--------------------------------------------
@@ -97,19 +99,21 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /**
      * Convenience setter for single-realm environments (fairly common).  This method just wraps the realm in a
      * collection and then calls {@link #setRealms}.
+     *
      * @param realm the realm to consult during authentication attempts.
      */
-    public void setRealm( Realm realm ) {
+    public void setRealm(Realm realm) {
         List<Realm> realms = new ArrayList<Realm>(1);
-        realms.add( realm );
-        setRealms( realms );
+        realms.add(realm);
+        setRealms(realms);
     }
 
     /**
      * Sets all realms used by this Authenticator, providing PAM (Pluggable Authentication Module) configuration.
+     *
      * @param realms the realms to consult during authentication attempts.
      */
-    public void setRealms( Collection<Realm> realms ) {
+    public void setRealms(Collection<Realm> realms) {
         this.realms = realms;
     }
 
@@ -135,7 +139,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @param modularAuthenticationStrategy the strategy implementation to use during log-in attempts.
      * @since 0.2
      */
-    public void setModularAuthenticationStrategy( ModularAuthenticationStrategy modularAuthenticationStrategy ) {
+    public void setModularAuthenticationStrategy(ModularAuthenticationStrategy modularAuthenticationStrategy) {
         this.modularAuthenticationStrategy = modularAuthenticationStrategy;
     }
 
@@ -145,12 +149,13 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /**
      * Used by the internal {@link #doAuthenticate} implementation to ensure that the <tt>realms</tt> property
      * has been set.  The default implementation ensures the property is not null and not empty.
+     *
      * @throws IllegalStateException if the <tt>realms</tt> property is configured incorrectly.
      */
     protected void assertRealmsConfigured() throws IllegalStateException {
-        if ( realms == null || realms.isEmpty() ) {
+        if (realms == null || realms.isEmpty()) {
             String msg = "No realms configured for this ModularRealmAuthenticator.  Configuration error.";
-            throw new IllegalStateException( msg );
+            throw new IllegalStateException(msg);
         }
     }
 
@@ -162,18 +167,18 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @param token the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
      * @return the Account associated with the user account corresponding to the specified <tt>token</tt>
      */
-    protected Account doSingleRealmAuthentication( Realm realm, AuthenticationToken token ) {
-        if ( !realm.supports( token ) ) {
+    protected Account doSingleRealmAuthentication(Realm realm, AuthenticationToken token) {
+        if (!realm.supports(token)) {
             String msg = "Realm [" + realm + "] does not support authentication token [" +
-                token + "].  Please ensure that the appropriate Realm implementation is " +
-                "configured correctly or that the realm accepts AuthenticationTokens of this type.";
-            throw new UnsupportedTokenException( msg );
+                    token + "].  Please ensure that the appropriate Realm implementation is " +
+                    "configured correctly or that the realm accepts AuthenticationTokens of this type.";
+            throw new UnsupportedTokenException(msg);
         }
-        Account account = realm.getAccount( token );
-        if ( account == null ) {
+        Account account = realm.getAccount(token);
+        if (account == null) {
             String msg = "Realm [" + realm + "] was unable to find account data for the " +
-                "submitted AuthenticationToken [" + token + "].";
-            throw new UnknownAccountException( msg );
+                    "submitted AuthenticationToken [" + token + "].";
+            throw new UnknownAccountException(msg);
         }
         return account;
     }
@@ -183,54 +188,54 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * as each realm is consulted for <tt>Account</tt> for the specified <tt>token</tt>.
      *
      * @param realms the multiple realms configured on this Authenticator instance.
-     * @param token the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
+     * @param token  the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
      * @return an aggregated Account instance representing account data across all the successfully
-     * consulted realms.
+     *         consulted realms.
      */
-    protected Account doMultiRealmAuthentication( Collection<? extends Realm> realms, AuthenticationToken token ) {
+    protected Account doMultiRealmAuthentication(Collection<? extends Realm> realms, AuthenticationToken token) {
 
         ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
 
-        Account aggregate = strategy.beforeAllAttempts( realms, token );
-        
+        Account aggregate = strategy.beforeAllAttempts(realms, token);
+
         if (log.isDebugEnabled()) {
             log.debug("Iterating through [" + realms.size() + "] realms for PAM authentication");
         }
 
-        for( Realm realm : realms) {
+        for (Realm realm : realms) {
 
-            aggregate = strategy.beforeAttempt( realm, token, aggregate );
+            aggregate = strategy.beforeAttempt(realm, token, aggregate);
 
-            if( realm.supports( token ) ) {
+            if (realm.supports(token)) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Attempting to authenticate token [" + token + "] " +
-                        "using realm of type [" + realm + "]");
+                            "using realm of type [" + realm + "]");
                 }
 
                 Account account = null;
                 Throwable t = null;
                 try {
-                    account = realm.getAccount( token );
-                } catch ( Throwable throwable ) {
+                    account = realm.getAccount(token);
+                } catch (Throwable throwable) {
                     t = throwable;
-                    if ( log.isTraceEnabled() ) {
+                    if (log.isTraceEnabled()) {
                         String msg = "Realm [" + realm + "] threw an exception during a multi-realm authentication attempt:";
-                        log.trace( msg, t );
+                        log.trace(msg, t);
                     }
                 }
 
-                aggregate = strategy.afterAttempt( realm, token, account, aggregate, t );
+                aggregate = strategy.afterAttempt(realm, token, account, aggregate, t);
 
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Realm of type [" + realm + "] does not support token " +
-                            "[" + token + "].  Skipping realm." );
+                            "[" + token + "].  Skipping realm.");
                 }
             }
         }
 
-        aggregate = strategy.afterAllAttempts( token, aggregate );
+        aggregate = strategy.afterAllAttempts(token, aggregate);
 
         return aggregate;
     }
@@ -252,19 +257,19 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * {@link org.jsecurity.authc.Account} object and returned.
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
-     * user being authenticated.
+     *                            user being authenticated.
      * @return account information attributed to the authenticated user.
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
-     * for the given principal and credentials.
+     *                                 for the given principal and credentials.
      */
     protected Account doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
         assertRealmsConfigured();
 
-        if ( realms.size() == 1 ) {
-            return doSingleRealmAuthentication( realms.iterator().next(), authenticationToken );
+        if (realms.size() == 1) {
+            return doSingleRealmAuthentication(realms.iterator().next(), authenticationToken);
         } else {
-            return doMultiRealmAuthentication( realms, authenticationToken );
+            return doMultiRealmAuthentication(realms, authenticationToken);
         }
     }
 
@@ -281,10 +286,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     public void onLogout(PrincipalCollection principals) {
         super.onLogout(principals);
-        if ( realms != null && !realms.isEmpty() ) {
-            for( Realm realm : realms ) {
-                if ( realm instanceof LogoutAware ) {
-                    ((LogoutAware)realm).onLogout(principals);
+        if (realms != null && !realms.isEmpty()) {
+            for (Realm realm : realms) {
+                if (realm instanceof LogoutAware) {
+                    ((LogoutAware) realm).onLogout(principals);
                 }
             }
         }

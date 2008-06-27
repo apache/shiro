@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood and the origional authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.util;
 
@@ -27,12 +30,11 @@ package org.jsecurity.util;
  * The original author names and copyright (Apache 2.0) has been left in place.  A special
  * thanks to Rod Johnson, Juergen Hoeller, and Rick Evans for making this available.</em>
  *
- * @since 0.2
- * 
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @author Rick Evans
  * @author Les Hazlewood
+ * @since 0.2
  */
 public abstract class JavaEnvironment {
 
@@ -41,110 +43,111 @@ public abstract class JavaEnvironment {
 
 
     /**
-	 * Constant identifying the 1.3.x JVM (JDK 1.3).
-	 */
-	public static final int JAVA_13 = 0;
+     * Constant identifying the 1.3.x JVM (JDK 1.3).
+     */
+    public static final int JAVA_13 = 0;
 
-	/**
-	 * Constant identifying the 1.4.x JVM (J2SE 1.4).
-	 */
-	public static final int JAVA_14 = 1;
+    /**
+     * Constant identifying the 1.4.x JVM (J2SE 1.4).
+     */
+    public static final int JAVA_14 = 1;
 
-	/**
-	 * Constant identifying the 1.5 JVM (Java 5).
-	 */
-	public static final int JAVA_15 = 2;
+    /**
+     * Constant identifying the 1.5 JVM (Java 5).
+     */
+    public static final int JAVA_15 = 2;
 
-	/**
-	 * Constant identifying the 1.6 JVM (Java 6).
-	 */
-	public static final int JAVA_16 = 3;
+    /**
+     * Constant identifying the 1.6 JVM (Java 6).
+     */
+    public static final int JAVA_16 = 3;
 
-	/**
-	 * Constant identifying the 1.7 JVM.
-	 */
-	public static final int JAVA_17 = 4;
-
-
-	private static final String version;
-
-	private static final int majorVersion;
-
-	static {
-		version = System.getProperty("java.version");
-		// version String should look like "1.4.2_10"
-		if ( version.indexOf("1.7.") != -1) {
-			majorVersion = JAVA_17;
-		}
-		else if ( version.indexOf("1.6.") != -1) {
-			majorVersion = JAVA_16;
-		}
-		else if ( version.indexOf("1.5.") != -1) {
-			majorVersion = JAVA_15;
-		}
-		else if ( version.indexOf("1.4.") != -1) {
-			majorVersion = JAVA_14;
-		}
-		else {
-			// else leave 1.3 as default (it's either 1.3 or unknown)
-			majorVersion = JAVA_13;
-		}
-	}
+    /**
+     * Constant identifying the 1.7 JVM.
+     */
+    public static final int JAVA_17 = 4;
 
 
-	/**
-	 * Return the full Java version string, as returned by
-	 * <code>System.getProperty("java.version")</code>.
-	 * @return the full Java version string
-	 * @see System#getProperty(String)
-	 */
-	public static String getVersion() {
-		return version;
-	}
+    private static final String version;
 
-	/**
-	 * Get the major version code. This means we can do things like
-	 * <code>if (getMajorVersion() < JAVA_14)</code>.
-	 * @return a code comparable to the JAVA_XX codes in this class
-	 * @see #JAVA_13
-	 * @see #JAVA_14
-	 * @see #JAVA_15
-	 * @see #JAVA_16
-	 * @see #JAVA_17
-	 */
-	public static int getMajorVersion() {
-		return majorVersion;
-	}
+    private static final int majorVersion;
 
-	/**
-	 * Convenience method to determine if the current JVM is at least Java 1.4.
-	 * @return <code>true</code> if the current JVM is at least Java 1.4
-	 * @see #getMajorVersion()
-	 * @see #JAVA_14
-	 * @see #JAVA_15
-	 * @see #JAVA_16
-	 * @see #JAVA_17
-	 */
-	public static boolean isAtLeastVersion14() {
-		return getMajorVersion() >= JAVA_14;
-	}
+    static {
+        version = System.getProperty("java.version");
+        // version String should look like "1.4.2_10"
+        if (version.indexOf("1.7.") != -1) {
+            majorVersion = JAVA_17;
+        } else if (version.indexOf("1.6.") != -1) {
+            majorVersion = JAVA_16;
+        } else if (version.indexOf("1.5.") != -1) {
+            majorVersion = JAVA_15;
+        } else if (version.indexOf("1.4.") != -1) {
+            majorVersion = JAVA_14;
+        } else {
+            // else leave 1.3 as default (it's either 1.3 or unknown)
+            majorVersion = JAVA_13;
+        }
+    }
 
-	/**
-	 * Convenience method to determine if the current JVM is at least
-	 * Java 1.5 (Java 5).
-	 * @return <code>true</code> if the current JVM is at least Java 1.5
-	 * @see #getMajorVersion()
-	 * @see #JAVA_15
-	 * @see #JAVA_16
-	 * @see #JAVA_17
-	 */
-	public static boolean isAtLeastVersion15() {
-		return getMajorVersion() >= JAVA_15;
-	}
+
+    /**
+     * Return the full Java version string, as returned by
+     * <code>System.getProperty("java.version")</code>.
+     *
+     * @return the full Java version string
+     * @see System#getProperty(String)
+     */
+    public static String getVersion() {
+        return version;
+    }
+
+    /**
+     * Get the major version code. This means we can do things like
+     * <code>if (getMajorVersion() < JAVA_14)</code>.
+     *
+     * @return a code comparable to the JAVA_XX codes in this class
+     * @see #JAVA_13
+     * @see #JAVA_14
+     * @see #JAVA_15
+     * @see #JAVA_16
+     * @see #JAVA_17
+     */
+    public static int getMajorVersion() {
+        return majorVersion;
+    }
+
+    /**
+     * Convenience method to determine if the current JVM is at least Java 1.4.
+     *
+     * @return <code>true</code> if the current JVM is at least Java 1.4
+     * @see #getMajorVersion()
+     * @see #JAVA_14
+     * @see #JAVA_15
+     * @see #JAVA_16
+     * @see #JAVA_17
+     */
+    public static boolean isAtLeastVersion14() {
+        return getMajorVersion() >= JAVA_14;
+    }
+
+    /**
+     * Convenience method to determine if the current JVM is at least
+     * Java 1.5 (Java 5).
+     *
+     * @return <code>true</code> if the current JVM is at least Java 1.5
+     * @see #getMajorVersion()
+     * @see #JAVA_15
+     * @see #JAVA_16
+     * @see #JAVA_17
+     */
+    public static boolean isAtLeastVersion15() {
+        return getMajorVersion() >= JAVA_15;
+    }
 
     /**
      * Returns if Ehcache is in the classpath and available to be used (e.g. when creating a
      * {@link org.jsecurity.cache.CacheManager CacheManager}.
+     *
      * @return true if Ehcache is in the classpath and can be used for caching, false otherwise.
      */
     public static boolean isEhcacheAvailable() {

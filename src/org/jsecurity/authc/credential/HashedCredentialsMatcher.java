@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authc.credential;
 
@@ -72,11 +75,10 @@ import org.jsecurity.crypto.hash.Hash;
  * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
  * supporting <code>CredentialsMatcher</code> implementations.</p>
  *
+ * @author Les Hazlewood
  * @see org.jsecurity.crypto.hash.Md5Hash
  * @see org.jsecurity.crypto.hash.Sha1Hash
  * @see org.jsecurity.crypto.hash.Sha256Hash
- *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
@@ -90,7 +92,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * is Base64 encoded.
      *
      * <p>Default value is <tt>true</tt> for convenience - all of JSecurity's {@link Hash Hash#toString()}
-     * implementations return Hex encoded values by default, making this class's use with those implementations 
+     * implementations return Hex encoded values by default, making this class's use with those implementations
      * easier.</p>
      *
      * @return <tt>true</tt> if the system's stored credential hash is Hex encoded, <tt>false</tt> if it
@@ -126,7 +128,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <p>The default value is <tt>false</tt>.
      *
      * @return <tt>true</tt> if a submitted <tt>AuthenticationToken</tt>'s credentials should be salted when hashing,
-     * <tt>false</tt> if it should not be salted.
+     *         <tt>false</tt> if it should not be salted.
      */
     public boolean isHashSalted() {
         return hashSalted;
@@ -152,7 +154,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <p>Unless overridden, the default value is <tt>1</tt>, meaning a normal hash execution will occur.
      *
      * @return the number of times a submitted <tt>AuthenticationToken</tt>'s credentials will be hashed before
-     * comparing to the credentials stored in the system.
+     *         comparing to the credentials stored in the system.
      */
     public int getHashIterations() {
         return hashIterations;
@@ -170,7 +172,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * @param hashIterations the number of times to hash a submitted <tt>AuthenticationToken</tt>'s credentials.
      */
     public void setHashIterations(int hashIterations) {
-        if ( hashIterations < 1 ) {
+        if (hashIterations < 1) {
             this.hashIterations = 1;
         } else {
             this.hashIterations = hashIterations;
@@ -183,10 +185,11 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <p>This default implementation merely returns <code>token.getPrincipal()</code>, effectively using the user's
      * identity (username, user id, etc) as the salt, a most common technique.  If you wish to provide the
      * authentication token's salt another way, you may override this method.
+     *
      * @param token the AuthenticationToken submitted during the authentication attempt.
      * @return a salt value to use to hash the authentication token's credentials.
      */
-    protected Object getSalt( AuthenticationToken token ) {
+    protected Object getSalt(AuthenticationToken token) {
         return token.getPrincipal();
     }
 
@@ -203,8 +206,8 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      */
     protected Object getCredentials(AuthenticationToken token) {
         Object credentials = token.getCredentials();
-        Object salt = isHashSalted() ? getSalt( token ) : null;
-        return hashProvidedCredentials(credentials, salt, getHashIterations() );
+        Object salt = isHashSalted() ? getSalt(token) : null;
+        return hashProvidedCredentials(credentials, salt, getHashIterations());
     }
 
     /**
@@ -220,7 +223,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <li>If <code>account.getCredentials()</code> was originally a String or char[] before <tt>toBytes</tt> was
      * called, check for encoding:
      * <li>If {@link #storedCredentialsHexEncoded storedCredentialsHexEncoded}, Hex decode that byte array, otherwise
-     *         Base64 decode the byte array</li>
+     * Base64 decode the byte array</li>
      * <li>Set the byte[] array directly on the <tt>Hash</tt> implementation and return it.</li>
      * </ol>
      *
@@ -232,17 +235,17 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
 
         byte[] storedBytes = toBytes(credentials);
 
-        if ( credentials instanceof String || credentials instanceof char[] ) {
+        if (credentials instanceof String || credentials instanceof char[]) {
             //account.credentials were a char[] or String, so
             //we need to do text decoding first:
             if (isStoredCredentialsHexEncoded()) {
-                storedBytes = Hex.decode( storedBytes );
+                storedBytes = Hex.decode(storedBytes);
             } else {
-                storedBytes = Base64.decode( storedBytes );
+                storedBytes = Base64.decode(storedBytes);
             }
         }
         AbstractHash hash = newHashInstance();
-        hash.setBytes( storedBytes );
+        hash.setBytes(storedBytes);
         return hash;
     }
 
@@ -250,13 +253,13 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * Hashes the provided credentials a total of <tt>hashIterations</tt> times, using the given salt.  The hash
      * implementation/algorithm used is left to subclasses.
      *
-     * @param credentials the submitted authentication token's credentials to hash
-     * @param salt the value to salt the hash, or <tt>null</tt> if a salt will not be used.
+     * @param credentials    the submitted authentication token's credentials to hash
+     * @param salt           the value to salt the hash, or <tt>null</tt> if a salt will not be used.
      * @param hashIterations the number of times to hash the credentials.  At least one hash will always occur though,
-     * even if this argument is 0 or negative.
+     *                       even if this argument is 0 or negative.
      * @return the hashed value of the provided credentials, according to the specified salt and hash iterations.
      */
-    protected abstract Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations );
+    protected abstract Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations);
 
     /**
      * Returns a new, <em>uninitialized</em> instance, without its byte array set.  Used as a utility method in the

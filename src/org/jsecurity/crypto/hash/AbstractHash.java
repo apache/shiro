@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.crypto.hash;
 
@@ -30,7 +33,7 @@ import java.util.Arrays;
  * <p>Read <a href="http://www.owasp.org/index.php/Hashing_Java" target="blank">http://www.owasp.org/index.php/Hashing_Java</a> for a
  * good article on the benefits of hashing, including what a 'salt' is as well as why it and multiple hash iterations
  * can be useful.
- * 
+ *
  * <p>This class and its subclasses support hashing with additional capabilities of salting and multiple iterations via
  * overloaded constructors</p>.
  *
@@ -71,7 +74,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * @throws CodecException if the specified <tt>source</tt> cannot be converted into a byte array (byte[]).
      */
     public AbstractHash(Object source) throws CodecException {
-        this( source, null, 1 );
+        this(source, null, 1);
     }
 
     /**
@@ -85,11 +88,11 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * types.
      *
      * @param source the source object to be hashed.
-     * @param salt the salt to use for the hash
+     * @param salt   the salt to use for the hash
      * @throws CodecException if either constructor argument cannot be converted into a byte array.
      */
-    public AbstractHash(Object source, Object salt ) throws CodecException {
-        this( source, salt, 1 );
+    public AbstractHash(Object source, Object salt) throws CodecException {
+        this(source, salt, 1);
     }
 
     /**
@@ -105,24 +108,25 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * convert your arguments to one of the default three supported types first before passing them in to this
      * constructor</tt>.
      *
-     * @param source the source object to be hashed.
-     * @param salt the salt to use for the hash
+     * @param source         the source object to be hashed.
+     * @param salt           the salt to use for the hash
      * @param hashIterations the number of times the <tt>source</tt> argument hashed for attack resiliency.
      * @throws CodecException if either Object constructor argument cannot be converted into a byte array.
      */
-    public AbstractHash(Object source, Object salt, int hashIterations ) throws CodecException {
-        byte[] sourceBytes = toBytes( source );
+    public AbstractHash(Object source, Object salt, int hashIterations) throws CodecException {
+        byte[] sourceBytes = toBytes(source);
         byte[] saltBytes = null;
-        if ( salt != null ) {
-            saltBytes = toBytes( salt );
+        if (salt != null) {
+            saltBytes = toBytes(salt);
         }
-        byte[] hashedBytes = hash( sourceBytes, saltBytes, hashIterations );
+        byte[] hashedBytes = hash(sourceBytes, saltBytes, hashIterations);
         setBytes(hashedBytes);
     }
 
     /**
      * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm to use
      * when performing the hash.
+     *
      * @return the {@link MessageDigest MessageDigest} algorithm to use when performing the hash.
      */
     protected abstract String getAlgorithmName();
@@ -147,6 +151,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
 
     /**
      * Returns the JDK MessageDigest instance to use for executing the hash.
+     *
      * @param algorithmName the algorithm to use for the hash, provided by subclasses.
      * @return the MessageDigest object for the specfied <tt>algorithm</tt>.
      */
@@ -166,33 +171,33 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * @return the hashed bytes.
      */
     protected byte[] hash(byte[] bytes) {
-        return hash( bytes, null, 1 );
+        return hash(bytes, null, 1);
     }
 
     /**
      * Hashes the specified byte array using the given <tt>salt</tt> for a single iteration.
      *
      * @param bytes the bytes to hash
-     * @param salt the salt to use for the initial hash
+     * @param salt  the salt to use for the initial hash
      * @return the hashed bytes
      */
-    protected byte[] hash(byte[] bytes, byte[] salt ) {
-        return hash( bytes, salt, 1 );
+    protected byte[] hash(byte[] bytes, byte[] salt) {
+        return hash(bytes, salt, 1);
     }
 
     /**
      * Hashes the specified byte array using the given <tt>salt</tt> for the specified number of iterations.
      *
-     * @param bytes the bytes to hash
-     * @param salt the salt to use for the initial hash
+     * @param bytes          the bytes to hash
+     * @param salt           the salt to use for the initial hash
      * @param hashIterations the number of times the the <tt>bytes</tt> will be hashed (for attack resiliency).
      * @return the hashed bytes.
      */
     protected byte[] hash(byte[] bytes, byte[] salt, int hashIterations) {
         MessageDigest md = getDigest(getAlgorithmName());
-        if ( salt != null ) {
+        if (salt != null) {
             md.reset();
-            md.update( salt );
+            md.update(salt);
         }
         byte[] hashed = md.digest(bytes);
         int iterations = hashIterations - 1; //already hashed once above
@@ -249,9 +254,10 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     /**
      * Returns <tt>true</tt> if the specified object is a Hash and its {@link #getBytes byte array} is identical to
      * this Hash's byte array, <tt>false</tt> otherwise.
+     *
      * @param o the object (Hash) to check for equality.
      * @return <tt>true</tt> if the specified object is a Hash and its {@link #getBytes byte array} is identical to
-     * this Hash's byte array, <tt>false</tt> otherwise.
+     *         this Hash's byte array, <tt>false</tt> otherwise.
      */
     public boolean equals(Object o) {
         if (o instanceof Hash) {
@@ -263,6 +269,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
 
     /**
      * Simply returns toHex().hashCode();
+     *
      * @return toHex().hashCode()
      */
     public int hashCode() {

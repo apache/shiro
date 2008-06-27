@@ -1,17 +1,20 @@
 /*
- * Copyright 2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.samples.sprhib.entity;
 
@@ -36,7 +39,7 @@ import java.io.Serializable;
  */
 public abstract class Entity implements Identifiable, Serializable, Cloneable {
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * RDBMS Primary key, aka 'surrogate key'.  <code>Long</code> surrogate keys are best
@@ -71,7 +74,7 @@ public abstract class Entity implements Identifiable, Serializable, Cloneable {
      *
      * <p>This method can be removed entirely if the EIS framework supports setting the ID property
      * directly (e.g. through reflection).  Hibernate does support this, it is called 'property access'.</p>
-     * 
+     *
      * @param id the entity id
      */
     public void setId(Long id) {
@@ -85,7 +88,7 @@ public abstract class Entity implements Identifiable, Serializable, Cloneable {
     /**
      * For the same reasons as the setId() method, this should only be called by a
      * framework and never directly.  Can be removed if the framework supports property access.
-     * 
+     *
      * @param entityVersion the entity version number
      */
     public void setEntityVersion(int entityVersion) {
@@ -123,7 +126,7 @@ public abstract class Entity implements Identifiable, Serializable, Cloneable {
             Long thisId = getId();
             Long otherId = e.getId();
             if (thisId != null && otherId != null) {
-                return thisId.equals(otherId) && getClass().equals( e.getClass() );
+                return thisId.equals(otherId) && getClass().equals(e.getClass());
             } else {
                 return onEquals(e);
             }
@@ -135,9 +138,8 @@ public abstract class Entity implements Identifiable, Serializable, Cloneable {
     /**
      * Subclasses must do an equals comparison based on business keys, aka 'natural keys' here.  Do <em>NOT</em> use
      * the {@link #getId id} property in these checks.
-     * 
-     * @param e the Entity to check for &quot;business&quot; equality based on natural keys.
      *
+     * @param e the Entity to check for &quot;business&quot; equality based on natural keys.
      * @return <code>true</code> if the specified Entity is naturally equal to this Entity, <code>false</code> otherwise.
      */
     public abstract boolean onEquals(Entity e);

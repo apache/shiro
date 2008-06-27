@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood, Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session.mgt;
 
@@ -37,9 +40,9 @@ import java.util.Date;
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
  *
- * @since 0.1
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class DelegatingSession implements Session {
 
@@ -56,9 +59,10 @@ public class DelegatingSession implements Session {
     private SessionManager sessionManager = null;
 
 
-    public DelegatingSession(){}
+    public DelegatingSession() {
+    }
 
-    public DelegatingSession( SessionManager sessionManager, Serializable id) {
+    public DelegatingSession(SessionManager sessionManager, Serializable id) {
         this.sessionManager = sessionManager;
         this.id = id;
     }
@@ -66,8 +70,9 @@ public class DelegatingSession implements Session {
     /**
      * Returns the {@link SessionManager SessionManager} used by this handle to invoke
      * all session-related methods.
+     *
      * @return the {@link SessionManager SessionManager} used by this handle to invoke
-     * all session-related methods.
+     *         all session-related methods.
      */
     public SessionManager getSessionManager() {
         return sessionManager;
@@ -87,19 +92,20 @@ public class DelegatingSession implements Session {
      * session id as necessary.
      *
      * @param sessionManager the <tt>SessionManager</tt> this handle will use when delegating
-     * method calls.
+     *                       method calls.
      */
-    public void setSessionManager( SessionManager sessionManager ) {
+    public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 
     /**
      * Sets the sessionId used by this handle for all future {@link SessionManager SessionManager}
      * method invocations.
+     *
      * @param id the <tt>sessionId</tt> to use for all <tt>SessionManager</tt> invocations.
-     * @see #setSessionManager( SessionManager sessionManager )
+     * @see #setSessionManager(SessionManager sessionManager)
      */
-    public void setId( Serializable id) {
+    public void setId(Serializable id) {
         this.id = id;
     }
 
@@ -114,7 +120,7 @@ public class DelegatingSession implements Session {
      * @see Session#getStartTimestamp()
      */
     public Date getStartTimestamp() {
-        if ( startTimestamp == null ) {
+        if (startTimestamp == null) {
             startTimestamp = sessionManager.getStartTimestamp(id);
         }
         return startTimestamp;
@@ -124,7 +130,7 @@ public class DelegatingSession implements Session {
      * @see Session#getStopTimestamp()
      */
     public Date getStopTimestamp() {
-        if ( stopTimestamp == null ) {
+        if (stopTimestamp == null) {
             stopTimestamp = sessionManager.getStopTimestamp(id);
         }
         return stopTimestamp;
@@ -150,15 +156,15 @@ public class DelegatingSession implements Session {
         return sessionManager.getTimeout(id);
     }
 
-    public void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException {
-        sessionManager.setTimeout(id, maxIdleTimeInMillis );
+    public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
+        sessionManager.setTimeout(id, maxIdleTimeInMillis);
     }
 
     /**
      * @see org.jsecurity.session.Session#getHostAddress()
      */
     public InetAddress getHostAddress() {
-        if ( hostAddress == null ) {
+        if (hostAddress == null) {
             hostAddress = sessionManager.getHostAddress(id);
         }
         return hostAddress;
@@ -188,25 +194,25 @@ public class DelegatingSession implements Session {
     /**
      * @see Session#getAttribute(Object key)
      */
-    public Object getAttribute( Object key ) throws InvalidSessionException {
-        return sessionManager.getAttribute(id, key );
+    public Object getAttribute(Object key) throws InvalidSessionException {
+        return sessionManager.getAttribute(id, key);
     }
 
     /**
      * @see Session#setAttribute(Object key, Object value)
      */
-    public void setAttribute( Object key, Object value ) throws InvalidSessionException {
-        if ( value == null ) {
-            removeAttribute( key );
+    public void setAttribute(Object key, Object value) throws InvalidSessionException {
+        if (value == null) {
+            removeAttribute(key);
         } else {
-            sessionManager.setAttribute(id, key, value );
+            sessionManager.setAttribute(id, key, value);
         }
     }
 
     /**
      * @see Session#removeAttribute(Object key)
      */
-    public Object removeAttribute( Object key ) throws InvalidSessionException {
-        return sessionManager.removeAttribute(id, key );
+    public Object removeAttribute(Object key) throws InvalidSessionException {
+        return sessionManager.removeAttribute(id, key);
     }
 }

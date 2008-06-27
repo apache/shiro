@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.realm.ldap;
 
@@ -35,8 +38,8 @@ import java.util.Map;
  * <p>Connection pooling is enabled by default on this factory, but can be disabled using the
  * {@link #usePooling} property.</p>
  *
- * @since 0.2
  * @author Jeremy Haile
+ * @since 0.2
  */
 public class DefaultLdapContextFactory implements LdapContextFactory {
 
@@ -53,7 +56,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
 
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected String authentication = "simple";
 
@@ -73,7 +76,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
 
     private boolean usePooling = true;
 
-    private Map<String,String> additionalEnvironment;
+    private Map<String, String> additionalEnvironment;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -88,7 +91,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param authentication the type of LDAP authentication to perform.
      */
-    public void setAuthentication( String authentication ) {
+    public void setAuthentication(String authentication) {
         this.authentication = authentication;
     }
 
@@ -98,7 +101,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param principalSuffix the suffix.
      */
-    public void setPrincipalSuffix( String principalSuffix ) {
+    public void setPrincipalSuffix(String principalSuffix) {
         this.principalSuffix = principalSuffix;
     }
 
@@ -108,7 +111,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param searchBase the search base.
      */
-    public void setSearchBase( String searchBase ) {
+    public void setSearchBase(String searchBase) {
         this.searchBase = searchBase;
     }
 
@@ -118,7 +121,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param contextFactoryClassName the context factory that should be used.
      */
-    public void setContextFactoryClassName( String contextFactoryClassName ) {
+    public void setContextFactoryClassName(String contextFactoryClassName) {
         this.contextFactoryClassName = contextFactoryClassName;
     }
 
@@ -127,7 +130,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param url the LDAP url.
      */
-    public void setUrl( String url ) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
@@ -136,7 +139,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param referral the referral property.
      */
-    public void setReferral( String referral ) {
+    public void setReferral(String referral) {
         this.referral = referral;
     }
 
@@ -147,7 +150,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param systemUsername the username to use when logging into the LDAP server for authorization.
      */
-    public void setSystemUsername( String systemUsername ) {
+    public void setSystemUsername(String systemUsername) {
         this.systemUsername = systemUsername;
     }
 
@@ -159,7 +162,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      *
      * @param systemPassword the password to use when logging into the LDAP server for authorization.
      */
-    public void setSystemPassword( String systemPassword ) {
+    public void setSystemPassword(String systemPassword) {
         this.systemPassword = systemPassword;
     }
 
@@ -170,6 +173,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      * LDAP Context Factory that is not Sun's default implementation, you will need to override the
      * default behavior to use this setting in whatever way your underlying LDAP ContextFactory
      * supports.  By default, pooling is enabled.
+     *
      * @param usePooling true to enable pooling, or false to disable it.
      */
     public void setUsePooling(boolean usePooling) {
@@ -178,6 +182,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
 
     /**
      * These entries are added to the environment map before initializing the LDAP context.
+     *
      * @param additionalEnvironment additional environment entries to be configured on the LDAP context.
      */
     public void setAdditionalEnvironment(Map<String, String> additionalEnvironment) {
@@ -189,45 +194,45 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     ============================================*/
 
     public LdapContext getSystemLdapContext() throws NamingException {
-        return getLdapContext( systemUsername, systemPassword );
+        return getLdapContext(systemUsername, systemPassword);
     }
 
     public LdapContext getLdapContext(String username, String password) throws NamingException {
-        if ( searchBase == null ) {
-            throw new IllegalStateException( "A search base must be specified." );
+        if (searchBase == null) {
+            throw new IllegalStateException("A search base must be specified.");
         }
-        if ( url == null ) {
-            throw new IllegalStateException( "An LDAP URL must be specified of the form ldap://<hostname>:<port>" );
+        if (url == null) {
+            throw new IllegalStateException("An LDAP URL must be specified of the form ldap://<hostname>:<port>");
         }
 
-        if( principalSuffix != null ) {
+        if (principalSuffix != null) {
             username += principalSuffix;
         }
 
         Hashtable<String, String> env = new Hashtable<String, String>();
 
-        env.put( Context.SECURITY_AUTHENTICATION, authentication );
-        env.put( Context.SECURITY_PRINCIPAL, username );
-        env.put( Context.SECURITY_CREDENTIALS, password );
-        env.put( Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName);
-        env.put( Context.PROVIDER_URL, url );
-        env.put( Context.REFERRAL, referral );
+        env.put(Context.SECURITY_AUTHENTICATION, authentication);
+        env.put(Context.SECURITY_PRINCIPAL, username);
+        env.put(Context.SECURITY_CREDENTIALS, password);
+        env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName);
+        env.put(Context.PROVIDER_URL, url);
+        env.put(Context.REFERRAL, referral);
 
         // Only pool connections for system contexts
-        if( usePooling && username.equals( systemUsername )) {
+        if (usePooling && username.equals(systemUsername)) {
             // Enable connection pooling
             env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
         }
 
-        if( additionalEnvironment != null ) {
-            env.putAll( additionalEnvironment );
+        if (additionalEnvironment != null) {
+            env.putAll(additionalEnvironment);
         }
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Initializing LDAP context using URL [" + url + "] and username [" + systemUsername + "] " +
-                    "with pooling [" + (usePooling ? "enabled" : "disabled") + "]" );
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing LDAP context using URL [" + url + "] and username [" + systemUsername + "] " +
+                    "with pooling [" + (usePooling ? "enabled" : "disabled") + "]");
         }
 
-        return new InitialLdapContext( env, null );
+        return new InitialLdapContext(env, null);
     }
 }

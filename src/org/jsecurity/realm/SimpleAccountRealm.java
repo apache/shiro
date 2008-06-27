@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.realm;
 
@@ -80,74 +83,76 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
         afterRoleCacheSet();
     }
 
-    public void afterRoleCacheSet(){}
+    public void afterRoleCacheSet() {
+    }
 
     protected void initRoleCache() {
         CacheManager manager = getCacheManager();
 
-        if ( manager == null ) {
+        if (manager == null) {
             manager = new HashtableCacheManager();
             setCacheManager(manager);
         }
 
-        if ( getAccountCache() == null ) {
+        if (getAccountCache() == null) {
             initAccountCache();
         }
 
         String roleCacheName = getRoleCacheName();
-        if ( roleCacheName == null ) {
+        if (roleCacheName == null) {
             roleCacheName = getName() + DEFAULT_ROLE_CACHE_POSTFIX;
-            setRoleCacheName( roleCacheName );
+            setRoleCacheName(roleCacheName);
         }
-        Cache roleCache = manager.getCache( roleCacheName );
+        Cache roleCache = manager.getCache(roleCacheName);
         setRoleCache(roleCache);
 
         userAndRoleCachesCreated();
     }
 
-    protected SimpleAuthorizingAccount getUser( String username ) {
-        return (SimpleAuthorizingAccount)getAccountCache().get( username );
+    protected SimpleAuthorizingAccount getUser(String username) {
+        return (SimpleAuthorizingAccount) getAccountCache().get(username);
     }
 
-    protected void add( SimpleAuthorizingAccount user ) {
+    protected void add(SimpleAuthorizingAccount user) {
         Object key = getAccountCacheKey(user.getPrincipals());
-        getAccountCache().put( key, user );
+        getAccountCache().put(key, user);
     }
 
-    protected SimpleRole getRole( String rolename ) {
-        return (SimpleRole)roleCache.get( rolename );
+    protected SimpleRole getRole(String rolename) {
+        return (SimpleRole) roleCache.get(rolename);
     }
 
-    protected void add( SimpleRole role ) {
-        roleCache.put( role.getName(), role );
+    protected void add(SimpleRole role) {
+        roleCache.put(role.getName(), role);
     }
 
-    protected static Set<String> toSet( String delimited, String delimiter ) {
-        if ( delimited == null || delimited.trim().equals( "" ) ) {
+    protected static Set<String> toSet(String delimited, String delimiter) {
+        if (delimited == null || delimited.trim().equals("")) {
             return null;
         }
 
         Set<String> values = new HashSet<String>();
-        String[] rolenamesArray = delimited.split( delimiter );
-        for ( String s : rolenamesArray ) {
+        String[] rolenamesArray = delimited.split(delimiter);
+        for (String s : rolenamesArray) {
             String trimmed = s.trim();
-            if ( trimmed.length() > 0 ) {
-                values.add( trimmed );
+            if (trimmed.length() > 0) {
+                values.add(trimmed);
             }
         }
 
         return values;
     }
 
-    protected void userAndRoleCachesCreated(){}
+    protected void userAndRoleCachesCreated() {
+    }
 
-    protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
-        UsernamePasswordToken upToken = (UsernamePasswordToken)token;
-        return (SimpleAuthorizingAccount)getAccountCache().get(upToken.getUsername());
+    protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
+        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+        return (SimpleAuthorizingAccount) getAccountCache().get(upToken.getUsername());
     }
 
     protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
-        return (SimpleAuthorizingAccount)getAccountCache().get(getAccountCacheKey(principals));
+        return (SimpleAuthorizingAccount) getAccountCache().get(getAccountCacheKey(principals));
     }
 
     protected Object getAccountCacheKey(PrincipalCollection principals) {

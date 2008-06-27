@@ -1,85 +1,89 @@
 /*
- * Copyright 2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.subject;
 
 import java.util.*;
 
 /**
- * @since 0.9
  * @author Les Hazlewood
+ * @since 0.9
  */
 @SuppressWarnings({"unchecked"})
 public class SimplePrincipalCollection implements PrincipalCollection {
 
-    private Map<String,Set> realmPrincipals;
+    private Map<String, Set> realmPrincipals;
 
-    public SimplePrincipalCollection(){}
+    public SimplePrincipalCollection() {
+    }
 
-    public SimplePrincipalCollection( String realmName, Object principal ) {
+    public SimplePrincipalCollection(String realmName, Object principal) {
         add(realmName, principal);
     }
 
-    public SimplePrincipalCollection( String realmName, Collection principals ) {
+    public SimplePrincipalCollection(String realmName, Collection principals) {
         add(realmName, principals);
     }
 
-    protected Collection getPrincipalsLazy( String realmName ) {
-        if ( realmPrincipals == null ) {
-            realmPrincipals = new LinkedHashMap<String,Set>();
+    protected Collection getPrincipalsLazy(String realmName) {
+        if (realmPrincipals == null) {
+            realmPrincipals = new LinkedHashMap<String, Set>();
         }
-        Set principals = realmPrincipals.get( realmName );
-        if ( principals == null ) {
+        Set principals = realmPrincipals.get(realmName);
+        if (principals == null) {
             principals = new LinkedHashSet();
-            realmPrincipals.put(realmName, principals );
+            realmPrincipals.put(realmName, principals);
         }
         return principals;
     }
 
-    public void add( String realmName, Object principal ) {
-        if ( realmName == null ) {
-            throw new IllegalArgumentException( "realmName argument cannot be null." );
+    public void add(String realmName, Object principal) {
+        if (realmName == null) {
+            throw new IllegalArgumentException("realmName argument cannot be null.");
         }
-        if ( principal == null ) {
-            throw new IllegalArgumentException( "principal argument cannot be null." );
+        if (principal == null) {
+            throw new IllegalArgumentException("principal argument cannot be null.");
         }
         getPrincipalsLazy(realmName).add(principal);
     }
 
-    public void add( String realmName, Collection principals ) {
-        if ( realmName == null ) {
-            throw new IllegalArgumentException( "realmName argument cannot be null." );
+    public void add(String realmName, Collection principals) {
+        if (realmName == null) {
+            throw new IllegalArgumentException("realmName argument cannot be null.");
         }
-        if ( principals == null ) {
-            throw new IllegalArgumentException( "principals argument cannot be null." );
+        if (principals == null) {
+            throw new IllegalArgumentException("principals argument cannot be null.");
         }
-        if ( principals.isEmpty() ) {
-            throw new IllegalArgumentException( "principals argument cannot be an empty collection." );
+        if (principals.isEmpty()) {
+            throw new IllegalArgumentException("principals argument cannot be an empty collection.");
         }
         getPrincipalsLazy(realmName).addAll(principals);
     }
 
     public <T> T oneByType(Class<T> type) {
-        if ( realmPrincipals == null || realmPrincipals.isEmpty() ) {
+        if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return null;
         }
         Collection<Set> values = realmPrincipals.values();
-        for ( Set set : values ) {
-            for( Object o : set ) {
-                if ( type.isAssignableFrom(o.getClass()) ) {
-                    return (T)o;
+        for (Set set : values) {
+            for (Object o : set) {
+                if (type.isAssignableFrom(o.getClass())) {
+                    return (T) o;
                 }
             }
         }
@@ -87,19 +91,19 @@ public class SimplePrincipalCollection implements PrincipalCollection {
     }
 
     public <T> Collection<T> byType(Class<T> type) {
-        if ( realmPrincipals == null || realmPrincipals.isEmpty() ) {
+        if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.EMPTY_SET;
         }
         Set<T> typed = new LinkedHashSet<T>();
         Collection<Set> values = realmPrincipals.values();
-        for ( Set set : values ) {
-            for( Object o : set ) {
-                if ( type.isAssignableFrom(o.getClass()) ) {
-                    typed.add((T)o);
+        for (Set set : values) {
+            for (Object o : set) {
+                if (type.isAssignableFrom(o.getClass())) {
+                    typed.add((T) o);
                 }
             }
         }
-        if ( typed.isEmpty() ) {
+        if (typed.isEmpty()) {
             return Collections.EMPTY_SET;
         }
         return Collections.unmodifiableSet(typed);
@@ -107,33 +111,33 @@ public class SimplePrincipalCollection implements PrincipalCollection {
 
     public List asList() {
         Set all = asSet();
-        if ( all.isEmpty() ) {
+        if (all.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        return Collections.unmodifiableList( new ArrayList(all) );
+        return Collections.unmodifiableList(new ArrayList(all));
     }
 
     public Set asSet() {
-        if ( realmPrincipals == null || realmPrincipals.isEmpty() ) {
+        if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.EMPTY_SET;
         }
         Set aggregated = new LinkedHashSet();
         Collection<Set> values = realmPrincipals.values();
-        for ( Set set : values ) {
+        for (Set set : values) {
             aggregated.addAll(set);
         }
-        if ( aggregated.isEmpty() ) {
+        if (aggregated.isEmpty()) {
             return Collections.EMPTY_SET;
         }
         return Collections.unmodifiableSet(aggregated);
     }
 
     public Collection fromRealm(String realmName) {
-        if ( realmPrincipals == null || realmPrincipals.isEmpty() ) {
+        if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.EMPTY_SET;
         }
         Set principals = realmPrincipals.get(realmName);
-        if ( principals == null || principals.isEmpty() ) {
+        if (principals == null || principals.isEmpty()) {
             principals = Collections.EMPTY_SET;
         }
         return Collections.unmodifiableSet(principals);
@@ -144,7 +148,7 @@ public class SimplePrincipalCollection implements PrincipalCollection {
     }
 
     public void clear() {
-        if ( realmPrincipals != null ) {
+        if (realmPrincipals != null) {
             realmPrincipals.clear();
             realmPrincipals = null;
         }
@@ -154,38 +158,38 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         return asSet().iterator();
     }
 
-    public void merge( SimplePrincipalCollection principals ) {
-        if ( principals == null || principals.isEmpty() ) {
+    public void merge(SimplePrincipalCollection principals) {
+        if (principals == null || principals.isEmpty()) {
             return;
         }
-        if ( this.realmPrincipals == null || this.realmPrincipals.isEmpty() ) {
+        if (this.realmPrincipals == null || this.realmPrincipals.isEmpty()) {
             this.realmPrincipals = principals.realmPrincipals;
             return;
         }
 
-        for( String realmName : principals.realmPrincipals.keySet() ) {
+        for (String realmName : principals.realmPrincipals.keySet()) {
             Collection realmPrincipals = principals.realmPrincipals.get(realmName);
-            if ( realmPrincipals != null && !realmPrincipals.isEmpty() ) {
-                for( Object principal : realmPrincipals ) {
-                    add( realmName, principal );
+            if (realmPrincipals != null && !realmPrincipals.isEmpty()) {
+                for (Object principal : realmPrincipals) {
+                    add(realmName, principal);
                 }
             }
         }
     }
 
-    public boolean equals( Object o ) {
-        if ( o == this ) {
+    public boolean equals(Object o) {
+        if (o == this) {
             return true;
         }
-        if ( o instanceof SimplePrincipalCollection ) {
-            SimplePrincipalCollection other = (SimplePrincipalCollection)o;
-            return this.realmPrincipals != null ? this.realmPrincipals.equals(other.realmPrincipals) : other.realmPrincipals == null;    
+        if (o instanceof SimplePrincipalCollection) {
+            SimplePrincipalCollection other = (SimplePrincipalCollection) o;
+            return this.realmPrincipals != null ? this.realmPrincipals.equals(other.realmPrincipals) : other.realmPrincipals == null;
         }
         return false;
     }
 
     public int hashCode() {
-        if ( this.realmPrincipals != null && !realmPrincipals.isEmpty() ) {
+        if (this.realmPrincipals != null && !realmPrincipals.isEmpty()) {
             return realmPrincipals.hashCode();
         }
         return super.hashCode();

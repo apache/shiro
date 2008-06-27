@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session;
 
@@ -33,8 +36,8 @@ import java.util.Date;
  * <p>See the {@link SessionFactory#getSession(java.io.Serializable) SessionFactory.getSession(Serializable)}
  * JavaDoc for more on the benefits of a POJO-based <tt>Session</tt> framework.
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public interface Session {
 
@@ -52,6 +55,7 @@ public interface Session {
 
     /**
      * Returns the time the session was started; that is, the time the system created the instance.
+     *
      * @return The time the system created the session.
      */
     Date getStartTimestamp();
@@ -61,24 +65,24 @@ public interface Session {
      *
      * <p>A session may become stopped under a number of conditions:
      * <ul>
-     *   <li>If the user logs out of the system, their current session is terminated (released).</li>
-     *   <li>If the session expires</li>
-     *   <li>The application explicitly calls {@link #stop() destroy()}</li>
-     *   <li>If there is an internal system error and the session state can no longer accurately
-     *       reflect the user's behavior, such in the case of a system crash</li>
+     * <li>If the user logs out of the system, their current session is terminated (released).</li>
+     * <li>If the session expires</li>
+     * <li>The application explicitly calls {@link #stop() destroy()}</li>
+     * <li>If there is an internal system error and the session state can no longer accurately
+     * reflect the user's behavior, such in the case of a system crash</li>
      * </ul>
      * </p>
      *
      * <p>Once stopped, a session may no longer be used.  It is locked from all further activity.
      *
      * @return The time the session was stopped, or <tt>null</tt> if the session is still
-     * active.
+     *         active.
      */
     Date getStopTimestamp();
 
     /**
      * Returns the last time the user associated with the session interacted with the system.
-     * 
+     *
      * @return The time the user last interacted with the system.
      * @see #touch()
      */
@@ -96,13 +100,14 @@ public interface Session {
      * Returns the time in milliseconds that the session session may remain idle before expiring.
      *
      * <ul>
-     *     <li>A negative return value means the session will never expire.</li>
-     *     <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * <li>A negative return value means the session will never expire.</li>
+     * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
      *
      * @return the time in milliseconds the session may remain idle before expiring.
-     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     * @throws org.jsecurity.session.InvalidSessionException
+     *          if the session has been stopped or expired prior to calling this method.
      * @since 0.2
      */
     long getTimeout() throws InvalidSessionException;
@@ -111,16 +116,17 @@ public interface Session {
      * Sets the time in milliseconds that the session may remain idle before expiring.
      *
      * <ul>
-     *     <li>A negative return value means the session will never expire.</li>
-     *     <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * <li>A negative return value means the session will never expire.</li>
+     * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
      *
      * @param maxIdleTimeInMillis the time in milliseconds that the session may remain idle before expiring.
-     * @throws org.jsecurity.session.InvalidSessionException if the session has been stopped or expired prior to calling this method.
+     * @throws org.jsecurity.session.InvalidSessionException
+     *          if the session has been stopped or expired prior to calling this method.
      * @since 0.2
      */
-    void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException;
+    void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException;
 
 
     /**
@@ -128,8 +134,7 @@ public interface Session {
      * if the host address is unknown.
      *
      * @return the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
-     * if the host address is unknown.
-     *
+     *         if the host address is unknown.
      * @see SessionFactory#start(java.net.InetAddress)
      */
     InetAddress getHostAddress();
@@ -163,7 +168,7 @@ public interface Session {
      * performance.
      *
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     * this method.
+     *                                 this method.
      */
     void touch() throws InvalidSessionException;
 
@@ -182,8 +187,7 @@ public interface Session {
      * to do any other additional cleanup.
      *
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     * this method.
-     *
+     *                                 this method.
      * @see #getStopTimestamp
      */
     void stop() throws InvalidSessionException;
@@ -191,8 +195,9 @@ public interface Session {
     /**
      * Returns the keys of all the attributes stored under this session.  If there are no
      * attributes, this returns an empty collection.
+     *
      * @return the keys of all attributes stored under this session, or an empty collection if
-     * there are no session attributes.
+     *         there are no session attributes.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
      * @since 0.2
      */
@@ -201,13 +206,14 @@ public interface Session {
     /**
      * Returns the object bound to this session identified by the specified key.  If there is no
      * object bound under the key, <tt>null</tt> is returned.
+     *
      * @param key the unique name of the object bound to this session
      * @return the object bound under the specified <tt>key</tt> name or <tt>null</tt> if there is
-     * no object bound under that name.
+     *         no object bound under that name.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     * this method.
+     *                                 this method.
      */
-    Object getAttribute( Object key ) throws InvalidSessionException;
+    Object getAttribute(Object key) throws InvalidSessionException;
 
     /**
      * Binds the specified <tt>value</tt> to this session, uniquely identified by the specifed
@@ -217,20 +223,21 @@ public interface Session {
      * <p>If the <tt>value</tt> parameter is null, it has the same effect as if
      * <tt>removeAttribute(key)</tt> was called.
      *
-     * @param key the name under which the <tt>value</tt> object will be bound in this session
+     * @param key   the name under which the <tt>value</tt> object will be bound in this session
      * @param value the object to bind in this session.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     * this method.
+     *                                 this method.
      */
-    void setAttribute( Object key, Object value ) throws InvalidSessionException;
+    void setAttribute(Object key, Object value) throws InvalidSessionException;
 
     /**
      * Removes (unbinds) the object bound to this session under the specified <tt>key</tt> name.
+     *
      * @param key the name uniquely identifying the object to remove
      * @return the object removed or <tt>null</tt> if there was no object bound under the name
-     * <tt>key</tt>.
+     *         <tt>key</tt>.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     * this method.
+     *                                 this method.
      */
-    Object removeAttribute( Object key ) throws InvalidSessionException;
+    Object removeAttribute(Object key) throws InvalidSessionException;
 }

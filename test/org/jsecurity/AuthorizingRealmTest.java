@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Tim Veil
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity;
 
@@ -59,7 +62,7 @@ public class AuthorizingRealmTest {
         try {
             localhost = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            fail( "Error creating localhost" );
+            fail("Error creating localhost");
         }
     }
 
@@ -69,7 +72,7 @@ public class AuthorizingRealmTest {
         securityManager = new DefaultSecurityManager();
         // Not using constructor to prevent init() from running automatically (so tests can alter SM before init())
         // Tests must call init() on SM before using.
-        securityManager.setRealm( realm );
+        securityManager.setRealm(realm);
 
     }
 
@@ -93,7 +96,7 @@ public class AuthorizingRealmTest {
         assertTrue(subject.isAuthenticated());
         assertTrue(subject.hasRole(ROLE));
         Object principals = subject.getPrincipal();
-        assertTrue(principals instanceof Collection && ((Collection)principals).size() == 3);
+        assertTrue(principals instanceof Collection && ((Collection) principals).size() == 3);
 
         UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
@@ -114,20 +117,20 @@ public class AuthorizingRealmTest {
         Realm realm = new AllowAllRealm() {
             protected Account createAccount(Object principal, Object credentials) {
                 String username = (String) principal;
-                UsernamePrincipal customPrincipal = new UsernamePrincipal( username );
-                return new SimpleAuthorizingAccount( customPrincipal, credentials, getName() );
+                UsernamePrincipal customPrincipal = new UsernamePrincipal(username);
+                return new SimpleAuthorizingAccount(customPrincipal, credentials, getName());
             }
         };
 
-        securityManager.setRealm( realm );
+        securityManager.setRealm(realm);
         securityManager.init();
 
         // Do login
         Subject subject = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(subject.isAuthenticated());
         assertTrue(subject.hasRole(ROLE));
-        assertTrue( (subject.getPrincipal() instanceof UsernamePrincipal) );
-        assertEquals( USERNAME, ((UsernamePrincipal) subject.getPrincipal()).getUsername() );
+        assertTrue((subject.getPrincipal() instanceof UsernamePrincipal));
+        assertEquals(USERNAME, ((UsernamePrincipal) subject.getPrincipal()).getUsername());
 
 
     }
@@ -138,12 +141,12 @@ public class AuthorizingRealmTest {
 
         public AllowAllRealm() {
             super();
-            setCredentialsMatcher( new AllowAllCredentialsMatcher() );
+            setCredentialsMatcher(new AllowAllCredentialsMatcher());
         }
 
         protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
-            PrincipalCollection principals = new SimplePrincipalCollection("allowAll", token.getPrincipal() );
-            return doGetAccount( principals );
+            PrincipalCollection principals = new SimplePrincipalCollection("allowAll", token.getPrincipal());
+            return doGetAccount(principals);
         }
 
         protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
@@ -154,10 +157,10 @@ public class AuthorizingRealmTest {
 
         protected Account createAccount(Object principal, Object credentials) {
             Collection<Object> principals = new ArrayList<Object>(3);
-            principals.add( new UserIdPrincipal(USER_ID));
-            principals.add( new UsernamePrincipal(USERNAME));
-            principals.add( USER_ID + USERNAME );
-            return new SimpleAccount(principals,PASSWORD, getName() );
+            principals.add(new UserIdPrincipal(USER_ID));
+            principals.add(new UsernamePrincipal(USERNAME));
+            principals.add(USER_ID + USERNAME);
+            return new SimpleAccount(principals, PASSWORD, getName());
         }
     }
 

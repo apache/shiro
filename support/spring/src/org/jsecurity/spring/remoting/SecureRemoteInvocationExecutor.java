@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.spring.remoting;
 
@@ -53,7 +56,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /**
      * Commons-logger.
      */
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * The SecurityManager used to retrieve realms that should be associated with the
@@ -69,7 +72,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public void setSecurityManager( org.jsecurity.mgt.SecurityManager securityManager ) {
+    public void setSecurityManager(org.jsecurity.mgt.SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
 
@@ -77,64 +80,64 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |               M E T H O D S               |
     ============================================*/
 
-    protected InetAddress getInetAddress( RemoteInvocation invocation, Object targetObject ) {
+    protected InetAddress getInetAddress(RemoteInvocation invocation, Object targetObject) {
         try {
             return InetAddress.getLocalHost();
-        } catch ( UnknownHostException e ) {
+        } catch (UnknownHostException e) {
             return null;
         }
     }
 
-    protected PrincipalCollection getPrincipals( RemoteInvocation invocation, Object targetObject, Session session ) {
-        return (PrincipalCollection)session.getAttribute( DefaultWebSecurityManager.PRINCIPALS_SESSION_KEY );
+    protected PrincipalCollection getPrincipals(RemoteInvocation invocation, Object targetObject, Session session) {
+        return (PrincipalCollection) session.getAttribute(DefaultWebSecurityManager.PRINCIPALS_SESSION_KEY);
     }
 
-    protected boolean isAuthenticated( RemoteInvocation invocation, Object targetObject, Session session, PrincipalCollection principals ) {
-        if ( principals != null ) {
-            Boolean authc = (Boolean)session.getAttribute(DefaultWebSecurityManager.AUTHENTICATED_SESSION_KEY);
+    protected boolean isAuthenticated(RemoteInvocation invocation, Object targetObject, Session session, PrincipalCollection principals) {
+        if (principals != null) {
+            Boolean authc = (Boolean) session.getAttribute(DefaultWebSecurityManager.AUTHENTICATED_SESSION_KEY);
             return authc != null && authc;
         }
         return false;
     }
 
-    @SuppressWarnings( { "unchecked" } )
-    public Object invoke( RemoteInvocation invocation, Object targetObject ) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    @SuppressWarnings({"unchecked"})
+    public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
             PrincipalCollection principals = null;
             boolean authenticated = false;
-            InetAddress inetAddress = getInetAddress( invocation, targetObject );
+            InetAddress inetAddress = getInetAddress(invocation, targetObject);
             Session session = null;
 
-            Serializable sessionId = invocation.getAttribute( SecureRemoteInvocationFactory.SESSION_ID_KEY );
+            Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);
 
-            if ( sessionId != null ) {
-                session = securityManager.getSession( sessionId );
-                principals = getPrincipals( invocation, targetObject, session );
-                authenticated = isAuthenticated( invocation, targetObject, session, principals );
+            if (sessionId != null) {
+                session = securityManager.getSession(sessionId);
+                principals = getPrincipals(invocation, targetObject, session);
+                authenticated = isAuthenticated(invocation, targetObject, session, principals);
             } else {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "RemoteInvocation object did not contain a JSecurity Session id under " +
-                        "attribute name [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Session will not " +
-                        "be available to the method.  Ensure that clients are using a " +
-                        "SecureRemoteInvocationFactory to prevent this problem." );
+                if (log.isWarnEnabled()) {
+                    log.warn("RemoteInvocation object did not contain a JSecurity Session id under " +
+                            "attribute name [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Session will not " +
+                            "be available to the method.  Ensure that clients are using a " +
+                            "SecureRemoteInvocationFactory to prevent this problem.");
                 }
             }
 
-            Subject subject = new DelegatingSubject( principals, authenticated, inetAddress, session, securityManager );
+            Subject subject = new DelegatingSubject(principals, authenticated, inetAddress, session, securityManager);
 
             ThreadContext.bind(subject);
 
-            return super.invoke( invocation, targetObject );
-            
-        } catch ( NoSuchMethodException nsme ) {
+            return super.invoke(invocation, targetObject);
+
+        } catch (NoSuchMethodException nsme) {
             throw nsme;
-        } catch ( IllegalAccessException iae ) {
+        } catch (IllegalAccessException iae) {
             throw iae;
-        } catch ( InvocationTargetException ite ) {
+        } catch (InvocationTargetException ite) {
             throw ite;
-        } catch ( Throwable t ) {
-            throw new InvocationTargetException( t );
+        } catch (Throwable t) {
+            throw new InvocationTargetException(t);
         } finally {
             ThreadContext.clear();
         }

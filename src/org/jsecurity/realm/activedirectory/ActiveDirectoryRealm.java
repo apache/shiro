@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Tim Veil, Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.realm.activedirectory;
 
@@ -41,17 +44,16 @@ import java.util.*;
  * queries for the user's groups and then maps the group names to roles using the
  * {@link #groupRolesMap}.</p>
  *
- *
- * @since 0.1
  * @author Tim Veil
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    
+
     private static final String ROLE_NAMES_DELIMETER = ",";
 
     /*--------------------------------------------
@@ -85,11 +87,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      *
      * <p>This method can be overridden by subclasses to query the LDAP server in a more complex way.</p>
      *
-     * @param token the authentication token provided by the user.
+     * @param token              the authentication token provided by the user.
      * @param ldapContextFactory the factory used to build connections to the LDAP server.
      * @return an {@link org.jsecurity.authc.Account} instance containing information retrieved from LDAP
-     * that can be used to build an {@link org.jsecurity.authc.Account} instance to return.
-     *
+     *         that can be used to build an {@link org.jsecurity.authc.Account} instance to return.
      * @throws NamingException if any LDAP errors occur during the search.
      */
     protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
@@ -99,16 +100,16 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
         try {
-            ctx = ldapContextFactory.getLdapContext( upToken.getUsername(), String.valueOf( upToken.getPassword() ) );
+            ctx = ldapContextFactory.getLdapContext(upToken.getUsername(), String.valueOf(upToken.getPassword()));
         } finally {
-            LdapUtils.closeContext( ctx );
+            LdapUtils.closeContext(ctx);
         }
 
-        return createAccount( upToken.getUsername(), upToken.getPassword() );
+        return createAccount(upToken.getUsername(), upToken.getPassword());
     }
 
-    protected Account createAccount( String username, char[] password ) {
-        return new SimpleAuthorizingAccount( username, password, getName() );
+    protected Account createAccount(String username, char[] password) {
+        return new SimpleAuthorizingAccount(username, password, getName());
     }
 
 
@@ -122,17 +123,17 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * <p>Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
      * complex way.  Note that this default implementation does not support permissions, only roles.</p>
      *
-     * @param principals the principal of the Subject whose Account is being retrieved.
+     * @param principals         the principal of the Subject whose Account is being retrieved.
      * @param ldapContextFactory the factory used to create LDAP connections.
      * @return the Account for the given Subject principal.
      * @throws NamingException if an error occurs when searching the LDAP server.
      */
-    protected AuthorizingAccount queryForLdapAccount( PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthorizingAccount queryForLdapAccount(PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
 
         String username;
 
 
-        username = (String)principals.fromRealm( getName() ).iterator().next();
+        username = (String) principals.fromRealm(getName()).iterator().next();
 
         // Perform context search
         LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
@@ -142,13 +143,13 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         try {
             roleNames = getRoleNamesForUser(username, ldapContext);
         } finally {
-            LdapUtils.closeContext( ldapContext );
+            LdapUtils.closeContext(ldapContext);
         }
 
         return new SimpleAuthorizingAccount(username, null, getName(), roleNames, null);
     }
 
-    private Set<String> getRoleNamesForUser( String username, LdapContext ldapContext) throws NamingException {
+    private Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
         Set<String> roleNames;
         roleNames = new LinkedHashSet<String>();
 
@@ -162,7 +163,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
 
-            if( log.isDebugEnabled() ) {
+            if (log.isDebugEnabled()) {
                 log.debug("Retrieving group names for user [" + sr.getName() + "]");
             }
 
@@ -170,15 +171,15 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
             if (attrs != null) {
                 NamingEnumeration ae = attrs.getAll();
-                while( ae.hasMore() ) {
+                while (ae.hasMore()) {
                     Attribute attr = (Attribute) ae.next();
 
-                    if( attr.getID().equals( "memberOf" ) ) {
+                    if (attr.getID().equals("memberOf")) {
 
-                        Collection<String> groupNames = LdapUtils.getAllAttributeValues( attr );
+                        Collection<String> groupNames = LdapUtils.getAllAttributeValues(attr);
 
                         if (log.isDebugEnabled()) {
-                            log.debug("Groups found for user [" + username + "]: " + groupNames );
+                            log.debug("Groups found for user [" + username + "]: " + groupNames);
                         }
 
                         Collection<String> rolesForGroups = getRoleNamesForGroups(groupNames);
@@ -193,23 +194,24 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     /**
      * This method is called by the default implementation to translate Active Directory group names
      * to role names.  This implementation uses the {@link #groupRolesMap} to map group names to role names.
+     *
      * @param groupNames the group names that apply to the current user.
      * @return a collection of roles that are implied by the given role names.
      */
     protected Collection<String> getRoleNamesForGroups(Collection<String> groupNames) {
-        Set<String> roleNames = new HashSet<String>( groupNames.size() );
+        Set<String> roleNames = new HashSet<String>(groupNames.size());
 
-        if( groupRolesMap != null ) {
-            for( String groupName : groupNames ) {
-                String strRoleNames = groupRolesMap.get( groupName );
-                if( strRoleNames != null ) {
-                    for( String roleName : strRoleNames.split( ROLE_NAMES_DELIMETER ) ) {
+        if (groupRolesMap != null) {
+            for (String groupName : groupNames) {
+                String strRoleNames = groupRolesMap.get(groupName);
+                if (strRoleNames != null) {
+                    for (String roleName : strRoleNames.split(ROLE_NAMES_DELIMETER)) {
 
-                        if( log.isDebugEnabled() ) {
-                            log.debug( "User is member of group [" + groupName + "] so adding role [" + roleName + "]" );
+                        if (log.isDebugEnabled()) {
+                            log.debug("User is member of group [" + groupName + "] so adding role [" + roleName + "]");
                         }
 
-                        roleNames.add( roleName );
+                        roleNames.add(roleName);
 
                     }
                 }

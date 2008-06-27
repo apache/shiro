@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.mgt;
 
@@ -69,11 +72,11 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
     protected void ensureCacheManager() {
         CacheManager cacheManager = getCacheManager();
         if (cacheManager == null) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "No CacheManager has been configured.  Attempting to create a default one..." );
+            if (log.isDebugEnabled()) {
+                log.debug("No CacheManager has been configured.  Attempting to create a default one...");
             }
             CacheManager manager = createCacheManager();
-            if ( manager != null ) {
+            if (manager != null) {
                 setCacheManager(manager);
             } else {
                 if (log.isInfoEnabled()) {
@@ -87,8 +90,8 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
                 }
             }
         } else {
-            if ( log.isInfoEnabled() ) {
-                log.info( "Using configured CacheManager [" + cacheManager + "]" );
+            if (log.isInfoEnabled()) {
+                log.info("Using configured CacheManager [" + cacheManager + "]");
             }
         }
     }
@@ -105,25 +108,27 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
             ehCacheManager.init();
             manager = ehCacheManager;
         } else {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Ehcache was not found in the classpath. A default EhCacheManager cannot be created.");
+            if (log.isDebugEnabled()) {
+                log.debug("Ehcache was not found in the classpath. A default EhCacheManager cannot be created.");
             }
         }
 
         return manager;
     }
 
-    protected void afterCacheManagerSet(){}
+    protected void afterCacheManagerSet() {
+    }
 
     public void destroy() {
         beforeCacheManagerDestroyed();
         destroyCacheManager();
     }
 
-    protected void beforeCacheManagerDestroyed(){}
+    protected void beforeCacheManagerDestroyed() {
+    }
 
     protected void destroyCacheManager() {
-        LifecycleUtils.destroy( getCacheManager() );
+        LifecycleUtils.destroy(getCacheManager());
         this.cacheManager = null;
     }
 }

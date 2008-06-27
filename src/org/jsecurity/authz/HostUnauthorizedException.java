@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authz;
 
@@ -22,10 +25,9 @@ import java.net.InetAddress;
  * or if the client has been enabled access but is not permitted to perform a particluar operation
  * or access a particular resource.
  *
- * @see org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
- *
- * @since 0.1
  * @author Les Hazlewood
+ * @see org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
+ * @since 0.1
  */
 public class HostUnauthorizedException extends UnauthorizedException {
 
@@ -40,41 +42,46 @@ public class HostUnauthorizedException extends UnauthorizedException {
 
     /**
      * Constructs a new HostUnauthorizedException.
+     *
      * @param message the reason for the exception
      */
-    public HostUnauthorizedException( String message ) {
-        super( message );
+    public HostUnauthorizedException(String message) {
+        super(message);
     }
 
     /**
      * Constructs a new HostUnauthorizedException.
+     *
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public HostUnauthorizedException( Throwable cause ) {
-        super( cause );
+    public HostUnauthorizedException(Throwable cause) {
+        super(cause);
     }
 
     /**
      * Constructs a new HostUnauthorizedException.
+     *
      * @param message the reason for the exception
-     * @param cause the underlying Throwable that caused this exception to be thrown.
+     * @param cause   the underlying Throwable that caused this exception to be thrown.
      */
-    public HostUnauthorizedException( String message, Throwable cause ) {
-        super( message, cause );
+    public HostUnauthorizedException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new HostUnauthorizedException associated with the given host address.
+     *
      * @param hostAddress the address of the host unauthorized to perform a particular action or
-     * access a particular resource.
+     *                    access a particular resource.
      */
-    public HostUnauthorizedException( InetAddress hostAddress ) {
-        this( "The system is not cofigured to allow access for host [" +
-              hostAddress.getHostAddress() + "]" );
+    public HostUnauthorizedException(InetAddress hostAddress) {
+        this("The system is not cofigured to allow access for host [" +
+                hostAddress.getHostAddress() + "]");
     }
 
     /**
      * Returns the host address associated with this exception.
+     *
      * @return the host address associated with this exception.
      */
     public InetAddress getHostAddress() {
@@ -83,9 +90,10 @@ public class HostUnauthorizedException extends UnauthorizedException {
 
     /**
      * Sets the host address associated with this exception.
+     *
      * @param hostAddress the host address associated with this exception.
      */
-    public void setHostAddress( InetAddress hostAddress ) {
+    public void setHostAddress(InetAddress hostAddress) {
         this.hostAddress = hostAddress;
     }
 }

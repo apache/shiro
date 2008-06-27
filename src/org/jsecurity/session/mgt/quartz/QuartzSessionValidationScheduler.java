@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session.mgt.quartz;
 
@@ -31,9 +34,9 @@ import org.quartz.impl.StdSchedulerFactory;
  * job to call {@link org.jsecurity.session.mgt.ValidatingSessionManager#validateSessions()} on
  * a regular basis.
  *
- * @since 0.1
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @since 0.1
  */
 public class QuartzSessionValidationScheduler implements SessionValidationScheduler {
 
@@ -57,7 +60,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     /**
      * Commons-logging logger
      */
-    protected final transient Log log = LogFactory.getLog( getClass() );
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     /**
      * The configured Quartz scheduler to use to schedule the Quartz job.  If no scheduler is
@@ -92,7 +95,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      *
      * @param sessionManager the <tt>SessionManager</tt> that should be used to validate sessions.
      */
-    public QuartzSessionValidationScheduler( ValidatingSessionManager sessionManager ) {
+    public QuartzSessionValidationScheduler(ValidatingSessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 
@@ -101,18 +104,18 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     ============================================*/
 
     protected Scheduler getScheduler() throws SchedulerException {
-        if ( scheduler == null ) {
+        if (scheduler == null) {
             scheduler = StdSchedulerFactory.getDefaultScheduler();
             schedulerImplicitlyCreated = true;
         }
         return scheduler;
     }
 
-    public void setScheduler( Scheduler scheduler ) {
+    public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
 
-    public void setSessionManager( ValidatingSessionManager sessionManager ) {
+    public void setSessionManager(ValidatingSessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 
@@ -122,9 +125,10 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      * {@link org.jsecurity.session.mgt.ValidatingSessionManager#validateSessions() ValidatingSessionManager#validateSessions()} method.
      *
      * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
+     *
      * @param sessionValidationInterval
      */
-    public void setSessionValidationInterval( long sessionValidationInterval ) {
+    public void setSessionValidationInterval(long sessionValidationInterval) {
         this.sessionValidationInterval = sessionValidationInterval;
     }
 
@@ -138,85 +142,85 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      */
     public void startSessionValidation() {
 
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Scheduling session validation job using Quartz with " +
-                "session validation interval of [" + sessionValidationInterval + "]ms..." );
+        if (log.isDebugEnabled()) {
+            log.debug("Scheduling session validation job using Quartz with " +
+                    "session validation interval of [" + sessionValidationInterval + "]ms...");
         }
 
         try {
-            SimpleTrigger trigger = new SimpleTrigger( getClass().getName(),
-                Scheduler.DEFAULT_GROUP,
-                SimpleTrigger.REPEAT_INDEFINITELY,
-                sessionValidationInterval );
+            SimpleTrigger trigger = new SimpleTrigger(getClass().getName(),
+                    Scheduler.DEFAULT_GROUP,
+                    SimpleTrigger.REPEAT_INDEFINITELY,
+                    sessionValidationInterval);
 
-            JobDetail detail = new JobDetail( JOB_NAME, Scheduler.DEFAULT_GROUP, QuartzSessionValidationJob.class );
-            detail.getJobDataMap().put( QuartzSessionValidationJob.SESSION_MANAGER_KEY, sessionManager );
+            JobDetail detail = new JobDetail(JOB_NAME, Scheduler.DEFAULT_GROUP, QuartzSessionValidationJob.class);
+            detail.getJobDataMap().put(QuartzSessionValidationJob.SESSION_MANAGER_KEY, sessionManager);
 
             Scheduler scheduler = getScheduler();
 
-            scheduler.scheduleJob( detail, trigger );
-            if ( schedulerImplicitlyCreated ) {
+            scheduler.scheduleJob(detail, trigger);
+            if (schedulerImplicitlyCreated) {
                 scheduler.start();
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Successfully started implicitly created Quartz Scheduler instance." );
+                if (log.isDebugEnabled()) {
+                    log.debug("Successfully started implicitly created Quartz Scheduler instance.");
                 }
             }
 
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Session validation job successfully scheduled with Quartz." );
+            if (log.isDebugEnabled()) {
+                log.debug("Session validation job successfully scheduled with Quartz.");
             }
 
-        } catch ( SchedulerException e ) {
-            if ( log.isErrorEnabled() ) {
-                log.error( "Error starting the Quartz session validation job.  Session validation may not occur.", e );
+        } catch (SchedulerException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Error starting the Quartz session validation job.  Session validation may not occur.", e);
             }
         }
     }
 
     public void stopSessionValidation() {
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Stopping Quartz session validation job..." );
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping Quartz session validation job...");
         }
 
         Scheduler scheduler;
         try {
             scheduler = getScheduler();
-            if ( scheduler == null ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "getScheduler() method returned a null Quartz scheduler, which is unexpected.  Please " +
-                        "check your configuration and/or implementation.  Returning quietly since there is no " +
-                        "validation job to remove (scheduler does not exist)." );
+            if (scheduler == null) {
+                if (log.isWarnEnabled()) {
+                    log.warn("getScheduler() method returned a null Quartz scheduler, which is unexpected.  Please " +
+                            "check your configuration and/or implementation.  Returning quietly since there is no " +
+                            "validation job to remove (scheduler does not exist).");
                 }
                 return;
             }
-        } catch ( SchedulerException e ) {
-            if ( log.isWarnEnabled() ) {
-                log.warn( "Unable to acquire Quartz Scheduler.  Ignoring and returning (already stopped?)", e );
+        } catch (SchedulerException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Unable to acquire Quartz Scheduler.  Ignoring and returning (already stopped?)", e);
             }
             return;
         }
 
         try {
-            scheduler.unscheduleJob( JOB_NAME, Scheduler.DEFAULT_GROUP );
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Quartz session validation job stopped successfully." );
+            scheduler.unscheduleJob(JOB_NAME, Scheduler.DEFAULT_GROUP);
+            if (log.isDebugEnabled()) {
+                log.debug("Quartz session validation job stopped successfully.");
             }
-        } catch ( SchedulerException e ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Could not cleanly remove SessionValidationJob from Quartz scheduler.  " +
-                    "Ignoring and stopping.", e );
+        } catch (SchedulerException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not cleanly remove SessionValidationJob from Quartz scheduler.  " +
+                        "Ignoring and stopping.", e);
             }
         }
 
-        if ( schedulerImplicitlyCreated ) {
+        if (schedulerImplicitlyCreated) {
             try {
                 scheduler.shutdown();
-            } catch ( SchedulerException e ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Unable to cleanly shutdown implicitly created Quartz Scheduler instance.", e );
+            } catch (SchedulerException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Unable to cleanly shutdown implicitly created Quartz Scheduler instance.", e);
                 }
             } finally {
-                setScheduler( null );
+                setScheduler(null);
                 schedulerImplicitlyCreated = false;
             }
         }
