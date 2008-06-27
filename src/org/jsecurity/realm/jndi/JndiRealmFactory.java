@@ -43,6 +43,8 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
      * Returns the JNDI names that will be used to look up Realm(s) from JNDI.
      *
      * @return the JNDI names that will be used to look up Realm(s) from JNDI.
+     * @see #setJndiNames(String)
+     * @see #setJndiNames(Collection)
      */
     public Collection<String> getJndiNames() {
         return jndiNames;
@@ -50,8 +52,11 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
 
     /**
      * Sets the JNDI names that will be used to look up Realm(s) from JNDI.
-     *
-     * If you find it easier to specify these names, you may use the {@link #setJndiNames(String)} method instead.
+     * <p/>
+     * The order of the collection determines the order that the Realms will be returned to the SecurityManager.
+     * <p/>
+     * If you find it easier to specify these names as a comma-delmited string, you may use the
+     * {@link #setJndiNames(String)} method instead.
      *
      * @param jndiNames the JNDI names that will be used to look up Realm(s) from JNDI.
      * @see #setJndiNames(String)
@@ -61,7 +66,7 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
     }
 
     /**
-     * Specifies a comma-delimited list of JNDI names to lookup, one each corresponding to a jndi-bound
+     * Specifies a comma-delimited list of JNDI names to lookup, each one corresponding to a jndi-bound
      * {@link Realm Realm}.  The Realms will be made available to the SecurityManager in the order
      * they are defined.
      *
@@ -81,8 +86,11 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
     }
 
     /**
-     * Performs the JNDI lookups for each {@link #getJndiNames() JNDI name} specified and returns all
+     * Performs the JNDI lookups for each specified {@link #getJndiNames() JNDI name} and returns all
      * discovered Realms in an ordered collection.
+     *
+     * <p>The returned Collection is in the same order as the specified
+     * {@link #setJndiNames(java.util.Collection) jndiNames}
      *
      * @return an ordered collection of the {@link #setJndiNames(java.util.Collection) specified Realms} found in JNDI.
      * @throws IllegalStateException if any of the JNDI names fails to successfully look up a Realm instance.
