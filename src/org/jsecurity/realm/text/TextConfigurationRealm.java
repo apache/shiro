@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.realm.text;
 
@@ -121,7 +124,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (roleDefinitions == null) {
             return;
         }
-        Map<String, String> roleDefs = toMap( toLines(roleDefinitions) );
+        Map<String, String> roleDefs = toMap(toLines(roleDefinitions));
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
         }
@@ -143,11 +146,11 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     protected void processUserDefinitions() throws ParseException {
 
         String userDefinitions = getUserDefinitions();
-        if ( userDefinitions == null ) {
+        if (userDefinitions == null) {
             return;
         }
 
-        Map<String, String> userDefs = toMap( toLines(userDefinitions));
+        Map<String, String> userDefs = toMap(toLines(userDefinitions));
         if (userDefs == null || userDefs.isEmpty()) {
             return;
         }
@@ -168,7 +171,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
             user.setCredentials(password);
 
             if (passwordAndRolesArray.length > 1) {
-                for( int i = 1; i < passwordAndRolesArray.length; i++ ) {
+                for (int i = 1; i < passwordAndRolesArray.length; i++) {
                     String rolename = passwordAndRolesArray[i];
                     SimpleRole role = getRole(rolename);
                     if (role == null) {
@@ -183,7 +186,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         }
     }
 
-    protected static Set<String> toLines( String s ) {
+    protected static Set<String> toLines(String s) {
         LinkedHashSet<String> set = new LinkedHashSet<String>();
         Scanner scanner = new Scanner(s);
         while (scanner.hasNextLine()) {

@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session.mgt.quartz;
 
@@ -28,8 +31,8 @@ import org.quartz.JobExecutionException;
  * method on a configured session manager.  The session manager will automatically be injected by the
  * superclass if it is in the job data map or the scheduler map.
  *
- * @since 0.1
  * @author Jeremy Haile
+ * @since 0.1
  */
 public class QuartzSessionValidationJob implements Job {
 
@@ -47,7 +50,7 @@ public class QuartzSessionValidationJob implements Job {
     /**
      * Commons-logger.
      */
-    protected transient final Log log = LogFactory.getLog( getClass() );
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -64,21 +67,22 @@ public class QuartzSessionValidationJob implements Job {
     /**
      * Called when the job is executed by quartz.  This method delegates to the
      * <tt>validateSessions()</tt> method on the associated session manager.
+     *
      * @param context the Quartz job execution context for this execution.
      */
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
         JobDataMap jobDataMap = context.getMergedJobDataMap();
-        ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get( SESSION_MANAGER_KEY );
+        ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get(SESSION_MANAGER_KEY);
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Executing session validation Quartz job..." );
+        if (log.isDebugEnabled()) {
+            log.debug("Executing session validation Quartz job...");
         }
 
         sessionManager.validateSessions();
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Session validation Quartz job complete." );
+        if (log.isDebugEnabled()) {
+            log.debug("Session validation Quartz job complete.");
         }
     }
 }

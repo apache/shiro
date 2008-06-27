@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authc;
 
@@ -81,16 +84,16 @@ public class SimpleAccount implements Account, Serializable {
     ============================================*/
     public SimpleAccount() {
     }
-    
-    public SimpleAccount( Object principal, Object credentials, String realmName ) {
-        this( principal instanceof PrincipalCollection ? (PrincipalCollection)principal : new SimplePrincipalCollection(realmName, principal), credentials );
+
+    public SimpleAccount(Object principal, Object credentials, String realmName) {
+        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(realmName, principal), credentials);
     }
 
-    public SimpleAccount( Collection principals, Object credentials, String realmName ) {
-        this( new SimplePrincipalCollection( realmName, principals ), credentials );
+    public SimpleAccount(Collection principals, Object credentials, String realmName) {
+        this(new SimplePrincipalCollection(realmName, principals), credentials);
     }
 
-    public SimpleAccount( PrincipalCollection principals, Object credentials ) {
+    public SimpleAccount(PrincipalCollection principals, Object credentials) {
         this.principals = principals;
         this.credentials = credentials;
     }
@@ -163,24 +166,24 @@ public class SimpleAccount implements Account, Serializable {
             setPrincipals(otherPrincipals);
         } else {
             //TODO - I don't like these checks - should be interface-based - Les.
-            if ( !(thisPrincipals instanceof SimplePrincipalCollection) ) {
-                throw new IllegalStateException( "The " + getClass().getName() + " class expects its internal " +
+            if (!(thisPrincipals instanceof SimplePrincipalCollection)) {
+                throw new IllegalStateException("The " + getClass().getName() + " class expects its internal " +
                         PrincipalCollection.class.getName() + " instance to be an instance of the " +
-                        SimplePrincipalCollection.class.getName() + " class." );
+                        SimplePrincipalCollection.class.getName() + " class.");
             }
-            if ( !(otherPrincipals instanceof SimplePrincipalCollection) ) {
-                throw new IllegalArgumentException( "The " + getClass().getName() + " class expects the " +
+            if (!(otherPrincipals instanceof SimplePrincipalCollection)) {
+                throw new IllegalArgumentException("The " + getClass().getName() + " class expects the " +
                         "account argument's internal " +
                         PrincipalCollection.class.getName() + " instance to be an instance of the " +
-                        SimplePrincipalCollection.class.getName() + " class." );
+                        SimplePrincipalCollection.class.getName() + " class.");
             }
-            ((SimplePrincipalCollection)thisPrincipals).merge((SimplePrincipalCollection)otherPrincipals);
+            ((SimplePrincipalCollection) thisPrincipals).merge((SimplePrincipalCollection) otherPrincipals);
             setPrincipals(thisPrincipals);
         }
 
         Object otherCredentials = otherAccount.getCredentials();
         Object thisCredentials = getCredentials();
-        if ( thisCredentials == null ) {
+        if (thisCredentials == null) {
             setCredentials(otherCredentials);
         } else {
             HashSet set = new HashSet();

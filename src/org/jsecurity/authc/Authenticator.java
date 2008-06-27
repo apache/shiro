@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood, Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authc;
 
@@ -29,13 +32,12 @@ package org.jsecurity.authc;
  * default architecture is based on an overall <tt>SecurityManager</tt> which typically wraps an
  * <tt>Authenticator</tt> instance.
  *
+ * @author Les Hazlewood
+ * @author Jeremy Haile
  * @see org.jsecurity.mgt.SecurityManager
  * @see AbstractAuthenticator AbstractAuthenticator
  * @see org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator
- *
  * @since 0.1
- * @author Les Hazlewood
- * @author Jeremy Haile
  */
 public interface Authenticator {
 
@@ -48,17 +50,14 @@ public interface Authenticator {
      * access to a <tt>Session</tt>
      *
      * @param authenticationToken any representation of a user's principals and credentials
-     * submitted during an authentication attempt.
-     *
+     *                            submitted during an authentication attempt.
      * @return the Account representing the authenticated user's account data.
-     *
      * @throws AuthenticationException if there is any problem during the authentication process.
-     * See the specific exceptions listed below to as examples of what could happen in order
-     * to accurately handle these problems and to notify the user in an appropriate manner why
-     * the authentication attempt failed.  Realize an implementation of this interface may or may
-     * not throw those listed or may throw other AuthenticationExceptions, but the list shows
-     * the most common ones.
-     *
+     *                                 See the specific exceptions listed below to as examples of what could happen in order
+     *                                 to accurately handle these problems and to notify the user in an appropriate manner why
+     *                                 the authentication attempt failed.  Realize an implementation of this interface may or may
+     *                                 not throw those listed or may throw other AuthenticationExceptions, but the list shows
+     *                                 the most common ones.
      * @see ExpiredCredentialsException
      * @see IncorrectCredentialsException
      * @see ExcessiveAttemptsException
@@ -66,6 +65,6 @@ public interface Authenticator {
      * @see ConcurrentAccessException
      * @see UnknownAccountException
      */
-    public Account authenticate( AuthenticationToken authenticationToken )
-        throws AuthenticationException;
+    public Account authenticate(AuthenticationToken authenticationToken)
+            throws AuthenticationException;
 }

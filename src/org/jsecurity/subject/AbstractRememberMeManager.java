@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.subject;
 
@@ -59,7 +62,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     protected boolean isRememberMe(AuthenticationToken token) {
         return token != null && (token instanceof RememberMeAuthenticationToken) &&
-            ((RememberMeAuthenticationToken) token).isRememberMe();
+                ((RememberMeAuthenticationToken) token).isRememberMe();
     }
 
     public void onSuccessfulLogin(AuthenticationToken token, Account account) {
@@ -68,7 +71,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("AuthenticationToken did not indicate RememberMe is requested.  " +
-                    "RememberMe functionality will not be executed for corresponding Account.");
+                        "RememberMe functionality will not be executed for corresponding Account.");
             }
         }
     }
@@ -112,11 +115,11 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
             }
             rememberSerializedIdentity(bytes);
         } catch (SerializationException se) {
-            if ( log.isWarnEnabled() ) {
+            if (log.isWarnEnabled()) {
                 log.warn("Unable to serialize account principals [" + accountPrincipals + "].  Identity " +
-                    "cannot be remembered!  This is a non fatal exception as RememberMe identity services " +
-                    "are not considered critical and execution can continue as normal.  But please " +
-                    "investigate and resolve to prevent seeing this message again.", se );
+                        "cannot be remembered!  This is a non fatal exception as RememberMe identity services " +
+                        "are not considered critical and execution can continue as normal.  But please " +
+                        "investigate and resolve to prevent seeing this message again.", se);
             }
         }
     }
@@ -137,11 +140,11 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
             try {
                 principals = deserialize(bytes);
             } catch (SerializationException e) {
-                if ( log.isWarnEnabled() ) {
+                if (log.isWarnEnabled()) {
                     log.warn("Unable to deserialize stored identity byte array.  Remembered identity " +
-                        "cannot be reconstituted!  This is a non fatal exception as RememberMe identity services " +
-                        "are not considered critical and execution can continue as normal, but please " +
-                        "investigate and resolve to prevent seeing this message again.", e );
+                            "cannot be reconstituted!  This is a non fatal exception as RememberMe identity services " +
+                            "are not considered critical and execution can continue as normal, but please " +
+                            "investigate and resolve to prevent seeing this message again.", e);
                 }
             }
         }
@@ -149,7 +152,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
-        return (PrincipalCollection)getSerializer().deserialize(serializedIdentity);
+        return (PrincipalCollection) getSerializer().deserialize(serializedIdentity);
     }
 
     protected abstract byte[] getSerializedRememberedIdentity();

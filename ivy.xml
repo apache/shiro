@@ -1,67 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC1" status="milestone" publication="20080425000800">
-        <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
-        <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
-        <description homepage="http://www.jsecurity.org">
-            JSecurity is a powerful and flexible open-source Java security framework that cleanly handles
-            authentication, authorization, enterprise session management, single sign-on and cryptography services.
+  <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC1" status="milestone"
+        publication="20080425000800">
+    <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+    <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
+    <description homepage="http://www.jsecurity.org">
+      JSecurity is a powerful and flexible open-source Java security framework that cleanly handles
+      authentication, authorization, enterprise session management, single sign-on and cryptography services.
 
-            Our mission: To provide the most robust and comprehensive Java security framework available while
-               also being very easy to understand and extremely simple to use.
-        </description>
-    </info>
+      Our mission: To provide the most robust and comprehensive Java security framework available while
+      also being very easy to understand and extremely simple to use.
+    </description>
+  </info>
 
-    <configurations defaultconfmapping="*->default">
-        <conf name="runtime" description="Minimum required runtime dependencies."/>
-        <conf name="runtime-web" extends="runtime" description="Minimum required runtime dependencies when running a web application."/>
-        <conf name="compile" extends="runtime-web" description="Required dependencies when building JSecurity from scratch."/>
-        <conf name="samples" extends="runtime-web" description="Required dependencies when running one of the sample web applications."/>
-        <conf name="test" extends="*" description="Any and all dependencies so all functionality can be tested."/>
-        <conf name="docbook"/>
-    </configurations>
+  <configurations defaultconfmapping="*->default">
+    <conf name="runtime" description="Minimum required runtime dependencies."/>
+    <conf name="runtime-web" extends="runtime"
+          description="Minimum required runtime dependencies when running a web application."/>
+    <conf name="compile" extends="runtime-web"
+          description="Required dependencies when building JSecurity from scratch."/>
+    <conf name="samples" extends="runtime-web"
+          description="Required dependencies when running one of the sample web applications."/>
+    <conf name="test" extends="*" description="Any and all dependencies so all functionality can be tested."/>
+    <conf name="docbook"/>
+  </configurations>
 
-    <dependencies>
+  <dependencies>
 
-        <!-- Minimal deps, depending on VM: -->
-        <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false" conf="runtime"/>
-        <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="runtime-web"/>
+    <!-- Minimal deps, depending on VM: -->
+    <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false" conf="runtime"/>
+    <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="runtime-web"/>
 
-        <!-- Feature-based dependencies: -->
-        <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
-        <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>        
-        <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
-        <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" transitive="false" conf="samples"/>
-        <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
-        <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
-        <dependency org="org.springframework" name="spring-webmvc" rev="2.5.1" transitive="false" conf="samples"/>
-        <dependency org="javax.servlet" name="servlet-api" rev="2.4" transitive="false" conf="compile,samples"/>
-        <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="compile"/>
+    <!-- Feature-based dependencies: -->
+    <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
+    <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>
+    <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
+    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" transitive="false"
+                conf="samples"/>
+    <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
+    <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
+    <dependency org="org.springframework" name="spring-webmvc" rev="2.5.1" transitive="false" conf="samples"/>
+    <dependency org="javax.servlet" name="servlet-api" rev="2.4" transitive="false" conf="compile,samples"/>
+    <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="compile"/>
 
-        <!-- Sample application dependencies: -->
-        <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>
-        <dependency org="javax.servlet" name="jstl" rev="1.2" transitive="false" conf="samples"/>
-        <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>
-        <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" transitive="false" conf="samples"/>
-        <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="samples">
-            <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so 
-                 we have to download it explictly from another location (we use Geronimo's version) -->
-            <exclude org="javax.transaction"/>
-        </dependency>
-        <dependency org="org.apache.geronimo.specs" name="geronimo-jta_1.0.1B_spec" rev="1.1.1" conf="samples"/>
+    <!-- Sample application dependencies: -->
+    <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>
+    <dependency org="javax.servlet" name="jstl" rev="1.2" transitive="false" conf="samples"/>
+    <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>
+    <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" transitive="false" conf="samples"/>
+    <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="samples">
+      <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so
+we have to download it explictly from another location (we use Geronimo's version) -->
+      <exclude org="javax.transaction"/>
+    </dependency>
+    <dependency org="org.apache.geronimo.specs" name="geronimo-jta_1.0.1B_spec" rev="1.1.1" conf="samples"/>
 
-        <!-- Testing -->
-        <dependency org="org.easymock" name="easymock" rev="2.3" transitive="false" conf="test"/>
-        <dependency org="org.easymock" name="easymockclassextension" rev="2.3" transitive="false" conf="test"/>
-        <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
+    <!-- Testing -->
+    <dependency org="org.easymock" name="easymock" rev="2.3" transitive="false" conf="test"/>
+    <dependency org="org.easymock" name="easymockclassextension" rev="2.3" transitive="false" conf="test"/>
+    <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
 
-        <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
-            <artifact name="docbook-libs" type="zip" ext="zip"/>
-        </dependency>
+    <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
+      <artifact name="docbook-libs" type="zip" ext="zip"/>
+    </dependency>
 
-            <!-- TODO: move these contents (old library_versions.txt file) into appropriate places in this document. -->
+    <!-- TODO: move these contents (old library_versions.txt file) into appropriate places in this document. -->
     <!-- This file lists all 3rd party libraries (and their versions!!!) that
 are required to build or run the project.
 
@@ -158,6 +181,6 @@ Some notes:
 -->
 
 
-    </dependencies>
+  </dependencies>
 
 </ivy-module>

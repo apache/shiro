@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.crypto;
 
@@ -40,7 +43,7 @@ import java.util.Arrays;
  * to you and you think the default key still makes things 'sufficiently difficult', then you can ignore this issue.
  *
  * <p>However, if you do feel this constitutes sensitive information, it is recommended that you provide your own
- * <tt>Key</tt> via the {@link #setKey setKey} method to a Key known only to your application, guaranteeing that no 
+ * <tt>Key</tt> via the {@link #setKey setKey} method to a Key known only to your application, guaranteeing that no
  * third party can decrypt your data.  If you want to know how to do this, you can browse this class's source code
  * for the {@link #generateNewKey()} method to see how we created our default.  Then you can duplicate the same in
  * your environment and set the result on an instance of this class via the <code>setKey</code> method.
@@ -61,7 +64,7 @@ public class BlowfishCipher implements Cipher {
     private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
-    private transient final Log log = LogFactory.getLog( getClass() );
+    private transient final Log log = LogFactory.getLog(getClass());
 
     private Key key = DEFAULT_CIPHER_KEY;
 
@@ -78,17 +81,17 @@ public class BlowfishCipher implements Cipher {
 
     public byte[] encrypt(byte[] raw, Key key) {
         byte[] encrypted = crypt(raw, javax.crypto.Cipher.ENCRYPT_MODE, key);
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Incoming byte array of size " + (raw != null ? raw.length : 0) + ".  Encrypted " +
-                "byte array is size " + (encrypted != null ? encrypted.length : 0) );
+        if (log.isTraceEnabled()) {
+            log.trace("Incoming byte array of size " + (raw != null ? raw.length : 0) + ".  Encrypted " +
+                    "byte array is size " + (encrypted != null ? encrypted.length : 0));
         }
         return encrypted;
     }
 
     public byte[] decrypt(byte[] encrypted, Key key) {
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Attempting to decrypt incoming byte array of length " +
-                (encrypted != null ? encrypted.length : 0) );
+        if (log.isTraceEnabled()) {
+            log.trace("Attempting to decrypt incoming byte array of length " +
+                    (encrypted != null ? encrypted.length : 0));
         }
         return crypt(encrypted, javax.crypto.Cipher.DECRYPT_MODE, key);
     }
@@ -110,7 +113,7 @@ public class BlowfishCipher implements Cipher {
             cipher.init(mode, key);
         } catch (InvalidKeyException e) {
             String msg = "Unable to init cipher.";
-            throw new IllegalStateException(msg,e);
+            throw new IllegalStateException(msg, e);
         }
     }
 
@@ -119,7 +122,7 @@ public class BlowfishCipher implements Cipher {
             return cipher.doFinal(bytes);
         } catch (Exception e) {
             String msg = "Unable to crypt bytes with cipher [" + cipher + "].";
-            throw new IllegalStateException(msg,e);
+            throw new IllegalStateException(msg, e);
         }
     }
 
@@ -134,13 +137,13 @@ public class BlowfishCipher implements Cipher {
         return generateNewKey(128);
     }
 
-    public static Key generateNewKey( int keyBitSize ) {
+    public static Key generateNewKey(int keyBitSize) {
         KeyGenerator kg;
         try {
-            kg = KeyGenerator.getInstance( ALGORITHM );
+            kg = KeyGenerator.getInstance(ALGORITHM);
         } catch (NoSuchAlgorithmException e) {
             String msg = "Unable to acquire " + ALGORITHM + " algorithm.  This is required to function.";
-            throw new IllegalStateException(msg,e);
+            throw new IllegalStateException(msg, e);
         }
         kg.init(keyBitSize);
         return kg.generateKey();

@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.web.session;
 
@@ -40,18 +43,18 @@ public class WebSession implements Session {
 
     private HttpSession httpSession = null;
 
-    public WebSession( HttpSession httpSession, InetAddress inetAddress ) {
-        if ( httpSession == null ) {
+    public WebSession(HttpSession httpSession, InetAddress inetAddress) {
+        if (httpSession == null) {
             String msg = "HttpSession constructor argument cannot be null.";
-            throw new IllegalArgumentException( msg );
+            throw new IllegalArgumentException(msg);
         }
-        if ( httpSession instanceof JSecurityHttpSession ) {
+        if (httpSession instanceof JSecurityHttpSession) {
             String msg = "HttpSession constructor argument cannot be an instance of JSecurityHttpSession.  This " +
-                "is enforced to prevent circular dependencies and infinite loops.";
-            throw new IllegalArgumentException( msg );
+                    "is enforced to prevent circular dependencies and infinite loops.";
+            throw new IllegalArgumentException(msg);
         }
         this.httpSession = httpSession;
-        if ( inetAddress != null ) {
+        if (inetAddress != null) {
             setHostAddress(inetAddress);
         }
     }
@@ -61,7 +64,7 @@ public class WebSession implements Session {
     }
 
     public Date getStartTimestamp() {
-        return new Date( httpSession.getCreationTime() );
+        return new Date(httpSession.getCreationTime());
     }
 
     public Date getStopTimestamp() {
@@ -69,7 +72,7 @@ public class WebSession implements Session {
     }
 
     public Date getLastAccessTime() {
-        return new Date( httpSession.getLastAccessedTime() );
+        return new Date(httpSession.getLastAccessedTime());
     }
 
     public boolean isExpired() {
@@ -79,43 +82,43 @@ public class WebSession implements Session {
     public long getTimeout() throws InvalidSessionException {
         try {
             return httpSession.getMaxInactiveInterval() * 1000;
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 
-    public void setTimeout( long maxIdleTimeInMillis ) throws InvalidSessionException {
+    public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
-            int timeout = Long.valueOf( maxIdleTimeInMillis / 1000 ).intValue();
-            httpSession.setMaxInactiveInterval( timeout );
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
+            int timeout = Long.valueOf(maxIdleTimeInMillis / 1000).intValue();
+            httpSession.setMaxInactiveInterval(timeout);
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 
-    protected void setHostAddress( InetAddress hostAddress ) {
-        setAttribute( INET_ADDRESS_SESSION_KEY, hostAddress );
+    protected void setHostAddress(InetAddress hostAddress) {
+        setAttribute(INET_ADDRESS_SESSION_KEY, hostAddress);
     }
 
     public InetAddress getHostAddress() {
-        return (InetAddress)getAttribute(INET_ADDRESS_SESSION_KEY);
+        return (InetAddress) getAttribute(INET_ADDRESS_SESSION_KEY);
     }
 
     public void touch() throws InvalidSessionException {
         //just manipulate the session to update the access time:
         try {
-            httpSession.setAttribute( TOUCH_OBJECT_SESSION_KEY, TOUCH_OBJECT_SESSION_KEY );
-            httpSession.removeAttribute( TOUCH_OBJECT_SESSION_KEY );
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e ); 
+            httpSession.setAttribute(TOUCH_OBJECT_SESSION_KEY, TOUCH_OBJECT_SESSION_KEY);
+            httpSession.removeAttribute(TOUCH_OBJECT_SESSION_KEY);
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 
     public void stop() throws InvalidSessionException {
         try {
             httpSession.invalidate();
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 
@@ -123,51 +126,51 @@ public class WebSession implements Session {
         try {
             Enumeration namesEnum = httpSession.getAttributeNames();
             Collection<Object> keys = null;
-            if (namesEnum != null ) {
+            if (namesEnum != null) {
                 keys = new ArrayList<Object>();
-                while( namesEnum.hasMoreElements() ) {
-                    keys.add( namesEnum.nextElement() );
+                while (namesEnum.hasMoreElements()) {
+                    keys.add(namesEnum.nextElement());
                 }
             }
             return keys;
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 
-    private static String assertString( Object key ) {
-        if ( !(key instanceof String) ) {
+    private static String assertString(Object key) {
+        if (!(key instanceof String)) {
             String msg = "HttpSession based implementations of the JSecurity Session interface requires attribute keys " +
-                "to be String objects.  The HttpSession class does not support anything other than String keys.";
-            throw new IllegalArgumentException( msg );
+                    "to be String objects.  The HttpSession class does not support anything other than String keys.";
+            throw new IllegalArgumentException(msg);
         }
-        return (String)key;
+        return (String) key;
     }
 
-    public Object getAttribute( Object key ) throws InvalidSessionException {
+    public Object getAttribute(Object key) throws InvalidSessionException {
         try {
-            return httpSession.getAttribute( assertString(key) );
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
-        }
-    }
-
-    public void setAttribute( Object key, Object value ) throws InvalidSessionException {
-        try {
-            httpSession.setAttribute( assertString(key), value );
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
+            return httpSession.getAttribute(assertString(key));
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 
-    public Object removeAttribute( Object key ) throws InvalidSessionException {
+    public void setAttribute(Object key, Object value) throws InvalidSessionException {
         try {
-            String sKey = assertString( key );
-            Object removed = httpSession.getAttribute( sKey );
-            httpSession.removeAttribute( sKey );
+            httpSession.setAttribute(assertString(key), value);
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
+        }
+    }
+
+    public Object removeAttribute(Object key) throws InvalidSessionException {
+        try {
+            String sKey = assertString(key);
+            Object removed = httpSession.getAttribute(sKey);
+            httpSession.removeAttribute(sKey);
             return removed;
-        } catch ( Exception e ) {
-            throw new InvalidSessionException( e );
+        } catch (Exception e) {
+            throw new InvalidSessionException(e);
         }
     }
 }

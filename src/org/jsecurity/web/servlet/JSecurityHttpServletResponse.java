@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood and the original authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.web.servlet;
 
@@ -49,8 +52,8 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
     //the associated request
     private JSecurityHttpServletRequest request = null;
 
-    public JSecurityHttpServletResponse( HttpServletResponse wrapped, ServletContext context, JSecurityHttpServletRequest request ) {
-        super( wrapped );
+    public JSecurityHttpServletResponse(HttpServletResponse wrapped, ServletContext context, JSecurityHttpServletRequest request) {
+        super(wrapped);
         this.context = context;
         this.request = request;
     }
@@ -59,7 +62,7 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
         return context;
     }
 
-    public void setContext( ServletContext context ) {
+    public void setContext(ServletContext context) {
         this.context = context;
     }
 
@@ -67,7 +70,7 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
         return request;
     }
 
-    public void setRequest( JSecurityHttpServletRequest request ) {
+    public void setRequest(JSecurityHttpServletRequest request) {
         this.request = request;
     }
 
@@ -77,17 +80,17 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param url URL to be encoded
      */
-    public String encodeRedirectURL( String url ) {
-        if ( isEncodeable( toAbsolute( url ) ) ) {
-            return toEncoded( url, request.getSession().getId() );
+    public String encodeRedirectURL(String url) {
+        if (isEncodeable(toAbsolute(url))) {
+            return toEncoded(url, request.getSession().getId());
         } else {
             return url;
         }
     }
 
 
-    public String encodeRedirectUrl( String s ) {
-        return encodeRedirectURL( s );
+    public String encodeRedirectUrl(String s) {
+        return encodeRedirectURL(s);
     }
 
 
@@ -97,21 +100,21 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param url URL to be encoded
      */
-    public String encodeURL( String url ) {
-        String absolute = toAbsolute( url );
-        if ( isEncodeable( absolute ) ) {
+    public String encodeURL(String url) {
+        String absolute = toAbsolute(url);
+        if (isEncodeable(absolute)) {
             // W3c spec clearly said
-            if ( url.equalsIgnoreCase( "" ) ) {
+            if (url.equalsIgnoreCase("")) {
                 url = absolute;
             }
-            return toEncoded( url, request.getSession().getId() );
+            return toEncoded(url, request.getSession().getId());
         } else {
             return url;
         }
     }
 
-    public String encodeUrl( String s ) {
-        return encodeURL( s );
+    public String encodeUrl(String s) {
+        return encodeURL(s);
     }
 
     /**
@@ -127,69 +130,69 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param location Absolute URL to be validated
      */
-    protected boolean isEncodeable( final String location ) {
+    protected boolean isEncodeable(final String location) {
 
-        if ( location == null )
-            return ( false );
+        if (location == null)
+            return (false);
 
         // Is this an intra-document reference?
-        if ( location.startsWith( "#" ) )
-            return ( false );
+        if (location.startsWith("#"))
+            return (false);
 
         // Are we in a valid session that is not using cookies?
         final HttpServletRequest hreq = request;
-        final HttpSession session = hreq.getSession( false );
-        if ( session == null )
-            return ( false );
-        if ( hreq.isRequestedSessionIdFromCookie() )
-            return ( false );
+        final HttpSession session = hreq.getSession(false);
+        if (session == null)
+            return (false);
+        if (hreq.isRequestedSessionIdFromCookie())
+            return (false);
 
-        return doIsEncodeable( hreq, session, location );
+        return doIsEncodeable(hreq, session, location);
     }
 
-    private boolean doIsEncodeable( HttpServletRequest hreq, HttpSession session, String location ) {
+    private boolean doIsEncodeable(HttpServletRequest hreq, HttpSession session, String location) {
         // Is this a valid absolute URL?
         URL url = null;
         try {
-            url = new URL( location );
-        } catch ( MalformedURLException e ) {
-            return ( false );
+            url = new URL(location);
+        } catch (MalformedURLException e) {
+            return (false);
         }
 
         // Does this URL match down to (and including) the context path?
-        if ( !hreq.getScheme().equalsIgnoreCase( url.getProtocol() ) )
-            return ( false );
-        if ( !hreq.getServerName().equalsIgnoreCase( url.getHost() ) )
-            return ( false );
+        if (!hreq.getScheme().equalsIgnoreCase(url.getProtocol()))
+            return (false);
+        if (!hreq.getServerName().equalsIgnoreCase(url.getHost()))
+            return (false);
         int serverPort = hreq.getServerPort();
-        if ( serverPort == -1 ) {
-            if ( "https".equals( hreq.getScheme() ) )
+        if (serverPort == -1) {
+            if ("https".equals(hreq.getScheme()))
                 serverPort = 443;
             else
                 serverPort = 80;
         }
         int urlPort = url.getPort();
-        if ( urlPort == -1 ) {
-            if ( "https".equals( url.getProtocol() ) )
+        if (urlPort == -1) {
+            if ("https".equals(url.getProtocol()))
                 urlPort = 443;
             else
                 urlPort = 80;
         }
-        if ( serverPort != urlPort )
-            return ( false );
+        if (serverPort != urlPort)
+            return (false);
 
         String contextPath = getRequest().getContextPath();
-        if ( contextPath != null ) {
+        if (contextPath != null) {
             String file = url.getFile();
-            if ( ( file == null ) || !file.startsWith( contextPath ) )
-                return ( false );
+            if ((file == null) || !file.startsWith(contextPath))
+                return (false);
             String tok = ";" + DEFAULT_SESSION_ID_PARAMETER_NAME + "=" + session.getId();
-            if ( file.indexOf( tok, contextPath.length() ) >= 0 )
-                return ( false );
+            if (file.indexOf(tok, contextPath.length()) >= 0)
+                return (false);
         }
 
         // This URL belongs to our web application, so it is encodeable
-        return ( true );
+        return (true);
 
     }
 
@@ -203,14 +206,14 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
      * @throws IllegalArgumentException if a MalformedURLException is
      *                                  thrown when converting the relative URL to an absolute one
      */
-    private String toAbsolute( String location ) {
+    private String toAbsolute(String location) {
 
-        if ( location == null )
-            return ( location );
+        if (location == null)
+            return (location);
 
-        boolean leadingSlash = location.startsWith( "/" );
+        boolean leadingSlash = location.startsWith("/");
 
-        if ( leadingSlash || !hasScheme( location ) ) {
+        if (leadingSlash || !hasScheme(location)) {
 
             StringBuffer buf = new StringBuffer();
 
@@ -219,23 +222,23 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
             int port = request.getServerPort();
 
             try {
-                buf.append( scheme ).append( "://" ).append( name );
-                if ( ( scheme.equals( "http" ) && port != 80 )
-                    || ( scheme.equals( "https" ) && port != 443 ) ) {
-                    buf.append( ':' ).append( port );
+                buf.append(scheme).append("://").append(name);
+                if ((scheme.equals("http") && port != 80)
+                        || (scheme.equals("https") && port != 443)) {
+                    buf.append(':').append(port);
                 }
-                if ( !leadingSlash ) {
+                if (!leadingSlash) {
                     String relativePath = request.getRequestURI();
-                    int pos = relativePath.lastIndexOf( '/' );
-                    relativePath = relativePath.substring( 0, pos );
+                    int pos = relativePath.lastIndexOf('/');
+                    relativePath = relativePath.substring(0, pos);
 
-                    String encodedURI = URLEncoder.encode( relativePath, getCharacterEncoding() );
-                    buf.append( encodedURI ).append( '/' );
+                    String encodedURI = URLEncoder.encode(relativePath, getCharacterEncoding());
+                    buf.append(encodedURI).append('/');
                 }
-                buf.append( location );
-            } catch ( IOException e ) {
-                IllegalArgumentException iae = new IllegalArgumentException( location );
-                iae.initCause( e );
+                buf.append(location);
+            } catch (IOException e) {
+                IllegalArgumentException iae = new IllegalArgumentException(location);
+                iae.initCause(e);
                 throw iae;
             }
 
@@ -250,22 +253,22 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
      * Determine if the character is allowed in the scheme of a URI.
      * See RFC 2396, Section 3.1
      */
-    public static boolean isSchemeChar( char c ) {
-        return Character.isLetterOrDigit( c ) ||
-            c == '+' || c == '-' || c == '.';
+    public static boolean isSchemeChar(char c) {
+        return Character.isLetterOrDigit(c) ||
+                c == '+' || c == '-' || c == '.';
     }
 
 
     /**
      * Determine if a URI string has a <code>scheme</code> component.
      */
-    private boolean hasScheme( String uri ) {
+    private boolean hasScheme(String uri) {
         int len = uri.length();
-        for ( int i = 0; i < len; i++ ) {
-            char c = uri.charAt( i );
-            if ( c == ':' ) {
+        for (int i = 0; i < len; i++) {
+            char c = uri.charAt(i);
+            if (c == ':') {
                 return i > 0;
-            } else if ( !isSchemeChar( c ) ) {
+            } else if (!isSchemeChar(c)) {
                 return false;
             }
         }
@@ -279,34 +282,34 @@ public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
      * @param url       URL to be encoded with the session id
      * @param sessionId Session id to be included in the encoded URL
      */
-    protected String toEncoded( String url, String sessionId ) {
+    protected String toEncoded(String url, String sessionId) {
 
-        if ( ( url == null ) || ( sessionId == null ) )
-            return ( url );
+        if ((url == null) || (sessionId == null))
+            return (url);
 
         String path = url;
         String query = "";
         String anchor = "";
-        int question = url.indexOf( '?' );
-        if ( question >= 0 ) {
-            path = url.substring( 0, question );
-            query = url.substring( question );
+        int question = url.indexOf('?');
+        if (question >= 0) {
+            path = url.substring(0, question);
+            query = url.substring(question);
         }
-        int pound = path.indexOf( '#' );
-        if ( pound >= 0 ) {
-            anchor = path.substring( pound );
-            path = path.substring( 0, pound );
+        int pound = path.indexOf('#');
+        if (pound >= 0) {
+            anchor = path.substring(pound);
+            path = path.substring(0, pound);
         }
-        StringBuffer sb = new StringBuffer( path );
-        if ( sb.length() > 0 ) { // jsessionid can't be first.
-            sb.append( ";" );
-            sb.append( DEFAULT_SESSION_ID_PARAMETER_NAME );
-            sb.append( "=" );
-            sb.append( sessionId );
+        StringBuffer sb = new StringBuffer(path);
+        if (sb.length() > 0) { // jsessionid can't be first.
+            sb.append(";");
+            sb.append(DEFAULT_SESSION_ID_PARAMETER_NAME);
+            sb.append("=");
+            sb.append(sessionId);
         }
-        sb.append( anchor );
-        sb.append( query );
-        return ( sb.toString() );
+        sb.append(anchor);
+        sb.append(query);
+        return (sb.toString());
 
     }
 }

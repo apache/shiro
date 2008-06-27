@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.web.tags;
 
@@ -37,8 +40,8 @@ import java.io.IOException;
  * is not authenticated, the tag displays nothing unless a <tt>defaultValue</tt>
  * is specified.</p>
  *
- * @since 0.2
  * @author Jeremy Haile
+ * @since 0.2
  */
 public class PrincipalTag extends SecureTag {
 
@@ -69,7 +72,6 @@ public class PrincipalTag extends SecureTag {
      * The default value that should be displayed if the user is not authenticated, or no principal is found.
      */
     private String defaultValue;
-
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -109,7 +111,6 @@ public class PrincipalTag extends SecureTag {
         this.defaultValue = defaultValue;
     }
 
-
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -119,34 +120,34 @@ public class PrincipalTag extends SecureTag {
     public int onDoStartTag() throws JspException {
         String strValue = null;
 
-        if( getSubject() != null ) {
+        if (getSubject() != null) {
 
             // Get the principal to print out
             Object principal;
-            
-            if( type == null ) {
+
+            if (type == null) {
                 principal = getSubject().getPrincipal();
             } else {
                 principal = getPrincipalFromClassName();
             }
 
             // Get the string value of the principal
-            if( principal != null ) {
-                if( property == null ) {
+            if (principal != null) {
+                if (property == null) {
                     strValue = principal.toString();
                 } else {
-                    strValue = getPrincipalProperty( principal, property );
+                    strValue = getPrincipalProperty(principal, property);
                 }
             }
 
         }
 
         // Print out the principal value if not null
-        if( strValue != null ) {
+        if (strValue != null) {
             try {
-                pageContext.getOut().write( strValue );
+                pageContext.getOut().write(strValue);
             } catch (IOException e) {
-                throw new JspTagException( "Error writing [" + strValue + "] to JSP.", e );
+                throw new JspTagException("Error writing [" + strValue + "] to JSP.", e);
             }
         }
 
@@ -155,14 +156,14 @@ public class PrincipalTag extends SecureTag {
 
     private Object getPrincipalFromClassName() {
         Object principal = null;
-        
+
         try {
             Class cls = Class.forName(type);
-            principal = getSubject().getPrincipals().oneByType( cls );
+            principal = getSubject().getPrincipals().oneByType(cls);
         } catch (ClassNotFoundException e) {
-           if (logger.isErrorEnabled()) {
-               logger.error("Unable to find class for name [" + type + "]");
-           }
+            if (logger.isErrorEnabled()) {
+                logger.error("Unable to find class for name [" + type + "]");
+            }
         }
         return principal;
     }
@@ -172,25 +173,25 @@ public class PrincipalTag extends SecureTag {
         String strValue = null;
 
         try {
-            BeanInfo bi = Introspector.getBeanInfo( principal.getClass() );
+            BeanInfo bi = Introspector.getBeanInfo(principal.getClass());
 
             // Loop through the properties to get the string value of the specified property
             boolean foundProperty = false;
-            for( PropertyDescriptor pd : bi.getPropertyDescriptors() ) {
-                if( pd.getName().equals( property ) ) {
-                    Object value = pd.getReadMethod().invoke( principal, (Object[]) null );
-                    strValue = String.valueOf( value );
+            for (PropertyDescriptor pd : bi.getPropertyDescriptors()) {
+                if (pd.getName().equals(property)) {
+                    Object value = pd.getReadMethod().invoke(principal, (Object[]) null);
+                    strValue = String.valueOf(value);
                     foundProperty = true;
                     break;
                 }
             }
 
-            if( !foundProperty ) {
+            if (!foundProperty) {
                 final String message = "Property [" + property + "] not found in principal of type [" + principal.getClass().getName() + "]";
                 if (logger.isErrorEnabled()) {
                     logger.error(message);
                 }
-                throw new JspTagException( message );
+                throw new JspTagException(message);
             }
 
         } catch (Exception e) {
@@ -198,7 +199,7 @@ public class PrincipalTag extends SecureTag {
             if (logger.isErrorEnabled()) {
                 logger.error(message, e);
             }
-            throw new JspTagException( message, e );
+            throw new JspTagException(message, e);
         }
 
         return strValue;

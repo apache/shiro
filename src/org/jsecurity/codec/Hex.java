@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood and original authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.codec;
 
@@ -19,15 +22,15 @@ package org.jsecurity.codec;
  * Hex encoder and decoder.
  *
  * <p>This class was borrowed from Apache Commons Codec SVN repository (rev. 560660 ) with modifications
- * to enable Hex conversion without a full dependency on Commons Codec.  We didn't want to reinvent the wheel of 
+ * to enable Hex conversion without a full dependency on Commons Codec.  We didn't want to reinvent the wheel of
  * great work they've done, but also didn't want to force every JSecurity user to depend on the commons-codec.jar</p>
  *
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>
  *
- * @since 0.9
  * @author Apache Software Foundation
  * @author Les Hazlewood
+ * @since 0.9
  */
 public class Hex {
 
@@ -35,19 +38,20 @@ public class Hex {
      * Used to build output as Hex
      */
     private static final char[] DIGITS = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-           '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
 
     /**
      * Encodes the specifed byte array to a character array and then returns that character array
      * as a String.
+     *
      * @param bytes the byte array to Hex-encode.
      * @return A String representation of the resultant hex-encoded char array.
      */
-    public static String encodeToString( byte[] bytes ) {
-        char[] encodedChars = encode( bytes );
-        return new String( encodedChars );
+    public static String encodeToString(byte[] bytes) {
+        char[] encodedChars = encode(bytes);
+        return new String(encodedChars);
     }
 
     /**
@@ -62,15 +66,15 @@ public class Hex {
 
         int l = data.length;
 
-           char[] out = new char[l << 1];
+        char[] out = new char[l << 1];
 
-           // two characters form the hex value.
-           for (int i = 0, j = 0; i < l; i++) {
-               out[j++] = DIGITS[(0xF0 & data[i]) >>> 4 ];
-               out[j++] = DIGITS[ 0x0F & data[i] ];
-           }
+        // two characters form the hex value.
+        for (int i = 0, j = 0; i < l; i++) {
+            out[j++] = DIGITS[(0xF0 & data[i]) >>> 4];
+            out[j++] = DIGITS[0x0F & data[i]];
+        }
 
-           return out;
+        return out;
     }
 
     /**
@@ -84,23 +88,24 @@ public class Hex {
      * @return A byte array containing binary data decoded from
      *         the supplied byte array (representing characters).
      * @throws IllegalArgumentException Thrown if an odd number of characters is supplied
-     *                   to this function
+     *                                  to this function
      * @see #decode(char[])
      */
-	public static byte[] decode(byte[] array) throws IllegalArgumentException {
+    public static byte[] decode(byte[] array) throws IllegalArgumentException {
         String s = CodecSupport.toString(array);
         return decode(s);
-	}
+    }
 
     /**
      * Converts the specified Hex-encoded String into a raw byte array.  This is a
      * convenience method that merely delegates to {@link #decode(char[])} using the
      * argument's hex.toCharArray() value.
+     *
      * @param hex a Hex-encoded String.
      * @return A byte array containing binary data decoded from the supplied String's char array.
      */
-    public static byte[] decode( String hex ) {
-        return decode( hex.toCharArray() );
+    public static byte[] decode(String hex) {
+        return decode(hex.toCharArray());
     }
 
     /**
@@ -114,7 +119,7 @@ public class Hex {
      * @return A byte array containing binary data decoded from
      *         the supplied char array.
      * @throws IllegalArgumentException if an odd number or illegal of characters
-     *         is supplied
+     *                                  is supplied
      */
     public static byte[] decode(char[] data) throws IllegalArgumentException {
 
@@ -141,7 +146,7 @@ public class Hex {
     /**
      * Converts a hexadecimal character to an integer.
      *
-     * @param ch A character to convert to an integer digit
+     * @param ch    A character to convert to an integer digit
      * @param index The index of the character in the source
      * @return An integer
      * @throws IllegalArgumentException if ch is an illegal hex character

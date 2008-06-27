@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session;
 
@@ -25,8 +28,8 @@ import java.net.InetAddress;
  * A <tt>SessionFactory</tt> is responsible for starting new {@link Session Session}s and
  * acquiring existing {@link Session Session}s.
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public interface SessionFactory {
 
@@ -62,16 +65,14 @@ public interface SessionFactory {
      * proxy servers.
      *
      * @param hostAddress the originating host InetAddress of the external party
-     * (user, 3rd party product, etc) that is attempting to interact with the system.
-     *
+     *                    (user, 3rd party product, etc) that is attempting to interact with the system.
      * @return a handle to the newly created session.
-     *
      * @throws HostUnauthorizedException if the system access control policy restricts access based
-     * on client location/IP and the specified hostAddress hasn't been enabled.
-     * @throws IllegalArgumentException if the system is configured to require a valid,
-     * non-<tt>null</tt> argument and the specified <tt>hostAddress</tt> is null.
+     *                                   on client location/IP and the specified hostAddress hasn't been enabled.
+     * @throws IllegalArgumentException  if the system is configured to require a valid,
+     *                                   non-<tt>null</tt> argument and the specified <tt>hostAddress</tt> is null.
      */
-    Session start( InetAddress hostAddress ) throws HostUnauthorizedException, IllegalArgumentException;
+    Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException;
 
     /**
      * Acquires a handle to the session identified by the specified <tt>sessionId</tt>.
@@ -92,16 +93,15 @@ public interface SessionFactory {
      * @param sessionId the id of the session to acquire.
      * @return a handle to the session identified by <tt>sessionId</tt>
      * @throws InvalidSessionException if the session identified by <tt>sessionId</tt> has
-     * been stopped, expired, or doesn't exist.
-     * @throws AuthorizationException if the executor of this method is not allowed to acquire
-     * (i.e. join) the session identified by <tt>sessionId</tt>.  The reason for the exception
-     * is implementation specific and could be for any number of reasons.  A common reason in many
-     * systems would be if one host tried to acquire/join a session that originated on an entirely
-     * different host (although it is not a JSecurity requirement this scenario is disallowed -
-     * its just an example that <em>may</em> throw an Exception in many systems).
-     *
+     *                                 been stopped, expired, or doesn't exist.
+     * @throws AuthorizationException  if the executor of this method is not allowed to acquire
+     *                                 (i.e. join) the session identified by <tt>sessionId</tt>.  The reason for the exception
+     *                                 is implementation specific and could be for any number of reasons.  A common reason in many
+     *                                 systems would be if one host tried to acquire/join a session that originated on an entirely
+     *                                 different host (although it is not a JSecurity requirement this scenario is disallowed -
+     *                                 its just an example that <em>may</em> throw an Exception in many systems).
      * @see HostUnauthorizedException
      */
-    Session getSession( Serializable sessionId ) throws InvalidSessionException, AuthorizationException;
+    Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException;
 
 }

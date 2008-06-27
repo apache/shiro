@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authz;
 
@@ -40,42 +43,42 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     public SimpleAuthorizingAccount() {
     }
 
-    public SimpleAuthorizingAccount( Object principal, Object credentials, String realmName ) {
-        super( principal,credentials, realmName);
+    public SimpleAuthorizingAccount(Object principal, Object credentials, String realmName) {
+        super(principal, credentials, realmName);
     }
 
-    public SimpleAuthorizingAccount( Collection principals, Object credentials, String realmName ) {
-        super( principals, credentials, realmName );
+    public SimpleAuthorizingAccount(Collection principals, Object credentials, String realmName) {
+        super(principals, credentials, realmName);
     }
 
     public SimpleAuthorizingAccount(PrincipalCollection principals, Object credentials) {
         super(principals, credentials);
     }
 
-    public SimpleAuthorizingAccount( Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions ) {
-        this(principal,credentials,realmName);
+    public SimpleAuthorizingAccount(Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+        this(principal, credentials, realmName);
         addRoles(roleNames);
         //only create a private role if there are permissions
-        if ( permissions != null && !permissions.isEmpty() ) {
-            addPrivateRole( getPrincipals(), permissions );
+        if (permissions != null && !permissions.isEmpty()) {
+            addPrivateRole(getPrincipals(), permissions);
         }
     }
 
     public SimpleAuthorizingAccount(Collection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
-        this(principals,credentials,realmName);
+        this(principals, credentials, realmName);
         addRoles(roleNames);
         //only create a private role if there are permissions:
-        if ( permissions != null && !permissions.isEmpty() ) {
-            addPrivateRole(getPrincipals(),permissions);
+        if (permissions != null && !permissions.isEmpty()) {
+            addPrivateRole(getPrincipals(), permissions);
         }
     }
 
     public SimpleAuthorizingAccount(PrincipalCollection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
-        this(principals,credentials,realmName);
+        this(principals, credentials, realmName);
         addRoles(roleNames);
         //only create a private role if there are permissions:
-        if ( permissions != null && !permissions.isEmpty() ) {
-            addPrivateRole(getPrincipals(),permissions);
+        if (permissions != null && !permissions.isEmpty()) {
+            addPrivateRole(getPrincipals(), permissions);
         }
     }
 
@@ -85,22 +88,22 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     @SuppressWarnings({"unchecked"})
     public void merge(Account otherAccount) {
         super.merge(otherAccount);
-        if ( otherAccount instanceof SimpleAuthorizingAccount ) {
-            SimpleAuthorizingAccount other = (SimpleAuthorizingAccount)otherAccount;
+        if (otherAccount instanceof SimpleAuthorizingAccount) {
+            SimpleAuthorizingAccount other = (SimpleAuthorizingAccount) otherAccount;
             Set<SimpleRole> otherRoles = other.getRoles();
-            if ( otherRoles != null && !otherRoles.isEmpty() ) {
-                for( SimpleRole otherRole : otherRoles ) {
-                    merge( otherRole );
+            if (otherRoles != null && !otherRoles.isEmpty()) {
+                for (SimpleRole otherRole : otherRoles) {
+                    merge(otherRole);
                 }
             }
         }
     }
 
-    protected void merge( SimpleRole role ) {
-        SimpleRole existing = getRole( role.getName() );
-        if ( existing != null ) {
+    protected void merge(SimpleRole role) {
+        SimpleRole existing = getRole(role.getName());
+        if (existing != null) {
             Set<Permission> rolePerms = role.getPermissions();
-            if ( rolePerms != null && !rolePerms.isEmpty() ) {
+            if (rolePerms != null && !rolePerms.isEmpty()) {
                 existing.addAll(rolePerms);
             }
         } else {
@@ -109,20 +112,20 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     }
 
     protected void addPrivateRole(PrincipalCollection principals, Collection<Permission> perms) {
-        SimpleRole privateRole = createPrivateRole( principals );
-        if ( perms != null && !perms.isEmpty() ) {
+        SimpleRole privateRole = createPrivateRole(principals);
+        if (perms != null && !perms.isEmpty()) {
             privateRole.addAll(perms);
         }
         add(privateRole);
     }
 
-    protected String getPrivateRoleName( PrincipalCollection principals ) {
+    protected String getPrivateRoleName(PrincipalCollection principals) {
         return getClass().getName() + "_PRIVATE_ROLE_" + PrincipalCollection.class.getName();
     }
 
-    protected SimpleRole createPrivateRole( PrincipalCollection principals ) {
+    protected SimpleRole createPrivateRole(PrincipalCollection principals) {
         String privateRoleName = getPrivateRoleName(principals);
-        return new SimpleRole(privateRoleName);    
+        return new SimpleRole(privateRoleName);
     }
 
     public Set<SimpleRole> getRoles() {
@@ -133,11 +136,11 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         this.roles = roles;
     }
 
-    public SimpleRole getRole( String name ) {
+    public SimpleRole getRole(String name) {
         Collection<SimpleRole> roles = getRoles();
-        if ( roles != null && !roles.isEmpty() ) {
-            for( SimpleRole role : roles ) {
-                if ( role.getName().equals(name) ) {
+        if (roles != null && !roles.isEmpty()) {
+            for (SimpleRole role : roles) {
+                if (role.getName().equals(name)) {
                     return role;
                 }
             }
@@ -161,9 +164,9 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         return rolenames;
     }
 
-    public void addRole( String roleName ) {
+    public void addRole(String roleName) {
         SimpleRole existing = getRole(roleName);
-        if ( existing == null ) {
+        if (existing == null) {
             SimpleRole role = new SimpleRole(roleName);
             add(role);
         }
@@ -178,10 +181,10 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         roles.add(role);
     }
 
-    public void addRoles( Set<String> roleNames ) {
-        if ( roleNames != null && !roleNames.isEmpty() ) {
-            for( String name : roleNames ) {
-                addRole( name );
+    public void addRoles(Set<String> roleNames) {
+        if (roleNames != null && !roleNames.isEmpty()) {
+            for (String name : roleNames) {
+                addRole(name);
             }
         }
     }

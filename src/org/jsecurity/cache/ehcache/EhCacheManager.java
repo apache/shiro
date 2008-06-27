@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.cache.ehcache;
 
@@ -36,9 +39,9 @@ import java.io.InputStream;
  *
  * <p>See http://ehcache.sf.net for documentation on EhCache</p>
  *
- * @since 0.2
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @since 0.2
  */
 public class EhCacheManager implements CacheManager, Initializable, Destroyable {
 
@@ -49,7 +52,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Commons-logging logger
      */
-    protected final transient Log log = LogFactory.getLog( getClass() );
+    protected final transient Log log = LogFactory.getLog(getClass());
 
     /**
      * The EhCache cache manager used by this implementation to create caches.
@@ -63,6 +66,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
 
     /**
      * Returns the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     *
      * @return the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
      */
     public net.sf.ehcache.CacheManager getCacheManager() {
@@ -71,9 +75,10 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
 
     /**
      * Sets the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     *
      * @param manager the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
      */
-    public void setCacheManager( net.sf.ehcache.CacheManager manager ) {
+    public void setCacheManager(net.sf.ehcache.CacheManager manager) {
         this.manager = manager;
     }
 
@@ -86,7 +91,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * lazily create a CacheManager if one is not already provided.</p>
      *
      * @return the resource location of the config file used to initialize the wrapped
-     * EhCache CacheManager instance.
+     *         EhCache CacheManager instance.
      */
     public String getCacheManagerConfigFile() {
         return this.cacheManagerConfigFile;
@@ -101,9 +106,9 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * lazily create a CacheManager if one is not already provided.</p>
      *
      * @param classpathLocation resource location of the config file used to create the wrapped
-     * EhCache CacheManager instance.
+     *                          EhCache CacheManager instance.
      */
-    public void setCacheManagerConfigFile( String classpathLocation ) {
+    public void setCacheManagerConfigFile(String classpathLocation) {
         this.cacheManagerConfigFile = classpathLocation;
     }
 
@@ -121,61 +126,62 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      *
      * @param name the name of the cache to load/create.
      */
-    public final Cache getCache( String name ) throws CacheException {
+    public final Cache getCache(String name) throws CacheException {
 
-        if ( log.isTraceEnabled() ) {
-            log.trace( "Loading a new EhCache cache named [" + name + "]" );
+        if (log.isTraceEnabled()) {
+            log.trace("Loading a new EhCache cache named [" + name + "]");
         }
 
         try {
-            net.sf.ehcache.Cache cache = getCacheManager().getCache( name );
-            if ( cache == null ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "Could not find a specific ehcache configuration for cache named [" + name + "]; using defaults." );
+            net.sf.ehcache.Cache cache = getCacheManager().getCache(name);
+            if (cache == null) {
+                if (log.isInfoEnabled()) {
+                    log.info("Could not find a specific ehcache configuration for cache named [" + name + "]; using defaults.");
                 }
-                if ( name.equals( DEFAULT_ACTIVE_SESSIONS_CACHE_NAME ) ) {
-                    if ( log.isInfoEnabled() ) {
-                        log.info( "Creating " + DEFAULT_ACTIVE_SESSIONS_CACHE_NAME + " cache with default JSecurity " +
-                            "session cache settings." );
+                if (name.equals(DEFAULT_ACTIVE_SESSIONS_CACHE_NAME)) {
+                    if (log.isInfoEnabled()) {
+                        log.info("Creating " + DEFAULT_ACTIVE_SESSIONS_CACHE_NAME + " cache with default JSecurity " +
+                                "session cache settings.");
                     }
                     cache = buildDefaultActiveSessionsCache();
-                    manager.addCache( cache );
+                    manager.addCache(cache);
                 } else {
-                    manager.addCache( name );
+                    manager.addCache(name);
                 }
 
-                cache = manager.getCache( name );
-                
-                if ( log.isInfoEnabled() ) {
-                    log.info( "Started EHCache named [" + name + "]" );
+                cache = manager.getCache(name);
+
+                if (log.isInfoEnabled()) {
+                    log.info("Started EHCache named [" + name + "]");
                 }
             } else {
-                if ( log.isInfoEnabled() ) {
-                    log.info("Using preconfigured EHCache named [" + cache.getName() + "]" );
+                if (log.isInfoEnabled()) {
+                    log.info("Using preconfigured EHCache named [" + cache.getName() + "]");
                 }
             }
-            return new EhCache( cache );
-        } catch ( net.sf.ehcache.CacheException e ) {
-            throw new CacheException( e );
+            return new EhCache(cache);
+        } catch (net.sf.ehcache.CacheException e) {
+            throw new CacheException(e);
         }
     }
 
     /**
      * Builds the default cache instance to use for JSecurity's Session Cache when enterprise Sessions are
      * enabled.
+     *
      * @return the default cache instance to use for JSecurity's Session Cache when enterprise Sessions are
-     * enabled.
+     *         enabled.
      * @throws CacheException if there is a problem constructing the Cache instance.
      */
     private net.sf.ehcache.Cache buildDefaultActiveSessionsCache() throws CacheException {
-        return new net.sf.ehcache.Cache( DEFAULT_ACTIVE_SESSIONS_CACHE_NAME,
-            DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM,
-            true,
-            true,
-            0,
-            0,
-            true,
-            DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS );
+        return new net.sf.ehcache.Cache(DEFAULT_ACTIVE_SESSIONS_CACHE_NAME,
+                DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM,
+                true,
+                true,
+                0,
+                0,
+                true,
+                DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS);
     }
 
     /**
@@ -200,28 +206,28 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     public final void init() throws CacheException {
         try {
             net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
-            if ( cacheMgr == null ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "cacheManager property not set.  Constructing CacheManager instance... " );
+            if (cacheMgr == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("cacheManager property not set.  Constructing CacheManager instance... ");
                 }
                 //using the CacheManager constructor, the resulting instance is _not_ a VM singleton
                 //(as would be the case by calling CacheManager.getInstance().  We do not use the getInstance here
                 //because we need to know if we need to destroy the CacheManager instance - using the static call,
                 //we don't know which component is responsible for shutting it down.  By using a single EhCacheManager,
                 //it will always know to shut down the instance if it was responsible for creating it.
-                cacheMgr = new net.sf.ehcache.CacheManager( getCacheManagerConfigFileInputStream() );
-                if ( log.isTraceEnabled()) {
-                    log.trace("instantiated Ehcache CacheManager instance." );
+                cacheMgr = new net.sf.ehcache.CacheManager(getCacheManagerConfigFileInputStream());
+                if (log.isTraceEnabled()) {
+                    log.trace("instantiated Ehcache CacheManager instance.");
                 }
                 cacheManagerImplicitlyCreated = true;
-                setCacheManager( cacheMgr );
-                if ( log.isDebugEnabled() ) {
+                setCacheManager(cacheMgr);
+                if (log.isDebugEnabled()) {
                     log.debug("implicit cacheManager created successfully.");
                 }
             }
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             log.error(e);
-            throw new CacheException( e );
+            throw new CacheException(e);
         }
     }
 
@@ -230,17 +236,17 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      *
      * <p>If another component injected
      * a non-null CacheManager into this instace before calling {@link #init() init}, this instance expects that same
-     * component to also destroy the CacheManager instance, and it will not attempt to do so. 
+     * component to also destroy the CacheManager instance, and it will not attempt to do so.
      */
     public void destroy() {
-        if ( cacheManagerImplicitlyCreated ) {
+        if (cacheManagerImplicitlyCreated) {
             try {
                 net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
                 cacheMgr.shutdown();
-            } catch ( Exception e ) {
-                if ( log.isWarnEnabled() ) {
-                    log.warn( "Unable to cleanly shutdown implicitly created CacheManager instance.  " +
-                        "Ignoring (shutting down)..." );
+            } catch (Exception e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Unable to cleanly shutdown implicitly created CacheManager instance.  " +
+                            "Ignoring (shutting down)...");
                 }
             }
             cacheManagerImplicitlyCreated = false;

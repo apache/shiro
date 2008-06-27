@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.web.servlet;
 
@@ -34,24 +37,24 @@ public class FilterChainWrapper implements FilterChain {
     private List<Filter> filters;
     private int index = 0;
 
-    public FilterChainWrapper( FilterChain orig, List<Filter> filters ) {
+    public FilterChainWrapper(FilterChain orig, List<Filter> filters) {
         this.orig = orig;
         this.filters = filters;
         this.index = 0;
     }
 
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-        if ( this.filters == null || this.filters.size() == this.index ) {
+        if (this.filters == null || this.filters.size() == this.index) {
             //we've reached the end of the wrapped chain, so invoke the original one:
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Invoking original filter chain." );
+            if (log.isTraceEnabled()) {
+                log.trace("Invoking original filter chain.");
             }
-            this.orig.doFilter( request, response );
+            this.orig.doFilter(request, response);
         } else {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Invoking wrapped filter at index [" + this.index + "]" );
+            if (log.isTraceEnabled()) {
+                log.trace("Invoking wrapped filter at index [" + this.index + "]");
             }
-            this.filters.get(this.index++).doFilter(request,response,this);
+            this.filters.get(this.index++).doFilter(request, response, this);
         }
     }
 }

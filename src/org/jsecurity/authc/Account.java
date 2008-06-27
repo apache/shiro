@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood, Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.authc;
 
@@ -30,11 +33,10 @@ import org.jsecurity.subject.PrincipalCollection;
  * out for any reason.  If you're using JSecurity's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
  *
- * @see SimpleAccount
- * @see org.jsecurity.authz.SimpleAuthorizingAccount
- *
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @see SimpleAccount
+ * @see org.jsecurity.authz.SimpleAuthorizingAccount
  * @since 0.9
  */
 public interface Account {
@@ -47,9 +49,8 @@ public interface Account {
      *
      * //TODO - update JavaDoc for multi-realm scenario.
      *
-     *
      * @return the account's primary principal, such as a user id or username, or in a multi-realm configuration, maybe
-     * more than one principal encapsulated by an implementation-specific instance.
+     *         more than one principal encapsulated by an implementation-specific instance.
      */
     PrincipalCollection getPrincipals();
 

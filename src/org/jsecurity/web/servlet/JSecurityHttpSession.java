@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.web.servlet;
 
@@ -28,8 +31,8 @@ import java.util.*;
  * Servlet Container's session mechanism.  This is preferred in heterogeneous client environments where the Session
  * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc).
  *
- * @since 0.2
  * @author Les Hazlewood
+ * @since 0.2
  */
 @SuppressWarnings({"deprecated", "deprecation"})
 public class JSecurityHttpSession implements HttpSession {
@@ -47,7 +50,7 @@ public class JSecurityHttpSession implements HttpSession {
     };
 
     private static final HttpSessionContext HTTP_SESSION_CONTEXT = new HttpSessionContext() {
-        public HttpSession getSession( String s ) {
+        public HttpSession getSession(String s) {
             return null;
         }
 
@@ -60,11 +63,11 @@ public class JSecurityHttpSession implements HttpSession {
     protected HttpServletRequest currentRequest = null;
     protected Session session = null; //'real' JSecurity Session
 
-    public JSecurityHttpSession( Session session, HttpServletRequest currentRequest, ServletContext servletContext ) {
-        if ( session instanceof WebSession) {
+    public JSecurityHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
+        if (session instanceof WebSession) {
             String msg = "Session constructor argument cannot be an instance of WebSession.  This is enforced to " +
-                "prevent circular dependencies and infinite loops.";
-            throw new IllegalArgumentException( msg );
+                    "prevent circular dependencies and infinite loops.";
+            throw new IllegalArgumentException(msg);
         }
         this.session = session;
         this.currentRequest = currentRequest;
@@ -78,8 +81,8 @@ public class JSecurityHttpSession implements HttpSession {
     public long getCreationTime() {
         try {
             return getSession().getStartTimestamp().getTime();
-        } catch ( Exception e ) {
-            throw new IllegalStateException( e );
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -95,19 +98,19 @@ public class JSecurityHttpSession implements HttpSession {
         return this.servletContext;
     }
 
-    public void setMaxInactiveInterval( int i ) {
+    public void setMaxInactiveInterval(int i) {
         try {
-            getSession().setTimeout( i * 1000 );
-        } catch ( InvalidSessionException e ) {
-            throw new IllegalStateException( e );
+            getSession().setTimeout(i * 1000);
+        } catch (InvalidSessionException e) {
+            throw new IllegalStateException(e);
         }
     }
 
     public int getMaxInactiveInterval() {
         try {
-            return ( new Long( getSession().getTimeout() / 1000 ) ).intValue();
-        } catch ( InvalidSessionException e ) {
-            throw new IllegalStateException( e );
+            return (new Long(getSession().getTimeout() / 1000)).intValue();
+        } catch (InvalidSessionException e) {
+            throw new IllegalStateException(e);
         }
     }
 
@@ -115,16 +118,16 @@ public class JSecurityHttpSession implements HttpSession {
         return HTTP_SESSION_CONTEXT;
     }
 
-    public Object getAttribute( String s ) {
+    public Object getAttribute(String s) {
         try {
-            return getSession().getAttribute( s );
-        } catch ( InvalidSessionException e ) {
-            throw new IllegalStateException( e );
+            return getSession().getAttribute(s);
+        } catch (InvalidSessionException e) {
+            throw new IllegalStateException(e);
         }
     }
 
-    public Object getValue( String s ) {
-        return getAttribute( s );
+    public Object getValue(String s) {
+        return getAttribute(s);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -132,14 +135,14 @@ public class JSecurityHttpSession implements HttpSession {
         Collection<Object> keySet = null;
         try {
             keySet = getSession().getAttributeKeys();
-        } catch ( InvalidSessionException e ) {
-            throw new IllegalStateException( e );
+        } catch (InvalidSessionException e) {
+            throw new IllegalStateException(e);
         }
         Set<String> keyNames = null;
-        if ( keySet != null && !keySet.isEmpty() ) {
-            keyNames = new HashSet<String>( keySet.size() );
-            for ( Object o : keySet ) {
-                keyNames.add( o.toString() );
+        if (keySet != null && !keySet.isEmpty()) {
+            keyNames = new HashSet<String>(keySet.size());
+            for (Object o : keySet) {
+                keyNames.add(o.toString());
             }
         } else {
             keyNames = Collections.EMPTY_SET;
@@ -164,65 +167,65 @@ public class JSecurityHttpSession implements HttpSession {
     public String[] getValueNames() {
         Set<String> keyNames = getKeyNames();
         String[] array = new String[keyNames.size()];
-        if ( keyNames.size() > 0 ) {
-            array = keyNames.toArray( array );
+        if (keyNames.size() > 0) {
+            array = keyNames.toArray(array);
         }
         return array;
     }
 
-    protected void beforeBound( String s, Object o ) {
-        if ( o instanceof HttpSessionBindingListener ) {
-            HttpSessionBindingListener listener = (HttpSessionBindingListener)o;
-            HttpSessionBindingEvent event = new HttpSessionBindingEvent( this, s, o );
-            listener.valueBound( event );
+    protected void beforeBound(String s, Object o) {
+        if (o instanceof HttpSessionBindingListener) {
+            HttpSessionBindingListener listener = (HttpSessionBindingListener) o;
+            HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, s, o);
+            listener.valueBound(event);
         }
     }
 
-    protected void afterUnbound( String s, Object o ) {
-        if ( o instanceof HttpSessionBindingListener ) {
-            HttpSessionBindingListener listener = (HttpSessionBindingListener)o;
-            HttpSessionBindingEvent event = new HttpSessionBindingEvent( this, s, o );
-            listener.valueUnbound( event );
+    protected void afterUnbound(String s, Object o) {
+        if (o instanceof HttpSessionBindingListener) {
+            HttpSessionBindingListener listener = (HttpSessionBindingListener) o;
+            HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, s, o);
+            listener.valueUnbound(event);
         }
     }
 
-    public void setAttribute( String s, Object o ) {
-        beforeBound( s, o );
+    public void setAttribute(String s, Object o) {
+        beforeBound(s, o);
         try {
-            getSession().setAttribute( s, o );
-        } catch ( InvalidSessionException e ) {
-            afterUnbound( s, o );
-            throw new IllegalStateException( e );
+            getSession().setAttribute(s, o);
+        } catch (InvalidSessionException e) {
+            afterUnbound(s, o);
+            throw new IllegalStateException(e);
         }
     }
 
-    public void putValue( String s, Object o ) {
-        setAttribute( s, o );
+    public void putValue(String s, Object o) {
+        setAttribute(s, o);
     }
 
-    public void removeAttribute( String s ) {
+    public void removeAttribute(String s) {
         try {
-            Object attribute = getSession().removeAttribute( s );
-            afterUnbound( s, attribute );
-        } catch ( InvalidSessionException e ) {
-            throw new IllegalStateException( e );
+            Object attribute = getSession().removeAttribute(s);
+            afterUnbound(s, attribute);
+        } catch (InvalidSessionException e) {
+            throw new IllegalStateException(e);
         }
     }
 
-    public void removeValue( String s ) {
-        removeAttribute( s );
+    public void removeValue(String s) {
+        removeAttribute(s);
     }
 
     public void invalidate() {
         try {
             getSession().stop();
-        } catch ( InvalidSessionException e ) {
-            throw new IllegalStateException( e );
+        } catch (InvalidSessionException e) {
+            throw new IllegalStateException(e);
         }
     }
 
     public boolean isNew() {
-        Boolean value = (Boolean)currentRequest.getAttribute( JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW );
-        return value != null && value.equals( Boolean.TRUE );
+        Boolean value = (Boolean) currentRequest.getAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_IS_NEW);
+        return value != null && value.equals(Boolean.TRUE);
     }
 }

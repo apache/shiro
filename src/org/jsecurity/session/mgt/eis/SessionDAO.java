@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.session.mgt.eis;
 
@@ -25,8 +28,8 @@ import java.util.Collection;
  * Data Access Object design pattern specification to enable {@link Session} access to an
  * EIS (Enterprise Information System).
  *
- * @since 0.1
  * @author Les Hazlewood
+ * @since 0.1
  */
 public interface SessionDAO {
 
@@ -39,7 +42,7 @@ public interface SessionDAO {
      * always be true:
      * <br/><br/><code>
      * <pre>Serializable id = create( session );
-id.equals( session.getId() ) == true</pre></code>
+     * id.equals( session.getId() ) == true</pre></code>
      *
      * <p>Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.
@@ -47,19 +50,19 @@ id.equals( session.getId() ) == true</pre></code>
      * @param session the {@link Session} object to create in the EIS.
      * @return the EIS id (e.g. primary key) of the created <tt>Session</tt> object.
      */
-    Serializable create( Session session );
+    Serializable create(Session session);
 
     /**
      * Retrieves the session from the EIS uniquely identified by the specified
      * <tt>sessionId</tt>.
      *
      * @param sessionId the system-wide unique identifier of the Session object to retrieve from
-     * the EIS.
+     *                  the EIS.
      * @return the persisted session in the EIS identified by <tt>sessionId</tt>.
      * @throws UnknownSessionException if there is no EIS record for any session with the
-     * specified <tt>sessionId</tt>
+     *                                 specified <tt>sessionId</tt>
      */
-    Session readSession( Serializable sessionId ) throws UnknownSessionException;
+    Session readSession(Serializable sessionId) throws UnknownSessionException;
 
     /**
      * Updates (persists) data from a previously created Session instance in the EIS identified by
@@ -72,9 +75,9 @@ id.equals( session.getId() ) == true</pre></code>
      *
      * @param session the Session to update
      * @throws UnknownSessionException if no existing EIS session record exists with the
-     * identifier of {@link Session#getId() session.getSessionId()}
+     *                                 identifier of {@link Session#getId() session.getSessionId()}
      */
-    void update( Session session ) throws UnknownSessionException;
+    void update(Session session) throws UnknownSessionException;
 
     /**
      * Deletes the associated EIS record of the specified <tt>session</tt>.  If there never
@@ -83,7 +86,7 @@ id.equals( session.getId() ) == true</pre></code>
      *
      * @param session the session to delete.
      */
-    void delete( Session session );
+    void delete(Session session);
 
     /**
      * Returns all sessions in the EIS that are considered active, meaning all sessions that
@@ -93,7 +96,7 @@ id.equals( session.getId() ) == true</pre></code>
      * or <tt>null</tt>.
      *
      * @return a Collection of <tt>Session</tt>s that are considered active, or an
-     * empty collection or <tt>null</tt> if there are no active sessions.
+     *         empty collection or <tt>null</tt> if there are no active sessions.
      */
     Collection<Session> getActiveSessions();
 }

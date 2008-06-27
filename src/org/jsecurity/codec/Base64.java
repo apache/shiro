@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood and original authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.codec;
 
@@ -30,9 +33,9 @@ package org.jsecurity.codec;
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>
  *
- * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @author Apache Software Foundation
  * @author Les Hazlewood
+ * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 0.9
  */
 public class Base64 {
@@ -202,12 +205,12 @@ public class Base64 {
 
         for (int i = 0; i < data.length; i++) {
             switch (data[i]) {
-                case (byte) ' ' :
-                case (byte) '\n' :
-                case (byte) '\r' :
-                case (byte) '\t' :
+                case (byte) ' ':
+                case (byte) '\n':
+                case (byte) '\r':
+                case (byte) '\t':
                     break;
-                default :
+                default:
                     groomedData[bytesCopied++] = data[i];
             }
         }
@@ -226,9 +229,9 @@ public class Base64 {
      * @param bytes the byte array to Base64 encode.
      * @return a UTF-8 encoded String of the resulting Base64 encoded byte array.
      */
-    public static String encodeToString( byte[] bytes ) {
-        byte[] encoded = encode( bytes );
-        return CodecSupport.toString( encoded );
+    public static String encodeToString(byte[] bytes) {
+        byte[] encoded = encode(bytes);
+        return CodecSupport.toString(encoded);
     }
 
     /**
@@ -255,7 +258,7 @@ public class Base64 {
      * Encodes binary data using the base64 algorithm, optionally chunking the output into 76 character blocks.
      *
      * @param binaryData Array containing binary data to encodeToChars.
-     * @param isChunked if <code>true</code> this encoder will chunk the base64 output into 76 character blocks
+     * @param isChunked  if <code>true</code> this encoder will chunk the base64 output into 76 character blocks
      * @return Base64-encoded data.
      * @throws IllegalArgumentException Thrown when the input array needs an output array bigger than {@link Integer#MAX_VALUE}
      */
@@ -380,32 +383,35 @@ public class Base64 {
 
     /**
      * Converts the specified UTF-8 Base64 encoded String and decodes it to a resultant UTF-8 encoded string.
+     *
      * @param base64Encoded a UTF-8 Base64 encoded String
      * @return the decoded String, UTF-8 encoded.
      */
-    public static String decodeToString( String base64Encoded ) {
-        byte[] encodedBytes = CodecSupport.toBytes( base64Encoded );
-        return decodeToString( encodedBytes );
+    public static String decodeToString(String base64Encoded) {
+        byte[] encodedBytes = CodecSupport.toBytes(base64Encoded);
+        return decodeToString(encodedBytes);
     }
 
     /**
      * Decodes the specified Base64 encoded byte array and returns the decoded result as a UTF-8 encoded.
+     *
      * @param base64Encoded a Base64 encoded byte array
      * @return the decoded String, UTF-8 encoded.
      */
-    public static String decodeToString( byte[] base64Encoded ) {
-        byte[] decoded = decode( base64Encoded );
-        return CodecSupport.toString( decoded );
+    public static String decodeToString(byte[] base64Encoded) {
+        byte[] decoded = decode(base64Encoded);
+        return CodecSupport.toString(decoded);
     }
 
     /**
      * Converts the specified UTF-8 Base64 encoded String and decodes it to a raw Base64 decoded byte array.
+     *
      * @param base64Encoded a UTF-8 Base64 encoded String
      * @return the raw Base64 decoded byte array.
      */
-    public static byte[] decode( String base64Encoded ) {
-        byte[] bytes = CodecSupport.toBytes( base64Encoded );
-        return decode( bytes );
+    public static byte[] decode(String base64Encoded) {
+        byte[] bytes = CodecSupport.toBytes(base64Encoded);
+        return decode(bytes);
     }
 
     /**

@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Jeremy Haile
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.realm.jdbc;
 
@@ -51,8 +54,8 @@ import java.util.Set;
  * This realm supports caching by extending from {@link org.jsecurity.realm.AuthorizingRealm}.
  * </p>
  *
- * @since 0.2
  * @author Jeremy Haile
+ * @since 0.2
  */
 public class JdbcRealm extends AuthorizingRealm {
 
@@ -101,7 +104,7 @@ public class JdbcRealm extends AuthorizingRealm {
      *
      * @param dataSource the SQL data source.
      */
-    public void setDataSource( DataSource dataSource ) {
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -115,7 +118,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * @param authenticationQuery the query to use for authentication.
      * @see #DEFAULT_AUTHENTICATION_QUERY
      */
-    public void setAuthenticationQuery( String authenticationQuery ) {
+    public void setAuthenticationQuery(String authenticationQuery) {
         this.authenticationQuery = authenticationQuery;
     }
 
@@ -129,7 +132,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * @param userRolesQuery the query to use for retrieving a user's roles.
      * @see #DEFAULT_USER_ROLES_QUERY
      */
-    public void setUserRolesQuery( String userRolesQuery ) {
+    public void setUserRolesQuery(String userRolesQuery) {
         this.userRolesQuery = userRolesQuery;
     }
 
@@ -149,7 +152,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * @see #DEFAULT_PERMISSIONS_QUERY
      * @see #setPermissionsLookupEnabled(boolean)
      */
-    public void setPermissionsQuery( String permissionsQuery ) {
+    public void setPermissionsQuery(String permissionsQuery) {
         this.permissionsQuery = permissionsQuery;
     }
 
@@ -160,7 +163,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * @param permissionsLookupEnabled true if permissions should be looked up during authorization, or false if only
      *                                 roles should be looked up.
      */
-    public void setPermissionsLookupEnabled( boolean permissionsLookupEnabled ) {
+    public void setPermissionsLookupEnabled(boolean permissionsLookupEnabled) {
         this.permissionsLookupEnabled = permissionsLookupEnabled;
     }
 
@@ -168,14 +171,14 @@ public class JdbcRealm extends AuthorizingRealm {
     |               M E T H O D S               |
     ============================================*/
 
-    protected Account doGetAccount( AuthenticationToken token ) throws AuthenticationException {
+    protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
 
-        UsernamePasswordToken upToken = (UsernamePasswordToken)token;
+        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         String username = upToken.getUsername();
 
         // Null username is invalid
-        if ( username == null ) {
-            throw new AccountException( "Null usernames are not allowed by this realm." );
+        if (username == null) {
+            throw new AccountException("Null usernames are not allowed by this realm.");
         }
 
         Connection conn = null;
@@ -183,61 +186,61 @@ public class JdbcRealm extends AuthorizingRealm {
         try {
             conn = dataSource.getConnection();
 
-            String password = getPasswordForUser( conn, username );
+            String password = getPasswordForUser(conn, username);
 
-            if ( password == null ) {
-                throw new UnknownAccountException( "No account found for user [" + username + "]" );
+            if (password == null) {
+                throw new UnknownAccountException("No account found for user [" + username + "]");
             }
 
-            account = createAccount( username, password.toCharArray() );
+            account = createAccount(username, password.toCharArray());
 
-        } catch ( SQLException e ) {
+        } catch (SQLException e) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
-            if ( log.isErrorEnabled() ) {
-                log.error( message, e );
+            if (log.isErrorEnabled()) {
+                log.error(message, e);
             }
 
             // Rethrow any SQL errors as an authentication exception
-            throw new AuthenticationException( message, e );
+            throw new AuthenticationException(message, e);
         } finally {
-            JdbcUtils.closeConnection( conn );
+            JdbcUtils.closeConnection(conn);
         }
 
         return account;
     }
 
-    protected Account createAccount( String username, char[] password ) {
-        return new SimpleAuthorizingAccount( username, password, getName() );
+    protected Account createAccount(String username, char[] password) {
+        return new SimpleAuthorizingAccount(username, password, getName());
     }
 
-    private String getPasswordForUser( Connection conn, String username ) throws SQLException {
+    private String getPasswordForUser(Connection conn, String username) throws SQLException {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
         String password = null;
         try {
-            ps = conn.prepareStatement( authenticationQuery );
-            ps.setString( 1, username );
+            ps = conn.prepareStatement(authenticationQuery);
+            ps.setString(1, username);
 
             // Execute query
             rs = ps.executeQuery();
 
             // Loop over results - although we are only expecting one result, since usernames should be unique
             boolean foundResult = false;
-            while ( rs.next() ) {
+            while (rs.next()) {
 
                 // Check to ensure only one row is processed
-                if ( foundResult ) {
-                    throw new AuthenticationException( "More than one user row found for user [" + username + "]. Usernames must be unique." );
+                if (foundResult) {
+                    throw new AuthenticationException("More than one user row found for user [" + username + "]. Usernames must be unique.");
                 }
 
-                password = rs.getString( 1 );
+                password = rs.getString(1);
 
                 foundResult = true;
             }
         } finally {
-            JdbcUtils.closeResultSet( rs );
-            JdbcUtils.closeStatement( ps );
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeStatement(ps);
         }
 
         return password;
@@ -250,14 +253,14 @@ public class JdbcRealm extends AuthorizingRealm {
      * @see AuthorizingRealm#getAccount(PrincipalCollection)
      */
     @Override
-    protected AuthorizingAccount doGetAccount( PrincipalCollection principals) {
+    protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
 
         //null usernames are invalid
-        if ( principals == null ) {
-            throw new AuthorizationException( "PrincipalCollection method argument cannot be null.");
+        if (principals == null) {
+            throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
-        String username = (String)principals.fromRealm( getName() ).iterator().next();
+        String username = (String) principals.fromRealm(getName()).iterator().next();
 
         Connection conn = null;
         Set<String> roleNames = null;
@@ -266,85 +269,85 @@ public class JdbcRealm extends AuthorizingRealm {
             conn = dataSource.getConnection();
 
             // Retrieve roles and permissions from database
-            roleNames = getRoleNamesForUser( conn, username );
-            permissions = getPermissions( conn, username, roleNames );
+            roleNames = getRoleNamesForUser(conn, username);
+            permissions = getPermissions(conn, username, roleNames);
 
-        } catch ( SQLException e ) {
+        } catch (SQLException e) {
             final String message = "There was a SQL error while authorizing user [" + username + "]";
-            if ( log.isErrorEnabled() ) {
-                log.error( message, e );
+            if (log.isErrorEnabled()) {
+                log.error(message, e);
             }
 
             // Rethrow any SQL errors as an authorization exception
-            throw new AuthorizationException( message, e );
+            throw new AuthorizationException(message, e);
         } finally {
-            JdbcUtils.closeConnection( conn );
+            JdbcUtils.closeConnection(conn);
         }
 
-        return new SimpleAuthorizingAccount(principals, null, getName(), roleNames, permissions );
+        return new SimpleAuthorizingAccount(principals, null, getName(), roleNames, permissions);
     }
 
-    protected Set<String> getRoleNamesForUser( Connection conn, String username ) throws SQLException {
+    protected Set<String> getRoleNamesForUser(Connection conn, String username) throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Set<String> roleNames = new LinkedHashSet<String>();
         try {
-            ps = conn.prepareStatement( userRolesQuery );
-            ps.setString( 1, username );
+            ps = conn.prepareStatement(userRolesQuery);
+            ps.setString(1, username);
 
             // Execute query
             rs = ps.executeQuery();
 
             // Loop over results and add each returned role to a set
-            while ( rs.next() ) {
+            while (rs.next()) {
 
-                String roleName = rs.getString( 1 );
+                String roleName = rs.getString(1);
 
                 // Add the role to the list of names if it isn't null
-                if ( roleName != null ) {
-                    roleNames.add( roleName );
+                if (roleName != null) {
+                    roleNames.add(roleName);
                 } else {
-                    if ( log.isWarnEnabled() ) {
-                        log.warn( "Null role name found while retrieving role names for user [" + username + "]" );
+                    if (log.isWarnEnabled()) {
+                        log.warn("Null role name found while retrieving role names for user [" + username + "]");
                     }
                 }
             }
         } finally {
-            JdbcUtils.closeResultSet( rs );
-            JdbcUtils.closeStatement( ps );
-        }                           
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeStatement(ps);
+        }
         return roleNames;
     }
 
-    protected Set<Permission> getPermissions( Connection conn, String username, Collection<String> roleNames ) throws SQLException {
+    protected Set<Permission> getPermissions(Connection conn, String username, Collection<String> roleNames) throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
         Set<Permission> permissions = new LinkedHashSet<Permission>();
         try {
-            for ( String roleName : roleNames ) {
+            for (String roleName : roleNames) {
 
-                ps = conn.prepareStatement( permissionsQuery );
-                ps.setString( 1, roleName );
+                ps = conn.prepareStatement(permissionsQuery);
+                ps.setString(1, roleName);
 
                 // Execute query
                 rs = ps.executeQuery();
 
                 // Loop over results and add each returned role to a set
-                while ( rs.next() ) {
+                while (rs.next()) {
 
-                    String permissionString = rs.getString( 1 );
+                    String permissionString = rs.getString(1);
 
                     // Instantiate a permission object using reflection
-                    Permission permission = getPermissionResolver().resolvePermission( permissionString );
+                    Permission permission = getPermissionResolver().resolvePermission(permissionString);
 
                     // Add the permission to the set of permissions
-                    permissions.add( permission );
+                    permissions.add(permission);
                 }
 
             }
         } finally {
-            JdbcUtils.closeResultSet( rs );
-            JdbcUtils.closeStatement( ps );
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeStatement(ps);
         }
 
         return permissions;

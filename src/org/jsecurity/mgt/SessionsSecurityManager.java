@@ -1,17 +1,20 @@
 /*
- * Copyright 2005-2008 Les Hazlewood
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jsecurity.mgt;
 
@@ -103,11 +106,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     protected SessionManager createSessionManager() {
         DefaultSessionManager sessionManager = new DefaultSessionManager();
-        if ( getCacheManager() != null ) {
+        if (getCacheManager() != null) {
             sessionManager.setCacheManager(getCacheManager());
         }
-        if ( getSessionEventListeners() != null ) {
-            sessionManager.setSessionEventListeners( getSessionEventListeners() );
+        if (getSessionEventListeners() != null) {
+            sessionManager.setSessionEventListeners(getSessionEventListeners());
         }
         sessionManager.init();
         return sessionManager;
@@ -117,7 +120,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         if (getSessionManager() == null) {
             if (log.isInfoEnabled()) {
                 log.info("No delegate SessionManager instance has been set as a property of this class.  Creating a " +
-                    "default SessionManager instance...");
+                        "default SessionManager instance...");
             }
             SessionManager sessionManager = createSessionManager();
             setSessionManager(sessionManager);
@@ -150,7 +153,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * will be thrown during {@link #init() initialization}.
      *
      * @param sessionEventListeners the <tt>SessionEventListener</tt>s to register with the underlying delegate
-     * <tt>SessionManager</tt> at startup.
+     *                              <tt>SessionManager</tt> at startup.
      */
     public void setSessionEventListeners(Collection<SessionEventListener> sessionEventListeners) {
         this.sessionEventListeners = sessionEventListeners;
@@ -159,9 +162,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     private void assertSessionEventListenerSupport(SessionManager sessionManager) {
         if (!(sessionManager instanceof SessionEventListenerRegistrar)) {
             String msg = "SessionEventListener registration failed:  The underlying SessionManager instance of " +
-                "type [" + sessionManager.getClass().getName() + "] does not implement the " +
-                SessionEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                "runtime SessionEvent propagation.";
+                    "type [" + sessionManager.getClass().getName() + "] does not implement the " +
+                    SessionEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                    "runtime SessionEvent propagation.";
             throw new IllegalStateException(msg);
         }
     }
@@ -170,13 +173,13 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         ensureSessionManager();
         SessionManager sm = getSessionManager();
         assertSessionEventListenerSupport(sm);
-        ((SessionEventListenerRegistrar)sm).add(listener);
+        ((SessionEventListenerRegistrar) sm).add(listener);
     }
 
     public boolean remove(SessionEventListener listener) {
         SessionManager sm = getSessionManager();
         return (sm instanceof SessionEventListenerRegistrar) &&
-            ((SessionEventListenerRegistrar)sm).remove(listener);
+                ((SessionEventListenerRegistrar) sm).remove(listener);
     }
 
     protected void afterAuthorizerSet() {
@@ -184,9 +187,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         afterSessionManagerSet();
     }
 
-    protected void afterSessionManagerSet(){}
+    protected void afterSessionManagerSet() {
+    }
 
-    protected void beforeSessionManagerDestroyed(){}
+    protected void beforeSessionManagerDestroyed() {
+    }
 
     protected void destroySessionManager() {
         LifecycleUtils.destroy(getSessionManager());
