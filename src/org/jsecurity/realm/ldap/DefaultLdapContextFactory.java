@@ -223,7 +223,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
         env.put(Context.REFERRAL, referral);
 
         // Only pool connections for system contexts
-        if (usePooling && username.equals(systemUsername)) {
+        if (usePooling && username != null && username.equals(systemUsername)) {
             // Enable connection pooling
             env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
         }
