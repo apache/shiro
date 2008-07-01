@@ -33,6 +33,7 @@ import java.util.*;
 
 /**
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
 public class IniConfiguration extends TextConfiguration {
@@ -106,7 +107,7 @@ public class IniConfiguration extends TextConfiguration {
     }
 
     protected void processIni(Map<String, Map<String, String>> sections) {
-        SecurityManager securityManager = createSecurityManager(sections);
+        SecurityManager securityManager = createSecurityManager();
         if (securityManager == null) {
             String msg = "A " + SecurityManager.class + " instance must be created at startup.";
             throw new ConfigurationException(msg);
@@ -116,9 +117,16 @@ public class IniConfiguration extends TextConfiguration {
         afterSecurityManagerSet(sections);
     }
 
-    protected SecurityManager createSecurityManager(Map<String, Map<String, String>> sections) {
+    protected SecurityManager createSecurityManager() {
+        return createSecurityManagerFromIni(true);
+    }
+
+    protected SecurityManager createSecurityManagerFromIni(boolean initSecurityManager) {
+        Map<String, Map<String, String>> sections = this.iniResource.getSections();
+
         Map<String, String> mainSection = sections.get(MAIN);
-        return doCreateSecurityManager(mainSection);
+
+        return createSecurityManagerForSection(mainSection, initSecurityManager);
     }
 
     protected RealmSecurityManager newSecurityManagerInstance() {
@@ -126,7 +134,7 @@ public class IniConfiguration extends TextConfiguration {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected SecurityManager doCreateSecurityManager(Map<String, String> mainSection) {
+    protected SecurityManager createSecurityManagerForSection(Map<String, String> mainSection, boolean initSecurityManager) {
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 
@@ -173,11 +181,12 @@ public class IniConfiguration extends TextConfiguration {
         //set them on the SecurityManager
         if (!realms.isEmpty()) {
             securityManager.setRealms(realms);
+            LifecycleUtils.init( realms );
         }
 
-        securityManager.init();
-
-        LifecycleUtils.init(realms);
+        if( initSecurityManager ) {
+            securityManager.init();
+        }
 
         return securityManager;
     }

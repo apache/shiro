@@ -36,6 +36,7 @@ import org.jsecurity.util.LifecycleUtils;
  * if one has not been provided.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
 public abstract class CachingSecurityManager implements SecurityManager, Initializable, Destroyable, CacheManagerAware {
@@ -66,7 +67,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
 
     public void init() {
         ensureCacheManager();
-        afterCacheManagerSet();
+        afterCacheManagerSet();       
     }
 
     protected void ensureCacheManager() {

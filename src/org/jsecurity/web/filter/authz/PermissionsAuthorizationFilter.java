@@ -27,6 +27,7 @@ import javax.servlet.ServletResponse;
 
 /**
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
 public class PermissionsAuthorizationFilter extends AuthorizationFilter {
@@ -48,11 +49,11 @@ public class PermissionsAuthorizationFilter extends AuthorizationFilter {
         if (perms != null && perms.length > 0) {
             if (perms.length == 1) {
                 if (!subject.isPermitted(perms[0])) {
-                    issueRedirect(request, response);
+                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
                 }
             } else {
                 if (!subject.isPermittedAll(perms)) {
-                    issueRedirect(request, response);
+                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
                 }
             }
         }

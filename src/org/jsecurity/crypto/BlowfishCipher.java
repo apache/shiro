@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 /**
  * JSecurity's default symmetric block Cipher using the Blowfish algorithm.  As it is a symmetric Cipher, it uses the
- * same <tt>Key</tt> to both encrypt and decrypt data.  If one is not provided via the {@link #setKey setKey} method,
+ * same <tt>Key</tt> to both encrypt and decrypt data.  If one is not provided via the {@link #setDefaultKey setKey} method,
  * a default one will be used, BUT NOTE:
  *
  * <p>Because JSecurity is an open-source project, if anyone knew that you were using JSecurity's default
@@ -43,12 +43,13 @@ import java.util.Arrays;
  * to you and you think the default key still makes things 'sufficiently difficult', then you can ignore this issue.
  *
  * <p>However, if you do feel this constitutes sensitive information, it is recommended that you provide your own
- * <tt>Key</tt> via the {@link #setKey setKey} method to a Key known only to your application, guaranteeing that no
+ * <tt>Key</tt> via the {@link # setDefaultKey setKey} method to a Key known only to your application, guaranteeing that no
  * third party can decrypt your data.  If you want to know how to do this, you can browse this class's source code
  * for the {@link #generateNewKey()} method to see how we created our default.  Then you can duplicate the same in
  * your environment and set the result on an instance of this class via the <code>setKey</code> method.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
 public class BlowfishCipher implements Cipher {
@@ -66,20 +67,20 @@ public class BlowfishCipher implements Cipher {
 
     private transient final Log log = LogFactory.getLog(getClass());
 
-    private Key key = DEFAULT_CIPHER_KEY;
+    private Key defaultKey = DEFAULT_CIPHER_KEY;
 
     public BlowfishCipher() {
     }
 
-    public Key getKey() {
-        return key;
+    public Key getDefaultKey() {
+        return defaultKey;
     }
 
-    public void setKey(Key key) {
-        this.key = key;
+    public void setDefaultKey(Key defaultKey) {
+        this.defaultKey = defaultKey;
     }
 
-    public byte[] encrypt(byte[] raw, Key key) {
+    public byte[] encrypt(byte[] raw, byte[] key) {
         byte[] encrypted = crypt(raw, javax.crypto.Cipher.ENCRYPT_MODE, key);
         if (log.isTraceEnabled()) {
             log.trace("Incoming byte array of size " + (raw != null ? raw.length : 0) + ".  Encrypted " +
@@ -88,7 +89,7 @@ public class BlowfishCipher implements Cipher {
         return encrypted;
     }
 
-    public byte[] decrypt(byte[] encrypted, Key key) {
+    public byte[] decrypt(byte[] encrypted, byte[] key) {
         if (log.isTraceEnabled()) {
             log.trace("Attempting to decrypt incoming byte array of length " +
                     (encrypted != null ? encrypted.length : 0));
@@ -126,9 +127,16 @@ public class BlowfishCipher implements Cipher {
         }
     }
 
-    protected byte[] crypt(byte[] bytes, int mode, Key key) {
+    protected byte[] crypt(byte[] bytes, int mode, byte[] key) {
         javax.crypto.Cipher cipher = newCipherInstance();
-        java.security.Key jdkKey = getKey();
+
+        java.security.Key jdkKey;
+        if( key == null ) {
+            jdkKey = getDefaultKey();
+        } else {
+            jdkKey = new SecretKeySpec( key, ALGORITHM );
+        }
+
         init(cipher, mode, jdkKey);
         return crypt(cipher, bytes);
     }

@@ -18,8 +18,6 @@
  */
 package org.jsecurity.crypto;
 
-import java.security.Key;
-
 /**
  * A <tt>Cipher</tt> is an algorithm used in cryptography that converts an original input source using a <tt>Key</tt> to
  * an uninterpretable format.  The resulting encrypted output is only able to be converted back to original form with
@@ -54,8 +52,8 @@ import java.security.Key;
  */
 public interface Cipher {
 
-    byte[] encrypt(byte[] raw, Key encryptionKey);
+    byte[] encrypt(byte[] raw, byte[] encryptionKey);
 
-    byte[] decrypt(byte[] encrypted, Key decryptionKey);
+    byte[] decrypt(byte[] encrypted, byte[] decryptionKey);
 
 }

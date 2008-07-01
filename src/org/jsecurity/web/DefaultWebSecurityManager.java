@@ -31,6 +31,7 @@ import org.jsecurity.web.session.WebSessionManager;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.Collection;
 
@@ -56,7 +57,55 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      */
     public static final String AUTHENTICATED_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
+    // Encoding used when converting cipher key characters to bytes
+    private static final String CIPHER_CHAR_ENCODING = "UTF-8";
+
     private String sessionMode = HTTP_SESSION_MODE; //default
+
+    protected String rememberMeCipherKey = null;
+    protected String rememberMeCookiePath = null;
+    protected Integer rememberMeMaxAge = null;
+
+    /**
+     * Sets the default cipher key used by the remember me manager.  If this is not
+     * overridden, the default key will be used instead.
+     * @param rememberMeCipherKey the cipher key to use for remember me cookie encryption.
+     */
+    public void setRememberMeCipherKey(String rememberMeCipherKey) {
+        this.rememberMeCipherKey = rememberMeCipherKey;
+    }
+
+    public String getRememberMeCipherKey() {
+        return rememberMeCipherKey;
+    }
+
+    public String getRememberMeCookiePath() {
+        return rememberMeCookiePath;
+    }
+
+    /**
+     * Sets the path used to store the remember me cookie.  This determines which paths
+     * are able to view the remember me cookie.
+     * @param rememberMeCookiePath the path to use for the remember me cookie.
+     */
+    public void setRememberMeCookiePath(String rememberMeCookiePath) {
+        this.rememberMeCookiePath = rememberMeCookiePath;
+    }
+
+    public Integer getRememberMeMaxAge() {
+        return rememberMeMaxAge;
+    }
+
+    /**
+     * Sets the maximum age allowed for the remember me cookie.  This basically sets how long
+     * a user will be remembered by the "remember me" feature.  Used when calling
+     * {@link javax.servlet.http.Cookie#setMaxAge(int) maxAge}.  Please see that JavaDoc for the semantics on the
+     * repercussions of negative, zero, and positive values for the maxAge.
+     * @param rememberMeMaxAge the maximum age for the remember me cookie.
+     */
+    public void setRememberMeMaxAge(Integer rememberMeMaxAge) {
+        this.rememberMeMaxAge = rememberMeMaxAge;
+    }
 
     public DefaultWebSecurityManager() {
         super();
@@ -72,6 +121,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     protected void afterSessionManagerSet() {
         WebRememberMeManager rmm = new WebRememberMeManager();
+        if( getRememberMeCipherKey() != null ) {
+            try {
+                rmm.setCipherKey( getRememberMeCipherKey().getBytes(CIPHER_CHAR_ENCODING) );
+            } catch (UnsupportedEncodingException e) {
+                log.error( "Error converting cipher key string to bytes.", e );
+            }
+        }
+        if( getRememberMeCookiePath() != null ) {
+            rmm.setCookiePath( getRememberMeCookiePath() );
+        }
+        if( getRememberMeMaxAge() != null ) {
+            rmm.setCookieMaxAge( getRememberMeMaxAge() );
+        }
         setRememberMeManager(rmm);
     }
 

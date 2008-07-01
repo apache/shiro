@@ -20,7 +20,6 @@ package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.subject.Subject;
 import static org.jsecurity.web.WebUtils.getSubject;
-import org.jsecurity.web.filter.PathMatchingFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -30,16 +29,27 @@ import javax.servlet.ServletResponse;
  * having a known principal.  This means that any user who is authenticated or remembered via a
  * 'remember me' feature will be allowed access from this filter.</p>
  *
+ * <p>If the accessor is not a known user, then they will be redirected to the login page, as set by
+ * {@link #setLoginUrl(String)}</p>
+ * 
  * @author Jeremy Haile
  * @since 0.9
  */
-public class UserFilter extends PathMatchingFilter {
+public class UserFilter extends AuthenticationFilter {
 
-    @Override
-    public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-        Subject subject = getSubject(request, response);
 
-        // If principal is not null, then the user is known and should be allowed access.
-        return subject.getPrincipal() != null;
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response) {
+        if( isLoginRequest(request, response ) ) {
+            return true;
+        } else {
+            Subject subject = getSubject(request, response);
+            // If principal is not null, then the user is known and should be allowed access.
+            return subject.getPrincipal() != null;
+        }
+    }
+
+    protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception {
+        saveRequestAndRedirectToLogin(request,response);
+        return false;
     }
 }

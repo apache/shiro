@@ -67,7 +67,7 @@
         # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
 
         [filters]
-        authc.url = /s/login
+        jsecurity.loginUrl = /s/login
         authc.successUrl = /s/index
 
 

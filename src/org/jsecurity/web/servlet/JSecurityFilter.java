@@ -19,6 +19,7 @@
 package org.jsecurity.web.servlet;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.jsecurity.config.Configuration;
 import org.jsecurity.config.ConfigurationException;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.util.ClassUtils;
@@ -79,12 +80,12 @@ import java.io.IOException;
  * #
  * # Form-based Authentication filter:
  * #<a name="authc"></a>authc = {@link org.jsecurity.web.filter.authc.FormAuthenticationFilter}
- * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setUrl(String) url} = /login.jsp
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setLoginUrl(String) url} = /login.jsp
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setUsernameParam(String) usernameParam} = username
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setPasswordParam(String) passwordParam} = password
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setRememberMeParam(String) rememberMeParam} = rememberMe
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setSuccessUrl(String) successUrl}  = /login.jsp
- * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setFailureKeyAtribute(String) failureKeyAttribute} = {@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#DEFAULT_ERROR_KEY_ATTRIBUTE_NAME}
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setFailureKeyAttribute(String) failureKeyAttribute} = {@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#DEFAULT_ERROR_KEY_ATTRIBUTE_NAME}
  * #
  * # Http BASIC Authentication filter:
  * #<a name="authcBasic"></a>authcBasic = {@link org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter}
@@ -93,14 +94,14 @@ import java.io.IOException;
  * # Roles filter: requires the requesting user to have one or more roles for the request to continue.
  * # If they do not have the specified roles, they are redirected to the specified URL.
  * #<a name="roles"></a>roles = {@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter}
- * #roles.{@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter#setUrl(String) url} =
+ * #roles.{@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter#setUnauthorizedUrl(String) url} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.
  * #
  * # Permissions filter: requires the requesting user to have one or more permissions for the request to
  * # continue, and if they do not, redirects them to the specified URL.
  * #<a name="perms"></a>perms = {@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter}
- * #perms.{@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter#setUrl(String) url} =
+ * #perms.{@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter#setUnauthorizedUrl(String) url} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.  Many
  * # applications like to use the same url specified in roles.url above.
@@ -182,6 +183,9 @@ public class JSecurityFilter extends OncePerRequestFilter {
     protected String configClassName;
     protected WebConfiguration configuration;
 
+    // Reference to the security manager used by this filter
+    protected SecurityManager securityManager;
+
     public JSecurityFilter() {
         this.configClassName = IniWebConfiguration.class.getName();
     }
@@ -194,10 +198,34 @@ public class JSecurityFilter extends OncePerRequestFilter {
         this.configuration = configuration;
     }
 
+    public SecurityManager getSecurityManager() {
+        return securityManager;
+    }
+
+    protected void setSecurityManager(SecurityManager sm) {
+        this.securityManager = sm;
+    }
+
     protected void onFilterConfigSet() throws Exception {
         applyInitParams();
         WebConfiguration config = configure();
+        setConfiguration(config);
+
+        // Retrieve and store a reference to the security manager
+        SecurityManager sm = getOrCreateSecurityManager(config);
+        setSecurityManager(sm);
+
+    }
+
+    /**
+     * Retrieves the security manager for the given configuration.
+     * @param config the configuration for this filter.
+     * @return the security manager that this filter should use.
+     */
+    protected SecurityManager getOrCreateSecurityManager(Configuration config) {
         SecurityManager sm = config.getSecurityManager();
+
+        // If the config doesn't return a security manager, build one by default.
         if (sm == null) {
             if (log.isInfoEnabled()) {
                 log.info("Configuration instance [" + config + "] did not provide a SecurityManager.  No config " +
@@ -206,18 +234,8 @@ public class JSecurityFilter extends OncePerRequestFilter {
             sm = new DefaultWebSecurityManager();
             LifecycleUtils.init(sm);
         }
-        setSecurityManager(sm);
-        setConfiguration(config);
-    }
 
-    protected void setSecurityManager(SecurityManager sm) {
-        ServletContext servletContext = getServletContext();
-        servletContext.setAttribute(SECURITY_MANAGER_CONTEXT_KEY, sm);
-    }
-
-    protected SecurityManager getSecurityManager() {
-        ServletContext servletContext = getServletContext();
-        return (SecurityManager) servletContext.getAttribute(SECURITY_MANAGER_CONTEXT_KEY);
+        return sm;
     }
 
     protected void applyInitParams() {

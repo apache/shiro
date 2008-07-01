@@ -29,19 +29,26 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.io.DefaultSerializer;
 import org.jsecurity.io.SerializationException;
 import org.jsecurity.io.Serializer;
+import org.jsecurity.web.HashedCookieComposer;
 
 /**
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     protected transient final Log log = LogFactory.getLog(getClass());
+    protected static final String COOKIE_CRYPT_ALGORITHM = "SHA-1";
 
     private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();
+    private byte[] cipherKey = null;
+    protected HashedCookieComposer cookieComposer;
+
 
     public AbstractRememberMeManager() {
+        this.cookieComposer = new HashedCookieComposer(COOKIE_CRYPT_ALGORITHM);
     }
 
     public Serializer getSerializer() {
@@ -59,6 +66,23 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     public void setCipher(Cipher cipher) {
         this.cipher = cipher;
     }
+
+    public byte[] getCipherKey() {
+        return cipherKey;
+    }
+
+    public void setCipherKey(byte[] cipherKey) {
+        this.cipherKey = cipherKey;
+    }
+
+    // Abstract methods to be implemented by subclasses
+    protected abstract void rememberSerializedIdentity(byte[] serialized);
+
+    protected abstract byte[] getSerializedRememberedIdentity();
+
+    protected abstract void forgetIdentity();
+
+
 
     protected boolean isRememberMe(AuthenticationToken token) {
         return token != null && (token instanceof RememberMeAuthenticationToken) &&
@@ -89,24 +113,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         return account.getPrincipals();
     }
 
-    protected byte[] encrypt(byte[] serialized) {
-        byte[] value = serialized;
-        Cipher cipher = getCipher();
-        if (cipher != null) {
-            value = cipher.encrypt(serialized, null);
-        }
-        return value;
-    }
-
-    protected byte[] decrypt(byte[] encrypted) {
-        byte[] serialized = encrypted;
-        Cipher cipher = getCipher();
-        if (cipher != null) {
-            serialized = cipher.decrypt(encrypted, null);
-        }
-        return serialized;
-    }
-
     protected void rememberIdentity(PrincipalCollection accountPrincipals) {
         try {
             byte[] bytes = serialize(accountPrincipals);
@@ -123,12 +129,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
             }
         }
     }
-
-    protected byte[] serialize(PrincipalCollection principals) {
-        return getSerializer().serialize(principals);
-    }
-
-    protected abstract void rememberSerializedIdentity(byte[] serialized);
 
     public PrincipalCollection getRememberedPrincipals() {
         PrincipalCollection principals = null;
@@ -151,11 +151,32 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         return principals;
     }
 
+    protected byte[] encrypt(byte[] serialized) {
+        byte[] value = serialized;
+        Cipher cipher = getCipher();
+        if (cipher != null) {
+            value = cipher.encrypt(serialized, getCipherKey());
+        }
+        return value;
+    }
+
+    protected byte[] decrypt(byte[] encrypted) {
+        byte[] serialized = encrypted;
+        Cipher cipher = getCipher();
+        if (cipher != null) {
+            serialized = cipher.decrypt(encrypted, getCipherKey());
+        }
+        return serialized;
+    }
+
+
+    protected byte[] serialize(PrincipalCollection principals) {
+          return getSerializer().serialize(principals);
+    }
+
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
         return (PrincipalCollection) getSerializer().deserialize(serializedIdentity);
     }
-
-    protected abstract byte[] getSerializedRememberedIdentity();
 
     public void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {
         forgetIdentity(token, ae);
@@ -173,5 +194,4 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         forgetIdentity();
     }
 
-    protected abstract void forgetIdentity();
 }

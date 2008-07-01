@@ -42,7 +42,9 @@ public class DefaultSerializer implements Serializer {
             oos.close();
             return baos.toByteArray();
         } catch (IOException e) {
-            String msg = "Unable to serialize object [" + o + "].";
+            String msg = "Unable to serialize object [" + o + "].  " +
+                    "In order for the DefaultSerializer to serialize this object, the [" + o.getClass().getName() + "] " +
+                    "class must implement java.io.Serializable.";
             throw new SerializationException(msg, e);
         }
     }
