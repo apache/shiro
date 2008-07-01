@@ -224,19 +224,23 @@ public class RedirectView {
 
         // If there aren't already some parameters, we need a "?".
         boolean first = (getUrl().indexOf('?') < 0);
-        Iterator entries = queryProperties(model).entrySet().iterator();
-        while (entries.hasNext()) {
-            if (first) {
-                targetUrl.append('?');
-                first = false;
-            } else {
-                targetUrl.append('&');
+        Map queryProps = queryProperties(model);
+
+        if( queryProps != null ) {
+            Iterator entries = queryProps.entrySet().iterator();
+            while (entries.hasNext()) {
+                if (first) {
+                    targetUrl.append('?');
+                    first = false;
+                } else {
+                    targetUrl.append('&');
+                }
+                Map.Entry entry = (Map.Entry) entries.next();
+                String encodedKey = urlEncode(entry.getKey().toString(), encodingScheme);
+                String encodedValue =
+                        (entry.getValue() != null ? urlEncode(entry.getValue().toString(), encodingScheme) : "");
+                targetUrl.append(encodedKey).append('=').append(encodedValue);
             }
-            Map.Entry entry = (Map.Entry) entries.next();
-            String encodedKey = urlEncode(entry.getKey().toString(), encodingScheme);
-            String encodedValue =
-                    (entry.getValue() != null ? urlEncode(entry.getValue().toString(), encodingScheme) : "");
-            targetUrl.append(encodedKey).append('=').append(encodedValue);
         }
 
         // Append anchor fragment, if any, to end of URL.

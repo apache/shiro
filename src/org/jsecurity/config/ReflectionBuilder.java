@@ -18,26 +18,35 @@
  */
 package org.jsecurity.config;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Nameable;
 import org.jsecurity.util.StringUtils;
 
+import java.beans.PropertyDescriptor;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 /**
+ * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
+ * map of "property values".  Typically these come from the JSecurity INI configuration and are used
+ * to construct or modify the SecurityManager and web-based security filters.
+ *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
+@SuppressWarnings("unchecked")
 public class ReflectionBuilder {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
+    private static final String GLOBAL_PROPERTY_PREFIX = "jsecurity";
     protected Map objects;
 
     public ReflectionBuilder() {
@@ -101,7 +110,26 @@ public class ReflectionBuilder {
 
     public Map buildObjects(Map<String, String> kvPairs) {
         if (kvPairs != null && !kvPairs.isEmpty()) {
+
+            // Separate key value pairs into object declarations and property assignment
+            // so that all objects can be created up front
+            Map<String,String> instanceMap = new HashMap<String,String>();
+            Map<String,String> propertyMap = new HashMap<String,String>();
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
+                if( entry.getKey().indexOf('.') < 0 || entry.getKey().endsWith( ".class" ) ) {
+                    instanceMap.put( entry.getKey(), entry.getValue() );
+                } else {
+                    propertyMap.put( entry.getKey(), entry.getValue() );
+                }
+            }
+
+            // Create all instances
+            for (Map.Entry<String, String> entry : instanceMap.entrySet()) {
+                createNewInstance(objects, entry.getKey(), entry.getValue());
+            }
+
+            // Set all properties
+            for (Map.Entry<String, String> entry : propertyMap.entrySet()) {
                 applyProperty(entry.getKey(), entry.getValue(), objects);
             }
         }
@@ -109,64 +137,97 @@ public class ReflectionBuilder {
         return objects;
     }
 
-    public void applyProperty(String key, String value, Map objects) {
+    protected void createNewInstance(Map objects, String name, String value) {
+
+          Object currentInstance = objects.get( name );
+          if( currentInstance != null ) {
+              log.warn( "An instance with name [" + name + "] already exists.  " +
+                      "Redefining this object as a new instance of type [" + value + "].");
+          }
+
+          Object instance;//name with no property, assume right hand side of equals sign is the class name:
+          try {
+              instance = ClassUtils.newInstance(value);
+              if (instance instanceof Nameable) {
+                  ((Nameable) instance).setName(name);
+              }
+          } catch (Exception e) {
+              String msg = "Unable to instantiate class [" + value + "] for object named '" + name + "'.  " +
+                      "Please ensure you've specified the fully qualified class name correctly.";
+              throw new ConfigurationException(msg, e);
+          }
+          objects.put(name, instance);
+    }
+
+    protected void applyProperty(String key, String value, Map objects) {
 
         int index = key.indexOf('.');
 
         if (index >= 0) {
             String name = key.substring(0, index);
             String property = key.substring(index + 1, key.length());
-            Object instance = objects.get(name);
-            if (instance == null) {
-                if (property.equals("class")) {
-                    instance = ClassUtils.newInstance(value);
-                    if (instance instanceof Nameable) {
-                        ((Nameable) instance).setName(name);
-                    }
-                    objects.put(name, instance);
-                } else {
-                    String msg = "Configuration error.  Specified object [" + name + "] with property [" +
-                            property + "] without first defining that object's class.  Please first " +
-                            "specify the class property first, e.g. myObject.class = fully_qualified_class_name " +
-                            "and then define additional properties.";
-                    throw new IllegalArgumentException(msg);
-                }
+
+            if( GLOBAL_PROPERTY_PREFIX.equalsIgnoreCase( name ) ) {
+                applyGlobalProperty(objects, property, value);
             } else {
-                applyProperty(instance, property, value);
+                applySingleProperty(objects, name, property, value);
             }
+
+
         } else {
-            //no period, assume the prop is just the name only:
-            Object instance = objects.get(key);
-            if (instance == null) {
-                //name with no property, assume right hand side of equals sign is the class name:
-                try {
-                    instance = ClassUtils.newInstance(value);
-                    if (instance instanceof Nameable) {
-                        ((Nameable) instance).setName(key);
-                    }
-                } catch (Exception e) {
-                    String msg = "Unable to instantiate class [" + value + "] for object named '" + key + "'.  " +
-                            "Please ensure you've specified the fully qualified class name correctly.";
-                    throw new ConfigurationException(msg, e);
+            throw new IllegalArgumentException( "All property keys must contain a '.' character. " +
+                    "(e.g. myBean.property = value)  These should already be separated out by buildObjects()." );
+        }
+    }
+
+    protected void applyGlobalProperty(Map objects, String property, String value) {
+        for( Object instance : objects.values() ) {
+            try {
+                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor( instance, property );
+                if( pd != null ) {
+                    applyProperty( instance, property, value );
                 }
-                objects.put(key, instance);
+            } catch (Exception e) {
+                String msg = "Error retrieving property descriptor for instance " +
+                        "of type [" + instance.getClass().getName() + "] " +
+                        "while setting property [" + property + "]";
+                throw new ConfigurationException( msg, e);
             }
         }
     }
 
-    public void applyProperty(Object object, String propertyName, String value) {
+    protected void applySingleProperty(Map objects, String name, String property, String value) {
+        Object instance = objects.get(name);
+        if( property.equals( "class" ) ) {
+            throw new IllegalArgumentException( "Property keys should not contain 'class' properties since these " +
+                    "should already be separated out by buildObjects()." );
+
+        } else if (instance == null) {
+            String msg = "Configuration error.  Specified object [" + name + "] with property [" +
+                    property + "] without first defining that object's class.  Please first " +
+                    "specify the class property first, e.g. myObject.class = fully_qualified_class_name " +
+                    "and then define additional properties.";
+            throw new IllegalArgumentException(msg);
+
+        } else {
+            applyProperty(instance, property, value);
+        }
+    }
+
+
+    protected void applyProperty(Object object, String propertyName, String value) {
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Applying property [" + propertyName + "] value [" + value + "] on object of type [" + object.getClass().getName() + "]");
             }
-            BeanUtils.setProperty(object, propertyName, value);
+            PropertyUtils.setProperty(object, propertyName, value);
         } catch (Exception e) {
             //perhaps the value was a reference to an object already defined:
 
             Object o = (objects != null && !objects.isEmpty() ? objects.get(value) : null);
             if (o != null) {
                 try {
-                    BeanUtils.setProperty(object, propertyName, o);
+                    PropertyUtils.setProperty(object, propertyName, o);
                     return;
                 } catch (Exception ignored) {
                 }

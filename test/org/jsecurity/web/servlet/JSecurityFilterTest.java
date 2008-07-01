@@ -19,7 +19,6 @@
 package org.jsecurity.web.servlet;
 
 import static org.easymock.EasyMock.*;
-import org.jsecurity.mgt.SecurityManager;
 import org.junit.Test;
 
 import javax.servlet.FilterConfig;
@@ -42,8 +41,6 @@ public class JSecurityFilterTest {
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
-
-        mockServletContext.setAttribute(eq(JSecurityFilter.SECURITY_MANAGER_CONTEXT_KEY), isA(SecurityManager.class));
     }
 
     public void tearDown() throws Exception {

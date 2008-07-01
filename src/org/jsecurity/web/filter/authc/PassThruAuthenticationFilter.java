@@ -16,28 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter.authz;
+package org.jsecurity.web.filter.authc;
 
-import org.jsecurity.web.filter.PathMatchingFilter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
- * @author Les Hazlewood
+ * An authentication filter that redirects the user to the login page when they are trying to access
+ * a protected resource.  However, if the user is trying to access the login page, the filter lets
+ * the request pass through to the application code.
+ *
  * @author Jeremy Haile
  * @since 0.9
  */
-public abstract class AuthorizationFilter extends PathMatchingFilter {
+public class PassThruAuthenticationFilter extends AuthenticationFilter {
 
-    private String unauthorizedUrl;
-
-    protected String getUnauthorizedUrl() {
-        return unauthorizedUrl;
-    }
-
-    public void setUnauthorizedUrl(String unauthorizedUrl) {
-        this.unauthorizedUrl = unauthorizedUrl;
-    }
-
-    public AuthorizationFilter() {
-    }
-
+    protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception {
+        if( isLoginRequest(request, response ) ) {
+            return true;
+        } else {
+            saveRequestAndRedirectToLogin(request, response);
+            return false;
+        }
+    }    
 }

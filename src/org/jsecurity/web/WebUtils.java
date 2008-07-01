@@ -30,10 +30,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 /**
  * Simple utility class for operations used across multiple class hierarchies in the web framework code.
@@ -42,6 +44,7 @@ import java.net.UnknownHostException;
  * and in these cases, we have retained all license, copyright and author information.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @since 0.9
@@ -374,5 +377,100 @@ public class WebUtils {
      */
     public static ServletResponse unbindServletResponse() {
         return (ServletResponse) ThreadContext.remove(SERVLET_RESPONSE_KEY);
+    }
+
+    /**
+     * Redirects the current request to a new URL based on the given parameters.
+     * @param request the servlet request.
+     * @param response the servlet response.
+     * @param url the URL to redirect the user to.
+     * @param queryParams a map of parameters that should be set as request parameters for the new request.
+     * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
+     * @param http10Compatible whether to stay compatible with HTTP 1.0 clients.
+     *
+     * @throws java.io.IOException if thrown by response methods.
+     */
+    public static void issueRedirect( ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative, boolean http10Compatible ) throws IOException {
+        RedirectView view = new RedirectView(url, contextRelative, http10Compatible);
+        view.renderMergedOutputModel(queryParams, toHttp(request), toHttp(response));
+    }
+
+    /**
+     * Redirects the current request to a new URL based on the given parameters and default values
+     * for unspecified parameters.
+     * @param request the servlet request.
+     * @param response the servlet response.
+     * @param url the URL to redirect the user to.
+     *
+     * @throws java.io.IOException if thrown by response methods.
+     */
+    public static void issueRedirect( ServletRequest request, ServletResponse response, String url ) throws IOException {
+        issueRedirect( request, response, url, null, true, true );
+    }
+
+    /**
+     * Redirects the current request to a new URL based on the given parameters and default values
+     * for unspecified parameters.
+     * @param request the servlet request.
+     * @param response the servlet response.
+     * @param url the URL to redirect the user to.
+     * @param queryParams a map of parameters that should be set as request parameters for the new request.
+     *
+     * @throws java.io.IOException if thrown by response methods.
+     */
+    public static void issueRedirect( ServletRequest request, ServletResponse response, String url, Map queryParams ) throws IOException {
+        issueRedirect( request, response, url, queryParams, true, true );
+    }
+
+    /**
+     * Redirects the current request to a new URL based on the given parameters and default values
+     * for unspecified parameters.
+     * @param request the servlet request.
+     * @param response the servlet response.
+     * @param url the URL to redirect the user to.
+     * @param queryParams a map of parameters that should be set as request parameters for the new request.
+     * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
+     *
+     * @throws java.io.IOException if thrown by response methods.
+     */
+    public static void issueRedirect( ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative ) throws IOException {
+        issueRedirect( request, response, url, queryParams, contextRelative, true );
+    }
+
+    /**
+     * <p>Checks to see if a request param is considered true using a loose matching strategy for
+     * general values that indicate that something is true or enabled, etc.</p>
+     *
+     * <p>Values that are considered "true" include (case-insensitive): true, t, 1, enabled, y, yes, on.</p>
+     *
+     * @param request the servlet request
+     * @param paramName @return true if the param value is considered true or false if it isn't.
+     * @return true if the given parameter is considered "true" - false otherwise.
+     */
+    public static boolean isTrue(ServletRequest request, String paramName) {
+        String paramValue = getCleanParam(request, paramName);
+
+        if( paramValue == null ) {
+            return false;
+        } else {
+            return paramValue.equalsIgnoreCase("true") ||
+                   paramValue.equalsIgnoreCase("t") ||
+                   paramValue.equalsIgnoreCase("1") ||
+                   paramValue.equalsIgnoreCase("enabled") ||
+                   paramValue.equalsIgnoreCase("y") ||
+                   paramValue.equalsIgnoreCase("yes") ||
+                   paramValue.equalsIgnoreCase("on");
+        }
+    }
+
+    /**
+     * Convenience method that returns a request parameter value, first running it through
+     * {@link StringUtils#clean(String)}.
+     * @param request the servlet request.
+     * @param paramName the parameter name.
+     * @return the clean param value, or null if the param does not exist or is empty.
+     */
+    public static String getCleanParam(ServletRequest request, String paramName) {
+        return StringUtils.clean( request.getParameter( paramName ) );
     }
 }

@@ -30,6 +30,7 @@ import java.util.Set;
 
 /**
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
 public class RolesAuthorizationFilter extends AuthorizationFilter {
@@ -53,11 +54,11 @@ public class RolesAuthorizationFilter extends AuthorizationFilter {
         if (roles != null && !roles.isEmpty()) {
             if (roles.size() == 1) {
                 if (!subject.hasRole(roles.iterator().next())) {
-                    issueRedirect(request, response);
+                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
                 }
             } else {
                 if (!subject.hasAllRoles(roles)) {
-                    issueRedirect(request, response);
+                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
                 }
             }
         }

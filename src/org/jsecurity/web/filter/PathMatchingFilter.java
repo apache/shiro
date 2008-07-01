@@ -22,6 +22,7 @@ import org.jsecurity.util.AntPathMatcher;
 import static org.jsecurity.util.StringUtils.split;
 import static org.jsecurity.web.WebUtils.getPathWithinApplication;
 import static org.jsecurity.web.WebUtils.toHttp;
+import org.jsecurity.web.servlet.AdviceFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -32,9 +33,10 @@ import java.util.Map;
  * <p>Base class for Filters that will process only specified paths and allow all others to pass through.</p>
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
-public abstract class PathMatchingFilter extends RedirectingFilter implements PathConfigProcessor {
+public abstract class PathMatchingFilter extends AdviceFilter implements PathConfigProcessor {
 
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
 
