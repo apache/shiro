@@ -18,14 +18,27 @@
  */
 package org.jsecurity.web.filter.authz;
 
-import org.jsecurity.web.filter.PathMatchingFilter;
+import org.jsecurity.subject.Subject;
+import org.jsecurity.util.StringUtils;
+import org.jsecurity.web.WebUtils;
+import org.jsecurity.web.filter.AccessControlFilter;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
+ * Superclass for authorization-related filters.  For unauthorized requests, this filter redirects to the
+ * login page if the current user is unknown (i.e. not authenticated or remembered).  If the user is known,
+ * the filter redirects to an unauthorized URL or returns an unauthorized HTTP status code if no unauthorized
+ * URL is specified.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
  */
-public abstract class AuthorizationFilter extends PathMatchingFilter {
+public abstract class AuthorizationFilter extends AccessControlFilter {
 
     private String unauthorizedUrl;
 
@@ -37,7 +50,24 @@ public abstract class AuthorizationFilter extends PathMatchingFilter {
         this.unauthorizedUrl = unauthorizedUrl;
     }
 
-    public AuthorizationFilter() {
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
+
+        Subject subject = WebUtils.getSubject(request, response);
+        // If the subject isn't identified, redirect to login URL
+        if( subject.getPrincipal() == null ) {
+            saveRequestAndRedirectToLogin(request,response);
+            return false;
+        } else {
+
+            // If subject is known but not authorized, redirect to the unauthorized URL if there is one 
+            // If no unauthorized URL is specified, just return an unauthorized HTTP status code
+            WebUtils.toHttp(response).setStatus( HttpServletResponse.SC_UNAUTHORIZED );
+            if( StringUtils.hasText( getUnauthorizedUrl() ) ) {
+                WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
+            }
+
+        }
+        return false;
     }
 
 }

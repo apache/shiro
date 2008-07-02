@@ -30,6 +30,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
@@ -55,6 +56,10 @@ public class WebUtils {
 
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXST_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
+
+    // Key used to save a request and later restore it (e.g. when redirecting to a requested page after login)
+    public static final String SAVED_REQUEST_KEY = "jsecuritySavedRequest";
+
 
     /**
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
@@ -473,4 +478,34 @@ public class WebUtils {
     public static String getCleanParam(ServletRequest request, String paramName) {
         return StringUtils.clean( request.getParameter( paramName ) );
     }
+
+    public static void saveRequest(ServletRequest request) {
+        HttpServletRequest httpRequest = toHttp(request);
+        HttpSession session = httpRequest.getSession();
+
+        SavedRequest savedRequest = new SavedRequest(httpRequest);
+        session.setAttribute( SAVED_REQUEST_KEY, savedRequest );
+    }
+
+    public static SavedRequest getAndClearSavedRequest(ServletRequest request) {
+        SavedRequest savedRequest = getSavedRequest(request);
+        if( savedRequest != null ) {
+            HttpSession session = WebUtils.toHttp(request).getSession();
+            session.removeAttribute( SAVED_REQUEST_KEY );
+        }
+        return savedRequest;
+    }
+
+    public static SavedRequest getSavedRequest(ServletRequest request) {
+        SavedRequest savedRequest = null;
+
+        HttpSession session = WebUtils.toHttp(request).getSession(false);
+        if( session != null ) {
+            savedRequest = (SavedRequest) session.getAttribute( SAVED_REQUEST_KEY );
+        }
+
+        return savedRequest;
+    }
+
+
 }

@@ -19,50 +19,43 @@
 package org.jsecurity.web.filter.authz;
 
 import org.jsecurity.subject.Subject;
-import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.io.IOException;
 import java.util.Set;
 
 /**
+ * Filter that allows access if the current user has the roles specified by the mapped value, or denies access
+ * if the user does not have all of the roles specified.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
  */
 public class RolesAuthorizationFilter extends AuthorizationFilter {
 
-    public void processPathConfig(String path, String config) {
-        if (config != null) {
-            String[] values = split(config);
-            if (values != null) {
-                Set<String> set = new LinkedHashSet<String>(Arrays.asList(values));
-                this.appliedPaths.put(path, set);
-            }
-        }
-    }
-
     @SuppressWarnings({"unchecked"})
-    public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+    public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
         Subject subject = WebUtils.getSubject(request, response);
         Set<String> roles = (Set<String>) mappedValue;
 
+        boolean hasRoles = true;
         if (roles != null && !roles.isEmpty()) {
             if (roles.size() == 1) {
                 if (!subject.hasRole(roles.iterator().next())) {
-                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
+                    hasRoles = false;
                 }
             } else {
                 if (!subject.hasAllRoles(roles)) {
-                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
+                    hasRoles = false;
                 }
             }
         }
 
-        return true;
+        return hasRoles;
     }
+
 }

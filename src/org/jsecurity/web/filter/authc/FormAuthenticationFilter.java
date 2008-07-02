@@ -99,7 +99,7 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
         this.appliedPaths.put(getLoginUrl(), null);
     }
 
-    protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {
             if (isLoginSubmission(request, response)) {
                 if (log.isTraceEnabled()) {

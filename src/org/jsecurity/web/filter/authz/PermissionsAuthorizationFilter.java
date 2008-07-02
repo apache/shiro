@@ -19,45 +19,40 @@
 package org.jsecurity.web.filter.authz;
 
 import org.jsecurity.subject.Subject;
-import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.IOException;
 
 /**
+ * Filter that allows access if the current user has the permissions specified by the mapped value, or denies access
+ * if the user does not have all of the permissions specified.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
  */
 public class PermissionsAuthorizationFilter extends AuthorizationFilter {
 
-    public void processPathConfig(String path, String config) {
-        if (config != null) {
-            String[] values = split(config);
-            if (values != null) {
-                this.appliedPaths.put(path, values);
-            }
-        }
-    }
-
-    public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+    public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
         Subject subject = WebUtils.getSubject(request, response);
         String[] perms = (String[]) mappedValue;
 
+        boolean isPermitted = true;
         if (perms != null && perms.length > 0) {
             if (perms.length == 1) {
                 if (!subject.isPermitted(perms[0])) {
-                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
+                    isPermitted = false;
                 }
             } else {
                 if (!subject.isPermittedAll(perms)) {
-                    WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
+                    isPermitted = false;
                 }
             }
         }
 
-        return true;
+        return isPermitted;
     }
 }
