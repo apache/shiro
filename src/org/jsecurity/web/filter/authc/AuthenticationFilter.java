@@ -21,14 +21,11 @@ package org.jsecurity.web.filter.authc;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.web.SavedRequest;
 import org.jsecurity.web.WebUtils;
-import static org.jsecurity.web.WebUtils.*;
-import org.jsecurity.web.filter.PathMatchingFilter;
+import static org.jsecurity.web.WebUtils.getSubject;
+import org.jsecurity.web.filter.AccessControlFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 /**
  * <p>Base class for all Filters that require the current user to be authenticated. This class encapsulates the
@@ -39,28 +36,11 @@ import java.io.IOException;
  * @author Jeremy Haile
  * @since 0.9
  */
-public abstract class AuthenticationFilter extends PathMatchingFilter {
+public abstract class AuthenticationFilter extends AccessControlFilter {
 
-    // Key used when storing a SavedRequest in the session
-    public static final String DEFAULT_LOGIN_URL = "/login.jsp";
     public static final String DEFAULT_SUCCESS_URL = "/index.jsp";
-    public static final String SAVED_REQUEST_KEY = "jsecuritySavedRequest";
-    protected static final String GET_METHOD = "get";
 
     private String successUrl = DEFAULT_SUCCESS_URL;
-    private String loginUrl = DEFAULT_LOGIN_URL;
-
-    protected String getLoginUrl() {
-        return loginUrl;
-    }
-
-    /**
-     * Sets the login URL used when a user needs to be redirected for authentication.
-     * @param loginUrl the login URL.
-     */
-    public void setLoginUrl(String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
 
 
     protected String getSuccessUrl() {
@@ -78,54 +58,23 @@ public abstract class AuthenticationFilter extends PathMatchingFilter {
     }
     
 
-    public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-        //mapped value is ignored - not needed for most (if not all) authc Filters.
-        if (isAccessAllowed(request, response)) {
-            return true;
-        } else {
-            return onUnauthenticatedRequest(request, response);
-        }
-    }
-
     /**
      * Determines whether the current subject is authenticated.
      *
      * @param request the servlet request.
      * @param response the servlet response.
+     * @param mappedValue
      * @return true if the subject is authenticated; false if the subject is unauthenticated
      */
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response) {
-        if( isLoginRequest(request, response ) ) {
-            return true;
-        } else {
-            Subject subject = getSubject(request, response);
-            return subject.isAuthenticated();
-        }
-    }
-
-    protected boolean isLoginRequest(ServletRequest servletRequest, ServletResponse response) {
-        HttpServletRequest request = toHttp(servletRequest);
-        String requestURI = getPathWithinApplication(request);
-        return pathMatcher.match(getLoginUrl(), requestURI);
-    }
-    
-    protected void saveRequest(ServletRequest servletRequest, ServletResponse response) {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpSession session = request.getSession();
-
-        SavedRequest savedRequest = new SavedRequest(request);
-        session.setAttribute( SAVED_REQUEST_KEY, savedRequest );
-    }
-
-    protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
-        saveRequest(request, response);
-        WebUtils.issueRedirect(request, response, getLoginUrl());
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        Subject subject = getSubject(request, response);
+        return subject.isAuthenticated();
     }
 
     protected void issueSuccessRedirect(ServletRequest request, ServletResponse response) throws Exception {
 
         String successUrl = null;
-        SavedRequest savedRequest = getAndClearSavedRequest(request);
+        SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(request);
         if( savedRequest != null && savedRequest.getMethod().equalsIgnoreCase( GET_METHOD ) ) {
             successUrl = savedRequest.getRequestUrl();
         }
@@ -139,32 +88,7 @@ public abstract class AuthenticationFilter extends PathMatchingFilter {
                     "One of these must be non-null for issueSuccessRedirect() to work." );
         }
 
-        WebUtils.issueRedirect( request, response, getSuccessUrl() );
+        WebUtils.issueRedirect( request, response, successUrl );
     }
 
-    protected SavedRequest getAndClearSavedRequest(ServletRequest request) {
-        SavedRequest savedRequest = null;
-
-        HttpSession session = WebUtils.toHttp(request).getSession(false);
-        if( session != null ) {
-            savedRequest = (SavedRequest) session.getAttribute( SAVED_REQUEST_KEY );
-            if( savedRequest != null ) {
-                session.removeAttribute( SAVED_REQUEST_KEY );
-            }
-        }
-
-        return savedRequest;
-    }
-
-    /**
-     * Template method sub-classes must implement. This method processes requests where the subject is not
-     * authenticated.
-     *
-     * @param request the servlet request.
-     * @param response the servlet response.
-     * @return true if the request should continue to be processed; false if the subclass will handle/render
-     *         the response directly.
-     * @throws Exception if there is an error processing the unauthenticated request.
-     */
-    protected abstract boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception;
 }

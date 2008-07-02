@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletResponse;
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
  * </ol>
  *
- * <p>The {@link #onUnauthenticatedRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
+ * <p>The {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
  * only be called if the subject making the request is not
  * {@link org.jsecurity.subject.Subject#isAuthenticated() authenticated} </p>
  *
@@ -87,7 +87,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * @param response outgoing ServletResponse
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
-    protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) {
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
         if (isLoginAttempt(request, response)) {
             return executeLogin(request, response);
         } else {

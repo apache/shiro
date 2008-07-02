@@ -20,6 +20,7 @@ package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.subject.Subject;
 import static org.jsecurity.web.WebUtils.getSubject;
+import org.jsecurity.web.filter.AccessControlFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -35,10 +36,10 @@ import javax.servlet.ServletResponse;
  * @author Jeremy Haile
  * @since 0.9
  */
-public class UserFilter extends AuthenticationFilter {
+public class UserFilter extends AccessControlFilter {
 
 
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response) {
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         if( isLoginRequest(request, response ) ) {
             return true;
         } else {
@@ -48,7 +49,7 @@ public class UserFilter extends AuthenticationFilter {
         }
     }
 
-    protected boolean onUnauthenticatedRequest(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         saveRequestAndRedirectToLogin(request,response);
         return false;
     }

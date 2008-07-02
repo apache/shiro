@@ -141,7 +141,7 @@ public class ReflectionBuilder {
 
           Object currentInstance = objects.get( name );
           if( currentInstance != null ) {
-              log.warn( "An instance with name [" + name + "] already exists.  " +
+              log.info( "An instance with name [" + name + "] already exists.  " +
                       "Redefining this object as a new instance of type [" + value + "].");
           }
 
