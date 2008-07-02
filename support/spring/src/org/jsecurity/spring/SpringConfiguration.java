@@ -72,6 +72,9 @@ public class SpringConfiguration extends IniWebConfiguration {
         this.securityManagerBeanName = securityManagerBeanName;
     }
 
+    public SpringConfiguration() {
+    }
+
     @Override
     public void init() throws JSecurityException {
         String beanName = getFilterConfig().getInitParameter(SECURITY_MANAGER_BEAN_NAME_PARAM_NAME);

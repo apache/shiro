@@ -18,6 +18,7 @@
  */
 package org.jsecurity.realm;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.*;
@@ -272,8 +273,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     protected void assertNotNullAccount(PrincipalCollection principals, Account account) {
         if (account == null) {
+            SecurityUtils.getSubject().logout();
             throw new MissingAccountException("No Account found for Subject principals [" +
-                    principals + "]");
+                    principals + "]  The Subject has been automatically logged out.");
         }
     }
 

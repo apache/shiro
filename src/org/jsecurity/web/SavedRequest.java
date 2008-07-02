@@ -56,6 +56,10 @@ public class SavedRequest {
     }
 
     public String getRequestUrl() {
-        return getRequestURI() + "?" + getQueryString();
+        StringBuilder requestUrl = new StringBuilder( getRequestURI() );
+        if( getQueryString() != null ) {
+            requestUrl.append( "?" ).append( getQueryString() );
+        }
+        return requestUrl.toString();
     }
 }
