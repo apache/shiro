@@ -18,7 +18,7 @@
  */
 package org.jsecurity.authz.aop;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.UnauthorizedException;
@@ -63,7 +63,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
         Integer methodArgIndex = Integer.parseInt(buf.toString());
         String beanUtilsPath = new String(chars, propertyStartIndex,
                 chars.length - propertyStartIndex);
-        Object targetValue = BeanUtils.getProperty(methodArgs[methodArgIndex], beanUtilsPath);
+        Object targetValue = PropertyUtils.getProperty(methodArgs[methodArgIndex], beanUtilsPath);
         return targetValue.toString();
     }
 

@@ -18,7 +18,7 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.jsecurity.config.Configuration;
 import org.jsecurity.config.ConfigurationException;
 import org.jsecurity.mgt.SecurityManager;
@@ -34,6 +34,7 @@ import org.jsecurity.web.config.WebConfiguration;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 
 /**
@@ -178,8 +179,10 @@ public class JSecurityFilter extends OncePerRequestFilter {
 
     public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";
     public static final String CONFIG_INIT_PARAM_NAME = "config";
+    private static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
     protected String config;
+    protected String configUrl;
     protected String configClassName;
     protected WebConfiguration configuration;
 
@@ -254,46 +257,72 @@ public class JSecurityFilter extends OncePerRequestFilter {
         }
 
         this.config = clean(config.getInitParameter(CONFIG_INIT_PARAM_NAME));
+        this.configUrl = clean(config.getInitParameter(CONFIG_URL_INIT_PARAM_NAME));
     }
 
     protected WebConfiguration configure() {
 
-        WebConfiguration config = (WebConfiguration) ClassUtils.newInstance(this.configClassName);
+        WebConfiguration conf = (WebConfiguration) ClassUtils.newInstance(this.configClassName);
 
         if (log.isDebugEnabled()) {
             String msg = "Attempting to inject the FilterConfig (using 'setFilterConfig' method) into the " +
                     "instantiated WebConfiguration for any wrapped Filter initialization...";
             log.debug(msg);
         }
+
         try {
-            BeanUtils.setProperty(config, "filterConfig", getFilterConfig());
-        } catch (Exception e) {
-            if (log.isInfoEnabled()) {
-                String msg = "WebConfiguration instance does not have a setFilterConfig(FilterConfig) " +
-                        "method to allow for Filter initialization.  Ignoring and continuing (perhaps " +
-                        "instance does not require the FilterConfig?)";
-                log.info(msg);
+            PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "filterConfig" );
+            if( pd != null ) {
+                PropertyUtils.setProperty(conf, "filterConfig", getFilterConfig());
             }
+
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("Exception for debugging purposes:", e);
+                log.debug("Error setting filter config on WebConfiguration instance.", e);
             }
         }
 
         if (this.config != null) {
             try {
-                BeanUtils.setProperty(config, "config", this.config);
+                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "config" );
+
+                if( pd != null ) {
+                    PropertyUtils.setProperty(conf, "config", this.config);
+                } else {
+                    String msg = "The 'config' filter param was specified, but there is no " +
+                            "'setConfig(String)' method on the Configuration instance [" + conf + "].  If you do " +
+                            "not require the 'config' filter param, please comment it out, or if you do need it, " +
+                            "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
+                    throw new ConfigurationException(msg);
+                }
             } catch (Exception e) {
-                String msg = "The 'config' filter param was specified, but there is no " +
-                        "'setConfig(String)' method on the Configuration instance [" + config + "].  If you do " +
-                        "not require the 'config' filter param, please comment it out, or if you do need it, " +
-                        "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
-                throw new ConfigurationException(msg);
+                String msg = "There was an error setting the 'config' property of the Configuration object.";
+                throw new ConfigurationException(msg, e);
             }
         }
 
-        LifecycleUtils.init(config);
+        if (this.configUrl != null) {
+            try {
+                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "configUrl" );
 
-        return config;
+                if( pd != null ) {
+                    PropertyUtils.setProperty(conf, "configUrl", this.configUrl);
+                } else {
+                    String msg = "The 'configUrl' filter param was specified, but there is no " +
+                            "'setConfigUrl(String)' method on the Configuration instance [" + conf + "].  If you do " +
+                            "not require the 'configUrl' filter param, please comment it out, or if you do need it, " +
+                            "please ensure your Configuration instance has a 'setConfigUrl(String)' method to receive it.";
+                    throw new ConfigurationException(msg);
+                }
+            } catch (Exception e) {
+                String msg = "There was an error setting the 'configUrl' property of the Configuration object.";
+                throw new ConfigurationException(msg, e);
+            }
+        }
+
+        LifecycleUtils.init(conf);
+
+        return conf;
     }
 
 

@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Controller responsible for logging out the current user by invoking
@@ -35,11 +36,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LogoutController extends AbstractController {
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {
             subject.logout();
         }
+
+        HttpSession session = request.getSession(false);
+        if( session != null ) {
+            session.invalidate();
+        }        
+
         return new ModelAndView("redirect:login");
     }
 }

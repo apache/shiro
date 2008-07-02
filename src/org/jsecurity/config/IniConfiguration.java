@@ -18,6 +18,7 @@
  */
 package org.jsecurity.config;
 
+import org.jsecurity.JSecurityException;
 import org.jsecurity.io.IniResource;
 import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.mgt.DefaultSecurityManager;
@@ -44,13 +45,11 @@ public class IniConfiguration extends TextConfiguration {
 
     public static final String SESSION_MODE_PROPERTY_NAME = "sessionMode";
 
+    protected String configUrl;
     protected IniResource iniResource;
+    protected boolean ignoreResourceNotFound = false;
 
     public IniConfiguration() {
-        if (ResourceUtils.resourceExists(DEFAULT_INI_RESOURCE_PATH)) {
-            load(DEFAULT_INI_RESOURCE_PATH);
-        }
-        //else defaults are fine
     }
 
     public IniConfiguration(String configBodyOrResourcePath) {
@@ -64,6 +63,42 @@ public class IniConfiguration extends TextConfiguration {
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
+    }
+
+    protected String getConfigUrl() {
+        return configUrl;
+    }
+
+    public void setConfigUrl(String configUrl) {
+        this.configUrl = configUrl;
+    }
+
+    public void init() throws JSecurityException {
+
+        if( configUrl != null ) {
+            if( ResourceUtils.resourceExists( configUrl ) ) {
+                load( configUrl );
+            } else {
+                if( ignoreResourceNotFound ) {
+                    if( log.isDebugEnabled() ) {
+                        log.debug( "JSecurity resource [" + configUrl + "] not found.  Ignoring since " +
+                                "'ignoreResourceNotFound' is set to true." );
+                    }
+                } else {
+                    throw new ConfigurationException( "JSecurity resource [" + configUrl + "] specified as a 'configUrl' " +
+                            "cannot be found.  If you want to fall back on default configuration specified " +
+                            "via the 'config' parameter, then set 'ignoreResourceNotFound' to true." );
+                }
+            }
+
+        } else {
+            if (ResourceUtils.resourceExists(DEFAULT_INI_RESOURCE_PATH)) {
+                load(DEFAULT_INI_RESOURCE_PATH);
+            }
+        }
+
+        // Only call super.init() after we try loading from the configUrl first.
+        super.init();
     }
 
     protected void load(Reader r) throws ConfigurationException {

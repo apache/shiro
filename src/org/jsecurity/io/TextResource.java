@@ -61,24 +61,15 @@ public abstract class TextResource extends AbstractResource {
         this.charsetName = charsetName;
     }
 
-    public void load(String configBodyOrResourcePath) {
-        if (configBodyOrResourcePath == null) {
-            throw new IllegalArgumentException("'configBodyOrResourcePath' argument cannot be null.");
+    public void load(String resourcePath) {
+        if (resourcePath == null) {
+            throw new IllegalArgumentException("'resourcePath' argument cannot be null.");
         }
         try {
-            super.load(configBodyOrResourcePath);
+            super.load(resourcePath);
         } catch (Exception e) {
-            if (log.isTraceEnabled()) {
-                log.trace("Unable to load text resource from the string argument.  Attempting to use the string " +
-                        "argument as the text resource itself...", e);
-            }
-            StringReader sr = new StringReader(configBodyOrResourcePath);
-            try {
-                load(sr);
-            } catch (Exception e2) {
-                String msg = "Unable to load from configBody method argument.";
-                throw new ResourceException(msg, e2);
-            }
+            String msg = "Unable to load text resource from the resource path [" + resourcePath +"]";
+            throw new ResourceException(msg, e);
         }
     }
 

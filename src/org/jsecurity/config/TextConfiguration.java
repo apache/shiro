@@ -19,10 +19,12 @@
 package org.jsecurity.config;
 
 import org.jsecurity.JSecurityException;
+import org.jsecurity.io.ResourceException;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.util.Initializable;
 
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.Scanner;
 
 /**
@@ -48,6 +50,21 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
 
     protected abstract void load(Scanner s) throws ConfigurationException;
 
+    /**
+     * Loads the configuration specified by the 'config' argument by creating a StringReader
+     * and using it to load the config.
+     * @param config the config text to be loaded.
+     */
+    protected void loadTextConfig(String config) {
+        StringReader sr = new StringReader(config);
+        try {
+            load(sr);
+        } catch (Exception e2) {
+            String msg = "Unable to load from text configuration.";
+            throw new ResourceException(msg, e2);
+        }
+    }
+
     public void init() throws JSecurityException {
         SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
@@ -56,8 +73,10 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
                 if (log.isInfoEnabled()) {
                     log.info("Attempting to load Configuration based on 'config' property.");
                 }
-                load(config);
+                loadTextConfig(config);
             }
         }
     }
+
+
 }
