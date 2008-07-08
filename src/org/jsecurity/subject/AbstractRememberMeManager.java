@@ -38,7 +38,6 @@ import org.jsecurity.io.Serializer;
 public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     protected transient final Log log = LogFactory.getLog(getClass());
-    protected static final String COOKIE_CRYPT_ALGORITHM = "SHA-1";
 
     private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();

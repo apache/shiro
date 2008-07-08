@@ -23,14 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Nameable;
-import org.jsecurity.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
@@ -65,61 +62,18 @@ public class ReflectionBuilder {
         this.objects = objects;
     }
 
-    private static String[] splitKeyValue(String line) {
-        try {
-            return StringUtils.splitKeyValue(line);
-        } catch (ParseException e) {
-            throw new ConfigurationException(e);
-        }
-    }
-
-    public Map buildObjects(String config) {
-
-        if (config == null) {
-            return objects;
-        }
-
-        Scanner scanner = new Scanner(config);
-        while (scanner.hasNextLine()) {
-
-            String definitionLine = StringUtils.clean(scanner.nextLine());
-
-            if (definitionLine != null && !definitionLine.startsWith("#")) {
-
-                if (log.isTraceEnabled()) {
-                    log.trace("Parsing definition line [" + definitionLine + "]");
-                }
-
-                String[] parts = splitKeyValue(definitionLine);
-                if (parts == null || parts.length != 2) {
-                    String msg = "Config parsing error - each configuration line must have the format:  key = value";
-                    throw new IllegalStateException(msg);
-                }
-
-                String key = parts[0].trim();
-                String value = parts[1].trim();
-
-                applyProperty(key, value, objects);
-            }
-
-        }
-        scanner.close();
-
-        return objects;
-    }
-
     public Map buildObjects(Map<String, String> kvPairs) {
         if (kvPairs != null && !kvPairs.isEmpty()) {
 
             // Separate key value pairs into object declarations and property assignment
             // so that all objects can be created up front
-            Map<String,String> instanceMap = new HashMap<String,String>();
-            Map<String,String> propertyMap = new HashMap<String,String>();
+            Map<String, String> instanceMap = new HashMap<String, String>();
+            Map<String, String> propertyMap = new HashMap<String, String>();
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
-                if( entry.getKey().indexOf('.') < 0 || entry.getKey().endsWith( ".class" ) ) {
-                    instanceMap.put( entry.getKey(), entry.getValue() );
+                if (entry.getKey().indexOf('.') < 0 || entry.getKey().endsWith(".class")) {
+                    instanceMap.put(entry.getKey(), entry.getValue());
                 } else {
-                    propertyMap.put( entry.getKey(), entry.getValue() );
+                    propertyMap.put(entry.getKey(), entry.getValue());
                 }
             }
 
@@ -139,24 +93,24 @@ public class ReflectionBuilder {
 
     protected void createNewInstance(Map objects, String name, String value) {
 
-          Object currentInstance = objects.get( name );
-          if( currentInstance != null ) {
-              log.info( "An instance with name [" + name + "] already exists.  " +
-                      "Redefining this object as a new instance of type [" + value + "].");
-          }
+        Object currentInstance = objects.get(name);
+        if (currentInstance != null) {
+            log.info("An instance with name [" + name + "] already exists.  " +
+                    "Redefining this object as a new instance of type [" + value + "].");
+        }
 
-          Object instance;//name with no property, assume right hand side of equals sign is the class name:
-          try {
-              instance = ClassUtils.newInstance(value);
-              if (instance instanceof Nameable) {
-                  ((Nameable) instance).setName(name);
-              }
-          } catch (Exception e) {
-              String msg = "Unable to instantiate class [" + value + "] for object named '" + name + "'.  " +
-                      "Please ensure you've specified the fully qualified class name correctly.";
-              throw new ConfigurationException(msg, e);
-          }
-          objects.put(name, instance);
+        Object instance;//name with no property, assume right hand side of equals sign is the class name:
+        try {
+            instance = ClassUtils.newInstance(value);
+            if (instance instanceof Nameable) {
+                ((Nameable) instance).setName(name);
+            }
+        } catch (Exception e) {
+            String msg = "Unable to instantiate class [" + value + "] for object named '" + name + "'.  " +
+                    "Please ensure you've specified the fully qualified class name correctly.";
+            throw new ConfigurationException(msg, e);
+        }
+        objects.put(name, instance);
     }
 
     protected void applyProperty(String key, String value, Map objects) {
@@ -167,7 +121,7 @@ public class ReflectionBuilder {
             String name = key.substring(0, index);
             String property = key.substring(index + 1, key.length());
 
-            if( GLOBAL_PROPERTY_PREFIX.equalsIgnoreCase( name ) ) {
+            if (GLOBAL_PROPERTY_PREFIX.equalsIgnoreCase(name)) {
                 applyGlobalProperty(objects, property, value);
             } else {
                 applySingleProperty(objects, name, property, value);
@@ -175,32 +129,32 @@ public class ReflectionBuilder {
 
 
         } else {
-            throw new IllegalArgumentException( "All property keys must contain a '.' character. " +
-                    "(e.g. myBean.property = value)  These should already be separated out by buildObjects()." );
+            throw new IllegalArgumentException("All property keys must contain a '.' character. " +
+                    "(e.g. myBean.property = value)  These should already be separated out by buildObjects().");
         }
     }
 
     protected void applyGlobalProperty(Map objects, String property, String value) {
-        for( Object instance : objects.values() ) {
+        for (Object instance : objects.values()) {
             try {
-                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor( instance, property );
-                if( pd != null ) {
-                    applyProperty( instance, property, value );
+                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(instance, property);
+                if (pd != null) {
+                    applyProperty(instance, property, value);
                 }
             } catch (Exception e) {
                 String msg = "Error retrieving property descriptor for instance " +
                         "of type [" + instance.getClass().getName() + "] " +
                         "while setting property [" + property + "]";
-                throw new ConfigurationException( msg, e);
+                throw new ConfigurationException(msg, e);
             }
         }
     }
 
     protected void applySingleProperty(Map objects, String name, String property, String value) {
         Object instance = objects.get(name);
-        if( property.equals( "class" ) ) {
-            throw new IllegalArgumentException( "Property keys should not contain 'class' properties since these " +
-                    "should already be separated out by buildObjects()." );
+        if (property.equals("class")) {
+            throw new IllegalArgumentException("Property keys should not contain 'class' properties since these " +
+                    "should already be separated out by buildObjects().");
 
         } else if (instance == null) {
             String msg = "Configuration error.  Specified object [" + name + "] with property [" +
