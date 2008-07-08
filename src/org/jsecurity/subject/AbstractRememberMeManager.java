@@ -85,6 +85,10 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     public void onSuccessfulLogin(AuthenticationToken token, Account account) {
+        //always clear any previous identity:
+        forgetIdentity(token);
+
+        //reset it if necessary:
         if (isRememberMe(token)) {
             rememberIdentity(token, account);
         } else {
