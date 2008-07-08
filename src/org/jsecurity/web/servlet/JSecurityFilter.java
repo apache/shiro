@@ -222,6 +222,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
 
     /**
      * Retrieves the security manager for the given configuration.
+     *
      * @param config the configuration for this filter.
      * @return the security manager that this filter should use.
      */
@@ -271,22 +272,22 @@ public class JSecurityFilter extends OncePerRequestFilter {
         }
 
         try {
-            PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "filterConfig" );
-            if( pd != null ) {
+            PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "filterConfig");
+            if (pd != null) {
                 PropertyUtils.setProperty(conf, "filterConfig", getFilterConfig());
             }
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("Error setting filter config on WebConfiguration instance.", e);
+                log.debug("Error setting FilterConfig on WebConfiguration instance.", e);
             }
         }
 
         if (this.config != null) {
             try {
-                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "config" );
+                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "config");
 
-                if( pd != null ) {
+                if (pd != null) {
                     PropertyUtils.setProperty(conf, "config", this.config);
                 } else {
                     String msg = "The 'config' filter param was specified, but there is no " +
@@ -303,9 +304,9 @@ public class JSecurityFilter extends OncePerRequestFilter {
 
         if (this.configUrl != null) {
             try {
-                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "configUrl" );
+                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "configUrl");
 
-                if( pd != null ) {
+                if (pd != null) {
                     PropertyUtils.setProperty(conf, "configUrl", this.configUrl);
                 } else {
                     String msg = "The 'configUrl' filter param was specified, but there is no " +

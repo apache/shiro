@@ -76,7 +76,7 @@ public class JSecurityFilterTest {
 
     @Test
     public void testSimpleConfig() throws Exception {
-        setUp("[interceptors]\n" +
+        setUp("[filters]\n" +
                 "authc.successUrl = /index.jsp");
         replayAndVerify();
     }

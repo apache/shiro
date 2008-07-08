@@ -54,7 +54,7 @@ public class WebUtils {
 
     private static final Log log = LogFactory.getLog(WebUtils.class);
 
-    public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXST_KEY";
+    public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
     // Key used to save a request and later restore it (e.g. when redirecting to a requested page after login)
@@ -386,16 +386,16 @@ public class WebUtils {
 
     /**
      * Redirects the current request to a new URL based on the given parameters.
-     * @param request the servlet request.
-     * @param response the servlet response.
-     * @param url the URL to redirect the user to.
-     * @param queryParams a map of parameters that should be set as request parameters for the new request.
-     * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
-     * @param http10Compatible whether to stay compatible with HTTP 1.0 clients.
      *
+     * @param request          the servlet request.
+     * @param response         the servlet response.
+     * @param url              the URL to redirect the user to.
+     * @param queryParams      a map of parameters that should be set as request parameters for the new request.
+     * @param contextRelative  true if the URL is relative to the servlet context path, or false if the URL is absolute.
+     * @param http10Compatible whether to stay compatible with HTTP 1.0 clients.
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect( ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative, boolean http10Compatible ) throws IOException {
+    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative, boolean http10Compatible) throws IOException {
         RedirectView view = new RedirectView(url, contextRelative, http10Compatible);
         view.renderMergedOutputModel(queryParams, toHttp(request), toHttp(response));
     }
@@ -403,43 +403,43 @@ public class WebUtils {
     /**
      * Redirects the current request to a new URL based on the given parameters and default values
      * for unspecified parameters.
-     * @param request the servlet request.
-     * @param response the servlet response.
-     * @param url the URL to redirect the user to.
      *
+     * @param request  the servlet request.
+     * @param response the servlet response.
+     * @param url      the URL to redirect the user to.
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect( ServletRequest request, ServletResponse response, String url ) throws IOException {
-        issueRedirect( request, response, url, null, true, true );
+    public static void issueRedirect(ServletRequest request, ServletResponse response, String url) throws IOException {
+        issueRedirect(request, response, url, null, true, true);
     }
 
     /**
      * Redirects the current request to a new URL based on the given parameters and default values
      * for unspecified parameters.
-     * @param request the servlet request.
-     * @param response the servlet response.
-     * @param url the URL to redirect the user to.
-     * @param queryParams a map of parameters that should be set as request parameters for the new request.
      *
+     * @param request     the servlet request.
+     * @param response    the servlet response.
+     * @param url         the URL to redirect the user to.
+     * @param queryParams a map of parameters that should be set as request parameters for the new request.
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect( ServletRequest request, ServletResponse response, String url, Map queryParams ) throws IOException {
-        issueRedirect( request, response, url, queryParams, true, true );
+    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams) throws IOException {
+        issueRedirect(request, response, url, queryParams, true, true);
     }
 
     /**
      * Redirects the current request to a new URL based on the given parameters and default values
      * for unspecified parameters.
-     * @param request the servlet request.
-     * @param response the servlet response.
-     * @param url the URL to redirect the user to.
-     * @param queryParams a map of parameters that should be set as request parameters for the new request.
+     *
+     * @param request         the servlet request.
+     * @param response        the servlet response.
+     * @param url             the URL to redirect the user to.
+     * @param queryParams     a map of parameters that should be set as request parameters for the new request.
      * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
-     *
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect( ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative ) throws IOException {
-        issueRedirect( request, response, url, queryParams, contextRelative, true );
+    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative) throws IOException {
+        issueRedirect(request, response, url, queryParams, contextRelative, true);
     }
 
     /**
@@ -448,35 +448,36 @@ public class WebUtils {
      *
      * <p>Values that are considered "true" include (case-insensitive): true, t, 1, enabled, y, yes, on.</p>
      *
-     * @param request the servlet request
+     * @param request   the servlet request
      * @param paramName @return true if the param value is considered true or false if it isn't.
      * @return true if the given parameter is considered "true" - false otherwise.
      */
     public static boolean isTrue(ServletRequest request, String paramName) {
         String paramValue = getCleanParam(request, paramName);
 
-        if( paramValue == null ) {
+        if (paramValue == null) {
             return false;
         } else {
             return paramValue.equalsIgnoreCase("true") ||
-                   paramValue.equalsIgnoreCase("t") ||
-                   paramValue.equalsIgnoreCase("1") ||
-                   paramValue.equalsIgnoreCase("enabled") ||
-                   paramValue.equalsIgnoreCase("y") ||
-                   paramValue.equalsIgnoreCase("yes") ||
-                   paramValue.equalsIgnoreCase("on");
+                    paramValue.equalsIgnoreCase("t") ||
+                    paramValue.equalsIgnoreCase("1") ||
+                    paramValue.equalsIgnoreCase("enabled") ||
+                    paramValue.equalsIgnoreCase("y") ||
+                    paramValue.equalsIgnoreCase("yes") ||
+                    paramValue.equalsIgnoreCase("on");
         }
     }
 
     /**
      * Convenience method that returns a request parameter value, first running it through
      * {@link StringUtils#clean(String)}.
-     * @param request the servlet request.
+     *
+     * @param request   the servlet request.
      * @param paramName the parameter name.
      * @return the clean param value, or null if the param does not exist or is empty.
      */
     public static String getCleanParam(ServletRequest request, String paramName) {
-        return StringUtils.clean( request.getParameter( paramName ) );
+        return StringUtils.clean(request.getParameter(paramName));
     }
 
     public static void saveRequest(ServletRequest request) {
@@ -484,14 +485,14 @@ public class WebUtils {
         HttpSession session = httpRequest.getSession();
 
         SavedRequest savedRequest = new SavedRequest(httpRequest);
-        session.setAttribute( SAVED_REQUEST_KEY, savedRequest );
+        session.setAttribute(SAVED_REQUEST_KEY, savedRequest);
     }
 
     public static SavedRequest getAndClearSavedRequest(ServletRequest request) {
         SavedRequest savedRequest = getSavedRequest(request);
-        if( savedRequest != null ) {
+        if (savedRequest != null) {
             HttpSession session = WebUtils.toHttp(request).getSession();
-            session.removeAttribute( SAVED_REQUEST_KEY );
+            session.removeAttribute(SAVED_REQUEST_KEY);
         }
         return savedRequest;
     }
@@ -500,8 +501,8 @@ public class WebUtils {
         SavedRequest savedRequest = null;
 
         HttpSession session = WebUtils.toHttp(request).getSession(false);
-        if( session != null ) {
-            savedRequest = (SavedRequest) session.getAttribute( SAVED_REQUEST_KEY );
+        if (session != null) {
+            savedRequest = (SavedRequest) session.getAttribute(SAVED_REQUEST_KEY);
         }
 
         return savedRequest;
