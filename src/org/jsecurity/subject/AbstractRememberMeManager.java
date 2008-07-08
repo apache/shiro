@@ -29,7 +29,6 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.io.DefaultSerializer;
 import org.jsecurity.io.SerializationException;
 import org.jsecurity.io.Serializer;
-import org.jsecurity.web.HashedCookieComposer;
 
 /**
  * @author Les Hazlewood
@@ -44,11 +43,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();
     private byte[] cipherKey = null;
-    protected HashedCookieComposer cookieComposer;
-
 
     public AbstractRememberMeManager() {
-        this.cookieComposer = new HashedCookieComposer(COOKIE_CRYPT_ALGORITHM);
     }
 
     public Serializer getSerializer() {
@@ -81,7 +77,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     protected abstract byte[] getSerializedRememberedIdentity();
 
     protected abstract void forgetIdentity();
-
 
 
     protected boolean isRememberMe(AuthenticationToken token) {
@@ -171,7 +166,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
 
     protected byte[] serialize(PrincipalCollection principals) {
-          return getSerializer().serialize(principals);
+        return getSerializer().serialize(principals);
     }
 
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
