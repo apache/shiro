@@ -24,10 +24,10 @@
   -->
 <beans>
 
-  <bean name="/sampleManager" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
-    <property name="service" ref="sampleManager"/>
-    <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
-    <property name="remoteInvocationExecutor" ref="secureRemoteInvocationExecutor"/>
-  </bean>
+    <bean name="/sampleManager" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+        <property name="service" ref="sampleManager"/>
+        <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
+        <property name="remoteInvocationExecutor" ref="secureRemoteInvocationExecutor"/>
+    </bean>
 
 </beans>
