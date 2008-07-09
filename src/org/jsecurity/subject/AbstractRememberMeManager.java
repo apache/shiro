@@ -24,6 +24,8 @@ import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.RememberMeAuthenticationToken;
+import org.jsecurity.codec.Base64;
+import org.jsecurity.codec.Hex;
 import org.jsecurity.crypto.BlowfishCipher;
 import org.jsecurity.crypto.Cipher;
 import org.jsecurity.io.DefaultSerializer;
@@ -41,7 +43,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();
-    private byte[] cipherKey = null;
+    private byte[] encryptionCipherKey = null;
+    private byte[] decryptionCipherKey = null;
 
     public AbstractRememberMeManager() {
     }
@@ -62,12 +65,57 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         this.cipher = cipher;
     }
 
+    public byte[] getEncryptionCipherKey() {
+        return encryptionCipherKey;
+    }
+
+    public void setEncryptionCipherKey(byte[] encryptionCipherKey) {
+        this.encryptionCipherKey = encryptionCipherKey;
+    }
+
+    public void setEncryptionCipherKeyHex(String hex) {
+        setEncryptionCipherKey(Hex.decode(hex));
+    }
+
+    public void setEncryptionCipherKeyBase64(String base64) {
+        setEncryptionCipherKey(Base64.decode(base64));
+    }
+
+    public byte[] getDecryptionCipherKey() {
+        return decryptionCipherKey;
+    }
+
+    public void setDecryptionCipherKey(byte[] decryptionCipherKey) {
+        this.decryptionCipherKey = decryptionCipherKey;
+    }
+
+    public void setDecryptionCipherKeyHex(String hex) {
+        setDecryptionCipherKey(Hex.decode(hex));
+    }
+
+    public void setDecryptionCipherKeyBase64(String base64) {
+        setDecryptionCipherKey(Base64.decode(base64));
+    }
+
     public byte[] getCipherKey() {
-        return cipherKey;
+        //Since this method should only be used with symmetric ciphers
+        //(where the enc and dec keys are the same), either is fine, just return one of them:
+        return getEncryptionCipherKey();
     }
 
     public void setCipherKey(byte[] cipherKey) {
-        this.cipherKey = cipherKey;
+        //Since this method should only be used in symmetric ciphers
+        //(where the enc and dec keys are the same), set it on both:
+        setEncryptionCipherKey(cipherKey);
+        setDecryptionCipherKey(cipherKey);
+    }
+
+    public void setCipherKeyHex(String hex) {
+        setCipherKey(Hex.decode(hex));
+    }
+
+    public void setCipherKeyBase64(String base64) {
+        setCipherKey(Base64.decode(base64));
     }
 
     // Abstract methods to be implemented by subclasses
@@ -153,7 +201,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         byte[] value = serialized;
         Cipher cipher = getCipher();
         if (cipher != null) {
-            value = cipher.encrypt(serialized, getCipherKey());
+            value = cipher.encrypt(serialized, getEncryptionCipherKey());
         }
         return value;
     }
@@ -162,7 +210,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         byte[] serialized = encrypted;
         Cipher cipher = getCipher();
         if (cipher != null) {
-            serialized = cipher.decrypt(encrypted, getCipherKey());
+            serialized = cipher.decrypt(encrypted, getDecryptionCipherKey());
         }
         return serialized;
     }

@@ -62,12 +62,12 @@ public class SimpleAccount implements Account, Serializable {
     /**
      * The principals that apply to the authenticated Subject/user.
      */
-    private PrincipalCollection principals = null;
+    private PrincipalCollection principals;
 
     /**
      * Credentials that were used to authenticate the user.
      */
-    private Object credentials = null;
+    private Object credentials;
 
     /**
      * True if the account is locked, false otherwise.

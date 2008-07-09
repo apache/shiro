@@ -20,6 +20,8 @@ package org.jsecurity.authz.permission;
 
 import org.jsecurity.authz.Permission;
 
+import java.io.Serializable;
+
 /**
  * An all <tt>AllPermission</tt> instance is one that always implies any other permission; that is, its
  * {@link #implies implies} method always returns <tt>true</tt>.
@@ -31,7 +33,7 @@ import org.jsecurity.authz.Permission;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class AllPermission implements Permission {
+public class AllPermission implements Permission, Serializable {
 
     /**
      * Always returns <tt>true</tt>, indicating any Subject granted this permission can do anything.

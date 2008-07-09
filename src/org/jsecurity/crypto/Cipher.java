@@ -52,8 +52,24 @@ package org.jsecurity.crypto;
  */
 public interface Cipher {
 
+    /**
+     * Encrypts data via the specified Cipher key.  Note that the key must be in a format understood by
+     * the Cipher implementation.
+     *
+     * @param raw           the data to encrypt
+     * @param encryptionKey the Cipher key used during encryption.
+     * @return an encrypted representation of the specified raw data.
+     */
     byte[] encrypt(byte[] raw, byte[] encryptionKey);
 
+    /**
+     * Decrypts encrypted data via the specified Cipher key and returns the original (pre-encrypted) data.
+     * Note that the key must be in a format understood by the Cipher implementation.
+     *
+     * @param encrypted     the previously encrypted data to decrypt
+     * @param decryptionKey the Cipher key used during decryption.
+     * @return the original form of the specified encrypted data.
+     */
     byte[] decrypt(byte[] encrypted, byte[] decryptionKey);
 
 }

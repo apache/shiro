@@ -63,8 +63,8 @@ public class User extends Person implements AuthorizingAccount {
 
     private String username;
     private String password;
-    private String passwordResetKey = null; //UUID generated when they ask to reset the password
-    private Date passwordResetKeyTimestamp = null; //when they asked to reset the password
+    private String passwordResetKey; //UUID generated when they ask to reset the password
+    private Date passwordResetKeyTimestamp; //when they asked to reset the password
     private Date lastLoginTimestamp; //can be null if never logged in
     private Date lockTimestamp; //date the account was locked, null means unlocked (default behavior)
     private boolean sessionTimeoutEnabled = true; //per-user session configuration
