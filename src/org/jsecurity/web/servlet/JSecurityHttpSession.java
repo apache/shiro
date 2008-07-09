@@ -34,7 +34,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 0.2
  */
-@SuppressWarnings({"deprecated", "deprecation"})
+@SuppressWarnings({"deprecation"})
 public class JSecurityHttpSession implements HttpSession {
 
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
@@ -132,13 +132,13 @@ public class JSecurityHttpSession implements HttpSession {
 
     @SuppressWarnings({"unchecked"})
     protected Set<String> getKeyNames() {
-        Collection<Object> keySet = null;
+        Collection<Object> keySet;
         try {
             keySet = getSession().getAttributeKeys();
         } catch (InvalidSessionException e) {
             throw new IllegalStateException(e);
         }
-        Set<String> keyNames = null;
+        Set<String> keyNames;
         if (keySet != null && !keySet.isEmpty()) {
             keyNames = new HashSet<String>(keySet.size());
             for (Object o : keySet) {

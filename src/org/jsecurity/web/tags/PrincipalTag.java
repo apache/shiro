@@ -154,6 +154,7 @@ public class PrincipalTag extends SecureTag {
         return SKIP_BODY;
     }
 
+    @SuppressWarnings({"unchecked"})
     private Object getPrincipalFromClassName() {
         Object principal = null;
 
