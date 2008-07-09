@@ -36,7 +36,7 @@ public class SuccessfulAuthenticationEvent extends AttemptedAuthenticationEvent 
      * The account object returned from the Authenticator as a result of the successful
      * authentication attempt.
      */
-    private Account account = null;
+    private final Account account;
 
     /**
      * Constructs a SuccessfulAuthenticationEvent in response to the successful authentication from

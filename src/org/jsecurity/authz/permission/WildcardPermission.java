@@ -21,6 +21,7 @@ package org.jsecurity.authz.permission;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.util.CollectionUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.Set;
  * @author Jeremy Haile
  * @since 0.9
  */
-public class WildcardPermission implements Permission {
+public class WildcardPermission implements Permission, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |

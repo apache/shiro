@@ -21,8 +21,13 @@ package org.jsecurity.realm;
 import java.util.Collection;
 
 /**
- * Enables JSecurity end-users to configure and initialize an application's {@link Realm Realm} instances
+ * Enables JSecurity end-users to configure and initialize one or more {@link Realm Realm} instances
  * in any manner desired.
+ * <p/>
+ * This interface exists to support environments where end-users may not wish to use JSecurity's default
+ * text-based configuration to create and configure realms, and instead wish to retrieve a realm configured in a
+ * proprietary manner.  An implementation of this interface can access that proprietary mechanism to retrieve the
+ * already-created <tt>Realm</tt>s.
  *
  * <p>The <code>Realm</code> instances returned will used to construct the application's
  * {@link org.jsecurity.mgt.SecurityManager SecurityManager} instance.

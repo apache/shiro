@@ -126,6 +126,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
             Subject subject = new DelegatingSubject(principals, authenticated, inetAddress, session, securityManager);
 
+            ThreadContext.bind(securityManager);
             ThreadContext.bind(subject);
 
             return super.invoke(invocation, targetObject);
