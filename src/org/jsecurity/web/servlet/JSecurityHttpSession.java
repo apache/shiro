@@ -173,7 +173,7 @@ public class JSecurityHttpSession implements HttpSession {
         return array;
     }
 
-    protected void beforeBound(String s, Object o) {
+    protected void afterBound(String s, Object o) {
         if (o instanceof HttpSessionBindingListener) {
             HttpSessionBindingListener listener = (HttpSessionBindingListener) o;
             HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, s, o);
@@ -190,12 +190,17 @@ public class JSecurityHttpSession implements HttpSession {
     }
 
     public void setAttribute(String s, Object o) {
-        beforeBound(s, o);
         try {
             getSession().setAttribute(s, o);
+            afterBound(s, o);
         } catch (InvalidSessionException e) {
-            afterUnbound(s, o);
-            throw new IllegalStateException(e);
+            //noinspection finally
+            try {
+                afterUnbound(s, o);
+            } finally {
+                //noinspection ThrowFromFinallyBlock
+                throw new IllegalStateException(e);
+            }
         }
     }
 
