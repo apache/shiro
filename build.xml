@@ -29,273 +29,306 @@
 -->
 <project name="jsecurity" default="all" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-  <!-- Static property definitions.  These will remain the same for any module or submodule. -->
-  <property name="project.name" value="jsecurity"/>
+    <!-- Static property definitions.  These will remain the same for any module or submodule. -->
+    <property name="project.name" value="jsecurity"/>
 
-  <property name="root.base.dir" value="${basedir}"/>
+    <property name="root.base.dir" value="${basedir}"/>
 
-  <!-- Allow override of default build properties from properties file. -->
-  <property file="build.properties"/>
-  <property file="${user.home}/.jsecurity/build.properties"/>
+    <!-- Allow override of default build properties from properties file. -->
+    <property file="build.properties"/>
+    <property file="${user.home}/.jsecurity/build.properties"/>
 
-  <!-- Environment variables (e.g. to pickup CATALINA_HOME for test deployment) -->
-  <property environment="env"/>
+    <!-- Environment variables (e.g. to pickup CATALINA_HOME for test deployment) -->
+    <property environment="env"/>
 
-  <property name="ivy.install.version" value="2.0.0-beta2"/>
-  <condition property="ivy.home" value="${env.IVY_HOME}">
-    <isset property="env.IVY_HOME"/>
-  </condition>
-  <property name="ivy.home" value="${user.home}/.ant"/>
-  <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
-  <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+    <property name="ivy.install.version" value="2.0.0-beta2"/>
+    <condition property="ivy.home" value="${env.IVY_HOME}">
+        <isset property="env.IVY_HOME"/>
+    </condition>
+    <property name="ivy.home" value="${user.home}/.ant"/>
+    <property name="ivy.jar.dir" value="${ivy.home}/lib"/>
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
 
-  <!-- version of the product, see http://apr.apache.org/versioning.html
-for details on this convention -->
-  <property name="major.version" value="0"/>
-  <property name="minor.version" value="9"/>
-  <property name="patch.version" value="0-RC1"/>
-  <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
-  <property name="release.name" value="${project.name}-${version}"/>
+    <!-- version of the product, see http://apr.apache.org/versioning.html for
+         details on this convention -->
+    <property name="major.version" value="0"/>
+    <property name="minor.version" value="9"/>
+    <property name="patch.version" value="0-RC1"/>
+    <property name="version" value="${major.version}.${minor.version}.${patch.version}"/>
+    <property name="release.name" value="${project.name}-${version}"/>
 
-  <!-- application-wide config files: (all other config files should be in a respective
-module or submodule) -->
-  <property name="root.etc.dir" value="${root.base.dir}/etc"/>
-  <property name="root.dist.dir" value="${root.base.dir}/build/${project.name}-${version}"/>
+    <!-- application-wide config files: (all other config files should be in a
+         respective module or submodule) -->
+    <property name="root.etc.dir" value="${root.base.dir}/etc"/>
+    <property name="root.dist.dir" value="${root.base.dir}/build/${project.name}-${version}"/>
 
-  <!-- All 3rd party libraries are in here: -->
-  <property name="lib.dir" value="${root.base.dir}/lib"/>
+    <!-- All 3rd party libraries are in here: -->
+    <property name="lib.dir" value="${root.base.dir}/lib"/>
 
-  <!-- *RELATIVE* definitions.  These properties will reflect a directory structure
-relative to where the build is being executed -->
-  <property name="base.dir" value="."/>
-  <property name="etc.dir" value="${base.dir}/etc"/>
-  <property name="src.dir" value="${base.dir}/src"/>
-  <property name="test.dir" value="${base.dir}/test"/>
-  <property name="build.dir" value="${base.dir}/build"/>
-  <property name="classes.dir" value="${build.dir}/classes"/>
-  <property name="test.classes.dir" value="${build.dir}/test-classes"/>
-  <!-- <property name="dist.dir" value="${build.dir}/dist"/> -->
-
-
-  <property name="docs.dir" value="${root.dist.dir}/docs"/>
-  <property name="src.ref.dir" value="${root.base.dir}/docs/reference"/>
-  <property name="dist.ref.dir" value="${docs.dir}/reference"/>
-  <property name="double.sided" value="0"/>
-  <!-- default to single-sided style -->
-  <property name="api.dir" value="${docs.dir}/api"/>
-  <property name="test.docs.dir" value="${docs.dir}/test-reports"/>
-
-  <!-- compile flags, can be overridden on the command line using the -D flag -->
-  <property name="compile.debug" value="true"/>
-  <property name="compile.deprecation" value="false"/>
-  <property name="compile.optimize" value="false"/>
-
-  <property name="dist.jarName" value="${project.name}.jar"/>
-  <property name="dist.jar" value="${root.dist.dir}/${dist.jarName}"/>
-
-  <path id="all.libs">
-    <fileset dir="${lib.dir}">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
-
-  <!-- To disable this task (maybe behind a firewall?), use the -Doffline=true command-line switch -->
-  <target name="download-ivy" unless="offline" description="Ensures Ivy exists for automatic dependency mgt">
-    <mkdir dir="${ivy.jar.dir}"/>
-    <!-- download Ivy from web site so that it can be used even without any special installation -->
-    <echo message="Installing Ivy for automated dependecy management..."/>
-    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-         dest="${ivy.jar.file}" usetimestamp="true"/>
-  </target>
-
-  <!-- =================================
- target: load-ivy
- This target is not necessary if you put ivy.jar in your ant lib directory.
- If you already have ivy in your ant lib, you can simply remove this target.
- ================================= -->
-  <target name="load-ivy" depends="download-ivy" description="Ensures Ivy ant tasks are loaded">
-    <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
-it into ant's lib dir (note that the latter copy will always take precedence).
-We will not fail as long as local lib dir exists (it may be empty) and
-ivy is in at least one of ant's lib dir or the local lib dir. -->
-    <path id="ivy.lib.path">
-      <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-    </path>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
-  </target>
-
-  <target name="retrieve-dependencies" depends="load-ivy"
-          description="Ensures all build dependencies have been downloaded">
-    <mkdir dir="${lib.dir}"/>
-    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true"/>
-  </target>
-
-  <!-- ===================================================================
--  Clean all local and children build files
--  =================================================================== -->
-  <target name="clean" description="Cleans the entire project">
-    <delete dir="${build.dir}"/>
-    <ant dir="samples/spring" target="clean"/>
-  </target>
-
-  <target name="compile.core" depends="retrieve-dependencies" description="Compiles JSecurity core API only">
-    <mkdir dir="${classes.dir}"/>
-    <mkdir dir="${classes.dir}/META-INF"/>
-
-    <javac destdir="${classes.dir}"
-           debug="${compile.debug}"
-           deprecation="${compile.deprecation}"
-           optimize="${compile.optimize}"
-           failonerror="true"
-           classpathref="all.libs">
-      <src path="${src.dir}"/>
-    </javac>
-
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}">
-        <include name="**/*.properties"/>
-        <include name="**/*.xml"/>
-        <include name="**/*.dtd"/>
-        <include name="**/*.xsd"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-      <fileset dir="${src.dir}">
-        <include name="**/*.tld"/>
-      </fileset>
-    </copy>
-  </target>
+    <!-- *RELATIVE* definitions.  These properties will reflect a directory
+         structure relative to where the build is being executed -->
+    <property name="base.dir" value="."/>
+    <property name="etc.dir" value="${base.dir}/etc"/>
+    <property name="src.dir" value="${base.dir}/src"/>
+    <property name="test.dir" value="${base.dir}/test"/>
+    <property name="build.dir" value="${base.dir}/build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="test.classes.dir" value="${build.dir}/test-classes"/>
+    <!-- <property name="dist.dir" value="${build.dir}/dist"/> -->
 
 
-  <target name="compile.spring" depends="compile.core" description="Compiles Spring Framework support">
-    <javac destdir="${classes.dir}"
-           debug="${compile.debug}"
-           deprecation="${compile.deprecation}"
-           optimize="${compile.optimize}"
-           failonerror="true">
-      <classpath refid="all.libs"/>
-      <classpath location="${classes.dir}"/>
-      <src path="${root.base.dir}/support/spring/src"/>
-    </javac>
+    <property name="docs.dir" value="${root.dist.dir}/docs"/>
+    <property name="src.ref.dir" value="${root.base.dir}/docs/reference"/>
+    <property name="dist.ref.dir" value="${docs.dir}/reference"/>
+    <property name="double.sided" value="0"/>
+    <!-- default to single-sided style -->
+    <property name="api.dir" value="${docs.dir}/api"/>
+    <property name="test.docs.dir" value="${docs.dir}/test-reports"/>
 
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${root.base.dir}/support/spring/src">
-        <include name="**/*.properties"/>
-        <include name="**/*.xml"/>
-        <include name="**/*.dtd"/>
-        <include name="**/*.xsd"/>
-      </fileset>
-    </copy>
+    <!-- compile flags, can be overridden on the command line using the -D flag -->
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="false"/>
 
-    <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-      <fileset dir="${root.base.dir}/support/spring/src">
-        <include name="**/*.tld"/>
-      </fileset>
-    </copy>
-  </target>
+    <property name="dist.jarName" value="${project.name}.jar"/>
+    <property name="dist.jar" value="${root.dist.dir}/${dist.jarName}"/>
 
-  <target name="compile" depends="compile.core, compile.spring" description="Compiles all classes"/>
-
-  <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
-
-    <mkdir dir="${root.dist.dir}"/>
-
-    <jar jarfile="${dist.jar}">
-      <fileset dir="${classes.dir}">
-        <include name="org/jsecurity/**"/>
-      </fileset>
-      <metainf dir="${classes.dir}/META-INF">
-        <include name="**"/>
-      </metainf>
-      <manifest>
-        <attribute name="Implementation-Title" value="${project.name}"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="${project.name}-Version" value="${version}"/>
-        <!-- Allow use of this JAR as a Java agent -->
-        <!-- <attribute name="Premain-Class" value="org.jsecurity.instrument.InstrumentationSavingAgent" /> -->
-      </manifest>
-    </jar>
-
-    <path id="retroweaver.path">
-      <fileset dir="${lib.dir}" includes="**/*"/>
+    <path id="all.libs">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
     </path>
 
-    <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask"
-             classpathref="retroweaver.path"/>
-    <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
-    <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
+    <!-- To disable this task (maybe behind a firewall?), use the -Doffline=true command-line switch -->
+    <target name="download-ivy" unless="offline" description="Ensures Ivy exists for automatic dependency mgt">
+        <mkdir dir="${ivy.jar.dir}"/>
+        <!-- download Ivy from web site so that it can be used even without any special installation -->
+        <echo message="Installing Ivy for automated dependecy management..."/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+             dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
 
-  </target>
+    <!-- =================================
+         target: load-ivy
+         This target is not necessary if you put ivy.jar in your ant lib directory.
+         If you already have ivy in your ant lib, you can simply remove this target.
+         ================================= -->
+    <target name="load-ivy" depends="download-ivy" description="Ensures Ivy ant tasks are loaded">
+        <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+             it into ant's lib dir (note that the latter copy will always take precedence).
+             We will not fail as long as local lib dir exists (it may be empty) and
+             ivy is in at least one of ant's lib dir or the local lib dir. -->
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
 
-  <target name="jar.deploy" depends="jar,src.zip"
-          description="Copies the jar and src.zip files to a local directory specified by build properties.  Requires creation of .jsecurity/build.properties file to specify the deploy dir.">
-    <fail unless="jar.deploy.dir"
-          message="jar.deploy.dir property is not set. Please create ${user.home}/.jsecurity/build.properties and specify this property before running this task."/>
-    <copy todir="${jar.deploy.dir}" preservelastmodified="true">
-      <fileset file="${dist.jar}"/>
-      <fileset file="${root.dist.dir}/${project.name}.src.zip"/>
-    </copy>
-  </target>
+    <target name="retrieve-dependencies" depends="load-ivy"
+            description="Ensures all build dependencies have been downloaded">
+        <mkdir dir="${lib.dir}"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true"/>
+    </target>
 
-  <target name="samples.quickstart" depends="jar" description="Creates the JSecurity quickstart .war">
-    <ant dir="samples/quickstart"/>
-  </target>
+    <!-- ===================================================================
+ -  Clean all local and children build files
+ -  =================================================================== -->
+    <target name="clean" description="Cleans the entire project">
+        <delete dir="${build.dir}"/>
+        <ant dir="samples/spring" target="clean"/>
+    </target>
 
-  <target name="samples.spring" depends="jar" description="Creates the sample JSecurity/Spring .war">
-    <ant dir="samples/spring"/>
-  </target>
+    <target name="compile.core" depends="retrieve-dependencies" description="Compiles JSecurity core API only">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${classes.dir}/META-INF"/>
 
-  <target name="samples.spring-hibernate" depends="jar"
-          description="Creates the sample JSecurity Spring/Hibernate .war">
-    <ant dir="samples/spring-hibernate"/>
-  </target>
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true"
+               classpathref="all.libs"
+               sourcepath=""
+               srcdir="${src.dir}">
+            <exclude name="org/jsecurity/web/**"/>
+        </javac>
 
-  <target name="samples" depends="samples.quickstart,samples.spring,samples.spring-hibernate"
-          description="Creates all sample applications"/>
+        <copy todir="${classes.dir}" preservelastmodified="true">
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
 
-  <target name="samples.quickstart.deploy" depends="samples.quickstart"
-          description="Deploys the JSecurity quickstart .war">
-    <ant dir="samples/quickstart" target="deploy"/>
-  </target>
+        <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${src.dir}">
+                <include name="**/*.tld"/>
+            </fileset>
+        </copy>
+    </target>
 
-  <target name="samples.spring.deploy" depends="samples.spring"
-          description="Deploys the sample JSecurity/Spring .war">
-    <ant dir="samples/spring" target="deploy"/>
-  </target>
+    <target name="compile.web" depends="compile.core" description="Compiles JSecurity web API only">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${classes.dir}/META-INF"/>
 
-  <target name="samples.spring-hibernate.deploy" depends="samples.spring-hibernate"
-          description="Deploys the sample JSecurity Spring/Hibernate .war">
-    <ant dir="samples/spring-hibernate" target="deploy"/>
-  </target>
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true"
+               classpathref="all.libs"
+               sourcepath=""
+               srcdir="${src.dir}">
+            <include name="org/jsecurity/web/**"/>
+        </javac>
 
-  <!-- =================================================================== -->
-  <!-- Javadoc all main sources                                            -->
-  <!-- =================================================================== -->
-  <target name="javadoc" description="Generate Javadocs">
+        <copy todir="${classes.dir}" preservelastmodified="true">
+            <fileset dir="${src.dir}/org/jsecurity/web">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
 
-    <path id="javadocSrcPath">
-      <pathelement location="${src.dir}"/>
-      <pathelement location="${root.base.dir}/support/spring/src"/>
-    </path>
+        <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${src.dir}">
+                <include name="**/*.tld"/>
+            </fileset>
+        </copy>
+    </target>
 
-    <echo message="Generating JavaDoc API..."/>
-    <delete dir="${api.dir}" failonerror="false"/>
-    <mkdir dir="${api.dir}"/>
 
-    <javadoc destdir="${api.dir}" windowtitle="JSecurity API ${version}"
-             source="1.5" access="package" author="true" version="true" use="true"
-             defaultexcludes="true"
-             header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;JSecurity&lt;/a&gt;'>
-      <sourcepath refid="javadocSrcPath"/>
-      <arg value="-breakiterator"/>
-      <arg value="-J-Xmx128m"/>
-      <arg value="-J-XX:MaxPermSize=128m"/>
-      <!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
-    <arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
-      <doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
-      <bottom>
-        <![CDATA[
+    <target name="compile.spring" depends="compile.core" description="Compiles Spring Framework support">
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true">
+            <classpath refid="all.libs"/>
+            <classpath location="${classes.dir}"/>
+            <src path="${root.base.dir}/support/spring/src"/>
+        </javac>
+
+        <copy todir="${classes.dir}" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/support/spring/src">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/support/spring/src">
+                <include name="**/*.tld"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile" depends="compile.core, compile.web, compile.spring" description="Compiles all classes"/>
+
+    <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
+
+        <mkdir dir="${root.dist.dir}"/>
+
+        <jar jarfile="${dist.jar}">
+            <fileset dir="${classes.dir}">
+                <include name="org/jsecurity/**"/>
+            </fileset>
+            <metainf dir="${classes.dir}/META-INF">
+                <include name="**"/>
+            </metainf>
+            <manifest>
+                <attribute name="Implementation-Title" value="${project.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="${project.name}-Version" value="${version}"/>
+                <!-- Allow use of this JAR as a Java agent -->
+                <!-- <attribute name="Premain-Class" value="org.jsecurity.instrument.InstrumentationSavingAgent" /> -->
+            </manifest>
+        </jar>
+
+        <path id="retroweaver.path">
+            <fileset dir="${lib.dir}" includes="**/*"/>
+        </path>
+
+        <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask"
+                 classpathref="retroweaver.path"/>
+        <retroweaver target="1.3" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk13.jar"/>
+        <retroweaver target="1.4" inputjar="${dist.jar}" outputjar="${root.dist.dir}/${project.name}-jdk14.jar"/>
+
+    </target>
+
+    <target name="jar.deploy" depends="jar,src.zip"
+            description="Copies the jar and src.zip files to a local directory specified by build properties.  Requires creation of .jsecurity/build.properties file to specify the deploy dir.">
+        <fail unless="jar.deploy.dir"
+              message="jar.deploy.dir property is not set. Please create ${user.home}/.jsecurity/build.properties and specify this property before running this task."/>
+        <copy todir="${jar.deploy.dir}" preservelastmodified="true">
+            <fileset file="${dist.jar}"/>
+            <fileset file="${root.dist.dir}/${project.name}.src.zip"/>
+        </copy>
+    </target>
+
+    <target name="samples.quickstart" depends="jar" description="Creates the JSecurity quickstart .war">
+        <ant dir="samples/quickstart"/>
+    </target>
+
+    <target name="samples.spring" depends="jar" description="Creates the sample JSecurity/Spring .war">
+        <ant dir="samples/spring"/>
+    </target>
+
+    <target name="samples.spring-hibernate" depends="jar"
+            description="Creates the sample JSecurity Spring/Hibernate .war">
+        <ant dir="samples/spring-hibernate"/>
+    </target>
+
+    <target name="samples" depends="samples.quickstart,samples.spring,samples.spring-hibernate"
+            description="Creates all sample applications"/>
+
+    <target name="samples.quickstart.deploy" depends="samples.quickstart"
+            description="Deploys the JSecurity quickstart .war">
+        <ant dir="samples/quickstart" target="deploy"/>
+    </target>
+
+    <target name="samples.spring.deploy" depends="samples.spring"
+            description="Deploys the sample JSecurity/Spring .war">
+        <ant dir="samples/spring" target="deploy"/>
+    </target>
+
+    <target name="samples.spring-hibernate.deploy" depends="samples.spring-hibernate"
+            description="Deploys the sample JSecurity Spring/Hibernate .war">
+        <ant dir="samples/spring-hibernate" target="deploy"/>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Javadoc all main sources                                            -->
+    <!-- =================================================================== -->
+    <target name="javadoc" description="Generate Javadocs">
+
+        <path id="javadocSrcPath">
+            <pathelement location="${src.dir}"/>
+            <pathelement location="${root.base.dir}/support/spring/src"/>
+        </path>
+
+        <echo message="Generating JavaDoc API..."/>
+        <delete dir="${api.dir}" failonerror="false"/>
+        <mkdir dir="${api.dir}"/>
+
+        <javadoc destdir="${api.dir}" windowtitle="JSecurity API ${version}"
+                 source="1.5" access="package" author="true" version="true" use="true"
+                 defaultexcludes="true"
+                 header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;JSecurity&lt;/a&gt;'>
+            <sourcepath refid="javadocSrcPath"/>
+            <arg value="-breakiterator"/>
+            <arg value="-J-Xmx128m"/>
+            <arg value="-J-XX:MaxPermSize=128m"/>
+            <!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
+          <arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
+            <doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
+            <bottom>
+                <![CDATA[
                 <i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i>
                 <script type="text/javascript">
                     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -307,361 +340,361 @@ ivy is in at least one of ant's lib dir or the local lib dir. -->
                     pageTracker._trackPageview();
                 </script>
                 ]]>
-      </bottom>
-      <classpath refid="all.libs"/>
-      <packageset dir="${src.dir}">
-        <include name="org/jsecurity/**"/>
-      </packageset>
-      <packageset dir="${root.base.dir}/support/spring/src">
-        <include name="org/jsecurity/**"/>
-      </packageset>
-      <link href="http://java.sun.com/j2se/1.5/docs/api"/>
-      <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
-      <!-- Jakarta Commons -->
-      <link href="http://jakarta.apache.org/commons/collections/apidocs/"/>
-      <link href="http://commons.apache.org/beanutils/commons-beanutils-1.7.0/docs/api/"/>
-      <link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
-      <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
-      <link href="http://quartz.sourceforge.net/javadoc/"/>
-      <link href="http://static.springframework.org/spring/docs/2.0.x/api/"/>
-      <link href="http://ehcache.sourceforge.net/javadoc/"/>
-    </javadoc>
+            </bottom>
+            <classpath refid="all.libs"/>
+            <packageset dir="${src.dir}">
+                <include name="org/jsecurity/**"/>
+            </packageset>
+            <packageset dir="${root.base.dir}/support/spring/src">
+                <include name="org/jsecurity/**"/>
+            </packageset>
+            <link href="http://java.sun.com/j2se/1.5/docs/api"/>
+            <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
+            <!-- Jakarta Commons -->
+            <link href="http://jakarta.apache.org/commons/collections/apidocs/"/>
+            <link href="http://commons.apache.org/beanutils/commons-beanutils-1.7.0/docs/api/"/>
+            <link href="http://jakarta.apache.org/commons/logging/apidocs/"/>
+            <link href="http://jakarta.apache.org/commons/codec/apidocs/"/>
+            <link href="http://quartz.sourceforge.net/javadoc/"/>
+            <link href="http://static.springframework.org/spring/docs/2.0.x/api/"/>
+            <link href="http://ehcache.sourceforge.net/javadoc/"/>
+        </javadoc>
 
-  </target>
-
-  <!-- ===================================================================
--  Reference documentation
--  =================================================================== -->
-  <target name="doc.prepare" depends="retrieve-dependencies" description="Extra preparation for the documentation">
+    </target>
+
+    <!-- ===================================================================
+ -  Reference documentation
+ -  =================================================================== -->
+    <target name="doc.prepare" depends="retrieve-dependencies" description="Extra preparation for the documentation">
 
-    <!-- unzip the docbook-libs.zip file containing the necessary jars: -->
-    <unzip src="${lib.dir}/docbook/docbook-libs.zip" dest="${lib.dir}/docbook"/>
+        <!-- unzip the docbook-libs.zip file containing the necessary jars: -->
+        <unzip src="${lib.dir}/docbook/docbook-libs.zip" dest="${lib.dir}/docbook"/>
 
-    <!-- <antcall target="tld.to.docbook"/> -->
+        <!-- <antcall target="tld.to.docbook"/> -->
 
-  </target>
+    </target>
 
 
-  <target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
+    <target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
 
-    <mkdir dir="${dist.ref.dir}/pdf/images"/>
+        <mkdir dir="${dist.ref.dir}/pdf/images"/>
 
-    <copy todir="${dist.ref.dir}/pdf/images">
-      <fileset dir="${src.ref.dir}/images">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
+        <copy todir="${dist.ref.dir}/pdf/images">
+            <fileset dir="${src.ref.dir}/images">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
 
-    <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}">
-      <classpath>
-        <fileset dir="${lib.dir}/docbook">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-      <jvmarg value="-Xmx256M"/>
-      <jvmarg value="-XX:MaxPermSize=128m"/>
-      <arg value="-o"/>
-      <arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-      <arg value="${src.ref.dir}/src/index.xml"/>
-      <arg value="${src.ref.dir}/styles/fopdf.xsl"/>
-      <!-- controls the double sided pagination style -->
-      <arg value="double.sided=${double.sided}"/>
-    </java>
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}">
+            <classpath>
+                <fileset dir="${lib.dir}/docbook">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <jvmarg value="-Xmx256M"/>
+            <jvmarg value="-XX:MaxPermSize=128m"/>
+            <arg value="-o"/>
+            <arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+            <arg value="${src.ref.dir}/src/index.xml"/>
+            <arg value="${src.ref.dir}/styles/fopdf.xsl"/>
+            <!-- controls the double sided pagination style -->
+            <arg value="double.sided=${double.sided}"/>
+        </java>
 
-    <java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${dist.ref.dir}">
-      <classpath>
-        <fileset dir="${lib.dir}/docbook">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-      <arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-      <arg value="${dist.ref.dir}/pdf/jsecurity-reference.pdf"/>
-    </java>
+        <java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${dist.ref.dir}">
+            <classpath>
+                <fileset dir="${lib.dir}/docbook">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+            <arg value="${dist.ref.dir}/pdf/jsecurity-reference.pdf"/>
+        </java>
 
-    <delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+        <delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
 
-  </target>
+    </target>
 
 
-  <!-- Start of TLD => DocBook targets -->
-  <!-- <target name="tld.to.docbook" depends="original.tld.to.docbook,forms.tld.to.docbook"/>
+    <!-- Start of TLD => DocBook targets -->
+    <!-- <target name="tld.to.docbook" depends="original.tld.to.docbook,forms.tld.to.docbook"/>
 
 
-  <target name="original.tld.to.docbook">
+<target name="original.tld.to.docbook">
 
-    <antcall target="hack.DOCTYPE">
-      <param name="doctype.input.file" value="src/org/springframework/web/servlet/tags/spring.tld"/>
-      <param name="doctype.scrubbed.file" value="${doc.ref.dir}/src/spring.tld"/>
-    </antcall>
+<antcall target="hack.DOCTYPE">
+<param name="doctype.input.file" value="src/org/springframework/web/servlet/tags/spring.tld"/>
+<param name="doctype.scrubbed.file" value="${doc.ref.dir}/src/spring.tld"/>
+</antcall>
 
-    <antcall target="private.tld.to.docbook">
-      <param name="input.tld" value="spring.tld"/>
-      <param name="input.tld.file" value="${doc.ref.dir}/src/spring.tld"/>
-    </antcall>
+<antcall target="private.tld.to.docbook">
+<param name="input.tld" value="spring.tld"/>
+<param name="input.tld.file" value="${doc.ref.dir}/src/spring.tld"/>
+</antcall>
 
-  </target>
+</target>
 
 
-  <target name="forms.tld.to.docbook">
+<target name="forms.tld.to.docbook">
 
-    <antcall target="hack.DOCTYPE">
-      <param name="doctype.input.file" value="src/org/springframework/web/servlet/tags/form/spring-form.tld"/>
-      <param name="doctype.scrubbed.file" value="${doc.ref.dir}/src/spring-form.tld"/>
-    </antcall>
+<antcall target="hack.DOCTYPE">
+<param name="doctype.input.file" value="src/org/springframework/web/servlet/tags/form/spring-form.tld"/>
+<param name="doctype.scrubbed.file" value="${doc.ref.dir}/src/spring-form.tld"/>
+</antcall>
 
-    <antcall target="private.tld.to.docbook">
-      <param name="input.tld" value="spring-form.tld"/>
-      <param name="input.tld.file" value="${doc.ref.dir}/src/spring-form.tld"/>
-    </antcall>
+<antcall target="private.tld.to.docbook">
+<param name="input.tld" value="spring-form.tld"/>
+<param name="input.tld.file" value="${doc.ref.dir}/src/spring-form.tld"/>
+</antcall>
 
-  </target>
+</target>
 
 
-  <target name="private.tld.to.docbook" if="input.tld">
+<target name="private.tld.to.docbook" if="input.tld">
 
-    <property name="out.file" value="${doc.ref.dir}/src/${input.tld}.xml"/>
+<property name="out.file" value="${doc.ref.dir}/src/${input.tld}.xml"/>
 
-    <xslt processor="trax" in="${input.tld.file}" out="${out.file}"
-          style="${doc.ref.dir}/styles/tld.to.docbook.xsl">
-      <param name="title" expression="${input.tld}"/>
-    </xslt>
+<xslt processor="trax" in="${input.tld.file}" out="${out.file}"
+    style="${doc.ref.dir}/styles/tld.to.docbook.xsl">
+<param name="title" expression="${input.tld}"/>
+</xslt>
 
-    <antcall target="hack.CDATA">
-      <param name="target.file" value="${out.file}"/>
-    </antcall>
+<antcall target="hack.CDATA">
+<param name="target.file" value="${out.file}"/>
+</antcall>
 
-    <delete file="${input.tld.file}"/>
+<delete file="${input.tld.file}"/>
 
-  </target>
+</target>
 
 
-  <target name="hack.CDATA" if="target.file">
+<target name="hack.CDATA" if="target.file">
 
-    <replace file="${target.file}">
-      <replacetoken><![CDATA[&lt;]]></replacetoken>
-      <replacevalue><![CDATA[<]]></replacevalue>
-    </replace>
+<replace file="${target.file}">
+<replacetoken><![CDATA[&lt;]]></replacetoken>
+<replacevalue><![CDATA[<]]></replacevalue>
+</replace>
 
-    <replace file="${target.file}">
-      <replacetoken><![CDATA[&gt;]]></replacetoken>
-      <replacevalue><![CDATA[>]]></replacevalue>
-    </replace>
+<replace file="${target.file}">
+<replacetoken><![CDATA[&gt;]]></replacetoken>
+<replacevalue><![CDATA[>]]></replacevalue>
+</replace>
 
-  </target>
+</target>
 
 
-  <target name="hack.DOCTYPE" if="doctype.input.file">
+<target name="hack.DOCTYPE" if="doctype.input.file">
 
-    <!- -
-    Removes the TLD DTD decl. from the TLD files as this messes
-    up the transform (feel free to fix this more elegantly)
-    - ->
-    <copy file="${doctype.input.file}" tofile="${doctype.scrubbed.file}" overwrite="true"/>
+<!- -
+Removes the TLD DTD decl. from the TLD files as this messes
+up the transform (feel free to fix this more elegantly)
+- ->
+<copy file="${doctype.input.file}" tofile="${doctype.scrubbed.file}" overwrite="true"/>
 
-    <replace file="${doctype.scrubbed.file}" value="">
-      <replacetoken><![CDATA[<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">]]></replacetoken>
-    </replace>
+<replace file="${doctype.scrubbed.file}" value="">
+<replacetoken><![CDATA[<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">]]></replacetoken>
+</replace>
 
-  </target>
-  <!- - End of TLD => DocBook targets -->
+</target>
+<!- - End of TLD => DocBook targets -->
 
 
-  <target name="doc.html" depends="doc.prepare"
-          description="Compile reference documentation to chunked html">
-
-    <mkdir dir="${dist.ref.dir}/html/images"/>
-
-    <copy todir="${dist.ref.dir}/html/images">
-      <fileset dir="${src.ref.dir}/images">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.ref.dir}/html/" failonerror="false">
-      <fileset dir="${src.ref.dir}/styles/">
-        <include name="*.css"/>
-        <include name="*.js"/>
-      </fileset>
-    </copy>
+    <target name="doc.html" depends="doc.prepare"
+            description="Compile reference documentation to chunked html">
+
+        <mkdir dir="${dist.ref.dir}/html/images"/>
+
+        <copy todir="${dist.ref.dir}/html/images">
+            <fileset dir="${src.ref.dir}/images">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${dist.ref.dir}/html/" failonerror="false">
+            <fileset dir="${src.ref.dir}/styles/">
+                <include name="*.css"/>
+                <include name="*.js"/>
+            </fileset>
+        </copy>
 
-    <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
-      <classpath>
-        <fileset dir="${lib.dir}/docbook">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-      <jvmarg value="-Xmx256M"/>
-      <jvmarg value="-XX:MaxPermSize=128m"/>
-      <arg value="${src.ref.dir}/src/index.xml"/>
-      <arg value="${src.ref.dir}/styles/html_chunk.xsl"/>
-    </java>
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
+            <classpath>
+                <fileset dir="${lib.dir}/docbook">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <jvmarg value="-Xmx256M"/>
+            <jvmarg value="-XX:MaxPermSize=128m"/>
+            <arg value="${src.ref.dir}/src/index.xml"/>
+            <arg value="${src.ref.dir}/styles/html_chunk.xsl"/>
+        </java>
 
-  </target>
+    </target>
 
 
-  <target name="doc.htmlsingle" depends="doc.prepare" description="Compile reference documentation to single html">
+    <target name="doc.htmlsingle" depends="doc.prepare" description="Compile reference documentation to single html">
 
-    <mkdir dir="${dist.ref.dir}/html_single/images"/>
+        <mkdir dir="${dist.ref.dir}/html_single/images"/>
 
-    <copy todir="${dist.ref.dir}/html_single/images">
-      <fileset dir="${src.ref.dir}/images">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
-    <copy todir="${dist.ref.dir}/html_single/" file="${src.ref.dir}/styles/html.css" failonerror="false"/>
-
-    <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}">
-      <classpath>
-        <fileset dir="${lib.dir}/docbook">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
-      <jvmarg value="-Xmx256M"/>
-      <jvmarg value="-XX:MaxPermSize=128m"/>
-      <arg value="-o"/>
-      <arg value="${dist.ref.dir}/html_single/index.html"/>
-      <arg value="${src.ref.dir}/src/index.xml"/>
-      <arg value="${src.ref.dir}/styles/html.xsl"/>
-    </java>
-
-  </target>
-
-
-  <target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf" description="Generate reference documentation"/>
-
-  <!-- <name name="junit.check.warning" if="tests.failed">
-     <echo>
-     ***********************************************************
-     * One or more unit tests failed!
-     * Check the reports located in ${test.docs.dir}
-     * for details...
-     ***********************************************************
-     </echo>
- </name>
-
- <!- - ===================================================================
-   -  quick-test-report - quickly generates test report documentation based
-   -  on the xml test reports previously created during a junit task
-   -  execution. (this does not run the task).
-   -  =================================================================== - ->
- <name name="test.report">
-     <echo message="Generating test reports..."/>
-
-     <junitreport todir="${test.docs.dir}">
-         <fileset dir=".">
-             <include name="**/TEST-*"/>
-         </fileset>
-         <report todir="${test.docs.dir}"/>
-     </junitreport>
- </name>
-
- <name name="unit.tests" depends="compile">
-     <echo message="Executing unit tests..."/>
-
-     <!- - Any properties files needed by test cases and/or Spring test case
-          configuration must be under the base root dir hierarchy so relative
-          file references may work properly.  - ->
-     <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/etc/log4j.properties"/>
-     <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/db/build/gen/jdbc.properties"/>
-
-     <junit printsummary="withOutAndErr"
-            showoutput="true"
-            haltonfailure="no"
-            failureproperty="tests.failed"
-            errorproperty="tests.failed"
-            timeout="60000"
-            fork="yes">
-         <classpath refid="test.path"/>
-
-         <formatter type="brief" usefile="false"/>
-         <formatter type="xml"/>
-         <!- - allows us to generate web reports - ->
-
-         <batchtest fork="true" todir="${gen.dir}">
-             <fileset dir="${test.classes.dir}">
-
-                 <include name="**/*Test.class"/>
-
-                 <exclude name="**/*IntegrationTest.class"/>
-                 <exclude name="**/*SystemTest.class"/>
-                 <exclude name="**/*StressTest.class"/>
-
-             </fileset>
-         </batchtest>
-
-     </junit>
-
- </name>
-
- <name name="test" depends="dist">
-     <antcall name="template">
-         <param name="name" value="test"/>
-     </antcall>
- </name> -->
-
-
-  <target name="src.zip" description="Create source ZIP (containing Java sources)">
-    <mkdir dir="${root.dist.dir}"/>
-    <delete file="${root.dist.dir}/${project.name}.src.zip"/>
-    <zip destfile="${root.dist.dir}/${project.name}.src.zip">
-      <fileset dir="${src.dir}">
-        <include name="org/jsecurity/**"/>
-      </fileset>
-      <fileset dir="${root.base.dir}/support/spring/src">
-        <include name="org/jsecurity/**"/>
-      </fileset>
-    </zip>
-  </target>
-
-  <target name="makepom" depends="load-ivy" description="Use Ivy to generate a Maven 2 pom.xml file">
-    <ivy:makepom ivyfile="${root.base.dir}/ivy.xml" pomfile="${build.dir}/${project.name}.pom">
-      <mapping conf="runtime" scope="compile"/>
-      <mapping conf="runtime-web" scope="compile"/>
-      <mapping conf="test" scope="test"/>
-    </ivy:makepom>
-  </target>
-
-  <target name="release" depends="jar,samples,src.zip,makepom,javadoc,doc.all"
-          description="Create all artifacts for a JSecurity release">
-    <property name="release.dir.name" value="${project.name}-${version}"/>
-    <property name="release.zip.name" value="${release.dir.name}.zip"/>
-    <property name="release.depzip.name" value="${release.dir.name}-with-dependencies.zip"/>
-    <copy todir="${root.dist.dir}">
-      <fileset dir="${root.base.dir}">
-        <type type="file"/>
-        <exclude name="build/**"/>
-        <exclude name="**/.svn/**"/>
-        <exclude name="**/lib/**"/>
-        <exclude name="${release.dir.name}"/>
-      </fileset>
-    </copy>
-    <zip destfile="${build.dir}/${release.zip.name}"
-         basedir="${build.dir}"
-         includes="${release.dir.name}/**"
-         excludes="**/${release.zip.name},**/lib/**"/>
-
-    <!-- Our ivy config puts copies of jars under lib directory according to the multiple build
+        <copy todir="${dist.ref.dir}/html_single/images">
+            <fileset dir="${src.ref.dir}/images">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <copy todir="${dist.ref.dir}/html_single/" file="${src.ref.dir}/styles/html.css" failonerror="false"/>
+
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}">
+            <classpath>
+                <fileset dir="${lib.dir}/docbook">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+            <jvmarg value="-Xmx256M"/>
+            <jvmarg value="-XX:MaxPermSize=128m"/>
+            <arg value="-o"/>
+            <arg value="${dist.ref.dir}/html_single/index.html"/>
+            <arg value="${src.ref.dir}/src/index.xml"/>
+            <arg value="${src.ref.dir}/styles/html.xsl"/>
+        </java>
+
+    </target>
+
+
+    <target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf" description="Generate reference documentation"/>
+
+    <!-- <name name="junit.check.warning" if="tests.failed">
+       <echo>
+       ***********************************************************
+       * One or more unit tests failed!
+       * Check the reports located in ${test.docs.dir}
+       * for details...
+       ***********************************************************
+       </echo>
+   </name>
+
+   <!- - ===================================================================
+     -  quick-test-report - quickly generates test report documentation based
+     -  on the xml test reports previously created during a junit task
+     -  execution. (this does not run the task).
+     -  =================================================================== - ->
+   <name name="test.report">
+       <echo message="Generating test reports..."/>
+
+       <junitreport todir="${test.docs.dir}">
+           <fileset dir=".">
+               <include name="**/TEST-*"/>
+           </fileset>
+           <report todir="${test.docs.dir}"/>
+       </junitreport>
+   </name>
+
+   <name name="unit.tests" depends="compile">
+       <echo message="Executing unit tests..."/>
+
+       <!- - Any properties files needed by test cases and/or Spring test case
+            configuration must be under the base root dir hierarchy so relative
+            file references may work properly.  - ->
+       <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/etc/log4j.properties"/>
+       <copy toDir="${classes.dir}" preservelastmodified="true" file="${root.base.dir}/db/build/gen/jdbc.properties"/>
+
+       <junit printsummary="withOutAndErr"
+              showoutput="true"
+              haltonfailure="no"
+              failureproperty="tests.failed"
+              errorproperty="tests.failed"
+              timeout="60000"
+              fork="yes">
+           <classpath refid="test.path"/>
+
+           <formatter type="brief" usefile="false"/>
+           <formatter type="xml"/>
+           <!- - allows us to generate web reports - ->
+
+           <batchtest fork="true" todir="${gen.dir}">
+               <fileset dir="${test.classes.dir}">
+
+                   <include name="**/*Test.class"/>
+
+                   <exclude name="**/*IntegrationTest.class"/>
+                   <exclude name="**/*SystemTest.class"/>
+                   <exclude name="**/*StressTest.class"/>
+
+               </fileset>
+           </batchtest>
+
+       </junit>
+
+   </name>
+
+   <name name="test" depends="dist">
+       <antcall name="template">
+           <param name="name" value="test"/>
+       </antcall>
+   </name> -->
+
+
+    <target name="src.zip" description="Create source ZIP (containing Java sources)">
+        <mkdir dir="${root.dist.dir}"/>
+        <delete file="${root.dist.dir}/${project.name}.src.zip"/>
+        <zip destfile="${root.dist.dir}/${project.name}.src.zip">
+            <fileset dir="${src.dir}">
+                <include name="org/jsecurity/**"/>
+            </fileset>
+            <fileset dir="${root.base.dir}/support/spring/src">
+                <include name="org/jsecurity/**"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="makepom" depends="load-ivy" description="Use Ivy to generate a Maven 2 pom.xml file">
+        <ivy:makepom ivyfile="${root.base.dir}/ivy.xml" pomfile="${build.dir}/${project.name}.pom">
+            <mapping conf="runtime" scope="compile"/>
+            <mapping conf="runtime-web" scope="compile"/>
+            <mapping conf="test" scope="test"/>
+        </ivy:makepom>
+    </target>
+
+    <target name="release" depends="jar,samples,src.zip,makepom,javadoc,doc.all"
+            description="Create all artifacts for a JSecurity release">
+        <property name="release.dir.name" value="${project.name}-${version}"/>
+        <property name="release.zip.name" value="${release.dir.name}.zip"/>
+        <property name="release.depzip.name" value="${release.dir.name}-with-dependencies.zip"/>
+        <copy todir="${root.dist.dir}">
+            <fileset dir="${root.base.dir}">
+                <type type="file"/>
+                <exclude name="build/**"/>
+                <exclude name="**/.svn/**"/>
+                <exclude name="**/lib/**"/>
+                <exclude name="${release.dir.name}"/>
+            </fileset>
+        </copy>
+        <zip destfile="${build.dir}/${release.zip.name}"
+             basedir="${build.dir}"
+             includes="${release.dir.name}/**"
+             excludes="**/${release.zip.name},**/lib/**"/>
+
+        <!-- Our ivy config puts copies of jars under lib directory according to the multiple build
 configuration targets.  We don't want multiple copies in the dependency lib, because it would
 make the download size larger.  Instead, just include one copy of each: -->
-    <mkdir dir="${root.dist.dir}/lib"/>
-    <copy todir="${root.dist.dir}/lib" overwrite="true" flatten="true">
-      <fileset dir="${lib.dir}">
-        <include name="**/*.jar"/>
-        <exclude name="**/docbook/*.jar"/>
-      </fileset>
-    </copy>
-    <zip destfile="${build.dir}/${release.depzip.name}"
-         basedir="${build.dir}"
-         includes="${release.dir.name}/**"
-         excludes="**/${release.zip.name}, **/lib/docbook/docbook-dtd/**, **/lib/docbook/docbook-xsl/**, **/lib/docbook/*.jar"/>
-    <delete dir="${root.dist.dir}/lib"/>
+        <mkdir dir="${root.dist.dir}/lib"/>
+        <copy todir="${root.dist.dir}/lib" overwrite="true" flatten="true">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+                <exclude name="**/docbook/*.jar"/>
+            </fileset>
+        </copy>
+        <zip destfile="${build.dir}/${release.depzip.name}"
+             basedir="${build.dir}"
+             includes="${release.dir.name}/**"
+             excludes="**/${release.zip.name}, **/lib/docbook/docbook-dtd/**, **/lib/docbook/docbook-xsl/**, **/lib/docbook/*.jar"/>
+        <delete dir="${root.dist.dir}/lib"/>
 
-  </target>
+    </target>
 
-  <!-- ===================================================================
--  all - everything
--  =================================================================== -->
-  <target name="all" depends="release" description="Do everything"/>
+    <!-- ===================================================================
+ -  all - everything
+ -  =================================================================== -->
+    <target name="all" depends="release" description="Do everything"/>
 
 </project>
 
