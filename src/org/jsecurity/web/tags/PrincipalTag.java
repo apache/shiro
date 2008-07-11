@@ -18,8 +18,8 @@
  */
 package org.jsecurity.web.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
@@ -52,11 +52,7 @@ public class PrincipalTag extends SecureTag {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-
-    /**
-     * Commons-logging logger
-     */
-    protected final transient Log logger = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.
@@ -162,8 +158,8 @@ public class PrincipalTag extends SecureTag {
             Class cls = Class.forName(type);
             principal = getSubject().getPrincipals().oneByType(cls);
         } catch (ClassNotFoundException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error("Unable to find class for name [" + type + "]");
+            if (log.isErrorEnabled()) {
+                log.error("Unable to find class for name [" + type + "]");
             }
         }
         return principal;
@@ -189,16 +185,16 @@ public class PrincipalTag extends SecureTag {
 
             if (!foundProperty) {
                 final String message = "Property [" + property + "] not found in principal of type [" + principal.getClass().getName() + "]";
-                if (logger.isErrorEnabled()) {
-                    logger.error(message);
+                if (log.isErrorEnabled()) {
+                    log.error(message);
                 }
                 throw new JspTagException(message);
             }
 
         } catch (Exception e) {
             final String message = "Error reading property [" + property + "] from principal of type [" + principal.getClass().getName() + "]";
-            if (logger.isErrorEnabled()) {
-                logger.error(message, e);
+            if (log.isErrorEnabled()) {
+                log.error(message, e);
             }
             throw new JspTagException(message, e);
         }

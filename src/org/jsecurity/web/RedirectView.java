@@ -18,9 +18,9 @@
  */
 package org.jsecurity.web;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.JavaEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,7 +76,7 @@ public class RedirectView {
      */
     public static final String DEFAULT_ENCODING_SCHEME = "UTF-8";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     private String url;
 
@@ -226,7 +226,7 @@ public class RedirectView {
         boolean first = (getUrl().indexOf('?') < 0);
         Map queryProps = queryProperties(model);
 
-        if( queryProps != null ) {
+        if (queryProps != null) {
             Iterator entries = queryProps.entrySet().iterator();
             while (entries.hasNext()) {
                 if (first) {
@@ -300,12 +300,11 @@ public class RedirectView {
         if (http10Compatible) {
             // Always send status code 302.
             response.sendRedirect(response.encodeRedirectURL(targetUrl));
-		}
-		else {
-			// Correct HTTP status code is 303, in particular for POST requests.
-			response.setStatus(303);
-			response.setHeader("Location", response.encodeRedirectURL(targetUrl));
-		}
-	}
+        } else {
+            // Correct HTTP status code is 303, in particular for POST requests.
+            response.setStatus(303);
+            response.setHeader("Location", response.encodeRedirectURL(targetUrl));
+        }
+    }
 
 }

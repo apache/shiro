@@ -18,10 +18,10 @@
  */
 package org.jsecurity.spring;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
@@ -42,10 +42,7 @@ import org.springframework.beans.factory.config.DestructionAwareBeanPostProcesso
  */
 public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {
 
-    /**
-     * Commons-logging logger
-     */
-    protected final transient Log logger = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.jsecurity.util.Initializable}
@@ -58,8 +55,8 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     public Object postProcessBeforeInitialization(Object object, String name) throws BeansException {
         if (object instanceof Initializable) {
             try {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Initializing bean [" + name + "]...");
+                if (log.isDebugEnabled()) {
+                    log.debug("Initializing bean [" + name + "]...");
                 }
 
                 ((Initializable) object).init();
@@ -87,8 +84,8 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     public void postProcessBeforeDestruction(Object object, String name) throws BeansException {
         if (object instanceof Destroyable) {
             try {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Destroying bean [" + name + "]...");
+                if (log.isDebugEnabled()) {
+                    log.debug("Destroying bean [" + name + "]...");
                 }
 
                 ((Destroyable) object).destroy();

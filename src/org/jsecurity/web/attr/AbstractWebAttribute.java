@@ -18,11 +18,11 @@
  */
 package org.jsecurity.web.attr;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Initializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -44,7 +44,7 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T>, Initia
 
     public static final String DEFAULT_NAME = "name";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     protected String name = DEFAULT_NAME;
 

@@ -18,10 +18,10 @@
  */
 package org.jsecurity.web.tags;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
 import org.jsecurity.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -32,7 +32,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class SecureTag extends TagSupport {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     public SecureTag() {
     }

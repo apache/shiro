@@ -142,10 +142,6 @@ we have to download it explictly from another location (we use Geronimo's versio
         - Servlet API 2.4 (http://java.sun.com/products/servlet)
         - required for building web support classes (Servlet Filters, etc)
 
-        * jakarta-commons/commons-logging.jar
-        - Commons Logging 1.0.4 (http://jakarta.apache.org/commons/logging)
-        - required by the RI during build and runtime for logging support
-
         * jakarta-commons/commons-beanutils-core.jar
         - Commons BeanUtils 1.7.0 (http://jakarta.apache.org/commons/beanutils/index.html)
         - required for building and running JSecurity

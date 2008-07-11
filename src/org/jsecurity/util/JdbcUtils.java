@@ -18,8 +18,8 @@
  */
 package org.jsecurity.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -41,10 +41,7 @@ import java.sql.Statement;
  */
 public class JdbcUtils {
 
-    /**
-     * Commons-logger.
-     */
-    protected static transient final Log log = LogFactory.getLog(JdbcUtils.class);
+    protected static transient final Logger log = LoggerFactory.getLogger(JdbcUtils.class);
 
     /**
      * Private constructor to prevent instantiation.

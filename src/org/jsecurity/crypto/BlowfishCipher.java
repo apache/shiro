@@ -18,10 +18,10 @@
  */
 package org.jsecurity.crypto;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.CodecSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
@@ -65,7 +65,7 @@ public class BlowfishCipher implements Cipher {
     private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
-    private transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     private Key defaultKey = DEFAULT_CIPHER_KEY;
 
@@ -131,10 +131,10 @@ public class BlowfishCipher implements Cipher {
         javax.crypto.Cipher cipher = newCipherInstance();
 
         java.security.Key jdkKey;
-        if( key == null ) {
+        if (key == null) {
             jdkKey = getDefaultKey();
         } else {
-            jdkKey = new SecretKeySpec( key, ALGORITHM );
+            jdkKey = new SecretKeySpec(key, ALGORITHM);
         }
 
         init(cipher, mode, jdkKey);

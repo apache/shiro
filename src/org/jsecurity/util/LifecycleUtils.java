@@ -18,9 +18,9 @@
  */
 package org.jsecurity.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -30,7 +30,7 @@ import java.util.Collection;
  */
 public abstract class LifecycleUtils {
 
-    protected static transient final Log log = LogFactory.getLog(LifecycleUtils.class);
+    protected static transient final Logger log = LoggerFactory.getLogger(LifecycleUtils.class);
 
     public static void init(Object o) throws JSecurityException {
         if (o instanceof Initializable) {

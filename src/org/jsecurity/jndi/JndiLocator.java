@@ -18,8 +18,8 @@
  */
 package org.jsecurity.jndi;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.NamingException;
 import java.util.Properties;
@@ -45,7 +45,7 @@ public class JndiLocator {
     /**
      * Logger, available to subclasses.
      */
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * JNDI prefix used in a J2EE container
@@ -146,8 +146,8 @@ public class JndiLocator {
         catch (NamingException ex) {
             if (!convertedName.equals(jndiName)) {
                 // Try fallback to originally specified name...
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Converted JNDI name [" + convertedName +
+                if (log.isDebugEnabled()) {
+                    log.debug("Converted JNDI name [" + convertedName +
                             "] not found - trying original name [" + jndiName + "]. " + ex);
                 }
                 jndiObject = getJndiTemplate().lookup(jndiName, requiredType);
@@ -155,8 +155,8 @@ public class JndiLocator {
                 throw ex;
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Located object with JNDI name [" + convertedName + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Located object with JNDI name [" + convertedName + "]");
         }
         return jndiObject;
     }

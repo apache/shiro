@@ -18,8 +18,6 @@
  */
 package org.jsecurity.session.mgt;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
@@ -31,6 +29,8 @@ import org.jsecurity.session.event.SessionEventListener;
 import org.jsecurity.session.event.mgt.DefaultSessionEventManager;
 import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;
 import org.jsecurity.session.event.mgt.SessionEventManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -43,7 +43,7 @@ import java.util.Date;
  */
 public abstract class AbstractSessionManager implements SessionManager, CacheManagerAware, SessionEventListenerRegistrar {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     protected SessionEventManager sessionEventManager = new DefaultSessionEventManager();
     protected CacheManager cacheManager;

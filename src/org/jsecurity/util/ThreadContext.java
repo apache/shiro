@@ -18,10 +18,10 @@
  */
 package org.jsecurity.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ import java.util.Map;
 @SuppressWarnings(value = {"unchecked", "unsafe"})
 public abstract class ThreadContext {
 
-    protected static transient final Log logger = LogFactory.getLog(ThreadContext.class);
+    protected static transient final Logger logger = LoggerFactory.getLogger(ThreadContext.class);
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";

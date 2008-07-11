@@ -19,10 +19,10 @@
 package org.jsecurity.config;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.Nameable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class ReflectionBuilder {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     private static final String GLOBAL_PROPERTY_PREFIX = "jsecurity";
     protected Map objects;
