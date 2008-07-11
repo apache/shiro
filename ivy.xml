@@ -20,167 +20,168 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-  <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC1" status="milestone"
-        publication="20080425000800">
-    <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
-    <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
-    <description homepage="http://www.jsecurity.org">
-      JSecurity is a powerful and flexible open-source Java security framework that cleanly handles
-      authentication, authorization, enterprise session management, single sign-on and cryptography services.
+    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC1" status="milestone"
+          publication="20080425000800">
+        <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+        <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
+        <description homepage="http://www.jsecurity.org">
+            JSecurity is a powerful and flexible open-source Java security framework that cleanly handles
+            authentication, authorization, enterprise session management, single sign-on and cryptography services.
 
-      Our mission: To provide the most robust and comprehensive Java security framework available while
-      also being very easy to understand and extremely simple to use.
-    </description>
-  </info>
+            Our mission: To provide the most robust and comprehensive Java security framework available while
+            also being very easy to understand and extremely simple to use.
+        </description>
+    </info>
 
-  <configurations defaultconfmapping="*->default">
-    <conf name="runtime" description="Minimum required runtime dependencies."/>
-    <conf name="runtime-web" extends="runtime"
-          description="Minimum required runtime dependencies when running a web application."/>
-    <conf name="compile" extends="runtime-web"
-          description="Required dependencies when building JSecurity from scratch."/>
-    <conf name="samples" extends="runtime-web"
-          description="Required dependencies when running one of the sample web applications."/>
-    <conf name="test" extends="*" description="Any and all dependencies so all functionality can be tested."/>
-    <conf name="docbook"/>
-  </configurations>
+    <configurations defaultconfmapping="*->default">
+        <conf name="runtime" description="Minimum required runtime dependencies."/>
+        <conf name="runtime-web" extends="runtime"
+              description="Minimum required runtime dependencies when running a web application."/>
+        <conf name="compile" extends="runtime-web"
+              description="Required dependencies when building JSecurity from scratch."/>
+        <conf name="samples" extends="runtime-web"
+              description="Required dependencies when running one of the sample web applications."/>
+        <conf name="test" extends="*" description="Any and all dependencies so all functionality can be tested."/>
+        <conf name="docbook"/>
+    </configurations>
 
-  <dependencies>
+    <dependencies>
 
-    <!-- Minimal deps, depending on VM: -->
-    <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false" conf="runtime"/>
-    <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="runtime-web"/>
+        <!-- Minimal deps, depending on VM: -->
+        <dependency org="org.slf4j" name="slf4j-api" rev="1.5.2" transitive="false" conf="runtime"/>
+        <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="runtime-web"/>
 
-    <!-- Feature-based dependencies: -->
-    <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
-    <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>
-    <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
-    <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" transitive="false"
-                conf="samples"/>
-    <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
-    <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
-    <dependency org="org.springframework" name="spring-webmvc" rev="2.5.1" transitive="false" conf="samples"/>
-    <dependency org="javax.servlet" name="servlet-api" rev="2.4" transitive="false" conf="compile,samples"/>
-    <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="compile"/>
+        <!-- Feature-based dependencies: -->
+        <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
+        <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>
+        <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
+        <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" transitive="false"
+                    conf="samples"/>
+        <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
+        <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
+        <dependency org="org.springframework" name="spring-webmvc" rev="2.5.1" transitive="false" conf="samples"/>
+        <dependency org="javax.servlet" name="servlet-api" rev="2.4" transitive="false" conf="compile,samples"/>
+        <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="compile"/>
 
-    <!-- Sample application dependencies: -->
-    <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>
-    <dependency org="javax.servlet" name="jstl" rev="1.2" transitive="false" conf="samples"/>
-    <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>
-    <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" transitive="false" conf="samples"/>
-    <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="samples">
-      <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so
+        <!-- Sample application dependencies: -->
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.2" transitive="false" conf="samples"/>
+        <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>
+        <dependency org="javax.servlet" name="jstl" rev="1.2" transitive="false" conf="samples"/>
+        <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>
+        <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" transitive="false" conf="samples"/>
+        <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="samples">
+            <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so
 we have to download it explictly from another location (we use Geronimo's version) -->
-      <exclude org="javax.transaction"/>
-    </dependency>
-    <dependency org="org.apache.geronimo.specs" name="geronimo-jta_1.0.1B_spec" rev="1.1.1" conf="samples"/>
+            <exclude org="javax.transaction"/>
+        </dependency>
+        <dependency org="org.apache.geronimo.specs" name="geronimo-jta_1.0.1B_spec" rev="1.1.1" conf="samples"/>
 
-    <!-- Testing -->
-    <dependency org="org.easymock" name="easymock" rev="2.3" transitive="false" conf="test"/>
-    <dependency org="org.easymock" name="easymockclassextension" rev="2.3" transitive="false" conf="test"/>
-    <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
+        <!-- Testing -->
+        <dependency org="org.easymock" name="easymock" rev="2.3" transitive="false" conf="test"/>
+        <dependency org="org.easymock" name="easymockclassextension" rev="2.3" transitive="false" conf="test"/>
+        <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
 
-    <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
-      <artifact name="docbook-libs" type="zip" ext="zip"/>
-    </dependency>
+        <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
+            <artifact name="docbook-libs" type="zip" ext="zip"/>
+        </dependency>
 
-    <!-- TODO: move these contents (old library_versions.txt file) into appropriate places in this document. -->
-    <!-- This file lists all 3rd party libraries (and their versions!!!) that
-are required to build or run the project.
+        <!-- TODO: move these contents (old library_versions.txt file) into appropriate places in this document. -->
+        <!-- This file lists all 3rd party libraries (and their versions!!!) that
+        are required to build or run the project.
 
-If you're a developer editing this file, please keep all listings in alphabetical order for
-convenient lookup.
+        If you're a developer editing this file, please keep all listings in alphabetical order for
+        convenient lookup.
 
-Some notes:
+        Some notes:
 
-- Each 3rd party library is stored in a directory named after the
-  open-source project or company that created it.  This makes for
-  easy organization of lots of libs.
+        - Each 3rd party library is stored in a directory named after the
+          open-source project or company that created it.  This makes for
+          easy organization of lots of libs.
 
-- Jar files stored _do not_ have version numbers
-  actually in their file name.  If the jar originally comes as such,
-  it is renamed with the version number stripped off.  The version
-  number is instead maintained in this file.  The reason for this is
-  so that every time we need to upgrade any 3rd party library,
-  we don't have to edit any build.xml or properies files to reflect
-  a potential name change due to a version number - you just note
-  that change once in this file and overwrite the old jar, checking
-  in that overwrite to CVS in the process.
+        - Jar files stored _do not_ have version numbers
+          actually in their file name.  If the jar originally comes as such,
+          it is renamed with the version number stripped off.  The version
+          number is instead maintained in this file.  The reason for this is
+          so that every time we need to upgrade any 3rd party library,
+          we don't have to edit any build.xml or properies files to reflect
+          a potential name change due to a version number - you just note
+          that change once in this file and overwrite the old jar, checking
+          in that overwrite to CVS in the process.
 
-- Each 3rd party lib is listed here along with what it is
-  used for and if its needed for build-time, run-time or both.
+        - Each 3rd party lib is listed here along with what it is
+          used for and if its needed for build-time, run-time or both.
 
-- Thanks to the gents working on the Spring Framework (http://www.springframework.org)
-  that provided the template and the idea for this file.
+        - Thanks to the gents working on the Spring Framework (http://www.springframework.org)
+          that provided the template and the idea for this file.
 
-* atunit/atunut.jar
-- AtUnit 1.0
-- Used in unit tests
+        * atunit/atunut.jar
+        - AtUnit 1.0
+        - Used in unit tests
 
-* easymock/easymock.jar, easymockclassextension.jar
-- EasyMock 2.2 w/ ClassExtension 2.2 (http://www.easymock.org)
-- Used in test cases for creating dynamic mock objects
+        * easymock/easymock.jar, easymockclassextension.jar
+        - EasyMock 2.2 w/ ClassExtension 2.2 (http://www.easymock.org)
+        - Used in test cases for creating dynamic mock objects
 
-* ehcache/ehcache.jar
-- ehcache 1.3.0 (http://ehcache.sourceforge.net/)
-- Required for compiling, using ehcache cache manager, and for runtime session management
+        * ehcache/ehcache.jar
+        - ehcache 1.3.0 (http://ehcache.sourceforge.net/)
+        - Required for compiling, using ehcache cache manager, and for runtime session management
 
-* google-collections/google-collect.jar
-- Google Collections Snapshot 20071022
-- Used in test cases for conveniently constructing collections
+        * google-collections/google-collect.jar
+        - Google Collections Snapshot 20071022
+        - Used in test cases for conveniently constructing collections
 
-* hsqldb/hsqldb.jar
-- HSQLDB 1.8.0.7 (http://www.hsqldb.org)
-- Used in the sample application to show an example of a JDBC-based Realm.
+        * hsqldb/hsqldb.jar
+        - HSQLDB 1.8.0.7 (http://www.hsqldb.org)
+        - Used in the sample application to show an example of a JDBC-based Realm.
 
-* j2ee/jsp-api.jar
-- JSP API 2.0 (http://java.sun.com/products/jsp)
-- Required for building the RI tag libraries
+        * j2ee/jsp-api.jar
+        - JSP API 2.0 (http://java.sun.com/products/jsp)
+        - Required for building the RI tag libraries
 
-* j2ee/servlet-api.jar
-- Servlet API 2.4 (http://java.sun.com/products/servlet)
-- required for building web support classes (Servlet Filters, etc)
+        * j2ee/servlet-api.jar
+        - Servlet API 2.4 (http://java.sun.com/products/servlet)
+        - required for building web support classes (Servlet Filters, etc)
 
-* jakarta-commons/commons-logging.jar
-- Commons Logging 1.0.4 (http://jakarta.apache.org/commons/logging)
-- required by the RI during build and runtime for logging support
+        * jakarta-commons/commons-logging.jar
+        - Commons Logging 1.0.4 (http://jakarta.apache.org/commons/logging)
+        - required by the RI during build and runtime for logging support
 
-* jakarta-commons/commons-beanutils-core.jar
-- Commons BeanUtils 1.7.0 (http://jakarta.apache.org/commons/beanutils/index.html)
-- required for building and running JSecurity
-- used for constructing Permissions in the Reference Implementation's PermissionAnnotationAuthorizationModule
+        * jakarta-commons/commons-beanutils-core.jar
+        - Commons BeanUtils 1.7.0 (http://jakarta.apache.org/commons/beanutils/index.html)
+        - required for building and running JSecurity
+        - used for constructing Permissions in the Reference Implementation's PermissionAnnotationAuthorizationModule
 
-* jboss/jboss-aop.jar
-- JBoss AOP jar from the JBoss 4.0.4.GA Application Server release
-- Required at build time for JBoss integration support classes.
+        * jboss/jboss-aop.jar
+        - JBoss AOP jar from the JBoss 4.0.4.GA Application Server release
+        - Required at build time for JBoss integration support classes.
 
-* jug/jug.jar
-- Java Uuid Genrator (JUG) v. 2.0.0 (Apache 2.0 jar) (http://jug.safehaus.org/)
-- used as a fallback UUID generator for memory-based session management if below Java 1.5
+        * jug/jug.jar
+        - Java Uuid Genrator (JUG) v. 2.0.0 (Apache 2.0 jar) (http://jug.safehaus.org/)
+        - used as a fallback UUID generator for memory-based session management if below Java 1.5
 
-* junit/junit.jar
-- JUnit Test Framework 4.1 (http://www.junit.org)
-- Required for building and running test cases
+        * junit/junit.jar
+        - JUnit Test Framework 4.1 (http://www.junit.org)
+        - Required for building and running test cases
 
-* log4j/log4j.jar
-- Log4J 1.2.9 (http://logging.apache.org/log4j)
-- required by the RI during build and runtime for logging support
+        * log4j/log4j.jar
+        - Log4J 1.2.9 (http://logging.apache.org/log4j)
+        - required by the RI during build and runtime for logging support
 
-* quartz/quartz.jar
-- Quartz 1.5.2 (http://www.opensymphony.com/quartz)
-- required during build and runtime for Quartz-based session validation support
+        * quartz/quartz.jar
+        - Quartz 1.5.2 (http://www.opensymphony.com/quartz)
+        - required during build and runtime for Quartz-based session validation support
 
-* retroweaver/retroweaver.jar,retroweaver-rt.jar
-- Retroweaver 2.0 (http://retroweaver.sourceforge.net)
-- required for retroweaving to support JDK 1.3 and 1.4
-- rt jar is required at runtime if running in 1.3 or 1.4
+        * retroweaver/retroweaver.jar,retroweaver-rt.jar
+        - Retroweaver 2.0 (http://retroweaver.sourceforge.net)
+        - required for retroweaving to support JDK 1.3 and 1.4
+        - rt jar is required at runtime if running in 1.3 or 1.4
 
-* spring/spring.jar
-- Spring Application Framework 2.0.2 (http://springframework.org)
-- required to build Spring integration support and sample apps
--->
+        * spring/spring.jar
+        - Spring Application Framework 2.0.2 (http://springframework.org)
+        - required to build Spring integration support and sample apps
+        -->
 
 
-  </dependencies>
+    </dependencies>
 
 </ivy-module>
