@@ -18,8 +18,8 @@
  */
 package org.jsecurity.jndi;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -46,7 +46,7 @@ import java.util.Properties;
  */
 public class JndiTemplate {
 
-    protected transient final Log logger = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     private Properties environment;
 
@@ -101,7 +101,7 @@ public class JndiTemplate {
                 ctx.close();
             }
             catch (NamingException ex) {
-                logger.debug("Could not close JNDI InitialContext", ex);
+                log.debug("Could not close JNDI InitialContext", ex);
             }
         }
     }
@@ -138,8 +138,8 @@ public class JndiTemplate {
      *                         name bound to JNDI
      */
     public Object lookup(final String name) throws NamingException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Looking up JNDI object with name [" + name + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Looking up JNDI object with name [" + name + "]");
         }
         return execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
@@ -185,8 +185,8 @@ public class JndiTemplate {
      * @throws NamingException thrown by JNDI, mostly name already bound
      */
     public void bind(final String name, final Object object) throws NamingException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Binding JNDI object with name [" + name + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Binding JNDI object with name [" + name + "]");
         }
         execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
@@ -205,8 +205,8 @@ public class JndiTemplate {
      * @throws NamingException thrown by JNDI
      */
     public void rebind(final String name, final Object object) throws NamingException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Rebinding JNDI object with name [" + name + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Rebinding JNDI object with name [" + name + "]");
         }
         execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
@@ -223,8 +223,8 @@ public class JndiTemplate {
      * @throws NamingException thrown by JNDI, mostly name not found
      */
     public void unbind(final String name) throws NamingException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Unbinding JNDI object with name [" + name + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Unbinding JNDI object with name [" + name + "]");
         }
         execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {

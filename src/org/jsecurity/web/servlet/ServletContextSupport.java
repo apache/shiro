@@ -18,9 +18,9 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.web.DefaultWebSecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 
@@ -36,7 +36,7 @@ public class ServletContextSupport {
     public static final String HTTP_SESSION_MODE = DefaultWebSecurityManager.HTTP_SESSION_MODE;
     public static final String JSECURITY_SESSION_MODE = DefaultWebSecurityManager.JSECURITY_SESSION_MODE;
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     private ServletContext servletContext = null;
 

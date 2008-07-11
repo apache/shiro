@@ -18,8 +18,6 @@
  */
 package org.jsecurity.mgt;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.cache.ehcache.EhCacheManager;
@@ -27,6 +25,8 @@ import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
 import org.jsecurity.util.JavaEnvironment;
 import org.jsecurity.util.LifecycleUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A very basic extension point for the SecurityManager interface that merely provides logging and caching
@@ -41,7 +41,7 @@ import org.jsecurity.util.LifecycleUtils;
  */
 public abstract class CachingSecurityManager implements SecurityManager, Initializable, Destroyable, CacheManagerAware {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     protected CacheManager cacheManager = null;
 
@@ -67,7 +67,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
 
     public void init() {
         ensureCacheManager();
-        afterCacheManagerSet();       
+        afterCacheManagerSet();
     }
 
     protected void ensureCacheManager() {

@@ -18,8 +18,8 @@
  */
 package org.jsecurity.samples.sprhib.entity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -39,7 +39,7 @@ import java.io.Serializable;
  */
 public abstract class Entity implements Identifiable, Serializable, Cloneable {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * RDBMS Primary key, aka 'surrogate key'.  <code>Long</code> surrogate keys are best

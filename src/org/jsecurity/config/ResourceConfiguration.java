@@ -18,9 +18,9 @@
  */
 package org.jsecurity.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -31,8 +31,7 @@ import java.io.Serializable;
  */
 public abstract class ResourceConfiguration implements Configuration, Serializable {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
-
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
     protected transient SecurityManager securityManager;
 
     public ResourceConfiguration() {

@@ -18,8 +18,8 @@
  */
 package org.jsecurity.realm.ldap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -56,7 +56,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     protected String authentication = "simple";
 

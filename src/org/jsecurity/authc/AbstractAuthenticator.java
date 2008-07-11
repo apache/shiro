@@ -18,13 +18,13 @@
  */
 package org.jsecurity.authc;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.event.AuthenticationEventListener;
 import org.jsecurity.authc.event.mgt.AuthenticationEventListenerRegistrar;
 import org.jsecurity.authc.event.mgt.AuthenticationEventManager;
 import org.jsecurity.authc.event.mgt.DefaultAuthenticationEventManager;
 import org.jsecurity.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -60,10 +60,7 @@ public abstract class AbstractAuthenticator
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    /**
-     * Commons-logging logger
-     */
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

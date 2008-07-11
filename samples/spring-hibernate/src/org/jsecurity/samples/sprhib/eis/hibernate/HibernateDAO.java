@@ -18,8 +18,6 @@
  */
 package org.jsecurity.samples.sprhib.eis.hibernate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Filter;
 import org.hibernate.LockMode;
 import org.hibernate.ReplicationMode;

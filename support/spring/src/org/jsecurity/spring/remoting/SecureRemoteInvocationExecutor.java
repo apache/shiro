@@ -18,8 +18,6 @@
  */
 package org.jsecurity.spring.remoting;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
@@ -27,6 +25,8 @@ import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.jsecurity.web.DefaultWebSecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -53,10 +53,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * Commons-logger.
-     */
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * The SecurityManager used to retrieve realms that should be associated with the

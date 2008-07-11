@@ -19,10 +19,10 @@
 package org.jsecurity.cache.ehcache;
 
 import net.sf.ehcache.Element;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -39,10 +39,7 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class EhCache implements Cache {
 
-    /**
-     * Commons-logging logger
-     */
-    protected final transient Log logger = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * The wrapped Ehcache instance.
@@ -69,16 +66,16 @@ public class EhCache implements Cache {
      */
     public Object get(Object key) throws CacheException {
         try {
-            if (logger.isTraceEnabled()) {
-                logger.trace("Getting object from cache [" + cache.getName() + "] for key [" + key + "]");
+            if (log.isTraceEnabled()) {
+                log.trace("Getting object from cache [" + cache.getName() + "] for key [" + key + "]");
             }
             if (key == null) {
                 return null;
             } else {
                 Element element = cache.get(key);
                 if (element == null) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("Element for [" + key + "] is null.");
+                    if (log.isTraceEnabled()) {
+                        log.trace("Element for [" + key + "] is null.");
                     }
                     return null;
                 } else {
@@ -98,8 +95,8 @@ public class EhCache implements Cache {
      * @param value the value.
      */
     public void put(Object key, Object value) throws CacheException {
-        if (logger.isTraceEnabled()) {
-            logger.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
+        if (log.isTraceEnabled()) {
+            log.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
             Element element = new Element(key, value);
@@ -118,8 +115,8 @@ public class EhCache implements Cache {
      * @param key the key of the element to remove
      */
     public void remove(Object key) throws CacheException {
-        if (logger.isTraceEnabled()) {
-            logger.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
+        if (log.isTraceEnabled()) {
+            log.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
             cache.remove(key);
@@ -132,8 +129,8 @@ public class EhCache implements Cache {
      * Removes all elements in the cache, but leaves the cache in a useable state.
      */
     public void clear() throws CacheException {
-        if (logger.isTraceEnabled()) {
-            logger.trace("Clearing all objects from cache [" + cache.getName() + "]");
+        if (log.isTraceEnabled()) {
+            log.trace("Clearing all objects from cache [" + cache.getName() + "]");
         }
         try {
             cache.removeAll();

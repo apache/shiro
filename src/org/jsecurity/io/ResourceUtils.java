@@ -18,9 +18,9 @@
  */
 package org.jsecurity.io;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,10 +48,7 @@ public class ResourceUtils {
      */
     public static final String FILE_PREFIX = "file:";
 
-    /**
-     * Commons-logging logger
-     */
-    private final static transient Log logger = LogFactory.getLog(ResourceUtils.class);
+    protected static transient final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
 
 
     /**
@@ -133,8 +130,8 @@ public class ResourceUtils {
 
     private static InputStream loadFromFile(String path) throws IOException {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Opening file [" + path + "]...");
+        if (log.isDebugEnabled()) {
+            log.debug("Opening file [" + path + "]...");
         }
 
         return new FileInputStream(path);
@@ -142,8 +139,8 @@ public class ResourceUtils {
 
     private static InputStream loadFromUrl(String urlPath) throws IOException {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Opening url [" + urlPath + "]...");
+        if (log.isDebugEnabled()) {
+            log.debug("Opening url [" + urlPath + "]...");
         }
 
         URL url = new URL(urlPath);
@@ -151,8 +148,8 @@ public class ResourceUtils {
     }
 
     private static InputStream loadFromClassPath(String path) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Opening resource from class path [" + path + "]...");
+        if (log.isDebugEnabled()) {
+            log.debug("Opening resource from class path [" + path + "]...");
         }
 
         return ClassUtils.getResourceAsStream(path);
@@ -167,7 +164,7 @@ public class ResourceUtils {
             try {
                 is.close();
             } catch (IOException e) {
-                logger.warn("Error closing input stream.", e);
+                log.warn("Error closing input stream.", e);
             }
         }
     }

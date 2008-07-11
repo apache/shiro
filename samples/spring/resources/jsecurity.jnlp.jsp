@@ -40,7 +40,7 @@
         <jar href="jsecurity-spring-sample.jar"/>
         <jar href="jsecurity.jar"/>
         <jar href="spring.jar"/>
-        <jar href="commons-logging.jar"/>
+        <jar href="slf4j-api.jar"/>
         <property name="jsecurity.session.id" value="${sessionId}"/>
     </resources>
     <application-desc main-class="org.jsecurity.samples.spring.ui.WebStartDriver"/>

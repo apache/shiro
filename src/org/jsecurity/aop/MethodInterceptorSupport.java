@@ -18,10 +18,10 @@
  */
 package org.jsecurity.aop;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
 import org.jsecurity.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is an abstraction of AOP method interceptor behavior specific to JSecurity that
@@ -33,7 +33,7 @@ import org.jsecurity.subject.Subject;
  */
 public abstract class MethodInterceptorSupport implements MethodInterceptor {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     public MethodInterceptorSupport() {
     }

@@ -18,8 +18,6 @@
  */
 package org.jsecurity.session.mgt.quartz;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.session.mgt.SessionValidationScheduler;
 import org.jsecurity.session.mgt.ValidatingSessionManager;
@@ -28,6 +26,8 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the {@link SessionValidationScheduler SessionValidationScheduler} that uses Quartz to schedule a
@@ -57,10 +57,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /**
-     * Commons-logging logger
-     */
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected transient final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * The configured Quartz scheduler to use to schedule the Quartz job.  If no scheduler is
