@@ -23,6 +23,8 @@ import org.hibernate.LockMode;
 import org.hibernate.ReplicationMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.jsecurity.samples.sprhib.eis.DataAccessObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateOperations;
@@ -42,7 +44,7 @@ import java.util.List;
 public class HibernateDAO extends HibernateDaoSupport
         implements HibernateOperations, DataAccessObject {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
     public Object execute(HibernateCallback action) throws DataAccessException {
         return getHibernateTemplate().execute(action);
