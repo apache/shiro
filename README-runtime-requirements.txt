@@ -9,8 +9,10 @@ the dependencies to a lib directory (peer to the build.xml).
 
 Minimal required dependencies
 -------------
-Java 1.5 and later: Ensure jsecurity.jar and Apache commons-logging.jar are in your application's classpath.
-Java 1.3 and 1.4 only: jsecurity.jar, commons-logging.jar and retroweaver.jar and its associated dependendencies
+Java 1.5 and later: Ensure jsecurity.jar, slf4j-api.jar and one if its bindings (slf4j-log4j12.jar, slf4j-jdk.jar, etc)
+                    are in your application's classpath.
+Java 1.3 and 1.4 only: jsecurity.jar, slfj4j-api.jar and one of its bindings, and retroweaver.jar and
+                       retroweaver's associated dependendencies
 
 
 Feature-based dependencies
