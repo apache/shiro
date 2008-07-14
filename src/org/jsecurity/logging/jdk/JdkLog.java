@@ -40,7 +40,7 @@ public class JdkLog implements Log {
     }
 
     public boolean isTraceEnabled() {
-        return logger.getLevel().intValue() < Level.FINE.intValue();
+        return logger.isLoggable(Level.FINER);
     }
 
     public void trace(String msg) {
@@ -60,7 +60,7 @@ public class JdkLog implements Log {
     }
 
     public boolean isDebugEnabled() {
-        return logger.getLevel().intValue() >= Level.FINE.intValue();
+        return logger.isLoggable(Level.CONFIG);
     }
 
     public void debug(String msg) {
@@ -80,7 +80,7 @@ public class JdkLog implements Log {
     }
 
     public boolean isInfoEnabled() {
-        return logger.getLevel().intValue() >= Level.INFO.intValue();
+        return logger.isLoggable(Level.INFO);
     }
 
     public void info(String msg) {
@@ -100,7 +100,7 @@ public class JdkLog implements Log {
     }
 
     public boolean isWarnEnabled() {
-        return logger.getLevel().intValue() >= Level.WARNING.intValue();
+        return logger.isLoggable(Level.WARNING);
     }
 
     public void warn(String msg) {
@@ -120,7 +120,7 @@ public class JdkLog implements Log {
     }
 
     public boolean isErrorEnabled() {
-        return logger.getLevel().intValue() >= Level.SEVERE.intValue();
+        return logger.isLoggable(Level.SEVERE);
     }
 
     public void error(String msg) {
