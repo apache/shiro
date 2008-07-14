@@ -64,6 +64,10 @@ public final class JSecurityLogFactory {
         return instance.getLog(name);
     }
 
+    public static Log getLog(Class clazz) {
+        return instance.getLog(clazz.getName());
+    }
+
     public static void setLogFactory(LogFactory instance) {
         if (instance == null) {
             throw new IllegalArgumentException("LogFactory instance cannot be null.");
