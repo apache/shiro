@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.logging.console;
+package org.jsecurity.logging.slf4j;
 
 import org.jsecurity.logging.Log;
 import org.jsecurity.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ConsoleLogFactory implements LogFactory {
+public class Slf4jLogFactory implements LogFactory {
 
     public Log getLog(String name) {
-        return new ConsoleLog();
+        return new Slf4jLog(LoggerFactory.getLogger(name));
     }
 }

@@ -18,8 +18,7 @@
  */
 package org.jsecurity.logging;
 
-import org.jsecurity.logging.console.ConsoleLogFactory;
-import org.jsecurity.logging.jdk.JdkLogFactory;
+import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.JavaEnvironment;
 
 /**
@@ -31,23 +30,34 @@ public final class JSecurityLogFactory {
     transient static LogFactory instance;
 
     static {
-        if (JavaEnvironment.isAtLeastVersion14()) {
-            instance = new JdkLogFactory();
-        } else {
-            instance = new ConsoleLogFactory();
+        try {
+            instance = (LogFactory) ClassUtils.newInstance("org.jsecurity.logging.slf4j.Slf4jLogFactory");
+            //ensure that the LogFactory can initialize:
+            instance.getLog(JSecurityLogFactory.class.getName());
+        } catch (Throwable t) {
+            //SLF4J not available or not initialized properly, try remaining possibilities:
+            if (JavaEnvironment.isAtLeastVersion14()) {
+                instance = (LogFactory) ClassUtils.newInstance("org.jsecurity.logging.jdk.JdkLogFactory");
+            } else {
+                //SLF4J not available and on JRE 1.3.  Disable logging entirely for performance.
+                //End-users must use SLF4J if they want logging on 1.3 environments:
+                instance = new NoOpLogFactory();
+            }
         }
-    }
-
-    public static void setLogFactory(LogFactory instance) {
-        JSecurityLogFactory.instance = instance;
-    }
-
-    public static LogFactory getLogFactory() {
-        return instance;
     }
 
     public static Log getLog(String name) {
         return instance.getLog(name);
     }
 
+    public static void setLogFactory(LogFactory instance) {
+        if (instance == null) {
+            throw new IllegalArgumentException("LogFactory instance cannot be null.");
+        }
+        JSecurityLogFactory.instance = instance;
+    }
+
+    public static LogFactory getLogFactory() {
+        return instance;
+    }
 }
