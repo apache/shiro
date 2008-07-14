@@ -22,6 +22,20 @@ import org.jsecurity.util.ClassUtils;
 import org.jsecurity.util.JavaEnvironment;
 
 /**
+ * <p>JSecurity doesn't implement a Logging mechanism itself, since that is outside the core competency of a
+ * Security framework.
+ * <p>This class exists <b>ONLY</b> to support low coupling to 3rd party APIs and
+ * graceful degredation.  This class initializes the underlying logging infrastructure and functions as follows:
+ *
+ * <ol>
+ * <li>Is SLF4J in the classpath?  If so, use it for all logging operations.</li>
+ * <li>If SLF4J is not in the classpath, are we on JRE 1.4?  If so, use a JDK Logger for all logging operations.</li>
+ * <li>If SLF4J is not in the classpath and we are not at least JRE 1.4, disable logging entirely.</li>
+ * </ol>
+ *
+ * <p>It is expected that all custom logging implementations (Log4J, Logback, etc) be enabled via SLF4J.  This is the
+ * only logging abstraction framework JSecurity supports.</p>
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
