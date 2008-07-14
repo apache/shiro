@@ -21,11 +21,6 @@ package org.jsecurity.logging;
 /**
  * A very simple Log instance to record useful information during runtime.
  *
- * <p>JSecurity doesn't implement a Logging mechanism itself, since that is outside the core competency of a
- * Security framework.  Instead, this interface provides an abstraction (wrapper) API on top of an underlying
- * logging framework's Log instance (e.g. JDK, SLF4J, Commons Logging, company proprietary mechansim, etc), allowing
- * a JSecurity user to configure any logging mechanism they choose.
- *
  * @author Les Hazlewood
  * @since 0.9
  */
