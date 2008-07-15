@@ -65,7 +65,7 @@ public final class JSecurityLogFactory {
     }
 
     public static Log getLog(Class clazz) {
-        return instance.getLog(clazz.getName());
+        return getLog(clazz.getName());
     }
 
     public static void setLogFactory(LogFactory instance) {
