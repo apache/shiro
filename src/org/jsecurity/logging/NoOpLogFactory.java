@@ -25,6 +25,6 @@ package org.jsecurity.logging;
 public class NoOpLogFactory implements LogFactory {
 
     public Log getLog(String name) {
-        return new NoOpLog(name);
+        return NoOpLog.INSTANCE;
     }
 }
