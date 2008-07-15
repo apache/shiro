@@ -24,6 +24,8 @@ package org.jsecurity.logging;
  */
 public class NoOpLog implements Log {
 
+    public static transient final NoOpLog INSTANCE = new NoOpLog("NoOp");
+
     private String name;
 
     public NoOpLog(String name) {
