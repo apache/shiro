@@ -25,7 +25,6 @@ import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.cache.ehcache.EhCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
-import org.jsecurity.util.JavaEnvironment;
 import org.jsecurity.util.LifecycleUtils;
 
 /**
@@ -100,15 +99,15 @@ public abstract class CachingSecurityManager implements SecurityManager, Initial
     protected CacheManager createCacheManager() {
         CacheManager manager = null;
 
-        if (JavaEnvironment.isEhcacheAvailable()) {
-            if (log.isDebugEnabled()) {
-                String msg = "Initializing default CacheManager using EhCache.";
-                log.debug(msg);
-            }
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to initialize default CacheManager using EhCache...");
+        }
+
+        try {
             EhCacheManager ehCacheManager = new EhCacheManager();
             ehCacheManager.init();
             manager = ehCacheManager;
-        } else {
+        } catch (NoClassDefFoundError e) {
             if (log.isDebugEnabled()) {
                 log.debug("Ehcache was not found in the classpath. A default EhCacheManager cannot be created.");
             }
