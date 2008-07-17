@@ -204,14 +204,14 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         for (Realm realm : realms) {
 
-            aggregate = strategy.beforeAttempt(realm, token, aggregate);
-
             if (realm.supports(token)) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Attempting to authenticate token [" + token + "] " +
                             "using realm of type [" + realm + "]");
                 }
+
+                aggregate = strategy.beforeAttempt(realm, token, aggregate);
 
                 Account account = null;
                 Throwable t = null;

@@ -40,8 +40,14 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     public Account afterAttempt(Realm realm, AuthenticationToken token, Account singleRealmAccount, Account aggregateAccount, Throwable t) throws AuthenticationException {
         if (aggregateAccount != null) {
-            //just keep the value, ignore all other realms
-            return aggregateAccount;
+            //if the aggregate account has principals, that means a realm has successfully authenticated, so just
+            //keep it and ignore all other realms:
+            if (aggregateAccount.getPrincipals() != null && !aggregateAccount.getPrincipals().isEmpty()) {
+                return aggregateAccount;
+            } else {
+                //we authenticated successfully against the first realm, return it:
+                return singleRealmAccount;
+            }
         } else {
             return singleRealmAccount;
         }
