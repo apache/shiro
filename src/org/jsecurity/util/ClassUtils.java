@@ -18,6 +18,9 @@
  */
 package org.jsecurity.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 
@@ -27,33 +30,85 @@ import java.lang.reflect.Constructor;
  */
 public class ClassUtils {
 
-    public static ClassLoader getDefaultClassLoader() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if (cl == null) {
-            cl = ClassUtils.class.getClassLoader();
-        }
-        return cl;
-    }
+    private static transient final Log log = LogFactory.getLog(ClassUtils.class);
 
     /**
-     * @param name
-     * @return
+     * Returns the specified resource by checking the current thread's
+     * {@link Thread#getContextClassLoader() context class loader}, then the
+     * current ClassLoader (<code>ClassUtils.class.getClassLoader()</code>), then the system/application
+     * ClassLoader (<code>ClassLoader.getSystemClassLoader()</code>, in that order, using
+     * {@link ClassLoader#getResourceAsStream(String) getResourceAsStream(name)}.
+     *
+     * @param name the name of the resource to acquire from the classloader(s).
+     * @return the InputStream of the resource found, or <code>null</code> if the resource cannot be found from any
+     *         of the three mentioned ClassLoaders.
      * @since 0.9
      */
     public static InputStream getResourceAsStream(String name) {
-        ClassLoader cl = getDefaultClassLoader();
-        return cl.getResourceAsStream(name);
+        InputStream is = null;
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if (cl != null) {
+            is = cl.getResourceAsStream(name);
+        }
+
+        if (is == null) {
+            if (log.isTraceEnabled()) {
+                log.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the " +
+                        "current ClassLoader...");
+            }
+            cl = ClassUtils.class.getClassLoader();
+            is = cl.getResourceAsStream(name);
+            if (is == null) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Resource [" + name + "] was not found via the current class loader.  Trying the " +
+                            "system/application ClassLoader...");
+                }
+                cl = ClassLoader.getSystemClassLoader();
+                is = cl.getResourceAsStream(name);
+                if (is == null && log.isTraceEnabled()) {
+                    log.trace("Resource [" + name + "] was not found via the thread context, current, or " +
+                            "system/application ClassLoaders.  All heuristics have been exhausted.  Returning null.");
+                }
+            }
+        }
+        return is;
     }
 
     public static Class forName(String fullyQualified) throws UnknownClassException {
-        ClassLoader cl = getDefaultClassLoader();
+        Class clazz = null;
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            return cl.loadClass(fullyQualified);
+            clazz = cl.loadClass(fullyQualified);
         } catch (ClassNotFoundException e) {
-            String msg = "Unable to load class name [" + fullyQualified + "] from ClassLoader [" +
-                    cl + "]";
-            throw new UnknownClassException(msg, e);
+            if (log.isTraceEnabled()) {
+                log.trace("Unable to load class named [" + fullyQualified + "] from the thread context ClassLoader.  " +
+                        "Trying the current ClassLoader...");
+            }
+            cl = ClassUtils.class.getClassLoader();
+            try {
+                clazz = cl.loadClass(fullyQualified);
+            } catch (ClassNotFoundException e1) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Unable to load class named [" + fullyQualified + "] from the current ClassLoader.  " +
+                            "Trying the system/application ClassLoader...");
+                }
+                cl = ClassLoader.getSystemClassLoader();
+                try {
+                    clazz = cl.loadClass(fullyQualified);
+                } catch (ClassNotFoundException ignored) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Unable to load class named [" + fullyQualified + "] from the " +
+                                "system/application ClassLoader.");
+                    }
+                }
+            }
         }
+        if (clazz == null) {
+            String msg = "Unable to load class named [" + fullyQualified + "] from the thread context, current, or " +
+                    "system/application ClassLoaders.  All heuristics have been exausted.  Class could not be found.";
+            throw new UnknownClassException(msg);
+        }
+        return clazz;
     }
 
     public static boolean isAvailable(String fullyQualifiedClassName) {
