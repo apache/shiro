@@ -74,37 +74,54 @@ public class ClassUtils {
         return is;
     }
 
-    public static Class forName(String fullyQualified) throws UnknownClassException {
+    /**
+     * Attempts to load the specified class name from the current thread's
+     * {@link Thread#getContextClassLoader() context class loader}, then the
+     * current ClassLoader (<code>ClassUtils.class.getClassLoader()</code>), then the system/application
+     * ClassLoader (<code>ClassLoader.getSystemClassLoader()</code>, in that order.  If any of them cannot locate
+     * the specified class, an <code>UnknownClassException</code> is thrown (our RuntimeException equivalent of
+     * the JRE's <code>ClassNotFoundException</code>.
+     *
+     * @param fqcn the fully qualified class name to load
+     * @return the located class
+     * @throws UnknownClassException if the class cannot be found.
+     */
+    public static Class forName(String fqcn) throws UnknownClassException {
         Class clazz = null;
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        try {
-            clazz = cl.loadClass(fullyQualified);
-        } catch (ClassNotFoundException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("Unable to load class named [" + fullyQualified + "] from the thread context ClassLoader.  " +
-                        "Trying the current ClassLoader...");
+        if (cl != null) {
+            try {
+                clazz = cl.loadClass(fqcn);
+            } catch (ClassNotFoundException e) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Unable to load class named [" + fqcn +
+                            "] from the thread context ClassLoader.  Trying the current ClassLoader...");
+                }
             }
+        }
+        if (clazz == null) {
             cl = ClassUtils.class.getClassLoader();
             try {
-                clazz = cl.loadClass(fullyQualified);
+                clazz = cl.loadClass(fqcn);
             } catch (ClassNotFoundException e1) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Unable to load class named [" + fullyQualified + "] from the current ClassLoader.  " +
+                    log.trace("Unable to load class named [" + fqcn + "] from the current ClassLoader.  " +
                             "Trying the system/application ClassLoader...");
                 }
                 cl = ClassLoader.getSystemClassLoader();
                 try {
-                    clazz = cl.loadClass(fullyQualified);
+                    clazz = cl.loadClass(fqcn);
                 } catch (ClassNotFoundException ignored) {
                     if (log.isTraceEnabled()) {
-                        log.trace("Unable to load class named [" + fullyQualified + "] from the " +
+                        log.trace("Unable to load class named [" + fqcn + "] from the " +
                                 "system/application ClassLoader.");
                     }
                 }
             }
         }
+
         if (clazz == null) {
-            String msg = "Unable to load class named [" + fullyQualified + "] from the thread context, current, or " +
+            String msg = "Unable to load class named [" + fqcn + "] from the thread context, current, or " +
                     "system/application ClassLoaders.  All heuristics have been exausted.  Class could not be found.";
             throw new UnknownClassException(msg);
         }
