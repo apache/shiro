@@ -18,8 +18,8 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class FilterChainWrapper implements FilterChain {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private FilterChain orig;
     private List<Filter> filters;

@@ -482,7 +482,6 @@
     <library name="all-libs">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/test/jstl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/slf4j-api.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/antlr.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/easymockclassextension.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/retroweaver-rt.jar!/" />
@@ -491,7 +490,6 @@
         <root url="jar://$PROJECT_DIR$/lib/test/asm-commons.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/asm-attrs.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/spring-webmvc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/slf4j-log4j12.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/dom4j.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/servlet-api.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/commons-beanutils.jar!/" />
@@ -512,6 +510,7 @@
         <root url="jar://$PROJECT_DIR$/lib/test/jsp-api.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/hibernate.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/test/commons-collections.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/commons-logging.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>

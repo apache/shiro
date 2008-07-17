@@ -18,8 +18,8 @@
  */
 package org.jsecurity.realm.ldap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -38,7 +38,7 @@ import java.util.Set;
  */
 public class LdapUtils {
 
-    protected static transient final Logger log = LoggerFactory.getLogger(LdapUtils.class);
+    protected static transient final Log log = LogFactory.getLog(LdapUtils.class);
 
     /**
      * Private constructor to prevent instantiation

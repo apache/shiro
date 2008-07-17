@@ -18,8 +18,8 @@
  */
 package org.jsecurity.jndi;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -46,7 +46,7 @@ import java.util.Properties;
  */
 public class JndiTemplate {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private Properties environment;
 

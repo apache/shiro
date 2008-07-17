@@ -114,8 +114,7 @@
             <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
             <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
             <fileset dir="${lib.dir}/samples" includes="spring.jar"/>
-            <fileset dir="${lib.dir}/samples" includes="slf4j-api.jar"/>
-            <fileset dir="${lib.dir}/samples" includes="slf4j-log4j12.jar"/>
+            <fileset dir="${lib.dir}/samples" includes="commons-*.jar"/>
         </copy>
         <signjar keystore="${etc.dir}/jsecurity-sample.jks"
                  alias="jsecurity"

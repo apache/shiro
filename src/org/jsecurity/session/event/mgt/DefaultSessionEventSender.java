@@ -18,10 +18,10 @@
  */
 package org.jsecurity.session.event.mgt;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.event.SessionEvent;
 import org.jsecurity.session.event.SessionEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +37,7 @@ import java.util.Collection;
  */
 public class DefaultSessionEventSender implements SessionEventSender {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected Collection<SessionEventListener> listeners = null;
 

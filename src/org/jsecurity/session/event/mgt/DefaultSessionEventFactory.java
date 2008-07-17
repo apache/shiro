@@ -18,13 +18,13 @@
  */
 package org.jsecurity.session.event.mgt;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.event.ExpiredSessionEvent;
 import org.jsecurity.session.event.SessionEvent;
 import org.jsecurity.session.event.StartedSessionEvent;
 import org.jsecurity.session.event.StoppedSessionEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Les Hazlewood
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultSessionEventFactory implements SessionEventFactory {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     public DefaultSessionEventFactory() {
     }

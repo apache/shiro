@@ -48,7 +48,7 @@
     <dependencies>
 
         <!-- Minimal deps, depending on VM: -->
-        <dependency org="org.slf4j" name="slf4j-api" rev="1.5.2" transitive="false" conf="runtime"/>
+        <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false" conf="runtime"/>
         <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="runtime-web"/>
 
         <!-- Feature-based dependencies: -->
@@ -64,7 +64,6 @@
         <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="compile"/>
 
         <!-- Sample application dependencies: -->
-        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.2" transitive="false" conf="samples"/>
         <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>
         <dependency org="javax.servlet" name="jstl" rev="1.2" transitive="false" conf="samples"/>
         <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>

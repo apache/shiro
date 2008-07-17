@@ -18,9 +18,9 @@
  */
 package org.jsecurity.io;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.ClassUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class ResourceUtils {
      */
     public static final String FILE_PREFIX = "file:";
 
-    protected static transient final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
+    protected static transient final Log log = LogFactory.getLog(ResourceUtils.class);
 
 
     /**

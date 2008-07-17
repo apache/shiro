@@ -19,10 +19,10 @@
 package org.jsecurity.cache.ehcache;
 
 import net.sf.ehcache.Element;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -39,7 +39,7 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class EhCache implements Cache {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * The wrapped Ehcache instance.

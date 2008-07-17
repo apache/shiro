@@ -18,6 +18,8 @@
  */
 package org.jsecurity.subject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.InetAuthenticationToken;
@@ -27,8 +29,6 @@ import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -62,7 +62,7 @@ import java.util.List;
  */
 public class DelegatingSubject implements Subject {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected PrincipalCollection principals = new SimplePrincipalCollection();
     protected boolean authenticated = false;

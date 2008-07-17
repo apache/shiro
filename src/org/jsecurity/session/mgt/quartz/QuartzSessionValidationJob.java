@@ -18,13 +18,13 @@
  */
 package org.jsecurity.session.mgt.quartz;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A quartz job that basically just calls the {@link org.jsecurity.session.mgt.ValidatingSessionManager#validateSessions()}
@@ -47,7 +47,7 @@ public class QuartzSessionValidationJob implements Job {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |

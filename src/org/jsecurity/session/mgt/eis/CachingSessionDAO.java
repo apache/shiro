@@ -18,14 +18,14 @@
  */
 package org.jsecurity.session.mgt.eis;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
 import org.jsecurity.util.Initializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -50,7 +50,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private CacheManager cacheManager = null;
     private Cache activeSessions = null;

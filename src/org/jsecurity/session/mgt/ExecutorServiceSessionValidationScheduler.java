@@ -18,8 +18,8 @@
  */
 package org.jsecurity.session.mgt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceSessionValidationScheduler implements SessionValidationScheduler, Runnable {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;

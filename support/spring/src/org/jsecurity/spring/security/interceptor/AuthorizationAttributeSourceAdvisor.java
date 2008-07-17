@@ -18,11 +18,11 @@
  */
 package org.jsecurity.spring.security.interceptor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.annotation.RequiresPermissions;
 import org.jsecurity.authz.annotation.RequiresRoles;
 import org.jsecurity.mgt.SecurityManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
 public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor
         implements InitializingBean {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     protected SecurityManager securityManager = null;
 

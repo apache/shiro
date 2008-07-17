@@ -18,10 +18,10 @@
  */
 package org.jsecurity.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ import java.util.Map;
 @SuppressWarnings(value = {"unchecked", "unsafe"})
 public abstract class ThreadContext {
 
-    protected static transient final Logger logger = LoggerFactory.getLogger(ThreadContext.class);
+    protected static transient final Log log = LogFactory.getLog(ThreadContext.class);
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
@@ -81,15 +81,15 @@ public abstract class ThreadContext {
      *         no value exists for the specified <code>key</code>
      */
     public static Object get(Object key) {
-        if (logger.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             String msg = "get() - in thread [" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+            log.trace(msg);
         }
         Object value = getResources().get(key);
-        if ((value != null) && logger.isTraceEnabled()) {
+        if ((value != null) && log.isTraceEnabled()) {
             String msg = "Retrieved value of type [" + value.getClass().getName() + "] for key [" +
                     key + "] " + "bound to thread [" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+            log.trace(msg);
         }
         return value;
     }
@@ -121,10 +121,10 @@ public abstract class ThreadContext {
 
         getResources().put(key, value);
 
-        if (logger.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             String msg = "Bound value of type [" + value.getClass().getName() + "] for key [" +
                     key + "] to thread " + "[" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+            log.trace(msg);
         }
     }
 
@@ -139,10 +139,10 @@ public abstract class ThreadContext {
     public static Object remove(Object key) {
         Object value = getResources().remove(key);
 
-        if ((value != null) && logger.isTraceEnabled()) {
+        if ((value != null) && log.isTraceEnabled()) {
             String msg = "Removed value of type [" + value.getClass().getName() + "] for key [" +
                     key + "]" + "from thread [" + Thread.currentThread().getName() + "]";
-            logger.trace(msg);
+            log.trace(msg);
         }
 
         return value;
@@ -169,8 +169,8 @@ public abstract class ThreadContext {
      */
     public static void clear() {
         getResources().clear();
-        if (logger.isTraceEnabled()) {
-            logger.trace("Removed all ThreadContext values from thread [" + Thread.currentThread().getName() + "]");
+        if (log.isTraceEnabled()) {
+            log.trace("Removed all ThreadContext values from thread [" + Thread.currentThread().getName() + "]");
         }
     }
 
