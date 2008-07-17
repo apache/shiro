@@ -18,10 +18,10 @@
  */
 package org.jsecurity.spring;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
@@ -42,7 +42,7 @@ import org.springframework.beans.factory.config.DestructionAwareBeanPostProcesso
  */
 public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.jsecurity.util.Initializable}

@@ -18,14 +18,14 @@
  */
 package org.jsecurity.authc.pam;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.SimpleAccount;
 import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.realm.Realm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -35,7 +35,7 @@ import java.util.Collection;
  */
 public abstract class AbstractAuthenticationStrategy implements ModularAuthenticationStrategy {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     public Account beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
         return new SimpleAuthorizingAccount();

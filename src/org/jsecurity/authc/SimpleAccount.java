@@ -18,10 +18,10 @@
  */
 package org.jsecurity.authc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -54,7 +54,7 @@ public class SimpleAccount implements Account, Serializable {
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

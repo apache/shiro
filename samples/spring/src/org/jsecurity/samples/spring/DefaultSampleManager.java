@@ -18,11 +18,11 @@
  */
 package org.jsecurity.samples.spring;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link SampleManager} interface that stores
@@ -44,7 +44,7 @@ public class DefaultSampleManager implements SampleManager {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |

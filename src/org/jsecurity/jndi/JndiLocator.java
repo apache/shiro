@@ -18,8 +18,8 @@
  */
 package org.jsecurity.jndi;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.naming.NamingException;
 import java.util.Properties;
@@ -43,9 +43,9 @@ import java.util.Properties;
 public class JndiLocator {
 
     /**
-     * Logger, available to subclasses.
+     * Log, available to subclasses.
      */
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * JNDI prefix used in a J2EE container

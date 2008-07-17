@@ -18,6 +18,8 @@
  */
 package org.jsecurity.subject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
@@ -29,8 +31,6 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.io.DefaultSerializer;
 import org.jsecurity.io.SerializationException;
 import org.jsecurity.io.Serializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Les Hazlewood
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();

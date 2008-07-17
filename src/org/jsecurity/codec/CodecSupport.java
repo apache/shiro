@@ -18,8 +18,8 @@
  */
 package org.jsecurity.codec;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.UnsupportedEncodingException;
 
@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
  */
 public abstract class CodecSupport {
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * JSecurity's default preferred Character encoding, equal to <b><code>UTF-8</code></b>.

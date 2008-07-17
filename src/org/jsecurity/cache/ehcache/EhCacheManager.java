@@ -18,6 +18,8 @@
  */
 package org.jsecurity.cache.ehcache;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheException;
 import org.jsecurity.cache.CacheManager;
@@ -25,8 +27,6 @@ import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.session.mgt.eis.CachingSessionDAO;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.Initializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +49,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
     public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
 
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /**
      * The EhCache cache manager used by this implementation to create caches.

@@ -18,10 +18,10 @@
  */
 package org.jsecurity.realm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>A very basic abstract extension point for the {@link Realm} interface that provides logging and caching support.
@@ -38,7 +38,7 @@ public abstract class CachingRealm implements Realm, CacheManagerAware {
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    protected transient final Logger log = LoggerFactory.getLogger(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
