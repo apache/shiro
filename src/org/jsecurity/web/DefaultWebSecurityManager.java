@@ -18,8 +18,6 @@
  */
 package org.jsecurity.web;
 
-import org.jsecurity.authc.AuthenticationInfo;
-import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
@@ -219,7 +217,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return isAuthenticated(existing);
     }
 
-    public Subject createSubject(AuthenticationToken token, AuthenticationInfo info) {
+    public Subject createSubject() {
         ServletRequest request = WebUtils.getServletRequest();
         ServletResponse response = WebUtils.getServletResponse();
         return createSubject(request, response);
