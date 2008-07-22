@@ -46,7 +46,7 @@ public interface Authenticator {
      *
      * <p>If the authentication is successful, an {@link AuthenticationInfo}
      * object is returned that represents the user's account data relevant to JSecurity.  This returned object is
-     * generally used in turn to construct a <tt>Subject</tt> representing that user's access rights and
+     * generally used in turn to construct a <tt>Subject</tt> representing that user's identity and
      * access to a <tt>Session</tt>
      *
      * @param authenticationToken any representation of a user's principals and credentials

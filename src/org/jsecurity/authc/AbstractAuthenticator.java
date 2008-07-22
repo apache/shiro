@@ -21,11 +21,10 @@ package org.jsecurity.authc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.event.AuthenticationEventListener;
-import org.jsecurity.authc.event.mgt.AuthenticationEventListenerRegistrar;
 import org.jsecurity.authc.event.mgt.AuthenticationEventManager;
-import org.jsecurity.authc.event.mgt.DefaultAuthenticationEventManager;
 import org.jsecurity.subject.PrincipalCollection;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -54,8 +53,7 @@ import java.util.Collection;
  * @author Les Hazlewood
  * @since 0.1
  */
-public abstract class AbstractAuthenticator
-        implements Authenticator, LogoutAware, AuthenticationEventListenerRegistrar {
+public abstract class AbstractAuthenticator implements Authenticator, LogoutAware, AuthenticationListenerRegistrar {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -65,7 +63,7 @@ public abstract class AbstractAuthenticator
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private AuthenticationEventManager authcEventManager = new DefaultAuthenticationEventManager();
+    private Collection<AuthenticationListener> listeners = new ArrayList<AuthenticationListener>();
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -77,43 +75,45 @@ public abstract class AbstractAuthenticator
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public AuthenticationEventManager getAuthenticationEventManager() {
-        return authcEventManager;
+    public void setAuthenticationListeners(Collection<AuthenticationListener> listeners) {
+        if (listeners == null) {
+            this.listeners = new ArrayList<AuthenticationListener>();
+        } else {
+            this.listeners = listeners;
+        }
     }
 
-    public void setAuthenticationEventManager(AuthenticationEventManager authcEventManager) {
-        this.authcEventManager = authcEventManager;
+    public void add(AuthenticationListener listener) {
+        this.listeners.add(listener);
     }
 
-    public void setAuthenticationEventListeners(Collection<AuthenticationEventListener> listeners) {
-        this.authcEventManager.setAuthenticationEventListeners(listeners);
-    }
-
-    public void add(AuthenticationEventListener listener) {
-        this.authcEventManager.add(listener);
-    }
-
-    public boolean remove(AuthenticationEventListener listener) {
-        return this.authcEventManager.remove(listener);
+    public boolean remove(AuthenticationListener listener) {
+        return this.listeners.remove(listener);
     }
 
     /*-------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-    protected void sendFailureEvent(AuthenticationToken token, AuthenticationException ae) {
-        this.authcEventManager.sendFailureEvent(token, ae);
+    protected void notifySuccess(AuthenticationToken token, AuthenticationInfo info) {
+        for (AuthenticationListener listener : this.listeners) {
+            listener.onSuccess(token, info);
+        }
     }
 
-    protected void sendSuccessEvent(AuthenticationToken token, AuthenticationInfo info) {
-        this.authcEventManager.sendSuccessEvent(token, info);
+    protected void notifyFailure(AuthenticationToken token, AuthenticationException ae) {
+        for (AuthenticationListener listener : this.listeners) {
+            listener.onFailure(token, ae);
+        }
     }
 
-    protected void sendLogoutEvent(PrincipalCollection subjectPrincipal) {
-        this.authcEventManager.sendLogoutEvent(subjectPrincipal);
+    protected void notifyLogout(PrincipalCollection principals) {
+        for (AuthenticationListener listener : this.listeners) {
+            listener.onLogout(principals);
+        }
     }
 
     public void onLogout(PrincipalCollection principals) {
-        sendLogoutEvent(principals);
+        notifyLogout(principals);
     }
 
 
@@ -171,7 +171,7 @@ public abstract class AbstractAuthenticator
                 }
             }
             try {
-                sendFailureEvent(token, ae);
+                notifyFailure(token, ae);
             } catch (Throwable t2) {
                 String msg = "Unable to send event for failed authentication attempt - listener error?.  Please check " +
                         "your AuthenticationEventListener implementation(s).  Logging sending exception and " +
@@ -190,7 +190,7 @@ public abstract class AbstractAuthenticator
                     "Returned account: [" + info + "]");
         }
 
-        sendSuccessEvent(token, info);
+        notifySuccess(token, info);
 
         return info;
     }

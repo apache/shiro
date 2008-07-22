@@ -34,10 +34,9 @@ import org.jsecurity.subject.PrincipalCollection;
 public interface LogoutAware {
 
     /**
-     * Callback allowing logout logic if so desired for a previously
-     * authenticated Subject/user.
+     * Callback triggered when a <code>Subject</code> logs out of the system.
      *
-     * @param principals the application-specific Subject/user identifiers that is logging out.
+     * @param principals the identifying principals of the Subject logging out.
      */
     public void onLogout(PrincipalCollection principals);
 }

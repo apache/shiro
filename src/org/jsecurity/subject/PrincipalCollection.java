@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * A collection of all principals associated with a corresponding {@link Subject Subject}.
+ * <p/>
+ * A <em>principal</em>
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
@@ -86,11 +90,15 @@ public interface PrincipalCollection extends Iterable, Serializable {
 
     /**
      * Returns the realm names that this collection has principals for.
+     *
      * @return the names of realms that this collection has one or more principals for.
      */
     Set<String> getRealmNames();
 
+    /**
+     * Returns <code>true</code> if this collection is empty, <code>false</code> otherwise.
+     *
+     * @return <code>true</code> if this collection is empty, <code>false</code> otherwise.
+     */
     boolean isEmpty();
-
-    void clear();
 }
