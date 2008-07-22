@@ -21,9 +21,9 @@ package org.jsecurity.authc;
 import org.jsecurity.authz.AuthorizationInfo;
 
 /**
- * <p>An <tt>Account</tt> is a convenience class that implements both {@link AuthenticationInfo} and
+ * <p>An <tt>Account</tt> is a convenience interface that extends both {@link AuthenticationInfo} and
  * {@link AuthorizationInfo}.  This interface can be useful when an application uses a single object to
- * encapsulate both the authentication and authorization information required by the {@link org.jsecurity.realm.Realm}</p>
+ * encapsulate both the authentication and authorization information required by a {@link org.jsecurity.realm.Realm Realm}</p>
  *
  * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to

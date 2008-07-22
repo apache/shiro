@@ -41,8 +41,6 @@ public interface DataAccessObject {
 
     void update(Object entity);
 
-    void saveOrUpdate(Object entity);
-
     void delete(Object entity);
 
     void deleteById(Class entityType, Serializable id);
