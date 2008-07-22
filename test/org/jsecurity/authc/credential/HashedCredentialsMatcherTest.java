@@ -19,9 +19,9 @@
 package org.jsecurity.authc.credential;
 
 import junit.framework.TestCase;
-import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.SimpleAccount;
+import org.jsecurity.authc.SimpleAuthenticationInfo;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.crypto.hash.AbstractHash;
 import org.jsecurity.util.ClassUtils;
@@ -41,7 +41,7 @@ public abstract class HashedCredentialsMatcherTest extends TestCase {
     public void testBasic() {
         CredentialsMatcher matcher = (CredentialsMatcher) ClassUtils.newInstance(getMatcherClass());
         byte[] hashed = hash("password").getBytes();
-        Account account = new SimpleAccount("username", hashed, "realmName");
+        AuthenticationInfo account = new SimpleAuthenticationInfo("username", hashed, "realmName");
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
         assertTrue(matcher.doCredentialsMatch(token, account));
     }

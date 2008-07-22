@@ -18,8 +18,8 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
@@ -34,22 +34,16 @@ import java.util.Collection;
  */
 public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
-    public Account beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
+    public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
         return null;
     }
 
-    public Account afterAttempt(Realm realm, AuthenticationToken token, Account singleRealmAccount, Account aggregateAccount, Throwable t) throws AuthenticationException {
-        if (aggregateAccount != null) {
-            //if the aggregate account has principals, that means a realm has successfully authenticated, so just
-            //keep it and ignore all other realms:
-            if (aggregateAccount.getPrincipals() != null && !aggregateAccount.getPrincipals().isEmpty()) {
-                return aggregateAccount;
-            } else {
-                //we authenticated successfully against the first realm, return it:
-                return singleRealmAccount;
-            }
+    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t) throws AuthenticationException {
+        if (aggregateInfo != null) {
+            //just keep the value, ignore all other realms
+            return aggregateInfo;
         } else {
-            return singleRealmAccount;
+            return singleRealmInfo;
         }
     }
 }

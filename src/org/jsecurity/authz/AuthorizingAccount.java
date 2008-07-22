@@ -35,10 +35,14 @@ import java.util.List;
  * ({@link org.jsecurity.realm.Realm Realm} is a sub-interface of {@link Authorizer Authorizer} and therefore must
  * implement those methods as well).
  *
+ * <p>Note: This class is deprecated and will be removed prior to 1.0 being released.  Instead, either just
+ * return an {@link Account} instance or if you want fine-grained control over authorization behavior, extend
+ * a subclass of {@link org.jsecurity.realm.AuthorizingRealm} and implement your own security checks.</p>
+ *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see org.jsecurity.realm.AuthorizingRealm AuthorizingRealm
- * @see SimpleAuthorizingAccount
+ * @deprecated
+ * @see org.jsecurity.realm.AuthorizingRealm
  * @since 0.9
  */
 public interface AuthorizingAccount extends Account {

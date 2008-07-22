@@ -106,10 +106,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         this.rememberMeManager = rememberMeManager;
     }
 
-    private void assertPrincipals(Account account) {
-        PrincipalCollection principals = account.getPrincipals();
+    private void assertPrincipals(AuthenticationInfo info) {
+        PrincipalCollection principals = info.getPrincipals();
         if (principals == null || principals.isEmpty()) {
-            String msg = "Account returned from Authenticator must have non null and non empty principals.";
+            String msg = "Authentication info returned from Authenticator must have non null and non empty principals.";
             throw new IllegalArgumentException(msg);
         }
     }
@@ -140,12 +140,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * Creates a <tt>Subject</tt> instance for the user represented by the given method arguments.
      *
      * @param token   the <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param account the <tt>Account</tt> of a newly authenticated user.
-     * @return the <tt>Subject</tt> instance that represents the account and session data for the newly
+     * @param info the <tt>AuthenticationInfo</tt> of a newly authenticated user.
+     * @return the <tt>Subject</tt> instance that represents the user and session data for the newly
      *         authenticated user.
      */
-    protected Subject createSubject(AuthenticationToken token, Account account) {
-        assertPrincipals(account);
+    protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info) {
+        assertPrincipals(info);
 
         //get any existing session that may exist - we don't want to lose it:
         Subject subject = getSubject();
@@ -163,7 +163,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             authcSourceIP = ThreadContext.getInetAddress();
         }
 
-        return createSubject(account.getPrincipals(), session, true, authcSourceIP);
+        return createSubject(info.getPrincipals(), session, true, authcSourceIP);
     }
 
     /**
@@ -185,22 +185,22 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     private void assertCreation(Subject subject) throws IllegalStateException {
         if (subject == null) {
             String msg = "Programming error - please verify that you have overridden the " +
-                    getClass().getName() + ".createSubject( Account account ) method to return " +
+                    getClass().getName() + ".createSubject( AuthenticationInfo info ) method to return " +
                     "a non-null Subject instance";
             throw new IllegalStateException(msg);
         }
     }
 
-    protected void rememberMeSuccessfulLogin(AuthenticationToken token, Account account) {
+    protected void rememberMeSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
-                rmm.onSuccessfulLogin(token, account);
+                rmm.onSuccessfulLogin(token, info);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
                             "] threw an exception during onSuccessfulLogin.  RememberMe services will not be " +
-                            "performed for Account [" + account + "].";
+                            "performed for account [" + info + "].";
                     log.warn(msg, e);
                 }
             }
@@ -208,7 +208,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             if (log.isDebugEnabled()) {
                 log.debug("This " + getClass().getName() + " instance does not have a " +
                         "[" + RememberMeManager.class.getName() + "] instance configured.  RememberMe services " +
-                        "will not be performed for account [" + account + "].");
+                        "will not be performed for account [" + info + "].");
             }
         }
     }
@@ -253,14 +253,14 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * subsequent access before being returned to the caller.
      *
      * @param token the authenticationToken to process for the login attempt.
-     * @return a Subject representing the authenticated account.
+     * @return a Subject representing the authenticated user.
      * @throws AuthenticationException if there is a problem authenticating the specified <tt>token</tt>.
      */
     public Subject login(AuthenticationToken token) throws AuthenticationException {
-        Account account;
+        AuthenticationInfo info;
         try {
-            account = authenticate(token);
-            onSuccessfulLogin(token, account);
+            info = authenticate(token);
+            onSuccessfulLogin(token, info);
         } catch (AuthenticationException ae) {
             try {
                 onFailedLogin(token, ae);
@@ -272,14 +272,14 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             }
             throw ae; //propagate
         }
-        Subject subject = createSubject(token, account);
+        Subject subject = createSubject(token, info);
         assertCreation(subject);
         bind(subject);
         return subject;
     }
 
-    protected void onSuccessfulLogin(AuthenticationToken token, Account account) {
-        rememberMeSuccessfulLogin(token, account);
+    protected void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
+        rememberMeSuccessfulLogin(token, info);
     }
 
     protected void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {

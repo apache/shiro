@@ -18,20 +18,15 @@
  */
 package org.jsecurity.realm;
 
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authz.AuthorizingAccount;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authc.*;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.cache.Cache;
-import org.jsecurity.cache.CacheManager;
-import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.Initializable;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -50,35 +45,12 @@ import java.util.Set;
  */
 public class SimpleAccountRealm extends AuthorizingRealm implements Initializable {
 
-    /**
-     * The default postfix appended to the Role cache name.
-     */
-    private static final String DEFAULT_ROLE_CACHE_POSTFIX = "-roles";
-
-    //parent class already has the user account cache, we just need to add a role cache:
-    protected Cache roleCache = null;
-    protected String roleCacheName;
+    protected Map<String,SimpleRole> roles = null;
 
     public SimpleAccountRealm() {
     }
 
-    public Cache getRoleCache() {
-        return roleCache;
-    }
-
-    public void setRoleCache(Cache roleCache) {
-        this.roleCache = roleCache;
-    }
-
-    public String getRoleCacheName() {
-        return roleCacheName;
-    }
-
-    public void setRoleCacheName(String roleCacheName) {
-        this.roleCacheName = roleCacheName;
-    }
-
-    public void afterAccountCacheSet() {
+    public void afterAuthorizationCacheSet() {
         initRoleCache();
         afterRoleCacheSet();
     }
@@ -87,43 +59,29 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
     }
 
     protected void initRoleCache() {
-        CacheManager manager = getCacheManager();
-
-        if (manager == null) {
-            manager = new HashtableCacheManager();
-            setCacheManager(manager);
+        if (getAuthorizationCache() == null) {
+            initAuthorizationCache();
         }
 
-        if (getAccountCache() == null) {
-            initAccountCache();
-        }
-
-        String roleCacheName = getRoleCacheName();
-        if (roleCacheName == null) {
-            roleCacheName = getName() + DEFAULT_ROLE_CACHE_POSTFIX;
-            setRoleCacheName(roleCacheName);
-        }
-        Cache roleCache = manager.getCache(roleCacheName);
-        setRoleCache(roleCache);
-
-        userAndRoleCachesCreated();
+        this.roles = new HashMap<String,SimpleRole>();
+        accountAndRoleCachesCreated();
     }
 
-    protected SimpleAuthorizingAccount getUser(String username) {
-        return (SimpleAuthorizingAccount) getAccountCache().get(username);
+    protected SimpleAccount getUser(String username) {
+        return (SimpleAccount) getAuthorizationCache().get(username);
     }
 
-    protected void add(SimpleAuthorizingAccount user) {
-        Object key = getAccountCacheKey(user.getPrincipals());
-        getAccountCache().put(key, user);
+    protected void add(SimpleAccount account) {
+        Object key = getAuthorizationCacheKey(account.getPrincipals());
+        getAuthorizationCache().put(key, account);
     }
 
     protected SimpleRole getRole(String rolename) {
-        return (SimpleRole) roleCache.get(rolename);
+        return roles.get(rolename);
     }
 
-    protected void add(SimpleRole role) {
-        roleCache.put(role.getName(), role);
+    protected void addRole(SimpleRole role) {
+        roles.put(role.getName(), role);
     }
 
     protected static Set<String> toSet(String delimited, String delimiter) {
@@ -143,19 +101,29 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
         return values;
     }
 
-    protected void userAndRoleCachesCreated() {
+    protected void accountAndRoleCachesCreated() {
     }
 
-    protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-        return (SimpleAuthorizingAccount) getAccountCache().get(upToken.getUsername());
+        SimpleAccount account = (SimpleAccount) getAuthorizationCache().get(upToken.getUsername());
+
+        if (account.isLocked()) {
+            throw new LockedAccountException("Account [" + account + "] is locked.");
+        }
+        if (account.isCredentialsExpired()) {
+            String msg = "The credentials for account [" + account + "] are expired";
+            throw new ExpiredCredentialsException(msg);
+        }
+
+        return account;
     }
 
-    protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
-        return (SimpleAuthorizingAccount) getAccountCache().get(getAccountCacheKey(principals));
+    protected Account doGetAuthorizationInfo(PrincipalCollection principals) {
+        return (Account) getAuthorizationCache().get(getAuthorizationCacheKey(principals));
     }
 
-    protected Object getAccountCacheKey(PrincipalCollection principals) {
+    protected Object getAuthorizationCacheKey(PrincipalCollection principals) {
         return principals.fromRealm(getName()).iterator().next(); //returns the username
     }
 }

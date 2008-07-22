@@ -29,13 +29,16 @@ import java.util.*;
  * for many realms.  This implementation caches an internal collection of roles and permissions
  * in order to perform authorization checks for a particular user.</p>
  *
+ * <p>See {@link AuthorizingAccount} interface for reasons why this class is deprecated.</p>
+ *
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @deprecated
  * @since 0.2
  */
 public class SimpleAuthorizingAccount extends SimpleAccount implements AuthorizingAccount {
 
-    protected Set<SimpleRole> roles;
+    protected Set<SimpleRole> simpleRoles;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -90,7 +93,7 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         super.merge(otherAccount);
         if (otherAccount instanceof SimpleAuthorizingAccount) {
             SimpleAuthorizingAccount other = (SimpleAuthorizingAccount) otherAccount;
-            Set<SimpleRole> otherRoles = other.getRoles();
+            Set<SimpleRole> otherRoles = other.getSimpleRoles();
             if (otherRoles != null && !otherRoles.isEmpty()) {
                 for (SimpleRole otherRole : otherRoles) {
                     merge(otherRole);
@@ -128,16 +131,16 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
         return new SimpleRole(privateRoleName);
     }
 
-    public Set<SimpleRole> getRoles() {
-        return roles;
+    public Set<SimpleRole> getSimpleRoles() {
+        return simpleRoles;
     }
 
-    public void setRoles(Set<SimpleRole> roles) {
-        this.roles = roles;
+    public void setSimpleRoles(Set<SimpleRole> simpleRoles) {
+        this.simpleRoles = simpleRoles;
     }
 
     public SimpleRole getRole(String name) {
-        Collection<SimpleRole> roles = getRoles();
+        Collection<SimpleRole> roles = getSimpleRoles();
         if (roles != null && !roles.isEmpty()) {
             for (SimpleRole role : roles) {
                 if (role.getName().equals(name)) {
@@ -150,7 +153,7 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
 
     public Set<Permission> getPermissions() {
         Set<Permission> permissions = new HashSet<Permission>();
-        for (SimpleRole role : roles) {
+        for (SimpleRole role : simpleRoles) {
             permissions.addAll(role.getPermissions());
         }
         return permissions;
@@ -158,7 +161,7 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
 
     public Set<String> getRolenames() {
         Set<String> rolenames = new HashSet<String>();
-        for (SimpleRole role : roles) {
+        for (SimpleRole role : simpleRoles) {
             rolenames.add(role.getName());
         }
         return rolenames;
@@ -173,10 +176,10 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     }
 
     public void add(SimpleRole role) {
-        Set<SimpleRole> roles = getRoles();
+        Set<SimpleRole> roles = getSimpleRoles();
         if (roles == null) {
             roles = new LinkedHashSet<SimpleRole>();
-            setRoles(roles);
+            setSimpleRoles(roles);
         }
         roles.add(role);
     }
@@ -191,10 +194,10 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
 
     public void addAll(Collection<SimpleRole> roles) {
         if (roles != null && !roles.isEmpty()) {
-            Set<SimpleRole> existingRoles = getRoles();
+            Set<SimpleRole> existingRoles = getSimpleRoles();
             if (existingRoles == null) {
                 existingRoles = new LinkedHashSet<SimpleRole>(roles.size());
-                setRoles(existingRoles);
+                setSimpleRoles(existingRoles);
             }
             existingRoles.addAll(roles);
         }
@@ -206,7 +209,7 @@ public class SimpleAuthorizingAccount extends SimpleAccount implements Authorizi
     }
 
     public boolean isPermitted(Permission permission) {
-        Collection<SimpleRole> roles = getRoles();
+        Collection<SimpleRole> roles = getSimpleRoles();
         if (roles != null && !roles.isEmpty()) {
             for (SimpleRole role : roles) {
                 if (role.isPermitted(permission)) {

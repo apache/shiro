@@ -20,8 +20,8 @@ package org.jsecurity.subject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.RememberMeAuthenticationToken;
 import org.jsecurity.codec.Base64;
@@ -131,32 +131,32 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
                 ((RememberMeAuthenticationToken) token).isRememberMe();
     }
 
-    public void onSuccessfulLogin(AuthenticationToken token, Account account) {
+    public void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
         //always clear any previous identity:
         forgetIdentity(token);
 
         //reset it if necessary:
         if (isRememberMe(token)) {
-            rememberIdentity(token, account);
+            rememberIdentity(token, info);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("AuthenticationToken did not indicate RememberMe is requested.  " +
-                        "RememberMe functionality will not be executed for corresponding Account.");
+                        "RememberMe functionality will not be executed for corresponding account.");
             }
         }
     }
 
-    public void rememberIdentity(AuthenticationToken submittedToken, Account successfullyAuthenticated) {
+    public void rememberIdentity(AuthenticationToken submittedToken, AuthenticationInfo successfullyAuthenticated) {
         rememberIdentity(successfullyAuthenticated);
     }
 
-    public void rememberIdentity(Account successfullyAuthenticated) {
+    public void rememberIdentity(AuthenticationInfo successfullyAuthenticated) {
         PrincipalCollection principals = getIdentityToRemember(successfullyAuthenticated);
         rememberIdentity(principals);
     }
 
-    protected PrincipalCollection getIdentityToRemember(Account account) {
-        return account.getPrincipals();
+    protected PrincipalCollection getIdentityToRemember(AuthenticationInfo info) {
+        return info.getPrincipals();
     }
 
     protected void rememberIdentity(PrincipalCollection accountPrincipals) {

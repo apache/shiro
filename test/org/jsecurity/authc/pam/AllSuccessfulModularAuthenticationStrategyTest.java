@@ -18,25 +18,18 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authz.AuthorizingAccount;
+import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.SimpleAccountRealm;
 import org.jsecurity.subject.PrincipalCollection;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Created by IntelliJ IDEA.
- * User: lhazlewood
- * Date: Mar 29, 2008
- * Time: 12:18:45 PM
- * To change this template use File | Settings | File Templates.
- */
 public class AllSuccessfulModularAuthenticationStrategyTest {
 
     private AllSuccessfulModularAuthenticationStrategy strategy;
@@ -48,8 +41,8 @@ public class AllSuccessfulModularAuthenticationStrategyTest {
 
     @Test
     public void beforeAllAttempts() {
-        Account account = strategy.beforeAllAttempts(null, null);
-        assertNotNull(account);
+        AuthenticationInfo info = strategy.beforeAllAttempts(null, null);
+        assertNotNull(info);
     }
 
     @Test
@@ -66,13 +59,14 @@ public class AllSuccessfulModularAuthenticationStrategyTest {
                 return false;
             }
 
-            protected AuthorizingAccount doGetAccount(PrincipalCollection principal) {
+            protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
                 return null;
             }
 
-            protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
+            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
                 return null;
             }
+
         };
 
         strategy.beforeAttempt(notSupportingRealm, null, null);

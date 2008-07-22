@@ -41,6 +41,7 @@ public class JSecurityFilterTest {
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
         expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
+        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null).once();
     }
 
     public void tearDown() throws Exception {

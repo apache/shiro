@@ -84,7 +84,13 @@ public interface PrincipalCollection extends Iterable, Serializable {
      */
     Collection fromRealm(String realmName);
 
-    public boolean isEmpty();
+    /**
+     * Returns the realm names that this collection has principals for.
+     * @return the names of realms that this collection has one or more principals for.
+     */
+    Set<String> getRealmNames();
 
-    public void clear();
+    boolean isEmpty();
+
+    void clear();
 }

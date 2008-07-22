@@ -16,26 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.authc.credential;
+package org.jsecurity.authz;
 
-import org.jsecurity.crypto.hash.AbstractHash;
-import org.jsecurity.crypto.hash.Hash;
-import org.jsecurity.crypto.hash.Sha256Hash;
+import java.util.Collection;
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
- * SHA-256 hashed.
  *
- * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.9
  */
-public class Sha256CredentialsMatcher extends HashedCredentialsMatcher {
+public interface AuthorizationInfo {
 
-    protected AbstractHash newHashInstance() {
-        return new Sha256Hash();
-    }
+    Collection<String> getRoles();
 
-    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
-        return new Sha256Hash(credentials, salt, hashIterations);
-    }
+    Collection<String> getStringPermissions();
+
+    Collection<Permission> getObjectPermissions();
+
 }

@@ -18,7 +18,7 @@
  */
 package org.jsecurity.authc.credential;
 
-import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.codec.CodecSupport;
 
@@ -59,16 +59,16 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * Returns the <tt>account</tt>'s credentials.
      *
      * <p>This default implementation merely returns
-     * {@link Account#getCredentials() account.getCredentials()} and exists as a template hook if subclasses
+     * {@link AuthenticationInfo#getCredentials() account.getCredentials()} and exists as a template hook if subclasses
      * wish to obtain the credentials in a different way or convert them to a different format before
      * returning.
      *
-     * @param account the <tt>Account</tt> stored in the data store to be compared against the submitted authentication
+     * @param info the <tt>AuthenticationInfo</tt> stored in the data store to be compared against the submitted authentication
      *                token's credentials.
      * @return the <tt>account</tt>'s associated credentials.
      */
-    protected Object getCredentials(Account account) {
-        return account.getCredentials();
+    protected Object getCredentials(AuthenticationInfo info) {
+        return info.getCredentials();
     }
 
     /**
@@ -85,7 +85,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * <p>Subclasses should override this method for more explicit equality checks.
      *
      * @param tokenCredentials   the <tt>AuthenticationToken</tt>'s associated credentials.
-     * @param accountCredentials the <tt>Account</tt>'s stored credentials.
+     * @param accountCredentials the <tt>AuthenticationInfo</tt>'s stored credentials.
      * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
@@ -112,18 +112,18 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * This implementation acquires the <tt>token</tt>'s credentials
      * (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
      * and then the <tt>account</tt>'s credentials
-     * (via {@link #getCredentials(Account) getCredentials(account)}) and then passes both of
+     * (via {@link #getCredentials(org.jsecurity.authc.AuthenticationInfo) getCredentials(account)}) and then passes both of
      * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
      * comparison.
      *
      * @param token   the <tt>AuthenticationToken</tt> submitted during the authentication attempt.
-     * @param account the <tt>Account</tt> stored in the system matching the token principal.
+     * @param info the <tt>AuthenticationInfo</tt> stored in the system matching the token principal.
      * @return <tt>true</tt> if the provided token credentials are equal to the stored account credentials,
      *         <tt>false</tt> otherwise
      */
-    public boolean doCredentialsMatch(AuthenticationToken token, Account account) {
+    public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         Object tokenCredentials = getCredentials(token);
-        Object accountCredentials = getCredentials(account);
+        Object accountCredentials = getCredentials(info);
         return equals(tokenCredentials, accountCredentials);
     }
 

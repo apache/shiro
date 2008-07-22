@@ -179,7 +179,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
 
     public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";
     public static final String CONFIG_INIT_PARAM_NAME = "config";
-    private static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
+    public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
     protected String config;
     protected String configUrl;

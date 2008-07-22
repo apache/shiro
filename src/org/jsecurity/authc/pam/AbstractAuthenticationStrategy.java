@@ -20,16 +20,13 @@ package org.jsecurity.authc.pam;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.SimpleAccount;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
 
 import java.util.Collection;
 
 /**
+ * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.9
  */
@@ -37,39 +34,40 @@ public abstract class AbstractAuthenticationStrategy implements ModularAuthentic
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    public Account beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
-        return new SimpleAuthorizingAccount();
+    public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
+        return new SimpleAuthenticationInfo();
     }
 
-    public Account beforeAttempt(Realm realm, AuthenticationToken token, Account aggregate) throws AuthenticationException {
+    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
         return aggregate;
     }
 
-    public Account afterAttempt(Realm realm, AuthenticationToken token, Account singleRealmAccount, Account aggregateAccount, Throwable t) throws AuthenticationException {
-        Account account;
-        if (singleRealmAccount == null) {
-            account = aggregateAccount;
+    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t) throws AuthenticationException {
+        AuthenticationInfo info;
+        if (singleRealmInfo == null) {
+            info = aggregateInfo;
         } else {
-            if (aggregateAccount == null) {
-                account = singleRealmAccount;
+            if (aggregateInfo == null) {
+                info = singleRealmInfo;
             } else {
-                account = merge(singleRealmAccount, aggregateAccount);
+                info = merge(singleRealmInfo, aggregateInfo);
             }
         }
 
-        return account;
+        return info;
     }
 
-    protected Account merge(Account singleRealmAccount, Account aggregateAccount) {
-        if (aggregateAccount instanceof SimpleAccount) {
-            ((SimpleAccount) aggregateAccount).merge(singleRealmAccount);
-            return aggregateAccount;
+    protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
+        if( aggregate instanceof MergableAuthenticationInfo ) {
+            ((MergableAuthenticationInfo)aggregate).merge(info);
+            return aggregate;
         } else {
-            return singleRealmAccount;
+            throw new IllegalArgumentException( "Attempt to merge authentication info from multiple realms, but aggreagate " +
+                      "AuthenticationInfo is not of type MergableAuthenticationInfo." );
         }
     }
 
-    public Account afterAllAttempts(AuthenticationToken token, Account aggregate) throws AuthenticationException {
+    public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
         return aggregate;
     }
 }

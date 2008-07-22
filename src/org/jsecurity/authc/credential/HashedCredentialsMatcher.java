@@ -18,7 +18,7 @@
  */
 package org.jsecurity.authc.credential;
 
-import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.codec.Hex;
@@ -27,7 +27,7 @@ import org.jsecurity.crypto.hash.Hash;
 
 /**
  * A <tt>HashedCredentialMatcher</tt> provides support for hashing of supplied <tt>AuthenticationToken</tt> credentials
- * before being compared to those in the <tt>Account</tt> from the data store.
+ * before being compared to those in the <tt>AuthenticationInfo</tt> from the data store.
  *
  * <p>Credential hashing is one of the most common security techniques when safeguarding a user's private credentials
  * (passwords, keys, etc).  Most developers never want to store their users' credentials in plain form, viewable by
@@ -36,7 +36,7 @@ import org.jsecurity.crypto.hash.Hash;
  * <p>This class (and its subclasses) function as follows:</p>
  *
  * <p>It first hashes the <tt>AuthenticationToken</tt> credentials supplied by the user during their login.  It then
- * compares this hashed value directly with the <tt>Account</tt> credentials stored in the system.  The stored account
+ * compares this hashed value directly with the <tt>AuthenticationInfo</tt> credentials stored in the system.  The stored account
  * credentials are expected to already be in hashed form.  If these two values are equal, the submitted credentials
  * match.</p>
  *
@@ -211,7 +211,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
     }
 
     /**
-     * Returns a {@link Hash Hash} instance representing the already-hashed Account credentials stored in the system.
+     * Returns a {@link Hash Hash} instance representing the already-hashed AuthenticationInfo credentials stored in the system.
      *
      * <p>This method reconstructs a {@link Hash Hash} instance based on a <code>account.getCredentials</code> call,
      * but it does <em>not</em> hash that value - it is expected that method call will return an already-hashed value.
@@ -227,11 +227,11 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <li>Set the byte[] array directly on the <tt>Hash</tt> implementation and return it.</li>
      * </ol>
      *
-     * @param account the Account from which to retrive the credentials which assumed to be in already-hashed form.
-     * @return a {@link Hash Hash} instance representing the given Account's stored credentials.
+     * @param info the AuthenticationInfo from which to retrive the credentials which assumed to be in already-hashed form.
+     * @return a {@link Hash Hash} instance representing the given AuthenticationInfo's stored credentials.
      */
-    protected Object getCredentials(Account account) {
-        Object credentials = account.getCredentials();
+    protected Object getCredentials(AuthenticationInfo info) {
+        Object credentials = info.getCredentials();
 
         byte[] storedBytes = toBytes(credentials);
 
@@ -263,7 +263,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
 
     /**
      * Returns a new, <em>uninitialized</em> instance, without its byte array set.  Used as a utility method in the
-     * {@link #getCredentials(Account) getCredentials(Account)} implementation.
+     * {@link SimpleCredentialsMatcher#getCredentials(org.jsecurity.authc.AuthenticationInfo) getCredentials(AuthenticationInfo)} implementation.
      *
      * @return a new, <em>uninitialized</em> instance, without its byte array set.
      */

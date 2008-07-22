@@ -21,17 +21,17 @@ package org.jsecurity;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
-import org.jsecurity.authz.AuthorizingAccount;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -83,7 +83,7 @@ public class AuthorizingRealmTest {
         realm = null;
     }
 
-    //TODO - re-enable
+    @Test
     public void testDefaultConfig() {
         securityManager.init();
         InetAddress localhost = null;
@@ -96,7 +96,7 @@ public class AuthorizingRealmTest {
         assertTrue(subject.isAuthenticated());
         assertTrue(subject.hasRole(ROLE));
         Object principals = subject.getPrincipal();
-        assertTrue(principals instanceof Collection && ((Collection) principals).size() == 3);
+        assertTrue(principals instanceof UserIdPrincipal);
 
         UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
         assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
@@ -111,14 +111,15 @@ public class AuthorizingRealmTest {
         subject.logout();
     }
 
-    //TODO - re-enable
+    @Test
     public void testCreateAccountOverride() {
 
         Realm realm = new AllowAllRealm() {
-            protected Account createAccount(Object principal, Object credentials) {
+            @Override
+            protected AuthenticationInfo buildAuthenticationInfo(Object principal, Object credentials) {
                 String username = (String) principal;
                 UsernamePrincipal customPrincipal = new UsernamePrincipal(username);
-                return new SimpleAuthorizingAccount(customPrincipal, credentials, getName());
+                return new SimpleAccount(customPrincipal, credentials, getName());
             }
         };
 
@@ -144,23 +145,22 @@ public class AuthorizingRealmTest {
             setCredentialsMatcher(new AllowAllCredentialsMatcher());
         }
 
-        protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
-            PrincipalCollection principals = new SimplePrincipalCollection("allowAll", token.getPrincipal());
-            return doGetAccount(principals);
+        protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+            return buildAuthenticationInfo(token.getPrincipal(), token.getCredentials());
         }
 
-        protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
+        protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(principals, null, getName(), roles, null);
+            return new SimpleAuthorizationInfo(roles);
         }
 
-        protected Account createAccount(Object principal, Object credentials) {
+        protected AuthenticationInfo buildAuthenticationInfo(Object principal, Object credentials) {
             Collection<Object> principals = new ArrayList<Object>(3);
             principals.add(new UserIdPrincipal(USER_ID));
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);
-            return new SimpleAccount(principals, PASSWORD, getName());
+            return new SimpleAuthenticationInfo(principals, PASSWORD, getName());
         }
     }
 

@@ -18,8 +18,8 @@
  */
 package org.jsecurity.authc.event.mgt;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.subject.PrincipalCollection;
@@ -48,11 +48,11 @@ public interface AuthenticationEventFactory {
      * Creates an AuthenticationEvent after a successful authentication (log-in).
      *
      * @param token   the authentication token submitted during the authentication attempt.
-     * @param account the account data retrieved in response to the successful token submission.
+     * @param info
      * @return the AuthenticationEvent to send due to the successful log-in attempt.
      * @see org.jsecurity.authc.event.FailedAuthenticationEvent
      */
-    AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account);
+    AuthenticationEvent createSuccessEvent(AuthenticationToken token, AuthenticationInfo info);
 
     /**
      * Creates an AuthenticationEvent in response to a Subject logging out.

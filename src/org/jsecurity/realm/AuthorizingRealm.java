@@ -18,8 +18,6 @@
  */
 package org.jsecurity.realm;
 
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.*;
 import org.jsecurity.authz.permission.PermissionResolver;
@@ -30,21 +28,16 @@ import org.jsecurity.cache.CacheManager;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.Initializable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding Authorization
- * (access control) support via the use of {@link AuthorizingAccount AuthorizingAccount} instances.
+ * (access control) support.
  *
  * <p>This implementation can only support Authorization operations if the subclass implementation's
- * {@link #getAccount(PrincipalCollection) getAccount(principals)} method returns an {@link AuthorizingAccount AuthorizingAccount}.
- * <p>If it does not, subclasses <em>must</em> override all {@link org.jsecurity.authz.Authorizer Authorizer} methods,
- * since the JSecurity default implementations cannot infer Role/Permission assignments via anything but
- * <tt>AuthorizingAccount</tt> instances.
+ * {@link #getAuthorizationInfo(org.jsecurity.subject.PrincipalCollection)} method returns an {@link AuthorizationInfo}.
  *
- * <p>If your Realm implementation does not want to deal with <tt>AuthorizingAccount</tt> constructs, you are of course
+ * <p>If your Realm implementation does not want the default authorization behavior, you are of course
  * free to subclass the {@link AuthorizingRealm AuthorizingRealm} directly and implement the remaining
  * interface methods yourself.  Many people do this if they want to have better control over how the
  * Role and Permission checks occur for their specific data source.
@@ -59,9 +52,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     |             C O N S T A N T S             |
     ============================================*/
     /**
-     * The default postfix appended to the realm name for caching Accounts.
+     * The default postfix appended to the realm name for caching AuthorizationInfos.
      */
-    private static final String DEFAULT_ACCOUNT_CACHE_POSTFIX = "-accounts";
+    private static final String DEFAULT_AUTHORIZATION_CACHE_POSTFIX = "-authorization";
 
     private static int INSTANCE_COUNT = 0;
 
@@ -69,10 +62,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * The cache used by this realm to store Accounts associated with individual Subject principals.
+     * The cache used by this realm to store AuthorizationInfos associated with individual Subject principals.
      */
-    private Cache accountCache = null;
-    private String accountCacheName = null;
+    private Cache authorizationCache = null;
+    private String authorizationCacheName = null;
 
     private PermissionResolver permissionResolver = new WildcardPermissionResolver();
 
@@ -97,20 +90,20 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-    public void setAccountCache(Cache accountCache) {
-        this.accountCache = accountCache;
+    public void setAuthorizationCache(Cache authorizationCache) {
+        this.authorizationCache = authorizationCache;
     }
 
-    public Cache getAccountCache() {
-        return this.accountCache;
+    public Cache getAuthorizationCache() {
+        return this.authorizationCache;
     }
 
-    public String getAccountCacheName() {
-        return accountCacheName;
+    public String getAuthorizationCacheName() {
+        return authorizationCacheName;
     }
 
-    public void setAccountCacheName(String accountCacheName) {
-        this.accountCacheName = accountCacheName;
+    public void setAuthorizationCacheName(String authorizationCacheName) {
+        this.authorizationCacheName = authorizationCacheName;
     }
 
     public PermissionResolver getPermissionResolver() {
@@ -129,35 +122,35 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      *
      * <p>When this method is called, the following logic is executed:
      * <ol>
-     * <li>If the {@link #setAccountCache cache} property has been set, it will be
-     * used to cache the Account objects returned from {@link #getAccount getAccount}
+     * <li>If the {@link #setAuthorizationCache cache} property has been set, it will be
+     * used to cache the AuthorizationInfo objects returned from {@link #getAuthorizationInfo}
      * method invocations.
-     * All future calls to <tt>getAccount</tt> will attempt to use this Account cache first
+     * All future calls to <tt>getAuthorizationInfo</tt> will attempt to use this cache first
      * to alleviate any potentially unnecessary calls to an underlying data store.</li>
-     * <li>If the {@link #setAccountCache cache} property has <b>not</b> been set,
+     * <li>If the {@link # setAuthorizationCache cache} property has <b>not</b> been set,
      * the {@link #setCacheManager cacheManager} property will be checked.
-     * If a <tt>cacheManager</tt> has been set, it will be used to create an Account
+     * If a <tt>cacheManager</tt> has been set, it will be used to create an authorization
      * <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
-     * <li>If neither the {@link #setAccountCache(org.jsecurity.cache.Cache) cache}
+     * <li>If neither the {@link # setAuthorizationCache (org.jsecurity.cache.Cache) cache}
      * or {@link #setCacheManager(org.jsecurity.cache.CacheManager) cacheManager}
-     * properties are set, caching will be disabled and Account lookups will be delegated to
+     * properties are set, caching will be disabled and authorization lookups will be delegated to
      * subclass implementations for each authorization check.</li>
      * </ol>
      */
     public final void init() {
-        initAccountCache();
-        afterAccountCacheSet();
+        initAuthorizationCache();
+        afterAuthorizationCacheSet();
     }
 
-    protected void afterAccountCacheSet() {
+    protected void afterAuthorizationCacheSet() {
     }
 
-    protected void initAccountCache() {
+    protected void initAuthorizationCache() {
         if (log.isTraceEnabled()) {
-            log.trace("Initializing account cache.");
+            log.trace("Initializing authorization cache.");
         }
 
-        Cache cache = getAccountCache();
+        Cache cache = getAuthorizationCache();
 
         if (cache == null) {
 
@@ -168,21 +161,21 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             CacheManager cacheManager = getCacheManager();
 
             if (cacheManager != null) {
-                String cacheName = getAccountCacheName();
+                String cacheName = getAuthorizationCacheName();
                 if (cacheName == null) {
                     //Simple default in case they didn't provide one:
-                    cacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_ACCOUNT_CACHE_POSTFIX;
-                    setAccountCacheName(cacheName);
+                    cacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_AUTHORIZATION_CACHE_POSTFIX;
+                    setAuthorizationCacheName(cacheName);
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("CacheManager [" + cacheManager + "] has been configured.  Building " +
-                            "Account cache named [" + cacheName + "]");
+                            "authorization cache named [" + cacheName + "]");
                 }
                 cache = cacheManager.getCache(cacheName);
-                setAccountCache(cache);
+                setAuthorizationCache(cache);
             } else {
                 if (log.isInfoEnabled()) {
-                    log.info("No cache or cacheManager properties have been set.  Account caching is " +
+                    log.info("No cache or cacheManager properties have been set.  Authorization caching is " +
                             "disabled.");
                 }
             }
@@ -191,109 +184,91 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
 
     /**
-     * <p>Retrieves Account information for the given account principals.
+     * <p>Retrieves authorization information for the given principals.
      *
-     * <p>If caching is enabled, the account cache will be checked first and if found, will return the cached account.
-     * If caching is disabled, or there is a cache miss from the cache lookup, the Account will be looked up from
-     * the underlying data store via the {@link #doGetAccount(PrincipalCollection)} method, which must be implemented by subclasses.
+     * <p>If caching is enabled, the authorization cache will be checked first and if found, will return the cached {@link AuthorizationInfo}.
+     * If caching is disabled, or there is a cache miss from the cache lookup, the authorization info will be looked up from
+     * the underlying data store via the {@link #doGetAuthorizationInfo(PrincipalCollection)} method, which must be implemented by subclasses.
      *
-     * <p>If caching is enabled, the retrieved Account from <tt>doGetAccount</tt> will be added to the account cache
-     * first and then returned.
+     * <p>If caching is enabled, the retrieved AuthorizationInfo from {@link #doGetAuthorizationInfo(org.jsecurity.subject.PrincipalCollection)}
+     * will be added to the authorization cache first and then returned.
      *
-     * @param principals the primary identifying principals of the Account that should be retrieved.
-     * @return the Account associated with this princpal.
+     * @param principals the primary identifying principals of the account that should be retrieved.
+     * @return the {@link AuthorizationInfo} associated with this princpal.
      */
-    protected Account getAccount(PrincipalCollection principals) {
+    public AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
         if (principals == null) {
             return null;
         }
 
-        Account account = null;
+        AuthorizationInfo info = null;
 
         if (log.isTraceEnabled()) {
-            log.trace("Retrieving Account for principals [" + principals + "]");
+            log.trace("Retrieving AuthorizationInfo for principals [" + principals + "]");
         }
 
-        Cache accountCache = getAccountCache();
-        if (accountCache != null) {
+        Cache authzCache = getAuthorizationCache();
+        if (authzCache != null) {
             if (log.isTraceEnabled()) {
-                log.trace("Attempting to retrieve the Account from cache.");
+                log.trace("Attempting to retrieve the AuthorizationIfno from cache.");
             }
-            Object key = getAccountCacheKey(principals);
-            account = (Account) accountCache.get(key);
+            Object key = getAuthorizationCacheKey(principals);
+            info = (AuthorizationInfo) authzCache.get(key);
             if (log.isTraceEnabled()) {
-                if (account == null) {
-                    log.trace("No Account found in cache for principals [" + principals + "]");
+                if (info == null) {
+                    log.trace("No AuthorizationInfo found in cache for principals [" + principals + "]");
                 } else {
-                    log.trace("Account found in cache for principals [" + principals + "]");
+                    log.trace("AuthorizationInfo found in cache for principals [" + principals + "]");
                 }
             }
         }
 
 
-        if (account == null) {
-            // Call template method if tbe Account was not found in a cache
-            account = doGetAccount(principals);
-            // If the account is not null and the cache has been created, then cache the account.
-            if (account != null && accountCache != null) {
+        if (info == null) {
+            // Call template method if tbe info was not found in a cache
+            info = doGetAuthorizationInfo(principals);
+            // If the info is not null and the cache has been created, then cache the authorization info.
+            if (info != null && authzCache != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Caching Account [" + principals + "].");
+                    log.trace("Caching authorization info for principals: [" + principals + "].");
                 }
-                Object key = getAccountCacheKey(principals);
-                accountCache.put(key, account);
+                Object key = getAuthorizationCacheKey(principals);
+                authzCache.put(key, info);
             }
         }
 
-        return account;
+        return info;
     }
 
-    protected Object getAccountCacheKey(PrincipalCollection principals) {
+    protected Object getAuthorizationCacheKey(PrincipalCollection principals) {
         return principals;
     }
 
     /**
-     * Template-pattern method to be implemented by subclasses to retrieve the Account for the given principal.
+     * Template-pattern method to be implemented by subclasses to retrieve the AuthorizationIfno for the given principals.
      *
-     * @param principal the primary identifying principal of the Account that should be retrieved.
-     * @return the Account associated with this principal.
+     * @param principals the primary identifying principals of the AuthorizationInfo that should be retrieved.
+     * @return the AuthorizationInfo associated with this principals.
      */
-    protected abstract AuthorizingAccount doGetAccount(PrincipalCollection principal);
+    protected abstract AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals);
 
-    protected AuthorizingAccount getAuthorizingAccount(PrincipalCollection principals) {
-        if (principals == null) {
-            throw new AuthorizationException("Specified principals argument is null and authorization checks cannot " +
-                    "occur without a known account identity.");
+    private Collection<Permission> getPermissions(AuthorizationInfo info) {
+        Set<Permission> permissions = new HashSet<Permission>();
+
+        if( info.getObjectPermissions() != null ) {
+            permissions.addAll( info.getObjectPermissions() );
         }
-        Account account = getAccount(principals);
-        assertNotNullAccount(principals, account);
-        assertAuthorizingAccount(account);
-        return (AuthorizingAccount) account;
-    }
 
-    protected void assertNotNullAccount(PrincipalCollection principals, Account account) {
-        if (account == null) {
-            SecurityUtils.getSubject().logout();
-            throw new MissingAccountException("No Account found for Subject principals [" +
-                    principals + "]  The Subject has been automatically logged out.");
+        if( info.getStringPermissions() != null ) {
+            for( String strPermission : info.getStringPermissions() ) {
+                Permission permission = getPermissionResolver().resolvePermission( strPermission );
+                permissions.add( permission );
+            }
         }
-    }
 
-    protected void assertAuthorizingAccount(Account account) {
-        if (!(account instanceof AuthorizingAccount)) {
-            String msg = "Underlying Account instance [" + account + "] does not implement the " +
-                    AuthorizingAccount.class.getName() + " interface.  The JSecurity " +
-                    AuthorizingRealm.class.getName() + " class and its default implementations can only provide default " +
-                    "authorization (access control) support for Accounts that implement this interface.  If you do not " +
-                    "wish to implement this interface, you will need to override all of this Realm's Authorizer methods " +
-                    "to perform the authorization check explicitly.\n\nNote that there is nothing wrong with this " +
-                    "approach since it often gives finer control of how authorization checks occur, but you would have " +
-                    "to override these methods explicitly since JSecurity can't infer your application's security " +
-                    "data model.";
-            throw new UnsupportedAccountException(msg);
-        }
+        return Collections.unmodifiableSet( permissions );  
     }
-
 
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         Permission p = getPermissionResolver().resolvePermission(permission);
@@ -301,8 +276,26 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
-        AuthorizingAccount account = getAuthorizingAccount(principals);
-        return account.isPermitted(permission);
+        AuthorizationInfo info = getAuthorizationInfo(principals);
+        return isPermitted(permission, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean isPermitted(Permission permission, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            return ((AuthorizingAccount)info).isPermitted(permission);
+        }
+
+        Collection<Permission> perms = getPermissions(info);
+        if (perms != null && !perms.isEmpty()) {
+            for (Permission perm : perms) {
+                if (perm.implies(permission)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean[] isPermitted(PrincipalCollection subjectIdentifier, String... permissions) {
@@ -314,8 +307,29 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
-        AuthorizingAccount account = getAuthorizingAccount(principals);
-        return account.isPermitted(permissions);
+        AuthorizationInfo info = getAuthorizationInfo(principals);
+        return isPermitted(permissions, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected boolean[] isPermitted(List<Permission> permissions, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            return ((AuthorizingAccount)info).isPermitted(permissions);
+        }
+
+        boolean[] result;
+        if (permissions != null && !permissions.isEmpty()) {
+            int size = permissions.size();
+            result = new boolean[size];
+            int i = 0;
+            for (Permission p : permissions) {
+                result[i++] = isPermitted(p, info);
+            }
+        } else {
+            result = new boolean[0];
+        }
+        return result;
     }
 
     public boolean isPermittedAll(PrincipalCollection subjectIdentifier, String... permissions) {
@@ -330,8 +344,25 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public boolean isPermittedAll(PrincipalCollection principal, Collection<Permission> permissions) {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        return account != null && account.isPermittedAll(permissions);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        return info != null && isPermittedAll(permissions, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected boolean isPermittedAll(Collection<Permission> permissions, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            return ((AuthorizingAccount)info).isPermittedAll(permissions);
+        }
+
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Permission p : permissions) {
+                if (!isPermitted(p, info)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void checkPermission(PrincipalCollection subjectIdentifier, String permission) throws AuthorizationException {
@@ -340,8 +371,21 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public void checkPermission(PrincipalCollection principal, Permission permission) throws AuthorizationException {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        account.checkPermission(permission);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        checkPermission(permission, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void checkPermission(Permission permission, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            ((AuthorizingAccount)info).checkPermission(permission);
+        } else {
+            if (!isPermitted(permission, info)) {
+                String msg = "User is not permitted [" + permission + "]";
+                throw new UnauthorizedException(msg);
+            }
+        }
     }
 
     public void checkPermissions(PrincipalCollection subjectIdentifier, String... permissions) throws AuthorizationException {
@@ -353,50 +397,139 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public void checkPermissions(PrincipalCollection principal, Collection<Permission> permissions) throws AuthorizationException {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        account.checkPermissions(permissions);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        checkPermissions(permissions, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void checkPermissions(Collection<Permission> permissions, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            ((AuthorizingAccount)info).checkPermissions(permissions);
+        } else {
+            if (permissions != null && !permissions.isEmpty()) {
+                for (Permission p : permissions) {
+                    checkPermission(p, info);
+                }
+            }
+        }
     }
 
     public boolean hasRole(PrincipalCollection principal, String roleIdentifier) {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        return account.hasRole(roleIdentifier);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        return hasRole(roleIdentifier, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected boolean hasRole(String roleIdentifier, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            return ((AuthorizingAccount)info).hasRole(roleIdentifier);
+        }
+        return info.getRoles() != null && info.getRoles().contains( roleIdentifier );
     }
 
     public boolean[] hasRoles(PrincipalCollection principal, List<String> roleIdentifiers) {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
         boolean[] result = new boolean[roleIdentifiers != null ? roleIdentifiers.size() : 0];
-        if (account != null) {
-            result = account.hasRoles(roleIdentifiers);
+        if (info != null) {
+            result = hasRoles(roleIdentifiers, info);
+        }
+        return result;
+    }
+
+    @SuppressWarnings("deprecation")
+    protected boolean[] hasRoles(List<String> roleIdentifiers, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            return ((AuthorizingAccount)info).hasRoles(roleIdentifiers);
+        }
+
+        boolean[] result;
+        if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
+            int size = roleIdentifiers.size();
+            result = new boolean[size];
+            int i = 0;
+            for (String roleName : roleIdentifiers) {
+                result[i++] = hasRole(roleName, info);
+            }
+        } else {
+            result = new boolean[0];
         }
         return result;
     }
 
     public boolean hasAllRoles(PrincipalCollection principal, Collection<String> roleIdentifiers) {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        return account != null && account.hasAllRoles(roleIdentifiers);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        return info != null && hasAllRoles(roleIdentifiers, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean hasAllRoles(Collection<String> roleIdentifiers, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            return ((AuthorizingAccount)info).hasAllRoles(roleIdentifiers);
+        }
+
+        if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
+            for (String roleName : roleIdentifiers) {
+                if (!hasRole(roleName, info)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void checkRole(PrincipalCollection principal, String role) throws AuthorizationException {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        account.checkRole(role);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        checkRole(role, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void checkRole(String role, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            ((AuthorizingAccount)info).checkRole(role);
+        } else {
+            if (!hasRole(role, info)) {
+                String msg = "User does not have role [" + role + "]";
+                throw new UnauthorizedException(msg);
+            }
+        }
     }
 
     public void checkRoles(PrincipalCollection principal, Collection<String> roles) throws AuthorizationException {
-        AuthorizingAccount account = getAuthorizingAccount(principal);
-        account.checkRoles(roles);
+        AuthorizationInfo info = getAuthorizationInfo(principal);
+        checkRoles(roles, info);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {
+        //todo Remove this once AuthorizingAccount class is deleted
+        if( info instanceof AuthorizingAccount ) {
+            ((AuthorizingAccount)info).checkRoles(roles);
+        } else {
+            if (roles != null && !roles.isEmpty()) {
+                for (String roleName : roles) {
+                    checkRole(roleName, info);
+                }
+            }
+        }
     }
 
     /**
-     * If account caching is enabled, this will remove the account from the cache.  Subclasses are free to override
-     * for additional behavior, but be sure to call <tt>super.onLogout</tt> to ensure cache cleanup.
+     * If authorization caching is enabled, this will remove the AuthorizationInfo from the cache.
+     * Subclasses are free to override for additional behavior, but be sure to call <tt>super.onLogout</tt>
+     * to ensure cache cleanup.
      *
-     * @param accountPrincipal the application-specific Subject/user identifier.
+     * @param principals the application-specific Subject/user identifier.
      */
-    public void onLogout(PrincipalCollection accountPrincipal) {
-        Cache cache = getAccountCache();
+    public void onLogout(PrincipalCollection principals) {
+        Cache cache = getAuthorizationCache();
         //cache instance will be non-null if caching is enabled:
-        if (cache != null && accountPrincipal != null) {
-            Object key = getAccountCacheKey(accountPrincipal);
+        if (cache != null && principals != null) {
+            Object key = getAuthorizationCacheKey(principals);
             cache.remove(key);
         }
     }

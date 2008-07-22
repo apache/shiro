@@ -37,7 +37,7 @@ import java.util.List;
  *
  * <p>If only one realm is configured (this is often the case for most applications), authentication success is naturally
  * only dependent upon invoking this one Realm's
- * {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken) getAccount} method.
+ * {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)} method.
  *
  * <p>But if two or more realms are configured, PAM behavior is implemented by iterating over the collection of realms
  * and interacting with each over the course of the authentication attempt.  As this is more complicated, this
@@ -163,40 +163,40 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * Performs the authentication attempt by interacting with the single configured realm, which is significantly
      * simpler than performing multi-realm logic.
      *
-     * @param realm the realm to consult for Account.
+     * @param realm the realm to consult for AuthenticationInfo.
      * @param token the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
-     * @return the Account associated with the user account corresponding to the specified <tt>token</tt>
+     * @return the AuthenticationInfo associated with the user account corresponding to the specified <tt>token</tt>
      */
-    protected Account doSingleRealmAuthentication(Realm realm, AuthenticationToken token) {
+    protected AuthenticationInfo doSingleRealmAuthentication(Realm realm, AuthenticationToken token) {
         if (!realm.supports(token)) {
             String msg = "Realm [" + realm + "] does not support authentication token [" +
                     token + "].  Please ensure that the appropriate Realm implementation is " +
                     "configured correctly or that the realm accepts AuthenticationTokens of this type.";
             throw new UnsupportedTokenException(msg);
         }
-        Account account = realm.getAccount(token);
-        if (account == null) {
+        AuthenticationInfo info = realm.getAuthenticationInfo(token);
+        if (info == null) {
             String msg = "Realm [" + realm + "] was unable to find account data for the " +
                     "submitted AuthenticationToken [" + token + "].";
             throw new UnknownAccountException(msg);
         }
-        return account;
+        return info;
     }
 
     /**
      * Performs the multi-realm authentication attempt by calling back to a {@link ModularAuthenticationStrategy} object
-     * as each realm is consulted for <tt>Account</tt> for the specified <tt>token</tt>.
+     * as each realm is consulted for <tt>AuthenticationInfo</tt> for the specified <tt>token</tt>.
      *
      * @param realms the multiple realms configured on this Authenticator instance.
      * @param token  the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
-     * @return an aggregated Account instance representing account data across all the successfully
+     * @return an aggregated AuthenticationInfo instance representing account data across all the successfully
      *         consulted realms.
      */
-    protected Account doMultiRealmAuthentication(Collection<? extends Realm> realms, AuthenticationToken token) {
+    protected AuthenticationInfo doMultiRealmAuthentication(Collection<? extends Realm> realms, AuthenticationToken token) {
 
         ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
 
-        Account aggregate = strategy.beforeAllAttempts(realms, token);
+        AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
 
         if (log.isDebugEnabled()) {
             log.debug("Iterating through [" + realms.size() + "] realms for PAM authentication");
@@ -211,12 +211,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                             "using realm of type [" + realm + "]");
                 }
 
-                aggregate = strategy.beforeAttempt(realm, token, aggregate);
-
-                Account account = null;
+                AuthenticationInfo info = null;
                 Throwable t = null;
                 try {
-                    account = realm.getAccount(token);
+                    info = realm.getAuthenticationInfo(token);
                 } catch (Throwable throwable) {
                     t = throwable;
                     if (log.isTraceEnabled()) {
@@ -225,7 +223,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     }
                 }
 
-                aggregate = strategy.afterAttempt(realm, token, account, aggregate, t);
+                aggregate = strategy.afterAttempt(realm, token, info, aggregate, t);
 
             } else {
                 if (log.isDebugEnabled()) {
@@ -247,14 +245,14 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * method will be called to determine if the realm supports the <tt>authenticationToken</tt> method argument.
      *
      * If a realm does support
-     * the token, its {@link Realm#getAccount(org.jsecurity.authc.AuthenticationToken)}
+     * the token, its {@link Realm#getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken)}
      * method will be called.  If the realm returns a non-null account, the token will be
      * considered authenticated for that realm and the account data recorded.  If the realm returns <tt>null</tt>,
      * the next realm will be consulted.  If no realms support the token or all supporting realms return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
      *
      * <p>After all realms have been consulted, the information from each realm is aggregated into a single
-     * {@link org.jsecurity.authc.Account} object and returned.
+     * {@link AuthenticationInfo} object and returned.
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
      *                            user being authenticated.
@@ -262,7 +260,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
      *                                 for the given principal and credentials.
      */
-    protected Account doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+    protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 
         assertRealmsConfigured();
 

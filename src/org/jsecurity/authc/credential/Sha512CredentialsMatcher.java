@@ -23,7 +23,7 @@ import org.jsecurity.crypto.hash.Hash;
 import org.jsecurity.crypto.hash.Sha512Hash;
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
  * SHA-512 hashed.
  *
  * @author Les Hazlewood

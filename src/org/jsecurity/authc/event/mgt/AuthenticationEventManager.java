@@ -18,8 +18,8 @@
  */
 package org.jsecurity.authc.event.mgt;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.subject.PrincipalCollection;
 
@@ -43,9 +43,9 @@ public interface AuthenticationEventManager extends AuthenticationEventFactory, 
      * the event.
      *
      * @param token   the authentication token reprenting the subject (user)'s authentication attempt.
-     * @param account the <tt>Account</tt> obtained after the successful attempt.
+     * @param info
      */
-    void sendSuccessEvent(AuthenticationToken token, Account account);
+    void sendSuccessEvent(AuthenticationToken token, AuthenticationInfo info);
 
     /**
      * Utility method that first creates a logout event based on the given subjectIdentifier and then actually

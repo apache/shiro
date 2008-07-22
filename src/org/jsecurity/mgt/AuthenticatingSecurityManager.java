@@ -18,8 +18,8 @@
  */
 package org.jsecurity.mgt;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
 import org.jsecurity.authc.event.AuthenticationEventListener;
@@ -206,7 +206,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     /**
      * Delegates to the authenticator for authentication.
      */
-    public Account authenticate(AuthenticationToken token) throws AuthenticationException {
+    public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
         return getRequiredAuthenticator().authenticate(token);
     }
 
