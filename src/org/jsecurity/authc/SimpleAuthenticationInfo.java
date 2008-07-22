@@ -27,12 +27,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Simple value object implementation of the {@link AuthenticationInfo} interface that holds the principal and
+ * Simple value object implementation of the {@link MergableAuthenticationInfo} interface that holds the principals and
  * credentials.
  *
  * @author Jeremy Haile
- * @since 0.9
  * @see org.jsecurity.realm.AuthenticatingRealm
+ * @since 0.9
  */
 public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
@@ -70,28 +70,28 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
     @SuppressWarnings("unchecked")
     public void merge(AuthenticationInfo info) {
-        if(info == null || info.getPrincipals() == null) {
+        if (info == null || info.getPrincipals() == null) {
             return;
         }
 
-        if( this.principals == null ) {
+        if (this.principals == null) {
             this.principals = new SimplePrincipalCollection();
         }
 
-        if( this.principals instanceof MutablePrincipalCollection ) {
-            ((MutablePrincipalCollection)this.principals).addAll( info.getPrincipals() );
+        if (this.principals instanceof MutablePrincipalCollection) {
+            ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
         } else {
-            throw new IllegalStateException( "Attempt to merge authentication info, but PrincipalCollection is not an " +
-                    "instance of MutablePrincipalCollection." );
+            throw new IllegalStateException("Attempt to merge authentication info, but PrincipalCollection is not an " +
+                    "instance of MutablePrincipalCollection.");
         }
 
         Object thisCredentials = getCredentials();
         Object otherCredentials = info.getCredentials();
 
-        if(!(thisCredentials instanceof Collection)) {
+        if (!(thisCredentials instanceof Collection)) {
             Set newSet = new HashSet();
-            if( thisCredentials != null ) {
-                newSet.add( thisCredentials );
+            if (thisCredentials != null) {
+                newSet.add(thisCredentials);
                 setCredentials(newSet);
             }
         }
@@ -101,7 +101,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
         if (otherCredentials instanceof Collection) {
             credentialCollection.addAll((Collection) otherCredentials);
 
-        } else if( otherCredentials != null ) {
+        } else if (otherCredentials != null) {
             credentialCollection.add(otherCredentials);
         }
     }

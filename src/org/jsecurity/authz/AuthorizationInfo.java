@@ -21,16 +21,59 @@ package org.jsecurity.authz;
 import java.util.Collection;
 
 /**
+ * <code>AuthorizationInfo</code> represents a single Subject's stored authorization data (roles, permissions, etc)
+ * used during authorization (access control) checks only.
+ * <p/>
+ * Because the act of authorization (access control) is orthoganal to authentication (log-in), this interface is
+ * intended to represent only the account data needed by JSecurity during an access control check
+ * (role, permission, etc).  JSecurity also has a parallel
+ * {@link org.jsecurity.authc.AuthenticationInfo AuthenticationInfo} interface for use during the authentication
+ * process that represents identity data such as principals and credentials.
+ * <p/>
+ * Because many if not most {@link org.jsecurity.realm.Realm Realm}s store both sets of data for a Subject, it might be
+ * convenient for a <code>Realm</code> implementation to utilize an implementation of the
+ * {@link org.jsecurity.authc.Account Account} interface instead, which is a convenience interface that combines both
+ * <code>AuthenticationInfo</code> and <code>AuthorizationInfo</code>.  Whether you choose to implement these two
+ * interfaces separately or implement the one <code>Account</code> interface for a given <code>Realm</code> is
+ * entirely based on your application's needs.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @see org.jsecurity.authc.AuthenticationInfo AuthenticationInfo
+ * @see org.jsecurity.authc.Account
  * @since 0.9
  */
 public interface AuthorizationInfo {
 
+    /**
+     * Returns the names of all roles assigned to a corresponding Subject.
+     *
+     * @return the names of all roles assigned to a corresponding Subject.
+     */
     Collection<String> getRoles();
 
+    /**
+     * Returns all string-based permissions assigned to the corresponding Subject.  The permissions here plus those
+     * returned from {@link #getObjectPermissions() getObjectPermissions()} represent the total set of permissions
+     * assigned.  The aggregate set is used to perform a permission authorization check.
+     * <p/>
+     * This method is a convenience mechanism that allows Realms to represent permissions as Strings if they choose.
+     * When performing a security check, a <code>Realm</code> usually converts these strings to object
+     * {@link Permission Permission}s via a {@link org.jsecurity.authz.permission.PermissionResolver PermissionResolver}
+     * in order to perform the actual permission check.  This is not a requirement of course, since <code>Realm</code>s
+     * can perform security checks in whatever manner deemed necessary, but this explains the conversion mechanism that
+     * most JSecurity execute during authorization checks.
+     *
+     * @return all string-based permissions assigned to the corresponding Subject.
+     */
     Collection<String> getStringPermissions();
 
+    /**
+     * Returns all type-safe {@link Permission Permission}s assigned to the corresponding Subject.  The permissions
+     * returned from this method plus any returned from {@link #getStringPermissions() getStringPermissions()}
+     * represent the total set of permissions.  The aggregate set is used to perform a permission authorization check.
+     *
+     * @return all type-safe {@link Permission Permission}s assigned to the corresponding Subject.
+     */
     Collection<Permission> getObjectPermissions();
-
 }

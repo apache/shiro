@@ -213,7 +213,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
     /**
      * Returns a {@link Hash Hash} instance representing the already-hashed AuthenticationInfo credentials stored in the system.
      *
-     * <p>This method reconstructs a {@link Hash Hash} instance based on a <code>account.getCredentials</code> call,
+     * <p>This method reconstructs a {@link Hash Hash} instance based on a <code>info.getCredentials</code> call,
      * but it does <em>not</em> hash that value - it is expected that method call will return an already-hashed value.
      *
      * <p>This implementation's reconstruction effort functions as follows:
