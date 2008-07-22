@@ -146,6 +146,7 @@
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
+               target="1.5"
                failonerror="true"
                classpathref="all.libs"
                sourcepath=""
@@ -177,6 +178,7 @@
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
+               target="1.5"
                failonerror="true"
                classpathref="all.libs"
                sourcepath=""
@@ -206,6 +208,7 @@
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
+               target="1.5"
                failonerror="true">
             <classpath refid="all.libs"/>
             <classpath location="${classes.dir}"/>
