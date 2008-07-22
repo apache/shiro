@@ -18,8 +18,8 @@
  */
 package org.jsecurity.realm.text;
 
+import org.jsecurity.authc.SimpleAccount;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.realm.SimpleAccountRealm;
 import org.jsecurity.subject.PrincipalCollection;
@@ -105,7 +105,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         this.roleDefinitions = roleDefinitions;
     }
 
-    protected void userAndRoleCachesCreated() {
+    protected void accountAndRoleCachesCreated() {
         processDefinitions();
     }
 
@@ -135,7 +135,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
             SimpleRole role = getRole(rolename);
             if (role == null) {
                 role = new SimpleRole(rolename);
-                add(role);
+                addRole(role);
             }
 
             Set<Permission> permissions = PermissionUtils.resolveDelimitedPermissions(value, getPermissionResolver());
@@ -163,25 +163,25 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
             String password = passwordAndRolesArray[0];
 
-            SimpleAuthorizingAccount user = getUser(username);
-            if (user == null) {
-                user = new SimpleAuthorizingAccount(username, password, getName());
-                add(user);
+            SimpleAccount account = getUser(username);
+            if (account == null) {
+                account = new SimpleAccount(username, password, getName());
+                add(account);
             }
-            user.setCredentials(password);
+            account.setCredentials(password);
 
             if (passwordAndRolesArray.length > 1) {
                 for (int i = 1; i < passwordAndRolesArray.length; i++) {
                     String rolename = passwordAndRolesArray[i];
+                    account.addRole(rolename);
+
                     SimpleRole role = getRole(rolename);
-                    if (role == null) {
-                        role = new SimpleRole(rolename);
-                        add(role);
+                    if( role != null ) {
+                        account.addObjectPermissions( role.getPermissions() );
                     }
-                    user.add(role);
                 }
             } else {
-                user.setRoles(null);
+                account.setRoles(null);
             }
         }
     }

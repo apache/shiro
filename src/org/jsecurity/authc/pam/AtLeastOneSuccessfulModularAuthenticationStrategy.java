@@ -18,8 +18,8 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
@@ -27,7 +27,7 @@ import org.jsecurity.authc.AuthenticationToken;
  * successfully process the submitted <tt>AuthenticationToken</tt> during the log-in attempt.
  *
  * <p>This means any number of configured realms do not have to support the submitted log-in token, or they may
- * be unable to acquire <tt>Account</tt> for the token, but as long as at least one can do both, this
+ * be unable to acquire <tt>AuthenticationInfo</tt> for the token, but as long as at least one can do both, this
  * Strategy implementation will allow the log-in process to be successful.
  *
  * <p>Note that this implementation will aggregate the account data from <em>all</em> successfully consulted
@@ -41,7 +41,7 @@ import org.jsecurity.authc.AuthenticationToken;
  */
 public class AtLeastOneSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
-    public Account afterAllAttempts(AuthenticationToken token, Account aggregate) throws AuthenticationException {
+    public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
         //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
         boolean oneOrMoreSuccessful = aggregate != null && (aggregate.getPrincipals() != null);

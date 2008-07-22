@@ -92,9 +92,4 @@ even after a JVM restart.  -->
          eternal="true"
          overflowToDisk="true"/>
 
-  <cache name="org.jsecurity.realm.text.PropertiesRealm-0-roles"
-         maxElementsInMemory="1000"
-         eternal="true"
-         overflowToDisk="true"/>
-
 </ehcache>

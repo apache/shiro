@@ -20,8 +20,8 @@ package org.jsecurity.authc.event.mgt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.AuthenticationEventListener;
@@ -63,8 +63,8 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
         return this.authenticationEventFactory.createFailureEvent(token, ex);
     }
 
-    public AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account) {
-        return this.authenticationEventFactory.createSuccessEvent(token, account);
+    public AuthenticationEvent createSuccessEvent(AuthenticationToken token, AuthenticationInfo info) {
+        return this.authenticationEventFactory.createSuccessEvent(token, info);
     }
 
     public AuthenticationEvent createLogoutEvent(PrincipalCollection principals) {
@@ -90,11 +90,11 @@ public class DefaultAuthenticationEventManager implements AuthenticationEventMan
      * the event.
      *
      * @param token   the authentication token reprenting the subject (user)'s authentication attempt.
-     * @param account the <tt>Account</tt> obtained after the successful attempt.
+     * @param info
      */
-    public void sendSuccessEvent(AuthenticationToken token, Account account) {
+    public void sendSuccessEvent(AuthenticationToken token, AuthenticationInfo info) {
         if (isSendingEvents()) {
-            AuthenticationEvent event = createSuccessEvent(token, account);
+            AuthenticationEvent event = createSuccessEvent(token, info);
             send(event);
         }
     }

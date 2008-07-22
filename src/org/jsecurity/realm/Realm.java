@@ -18,10 +18,12 @@
  */
 package org.jsecurity.realm;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
@@ -72,7 +74,7 @@ public interface Realm extends Authorizer {
      *
      * <p>If this method returns <tt>false</tt>, it will not be called to authenticate the Subject represented by
      * the token - more specifically, a <tt>false</tt> return value means this Realm instance's
-     * {@link #getAccount getAccount} method will not be invoked for that token.
+     * {@link #getAuthenticationInfo} method will not be invoked for that token.
      *
      * @param token the AuthenticationToken submitted for the authentication attempt
      * @return <tt>true</tt> if this realm can/will authenticate Subjects represented by specified token,
@@ -93,9 +95,11 @@ public interface Realm extends Authorizer {
      * @return the account information for the account associated with the specified <tt>token</tt>,
      *         or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      * @throws org.jsecurity.authc.AuthenticationException
-     *          if there is an error obtaining or
-     *          constructing an Account based on the specified <tt>token</tt> or implementation-specifc login behavior fails.
+     *          if there is an error obtaining or constructing an AuthenticationInfo object based on the
+     * specified <tt>token</tt> or implementation-specifc login behavior fails.
      */
-    Account getAccount(AuthenticationToken token) throws AuthenticationException;
+    AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
+
+    AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals);
 
 }

@@ -18,8 +18,8 @@
  */
 package org.jsecurity.subject;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
@@ -33,7 +33,7 @@ public interface RememberMeManager {
 
     PrincipalCollection getRememberedPrincipals();
 
-    void onSuccessfulLogin(AuthenticationToken token, Account account);
+    void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info);
 
     void onFailedLogin(AuthenticationToken token, AuthenticationException ae);
 

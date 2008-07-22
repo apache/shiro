@@ -43,6 +43,7 @@ import org.jsecurity.subject.PrincipalCollection;
  * point for most applications.
  *
  * @author Les Hazlewood
+ * @author Jeremy Haile
  * @since 0.2
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {
@@ -158,30 +159,22 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
         return token != null && getAuthenticationTokenClass().isAssignableFrom(token.getClass());
     }
 
-    public final Account getAccount(AuthenticationToken token) throws AuthenticationException {
+    public final AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-        Account account = doGetAccount(token);
+        AuthenticationInfo info = doGetAuthenticationInfo(token);
 
-        if (account == null) {
+        if (info == null) {
             if (log.isDebugEnabled()) {
-                String msg = "No account information found for submitted authentication token [" + token + "].  " +
+                String msg = "No authentication information found for submitted authentication token [" + token + "].  " +
                         "Returning null.";
                 log.debug(msg);
             }
             return null;
         }
 
-        if (account.isLocked()) {
-            throw new LockedAccountException("Account [" + account + "] is locked.");
-        }
-        if (account.isCredentialsExpired()) {
-            String msg = "The credentials for account [" + account + "] are expired";
-            throw new ExpiredCredentialsException(msg);
-        }
-
         CredentialsMatcher cm = getCredentialsMatcher();
         if (cm != null) {
-            if (!cm.doCredentialsMatch(token, account)) {
+            if (!cm.doCredentialsMatch(token, info)) {
                 String msg = "The credentials provided for account [" + token +
                         "] did not match the expected credentials.";
                 throw new IncorrectCredentialsException(msg);
@@ -192,45 +185,43 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
                     "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
         }
 
-        return account;
+        return info;
     }
 
     /**
-     * Retrieves account data from an implementation-specific datasource (RDBMS, LDAP, etc) for the given
+     * Retrieves authentication data from an implementation-specific datasource (RDBMS, LDAP, etc) for the given
      * authentication token.
      *
-     * <p>For most datasources, this means just 'pulling' account data for an associated subject/user and nothing
+     * <p>For most datasources, this means just 'pulling' authentication data for an associated subject/user and nothing
      * more and letting JSecurity do the rest.  But in some systems, this method could actually perform EIS specific
      * log-in logic in addition to just retrieving data - it is up to the Realm implementation.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
      *
      * @param token the authentication token containing the user's principal and credentials.
-     * @return an {@link org.jsecurity.authc.Account} containing account data resulting from the
+     * @return an {@link AuthenticationInfo} object containing account data resulting from the
      *         authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
      * @throws org.jsecurity.authc.AuthenticationException
      *          if there is an error acquiring data or performing
      *          realm-specific authentication logic for the specified <tt>token</tt>
      */
-    protected abstract Account doGetAccount(AuthenticationToken token) throws AuthenticationException;
+    protected abstract AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
 
     /**
      * Default implementation that does nothing (no-op) and exists as a convenience mechanism in case subclasses
      * wish to override it to implement realm-specific logout logic for the given user account logging out.</p>
      *
-     * <p>In a single-realm JSecurity configuration (most applications), the <code>accountPrincipal</code> method
-     * argument will be the same as that which is contained in the <code>Account</code> object returned by the
-     * {@link #doGetAccount} method (that is, {@link Account#getPrincipals account.getPrincipals()}).
+     * <p>In a single-realm JSecurity configuration (most applications), the <code>principals</code> method
+     * argument will be the same as that which is contained in the <code>AuthenticationInfo</code> object returned by the
+     * {@link #doGetAuthenticationInfo} method (that is, {@link AuthenticationInfo#getPrincipals info.getPrincipals()}).
      *
-     * //TODO update
-     *
-     * <p>In a multi-realm JSecurity configuration, the given <code>accountPrincipal</code> method
+     * <p>In a multi-realm JSecurity configuration, the given <code>principals</code> method
      * argument could contain principals returned by many realms.  Therefore the subclass implementation would need
      * to know how to extract the principal(s) relevant to only itself and ignore other realms' principals.</p>
      *
-     * @param accountPrincipal the application-specific Subject/user identifier that is logging out.
+     * @param principals the application-specific Subject/user identifier that is logging out.
      */
-    public void onLogout(PrincipalCollection accountPrincipal) {
+    public void onLogout(PrincipalCollection principals) {
         //no-op, here for subclass override if desired.
     }
 

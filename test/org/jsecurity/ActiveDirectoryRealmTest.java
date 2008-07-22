@@ -20,8 +20,8 @@ package org.jsecurity;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
-import org.jsecurity.authz.AuthorizingAccount;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
@@ -30,7 +30,7 @@ import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -69,7 +69,9 @@ public class ActiveDirectoryRealmTest {
 
     @After
     public void tearDown() {
-        securityManager.destroy();
+        if( securityManager != null ) {
+            securityManager.destroy();
+        }
     }
 
     @Test
@@ -111,7 +113,7 @@ public class ActiveDirectoryRealmTest {
 
 
             credentialsMatcher = new CredentialsMatcher() {
-                public boolean doCredentialsMatch(AuthenticationToken object, Account object1) {
+                public boolean doCredentialsMatch(AuthenticationToken object, AuthenticationInfo object1) {
                     return true;
                 }
             };
@@ -120,13 +122,13 @@ public class ActiveDirectoryRealmTest {
         }
 
 
-        protected Account doGetAccount(AuthenticationToken token) throws AuthenticationException {
-            SimpleAccount account = (SimpleAccount) super.doGetAccount(token);
+        protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+            SimpleAccount account = (SimpleAccount) super.doGetAuthenticationInfo(token);
 
             if (account != null) {
                 SimplePrincipalCollection principals = new SimplePrincipalCollection();
-                principals.add(getName(), new UserIdPrincipal(USER_ID));
-                principals.add(getName(), new UsernamePrincipal(USERNAME));
+                principals.add(new UserIdPrincipal(USER_ID), getName());
+                principals.add(new UsernamePrincipal(USERNAME), getName());
                 account.setPrincipals(principals);
             }
 
@@ -134,14 +136,14 @@ public class ActiveDirectoryRealmTest {
 
         }
 
-        protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
+        protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Set<String> roles = new HashSet<String>();
             roles.add(ROLE);
-            return new SimpleAuthorizingAccount(principals.fromRealm(getName()), null, getName(), roles, null);
+            return new SimpleAuthorizationInfo(roles);
         }
 
         // override ldap query because i don't care about testing that piece in this case
-        protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
+        protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
             return new SimpleAccount(token.getPrincipal(), token.getCredentials(), getName());
         }
 

@@ -16,26 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jsecurity.authc;
 
-import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
- * <p>An <tt>Account</tt> is a convenience class that implements both {@link AuthenticationInfo} and
- * {@link AuthorizationInfo}.  This interface can be useful when an application uses a single object to
- * encapsulate both the authentication and authorization information required by the {@link org.jsecurity.realm.Realm}</p>
  *
- * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
+ *
+ * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your AuthenticationInfo's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
  * out for any reason.  If you're using JSecurity's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
  *
  * @author Jeremy Haile
- * @author Les Hazlewood
- * @see SimpleAccount
  * @since 0.9
  */
-public interface Account extends AuthenticationInfo, AuthorizationInfo {
+public interface AuthenticationInfo {
+
+    /**
+     * Returns the principals that are encapsulated by this object.
+     * @return the set of principals for the user.
+     */
+    PrincipalCollection getPrincipals();
+
+    /**
+     * Returns the credentials encapsulated by this object.
+     * @return the user's credentials.
+     */
+    Object getCredentials();
 
 }

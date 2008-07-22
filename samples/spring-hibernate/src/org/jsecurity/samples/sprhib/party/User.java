@@ -18,10 +18,8 @@
  */
 package org.jsecurity.samples.sprhib.party;
 
-import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.AuthorizingAccount;
+import org.jsecurity.authc.Account;
 import org.jsecurity.authz.Permission;
-import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.samples.sprhib.security.Role;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
@@ -36,12 +34,12 @@ import java.util.regex.Pattern;
  * or another.  Naturally you could ignore the parent class in your application, but it does represent a clean
  * OO way of modeling things.
  *
- * <p>This class implements the {@link AuthorizingAccount AuthorizingAccount} interface for dead-simple integration
+ * <p>This class implements the {@link org.jsecurity.authc.Account} interface for dead-simple integration
  * with JSecurity - this allows you to use your User objects directly inside of
  * {@link org.jsecurity.realm.Realm Realm} implementations, significantly reducing the implementation effort.</p>
  *
  * <p>Because this class performs its own Realm and Permission checks, and these can happen frequently enough in a
- * production application, it is highly recommended that the internal User {@link #getRoles roles} collection be cached
+ * production application, it is highly recommended that the internal User {@link #getUserRoles} collection be cached
  * in a 2nd-level cache when using JPA and/or Hibernate.  The hibernate xml configuration for this sample application
  * does in fact do this for your reference (see User.hbm.xml - the 'roles' declaration).</p>
  *
@@ -50,7 +48,7 @@ import java.util.regex.Pattern;
  *
  * @author Les Hazlewood
  */
-public class User extends Person implements AuthorizingAccount {
+public class User extends Person implements Account {
 
     /**
      * Requires 6 or more alphanumeric and/or punctuation characters.
@@ -203,16 +201,16 @@ public class User extends Person implements AuthorizingAccount {
         }
     }
 
-    public Set<Role> getRoles() {
+    public Set<Role> getUserRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setUserRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
     public Role getRole(String name) {
-        Collection<Role> roles = getRoles();
+        Collection<Role> roles = getUserRoles();
         if (roles != null && !roles.isEmpty()) {
             for (Role role : roles) {
                 if (role.getName().equals(name)) {
@@ -232,16 +230,16 @@ public class User extends Person implements AuthorizingAccount {
      * @param r the Role to add/associate with this User
      */
     public void add(Role r) {
-        Set<Role> roles = getRoles();
+        Set<Role> roles = getUserRoles();
         if (roles == null) {
             roles = new LinkedHashSet<Role>();
-            setRoles(roles);
+            setUserRoles(roles);
         }
         roles.add(r);
     }
 
     public boolean removeRole(Role r) {
-        Set<Role> roles = getRoles();
+        Set<Role> roles = getUserRoles();
         return roles != null && roles.remove(r);
     }
 
@@ -288,10 +286,10 @@ public class User extends Person implements AuthorizingAccount {
 
     public void addAll(Collection<Role> roles) {
         if (roles != null && !roles.isEmpty()) {
-            Set<Role> existingRoles = getRoles();
+            Set<Role> existingRoles = getUserRoles();
             if (existingRoles == null) {
                 existingRoles = new LinkedHashSet<Role>(roles.size());
-                setRoles(existingRoles);
+                setUserRoles(existingRoles);
             }
             existingRoles.addAll(roles);
         }
@@ -366,7 +364,7 @@ public class User extends Person implements AuthorizingAccount {
        =========== */
     public PrincipalCollection getPrincipals() {
         //The realm name must match the name of the configured realm.
-        return new SimplePrincipalCollection("DefaultRealm", getId());
+        return new SimplePrincipalCollection(getId(), "DefaultRealm");
     }
 
     public Object getCredentials() {
@@ -381,118 +379,22 @@ public class User extends Person implements AuthorizingAccount {
         return false;
     }
 
-
-    public boolean hasRole(String roleName) {
-        return getRole(roleName) != null;
+    public Collection<String> getRoles() {
+        return getRolenames();
     }
 
-    public boolean isPermitted(Permission p) {
-        Set<Role> roles = getRoles();
-        if (roles != null && !roles.isEmpty()) {
-            for (Role role : roles) {
-                if (role.isPermitted(p)) {
-                    if (log.isTraceEnabled()) {
-                        String msg = "Permission implies permission argument.  User [" +
-                                getUsername() + "] has permission";
-                        log.trace(msg);
-                    }
-                    return true;
-                }
-            }
-
-        }
-
-        if (log.isTraceEnabled()) {
-            log.trace("No assigned permissions implies the permission argument.  User [" +
-                    getUsername() + "] doesn't have the specified permission");
-        }
-
-        return false;
+    public Collection<String> getStringPermissions() {
+        // This model uses object permissions, so this method isn't implemented
+        return null;
     }
 
-    public boolean[] hasRoles(List<String> roleIdentifiers) {
-        boolean[] result;
-        if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
-            int size = roleIdentifiers.size();
-            result = new boolean[size];
-            int i = 0;
-            for (String roleName : roleIdentifiers) {
-                result[i++] = hasRole(roleName);
-            }
-        } else {
-            result = new boolean[0];
+    public Collection<Permission> getObjectPermissions() {
+        Set<Permission> permissions = new HashSet<Permission>();
+        for( Role role : getUserRoles() ) {
+            permissions.addAll( role.getPermissions() );
         }
-        return result;
+        return permissions;
     }
-
-    public boolean hasAllRoles(Collection<String> roleIdentifiers) {
-        if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
-            for (String roleName : roleIdentifiers) {
-                if (!hasRole(roleName)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public boolean[] isPermitted(List<Permission> permissions) {
-        boolean[] result;
-        if (permissions != null && !permissions.isEmpty()) {
-            int size = permissions.size();
-            result = new boolean[size];
-            int i = 0;
-            for (Permission p : permissions) {
-                result[i++] = isPermitted(p);
-            }
-        } else {
-            result = new boolean[0];
-        }
-        return result;
-    }
-
-    public boolean isPermittedAll(Collection<Permission> permissions) {
-        if (permissions != null && !permissions.isEmpty()) {
-            for (Permission p : permissions) {
-                if (!isPermitted(p)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public void checkPermission(Permission permission) throws AuthorizationException {
-        if (!isPermitted(permission)) {
-            String msg = "User is not permitted [" + permission + "]";
-            throw new UnauthorizedException(msg);
-        }
-    }
-
-    public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
-        if (permissions != null && !permissions.isEmpty()) {
-            for (Permission p : permissions) {
-                checkPermission(p);
-            }
-        }
-    }
-
-    public void checkRole(String role) {
-        if (!hasRole(role)) {
-            String msg = "User does not have role [" + role + "]";
-            throw new UnauthorizedException(msg);
-        }
-    }
-
-    public void checkRoles(Collection<String> roles) {
-        if (roles != null && !roles.isEmpty()) {
-            for (String roleName : roles) {
-                checkRole(roleName);
-            }
-        }
-    }
-
-
 }
 
 

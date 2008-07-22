@@ -23,7 +23,7 @@ import javax.naming.ldap.LdapContext;
 
 /**
  * Interface that encapsulates the creation of <tt>LdapContext</tt> objects that are used by subclasses
- * of {@link AbstractLdapRealm} to query for <tt>Account</tt> security data (roles, permissions, etc) of particular
+ * of {@link AbstractLdapRealm} to query for <tt>AuthenticationInfo</tt> security data (roles, permissions, etc) of particular
  * Subjects (users).
  *
  * @author Jeremy Haile

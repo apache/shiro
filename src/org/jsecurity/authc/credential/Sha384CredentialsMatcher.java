@@ -23,7 +23,7 @@ import org.jsecurity.crypto.hash.Hash;
 import org.jsecurity.crypto.hash.Sha384Hash;
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
  * SHA-384 hashed.
  *
  * @author Les Hazlewood

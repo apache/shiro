@@ -18,11 +18,7 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.jsecurity.authc.Account;
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authc.UnknownAccountException;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
 
 /**
@@ -30,7 +26,7 @@ import org.jsecurity.realm.Realm;
  * <b>successfully</b> process the submitted <tt>AuthenticationToken</tt> during the log-in attempt.
  *
  * <p>If one or more realms do not support the submitted token, or one or more are unable to acquire
- * <tt>Account</tt> for the token, this implementation will immediately fail the log-in attempt for the
+ * <tt>AuthenticationInfo</tt> for the token, this implementation will immediately fail the log-in attempt for the
  * associated subject (user).
  *
  * @author Les Hazlewood
@@ -38,7 +34,7 @@ import org.jsecurity.realm.Realm;
  */
 public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
-    public Account beforeAttempt(Realm realm, AuthenticationToken token, Account account) throws AuthenticationException {
+    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
         if (!realm.supports(token)) {
             String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support " +
                     " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName() +
@@ -47,10 +43,10 @@ public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenti
             throw new UnsupportedTokenException(msg);
         }
 
-        return account;
+        return info;
     }
 
-    public Account afterAttempt(Realm realm, AuthenticationToken token, Account account, Account aggregate, Throwable t)
+    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
             throws AuthenticationException {
         if (t != null) {
             if (t instanceof AuthenticationException) {
@@ -63,7 +59,7 @@ public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenti
                 throw new AuthenticationException(msg, t);
             }
         }
-        if (account == null) {
+        if (info == null) {
             String msg = "Realm [" + realm + "] could not find any associated account data for the submitted " +
                     "AuthenticationToken [" + token + "].  The [" + getClass().getName() + "] implementation requires " +
                     "all configured realm(s) to acquire valid account data for a submitted token during the " +
@@ -76,8 +72,13 @@ public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenti
         if (log.isDebugEnabled()) {
             log.debug("Account successfully authenticated using realm of type [" + realm.getClass().getName() + "]");
         }
-        ((SimpleAuthorizingAccount) aggregate).merge(account);
 
-        return aggregate;
+        if( aggregate instanceof MergableAuthenticationInfo ) {
+            ((MergableAuthenticationInfo)aggregate).merge(info);
+            return aggregate;
+        } else {
+            throw new IllegalArgumentException( "Attempt to merge authentication info from multiple realms, but aggreagate " +
+                      "AuthenticationInfo is not of type MergableAuthenticationInfo." );
+        }
     }
 }

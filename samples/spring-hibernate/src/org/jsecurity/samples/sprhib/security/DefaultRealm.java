@@ -18,11 +18,11 @@
  */
 package org.jsecurity.samples.sprhib.security;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authz.AuthorizingAccount;
+import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.samples.sprhib.party.eis.UserDAO;
 import org.jsecurity.subject.PrincipalCollection;
@@ -59,13 +59,13 @@ public class DefaultRealm extends AuthorizingRealm implements InitializingBean {
         }
     }
 
-    protected Account doGetAccount(AuthenticationToken authcToken) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
         return userDAO.findUser(token.getUsername());
     }
 
 
-    protected AuthorizingAccount doGetAccount(PrincipalCollection principals) {
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         Long userId = (Long) principals.fromRealm(getName()).iterator().next();
         return userDAO.getUser(userId);
     }

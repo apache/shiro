@@ -18,11 +18,12 @@
  */
 package org.jsecurity.realm.activedirectory;
 
-import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.SimpleAuthenticationInfo;
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.authz.AuthorizingAccount;
-import org.jsecurity.authz.SimpleAuthorizingAccount;
+import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.ldap.AbstractLdapRealm;
 import org.jsecurity.realm.ldap.LdapContextFactory;
@@ -81,7 +82,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
 
     /**
-     * <p>Builds an {@link org.jsecurity.authc.Account} object by querying the active directory LDAP context for the
+     * <p>Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
      * specified username.  This method binds to the LDAP server using the provided username and password -
      * which if successful, indicates that the password is correct.</p>
      *
@@ -89,11 +90,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      *
      * @param token              the authentication token provided by the user.
      * @param ldapContextFactory the factory used to build connections to the LDAP server.
-     * @return an {@link org.jsecurity.authc.Account} instance containing information retrieved from LDAP
-     *         that can be used to build an {@link org.jsecurity.authc.Account} instance to return.
+     * @return an {@link AuthenticationInfo} instance containing information retrieved from LDAP.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected Account queryForLdapAccount(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
 
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
@@ -105,16 +105,16 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext(ctx);
         }
 
-        return createAccount(upToken.getUsername(), upToken.getPassword());
+        return buildAuthenticationInfo(upToken.getUsername(), upToken.getPassword());
     }
 
-    protected Account createAccount(String username, char[] password) {
-        return new SimpleAuthorizingAccount(username, password, getName());
+    protected AuthenticationInfo buildAuthenticationInfo(String username, char[] password) {
+        return new SimpleAuthenticationInfo(username, password, getName());
     }
 
 
     /**
-     * <p>Builds an {@link org.jsecurity.authz.AuthorizingAccount} object by querying the active directory LDAP context for the
+     * <p>Builds an {@link AuthorizationInfo} object by querying the active directory LDAP context for the
      * groups that a user is a member of.  The groups are then translated to role names by using the
      * configured {@link #groupRolesMap}.</p>
      *
@@ -123,12 +123,12 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * <p>Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
      * complex way.  Note that this default implementation does not support permissions, only roles.</p>
      *
-     * @param principals         the principal of the Subject whose Account is being retrieved.
+     * @param principals         the principal of the Subject whose account is being retrieved.
      * @param ldapContextFactory the factory used to create LDAP connections.
-     * @return the Account for the given Subject principal.
+     * @return the AuthorizationInfo for the given Subject principal.
      * @throws NamingException if an error occurs when searching the LDAP server.
      */
-    protected AuthorizingAccount queryForLdapAccount(PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
 
         String username;
 
@@ -146,7 +146,11 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             LdapUtils.closeContext(ldapContext);
         }
 
-        return new SimpleAuthorizingAccount(username, null, getName(), roleNames, null);
+        return buildAuthorizationInfo(roleNames);
+    }
+
+    protected AuthorizationInfo buildAuthorizationInfo(Set<String> roleNames) {
+        return new SimpleAuthorizationInfo(roleNames);
     }
 
     private Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {

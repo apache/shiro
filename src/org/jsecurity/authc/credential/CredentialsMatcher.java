@@ -18,7 +18,7 @@
  */
 package org.jsecurity.authc.credential;
 
-import org.jsecurity.authc.Account;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
@@ -46,10 +46,10 @@ public interface CredentialsMatcher {
      * <tt>false</tt> otherwise.
      *
      * @param token   the <tt>AuthenticationToken</tt> submitted during the authentication attempt
-     * @param account the <tt>Account</tt> stored in the system.
+     * @param info the <tt>AuthenticationInfo</tt> stored in the system.
      * @return <tt>true</tt> if the provided token credentials match the stored account credentials,
      *         <tt>false</tt> otherwise.
      */
-    boolean doCredentialsMatch(AuthenticationToken token, Account account);
+    boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info);
 
 }

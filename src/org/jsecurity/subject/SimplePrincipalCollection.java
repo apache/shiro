@@ -21,23 +21,34 @@ package org.jsecurity.subject;
 import java.util.*;
 
 /**
+ * A simple implementation of the {@link PrincipalCollection} interface that tracks principals internally
+ * by storing them in a {@link LinkedHashMap}.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
 @SuppressWarnings({"unchecked"})
-public class SimplePrincipalCollection implements PrincipalCollection {
+public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
     private Map<String, Set> realmPrincipals;
 
     public SimplePrincipalCollection() {
     }
 
-    public SimplePrincipalCollection(String realmName, Object principal) {
-        add(realmName, principal);
+    public SimplePrincipalCollection(Object principal, String realmName) {
+        if( principal instanceof Collection ) {
+            addAll( (Collection)principal, realmName );
+        } else {
+            add(principal, realmName);
+        }
     }
 
-    public SimplePrincipalCollection(String realmName, Collection principals) {
-        add(realmName, principals);
+    public SimplePrincipalCollection(Collection principals, String realmName) {
+        addAll(principals, realmName);
+    }
+
+    public SimplePrincipalCollection(PrincipalCollection principals) {
+        addAll(principals);
     }
 
     protected Collection getPrincipalsLazy(String realmName) {
@@ -52,7 +63,7 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         return principals;
     }
 
-    public void add(String realmName, Object principal) {
+    public void add(Object principal, String realmName) {
         if (realmName == null) {
             throw new IllegalArgumentException("realmName argument cannot be null.");
         }
@@ -62,7 +73,7 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         getPrincipalsLazy(realmName).add(principal);
     }
 
-    public void add(String realmName, Collection principals) {
+    public void addAll(Collection principals, String realmName) {
         if (realmName == null) {
             throw new IllegalArgumentException("realmName argument cannot be null.");
         }
@@ -73,6 +84,16 @@ public class SimplePrincipalCollection implements PrincipalCollection {
             throw new IllegalArgumentException("principals argument cannot be an empty collection.");
         }
         getPrincipalsLazy(realmName).addAll(principals);
+    }
+
+    public void addAll(PrincipalCollection principals) {
+        if( principals.getRealmNames() != null ) {
+            for( String realmName : principals.getRealmNames() ) {
+                for( Object principal : principals.fromRealm( realmName ) ) {
+                    add(principal, realmName);
+                }
+            }
+        }
     }
 
     public <T> T oneByType(Class<T> type) {
@@ -143,6 +164,14 @@ public class SimplePrincipalCollection implements PrincipalCollection {
         return Collections.unmodifiableSet(principals);
     }
 
+    public Set<String> getRealmNames() {
+        if( realmPrincipals == null ) {
+            return null;
+        } else {
+            return realmPrincipals.keySet();
+        }
+    }
+
     public boolean isEmpty() {
         return realmPrincipals == null || realmPrincipals.isEmpty();
     }
@@ -156,25 +185,6 @@ public class SimplePrincipalCollection implements PrincipalCollection {
 
     public Iterator iterator() {
         return asSet().iterator();
-    }
-
-    public void merge(SimplePrincipalCollection principals) {
-        if (principals == null || principals.isEmpty()) {
-            return;
-        }
-        if (this.realmPrincipals == null || this.realmPrincipals.isEmpty()) {
-            this.realmPrincipals = principals.realmPrincipals;
-            return;
-        }
-
-        for (String realmName : principals.realmPrincipals.keySet()) {
-            Collection realmPrincipals = principals.realmPrincipals.get(realmName);
-            if (realmPrincipals != null && !realmPrincipals.isEmpty()) {
-                for (Object principal : realmPrincipals) {
-                    add(realmName, principal);
-                }
-            }
-        }
     }
 
     public boolean equals(Object o) {

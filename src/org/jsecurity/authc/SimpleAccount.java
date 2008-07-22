@@ -20,36 +20,25 @@ package org.jsecurity.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.authz.Permission;
+import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Simple implementation of the {@link org.jsecurity.authc.Account} interface that
  * contains principal and credential information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
- * <p>Realm implementations can use this for simple principal/credential accounts, but note:
- *
- * <p>This class cannot perform its own authorization checks for roles and permissions.  It is therefore not sufficient
- * to use to back a Realm's {@link org.jsecurity.authz.Authorizer Authorizer} method implementations.  If you need
- * an Account object to perform role and permission checks itself, you might want to use instaces of
- * {@link org.jsecurity.authz.SimpleAuthorizingAccount SimpleAuthorizingAccount} instead of this class.
- *
- * <p>But note that a <tt>SimpleAuthorizingAccount</tt> object caches its roles and permission definitions and will not
- * persist any changes to these definitions back to the source Realm.  If you need dynamic runtime modification of Roles
- * and/or Permissions for any given account, your Realm implementation will need to perform the authorization checks
- * directly since instances of this class are primarily used for caching and could represent stale data.
- *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see org.jsecurity.authz.SimpleAuthorizingAccount
  * @since 0.1
  */
-public class SimpleAccount implements Account, Serializable {
+public class SimpleAccount implements Account, MergableAuthenticationInfo, Serializable {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -62,22 +51,24 @@ public class SimpleAccount implements Account, Serializable {
     /**
      * The principals that apply to the authenticated Subject/user.
      */
-    private PrincipalCollection principals;
+    private SimpleAuthenticationInfo authcInfo;
 
     /**
-     * Credentials that were used to authenticate the user.
+     * The authorization information for this account.
      */
-    private Object credentials;
+    private SimpleAuthorizationInfo authzInfo;
 
     /**
-     * True if the account is locked, false otherwise.
+     * Indicates this account is locked.  This isn't honored by all <tt>Realms</tt> but is honored by
+     * {@link org.jsecurity.realm.SimpleAccountRealm}.
      */
-    private boolean locked = false;
+    private boolean locked;
 
     /**
-     * True if the user's credentials are expired, false otherwise.
+     * Indicates credentials on this account are expired.  This isn't honored by all <tt>Realms</tt> but is honored by
+     * {@link org.jsecurity.realm.SimpleAccountRealm}.
      */
-    private boolean credentialsExpired = false;
+    private boolean credentialsExpired;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -86,36 +77,107 @@ public class SimpleAccount implements Account, Serializable {
     }
 
     public SimpleAccount(Object principal, Object credentials, String realmName) {
-        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(realmName, principal), credentials);
+        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
     }
 
     public SimpleAccount(Collection principals, Object credentials, String realmName) {
-        this(new SimplePrincipalCollection(realmName, principals), credentials);
+        this(new SimplePrincipalCollection(principals, realmName), credentials);
     }
 
     public SimpleAccount(PrincipalCollection principals, Object credentials) {
-        this.principals = principals;
-        this.credentials = credentials;
+        this.authcInfo = new SimpleAuthenticationInfo(principals, credentials);
+        this.authzInfo = new SimpleAuthorizationInfo();
     }
+
+    public SimpleAccount(PrincipalCollection principals, Object credentials, Set<String> roles) {
+        this.authcInfo = new SimpleAuthenticationInfo(principals, credentials);
+        this.authzInfo = new SimpleAuthorizationInfo(roles);
+    }
+
+    public SimpleAccount(Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+        this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principal, realmName), credentials);
+        this.authzInfo = new SimpleAuthorizationInfo(roleNames);
+        this.authzInfo.setObjectPermissions( permissions );
+    }
+
+    public SimpleAccount(Collection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+        this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principals, realmName), credentials);
+        this.authzInfo = new SimpleAuthorizationInfo(roleNames);
+        this.authzInfo.setObjectPermissions( permissions );
+    }
+
+    public SimpleAccount(PrincipalCollection principals, Object credentials, Set<String> roleNames, Set<Permission> permissions) {
+        this.authcInfo = new SimpleAuthenticationInfo(principals, credentials);
+        this.authzInfo = new SimpleAuthorizationInfo(roleNames);
+        this.authzInfo.setObjectPermissions( permissions );
+    }
+
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
     public PrincipalCollection getPrincipals() {
-        return this.principals;
+        return authcInfo.getPrincipals();
     }
 
-    public void setPrincipals(PrincipalCollection principals) {
-        this.principals = principals;
+    public void setPrincipals( PrincipalCollection principals ) {
+        this.authcInfo.setPrincipals( principals );
     }
 
     public Object getCredentials() {
-        return credentials;
+        return authcInfo.getCredentials();
     }
 
-    public void setCredentials(Object credentials) {
-        this.credentials = credentials;
+    public void setCredentials( Object credentials ) {
+        this.authcInfo.setCredentials( credentials );
+    }
+
+    public Collection<String> getRoles() {
+        return authzInfo.getRoles();
+    }
+
+    public void setRoles( Set<String> roles ) {
+        this.authzInfo.setRoles( roles );
+    }
+
+    public void addRole( String role ) {
+        this.authzInfo.addRole( role );
+    }
+    public void addRole( Collection<String> roles ) {
+        this.authzInfo.addRoles( roles );
+    }
+
+    public Collection<String> getStringPermissions() {
+        return authzInfo.getStringPermissions();
+    }
+
+    public void setStringPermissions( Set<String> permissions ) {
+        this.authzInfo.setStringPermissions( permissions );
+    }
+
+    public void addStringPermission( String permission ) {
+        this.authzInfo.addStringPermission( permission );
+    }
+
+    public void addStringPermissions( Collection<String> permissions ) {
+        this.authzInfo.addStringPermissions( permissions );
+    }
+
+    public Collection<Permission> getObjectPermissions() {
+        return authzInfo.getObjectPermissions();
+    }
+
+    public void setObjectPermissions( Set<Permission> permissions ) {
+        this.authzInfo.setObjectPermissions( permissions );
+    }
+
+    public void addObjectPermission( Permission permission ) {
+        this.authzInfo.addObjectPermission( permission );
+    }
+
+    public void addObjectPermissions( Collection<Permission> permissions ) {
+        this.authzInfo.addObjectPermissions( permissions );
     }
 
     public boolean isLocked() {
@@ -134,78 +196,20 @@ public class SimpleAccount implements Account, Serializable {
         this.credentialsExpired = credentialsExpired;
     }
 
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
-    /**
-     * Merges (adds) the specified Account data into this instance.
-     *
-     * This allows an instance of this class to be an <em>aggregation</em>, or <em>composition</em> of account data
-     * from across multiple <code>Realm</code>s <tt>Realm</tt>s, not just one realm.
-     *
-     * <p>This is useful in a multi-realm authentication configuration - the individual <tt>Account</tt>
-     * objects obtained from each realm can be {@link #merge merged} into this object.  This single object can then be
-     * returned at the end of the authentication process, giving the impression of a single underlying
-     * realm/data source.
-     *
-     * @param otherAccount the account whos data will be merged (added) into this instance.
-     */
-    @SuppressWarnings({"unchecked"})
-    public void merge(Account otherAccount) {
-        if (otherAccount == null) {
-            return;
-        }
 
-        PrincipalCollection otherPrincipals = otherAccount.getPrincipals();
-        if (otherPrincipals == null) {
-            return;
-        }
+    public void merge(AuthenticationInfo info) {
+        authcInfo.merge(info);
 
-        PrincipalCollection thisPrincipals = getPrincipals();
-        if (thisPrincipals == null) {
-            setPrincipals(otherPrincipals);
-        } else {
-            //TODO - I don't like these checks - should be interface-based - Les.
-            if (!(thisPrincipals instanceof SimplePrincipalCollection)) {
-                throw new IllegalStateException("The " + getClass().getName() + " class expects its internal " +
-                        PrincipalCollection.class.getName() + " instance to be an instance of the " +
-                        SimplePrincipalCollection.class.getName() + " class.");
+        // Merge SimpleAccount specific info
+        if( info instanceof SimpleAccount ) {
+            SimpleAccount otherAccount = (SimpleAccount) info;
+            if (otherAccount.isLocked()) {
+                setLocked(true);
             }
-            if (!(otherPrincipals instanceof SimplePrincipalCollection)) {
-                throw new IllegalArgumentException("The " + getClass().getName() + " class expects the " +
-                        "account argument's internal " +
-                        PrincipalCollection.class.getName() + " instance to be an instance of the " +
-                        SimplePrincipalCollection.class.getName() + " class.");
-            }
-            ((SimplePrincipalCollection) thisPrincipals).merge((SimplePrincipalCollection) otherPrincipals);
-            setPrincipals(thisPrincipals);
-        }
 
-        Object otherCredentials = otherAccount.getCredentials();
-        Object thisCredentials = getCredentials();
-        if (thisCredentials == null) {
-            setCredentials(otherCredentials);
-        } else {
-            HashSet set = new HashSet();
-            if (thisCredentials instanceof Collection) {
-                set.addAll((Collection) thisCredentials);
-            } else {
-                set.add(thisCredentials);
+            if (otherAccount.isCredentialsExpired()) {
+                setCredentialsExpired(true);
             }
-            if (otherCredentials instanceof Collection) {
-                set.addAll((Collection) otherCredentials);
-            } else {
-                set.add(otherCredentials);
-            }
-            setCredentials(set);
-        }
-
-        if (otherAccount.isLocked()) {
-            setLocked(true);
-        }
-
-        if (otherAccount.isCredentialsExpired()) {
-            setCredentialsExpired(true);
         }
     }
 
@@ -228,4 +232,5 @@ public class SimpleAccount implements Account, Serializable {
     public String toString() {
         return getPrincipals() != null ? getPrincipals().toString() : "empty";
     }
+
 }

@@ -44,14 +44,14 @@ public interface Authenticator {
     /**
      * Authenticates a user based on the submitted <tt>authenticationToken</tt>.
      *
-     * <p>If the authentication is successful, an {@link Account Account}
+     * <p>If the authentication is successful, an {@link AuthenticationInfo}
      * object is returned that represents the user's account data relevant to JSecurity.  This returned object is
      * generally used in turn to construct a <tt>Subject</tt> representing that user's access rights and
      * access to a <tt>Session</tt>
      *
      * @param authenticationToken any representation of a user's principals and credentials
      *                            submitted during an authentication attempt.
-     * @return the Account representing the authenticated user's account data.
+     * @return the AuthenticationInfo representing the authenticating user's account data.
      * @throws AuthenticationException if there is any problem during the authentication process.
      *                                 See the specific exceptions listed below to as examples of what could happen in order
      *                                 to accurately handle these problems and to notify the user in an appropriate manner why
@@ -65,6 +65,6 @@ public interface Authenticator {
      * @see ConcurrentAccessException
      * @see UnknownAccountException
      */
-    public Account authenticate(AuthenticationToken authenticationToken)
+    public AuthenticationInfo authenticate(AuthenticationToken authenticationToken)
             throws AuthenticationException;
 }

@@ -18,8 +18,8 @@
  */
 package org.jsecurity.authc.event.mgt;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.event.AuthenticationEvent;
 import org.jsecurity.authc.event.FailedAuthenticationEvent;
@@ -47,15 +47,15 @@ public class DefaultAuthenticationEventFactory implements AuthenticationEventFac
     }
 
     /**
-     * Uses the principal found in the <em>Account</em> parameter (not the authentication token) to
+     * Uses the principal found in the <em>AuthenticationInfo</em> parameter (not the authentication token) to
      * construct a {@link org.jsecurity.authc.event.SuccessfulAuthenticationEvent}
      *
      * @param token   the authentication token submitted during the authentication attempt.
-     * @param account the account data constructed due to the successful attempt.
+     * @param info
      * @return a {@link org.jsecurity.authc.event.SuccessfulAuthenticationEvent} to send due to the successful attempt.
      */
-    public AuthenticationEvent createSuccessEvent(AuthenticationToken token, Account account) {
-        return new SuccessfulAuthenticationEvent(token, account);
+    public AuthenticationEvent createSuccessEvent(AuthenticationToken token, AuthenticationInfo info) {
+        return new SuccessfulAuthenticationEvent(token, info);
     }
 
     public AuthenticationEvent createLogoutEvent(PrincipalCollection principals) {

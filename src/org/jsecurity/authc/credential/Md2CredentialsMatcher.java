@@ -23,7 +23,7 @@ import org.jsecurity.crypto.hash.Hash;
 import org.jsecurity.crypto.hash.Md2Hash;
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>Account</tt> credentials to be
+ * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
  * MD2 hashed.
  *
  * <p><b>Note:</b> the MD2, <a href="http://en.wikipedia.org/wiki/MD5">MD5</a> and

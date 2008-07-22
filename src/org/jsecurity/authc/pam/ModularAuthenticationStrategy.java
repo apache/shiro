@@ -18,8 +18,8 @@
  */
 package org.jsecurity.authc.pam;
 
-import org.jsecurity.authc.Account;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.realm.Realm;
 
@@ -44,7 +44,7 @@ public interface ModularAuthenticationStrategy {
      * Method invoked by the ModularAuthenticator signifying that the authentication process is about to begin for the
      * specified <tt>token</tt> - called before any <tt>Realm</tt> is actually invoked.
      *
-     * <p>The <code>Account</code> object returned from this method is essentially an empty place holder for
+     * <p>The <code>AuthenticationInfo</code> object returned from this method is essentially an empty place holder for
      * aggregating account data across multiple realms.  It should be populated by the realms over the course of the
      * authentication attempt across the multiple realms.  It will be passed into the
      * {@link #beforeAttempt} calls, allowing inspection of the aggregated account data up to that point in the
@@ -52,63 +52,62 @@ public interface ModularAuthenticationStrategy {
      *
      * @param realms the Realms that will be consulted during the authentication process for the specified token.
      * @param token  the Principal/Credential representation to be used during authentication for a corresponding subject.
-     * @return an empty Account object that will populated with data from multiple realms.
+     * @return an empty AuthenticationInfo object that will populated with data from multiple realms.
      * @throws AuthenticationException if the strategy implementation does not wish the Authentication attempt to execute.
      */
-    Account beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException;
+    AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator just prior to the realm being consulted for account data,
      * allowing pre-authentication-attempt logic for that realm only.
      *
-     * <p>This method returns an <code>Account</code> object that will be used for further interaction with realms.  Most
+     * <p>This method returns an <code>AuthenticationInfo</code> object that will be used for further interaction with realms.  Most
      * implementations will merely return the <code>aggregate</code> method argument if they don't have a need to
      * manipulate it.
      *
-     * @param realm     the realm that will be consulted for <tt>Account</tt> for the specified <tt>token</tt>.
+     * @param realm     the realm that will be consulted for <tt>AuthenticationInfo</tt> for the specified <tt>token</tt>.
      * @param token     the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
-     * @param aggregate the aggregated Account object being used across the multi-realm authentication attempt
-     * @return the Account object that will be presented to further realms in the authentication process - returning
+     * @param aggregate the aggregated AuthenticationInfo object being used across the multi-realm authentication attempt
+     * @return the AuthenticationInfo object that will be presented to further realms in the authentication process - returning
      *         the <code>aggregate</code> method argument is the normal case if no special action needs to be taken.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login
      *                                 process for the associated subject (user) to stop immediately.
      */
-    Account beforeAttempt(Realm realm, AuthenticationToken token, Account aggregate) throws AuthenticationException;
+    AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator just after the given realm has been consulted for authentication,
      * allowing post-authentication-attempt logic for that realm only.
      *
-     * <p>This method returns an <code>Account</code> object that will be used for further interaction with realms.  Most
-     * implementations will merge the <code>singleRealmAccount</code> into the <code>aggregateAccount</code> and
-     * just return the <code>aggregateAccount</code> for continued use throughout the authentication process.</p>
+     * <p>This method returns an <code>AuthenticationInfo</code> object that will be used for further interaction with realms.  Most
+     * implementations will merge the <code>singleRealmInfo</code> into the <code>aggregateInfo</code> and
+     * just return the <code>aggregateInfo</code> for continued use throughout the authentication process.</p>
      *
-     * @param realm              the realm that was just consulted for <tt>Account</tt> for the given <tt>token</tt>.
+     * @param realm              the realm that was just consulted for <tt>AuthenticationInfo</tt> for the given <tt>token</tt>.
      * @param token              the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
-     * @param singleRealmAccount the <tt>Account</tt> object returned by the realm during the consultation process, or
-     *                           <tt>null</tt> if the realm was unable to acquire account data based on the given <tt>token</tt>.
-     * @param aggregateAccount   the Account object being populated with data across multiple realms.
+     * @param singleRealmInfo    the info returned from a single realm.
+     * @param aggregateInfo      the aggregate info representing all realms in a multi-realm environment.
      * @param t                  the Throwable thrown by the Realm during the attempt, or <tt>null</tt> if the method returned normally.
-     * @return the Account object that will be presented to further realms in the authentication process - returning
+     * @return the AuthenticationInfo object that will be presented to further realms in the authentication process - returning
      *         the <code>aggregateAccount</code> method argument is the normal case if no special action needs to be taken.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login process
      *                                 for the associated subject (user) to stop immediately.
      */
-    Account afterAttempt(Realm realm, AuthenticationToken token, Account singleRealmAccount, Account aggregateAccount, Throwable t)
+    AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t)
             throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted
      * for account data, allowing post-proccessing after all realms have completed.
      *
-     * <p>Returns the final Account object that will be returned from the Authenticator to the authenticate() caller.
-     * This is most likely the aggregate Account object that has been populated by many realms, but the actual return value is
+     * <p>Returns the final AuthenticationInfo object that will be returned from the Authenticator to the authenticate() caller.
+     * This is most likely the aggregate AuthenticationInfo object that has been populated by many realms, but the actual return value is
      * always up to the implementation.
      *
      * @param token     the <tt>AuthenticationToken</tt> submitted for the subject attempting system log-in.
-     * @param aggregate the aggregate <tt>Account</tt> instance populated by all realms during the log-in attempt.
-     * @return the final <code>Account</code> object to return to the Authenticator.authenticate() caller.
+     * @param aggregate the aggregate <tt>AuthenticationInfo</tt> instance populated by all realms during the log-in attempt.
+     * @return the final <code>AuthenticationInfo</code> object to return to the Authenticator.authenticate() caller.
      * @throws AuthenticationException if the Strategy implementation wishes to fail the authentication attempt.
      */
-    Account afterAllAttempts(AuthenticationToken token, Account aggregate) throws AuthenticationException;
+    AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException;
 }

@@ -104,8 +104,8 @@ public abstract class AbstractAuthenticator
         this.authcEventManager.sendFailureEvent(token, ae);
     }
 
-    protected void sendSuccessEvent(AuthenticationToken token, Account account) {
-        this.authcEventManager.sendSuccessEvent(token, account);
+    protected void sendSuccessEvent(AuthenticationToken token, AuthenticationInfo info) {
+        this.authcEventManager.sendSuccessEvent(token, info);
     }
 
     protected void sendLogoutEvent(PrincipalCollection subjectPrincipal) {
@@ -128,15 +128,15 @@ public abstract class AbstractAuthenticator
      * for the caller to handle.</li>
      * <li>If no exception is thrown (indicating a successful login), send a success <tt>AuthenticationEvent</tt>
      * noting the successful authentication.</li>
-     * <li>Return the <tt>Account</tt></li>
+     * <li>Return the <tt>AuthenticationInfo</tt></li>
      * </ol>
      *
      * @param token the submitted token representing the subject's (user's) login principals and credentials.
-     * @return the Account referencing the authenticated user's account data.
+     * @return the AuthenticationInfo referencing the authenticated user's account data.
      * @throws AuthenticationException if there is any problem during the authentication process - see the
      *                                 interface's JavaDoc for a more detailed explanation.
      */
-    public final Account authenticate(AuthenticationToken token)
+    public final AuthenticationInfo authenticate(AuthenticationToken token)
             throws AuthenticationException {
 
         if (token == null) {
@@ -147,10 +147,10 @@ public abstract class AbstractAuthenticator
             log.trace("Authentication attempt received for token [" + token + "]");
         }
 
-        Account account;
+        AuthenticationInfo info;
         try {
-            account = doAuthenticate(token);
-            if (account == null) {
+            info = doAuthenticate(token);
+            if (info == null) {
                 String msg = "No account information found for authentication token [" + token + "] by this " +
                         "Authenticator instance.  Please check that it is configured correctly.";
                 throw new AuthenticationException(msg);
@@ -187,12 +187,12 @@ public abstract class AbstractAuthenticator
 
         if (log.isInfoEnabled()) {
             log.info("Authentication successful for token [" + token + "].  " +
-                    "Returned account: [" + account + "]");
+                    "Returned account: [" + info + "]");
         }
 
-        sendSuccessEvent(token, account);
+        sendSuccessEvent(token, info);
 
-        return account;
+        return info;
     }
 
     /**
@@ -208,11 +208,11 @@ public abstract class AbstractAuthenticator
      * indicate any expected problem (such as an unknown account or username, or invalid password, etc).
      *
      * @param token the authentication token encapsulating the user's login information.
-     * @return an <tt>Account</tt> object encapsulating the user's account information
+     * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
      *         important to JSecurity.
      * @throws AuthenticationException if there is a problem logging in the user.
      */
-    protected abstract Account doAuthenticate(AuthenticationToken token)
+    protected abstract AuthenticationInfo doAuthenticate(AuthenticationToken token)
             throws AuthenticationException;
 
 
