@@ -22,7 +22,6 @@ import org.jsecurity.JSecurityException;
 import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.config.IniWebConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
@@ -135,8 +134,6 @@ public class SpringConfiguration extends IniWebConfiguration {
                         "type RealmSecurityManager - instead was of type: " + securityManager.getClass().getName());
             }
         }
-
-        LifecycleUtils.init(securityManager);
 
         return securityManager;
     }
