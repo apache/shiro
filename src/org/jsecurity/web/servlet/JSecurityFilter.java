@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * Main ServletFilter that configures and enables all JSecurity functions within a web application.
@@ -215,9 +216,8 @@ public class JSecurityFilter extends OncePerRequestFilter {
         setConfiguration(config);
 
         // Retrieve and store a reference to the security manager
-        SecurityManager sm = getOrCreateSecurityManager(config);
+        SecurityManager sm = ensureSecurityManager(config);
         setSecurityManager(sm);
-
     }
 
     /**
@@ -226,7 +226,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
      * @param config the configuration for this filter.
      * @return the security manager that this filter should use.
      */
-    protected SecurityManager getOrCreateSecurityManager(Configuration config) {
+    protected SecurityManager ensureSecurityManager(Configuration config) {
         SecurityManager sm = config.getSecurityManager();
 
         // If the config doesn't return a security manager, build one by default.
@@ -236,7 +236,6 @@ public class JSecurityFilter extends OncePerRequestFilter {
                         "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
             }
             sm = new DefaultWebSecurityManager();
-            LifecycleUtils.init(sm);
         }
 
         return sm;
@@ -262,27 +261,33 @@ public class JSecurityFilter extends OncePerRequestFilter {
     }
 
     protected WebConfiguration configure() {
-
         WebConfiguration conf = (WebConfiguration) ClassUtils.newInstance(this.configClassName);
+        applyFilterConfig(conf);
+        applyUrlConfig(conf);
+        applyEmbeddedConfig(conf);
+        LifecycleUtils.init(conf);
+        return conf;
+    }
 
+    protected void applyFilterConfig(WebConfiguration conf) {
         if (log.isDebugEnabled()) {
             String msg = "Attempting to inject the FilterConfig (using 'setFilterConfig' method) into the " +
                     "instantiated WebConfiguration for any wrapped Filter initialization...";
             log.debug(msg);
         }
-
         try {
             PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "filterConfig");
             if (pd != null) {
                 PropertyUtils.setProperty(conf, "filterConfig", getFilterConfig());
             }
-
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Error setting FilterConfig on WebConfiguration instance.", e);
             }
         }
+    }
 
+    protected void applyEmbeddedConfig(WebConfiguration conf) {
         if (this.config != null) {
             try {
                 PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "config");
@@ -301,7 +306,9 @@ public class JSecurityFilter extends OncePerRequestFilter {
                 throw new ConfigurationException(msg, e);
             }
         }
+    }
 
+    protected void applyUrlConfig(WebConfiguration conf) {
         if (this.configUrl != null) {
             try {
                 PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(conf, "configUrl");
@@ -320,12 +327,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
                 throw new ConfigurationException(msg, e);
             }
         }
-
-        LifecycleUtils.init(conf);
-
-        return conf;
     }
-
 
     protected boolean isHttpSessions() {
         SecurityManager secMgr = getSecurityManager();
@@ -336,13 +338,17 @@ public class JSecurityFilter extends OncePerRequestFilter {
         }
     }
 
+    protected InetAddress getInetAddress(ServletRequest request) {
+        return WebUtils.getInetAddress(request);
+    }
+
     protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,
                                     FilterChain origChain) throws ServletException, IOException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        ThreadContext.bind(WebUtils.getInetAddress(request));
+        ThreadContext.bind(getInetAddress(request));
 
         boolean httpSessions = isHttpSessions();
         request = new JSecurityHttpServletRequest(request, getServletContext(), httpSessions);
