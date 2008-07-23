@@ -48,7 +48,7 @@ package org.jsecurity.util;
  * <code>org/servlet/bla.jsp</code></li>
  * </ul>
  *
- * <p><b>N.B.</b>: This class was graciously borrowed from the
+ * <p><b>N.B.</b>: This class was borrowed (with much appreciation) from the
  * <a href="http://www.springframework.org">Spring Framework</a> with modifications.  We didn't want to reinvent the
  * wheel of great work they've done, but also didn't want to force every JSecurity user to depend on Spring</p>
  *
