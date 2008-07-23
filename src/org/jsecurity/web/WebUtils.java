@@ -164,7 +164,7 @@ public class WebUtils {
      * @return the context path
      */
     public static String getContextPath(HttpServletRequest request) {
-        String contextPath = (String) request.getAttribute(org.springframework.web.util.WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE);
+        String contextPath = (String) request.getAttribute(INCLUDE_CONTEXT_PATH_ATTRIBUTE);
         if (contextPath == null) {
             contextPath = request.getContextPath();
         }
@@ -185,7 +185,7 @@ public class WebUtils {
      * @param request current HTTP request
      * @param source  the String to decode
      * @return the decoded String
-     * @see org.springframework.web.util.WebUtils#DEFAULT_CHARACTER_ENCODING
+     * @see #DEFAULT_CHARACTER_ENCODING
      * @see javax.servlet.ServletRequest#getCharacterEncoding
      * @see java.net.URLDecoder#decode(String, String)
      * @see java.net.URLDecoder#decode(String)
