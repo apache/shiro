@@ -119,7 +119,7 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
                         "Authentication url [" + getLoginUrl() + "]");
             }
 
-            saveRequestAndRedirectToLogin(request,response);
+            saveRequestAndRedirectToLogin(request, response);
             return false;
         }
     }
@@ -146,15 +146,19 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
             issueSuccessRedirect(request, response);
             return false;
         } catch (AuthenticationException e) {
-            String className = e.getClass().getName();
-            request.setAttribute(getFailureKeyAttribute(), className);
+            setFailureAttribute(request, e);
             //login failed, let request continue back to the login page:
             return true;
         }
     }
 
+    protected void setFailureAttribute(ServletRequest request, AuthenticationException ae) {
+        String className = ae.getClass().getName();
+        request.setAttribute(getFailureKeyAttribute(), className);
+    }
+
     protected String getUsername(ServletRequest request, ServletResponse response) {
-        return WebUtils.getCleanParam(request, getUsernameParam() );
+        return WebUtils.getCleanParam(request, getUsernameParam());
     }
 
     protected String getPassword(ServletRequest request, ServletResponse response) {
@@ -162,7 +166,7 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
     }
 
     protected boolean isRememberMe(ServletRequest request, ServletResponse response) {
-        return WebUtils.isTrue( request, getRememberMeParam() );
+        return WebUtils.isTrue(request, getRememberMeParam());
     }
 
     protected InetAddress getInetAddress(ServletRequest request, ServletResponse response) {
