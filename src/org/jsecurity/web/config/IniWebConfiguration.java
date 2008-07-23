@@ -25,8 +25,7 @@ import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.util.AntPathMatcher;
 import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.DefaultWebSecurityManager;
-import static org.jsecurity.web.WebUtils.getPathWithinApplication;
-import static org.jsecurity.web.WebUtils.toHttp;
+import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.filter.PathConfigProcessor;
 import org.jsecurity.web.filter.authc.AnonymousFilter;
 import org.jsecurity.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -74,7 +73,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
             return null;
         }
 
-        String requestURI = getPathWithinApplication(toHttp(request));
+        String requestURI = getPathWithinApplication(request);
 
         for (String path : this.chains.keySet()) {
 
@@ -92,6 +91,10 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
         }
 
         return null;
+    }
+
+    protected String getPathWithinApplication(ServletRequest request) {
+        return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
     }
 
     protected RealmSecurityManager newSecurityManagerInstance() {
