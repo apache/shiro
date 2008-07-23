@@ -20,8 +20,6 @@ package org.jsecurity.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.event.AuthenticationEventListener;
-import org.jsecurity.authc.event.mgt.AuthenticationEventManager;
 import org.jsecurity.subject.PrincipalCollection;
 
 import java.util.ArrayList;
@@ -31,23 +29,13 @@ import java.util.Collection;
  * Superclass for almost all {@link Authenticator} implementations that performs the common work around authentication
  * attempts.
  *
- * <p>This class delegates the actual authentication attempt to subclasses but supports event propagation for
- * successful and failed logins and logouts.
+ * <p>This class delegates the actual authentication attempt to subclasses but supports notification for
+ * successful and failed logins as well as logouts. Notification is sent to one or more registered
+ * {@link org.jsecurity.authc.AuthenticationListener AuthenticationListener}s to allow for custom processing logic
+ * when these conditions occur.
  *
  * <p>In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
  * is perform the actual principal/credential verification process for the submitted <tt>AuthenticationToken</tt>.
- *
- * <p>This implementation employs an event-based architecture so other components may react to both failed and
- * successful authentication attempts.  Failure or success events are triggered based on the
- * subclass's {@link #doAuthenticate} implementation throwing an exception or not, respectively.  That is, a failure
- * event will be created if <tt>doAuthenticate</tt> throws an exception a success event will be created and
- * sent if it does not.  The actual events
- * themselves are constructed and sent via an {@link AuthenticationEventManager} to interested
- * {@link AuthenticationEventListener}s.  If no <tt>AuthenticationEventListener</tt>s are configured, no events will
- * be created or sent.
- *
- * <p>Both the event manager and the event listeners may be set as properties of this class, but a default event
- * manager will be provided.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -173,8 +161,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
             try {
                 notifyFailure(token, ae);
             } catch (Throwable t2) {
-                String msg = "Unable to send event for failed authentication attempt - listener error?.  Please check " +
-                        "your AuthenticationEventListener implementation(s).  Logging sending exception and " +
+                String msg = "Unable to send notification for failed authentication attempt - listener error?.  " +
+                        "Please check your AuthenticationListener implementation(s).  Logging sending exception and " +
                         "propagating original AuthenticationException instead...";
                 if (log.isWarnEnabled()) {
                     log.warn(msg, t2);

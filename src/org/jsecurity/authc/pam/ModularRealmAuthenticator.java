@@ -75,14 +75,13 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     private Collection<? extends Realm> realms;
 
-    private ModularAuthenticationStrategy modularAuthenticationStrategy =
-            new AllSuccessfulModularAuthenticationStrategy();
+    private ModularAuthenticationStrategy modularAuthenticationStrategy;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
     public ModularRealmAuthenticator() {
-        super();
+        this.modularAuthenticationStrategy = new AllSuccessfulModularAuthenticationStrategy();
     }
 
     public ModularRealmAuthenticator(Realm realm) {

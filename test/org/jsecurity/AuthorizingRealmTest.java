@@ -85,7 +85,6 @@ public class AuthorizingRealmTest {
 
     @Test
     public void testDefaultConfig() {
-        securityManager.init();
         InetAddress localhost = null;
         try {
             localhost = InetAddress.getLocalHost();
@@ -124,7 +123,6 @@ public class AuthorizingRealmTest {
         };
 
         securityManager.setRealm(realm);
-        securityManager.init();
 
         // Do login
         Subject subject = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));

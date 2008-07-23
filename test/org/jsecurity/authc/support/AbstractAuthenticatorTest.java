@@ -20,10 +20,6 @@ package org.jsecurity.authc.support;
 
 import static org.easymock.EasyMock.*;
 import org.jsecurity.authc.*;
-import org.jsecurity.authc.event.AuthenticationEvent;
-import org.jsecurity.authc.event.AuthenticationEventListener;
-import org.jsecurity.authc.event.FailedAuthenticationEvent;
-import org.jsecurity.authc.event.SuccessfulAuthenticationEvent;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +50,7 @@ public class AbstractAuthenticatorTest {
     }
 
     private AuthenticationToken newToken() {
-        return new UsernamePasswordToken("user1", "secret".toCharArray());
+        return new UsernamePasswordToken("user1", "secret");
     }
 
     @Before
@@ -124,12 +120,10 @@ public class AbstractAuthenticatorTest {
 
     @Test
     public void sendSuccessEventAfterDoAuthenticate() {
-        AuthenticationEventListener mockListener = createMock(AuthenticationEventListener.class);
+        AuthenticationListener mockListener = createMock(AuthenticationListener.class);
         abstractAuthenticator.add(mockListener);
         AuthenticationToken token = newToken();
-        AuthenticationEvent successEvent = new SuccessfulAuthenticationEvent(token, info);
-
-        mockListener.onEvent(isA(SuccessfulAuthenticationEvent.class));
+        mockListener.onSuccess(token, info);
 
         replay(mockListener);
         abstractAuthenticator.authenticate(token);
@@ -138,7 +132,7 @@ public class AbstractAuthenticatorTest {
 
     @Test
     public void sendFailedEventAfterDoAuthenticateThrowsAuthenticationException() {
-        AuthenticationEventListener mockListener = createMock(AuthenticationEventListener.class);
+        AuthenticationListener mockListener = createMock(AuthenticationListener.class);
         AuthenticationToken token = newToken();
 
         final AuthenticationException ae = new AuthenticationException("dummy exception to test event sending");
@@ -150,7 +144,7 @@ public class AbstractAuthenticatorTest {
         };
         abstractAuthenticator.add(mockListener);
 
-        mockListener.onEvent(isA(FailedAuthenticationEvent.class));
+        mockListener.onFailure(token, ae);
         replay(mockListener);
 
         boolean exceptionThrown = false;

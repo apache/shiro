@@ -66,6 +66,12 @@ import org.jsecurity.subject.PrincipalCollection;
  */
 public interface Realm extends Authorizer {
 
+    /**
+     * Returns the (application-unique) name assigned to this <code>Realm</code>. All realms configured for a single
+     * application must have a unique name.
+     *
+     * @return the (application-unique) name assigned to this <code>Realm</code>.
+     */
     String getName();
 
     /**
@@ -83,7 +89,7 @@ public interface Realm extends Authorizer {
     boolean supports(AuthenticationToken token);
 
     /**
-     * Returns account information for the specified <tt>token</tt>,
+     * Returns an account's authentication-specific information for the specified <tt>token</tt>,
      * or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
      *
      * <p>This method effectively represents a login attempt for the corresponding user with the underlying EIS datasource.
@@ -92,14 +98,36 @@ public interface Realm extends Authorizer {
      * desired.
      *
      * @param token the application-specific representation of an account principal and credentials.
-     * @return the account information for the account associated with the specified <tt>token</tt>,
-     *         or <tt>null</tt> if no account could be found based on the <tt>token</tt>.
+     * @return the authentication information for the account associated with the specified <tt>token</tt>,
+     *         or <tt>null</tt> if no account could be found.
      * @throws org.jsecurity.authc.AuthenticationException
      *          if there is an error obtaining or constructing an AuthenticationInfo object based on the
-     * specified <tt>token</tt> or implementation-specifc login behavior fails.
+     *          specified <tt>token</tt> or implementation-specifc login behavior fails.
      */
     AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
 
+    /**
+     * Returns an account's authorization-specific information for the specified <code>principals</code>,
+     * or <tt>null</tt> if no account could be found.
+     *
+     * <p>This resulting <code>AuthorizationInfo</code> data is used by JSecurity to perform access control checks for
+     * the corresponding <code>Subject</code>.
+     *
+     * <p>Invocations of this method should be thought of as completely orthogonal to acquiring
+     * {@link #getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken) authenticationInfo}, since either could
+     * occur in any order.
+     *
+     * <p>For example, in &quot;Remember Me&quot; scenarios, the user identity is remembered (and
+     * assumed) for their current session and an authentication attempt during that session might never occur.
+     * But because their identity would be remembered, that is sufficient enough information to call this method to
+     * execute any necessary authorization checks.  For this reason, authentication and authorization should be
+     * loosely coupled and not depend on each other.
+     *
+     * @param principals the corresponding Subject's identifying principals with which to look up the Subject's
+     *                   <code>AuthorizationInfo</code>.
+     * @return the authorization information for the account associated with the specified <code>principals</code>,
+     *         or <tt>null</tt> if no account could be found.
+     */
     AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals);
 
 }

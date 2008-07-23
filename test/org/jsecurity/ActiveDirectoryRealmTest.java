@@ -30,7 +30,7 @@ import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -69,14 +69,13 @@ public class ActiveDirectoryRealmTest {
 
     @After
     public void tearDown() {
-        if( securityManager != null ) {
+        if (securityManager != null) {
             securityManager.destroy();
         }
     }
 
     @Test
     public void testDefaultConfig() {
-        securityManager.init();
         InetAddress localhost = null;
         try {
             localhost = InetAddress.getLocalHost();

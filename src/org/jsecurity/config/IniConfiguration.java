@@ -75,19 +75,19 @@ public class IniConfiguration extends TextConfiguration {
 
     public void init() throws JSecurityException {
 
-        if( configUrl != null ) {
-            if( ResourceUtils.resourceExists( configUrl ) ) {
-                load( configUrl );
+        if (configUrl != null) {
+            if (ResourceUtils.resourceExists(configUrl)) {
+                load(configUrl);
             } else {
-                if( ignoreResourceNotFound ) {
-                    if( log.isDebugEnabled() ) {
-                        log.debug( "JSecurity resource [" + configUrl + "] not found.  Ignoring since " +
-                                "'ignoreResourceNotFound' is set to true." );
+                if (ignoreResourceNotFound) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("JSecurity resource [" + configUrl + "] not found.  Ignoring since " +
+                                "'ignoreResourceNotFound' is set to true.");
                     }
                 } else {
-                    throw new ConfigurationException( "JSecurity resource [" + configUrl + "] specified as a 'configUrl' " +
+                    throw new ConfigurationException("JSecurity resource [" + configUrl + "] specified as a 'configUrl' " +
                             "cannot be found.  If you want to fall back on default configuration specified " +
-                            "via the 'config' parameter, then set 'ignoreResourceNotFound' to true." );
+                            "via the 'config' parameter, then set 'ignoreResourceNotFound' to true.");
                 }
             }
 
@@ -153,15 +153,11 @@ public class IniConfiguration extends TextConfiguration {
     }
 
     protected SecurityManager createSecurityManager() {
-        return createSecurityManagerFromIni(true);
-    }
-
-    protected SecurityManager createSecurityManagerFromIni(boolean initSecurityManager) {
         Map<String, Map<String, String>> sections = this.iniResource.getSections();
 
         Map<String, String> mainSection = sections.get(MAIN);
 
-        return createSecurityManagerForSection(mainSection, initSecurityManager);
+        return createSecurityManagerForSection(mainSection);
     }
 
     protected RealmSecurityManager newSecurityManagerInstance() {
@@ -169,7 +165,7 @@ public class IniConfiguration extends TextConfiguration {
     }
 
     @SuppressWarnings({"unchecked"})
-    protected SecurityManager createSecurityManagerForSection(Map<String, String> mainSection, boolean initSecurityManager) {
+    protected SecurityManager createSecurityManagerForSection(Map<String, String> mainSection) {
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 
@@ -216,11 +212,7 @@ public class IniConfiguration extends TextConfiguration {
         //set them on the SecurityManager
         if (!realms.isEmpty()) {
             securityManager.setRealms(realms);
-            LifecycleUtils.init( realms );
-        }
-
-        if( initSecurityManager ) {
-            securityManager.init();
+            LifecycleUtils.init(realms);
         }
 
         return securityManager;

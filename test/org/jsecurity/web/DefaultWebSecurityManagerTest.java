@@ -29,7 +29,6 @@ public class DefaultWebSecurityManagerTest {
     @Test
     public void simpleWebSecurityManagerInit() {
         DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
-        dwsm.init();
         dwsm.destroy();
     }
 
@@ -37,7 +36,6 @@ public class DefaultWebSecurityManagerTest {
     public void jsecuritySessionModeWebSecurityManagerInit() {
         DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
         dwsm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
-        dwsm.init();
         dwsm.destroy();
     }
 

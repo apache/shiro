@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -227,15 +226,14 @@ public class RedirectView {
         Map queryProps = queryProperties(model);
 
         if (queryProps != null) {
-            Iterator entries = queryProps.entrySet().iterator();
-            while (entries.hasNext()) {
+            for (Object o : queryProps.entrySet()) {
                 if (first) {
                     targetUrl.append('?');
                     first = false;
                 } else {
                     targetUrl.append('&');
                 }
-                Map.Entry entry = (Map.Entry) entries.next();
+                Map.Entry entry = (Map.Entry) o;
                 String encodedKey = urlEncode(entry.getKey().toString(), encodingScheme);
                 String encodedValue =
                         (entry.getValue() != null ? urlEncode(entry.getValue().toString(), encodingScheme) : "");
