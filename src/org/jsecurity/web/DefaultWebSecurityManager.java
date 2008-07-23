@@ -150,7 +150,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     public boolean isHttpSessionMode() {
-        return this.sessionMode != null && this.sessionMode.equals(HTTP_SESSION_MODE);
+        return this.sessionMode == null || this.sessionMode.equals(HTTP_SESSION_MODE);
     }
 
     protected SessionManager newSessionManagerInstance() {
