@@ -32,8 +32,22 @@ import org.jsecurity.authz.Permission;
  * <p>A <tt>PermissionResolver</tt> is used by many JSecurity components such as annotations, property file
  * configuration, URL configuration, etc.  It is useful whenever a String representation of a permission is specified
  * and that String needs to be converted to a Permission instance before executing a security check.</p>
+ * <p/>
+ * JSecurity chooses to support {@link WildcardPermission Wildcardpermission}s by default in almost all components and
+ * we do that in the form of the {@link WildcardPermissionResolver WildcardPermissionResolver}.   One of the nice
+ * things about <code>WildcardPermission</code>s being supported by default is that it makes it very easy to
+ * store complex permissions in the database - and also makes it very easy to represent permissions in JSP files,
+ * annotations, etc., where a simple string representation is useful.
+ * <p/>
+ * Although this happens to be the JSecurity default, you are of course free to provide custom
+ * String-to-Permission conversion by providing JSecurity components any instance of this interface.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @see org.jsecurity.mgt.AuthorizingSecurityManager#setPermissionResolver(PermissionResolver) AuthorizingSecurityManager.setPermissionResolver
+ * @see org.jsecurity.authz.ModularRealmAuthorizer#setPermissionResolver(PermissionResolver) ModularRealmAuthorizer.setPermissionResolver
+ * @see org.jsecurity.realm.AuthorizingRealm#setPermissionResolver(PermissionResolver) AuthorizingRealm.setPermissionResolver
+ * @see PermissionResolverAware PermissionResolverAware
  * @since 0.9
  */
 public interface PermissionResolver {

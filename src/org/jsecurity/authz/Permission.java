@@ -56,7 +56,12 @@ package org.jsecurity.authz;
  * really determine how a user 'has' a permission or not.  The Realm could use the semantics described here, or it
  * could utilize some other mechanism entirely - it is always up to the application developer.
  *
+ * <p>JSecurity provides a very powerful default implementation of this interface in the form of the
+ * {@link org.jsecurity.authz.permission.WildcardPermission WildcardPermission}.  We highly recommend that you
+ * investigate this class before trying to implement your own <code>Permission</code>s.
+ *
  * @author Les Hazlewood
+ * @see org.jsecurity.authz.permission.WildcardPermission WildcardPermission
  * @since 0.2
  */
 public interface Permission {
