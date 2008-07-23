@@ -21,6 +21,7 @@ package org.jsecurity.session.mgt;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
+import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
@@ -36,7 +37,7 @@ import java.util.Date;
  * @since 0.1
  */
 public abstract class AbstractValidatingSessionManager extends AbstractSessionManager
-        implements ValidatingSessionManager {
+        implements ValidatingSessionManager, Destroyable {
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;

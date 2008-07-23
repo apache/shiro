@@ -203,15 +203,15 @@ public class Base64 {
         byte groomedData[] = new byte[data.length];
         int bytesCopied = 0;
 
-        for (int i = 0; i < data.length; i++) {
-            switch (data[i]) {
+        for (byte aByte : data) {
+            switch (aByte) {
                 case (byte) ' ':
                 case (byte) '\n':
                 case (byte) '\r':
                 case (byte) '\t':
                     break;
                 default:
-                    groomedData[bytesCopied++] = data[i];
+                    groomedData[bytesCopied++] = aByte;
             }
         }
 
@@ -490,9 +490,9 @@ public class Base64 {
         byte groomedData[] = new byte[data.length];
         int bytesCopied = 0;
 
-        for (int i = 0; i < data.length; i++) {
-            if (isBase64(data[i])) {
-                groomedData[bytesCopied++] = data[i];
+        for (byte aByte : data) {
+            if (isBase64(aByte)) {
+                groomedData[bytesCopied++] = aByte;
             }
         }
 

@@ -21,19 +21,11 @@ package org.jsecurity.session.mgt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.cache.CacheManager;
-import org.jsecurity.cache.CacheManagerAware;
-import org.jsecurity.session.ExpiredSessionException;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.UnknownSessionException;
-import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.mgt.DefaultSessionEventManager;
-import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;
-import org.jsecurity.session.event.mgt.SessionEventManager;
+import org.jsecurity.session.*;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -41,52 +33,53 @@ import java.util.Date;
  * @author Les Hazlewood
  * @since 0.1
  */
-public abstract class AbstractSessionManager implements SessionManager, CacheManagerAware, SessionEventListenerRegistrar {
+public abstract class AbstractSessionManager implements SessionManager, SessionListenerRegistrar {
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected SessionEventManager sessionEventManager = new DefaultSessionEventManager();
-    protected CacheManager cacheManager;
+    protected Collection<SessionListener> listeners = new ArrayList<SessionListener>();
 
     public AbstractSessionManager() {
     }
 
-    public SessionEventManager getSessionEventManager() {
-        return sessionEventManager;
+    public void setSessionListeners(Collection<SessionListener> listeners) {
+        if (listeners == null) {
+            this.listeners = new ArrayList<SessionListener>();
+        } else {
+            this.listeners = listeners;
+        }
     }
 
-    public void setSessionEventManager(SessionEventManager sessionEventManager) {
-        this.sessionEventManager = sessionEventManager;
+    public void add(SessionListener listener) {
+        this.listeners.add(listener);
     }
 
-    public CacheManager getCacheManager() {
-        return cacheManager;
-    }
-
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
-    public void setSessionEventListeners(Collection<SessionEventListener> listeners) {
-        this.sessionEventManager.setSessionEventListeners(listeners);
-    }
-
-    public void add(SessionEventListener listener) {
-        this.sessionEventManager.add(listener);
-    }
-
-    public boolean remove(SessionEventListener listener) {
-        return this.sessionEventManager.remove(listener);
+    public boolean remove(SessionListener listener) {
+        return this.listeners.remove(listener);
     }
 
     public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
         Session session = createSession(originatingHost);
-        sendStartEvent(session);
+        notifyStart(session);
         return session.getId();
     }
 
-    protected void sendStartEvent(Session session) {
-        this.sessionEventManager.sendStartEvent(session);
+    protected void notifyStart(Session session) {
+        for (SessionListener listener : this.listeners) {
+            listener.onStart(session);
+        }
+    }
+
+    protected void notifyStop(Session session) {
+        for (SessionListener listener : this.listeners) {
+            listener.onStop(session);
+        }
+    }
+
+    protected void notifyExpiration(Session session) {
+        for (SessionListener listener : this.listeners) {
+            listener.onExpiration(session);
+        }
     }
 
     public Date getStartTimestamp(Serializable sessionId) {
@@ -144,13 +137,9 @@ public abstract class AbstractSessionManager implements SessionManager, CacheMan
         if (log.isDebugEnabled()) {
             log.debug("Stopping session with id [" + session.getId() + "]");
         }
-        sendStopEvent(session);
+        notifyStop(session);
         session.stop();
         onStop(session);
-    }
-
-    protected void sendStopEvent(Session session) {
-        this.sessionEventManager.sendStopEvent(session);
     }
 
     protected void onStop(Session session) {
@@ -161,13 +150,9 @@ public abstract class AbstractSessionManager implements SessionManager, CacheMan
         if (log.isDebugEnabled()) {
             log.debug("Expiring session with id [" + session.getId() + "]");
         }
-        sendExpirationEvent(session);
+        notifyExpiration(session);
         session.stop();
         onExpiration(session);
-    }
-
-    protected void sendExpirationEvent(Session session) {
-        this.sessionEventManager.sendExpirationEvent(session);
     }
 
     protected void onExpiration(Session session) {

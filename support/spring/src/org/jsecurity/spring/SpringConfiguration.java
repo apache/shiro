@@ -52,10 +52,8 @@ import java.util.Map;
  * </p>
  *
  * @author Jeremy Haile
- * @since 0.9
- *
  * @see IniWebConfiguration
- * @see IniWebConfiguration#createSecurityManagerFromIni(boolean)
+ * @since 0.9
  */
 public class SpringConfiguration extends IniWebConfiguration {
 
@@ -90,7 +88,7 @@ public class SpringConfiguration extends IniWebConfiguration {
         ServletContext servletContext = getFilterConfig().getServletContext();
         ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
 
-        return getOrCreateSecurityManager( appCtx );
+        return getOrCreateSecurityManager(appCtx);
     }
 
     protected SecurityManager getOrCreateSecurityManager(ApplicationContext appCtx) {
@@ -127,14 +125,14 @@ public class SpringConfiguration extends IniWebConfiguration {
         if (!realms.isEmpty()) {
 
             // Create security manager according to superclass and set realms on it from Spring.
-            securityManager = super.createSecurityManagerFromIni(false);
+            securityManager = super.createSecurityManager();
 
-            if( securityManager instanceof RealmSecurityManager ) {
+            if (securityManager instanceof RealmSecurityManager) {
                 RealmSecurityManager realmSM = (RealmSecurityManager) securityManager;
                 realmSM.setRealms(realms);
             } else {
-                log.warn( "Attempted to set realms declared in Spring on SecurityManager, but was not of " +
-                        "type RealmSecurityManager - instead was of type: " + securityManager.getClass().getName() );
+                log.warn("Attempted to set realms declared in Spring on SecurityManager, but was not of " +
+                        "type RealmSecurityManager - instead was of type: " + securityManager.getClass().getName());
             }
         }
 

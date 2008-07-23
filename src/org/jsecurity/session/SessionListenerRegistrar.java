@@ -16,17 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.authz;
+package org.jsecurity.session;
 
-import org.jsecurity.ExceptionTest;
+import java.util.Collection;
 
 /**
  * @author Les Hazlewood
- * @since Jun 10, 2008 4:08:48 PM
+ * @since 0.9
  */
-public class UnsupportedAccountExceptionTest extends ExceptionTest {
+public interface SessionListenerRegistrar {
 
-    protected Class getExceptionClass() {
-        return UnsupportedAccountException.class;
-    }
+    void setSessionListeners(Collection<SessionListener> listeners);
+
+    void add(SessionListener listener);
+
+    boolean remove(SessionListener listener);
 }

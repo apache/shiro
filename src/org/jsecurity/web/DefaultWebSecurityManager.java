@@ -18,20 +18,19 @@
  */
 package org.jsecurity.web;
 
-import org.jsecurity.cache.CacheManager;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
+import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.session.DefaultWebSessionManager;
 import org.jsecurity.web.session.ServletContainerSessionManager;
 import org.jsecurity.web.session.WebSessionManager;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.Collection;
 
@@ -57,43 +56,64 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      */
     public static final String AUTHENTICATED_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
-    // Encoding used when converting cipher key characters to bytes
-    private static final String CIPHER_CHAR_ENCODING = "UTF-8";
-
     private String sessionMode = HTTP_SESSION_MODE; //default
 
-    protected String rememberMeCipherKey = null;
-    protected String rememberMeCookiePath = null;
-    protected Integer rememberMeMaxAge = null;
-
-    /**
-     * Sets the default cipher key used by the remember me manager.  If this is not
-     * overridden, the default key will be used instead.
-     * @param rememberMeCipherKey the cipher key to use for remember me cookie encryption.
-     */
-    public void setRememberMeCipherKey(String rememberMeCipherKey) {
-        this.rememberMeCipherKey = rememberMeCipherKey;
+    public DefaultWebSecurityManager() {
+        setRememberMeManager(new WebRememberMeManager());
     }
 
-    public String getRememberMeCipherKey() {
-        return rememberMeCipherKey;
+    public DefaultWebSecurityManager(Realm singleRealm) {
+        setRealm(singleRealm);
     }
 
-    public String getRememberMeCookiePath() {
-        return rememberMeCookiePath;
+    public DefaultWebSecurityManager(Collection<Realm> realms) {
+        setRealms(realms);
+    }
+
+    public void setRememberMeCipherKey(byte[] bytes) {
+        ((WebRememberMeManager) getRememberMeManager()).setCipherKey(bytes);
+    }
+
+    public void setRememberMeCipherKeyHex(String hex) {
+        ((WebRememberMeManager) getRememberMeManager()).setCipherKeyHex(hex);
+    }
+
+    public void setRememberMeCipherKeyBase64(String base64) {
+        ((WebRememberMeManager) getRememberMeManager()).setCipherKeyBase64(base64);
+    }
+
+    public void setRememberMeEncryptionCipherKey(byte[] bytes) {
+        ((WebRememberMeManager) getRememberMeManager()).setEncryptionCipherKey(bytes);
+    }
+
+    public void setRememberMeEncryptionCipherKeyHex(String hex) {
+        ((WebRememberMeManager) getRememberMeManager()).setEncryptionCipherKeyHex(hex);
+    }
+
+    public void setRememberMeEncryptionCipherKeyBase64(String base64) {
+        ((WebRememberMeManager) getRememberMeManager()).setEncryptionCipherKeyBase64(base64);
+    }
+
+    public void setRememberMeDecryptionCipherKey(byte[] bytes) {
+        ((WebRememberMeManager) getRememberMeManager()).setDecryptionCipherKey(bytes);
+    }
+
+    public void setRememberMeDecryptionCipherKeyHex(String hex) {
+        ((WebRememberMeManager) getRememberMeManager()).setDecryptionCipherKeyHex(hex);
+    }
+
+    public void setRememberMeDecryptionCipherKeyBase64(String base64) {
+        ((WebRememberMeManager) getRememberMeManager()).setDecryptionCipherKeyBase64(base64);
     }
 
     /**
      * Sets the path used to store the remember me cookie.  This determines which paths
      * are able to view the remember me cookie.
+     *
      * @param rememberMeCookiePath the path to use for the remember me cookie.
      */
     public void setRememberMeCookiePath(String rememberMeCookiePath) {
-        this.rememberMeCookiePath = rememberMeCookiePath;
-    }
-
-    public Integer getRememberMeMaxAge() {
-        return rememberMeMaxAge;
+        ((WebRememberMeManager) getRememberMeManager()).setCookiePath(rememberMeCookiePath);
     }
 
     /**
@@ -101,40 +121,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      * a user will be remembered by the "remember me" feature.  Used when calling
      * {@link javax.servlet.http.Cookie#setMaxAge(int) maxAge}.  Please see that JavaDoc for the semantics on the
      * repercussions of negative, zero, and positive values for the maxAge.
+     *
      * @param rememberMeMaxAge the maximum age for the remember me cookie.
      */
     public void setRememberMeMaxAge(Integer rememberMeMaxAge) {
-        this.rememberMeMaxAge = rememberMeMaxAge;
-    }
-
-    public DefaultWebSecurityManager() {
-        super();
-    }
-
-    public DefaultWebSecurityManager(Realm singleRealm) {
-        super(singleRealm);
-    }
-
-    public DefaultWebSecurityManager(Collection<Realm> realms) {
-        super(realms);
-    }
-
-    protected void afterSessionManagerSet() {
-        WebRememberMeManager rmm = new WebRememberMeManager();
-        if( getRememberMeCipherKey() != null ) {
-            try {
-                rmm.setCipherKey( getRememberMeCipherKey().getBytes(CIPHER_CHAR_ENCODING) );
-            } catch (UnsupportedEncodingException e) {
-                log.error( "Error converting cipher key string to bytes.", e );
-            }
-        }
-        if( getRememberMeCookiePath() != null ) {
-            rmm.setCookiePath( getRememberMeCookiePath() );
-        }
-        if( getRememberMeMaxAge() != null ) {
-            rmm.setCookieMaxAge( getRememberMeMaxAge() );
-        }
-        setRememberMeManager(rmm);
+        ((WebRememberMeManager) getRememberMeManager()).setCookieMaxAge(rememberMeMaxAge);
     }
 
     public String getSessionMode() {
@@ -150,38 +141,29 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
                     HTTP_SESSION_MODE + "' being the default.";
             throw new IllegalArgumentException(msg);
         }
+        boolean recreate = !this.sessionMode.equals(sessionMode);
         this.sessionMode = sessionMode;
+        if (recreate) {
+            LifecycleUtils.destroy(getSessionManager());
+            createSessionManager();
+        }
     }
 
     public boolean isHttpSessionMode() {
-        return this.sessionMode.equals(HTTP_SESSION_MODE);
+        return this.sessionMode != null && this.sessionMode.equals(HTTP_SESSION_MODE);
     }
 
-    protected SessionManager createSessionManager() {
-
-        CacheManager cacheManager = getCacheManager();
-
+    protected SessionManager newSessionManagerInstance() {
         if (isHttpSessionMode()) {
             if (log.isInfoEnabled()) {
                 log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (Http Sessions)");
             }
-            ServletContainerSessionManager scsm = new ServletContainerSessionManager();
-            if (cacheManager != null) {
-                scsm.setCacheManager(cacheManager);
-            }
-            scsm.setSessionEventListeners(getSessionEventListeners());
-            return scsm;
+            return new ServletContainerSessionManager();
         } else {
             if (log.isInfoEnabled()) {
                 log.info(JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
             }
-            DefaultWebSessionManager wsm = new DefaultWebSessionManager();
-            if (cacheManager != null) {
-                wsm.setCacheManager(cacheManager);
-            }
-            wsm.setSessionEventListeners(getSessionEventListeners());
-            wsm.init();
-            return wsm;
+            return new DefaultWebSessionManager();
         }
     }
 

@@ -21,6 +21,7 @@ package org.jsecurity.mgt;
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.DelegatingSubject;
@@ -45,8 +46,9 @@ import java.util.Collection;
  *
  * <p>Unless you're happy with the default simple {@link org.jsecurity.realm.text.PropertiesRealm properties file}-based realm, which may or
  * may not be flexible enough for enterprise applications, you might want to specify at least one custom
- * <tt>Realm</tt> implementation (via {@link #setRealm}) that 'knows' about your application's data/security model.
- * All other attributes have suitable defaults for most enterprise applications.</p>
+ * <tt>Realm</tt> implementation that 'knows' about your application's data/security model
+ * (via {@link #setRealm} or one of the overloaded constructors).  All other attributes in this class hierarchy
+ * will have suitable defaults for most enterprise applications.</p>
  *
  * <p><b>RememberMe notice</b>: This class supports the ability to configure a
  * {@link #setRememberMeManager RememberMeManager}
@@ -55,14 +57,11 @@ import java.util.Collection;
  *
  * <p>Because RememberMe services are inherently client tier-specific and
  * therefore aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an
- * instance yourself before calling {@link #init() init()}.  However if you're reading this JavaDoc with the
+ * instance yourself via the {@link #setRememberMeManager(org.jsecurity.subject.RememberMeManager) setRememberMeManager}
+ * mutator.  However if you're reading this JavaDoc with the
  * expectation of operating in a Web environment, take a look at the
  * {@link org.jsecurity.web.DefaultWebSecurityManager DefaultWebSecurityManager} implementation, which
  * <em>does</em> support <tt>RememberMe</tt> services by default at startup.
- *
- * <p>Finally, the only absolute requirement for a <tt>DefaultSecurityManager</tt> instance to function properly is
- * that its {@link #init() init()} method must be called before it is used.  Even this is called automatically if
- * you use one of the overloaded constructors with one or more arguments.</p>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -71,31 +70,33 @@ import java.util.Collection;
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {
 
-    protected RememberMeManager rememberMeManager = null;
+    protected RememberMeManager rememberMeManager;
 
     /**
-     * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
-     * {@link #init()} after the necessary properties have been set.
+     * Default no-arg constructor.
      */
     public DefaultSecurityManager() {
+        PropertiesRealm propsRealm = new PropertiesRealm();
+        setRealm(propsRealm);
+        propsRealm.init();
     }
 
     /**
-     * Supporting constructor for a single-realm application (automatically calls {@link #init()} before returning).
+     * Supporting constructor for a single-realm application.
      *
      * @param singleRealm the single realm used by this SecurityManager.
      */
     public DefaultSecurityManager(Realm singleRealm) {
-        super(singleRealm);
+        setRealm(singleRealm);
     }
 
     /**
-     * Supporting constructor that sets the {@link #setRealms realms} property and then automatically calls {@link #init()}.
+     * Supporting constructor for multiple {@link #setRealms realms}.
      *
      * @param realms the realm instances backing this SecurityManager.
      */
     public DefaultSecurityManager(Collection<Realm> realms) {
-        super(realms);
+        setRealms(realms);
     }
 
     public RememberMeManager getRememberMeManager() {
@@ -139,8 +140,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     /**
      * Creates a <tt>Subject</tt> instance for the user represented by the given method arguments.
      *
-     * @param token   the <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param info the <tt>AuthenticationInfo</tt> of a newly authenticated user.
+     * @param token the <tt>AuthenticationToken</tt> submitted for the successful authentication.
+     * @param info  the <tt>AuthenticationInfo</tt> of a newly authenticated user.
      * @return the <tt>Subject</tt> instance that represents the user and session data for the newly
      *         authenticated user.
      */

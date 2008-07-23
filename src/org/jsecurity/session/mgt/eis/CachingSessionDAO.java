@@ -25,7 +25,6 @@ import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
-import org.jsecurity.util.Initializable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -35,43 +34,28 @@ import java.util.Collections;
  * An CachingSessionDAO is a SessionDAO that provides a transparent caching layer between the components that
  * use it and the underlying EIS (Enterprise Information System) for enhanced performance.
  *
- * <p>This implementation caches all active sessions in a cache created by a required
+ * <p>This implementation caches all active sessions in a cache created by a
  * {@link org.jsecurity.cache.CacheManager}.  All <tt>SessionDAO</tt> methods are implemented by this class to employ
  * caching behavior and delegates the actual EIS operations to respective do* methods to be implemented by
  * subclasses (doCreate, doRead, etc).
  *
- * <p>After instantiating an instance of this class (or subclass) and setting the <tt>CacheManager</tt> property,
- * the {@link #init} method must be called to properly initialize the cache.
- *
  * @author Les Hazlewood
  * @since 0.2
  */
-public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware, Initializable {
+public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware {
 
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    private CacheManager cacheManager = null;
-    private Cache activeSessions = null;
+    private CacheManager cacheManager;
+    private Cache activeSessions;
     private String activeSessionsCacheName = ACTIVE_SESSION_CACHE_NAME;
 
     /**
-     * JavaBeans compatible constructor.  The {@link #setCacheManager CacheManager} property must be set and the
-     * {@link #init} method called before the instance can be used.
+     * JavaBeans compatible constructor.
      */
     public CachingSessionDAO() {
-    }
-
-    /**
-     * Constructor taking in the required <tt>CacheManager</tt> property.  This constructor will call init()
-     * automatically, thereby making the instance ready for use immediately after instantiation.
-     *
-     * @param manager the required <tt>CacheManager</tt> property necessary for cache initialization.
-     */
-    public CachingSessionDAO(CacheManager manager) {
-        setCacheManager(manager);
-        init();
     }
 
     /**
@@ -81,6 +65,9 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      */
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
+        //force cache reload:
+        this.activeSessions = null;
+        getActiveSessionsCacheLazy();
     }
 
     /**
@@ -116,27 +103,13 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     }
 
     protected Cache createActiveSessionsCache() {
+        Cache cache = null;
         CacheManager mgr = getCacheManager();
-        if (mgr == null) {
-            throw new IllegalStateException("CacheManager property must be set to perform Cache creation.");
+        if (mgr != null) {
+            String name = getActiveSessionsCacheName();
+            cache = mgr.getCache(name);
         }
-        return mgr.getCache(getActiveSessionsCacheName());
-    }
-
-    /**
-     * Initializes this DAO's internal session cache.  Subclasses can override the {@link #onInit} method for
-     * additional custom startup behavior.
-     */
-    public void init() {
-        getActiveSessionsCacheLazy();
-        onInit();
-    }
-
-    /**
-     * Template callback methods for subclass custom initialization behavior, so they don't have to override
-     * the {@link #init} method.
-     */
-    protected void onInit() {
+        return cache;
     }
 
     /**
@@ -148,7 +121,10 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     public Serializable create(Session session) {
         Serializable sessionId = doCreate(session);
         verifySessionId(sessionId);
-        getActiveSessionsCacheLazy().put(sessionId, session);
+        Cache cache = getActiveSessionsCacheLazy();
+        if (cache != null) {
+            cache.put(sessionId, session);
+        }
         return sessionId;
     }
 
@@ -173,7 +149,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      * @param sessionId the session id to check for non-existence in the cache.
      */
     protected void ensureUncached(Serializable sessionId) {
-        Cache cache = getActiveSessionsCache();
+        Cache cache = getActiveSessionsCacheLazy();
         if (cache != null && cache.get(sessionId) != null) {
             String msg = "There is an existing session already created with session id [" +
                     sessionId + "].  Session ID's must be unique.";
@@ -203,17 +179,15 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     public Session readSession(Serializable sessionId) throws UnknownSessionException {
         Session s = null;
 
-        Cache cache = getActiveSessionsCache();
+        Cache cache = getActiveSessionsCacheLazy();
         if (cache != null) {
             s = (Session) cache.get(sessionId);
         }
 
         if (s == null) {
             s = doReadSession(sessionId);
-            if (s != null) {
-                if (!s.isExpired() && s.getStopTimestamp() == null) {
-                    getActiveSessionsCacheLazy().put(sessionId, s);
-                }
+            if (cache != null && s != null && !s.isExpired() && s.getStopTimestamp() == null) {
+                cache.put(sessionId, s);
             }
         }
 
@@ -251,7 +225,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
         doUpdate(session);
 
-        Cache cache = getActiveSessionsCache();
+        Cache cache = getActiveSessionsCacheLazy();
         Serializable id = session.getId();
 
         if (session.getStopTimestamp() != null || session.isExpired()) {
@@ -259,7 +233,9 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
                 cache.remove(id);
             }
         } else {
-            getActiveSessionsCacheLazy().put(id, session);
+            if (cache != null) {
+                cache.put(id, session);
+            }
         }
     }
 
@@ -279,7 +255,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     public void delete(Session session) {
         Serializable id = session.getId();
         doDelete(session);
-        Cache cache = getActiveSessionsCache();
+        Cache cache = getActiveSessionsCacheLazy();
         if (cache != null) {
             cache.remove(id);
         }
@@ -303,7 +279,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      */
     @SuppressWarnings({"unchecked"})
     public Collection<Session> getActiveSessions() {
-        Cache cache = getActiveSessionsCache();
+        Cache cache = getActiveSessionsCacheLazy();
         if (cache != null) {
             return cache.values();
         } else {

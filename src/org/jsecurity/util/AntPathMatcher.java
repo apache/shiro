@@ -249,8 +249,8 @@ public class AntPathMatcher {
         char ch;
 
         boolean containsStar = false;
-        for (int i = 0; i < patArr.length; i++) {
-            if (patArr[i] == '*') {
+        for (char aPatArr : patArr) {
+            if (aPatArr == '*') {
                 containsStar = true;
                 break;
             }
@@ -414,9 +414,9 @@ public class AntPathMatcher {
                 buffer.append(this.pathSeparator);
             }
             buffer.append(pathParts[i]);
-		}
+        }
 
-		return buffer.toString();
-	}
+        return buffer.toString();
+    }
 
 }

@@ -54,7 +54,6 @@ public class DefaultSecurityManagerTest {
 
     @Test
     public void testDefaultConfig() {
-        sm.init();
         InetAddress localhost = null;
         try {
             localhost = InetAddress.getLocalHost();

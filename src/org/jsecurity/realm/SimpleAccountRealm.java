@@ -22,7 +22,6 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.util.Initializable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,9 +42,9 @@ import java.util.Set;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class SimpleAccountRealm extends AuthorizingRealm implements Initializable {
+public class SimpleAccountRealm extends AuthorizingRealm {
 
-    protected Map<String,SimpleRole> roles = null;
+    protected Map<String, SimpleRole> roles = null;
 
     public SimpleAccountRealm() {
     }
@@ -63,7 +62,7 @@ public class SimpleAccountRealm extends AuthorizingRealm implements Initializabl
             initAuthorizationCache();
         }
 
-        this.roles = new HashMap<String,SimpleRole>();
+        this.roles = new HashMap<String, SimpleRole>();
         accountAndRoleCachesCreated();
     }
 

@@ -21,7 +21,7 @@ package org.jsecurity.authc;
 import org.jsecurity.subject.PrincipalCollection;
 
 /**
- * An <code>AuthenticationListener</code> is notified of noteworthy events while
+ * An <code>AuthenticationListener</code> listens for notifications while
  * {@link org.jsecurity.subject.Subject Subject}s authenticate with the system.
  *
  * @author Les Hazlewood

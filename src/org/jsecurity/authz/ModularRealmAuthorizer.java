@@ -22,7 +22,6 @@ import org.jsecurity.authz.permission.PermissionResolver;
 import org.jsecurity.authz.permission.PermissionResolverAware;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.util.Initializable;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,17 +33,15 @@ import java.util.List;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class ModularRealmAuthorizer implements Authorizer, Initializable, PermissionResolverAware {
+public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAware {
 
-    protected Collection<Realm> realms = null;
-    protected PermissionResolver permissionResolver = null;
+    protected Collection<Realm> realms;
 
     public ModularRealmAuthorizer() {
     }
 
-    public ModularRealmAuthorizer(List<Realm> realms) {
+    public ModularRealmAuthorizer(Collection<Realm> realms) {
         setRealms(realms);
-        init();
     }
 
     public Collection<Realm> getRealms() {
@@ -55,30 +52,16 @@ public class ModularRealmAuthorizer implements Authorizer, Initializable, Permis
         this.realms = realms;
     }
 
-    public PermissionResolver getPermissionResolver() {
-        return permissionResolver;
-    }
-
     public void setPermissionResolver(PermissionResolver permissionResolver) {
-        this.permissionResolver = permissionResolver;
-    }
-
-    public void init() {
         Collection<Realm> realms = getRealms();
-        if (realms == null || realms.isEmpty()) {
-            String msg = "One or more realms must be configured.";
-            throw new IllegalStateException(msg);
-        }
-        PermissionResolver resolver = getPermissionResolver();
-        if (resolver != null) {
+        if (realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
                 if (realm instanceof PermissionResolverAware) {
-                    ((PermissionResolverAware) realm).setPermissionResolver(resolver);
+                    ((PermissionResolverAware) realm).setPermissionResolver(permissionResolver);
                 }
             }
         }
     }
-
 
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         for (Realm realm : getRealms()) {

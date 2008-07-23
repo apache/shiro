@@ -53,6 +53,9 @@ import java.net.InetAddress;
  */
 public class ServletContainerSessionManager extends AbstractSessionManager implements WebSessionManager {
 
+    public ServletContainerSessionManager() {
+    }
+
     protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
         //Ignore session id since there is no way to acquire a session based on an id in a servlet container
         //(that is implementation agnostic)

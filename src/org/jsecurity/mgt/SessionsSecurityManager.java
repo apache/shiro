@@ -20,13 +20,9 @@ package org.jsecurity.mgt;
 
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.realm.Realm;
-import org.jsecurity.session.ExpiredSessionException;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.session.Session;
-import org.jsecurity.session.StoppedSessionException;
-import org.jsecurity.session.event.SessionEventListener;
-import org.jsecurity.session.event.mgt.SessionEventListenerRegistrar;
+import org.jsecurity.cache.CacheManager;
+import org.jsecurity.cache.CacheManagerAware;
+import org.jsecurity.session.*;
 import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.session.mgt.DelegatingSession;
 import org.jsecurity.session.mgt.SessionManager;
@@ -47,40 +43,19 @@ import java.util.Collection;
  * implemented by subclasses.
  *
  * <p>In keeping with the other classes in this hierarchy and JSecurity's desire to minimize configuration whenever
- * possible, suitable default instances for all dependencies will be created upon {@link #init() initialization} if
- * they have not been provided.
+ * possible, suitable default instances for all dependencies will be created upon instantiation.
  *
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionEventListenerRegistrar {
+public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionListenerRegistrar {
 
-    protected SessionManager sessionManager;
-    protected Collection<SessionEventListener> sessionEventListeners = null;
+    protected SessionManager sessionManager = createSessionManager();
 
     /**
-     * Default no-arg constructor - used in IoC environments or when the programmer wishes to explicitly call
-     * {@link #init()} after the necessary properties have been set.
+     * Default no-arg constructor.
      */
     public SessionsSecurityManager() {
-    }
-
-    /**
-     * Supporting constructor for a single-realm application (automatically calls {@link #init()} before returning).
-     *
-     * @param singleRealm the single realm used by this SecurityManager.
-     */
-    public SessionsSecurityManager(Realm singleRealm) {
-        super(singleRealm);
-    }
-
-    /**
-     * Supporting constructor that sets the {@link #setRealms realms} property and then automatically calls {@link #init()}.
-     *
-     * @param realms the realm instances backing this SecurityManager.
-     */
-    public SessionsSecurityManager(Collection<Realm> realms) {
-        super(realms);
     }
 
     /**
@@ -105,37 +80,30 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     protected SessionManager createSessionManager() {
-        DefaultSessionManager sessionManager = new DefaultSessionManager();
-        if (getCacheManager() != null) {
-            sessionManager.setCacheManager(getCacheManager());
-        }
-        if (getSessionEventListeners() != null) {
-            sessionManager.setSessionEventListeners(getSessionEventListeners());
-        }
-        sessionManager.init();
-        return sessionManager;
-    }
-
-    protected void ensureSessionManager() {
-        if (getSessionManager() == null) {
-            if (log.isInfoEnabled()) {
-                log.info("No delegate SessionManager instance has been set as a property of this class.  Creating a " +
-                        "default SessionManager instance...");
+        SessionManager sm = newSessionManagerInstance();
+        CacheManager cm = getCacheManager();
+        if (cm != null) {
+            if (sm instanceof CacheManagerAware) {
+                ((CacheManagerAware) sm).setCacheManager(cm);
             }
-            SessionManager sessionManager = createSessionManager();
-            setSessionManager(sessionManager);
         }
+        return sm;
     }
 
-    protected SessionManager getRequiredSessionManager() {
-        if (getSessionManager() == null) {
-            ensureSessionManager();
-        }
-        return getSessionManager();
+    protected SessionManager newSessionManagerInstance() {
+        return new DefaultSessionManager();
     }
 
-    public Collection<SessionEventListener> getSessionEventListeners() {
-        return sessionEventListeners;
+    protected void afterCacheManagerSet() {
+        super.afterCacheManagerSet();
+        applyCacheManagerToSessionManager();
+    }
+
+    protected void applyCacheManagerToSessionManager() {
+        SessionManager sm = getSessionManager();
+        if (sm instanceof CacheManagerAware) {
+            ((CacheManagerAware) sm).setCacheManager(cacheManager);
+        }
     }
 
     /**
@@ -144,50 +112,41 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      *
      * <p>This is more convenient than having to configure your own SessionManager instance, inject the listeners on
      * it, and then set that SessionManager instance as an attribute of this class.  Instead, you can just rely
-     * on the <tt>SecurityManager</tt>'s default initialization logic to create the SessionManager instance for you
-     * and then apply these <tt>SessionEventListener</tt>s on your behalf.
+     * on the <tt>SecurityManager</tt> to apply these <tt>SessionEventListener</tt>s on your behalf.
      *
      * <p>One notice however: The underlying SessionManager delegate must implement the
-     * {@link SessionEventListenerRegistrar SessionEventListenerRegistrar} interface in order for these listeners to
+     * {@link SessionListenerRegistrar SessionListenerRegistrar} interface in order for these listeners to
      * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
-     * will be thrown during {@link #init() initialization}.
+     * will be thrown.
      *
      * @param sessionEventListeners the <tt>SessionEventListener</tt>s to register with the underlying delegate
      *                              <tt>SessionManager</tt> at startup.
      */
-    public void setSessionEventListeners(Collection<SessionEventListener> sessionEventListeners) {
-        this.sessionEventListeners = sessionEventListeners;
+    public void setSessionListeners(Collection<SessionListener> sessionEventListeners) {
+        assertSessionListenerSupport();
+        ((SessionListenerRegistrar) this.sessionManager).setSessionListeners(sessionEventListeners);
     }
 
-    private void assertSessionEventListenerSupport(SessionManager sessionManager) {
-        if (!(sessionManager instanceof SessionEventListenerRegistrar)) {
-            String msg = "SessionEventListener registration failed:  The underlying SessionManager instance of " +
+    private void assertSessionListenerSupport() {
+        if (!(this.sessionManager instanceof SessionListenerRegistrar)) {
+            String msg = "SessionListener registration failed:  The underlying SessionManager instance of " +
                     "type [" + sessionManager.getClass().getName() + "] does not implement the " +
-                    SessionEventListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                    "runtime SessionEvent propagation.";
+                    SessionListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                    "session notifications.";
             throw new IllegalStateException(msg);
         }
     }
 
-    public void add(SessionEventListener listener) {
-        ensureSessionManager();
+    public void add(SessionListener listener) {
+        assertSessionListenerSupport();
         SessionManager sm = getSessionManager();
-        assertSessionEventListenerSupport(sm);
-        ((SessionEventListenerRegistrar) sm).add(listener);
+        ((SessionListenerRegistrar) sm).add(listener);
     }
 
-    public boolean remove(SessionEventListener listener) {
+    public boolean remove(SessionListener listener) {
         SessionManager sm = getSessionManager();
-        return (sm instanceof SessionEventListenerRegistrar) &&
-                ((SessionEventListenerRegistrar) sm).remove(listener);
-    }
-
-    protected void afterAuthorizerSet() {
-        ensureSessionManager();
-        afterSessionManagerSet();
-    }
-
-    protected void afterSessionManagerSet() {
+        return (sm instanceof SessionListenerRegistrar) &&
+                ((SessionListenerRegistrar) sm).remove(listener);
     }
 
     protected void beforeSessionManagerDestroyed() {
@@ -195,8 +154,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     protected void destroySessionManager() {
         LifecycleUtils.destroy(getSessionManager());
-        this.sessionManager = null;
-        this.sessionEventListeners = null;
     }
 
     protected void beforeAuthorizerDestroyed() {
@@ -205,12 +162,13 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        Serializable sessionId = getRequiredSessionManager().start(hostAddress);
-        return new DelegatingSession(sessionManager, sessionId);
+        SessionManager sm = getSessionManager();
+        Serializable sessionId = sm.start(hostAddress);
+        return new DelegatingSession(sm, sessionId);
     }
 
     public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        SessionManager sm = getRequiredSessionManager();
+        SessionManager sm = getSessionManager();
         if (sm.isExpired(sessionId)) {
             String msg = "Session with id [" + sessionId + "] has expired and may not be used.";
             throw new ExpiredSessionException(msg);

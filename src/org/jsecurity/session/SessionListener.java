@@ -16,19 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.authc;
-
-import java.util.Collection;
+package org.jsecurity.session;
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface AuthenticationListenerRegistrar {
+public interface SessionListener {
 
-    void setAuthenticationListeners(Collection<AuthenticationListener> listeners);
+    /**
+     * Notification callback that occurs when the corresponding Session has started.
+     *
+     * @param session the session that has started.
+     */
+    void onStart(Session session);
 
-    void add(AuthenticationListener listener);
+    /**
+     * Notification callback that occurs when the corresponding Session has stopped.
+     * <p/>
+     * See {@link org.jsecurity.session.Session#getStopTimestamp() Session.getStopTimestamp()} for an explanation
+     * of when a session may become stopped.
+     *
+     * @param session the session that has stopped.
+     */
+    void onStop(Session session);
 
-    boolean remove(AuthenticationListener listener);
+    /**
+     * Notification callback that occurs when the corresponding Session has expired.
+     *
+     * @param session the session that has expired.
+     */
+    void onExpiration(Session session);
 }

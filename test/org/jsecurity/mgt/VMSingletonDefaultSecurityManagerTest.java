@@ -49,7 +49,6 @@ public class VMSingletonDefaultSecurityManagerTest {
     @Test
     public void testVMSingleton() {
         DefaultSecurityManager sm = new DefaultSecurityManager();
-        sm.init();
         SecurityUtils.setSecurityManager(sm);
 
         Subject subject = SecurityUtils.getSubject();

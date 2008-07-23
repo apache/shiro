@@ -55,17 +55,6 @@ public abstract class CachingRealm implements Realm, CacheManagerAware {
     }
 
     /**
-     * Sets the <tt>CacheManager</tt> to be used for data caching to reduce EIS round trips.
-     *
-     * <p>This property is <tt>null</tt> by default, indicating that caching is turned off.
-     *
-     * @param authzInfoCacheManager the <tt>CacheManager</tt> to use for data caching, or <tt>null</tt> to disable caching.
-     */
-    public void setCacheManager(CacheManager authzInfoCacheManager) {
-        this.cacheManager = authzInfoCacheManager;
-    }
-
-    /**
      * Returns the <tt>CacheManager</tt> used for data caching to reduce EIS round trips, or <tt>null</tt> if
      * caching is disabled.
      *
@@ -74,6 +63,21 @@ public abstract class CachingRealm implements Realm, CacheManagerAware {
      */
     public CacheManager getCacheManager() {
         return this.cacheManager;
+    }
+
+    /**
+     * Sets the <tt>CacheManager</tt> to be used for data caching to reduce EIS round trips.
+     *
+     * <p>This property is <tt>null</tt> by default, indicating that caching is turned off.
+     *
+     * @param authzInfoCacheManager the <tt>CacheManager</tt> to use for data caching, or <tt>null</tt> to disable caching.
+     */
+    public void setCacheManager(CacheManager authzInfoCacheManager) {
+        this.cacheManager = authzInfoCacheManager;
+        afterCacheManagerSet();
+    }
+
+    protected void afterCacheManagerSet() {
     }
 
     public String getName() {
