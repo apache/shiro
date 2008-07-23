@@ -40,7 +40,8 @@ import org.jsecurity.subject.PrincipalCollection;
  * convenient for a <code>Realm</code> implementation to utilize an implementation of the {@link Account Account}
  * interface instead, which is a convenience interface that combines both <code>AuthenticationInfo</code> and
  * <code>AuthorizationInfo</code>.  Whether you choose to implement these two interfaces separately or implement the one
- * <code>Account</code> interface for a given <code>Realm</code> is entirely based on your application's needs.
+ * <code>Account</code> interface for a given <code>Realm</code> is entirely based on your application's needs or your
+ * preferences.
  *
  * <p><b>Pleae note:</b>  Since JSecurity sometimes logs authentication operations, please ensure your AuthenticationInfo's
  * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to

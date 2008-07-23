@@ -35,7 +35,7 @@ import java.util.Collection;
  * {@link org.jsecurity.authc.Account Account} interface instead, which is a convenience interface that combines both
  * <code>AuthenticationInfo</code> and <code>AuthorizationInfo</code>.  Whether you choose to implement these two
  * interfaces separately or implement the one <code>Account</code> interface for a given <code>Realm</code> is
- * entirely based on your application's needs.
+ * entirely based on your application's needs or your preferences.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
