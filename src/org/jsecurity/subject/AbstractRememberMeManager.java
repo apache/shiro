@@ -33,6 +33,12 @@ import org.jsecurity.io.SerializationException;
 import org.jsecurity.io.Serializer;
 
 /**
+ * Abstract implementation of the <code>RememberMeManager</code> interface that handles
+ * {@link #setSerializer(org.jsecurity.io.Serializer) serialization} and
+ * {@link #setCipher(org.jsecurity.crypto.Cipher) encryption} of the remembered user identity.
+ *
+ * <p>The remembered identity storage location is implementation-specific.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
