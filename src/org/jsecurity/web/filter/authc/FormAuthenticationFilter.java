@@ -26,6 +26,7 @@ import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 
 /**
@@ -124,8 +125,16 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
         }
     }
 
-    protected boolean isLoginSubmission(ServletRequest servletRequest, ServletResponse response) {
-        return toHttp(servletRequest).getMethod().equalsIgnoreCase("POST");
+    /**
+     * This default implementation merely returns <code>true</code> if the request is an HTTP <code>POST</code>,
+     * <code>false</code> otherwise. Can be overridden by subclasses for custom login submission detection behavior.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse.
+     * @return <code>true</code> if the request is an HTTP <code>POST</code>, <code>false</code> otherwise.
+     */
+    protected boolean isLoginSubmission(ServletRequest request, ServletResponse response) {
+        return (request instanceof HttpServletRequest) && toHttp(request).getMethod().equalsIgnoreCase("POST");
     }
 
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {

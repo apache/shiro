@@ -61,10 +61,17 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     }
 
     /**
-     * Default implemenation of this method. Always returns true. Sub-classes should override this method.
+     * Implementation that handles path-matching behavior before a request is evaluated.  If the path matches,
+     * the request will be allowed through via the result from
+     * {@link #onPreHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) onPreHandle}.  If the
+     * path does not match, this filter will allow passthrough immediately.
      *
-     * @param request
-     * @param response
+     * <p>In order to retain path-matching functionality, subclasses should not override this method if at all
+     * possible, and instead override
+     * {@link #onPreHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) onPreHandle} instead.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
      * @return true - allow the request chain to continue in this default implementation
      * @throws Exception
      */
@@ -106,6 +113,17 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         return true;
     }
 
+    /**
+     * Default implementation always returns <code>true</code>.  Should be overridden by subclasses for custom
+     * logic.
+     *
+     * @param request     the incoming ServletRequest
+     * @param response    the outgoing ServletResponse
+     * @param configValue the configured value for this filter for the matching path.
+     * @return <code>true</code> if the request should be able to continue, <code>false</code> if the filter will
+     *         handle the request directly.
+     * @throws Exception if an error occurs
+     */
     protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object configValue) throws Exception {
         return true;
     }

@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
  *
- * <p>Supports Basic HTTP Authentication as specified in
+ * <p>This implementation supports Basic HTTP Authentication as specified in
  * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
  *
  * <p>Basic authentication works as follows:</p>
@@ -47,7 +47,6 @@ import javax.servlet.http.HttpServletResponse;
  * <li>Upon receiving this <code>WWW-Authenticate</code> challenge from the server, the client then takes a
  * username and a password and puts them in the following format:
  * <p><code>username:password</code></p></li>
- *
  * <li>This token is then base 64 encoded.</li>
  * <li>The client then sends another request for the same resource with the following header:<p/>
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
@@ -121,7 +120,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
         }
         HttpServletResponse httpResponse = toHttp(response);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        String authenticateHeader = HttpServletRequest.BASIC_AUTH + " realm=\"" + applicationName + "\"";
+        String authenticateHeader = HttpServletRequest.BASIC_AUTH + " realm=\"" + getApplicationName() + "\"";
         httpResponse.setHeader(AUTHENTICATE_HEADER, authenticateHeader);
         return false;
     }
