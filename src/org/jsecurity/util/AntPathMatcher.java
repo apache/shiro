@@ -16,16 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jsecurity.util;
 
 /**
- * <p>This class was borrowed from the Spring Framework with modifications.  We didn't want to reinvent the wheel of
- * great work they've done, but also didn't want to force every JSecurity user to depend on spring</p>
- *
- * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
- * remained in tact.</p>
- *
  * <p>PathMatcher implementation for Ant-style path patterns.
  * Examples are provided below.</p>
  *
@@ -47,13 +40,20 @@ package org.jsecurity.util;
  * <code>com</code> directory</li>
  * <li><code>com/&#42;&#42;/test.jsp</code> - matches all <code>test.jsp</code>
  * files underneath the <code>com</code> path</li>
- * <li><code>org/springframework/&#42;&#42;/*.jsp</code> - matches all <code>.jsp</code>
- * files underneath the <code>org/springframework</code> path</li>
+ * <li><code>org/jsecurity/&#42;&#42;/*.jsp</code> - matches all <code>.jsp</code>
+ * files underneath the <code>org/jsecurity</code> path</li>
  * <li><code>org/&#42;&#42;/servlet/bla.jsp</code> - matches
- * <code>org/springframework/servlet/bla.jsp</code> but also
- * <code>org/springframework/testing/servlet/bla.jsp</code> and
+ * <code>org/jsecurity/servlet/bla.jsp</code> but also
+ * <code>org/jsecurity/testing/servlet/bla.jsp</code> and
  * <code>org/servlet/bla.jsp</code></li>
  * </ul>
+ *
+ * <p><b>N.B.</b>: This class was graciously borrowed from the
+ * <a href="http://www.springframework.org">Spring Framework</a> with modifications.  We didn't want to reinvent the
+ * wheel of great work they've done, but also didn't want to force every JSecurity user to depend on Spring</p>
+ *
+ * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
+ * remained in tact.</p>
  *
  * @author Alef Arendsen
  * @author Juergen Hoeller
