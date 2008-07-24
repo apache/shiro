@@ -32,7 +32,7 @@ import java.util.Collection;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
+public class FirstSuccessfulAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
     public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
         return null;
