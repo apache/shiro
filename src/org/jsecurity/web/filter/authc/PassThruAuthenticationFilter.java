@@ -31,7 +31,7 @@ import javax.servlet.ServletResponse;
  * user by passing the "username" and "password" request parameter values to
  * {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken)}.
  * <p/>
- * This controller always passes all requests to the login URL through, both GETs and POSTs.
+ * This controller always passes all requests to the {@link #loginUrl} through, both GETs and POSTs.
  * This is useful in cases where the developer
  * wants to write their own login behavior, which should include a call to
  * {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken)} at some point.  For example,
