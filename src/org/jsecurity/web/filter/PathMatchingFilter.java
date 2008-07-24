@@ -20,8 +20,7 @@ package org.jsecurity.web.filter;
 
 import org.jsecurity.util.AntPathMatcher;
 import static org.jsecurity.util.StringUtils.split;
-import static org.jsecurity.web.WebUtils.getPathWithinApplication;
-import static org.jsecurity.web.WebUtils.toHttp;
+import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.servlet.AdviceFilter;
 
 import javax.servlet.ServletRequest;
@@ -50,7 +49,6 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
 
-
     public void processPathConfig(String path, String config) {
         String[] values = null;
         if (config != null) {
@@ -58,6 +56,22 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         }
 
         this.appliedPaths.put(path, values);
+    }
+
+    protected String getPathWithinApplication(ServletRequest request) {
+        return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
+    }
+
+    protected boolean pathsMatch(String path, ServletRequest request) {
+        String requestURI = getPathWithinApplication(request);
+        if (log.isTraceEnabled()) {
+            log.trace("Attempting to match pattern [" + path + "] with current requestURI [" + requestURI + "]...");
+        }
+        return pathsMatch(path, requestURI);
+    }
+
+    protected boolean pathsMatch(String pattern, String path) {
+        return pathMatcher.match(pattern, path);
     }
 
     /**
@@ -79,21 +93,14 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
 
         if (this.appliedPaths != null && !this.appliedPaths.isEmpty()) {
 
-            String requestURI = getPathWithinApplication(toHttp(request));
-
             // If URL path isn't matched, we allow the request to go through so default to true
             boolean continueChain = true;
             for (String path : this.appliedPaths.keySet()) {
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Attempting to match path [" + path + "] against current requestURI [" + requestURI + "]...");
-                }
-
                 // If the path does match, then pass on to the subclass implementation for specific checks:
-                if (pathMatcher.match(path, requestURI)) {
+                if (pathsMatch(path, request)) {
                     if (log.isTraceEnabled()) {
-                        log.trace("matched path [" + path + "] for requestURI [" + requestURI + "].  " +
-                                "Performing onPreHandle check...");
+                        log.trace("Current requestURI matches pattern [" + path + "].  Performing onPreHandle check...");
                     }
                     Object config = this.appliedPaths.get(path);
                     continueChain = onPreHandle(request, response, config);
