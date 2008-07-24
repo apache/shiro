@@ -295,12 +295,9 @@ public class DelegatingSubject implements Subject {
         }
 
         if (this.session == null && create) {
-
-
             if (log.isTraceEnabled()) {
                 log.trace("starting session for address [" + getInetAddress() + "]");
             }
-
             this.session = securityManager.start(getInetAddress());
         }
         return this.session;

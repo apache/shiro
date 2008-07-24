@@ -18,6 +18,7 @@
  */
 package org.jsecurity.web;
 
+import org.jsecurity.crypto.Cipher;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
@@ -68,6 +69,10 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public DefaultWebSecurityManager(Collection<Realm> realms) {
         setRealms(realms);
+    }
+
+    public void setRememberMeCipher(Cipher cipher) {
+        ((WebRememberMeManager) getRememberMeManager()).setCipher(cipher);
     }
 
     public void setRememberMeCipherKey(byte[] bytes) {
@@ -124,8 +129,24 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      *
      * @param rememberMeMaxAge the maximum age for the remember me cookie.
      */
-    public void setRememberMeMaxAge(Integer rememberMeMaxAge) {
+    public void setRememberMeCookieMaxAge(Integer rememberMeMaxAge) {
         ((WebRememberMeManager) getRememberMeManager()).setCookieMaxAge(rememberMeMaxAge);
+    }
+
+    public void setSessionIdCookieName(String name) {
+        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookieName(name);
+    }
+
+    public void setSessionIdCookiePath(String path) {
+        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookiePath(path);
+    }
+
+    public void setSessionIdCookieMaxAge(int maxAge) {
+        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookieMaxAge(maxAge);
+    }
+
+    public void setSessionIdCookieSecure(boolean secure) {
+        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookieSecure(secure);
     }
 
     public String getSessionMode() {

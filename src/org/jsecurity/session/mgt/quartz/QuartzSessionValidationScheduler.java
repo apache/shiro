@@ -67,6 +67,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     private boolean schedulerImplicitlyCreated = false;
 
+    private boolean running = false;
+
     /**
      * The session manager used to validate sessions.
      */
@@ -116,6 +118,9 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         this.sessionManager = sessionManager;
     }
 
+    public boolean isRunning() {
+        return this.running;
+    }
 
     /**
      * Specifies how frequently (in milliseconds) this Scheduler will call the
@@ -162,6 +167,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                     log.debug("Successfully started implicitly created Quartz Scheduler instance.");
                 }
             }
+            this.running = true;
 
             if (log.isDebugEnabled()) {
                 log.debug("Session validation job successfully scheduled with Quartz.");
@@ -208,6 +214,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                         "Ignoring and stopping.", e);
             }
         }
+
+        this.running = false;
 
         if (schedulerImplicitlyCreated) {
             try {

@@ -24,6 +24,7 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.eis.MemorySessionDAO;
 import org.jsecurity.session.mgt.eis.SessionDAO;
+import org.jsecurity.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -55,7 +56,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         ((CacheManagerAware) getSessionDAO()).setCacheManager(cacheManager);
     }
 
-    protected Session createSession(InetAddress originatingHost) {
+    protected Session doCreateSession(InetAddress originatingHost) {
         if (log.isTraceEnabled()) {
             log.trace("Creating session for originating host [" + originatingHost + "]");
         }
@@ -94,7 +95,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         sessionDAO.update(session);
     }
 
-    protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
+    protected Session retrieveSession(Serializable sessionId) throws InvalidSessionException {
         if (log.isTraceEnabled()) {
             log.trace("Retrieving session with id [" + sessionId + "]");
         }
@@ -104,7 +105,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     }
 
     protected Collection<Session> getActiveSessions() {
-        return sessionDAO.getActiveSessions();
+        Collection<Session> active = sessionDAO.getActiveSessions();
+        return active != null ? active : CollectionUtils.emptyCollection(Session.class);
     }
 
 }

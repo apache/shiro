@@ -69,8 +69,7 @@ import java.net.InetAddress;
  * #securityManager.{@link org.jsecurity.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
  *
  * [filters]
- * # This section defines the 'pool' of all the available Filters that are available to the url path
- * # definitions below in the [urls] section.
+ * # This section defines the 'pool' of all Filters available to the url path definitions in the [urls] section below.
  * #
  * # The following commented values are already provided by JSecurity by default and are immediately usable
  * # in the [urls] definitions below.  If you like, you may override any values by uncommenting only the lines

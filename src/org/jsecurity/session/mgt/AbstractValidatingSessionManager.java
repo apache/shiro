@@ -18,6 +18,7 @@
  */
 package org.jsecurity.session.mgt;
 
+import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
@@ -25,6 +26,7 @@ import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -64,7 +66,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
 
     public AbstractValidatingSessionManager() {
-        init();
     }
 
     public boolean isSessionValidationSchedulerEnabled() {
@@ -81,6 +82,13 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     public SessionValidationScheduler getSessionValidationScheduler() {
         return sessionValidationScheduler;
+    }
+
+    public void startSessionValidationIfNecessary() {
+        SessionValidationScheduler scheduler = getSessionValidationScheduler();
+        if (isSessionValidationSchedulerEnabled() && (scheduler == null || !scheduler.isRunning())) {
+            startSessionValidation();
+        }
     }
 
     /**
@@ -136,6 +144,20 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     public long getSessionValidationInterval() {
         return sessionValidationInterval;
     }
+
+    protected final Session doGetSession(Serializable sessionId) throws InvalidSessionException {
+        startSessionValidationIfNecessary();
+        return retrieveSession(sessionId);
+    }
+
+    protected abstract Session retrieveSession(Serializable sessionId) throws InvalidSessionException;
+
+    protected final Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
+        startSessionValidationIfNecessary();
+        return doCreateSession(originatingHost);
+    }
+
+    protected abstract Session doCreateSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException;
 
     protected void validate(Session session) throws InvalidSessionException {
 
@@ -261,13 +283,21 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             log.info("Starting session validation scheduler...");
         }
         scheduler.startSessionValidation();
+        afterSessionValidationStarted();
+    }
+
+    protected void afterSessionValidationStarted() {
     }
 
     protected void stopSessionValidation() {
+        beforeSessionValidationStopped();
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (scheduler != null) {
             try {
                 scheduler.stopSessionValidation();
+                if (log.isInfoEnabled()) {
+                    log.info("Stopped session validation scheduler.");
+                }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     String msg = "Unable to stop SessionValidationScheduler.  Ignoring (shutting down)...";
@@ -279,24 +309,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         }
     }
 
-    public void init() {
-        if (isSessionValidationSchedulerEnabled()) {
-            startSessionValidation();
-        }
-        afterSessionValidationStarted();
-    }
-
-    protected void afterSessionValidationStarted() {
-    }
-
-    public void destroy() {
-        beforeSessionValidationStopped();
-        stopSessionValidation();
-    }
-
     protected void beforeSessionValidationStopped() {
     }
 
+    public void destroy() {
+        stopSessionValidation();
+    }
 
     /**
      * @see ValidatingSessionManager#validateSessions()
