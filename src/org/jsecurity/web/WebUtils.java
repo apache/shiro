@@ -21,7 +21,6 @@ package org.jsecurity.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.StringUtils;
 import org.jsecurity.util.ThreadContext;
@@ -242,19 +241,6 @@ public class WebUtils {
 
     public static Subject getSubject(ServletRequest request, ServletResponse response) {
         return SecurityUtils.getSubject();
-    }
-
-    public static Session getSession(ServletRequest request, ServletResponse response) {
-
-        Session session = null;
-
-        Subject subject = getSubject(request, response);
-
-        if (subject != null) {
-            session = subject.getSession(false);
-        }
-
-        return session;
     }
 
     public static HttpServletRequest toHttp(ServletRequest request) {

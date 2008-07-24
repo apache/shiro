@@ -19,12 +19,9 @@
 package org.jsecurity.web.filter;
 
 import org.jsecurity.web.WebUtils;
-import static org.jsecurity.web.WebUtils.getPathWithinApplication;
-import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -93,9 +90,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     }
 
     protected boolean isLoginRequest(ServletRequest servletRequest, ServletResponse response) {
-        HttpServletRequest request = toHttp(servletRequest);
-        String requestURI = getPathWithinApplication(request);
-        return pathMatcher.match(getLoginUrl(), requestURI);
+        return pathsMatch(getLoginUrl(), servletRequest);
     }
 
     protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
