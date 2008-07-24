@@ -18,6 +18,9 @@
  */
 package org.jsecurity.web;
 
+import org.jsecurity.util.ThreadContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -25,6 +28,16 @@ import org.junit.Test;
  * @since 0.9
  */
 public class DefaultWebSecurityManagerTest {
+
+    @Before
+    public void setup() {
+        ThreadContext.clear();
+    }
+
+    @After
+    public void tearDown() {
+        ThreadContext.clear();
+    }
 
     @Test
     public void simpleWebSecurityManagerInit() {
@@ -38,5 +51,4 @@ public class DefaultWebSecurityManagerTest {
         dwsm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
         dwsm.destroy();
     }
-
 }

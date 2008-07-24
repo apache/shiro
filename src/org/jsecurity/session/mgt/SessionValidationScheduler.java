@@ -29,6 +29,13 @@ package org.jsecurity.session.mgt;
 public interface SessionValidationScheduler {
 
     /**
+     * Indicates that this Scheduler has been started - not that it is currently actively validating sessions.
+     *
+     * @return
+     */
+    boolean isRunning();
+
+    /**
      * Starts the session validation job.
      */
     void startSessionValidation();

@@ -53,6 +53,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     protected RequestParamAttribute<Serializable> sessionIdRequestParamAttribute = null;
 
     public DefaultWebSessionManager() {
+        ensureCookieSessionIdStore();
+        ensureRequestParamSessionIdStore();
     }
 
     public CookieAttribute<Serializable> getSessionIdCookieAttribute() {
@@ -112,10 +114,20 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         this.validateRequestOrigin = validateRequestOrigin;
     }
 
-    public void init() {
-        super.init();
-        ensureCookieSessionIdStore();
-        ensureRequestParamSessionIdStore();
+    public void setSessionIdCookieName(String name) {
+        getSessionIdCookieAttribute().setName(name);
+    }
+
+    public void setSessionIdCookiePath(String path) {
+        getSessionIdCookieAttribute().setPath(path);
+    }
+
+    public void setSessionIdCookieMaxAge(int maxAge) {
+        getSessionIdCookieAttribute().setMaxAge(maxAge);
+    }
+
+    public void setSessionIdCookieSecure(boolean secure) {
+        getSessionIdCookieAttribute().setSecure(secure);
     }
 
     protected void ensureCookieSessionIdStore() {
@@ -211,9 +223,9 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return sessionId;
     }
 
-    public Session doGetSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+    public Session retrieveSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         if (sessionId != null) {
-            return super.doGetSession(sessionId);
+            return super.retrieveSession(sessionId);
         } else {
             ServletRequest request = WebUtils.getServletRequest();
             ServletResponse response = WebUtils.getServletResponse();
@@ -260,7 +272,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
         if (sessionId != null) {
             request.setAttribute(JSecurityHttpServletRequest.REFERENCED_SESSION_ID, sessionId);
-            session = super.doGetSession(sessionId);
+            session = super.retrieveSession(sessionId);
             if (isValidateRequestOrigin()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Validating request origin against session origin");

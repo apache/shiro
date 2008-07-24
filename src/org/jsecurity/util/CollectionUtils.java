@@ -19,6 +19,7 @@
 package org.jsecurity.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
@@ -29,6 +30,19 @@ import java.util.LinkedHashSet;
  * @since 0.9
  */
 public class CollectionUtils {
+
+    /**
+     * Simple method that just returns <code>Collections.EMPTY_SET</code>.
+     * This exists to enable type-safe empty collections so other locations in JSecurity code
+     * do not need to worry about suppressing warnings.
+     *
+     * @param clazz the class of the collection type to return
+     * @return an empty collection
+     */
+    @SuppressWarnings({"unchecked"})
+    public static <E> Collection<E> emptyCollection(Class<E> clazz) {
+        return Collections.EMPTY_SET;
+    }
 
     public static <E> LinkedHashSet<E> newLinkedHashSet(E... elements) {
         LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
