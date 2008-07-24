@@ -64,6 +64,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
 
     public AbstractValidatingSessionManager() {
+        init();
     }
 
     public boolean isSessionValidationSchedulerEnabled() {
