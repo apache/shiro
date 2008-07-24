@@ -133,20 +133,32 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         ((WebRememberMeManager) getRememberMeManager()).setCookieMaxAge(rememberMeMaxAge);
     }
 
+    private DefaultWebSessionManager getSessionManagerForCookieAttributes() {
+        SessionManager sessionManager = getSessionManager();
+        if (!(sessionManager instanceof DefaultWebSessionManager)) {
+            String msg = "The convenience passthrough methods for setting session id cookie attributes " +
+                    "are only available when the underlying SessionManager implementation is " +
+                    DefaultWebSessionManager.class.getName() + ", which is enabled by default when the " +
+                    "sessionMode is 'jsecurity'.";
+            throw new IllegalStateException(msg);
+        }
+        return (DefaultWebSessionManager) sessionManager;
+    }
+
     public void setSessionIdCookieName(String name) {
-        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookieName(name);
+        getSessionManagerForCookieAttributes().setSessionIdCookieName(name);
     }
 
     public void setSessionIdCookiePath(String path) {
-        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookiePath(path);
+        getSessionManagerForCookieAttributes().setSessionIdCookiePath(path);
     }
 
     public void setSessionIdCookieMaxAge(int maxAge) {
-        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookieMaxAge(maxAge);
+        getSessionManagerForCookieAttributes().setSessionIdCookieMaxAge(maxAge);
     }
 
     public void setSessionIdCookieSecure(boolean secure) {
-        ((DefaultWebSessionManager) getSessionManager()).setSessionIdCookieSecure(secure);
+        getSessionManagerForCookieAttributes().setSessionIdCookieSecure(secure);
     }
 
     public String getSessionMode() {
