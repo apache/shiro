@@ -38,9 +38,20 @@ import java.net.InetAddress;
  * an i18n key or lookup mechanism that can then  be used to show the user why their login attempt failed
  * (e.g. no account, incorrect password, etc).
  *
+ * <p>This controller calls {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken)} with
+ * the values of the username, password, and remember me request parameters.  By default these are "username", "password",
+ * and "rememberMe" but can be customized via the appropriate properties.  By default, this login call occurs whenever
+ * the request is for the {@link #loginUrl} and it is a POST.  This determination can be overridden by subclasses
+ * by overridding the {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
+ *
+ * <p>If you would prefer to handle the authentication validation and login in your own code, consider using the
+ * {@link org.jsecurity.web.filter.authc.PassThruAuthenticationFilter} instead, which allows requests to the
+ * {@link #loginUrl} to pass through to your application's code.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
+ * @see org.jsecurity.web.filter.authc.PassThruAuthenticationFilter
  */
 public class FormAuthenticationFilter extends AuthenticationFilter {
 
