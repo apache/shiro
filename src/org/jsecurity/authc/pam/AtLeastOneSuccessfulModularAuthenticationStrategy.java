@@ -33,10 +33,10 @@ import org.jsecurity.authc.AuthenticationToken;
  * <p>Note that this implementation will aggregate the account data from <em>all</em> successfully consulted
  * realms during the authentication attempt. If you want only the account data from the first successfully
  * consulted realm and want to ignore all subsequent realms, use the
- * {@link org.jsecurity.authc.pam.FirstSuccessfulStrategy FirstSuccessfulStrategy} instead.
+ * {@link FirstSuccessfulAuthenticationStrategy FirstSuccessfulStrategy} instead.
  *
  * @author Les Hazlewood
- * @see org.jsecurity.authc.pam.FirstSuccessfulStrategy FirstSuccessfulStrategy
+ * @see FirstSuccessfulAuthenticationStrategy FirstSuccessfulStrategy
  * @since 0.2
  */
 public class AtLeastOneSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
