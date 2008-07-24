@@ -20,14 +20,12 @@ package org.jsecurity.mgt;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
+import org.jsecurity.crypto.Cipher;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.subject.DelegatingSubject;
-import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.RememberMeManager;
-import org.jsecurity.subject.Subject;
+import org.jsecurity.subject.*;
 import org.jsecurity.util.ThreadContext;
 
 import java.net.InetAddress;
@@ -105,6 +103,57 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void setRememberMeManager(RememberMeManager rememberMeManager) {
         this.rememberMeManager = rememberMeManager;
+    }
+
+    private AbstractRememberMeManager getRememberMeManagerForCipherAttributes() {
+        RememberMeManager rmm = getRememberMeManager();
+        if (!(rmm instanceof AbstractRememberMeManager)) {
+            String msg = "The convenience passthrough methods for setting remember me cipher attributes " +
+                    "are only available when the underlying RememberMeManager implementation is a subclass of " +
+                    AbstractRememberMeManager.class.getName() + ".";
+            throw new IllegalStateException(msg);
+        }
+        return (AbstractRememberMeManager) rmm;
+    }
+
+    public void setRememberMeCipher(Cipher cipher) {
+        getRememberMeManagerForCipherAttributes().setCipher(cipher);
+    }
+
+    public void setRememberMeCipherKey(byte[] bytes) {
+        getRememberMeManagerForCipherAttributes().setCipherKey(bytes);
+    }
+
+    public void setRememberMeCipherKeyHex(String hex) {
+        getRememberMeManagerForCipherAttributes().setCipherKeyHex(hex);
+    }
+
+    public void setRememberMeCipherKeyBase64(String base64) {
+        getRememberMeManagerForCipherAttributes().setCipherKeyBase64(base64);
+    }
+
+    public void setRememberMeEncryptionCipherKey(byte[] bytes) {
+        getRememberMeManagerForCipherAttributes().setEncryptionCipherKey(bytes);
+    }
+
+    public void setRememberMeEncryptionCipherKeyHex(String hex) {
+        getRememberMeManagerForCipherAttributes().setEncryptionCipherKeyHex(hex);
+    }
+
+    public void setRememberMeEncryptionCipherKeyBase64(String base64) {
+        getRememberMeManagerForCipherAttributes().setEncryptionCipherKeyBase64(base64);
+    }
+
+    public void setRememberMeDecryptionCipherKey(byte[] bytes) {
+        getRememberMeManagerForCipherAttributes().setDecryptionCipherKey(bytes);
+    }
+
+    public void setRememberMeDecryptionCipherKeyHex(String hex) {
+        getRememberMeManagerForCipherAttributes().setDecryptionCipherKeyHex(hex);
+    }
+
+    public void setRememberMeDecryptionCipherKeyBase64(String base64) {
+        getRememberMeManagerForCipherAttributes().setDecryptionCipherKeyBase64(base64);
     }
 
     private void assertPrincipals(AuthenticationInfo info) {

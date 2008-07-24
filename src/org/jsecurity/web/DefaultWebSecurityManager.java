@@ -18,7 +18,6 @@
  */
 package org.jsecurity.web;
 
-import org.jsecurity.crypto.Cipher;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
@@ -69,46 +68,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public DefaultWebSecurityManager(Collection<Realm> realms) {
         setRealms(realms);
-    }
-
-    public void setRememberMeCipher(Cipher cipher) {
-        ((WebRememberMeManager) getRememberMeManager()).setCipher(cipher);
-    }
-
-    public void setRememberMeCipherKey(byte[] bytes) {
-        ((WebRememberMeManager) getRememberMeManager()).setCipherKey(bytes);
-    }
-
-    public void setRememberMeCipherKeyHex(String hex) {
-        ((WebRememberMeManager) getRememberMeManager()).setCipherKeyHex(hex);
-    }
-
-    public void setRememberMeCipherKeyBase64(String base64) {
-        ((WebRememberMeManager) getRememberMeManager()).setCipherKeyBase64(base64);
-    }
-
-    public void setRememberMeEncryptionCipherKey(byte[] bytes) {
-        ((WebRememberMeManager) getRememberMeManager()).setEncryptionCipherKey(bytes);
-    }
-
-    public void setRememberMeEncryptionCipherKeyHex(String hex) {
-        ((WebRememberMeManager) getRememberMeManager()).setEncryptionCipherKeyHex(hex);
-    }
-
-    public void setRememberMeEncryptionCipherKeyBase64(String base64) {
-        ((WebRememberMeManager) getRememberMeManager()).setEncryptionCipherKeyBase64(base64);
-    }
-
-    public void setRememberMeDecryptionCipherKey(byte[] bytes) {
-        ((WebRememberMeManager) getRememberMeManager()).setDecryptionCipherKey(bytes);
-    }
-
-    public void setRememberMeDecryptionCipherKeyHex(String hex) {
-        ((WebRememberMeManager) getRememberMeManager()).setDecryptionCipherKeyHex(hex);
-    }
-
-    public void setRememberMeDecryptionCipherKeyBase64(String base64) {
-        ((WebRememberMeManager) getRememberMeManager()).setDecryptionCipherKeyBase64(base64);
     }
 
     /**
