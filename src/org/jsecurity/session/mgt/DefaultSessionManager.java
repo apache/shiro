@@ -41,7 +41,6 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     protected SessionDAO sessionDAO = new MemorySessionDAO();
 
     public DefaultSessionManager() {
-        startSessionValidation();
     }
 
     public void setSessionDAO(SessionDAO sessionDAO) {
