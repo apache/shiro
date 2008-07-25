@@ -26,61 +26,99 @@ import java.io.IOException;
 
 /**
  * Superclass for any filter that controls access to a resource and may redirect the user to the login page
- * if they are not authenticated.  This superclass provides the method {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+ * if they are not authenticated.  This superclass provides the method
+ * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
  * which is used by many subclasses as the behavior when a user is unauthenticated.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AccessControlFilter extends PathMatchingFilter {
 
     // Key used when storing a SavedRequest in the session
+    /**
+     * Simple default login URL equal to <code>/login.jsp</code>, which will probably be overridden in most
+     * applications.
+     */
     public static final String DEFAULT_LOGIN_URL = "/login.jsp";
     protected static final String GET_METHOD = "get";
 
+    /**
+     * The login url to used to authenticate a user, used when redirecting users if authentication is required.
+     */
     private String loginUrl = DEFAULT_LOGIN_URL;
 
+    /**
+     * Returns the login URL used to authenticate a user.
+     * <p/>
+     * Most JSecurity filters use this url
+     * as the location to redirect a user when the filter requires authentication.  Unless overridden, the
+     * {@link #DEFAULT_LOGIN_URL DEFAULT_LOGIN_URL} is assumed, which can be overridden via
+     * {@link #setLoginUrl(String) setLoginUrl}.
+     *
+     * @return the login URL used to authenticate a user, used when redirecting users if authentication is required.
+     */
     protected String getLoginUrl() {
         return loginUrl;
     }
 
     /**
-     * Sets the login URL used used to authenticate a user.  Most JSecurity filters will use this url
-     * as the location to redirect a user when the filter requires authentication.
+     * Sets the login URL used to authenticate a user.
+     * <p/>
+     * Most JSecurity filters use this url as the location to redirect a user when the filter requires
+     * authentication.  Unless overridden, the {@link #DEFAULT_LOGIN_URL DEFAULT_LOGIN_URL} is assumed.
      *
-     * @param loginUrl the login URL.
+     * @param loginUrl the login URL used to authenticate a user, used when redirecting users if authentication is required.
      */
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
     }
 
     /**
-     * Template method subclasses must implement.  This method determines whether or not the request is allowed to
-     * proceed normally, or whether the request should be handled by the logic in
-     * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}.
+     * Returns <code>true</code> if the request is allowed to proceed through the filter normally, or <code>false</code>
+     * if the request should be handled by the
+     * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied(request,response)}
+     * method instead.
      *
-     * @param request     the request.
-     * @param response    the response.
-     * @param mappedValue the value mapped to this filter in the URL rules.
-     * @return true if the reques should proceed normally, false if the request should be proceessed by this filter's
-     *         {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
-     * @throws IOException if an error occurs during processing.
+     * @param request     the incoming <code>ServletRequest</code>
+     * @param response    the outgoing <code>ServletResponse</code>
+     * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
+     * @return <code>true</code> if the request should proceed through the filter normally, <code>false</code> if the
+     *         request should be processed by this filter's
+     *         {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method instead.
+     * @throws Exception if an error occurs during processing.
      */
     protected abstract boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception;
 
     /**
-     * Template method sub-classes must implement. This method processes requests where the subject was denied access
-     * by the {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
+     * Processes requests where the subject was denied access as determined by the
+     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
      * method.
      *
-     * @param request  the servlet request.
-     * @param response the servlet response.
-     * @return true if the request should continue to be processed; false if the subclass will handle/render
-     *         the response directly.
+     * @param request  the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @return <code>true</code> if the request should continue to be processed; false if the subclass will
+     *         handle/render the response directly.
      * @throws Exception if there is an error processing the request.
      */
     protected abstract boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception;
 
+    /**
+     * Returns <code>true</code> if
+     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
+     * otherwise returns the result of
+     * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
+     *
+     * @param request     the incoming <code>ServletRequest</code>
+     * @param response    the outgoing <code>ServletResponse</code>
+     * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
+     * @return <code>true</code> if
+     *         {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
+     *         otherwise returns the result of
+     *         {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
+     * @throws Exception if an error occurs.
+     */
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         //mapped value is ignored - not needed for most (if not all) authc Filters.
         if (isAccessAllowed(request, response, mappedValue)) {
@@ -90,13 +128,69 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
         }
     }
 
-    protected boolean isLoginRequest(ServletRequest servletRequest, ServletResponse response) {
-        return pathsMatch(getLoginUrl(), servletRequest);
+    /**
+     * Returns <code>true</code> if the incoming request is a login request, <code>false</code> otherwise.
+     * <p/>
+     * The default implementation merely returns <code>true</code> if the incoming request matches the configured
+     * {@link #getLoginUrl() loginUrl} by calling
+     * <code>{@link #pathsMatch(String, String) pathsMatch(loginUrl, request)}</code>.
+     *
+     * @param request  the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @return <code>true</code> if the incoming request is a login request, <code>false</code> otherwise.
+     */
+    protected boolean isLoginRequest(ServletRequest request, ServletResponse response) {
+        return pathsMatch(getLoginUrl(), request);
     }
 
+    /**
+     * Convenience method for subclasses to use when a login redirect is required.
+     * <p/>
+     * This implementation simply calls {@link #saveRequest(javax.servlet.ServletRequest) saveRequest(request)}
+     * and then {@link #redirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse) redirectToLogin(request,response)}.
+     *
+     * @param request  the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @throws IOException if an error occurs.
+     */
     protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
+        saveRequest(request);
+        redirectToLogin(request, response);
+    }
+
+    /**
+     * Convenience method merely delegates to
+     * {@link WebUtils#saveRequest(javax.servlet.ServletRequest) WebUtils.saveRequest(request)} to save the request
+     * state for reuse later.  This is mostly used to retain user request state when a redirect is issued to
+     * return the user to their originally requested url/resource.
+     * <p/>
+     * If you need to save and then immediately redirect the user to login, consider using
+     * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     * saveRequestAndRedirectToLogin(request,response)} directly.
+     *
+     * @param request the incoming ServletRequest to save for re-use later (for example, after a redirect).
+     */
+    protected void saveRequest(ServletRequest request) {
         WebUtils.saveRequest(request);
-        WebUtils.issueRedirect(request, response, getLoginUrl());
+    }
+
+    /**
+     * Convenience method for subclasses that merely acquires the {@link #getLoginUrl() getLoginUrl} and redirects
+     * the request to that url.
+     * <p/>
+     * <b>N.B.</b>  If you want to issue a redirect with the intention of allowing the user to then return to their
+     * originally requested URL, don't use this method directly.  Instead you should call
+     * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     * saveRequestAndRedirectToLogin(request,response)}, which will save the current request state so that it can
+     * be reconstructed and re-used after a successful login.
+     *
+     * @param request  the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @throws IOException if an error occurs.
+     */
+    protected void redirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
+        String loginUrl = getLoginUrl();
+        WebUtils.issueRedirect(request, response, loginUrl);
     }
 
 }
