@@ -31,27 +31,30 @@ import java.net.InetAddress;
 
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
- * to login via by redirecting them to the {@link #setLoginUrl(String) login page} you configure.
+ * to login via by redirecting them to the {@link #setLoginUrl(String) loginUrl} you configure.
  *
- * <p>If the login attempt fails the AuthenticationException fully qualified class name will be placed as a request
- * attribute under the {@link #setFailureKeyAttribute(String) failureKeyAttribute} key.  This FQCN can then be used as
- * an i18n key or lookup mechanism that can then  be used to show the user why their login attempt failed
+ * <p>This filter constructs a {@link UsernamePasswordToken UsernamePasswordToken} with the values found in
+ * {@link #setUsernameParam(String) username}, {@link #setPasswordParam(String) password},
+ * and {@link #setRememberMeParam(String) rememberMe} request parameters.  It then calls
+ * {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken) Subject.login(usernamePasswordToken)},
+ * effectively automatically performing a login attempt.  Note that the login attempt will only occur when the
+ * {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginSubmission(request,response)}
+ * is <code>true</code>, which by default occurs when the request is for the {@link #setLoginUrl(String) loginUrl} and
+ * is a POST request.
+ *
+ * <p>If the login attempt fails, the resulting <code>AuthenticationException</code> fully qualified class name will
+ * be set as a request attribute under the {@link #setFailureKeyAttribute(String) failureKeyAttribute} key.  This
+ * FQCN can be used as an i18n key or lookup mechanism to explain to the user why their login attempt failed
  * (e.g. no account, incorrect password, etc).
- *
- * <p>This controller calls {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken)} with
- * the values of the username, password, and remember me request parameters.  By default these are "username", "password",
- * and "rememberMe" but can be customized via the appropriate properties.  By default, this login call occurs whenever
- * the request is for the {@link #loginUrl} and it is a POST.  This determination can be overridden by subclasses
- * by overridding the {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method.
  *
  * <p>If you would prefer to handle the authentication validation and login in your own code, consider using the
  * {@link org.jsecurity.web.filter.authc.PassThruAuthenticationFilter} instead, which allows requests to the
- * {@link #loginUrl} to pass through to your application's code.
+ * {@link #loginUrl} to pass through to your application's code directly.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @since 0.9
  * @see org.jsecurity.web.filter.authc.PassThruAuthenticationFilter
+ * @since 0.9
  */
 public class FormAuthenticationFilter extends AuthenticationFilter {
 
@@ -75,6 +78,12 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
         return usernameParam;
     }
 
+    /**
+     * Sets the request parameter name to look for when acquiring the username.  Unless overridden by calling this
+     * method, the default is <code>username</code>.
+     *
+     * @param usernameParam the name of the request param to check for acquiring the username.
+     */
     public void setUsernameParam(String usernameParam) {
         this.usernameParam = usernameParam;
     }
@@ -83,6 +92,12 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
         return passwordParam;
     }
 
+    /**
+     * Sets the request parameter name to look for when acquiring the password.  Unless overridden by calling this
+     * method, the default is <code>password</code>.
+     *
+     * @param passwordParam the name of the request param to check for acquiring the password.
+     */
     public void setPasswordParam(String passwordParam) {
         this.passwordParam = passwordParam;
     }
@@ -91,6 +106,16 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
         return rememberMeParam;
     }
 
+    /**
+     * Sets the request parameter name to look for when acquiring the rememberMe boolean value.  Unless overridden
+     * by calling this method, the default is <code>rememberMe</code>.
+     * <p/>
+     * RememberMe will be <code>true</code> if the parameter value equals any of those supported by
+     * {@link WebUtils#isTrue(javax.servlet.ServletRequest, String) WebUtils.isTrue(request,value)}, <code>false</code>
+     * otherwise.
+     *
+     * @param rememberMeParam the name of the request param to check for acquiring the rememberMe boolean value.
+     */
     public void setRememberMeParam(String rememberMeParam) {
         this.rememberMeParam = rememberMeParam;
     }
