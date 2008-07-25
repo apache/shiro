@@ -21,7 +21,6 @@ package org.jsecurity.web.filter.authc;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.web.WebUtils;
-import static org.jsecurity.web.WebUtils.getSubject;
 import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;

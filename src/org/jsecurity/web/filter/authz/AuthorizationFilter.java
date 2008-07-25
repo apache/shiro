@@ -52,17 +52,17 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
 
-        Subject subject = WebUtils.getSubject(request, response);
+        Subject subject = getSubject(request, response);
         // If the subject isn't identified, redirect to login URL
-        if( subject.getPrincipal() == null ) {
-            saveRequestAndRedirectToLogin(request,response);
+        if (subject.getPrincipal() == null) {
+            saveRequestAndRedirectToLogin(request, response);
             return false;
         } else {
 
             // If subject is known but not authorized, redirect to the unauthorized URL if there is one 
             // If no unauthorized URL is specified, just return an unauthorized HTTP status code
-            WebUtils.toHttp(response).setStatus( HttpServletResponse.SC_UNAUTHORIZED );
-            if( StringUtils.hasText( getUnauthorizedUrl() ) ) {
+            WebUtils.toHttp(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            if (StringUtils.hasText(getUnauthorizedUrl())) {
                 WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
             }
 

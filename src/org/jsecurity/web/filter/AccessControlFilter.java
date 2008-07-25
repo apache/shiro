@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.filter;
 
+import org.jsecurity.SecurityUtils;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
@@ -72,6 +74,19 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      */
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
+    }
+
+    /**
+     * Convenience method that acquires the Subject associated with the request.
+     * <p/>
+     * This implementation simply returns {@link org.jsecurity.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
+     *
+     * @param request  the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @return the Subject associated with the request.
+     */
+    protected Subject getSubject(ServletRequest request, ServletResponse response) {
+        return SecurityUtils.getSubject();
     }
 
     /**

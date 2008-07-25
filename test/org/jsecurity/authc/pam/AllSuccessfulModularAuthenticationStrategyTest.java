@@ -26,7 +26,7 @@ import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.realm.SimpleAccountRealm;
 import org.jsecurity.subject.PrincipalCollection;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 

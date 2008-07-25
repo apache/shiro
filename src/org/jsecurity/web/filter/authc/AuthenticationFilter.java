@@ -21,7 +21,6 @@ package org.jsecurity.web.filter.authc;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.web.SavedRequest;
 import org.jsecurity.web.WebUtils;
-import static org.jsecurity.web.WebUtils.getSubject;
 import org.jsecurity.web.filter.AccessControlFilter;
 
 import javax.servlet.ServletRequest;
@@ -51,18 +50,19 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
      * Sets the success URL that is the default location a user is sent to after logging in when
      * {@link #issueSuccessRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
      * is called by subclasses of this filter.
+     *
      * @param successUrl the success URL to redirect the user to after a successful login.
      */
     public void setSuccessUrl(String successUrl) {
         this.successUrl = successUrl;
     }
-    
+
 
     /**
      * Determines whether the current subject is authenticated.
      *
-     * @param request the servlet request.
-     * @param response the servlet response.
+     * @param request     the servlet request.
+     * @param response    the servlet response.
      * @param mappedValue
      * @return true if the subject is authenticated; false if the subject is unauthenticated
      */
@@ -75,20 +75,20 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
 
         String successUrl = null;
         SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(request);
-        if( savedRequest != null && savedRequest.getMethod().equalsIgnoreCase( GET_METHOD ) ) {
+        if (savedRequest != null && savedRequest.getMethod().equalsIgnoreCase(GET_METHOD)) {
             successUrl = savedRequest.getRequestUrl();
         }
 
-        if( successUrl == null ) {
+        if (successUrl == null) {
             successUrl = getSuccessUrl();
         }
 
-        if( successUrl == null ) {
-            throw new IllegalArgumentException( "Success URL not available via saved request or by calling getSuccessUrl().  " +
-                    "One of these must be non-null for issueSuccessRedirect() to work." );
+        if (successUrl == null) {
+            throw new IllegalArgumentException("Success URL not available via saved request or by calling getSuccessUrl().  " +
+                    "One of these must be non-null for issueSuccessRedirect() to work.");
         }
 
-        WebUtils.issueRedirect( request, response, successUrl );
+        WebUtils.issueRedirect(request, response, successUrl);
     }
 
 }

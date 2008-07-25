@@ -19,7 +19,6 @@
 package org.jsecurity.web.filter.authc;
 
 import org.jsecurity.subject.Subject;
-import static org.jsecurity.web.WebUtils.getSubject;
 import org.jsecurity.web.filter.AccessControlFilter;
 
 import javax.servlet.ServletRequest;
@@ -32,7 +31,7 @@ import javax.servlet.ServletResponse;
  *
  * <p>If the accessor is not a known user, then they will be redirected to the login page, as set by
  * {@link #setLoginUrl(String)}</p>
- * 
+ *
  * @author Jeremy Haile
  * @since 0.9
  */
@@ -40,7 +39,7 @@ public class UserFilter extends AccessControlFilter {
 
 
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        if( isLoginRequest(request, response ) ) {
+        if (isLoginRequest(request, response)) {
             return true;
         } else {
             Subject subject = getSubject(request, response);
@@ -50,7 +49,7 @@ public class UserFilter extends AccessControlFilter {
     }
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        saveRequestAndRedirectToLogin(request,response);
+        saveRequestAndRedirectToLogin(request, response);
         return false;
     }
 }

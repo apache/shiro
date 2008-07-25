@@ -24,7 +24,7 @@ import org.jsecurity.authc.SimpleAuthenticationInfo;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
@@ -51,8 +51,8 @@ public class WebRememberMeManagerTest {
         token.setRememberMe(true);
         AuthenticationInfo account = new SimpleAuthenticationInfo("user", "secret", "test");
 
-        expect( mockRequest.getCookies() ).andReturn( null );
-        expect( mockRequest.getContextPath() ).andReturn( "/" );
+        expect(mockRequest.getCookies()).andReturn(null);
+        expect(mockRequest.getContextPath()).andReturn("/");
 
         replay(mockRequest);
         mgr.onSuccessfulLogin(token, account);

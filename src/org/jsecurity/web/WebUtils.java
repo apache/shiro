@@ -20,8 +20,6 @@ package org.jsecurity.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.subject.Subject;
 import org.jsecurity.util.StringUtils;
 import org.jsecurity.util.ThreadContext;
 
@@ -237,10 +235,6 @@ public class WebUtils {
         }
 
         return clientAddress;
-    }
-
-    public static Subject getSubject(ServletRequest request, ServletResponse response) {
-        return SecurityUtils.getSubject();
     }
 
     public static HttpServletRequest toHttp(ServletRequest request) {

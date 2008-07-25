@@ -19,7 +19,6 @@
 package org.jsecurity.web.filter.authz;
 
 import org.jsecurity.subject.Subject;
-import org.jsecurity.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,7 +38,7 @@ public class RolesAuthorizationFilter extends AuthorizationFilter {
     @SuppressWarnings({"unchecked"})
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
-        Subject subject = WebUtils.getSubject(request, response);
+        Subject subject = getSubject(request, response);
         Set<String> roles = (Set<String>) mappedValue;
 
         boolean hasRoles = true;
