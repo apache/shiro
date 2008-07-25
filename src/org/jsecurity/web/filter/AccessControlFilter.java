@@ -36,13 +36,12 @@ import java.io.IOException;
  */
 public abstract class AccessControlFilter extends PathMatchingFilter {
 
-    // Key used when storing a SavedRequest in the session
     /**
      * Simple default login URL equal to <code>/login.jsp</code>, which will probably be overridden in most
      * applications.
      */
     public static final String DEFAULT_LOGIN_URL = "/login.jsp";
-    protected static final String GET_METHOD = "get";
+    protected static final String GET_METHOD = "GET";
 
     /**
      * The login url to used to authenticate a user, used when redirecting users if authentication is required.
