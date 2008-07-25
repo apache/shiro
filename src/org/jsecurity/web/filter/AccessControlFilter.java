@@ -45,7 +45,8 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     }
 
     /**
-     * Sets the login URL used when a user needs to be redirected for authentication.
+     * Sets the login URL used used to authenticate a user.  Most JSecurity filters will use this url
+     * as the location to redirect a user when the filter requires authentication.
      *
      * @param loginUrl the login URL.
      */
