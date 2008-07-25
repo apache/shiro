@@ -22,7 +22,6 @@ import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.subject.Subject;
-import static org.jsecurity.web.WebUtils.getSubject;
 import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
