@@ -184,7 +184,22 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
 
     /**
-     * <p>Retrieves authorization information for the given principals.
+     * /**
+     * Returns an account's authorization-specific information for the specified <code>principals</code>,
+     * or <tt>null</tt> if no account could be found.
+     *
+     * <p>This resulting <code>AuthorizationInfo</code> data is used by AuthorizingRealms to perform access control checks for
+     * the corresponding <code>Subject</code>.
+     *
+     * <p>Invocations of this method should be thought of as completely orthogonal to acquiring
+     * {@link #getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken) authenticationInfo}, since either could
+     * occur in any order.
+     *
+     * <p>For example, in &quot;Remember Me&quot; scenarios, the user identity is remembered (and
+     * assumed) for their current session and an authentication attempt during that session might never occur.
+     * But because their identity would be remembered, that is sufficient enough information to call this method to
+     * execute any necessary authorization checks.  For this reason, authentication and authorization should be
+     * loosely coupled and not depend on each other.
      *
      * <p>If caching is enabled, the authorization cache will be checked first and if found, will return the cached {@link AuthorizationInfo}.
      * If caching is disabled, or there is a cache miss from the cache lookup, the authorization info will be looked up from
@@ -193,8 +208,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * <p>If caching is enabled, the retrieved AuthorizationInfo from {@link #doGetAuthorizationInfo(org.jsecurity.subject.PrincipalCollection)}
      * will be added to the authorization cache first and then returned.
      *
-     * @param principals the primary identifying principals of the account that should be retrieved.
-     * @return the {@link AuthorizationInfo} associated with this princpal.
+     * @param principals the corresponding Subject's identifying principals with which to look up the Subject's
+     *                   <code>AuthorizationInfo</code>.
+     * @return the authorization information for the account associated with the specified <code>principals</code>,
+     *         or <tt>null</tt> if no account could be found.
      */
     public AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
