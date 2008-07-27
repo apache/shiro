@@ -21,9 +21,7 @@ package org.jsecurity.realm;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
-import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
@@ -105,29 +103,5 @@ public interface Realm extends Authorizer {
      *          specified <tt>token</tt> or implementation-specifc login behavior fails.
      */
     AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
-
-    /**
-     * Returns an account's authorization-specific information for the specified <code>principals</code>,
-     * or <tt>null</tt> if no account could be found.
-     *
-     * <p>This resulting <code>AuthorizationInfo</code> data is used by JSecurity to perform access control checks for
-     * the corresponding <code>Subject</code>.
-     *
-     * <p>Invocations of this method should be thought of as completely orthogonal to acquiring
-     * {@link #getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken) authenticationInfo}, since either could
-     * occur in any order.
-     *
-     * <p>For example, in &quot;Remember Me&quot; scenarios, the user identity is remembered (and
-     * assumed) for their current session and an authentication attempt during that session might never occur.
-     * But because their identity would be remembered, that is sufficient enough information to call this method to
-     * execute any necessary authorization checks.  For this reason, authentication and authorization should be
-     * loosely coupled and not depend on each other.
-     *
-     * @param principals the corresponding Subject's identifying principals with which to look up the Subject's
-     *                   <code>AuthorizationInfo</code>.
-     * @return the authorization information for the account associated with the specified <code>principals</code>,
-     *         or <tt>null</tt> if no account could be found.
-     */
-    AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals);
 
 }
