@@ -133,11 +133,12 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
                     HTTP_SESSION_MODE + "' being the default.";
             throw new IllegalArgumentException(msg);
         }
-        boolean recreate = !this.sessionMode.equals(sessionMode);
+        boolean recreate = this.sessionMode == null || !this.sessionMode.equals(sessionMode);
         this.sessionMode = sessionMode;
         if (recreate) {
             LifecycleUtils.destroy(getSessionManager());
-            createSessionManager();
+            SessionManager sm = createSessionManager();
+            setSessionManager(sm);
         }
     }
 

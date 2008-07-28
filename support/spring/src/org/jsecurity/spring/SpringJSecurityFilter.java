@@ -21,7 +21,7 @@ package org.jsecurity.spring;
 import org.jsecurity.web.servlet.JSecurityFilter;
 
 /**
- * <p>Extension of JSecurityFilter that uses {@link SpringConfiguration} to configure the JSecurity instance.</p>
+ * <p>Extension of JSecurityFilter that uses {@link SpringWebConfiguration} to configure the JSecurity instance.</p>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -30,6 +30,6 @@ import org.jsecurity.web.servlet.JSecurityFilter;
 public class SpringJSecurityFilter extends JSecurityFilter {
 
     public SpringJSecurityFilter() {
-        this.configClassName = SpringConfiguration.class.getName();
+        this.configClassName = SpringWebConfiguration.class.getName();
     }
 }

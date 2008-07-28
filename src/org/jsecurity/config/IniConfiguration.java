@@ -99,6 +99,13 @@ public class IniConfiguration extends TextConfiguration {
 
         // Only call super.init() after we try loading from the configUrl first.
         super.init();
+
+        SecurityManager sm = getSecurityManager();
+        if (sm == null) {
+            //no config specified, use the defaults:
+            sm = createDefaultSecurityManager();
+            setSecurityManager(sm);
+        }
     }
 
     protected void load(Reader r) throws ConfigurationException {
@@ -142,7 +149,7 @@ public class IniConfiguration extends TextConfiguration {
     }
 
     protected void processIni(Map<String, Map<String, String>> sections) {
-        SecurityManager securityManager = createSecurityManager();
+        SecurityManager securityManager = createSecurityManager(sections);
         if (securityManager == null) {
             String msg = "A " + SecurityManager.class + " instance must be created at startup.";
             throw new ConfigurationException(msg);
@@ -152,11 +159,12 @@ public class IniConfiguration extends TextConfiguration {
         afterSecurityManagerSet(sections);
     }
 
-    protected SecurityManager createSecurityManager() {
-        Map<String, Map<String, String>> sections = this.iniResource.getSections();
+    protected SecurityManager createDefaultSecurityManager() {
+        return newSecurityManagerInstance();
+    }
 
+    protected SecurityManager createSecurityManager(Map<String, Map<String, String>> sections) {
         Map<String, String> mainSection = sections.get(MAIN);
-
         return createSecurityManagerForSection(mainSection);
     }
 
