@@ -40,12 +40,13 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
-    protected CacheManager cacheManager = createCacheManager();
+    protected CacheManager cacheManager;
 
     /**
      * Default no-arg constructor.
      */
     public CachingSecurityManager() {
+        ensureCacheManager();
     }
 
     /**
@@ -60,6 +61,16 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
         afterCacheManagerSet();
+    }
+
+    protected void ensureCacheManager() {
+        CacheManager cm = getCacheManager();
+        if (cm == null) {
+            cm = createCacheManager();
+            if (cm != null) {
+                setCacheManager(cm);
+            }
+        }
     }
 
     protected void afterCacheManagerSet() {

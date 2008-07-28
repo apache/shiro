@@ -44,12 +44,13 @@ import java.util.Collection;
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         implements AuthenticationListenerRegistrar {
 
-    private Authenticator authenticator = new ModularRealmAuthenticator();
+    private Authenticator authenticator;
 
     /**
      * Default no-arg constructor.
      */
     public AuthenticatingSecurityManager() {
+        ensureAuthenticator();
     }
 
     public Authenticator getAuthenticator() {
@@ -62,6 +63,18 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
             throw new IllegalArgumentException(msg);
         }
         this.authenticator = authenticator;
+    }
+
+    protected void ensureAuthenticator() {
+        Authenticator authc = getAuthenticator();
+        if (authc == null) {
+            authc = createAuthenticator();
+            setAuthenticator(authc);
+        }
+    }
+
+    protected Authenticator createAuthenticator() {
+        return new ModularRealmAuthenticator();
     }
 
     public void setModularAuthenticationStrategy(ModularAuthenticationStrategy strategy) {
@@ -154,6 +167,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * Delegates to the wrapped {@link Authenticator Authenticator} for authentication.
      */
     public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
+        ensureRealms();
         return this.authenticator.authenticate(token);
     }
 }

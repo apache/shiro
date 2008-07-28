@@ -51,12 +51,13 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private Collection<AuthenticationListener> listeners = new ArrayList<AuthenticationListener>();
+    private Collection<AuthenticationListener> listeners;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
     public AbstractAuthenticator() {
+        listeners = new ArrayList<AuthenticationListener>();
     }
 
     /*--------------------------------------------

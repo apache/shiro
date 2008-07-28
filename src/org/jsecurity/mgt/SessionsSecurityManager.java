@@ -50,12 +50,13 @@ import java.util.Collection;
  */
 public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionListenerRegistrar {
 
-    protected SessionManager sessionManager = createSessionManager();
+    protected SessionManager sessionManager;
 
     /**
      * Default no-arg constructor.
      */
     public SessionsSecurityManager() {
+        ensureSessionManager();
     }
 
     /**
@@ -77,6 +78,14 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     public SessionManager getSessionManager() {
         return this.sessionManager;
+    }
+
+    protected void ensureSessionManager() {
+        SessionManager sessionManager = getSessionManager();
+        if (sessionManager == null) {
+            sessionManager = createSessionManager();
+            setSessionManager(sessionManager);
+        }
     }
 
     protected SessionManager createSessionManager() {

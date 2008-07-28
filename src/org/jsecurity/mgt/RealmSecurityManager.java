@@ -21,6 +21,7 @@ package org.jsecurity.mgt;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.realm.Realm;
+import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.util.ArrayList;
@@ -76,6 +77,27 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         applyCacheManagerToRealms();
     }
 
+    protected void ensureRealms() {
+        Collection<Realm> realms = getRealms();
+        if (realms == null || realms.isEmpty()) {
+            if (log.isInfoEnabled()) {
+                log.info("No Realms configured.  Defaulting to failsafe PropertiesRealm.");
+            }
+            Realm realm = createDefaultRealm();
+            setRealm(realm);
+        }
+    }
+
+    protected Realm createDefaultRealm() {
+        PropertiesRealm realm = new PropertiesRealm();
+        CacheManager cacheManager = getCacheManager();
+        if (cacheManager != null) {
+            realm.setCacheManager(cacheManager);
+        }
+        realm.init();
+        return realm;
+    }
+
     /**
      * Returns the {@link Realm Realm}s managed by this SecurityManager instance.
      *
@@ -88,7 +110,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
     protected void applyCacheManagerToRealms() {
         CacheManager cacheManager = getCacheManager();
         Collection<Realm> realms = getRealms();
-        if (cacheManager != null) {
+        if (cacheManager != null && realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
                 if (realm instanceof CacheManagerAware) {
                     ((CacheManagerAware) realm).setCacheManager(cacheManager);
