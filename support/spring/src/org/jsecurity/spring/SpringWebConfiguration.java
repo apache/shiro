@@ -44,7 +44,8 @@ import java.util.Map;
  * If more than one exist, use the one named "securityManager".  If none of them are named "securityManager"
  * throw an exception that says you have to set the init-param to specify the bean name.</li>
  * <li>if no beans of type {@link SecurityManager}, look for any beans of type {@link Realm}.
- * If some are found, create a security manager by calling {@link org.jsecurity.web.config.IniWebConfiguration#createSecurityManager()}
+ * If some are found, create a security manager by calling
+ * {@link org.jsecurity.web.config.IniWebConfiguration#createSecurityManager(java.util.Map) super.createSecurityManager(Map)}
  * and set the Realms on the default security manager returned.</li>
  * <li>if none of the above, throw an exception that explains the options.</li>
  * <ol>
@@ -54,7 +55,7 @@ import java.util.Map;
  * @see IniWebConfiguration
  * @since 0.9
  */
-public class SpringConfiguration extends IniWebConfiguration {
+public class SpringWebConfiguration extends IniWebConfiguration {
 
     public static final String SECURITY_MANAGER_BEAN_NAME_PARAM_NAME = "securityManagerBeanName";
     public static final String DEFAULT_SECURITY_MANAGER_BEAN_ID = "securityManager";
@@ -69,7 +70,7 @@ public class SpringConfiguration extends IniWebConfiguration {
         this.securityManagerBeanName = securityManagerBeanName;
     }
 
-    public SpringConfiguration() {
+    public SpringWebConfiguration() {
     }
 
     @Override
@@ -83,14 +84,18 @@ public class SpringConfiguration extends IniWebConfiguration {
     }
 
     @Override
-    protected SecurityManager createSecurityManager() {
-        ServletContext servletContext = getFilterConfig().getServletContext();
-        ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-
-        return getOrCreateSecurityManager(appCtx);
+    protected SecurityManager createDefaultSecurityManager() {
+        return createSecurityManager(null);
     }
 
-    protected SecurityManager getOrCreateSecurityManager(ApplicationContext appCtx) {
+    @Override
+    protected SecurityManager createSecurityManager(Map<String, Map<String, String>> sections) {
+        ServletContext servletContext = getFilterConfig().getServletContext();
+        ApplicationContext appCtx = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        return getOrCreateSecurityManager(appCtx, sections);
+    }
+
+    protected SecurityManager getOrCreateSecurityManager(ApplicationContext appCtx, Map<String, Map<String, String>> sections) {
         String beanName = getSecurityManagerBeanName();
 
         SecurityManager securityManager = null;
@@ -103,28 +108,39 @@ public class SpringConfiguration extends IniWebConfiguration {
         }
 
         if (securityManager == null) {
-            securityManager = createDefaultSecurityManagerFromRealms(appCtx);
+            securityManager = createDefaultSecurityManagerFromRealms(appCtx, sections);
         }
 
         if (securityManager == null) {
-            String msg = "There is no " + SecurityManager.class.getName() + " instance available in the " +
-                    "Spring WebApplicationContext.  A bean of type " + SecurityManager.class.getName() + " would be " +
-                    "automatically detected.  You can also specify which bean is retrieved by " +
-                    "setting this filter's 'securityManagerBeanName' init-param.";
+            String msg = "Unable to locate a " + SecurityManager.class.getName() + " instance in the " +
+                    "Spring WebApplicationContext.  You can 1) simply just define the securityManager as a bean (" +
+                    "it will be automatically located based on type) or " +
+                    "2) explicitly specifify which bean is retrieved by setting this filter's " +
+                    "'securityManagerBeanName' init-param or 3) define one or more " + Realm.class.getName() +
+                    " instances and a default SecurityManager using those realms will be created automatically.";
             throw new ApplicationContextException(msg);
         }
         return securityManager;
     }
 
     @SuppressWarnings("unchecked")
-    protected SecurityManager createDefaultSecurityManagerFromRealms(ApplicationContext appCtx) {
+    protected SecurityManager createDefaultSecurityManagerFromRealms(ApplicationContext appCtx, Map<String, Map<String, String>> sections) {
         SecurityManager securityManager = null;
 
-        Collection<Realm> realms = appCtx.getBeansOfType(Realm.class).values();
+        Map<String, Realm> realmMap = appCtx.getBeansOfType(Realm.class);
+        if (realmMap == null || realmMap.isEmpty()) {
+            return null;
+        }
+
+        Collection<Realm> realms = realmMap.values();
+        if (realms == null || realms.isEmpty()) {
+            return null;
+        }
+
         if (!realms.isEmpty()) {
 
             // Create security manager according to superclass and set realms on it from Spring.
-            securityManager = super.createSecurityManager();
+            securityManager = super.createSecurityManager(sections);
 
             if (securityManager instanceof RealmSecurityManager) {
                 RealmSecurityManager realmSM = (RealmSecurityManager) securityManager;
@@ -144,6 +160,9 @@ public class SpringConfiguration extends IniWebConfiguration {
         SecurityManager securityManager = null;
 
         Map<String, SecurityManager> securityManagers = appCtx.getBeansOfType(SecurityManager.class);
+        if (securityManagers == null || securityManagers.isEmpty()) {
+            return null;
+        }
 
         if (securityManagers.size() > 1) {
 

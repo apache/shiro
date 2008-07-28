@@ -53,6 +53,7 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
     /**
      * Loads the configuration specified by the 'config' argument by creating a StringReader
      * and using it to load the config.
+     *
      * @param config the config text to be loaded.
      */
     protected void loadTextConfig(String config) {
@@ -77,6 +78,4 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
             }
         }
     }
-
-
 }

@@ -20,7 +20,7 @@ package org.jsecurity.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.crypto.hash.Sha1Hash;
+import org.jsecurity.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -72,12 +72,16 @@ public class BootstrapDataPopulator implements InitializingBean {
         jdbcTemplate.execute(CREATE_TABLES);
 
         //password is 'user1' SHA hashed and base64 encoded:
-        String query = "insert into users values ('user1', 's9qne0wEqVUbh4HQMZH+CY8yXmc=')";
+        //The first argument to the hash constructor is the actual value to be hased.  The 2nd is the
+        //salt.  In this simple demo scenario, the username and the password are the same, but to clarify the
+        //distinction, you would see this in practice:
+        //new Sha256Hash( <password>, <username> )
+        String query = "insert into users values ('user1', '" + new Sha256Hash("user1", "user1").toBase64() + "' )";
         jdbcTemplate.execute(query);
         log.debug("Created user1.");
 
         //password is 'user2' SHA hashed and base64 encoded:
-        query = "insert into users values ( 'user2', 'oYgcBu7JbbmQHHu/5BxCo/COnLQ=' )";
+        query = "insert into users values ( 'user2', '" + new Sha256Hash("user2", "user2").toBase64() + "' )";
         jdbcTemplate.execute(query);
         log.debug("Created user2.");
 
@@ -112,8 +116,4 @@ public class BootstrapDataPopulator implements InitializingBean {
         log.debug("Assigned user2 role role2");
     }
 
-    public static void main(String[] args) {
-        System.out.println("value [user1] sha hashed and base64 encoded is [" + new Sha1Hash("user1").toBase64() + "]");
-        System.out.println("value [user2] sha hashed and base64 encoded is [" + new Sha1Hash("user2").toBase64() + "]");
-    }
 }

@@ -52,9 +52,13 @@
     <bean id="jdbcRealm" class="org.jsecurity.realm.jdbc.JdbcRealm">
         <property name="dataSource" ref="dataSource"/>
         <property name="credentialsMatcher">
-            <bean class="org.jsecurity.authc.credential.Sha1CredentialsMatcher">
+            <!-- The 'bootstrapDataPopulator' Sha256 hashes the password
+                 (using the username as the salt) then base64 encodes it: -->
+            <bean class="org.jsecurity.authc.credential.Sha256CredentialsMatcher">
                 <!-- true means hex encoded, false means base64 encoded -->
                 <property name="storedCredentialsHexEncoded" value="false"/>
+                <!-- We salt the password using the username, the most common practice: -->
+                <property name="hashSalted" value="true"/>
             </bean>
         </property>
     </bean>
