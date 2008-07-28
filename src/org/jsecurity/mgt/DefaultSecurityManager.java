@@ -22,7 +22,6 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.crypto.Cipher;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.*;
@@ -74,9 +73,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * Default no-arg constructor.
      */
     public DefaultSecurityManager() {
-        PropertiesRealm propsRealm = new PropertiesRealm();
-        setRealm(propsRealm);
-        propsRealm.init();
     }
 
     /**

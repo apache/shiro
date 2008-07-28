@@ -19,12 +19,15 @@
 package org.jsecurity.spring;
 
 import static org.easymock.EasyMock.*;
+import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.web.servlet.JSecurityFilter;
 import org.junit.Test;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Les Hazlewood
@@ -43,10 +46,13 @@ public class SpringJSecurityFilterTest {
         expect(mockConfig.getInitParameter(SpringWebConfiguration.SECURITY_MANAGER_BEAN_NAME_PARAM_NAME)).andReturn(null);
 
         ServletContext mockContext = createMock(ServletContext.class);
-
-        WebApplicationContext appCtx = createNiceMock(WebApplicationContext.class);
+        WebApplicationContext appCtx = createMock(WebApplicationContext.class);
+        SecurityManager secMgr = createMock(SecurityManager.class);
+        Map<String, SecurityManager> beansOfType = new HashMap<String, SecurityManager>(1);
+        beansOfType.put("securityManager", secMgr);
 
         expect(mockContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)).andReturn(appCtx);
+        expect(appCtx.getBeansOfType(SecurityManager.class)).andReturn(beansOfType);
 
         expect(mockConfig.getServletContext()).andReturn(mockContext).anyTimes();
 

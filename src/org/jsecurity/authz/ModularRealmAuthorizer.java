@@ -52,6 +52,21 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         this.realms = realms;
     }
 
+    /**
+     * Used by the {@link Authorizer Authorizer} implementation methods to ensure that the {@link #setRealms realms}
+     * has been set.  The default implementation ensures the property is not null and not empty.
+     *
+     * @throws IllegalStateException if the <tt>realms</tt> property is configured incorrectly.
+     */
+    protected void assertRealmsConfigured() throws IllegalStateException {
+        Collection<Realm> realms = getRealms();
+        if (realms == null || realms.isEmpty()) {
+            String msg = "Configuration error:  No realms have been configured!  One or more realms must be " +
+                    "present to execute an authorization operation.";
+            throw new IllegalStateException(msg);
+        }
+    }
+
     public void setPermissionResolver(PermissionResolver permissionResolver) {
         Collection<Realm> realms = getRealms();
         if (realms != null && !realms.isEmpty()) {
@@ -64,6 +79,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permission) {
+        assertRealmsConfigured();
         for (Realm realm : getRealms()) {
             if (realm.isPermitted(principals, permission)) {
                 return true;
@@ -73,6 +89,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
+        assertRealmsConfigured();
         for (Realm realm : getRealms()) {
             if (realm.isPermitted(principals, permission)) {
                 return true;
@@ -156,6 +173,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
+        assertRealmsConfigured();
         for (Realm realm : getRealms()) {
             if (realm.hasRole(principals, roleIdentifier)) {
                 return true;

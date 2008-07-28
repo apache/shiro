@@ -73,7 +73,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /**
      * List of realms that will be iterated through when a user authenticates.
      */
-    private Collection<? extends Realm> realms;
+    private Collection<Realm> realms;
 
     private ModularAuthenticationStrategy modularAuthenticationStrategy;
 
@@ -81,7 +81,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     |         C O N S T R U C T O R S           |
     ============================================*/
     public ModularRealmAuthenticator() {
-        this.modularAuthenticationStrategy = new AllSuccessfulModularAuthenticationStrategy();
+        ModularAuthenticationStrategy strategy = new AllSuccessfulModularAuthenticationStrategy();
+        setModularAuthenticationStrategy(strategy);
     }
 
     public ModularRealmAuthenticator(Realm realm) {
@@ -114,6 +115,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     public void setRealms(Collection<Realm> realms) {
         this.realms = realms;
+    }
+
+    protected Collection<Realm> getRealms() {
+        return this.realms;
     }
 
     /**
@@ -152,8 +157,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @throws IllegalStateException if the <tt>realms</tt> property is configured incorrectly.
      */
     protected void assertRealmsConfigured() throws IllegalStateException {
+        Collection<Realm> realms = getRealms();
         if (realms == null || realms.isEmpty()) {
-            String msg = "No realms configured for this ModularRealmAuthenticator.  Configuration error.";
+            String msg = "Configuration error:  No realms have been configured!  One or more realms must be " +
+                    "present to execute an authentication attempt.";
             throw new IllegalStateException(msg);
         }
     }
@@ -191,7 +198,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @return an aggregated AuthenticationInfo instance representing account data across all the successfully
      *         consulted realms.
      */
-    protected AuthenticationInfo doMultiRealmAuthentication(Collection<? extends Realm> realms, AuthenticationToken token) {
+    protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token) {
 
         ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
 
@@ -260,9 +267,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      *                                 for the given principal and credentials.
      */
     protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
-
         assertRealmsConfigured();
-
+        Collection<Realm> realms = getRealms();
         if (realms.size() == 1) {
             return doSingleRealmAuthentication(realms.iterator().next(), authenticationToken);
         } else {
@@ -283,6 +289,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     public void onLogout(PrincipalCollection principals) {
         super.onLogout(principals);
+        Collection<Realm> realms = getRealms();
         if (realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
                 if (realm instanceof LogoutAware) {

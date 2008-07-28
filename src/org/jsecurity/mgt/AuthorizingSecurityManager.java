@@ -52,12 +52,13 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     /**
      * The wrapped instance to which all of this <tt>SecurityManager</tt> authorization calls are delegated.
      */
-    protected Authorizer authorizer = new ModularRealmAuthorizer();
+    protected Authorizer authorizer;
 
     /**
      * Default no-arg constructor.
      */
     public AuthorizingSecurityManager() {
+        ensureAuthorizer();
     }
 
     /**
@@ -83,6 +84,18 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
             throw new IllegalArgumentException(msg);
         }
         this.authorizer = authorizer;
+    }
+
+    protected void ensureAuthorizer() {
+        Authorizer authorizer = getAuthorizer();
+        if (authorizer == null) {
+            authorizer = createAuthorizer();
+            setAuthorizer(authorizer);
+        }
+    }
+
+    protected Authorizer createAuthorizer() {
+        return new ModularRealmAuthorizer();
     }
 
     /**
@@ -146,62 +159,77 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permissionString) {
+        ensureRealms();
         return getAuthorizer().isPermitted(principals, permissionString);
     }
 
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
+        ensureRealms();
         return getAuthorizer().isPermitted(principals, permission);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
+        ensureRealms();
         return getAuthorizer().isPermitted(principals, permissions);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
+        ensureRealms();
         return getAuthorizer().isPermitted(principals, permissions);
     }
 
     public boolean isPermittedAll(PrincipalCollection principals, String... permissions) {
+        ensureRealms();
         return getAuthorizer().isPermittedAll(principals, permissions);
     }
 
     public boolean isPermittedAll(PrincipalCollection principals, Collection<Permission> permissions) {
+        ensureRealms();
         return getAuthorizer().isPermittedAll(principals, permissions);
     }
 
     public void checkPermission(PrincipalCollection principals, String permission) throws AuthorizationException {
+        ensureRealms();
         getAuthorizer().checkPermission(principals, permission);
     }
 
     public void checkPermission(PrincipalCollection principals, Permission permission) throws AuthorizationException {
+        ensureRealms();
         getAuthorizer().checkPermission(principals, permission);
     }
 
     public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
+        ensureRealms();
         getAuthorizer().checkPermissions(principals, permissions);
     }
 
     public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions) throws AuthorizationException {
+        ensureRealms();
         getAuthorizer().checkPermissions(principals, permissions);
     }
 
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
+        ensureRealms();
         return getAuthorizer().hasRole(principals, roleIdentifier);
     }
 
     public boolean[] hasRoles(PrincipalCollection principals, List<String> roleIdentifiers) {
+        ensureRealms();
         return getAuthorizer().hasRoles(principals, roleIdentifiers);
     }
 
     public boolean hasAllRoles(PrincipalCollection principals, Collection<String> roleIdentifiers) {
+        ensureRealms();
         return getAuthorizer().hasAllRoles(principals, roleIdentifiers);
     }
 
     public void checkRole(PrincipalCollection principals, String role) throws AuthorizationException {
+        ensureRealms();
         getAuthorizer().checkRole(principals, role);
     }
 
     public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
+        ensureRealms();
         getAuthorizer().checkRoles(principals, roles);
     }
 }
