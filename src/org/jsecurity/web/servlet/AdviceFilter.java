@@ -37,31 +37,75 @@ import java.io.IOException;
 public abstract class AdviceFilter extends OncePerRequestFilter {
 
     /**
-     * Default implementation that always returns <code>true</code> that can be overridden by subclasses
-     * for specific preHandle request continuation logic.
+     * Returns <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.
+     * Called before the chain is actually consulted/executed.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @return <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.
+     * @throws Exception if there is any error.
      */
     public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         return true;
     }
 
     /**
-     * Default implementation that does nothing and exists only as a template hook for subclasses that
-     * wish to implement postHandle logic.
+     * Allows 'post' advice logic to be called, but only if no exception occurs during filter chain execution.  That
+     * is, if {@link #executeChain executeChain} throws an exception, this method will never be called.  Be aware of
+     * this when implementing logic.  Most resource 'cleanup' behavior is often done in the
+     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion(request,response,exception)}
+     * implementation, which is guaranteed to be called for every request, even when the chain processing throws
+     * an Exception.
+     * <p/>
+     * The default implementation is a no-op, and exists as a template method for subclasses.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @throws Exception if an error occurs.
      */
     public void postHandle(ServletRequest request, ServletResponse response) throws Exception {
     }
 
     /**
-     * Default implementation that does nothing and exists only as a template hook for subclasses that
-     * wish to implement afterCompletion logic.
+     * Called in all cases in a <code>finally</code> block even if {@link #preHandle preHandle} returns
+     * <code>false</code> or if an exception is thrown during filter chain processing.  Can be used for resource
+     * cleanup if so desired.
+     * <p/>
+     * The default implementation is a no-op, and exists as a template method for subclasses.
+     *
+     * @param request   the incoming ServletRequest
+     * @param response  the outgoing ServletResponse
+     * @param exception any exception thrown during {@link #preHandle preHandle}, {@link #executeChain executeChain},
+     *                  or {@link #postHandle postHandle} execution, or <code>null</code> if no exception was thrown
+     *                  (i.e. the chain processed successfully).
+     * @throws Exception if an error occurs.
      */
     public void afterCompletion(ServletRequest request, ServletResponse response, Exception exception) throws Exception {
     }
 
+    /**
+     * Actually executes the specified filter chain by calling
+     * <pre>chain.doFilter(request,response);</pre>
+     * Can be overridden by subclasses for custom logic.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @param chain    the filter chain to execute
+     * @throws Exception if there is any error executing the chain.
+     */
     protected void executeChain(ServletRequest request, ServletResponse response, FilterChain chain) throws Exception {
         chain.doFilter(request, response);
     }
 
+    /**
+     * Actually implements the chain execution logic, utilizing pre, post, and after advice hooks.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @param chain    the filter chain to execute
+     * @throws ServletException if a servlet-related error occurs
+     * @throws IOException      if an IO error occurs
+     */
     @SuppressWarnings({"ThrowFromFinallyBlock"})
     public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
