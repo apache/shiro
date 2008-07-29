@@ -21,7 +21,7 @@ package org.jsecurity.subject;
 import java.util.*;
 
 /**
- * A simple implementation of the {@link PrincipalCollection} interface that tracks principals internally
+ * A simple implementation of the {@link MutablePrincipalCollection} interface that tracks principals internally
  * by storing them in a {@link LinkedHashMap}.
  *
  * @author Les Hazlewood
@@ -36,8 +36,8 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public SimplePrincipalCollection(Object principal, String realmName) {
-        if( principal instanceof Collection ) {
-            addAll( (Collection)principal, realmName );
+        if (principal instanceof Collection) {
+            addAll((Collection) principal, realmName);
         } else {
             add(principal, realmName);
         }
@@ -87,9 +87,9 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public void addAll(PrincipalCollection principals) {
-        if( principals.getRealmNames() != null ) {
-            for( String realmName : principals.getRealmNames() ) {
-                for( Object principal : principals.fromRealm( realmName ) ) {
+        if (principals.getRealmNames() != null) {
+            for (String realmName : principals.getRealmNames()) {
+                for (Object principal : principals.fromRealm(realmName)) {
                     add(principal, realmName);
                 }
             }
@@ -165,7 +165,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public Set<String> getRealmNames() {
-        if( realmPrincipals == null ) {
+        if (realmPrincipals == null) {
             return null;
         } else {
             return realmPrincipals.keySet();
