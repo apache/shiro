@@ -35,30 +35,39 @@ import java.io.IOException;
  * <p><b>NOTE</b> This class was borrowed from the Spring framework, and as such,
  * all copyright notices and author names have remained in tact.
  *
+ * @author Les Hazlewood
  * @author Juergen Hoeller
- * @since 06.12.2003
+ * @since 0.1
  */
 public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter, Nameable {
 
     /**
-     * Suffix that gets appended to the filter name for the
-     * "already filtered" request attribute.
+     * Suffix that gets appended to the filter name for the "already filtered" request attribute.
      *
      * @see #getAlreadyFilteredAttributeName
      */
     public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
 
-    protected FilterConfig filterConfig = null;
+    protected FilterConfig filterConfig;
 
-    private String name = null;
+    private String name;
 
+    /**
+     * Returns the servlet container specified <code>FilterConfig</code> instance provided at
+     * {@link #init(javax.servlet.FilterConfig) startup}.
+     *
+     * @return the servlet container specified <code>FilterConfig</code> instance provided at startup.
+     */
     public FilterConfig getFilterConfig() {
         return filterConfig;
     }
 
     /**
-     * Sets the FilterConfig <em>and</em> the <code>filterConfig.getServletContext()</code> as
-     * attributes of this class for use by subclasses.
+     * Sets the FilterConfig <em>and</em> the <code>ServletContext</code> as attributes of this class for use by
+     * subclasses.
+     * That is:
+     * <pre>       this.filterConfig = filterConfig;
+     * setServletContext(filterConfig.getServletContext());</pre>
      *
      * @param filterConfig the FilterConfig instance provided by the Servlet container at startup.
      */
@@ -68,10 +77,11 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
     }
 
     /**
-     * Make the name of this filter available to subclasses.
-     * <p>Takes the FilterConfig's filter name by default.
-     * If initialized as bean in a Spring application context,
-     * it falls back to the bean name as defined in the bean factory.
+     * Returns the name of this filter.
+     * <p/>
+     * Unless overridden by calling the {@link #setName(String) setName(String)} method, this value defaults to the
+     * filter name as specified by the servlet container at startup:
+     * <pre>this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</pre>
      *
      * @return the filter name, or <code>null</code> if none available
      * @see javax.servlet.GenericServlet#getServletName()
@@ -79,18 +89,35 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      */
     protected String getName() {
         if (this.name == null) {
-            if (this.filterConfig != null) {
-                this.name = this.filterConfig.getFilterName();
+            FilterConfig config = getFilterConfig();
+            if (config != null) {
+                this.name = config.getFilterName();
             }
         }
 
         return this.name;
     }
 
+    /**
+     * Sets the filter's name.
+     * <p/>
+     * Unless overridden by calling this method, this value defaults to the filter name as specified by the
+     * servlet container at startup:
+     * <pre>this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</pre>
+     *
+     * @param name the name of the filter.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Sets the filter's {@link #setFilterConfig filterConfig} and then immediately calls
+     * {@link #onFilterConfigSet() onFilterConfigSet()} to trigger any processing a subclass might wish to perform.
+     *
+     * @param filterConfig the servlet container supplied FilterConfig instance.
+     * @throws ServletException if {@link #onFilterConfigSet() onFilterConfigSet()} throws an Exception.
+     */
     public final void init(FilterConfig filterConfig) throws ServletException {
         setFilterConfig(filterConfig);
         try {
@@ -107,6 +134,15 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
         }
     }
 
+    /**
+     * Template method to be overridden by subclasses to perform initialization logic at startup.  The
+     * <code>ServletContext</code> and <code>FilterConfig</code> will be accessible
+     * (and non-<code>null</code>) at the time this method is invoked via the
+     * {@link #getServletContext() getServletContext()} and {@link #getFilterConfig() getFilterConfig()}
+     * methods respectively.
+     *
+     * @throws Exception if the subclass has an error upon initialization.
+     */
     protected void onFilterConfigSet() throws Exception {
     }
 
@@ -140,12 +176,12 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
     }
 
     /**
-     * Return the name of the request attribute that identifies that a request
-     * is already filtered.
-     * <p>Default implementation takes the configured name of the concrete filter
-     * instance and appends ".FILTERED". If the filter is not fully initialized,
-     * it falls back to its class name.
+     * Return name of the request attribute that identifies that a request has already been filtered.
+     * <p/>
+     * The default implementation takes the configured {@link #getName() name} and appends ".FILTERED".
+     * If the filter is not fully initialized, it falls back to the implementation's class name.
      *
+     * @return the name of the request attribute that identifies that a request has already been filtered.
      * @see #getName
      * @see #ALREADY_FILTERED_SUFFIX
      */
@@ -181,6 +217,9 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
             ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws ServletException, IOException;
 
+    /**
+     * Default no-op implementation that can be overridden by subclasses for custom cleanup behavior.
+     */
     public void destroy() {
     }
 }
