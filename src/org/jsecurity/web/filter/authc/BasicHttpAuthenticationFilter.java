@@ -135,7 +135,6 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
         if (log.isDebugEnabled()) {
             log.debug("Attempting to authenticate Subject based on Http BASIC Authentication request...");
         }
-        boolean isLoggedIn = false;
 
         HttpServletRequest httpRequest = toHttp(request);
         String authorizationHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
@@ -165,22 +164,18 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
                         if (log.isDebugEnabled()) {
                             log.debug("Successfully logged in user [" + credentials[0] + "]");
                         }
-                        isLoggedIn = true;
+                        return true;
                     } catch (AuthenticationException ae) {
                         if (log.isDebugEnabled()) {
                             log.debug("Unable to log in subject [" + credentials[0] + "]", ae);
                         }
-
-                        return sendChallenge(request, response);
                     }
                 }
             }
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Returning [" + isLoggedIn + "] from executeLogin()");
-        }
-
-        return isLoggedIn;
+        //always default to sending the challenge.  If we've made it to this point in the code, that
+        //means the authentication attempt either never occured, or wasn't successful:
+        return sendChallenge(request, response);
     }
 }
