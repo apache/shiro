@@ -62,8 +62,6 @@ public class WebUtils {
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
      * <p>If included via a RequestDispatcher, the current resource will see the
      * originating request. Its own URI and paths are exposed as request attributes.
-     *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = "javax.servlet.include.request_uri";
     public static final String INCLUDE_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.include.context_path";
@@ -75,8 +73,6 @@ public class WebUtils {
      * Standard Servlet 2.4+ spec request attributes for forward URI and paths.
      * <p>If forwarded to via a RequestDispatcher, the current resource will see its
      * own URI and paths. The originating URI and paths are exposed as request attributes.
-     *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      */
     public static final String FORWARD_REQUEST_URI_ATTRIBUTE = "javax.servlet.forward.request_uri";
     public static final String FORWARD_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.forward.context_path";
@@ -88,8 +84,6 @@ public class WebUtils {
      * Default character encoding to use when <code>request.getCharacterEncoding</code>
      * returns <code>null</code>, according to the Servlet spec.
      *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
-     *
      * @see javax.servlet.ServletRequest#getCharacterEncoding
      */
     public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
@@ -97,8 +91,14 @@ public class WebUtils {
     /**
      * Return the path within the web application for the given request.
      * <p>Detects include request URL if called within a RequestDispatcher include.
-     *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     * <p/>
+     * For example, for a request to URL
+     * <p/>
+     * <code>http://www.somehost.com/myapp/my/url.jsp</code>,
+     * <p/>
+     * for an application deployed to <code>/mayapp</code> (the application's context path), this method would return
+     * <p/>
+     * <code>/my/url.jsp</code>.
      *
      * @param request current HTTP request
      * @return the path within the web application
@@ -125,8 +125,6 @@ public class WebUtils {
      * containers like JBoss/Jetty incorrectly include ";" strings like ";jsessionid"
      * in the URI. This method cuts off such incorrect appendices.
      *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
-     *
      * @param request current HTTP request
      * @return the request URI
      */
@@ -141,7 +139,9 @@ public class WebUtils {
     /**
      * Decode the supplied URI string and strips any extraneous portion after a ';'.
      *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     * @param request the incoming HttpServletRequest
+     * @param uri     the application's URI string
+     * @return the supplied URI string stripped of any extraneous portion after a ';'.
      */
     private static String decodeAndCleanUriString(HttpServletRequest request, String uri) {
         uri = decodeRequestString(request, uri);
@@ -154,8 +154,6 @@ public class WebUtils {
      * URL if called within a RequestDispatcher include.
      * <p>As the value returned by <code>request.getContextPath()</code> is <i>not</i>
      * decoded by the servlet container, this method will decode it.
-     *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @return the context path
@@ -176,8 +174,6 @@ public class WebUtils {
      * Decode the given source string with a URLDecoder. The encoding will be taken
      * from the request, falling back to the default "ISO-8859-1".
      * <p>The default implementation uses <code>URLDecoder.decode(input, enc)</code>.
-     *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param request current HTTP request
      * @param source  the String to decode
@@ -208,8 +204,6 @@ public class WebUtils {
      * <p>The default implementation checks the request encoding,
      * falling back to the default encoding specified for this resolver.
      *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
-     *
      * @param request current HTTP request
      * @return the encoding for the request (never <code>null</code>)
      * @see javax.servlet.ServletRequest#getCharacterEncoding()
@@ -237,10 +231,30 @@ public class WebUtils {
         return clientAddress;
     }
 
+    /**
+     * A convenience method that merely casts the incoming <code>ServletRequest</code> to an
+     * <code>HttpServletRequest</code>:
+     * <pre>return (HttpServletRequest)request;</pre>
+     * Logic could be changed in the future for logging or throwing an meaningful exception in
+     * non HTTP request environments (e.g. Portlet API).
+     *
+     * @param request the incoming ServletRequest
+     * @return the <code>request</code> argument casted to an <code>HttpServletRequest</code>.
+     */
     public static HttpServletRequest toHttp(ServletRequest request) {
         return (HttpServletRequest) request;
     }
 
+    /**
+     * A convenience method that merely casts the incoming <code>ServletResponse</code> to an
+     * <code>HttpServletResponse</code>:
+     * <pre>return (HttpServletResponse)response;</pre>
+     * Logic could be changed in the future for logging or throwing an meaningful exception in
+     * non HTTP request environments (e.g. Portlet API).
+     *
+     * @param response the outgoing ServletResponse
+     * @return the <code>response</code> argument casted to an <code>HttpServletResponse</code>.
+     */
     public static HttpServletResponse toHttp(ServletResponse response) {
         return (HttpServletResponse) response;
     }

@@ -58,10 +58,35 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         this.appliedPaths.put(path, values);
     }
 
+    /**
+     * Returns the context path within the application based on the specified <code>request</code>.
+     * <p/>
+     * This implementation merely delegates to
+     * {@link WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest) WebUtils.getPathWithinApplication(request)},
+     * but can be overridden by subclasses for custom logic.
+     *
+     * @param request
+     * @return
+     */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
     }
 
+    /**
+     * Returns <code>true</code> if the incoming <code>request</code> matches the specified <code>path</code> pattern,
+     * <code>false</code> otherwise.
+     * <p/>
+     * The default implementation acquires the <code>request</code>'s path within the application and determines
+     * if that matches:
+     *
+     * <pre>       String requestURI = {@link #getPathWithinApplication(javax.servlet.ServletRequest) getPathWithinApplication(request)};
+     * return {@link #pathsMatch(String, String) pathsMatch(path,requestURI)}</pre>
+     *
+     * @param path    the configured url pattern to check the incoming request against.
+     * @param request the incoming ServletRequest
+     * @return <code>true</code> if the incoming <code>request</code> matches the specified <code>path</code> pattern,
+     *         <code>false</code> otherwise.
+     */
     protected boolean pathsMatch(String path, ServletRequest request) {
         String requestURI = getPathWithinApplication(request);
         if (log.isTraceEnabled()) {
@@ -70,6 +95,19 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         return pathsMatch(path, requestURI);
     }
 
+    /**
+     * Returns <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
+     * <code>false</code> otherwise.
+     * <p/>
+     * Simply delegates to
+     * <b><code>this.pathMatcher.{@link AntPathMatcher#match(String, String) match(pattern,path)}</code></b>,
+     * but can be overridden by subclasses for custom matching behavior.
+     *
+     * @param pattern the pattern to match against
+     * @param path    the value to match with the specified <code>pattern</code>
+     * @return <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
+     *         <code>false</code> otherwise.
+     */
     protected boolean pathsMatch(String pattern, String path) {
         return pathMatcher.match(pattern, path);
     }
@@ -91,32 +129,26 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 
-        if (this.appliedPaths != null && !this.appliedPaths.isEmpty()) {
-
-            // If URL path isn't matched, we allow the request to go through so default to true
-            boolean continueChain = true;
-            for (String path : this.appliedPaths.keySet()) {
-
-                // If the path does match, then pass on to the subclass implementation for specific checks:
-                if (pathsMatch(path, request)) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Current requestURI matches pattern [" + path + "].  Performing onPreHandle check...");
-                    }
-                    Object config = this.appliedPaths.get(path);
-                    continueChain = onPreHandle(request, response, config);
-                }
-
-                if (!continueChain) {
-                    //it is expected the subclass renders the response directly, so just return false
-                    return false;
-                }
-            }
-        } else {
+        if (this.appliedPaths == null || this.appliedPaths.isEmpty()) {
             if (log.isTraceEnabled()) {
                 log.trace("appliedPaths property is null or empty.  This Filter will passthrough immediately.");
             }
+            return true;
         }
 
+        for (String path : this.appliedPaths.keySet()) {
+            // If the path does match, then pass on to the subclass implementation for specific checks
+            //(first match 'wins'):
+            if (pathsMatch(path, request)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Current requestURI matches pattern [" + path + "].  Performing onPreHandle check...");
+                }
+                Object config = this.appliedPaths.get(path);
+                return onPreHandle(request, response, config);
+            }
+        }
+
+        //no path matched, allow the request to go through:
         return true;
     }
 
