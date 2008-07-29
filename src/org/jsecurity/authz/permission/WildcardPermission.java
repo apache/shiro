@@ -133,11 +133,11 @@ public class WildcardPermission implements Permission, Serializable {
 
         wildcardString = wildcardString.trim();
 
-        List<String> parts = CollectionUtils.newArrayList(wildcardString.split(PART_DIVIDER_TOKEN));
+        List<String> parts = CollectionUtils.asList(wildcardString.split(PART_DIVIDER_TOKEN));
 
         this.parts = new ArrayList<Set<String>>();
         for (String part : parts) {
-            Set<String> subparts = CollectionUtils.newLinkedHashSet(part.split(SUBPART_DIVIDER_TOKEN));
+            Set<String> subparts = CollectionUtils.asSet(part.split(SUBPART_DIVIDER_TOKEN));
 
             if (!caseSensitive) {
                 subparts = lowercase(subparts);

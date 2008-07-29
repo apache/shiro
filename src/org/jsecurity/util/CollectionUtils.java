@@ -18,15 +18,13 @@
  */
 package org.jsecurity.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 /**
  * Static helper class for use dealing with Arrays.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @since 0.9
  */
 public class CollectionUtils {
@@ -44,23 +42,29 @@ public class CollectionUtils {
         return Collections.EMPTY_SET;
     }
 
-    public static <E> LinkedHashSet<E> newLinkedHashSet(E... elements) {
+    @SuppressWarnings({"unchecked"})
+    public static <E> Set<E> asSet(E... elements) {
+        if (elements == null || elements.length == 0) {
+            return Collections.EMPTY_SET;
+        }
         LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
         return set;
     }
 
-    public static <E> ArrayList<E> newArrayList(E... elements) {
+    @SuppressWarnings({"unchecked"})
+    public static <E> List<E> asList(E... elements) {
+        if (elements == null || elements.length == 0) {
+            return Collections.EMPTY_LIST;
+        }
         // Avoid integer overflow when a large array is passed in
-        int capacity = computeArrayListCapacity(elements.length);
+        int capacity = computeListCapacity(elements.length);
         ArrayList<E> list = new ArrayList<E>(capacity);
         Collections.addAll(list, elements);
         return list;
     }
 
-    static int computeArrayListCapacity(int arraySize) {
+    static int computeListCapacity(int arraySize) {
         return (int) Math.min(5L + arraySize + (arraySize / 10), Integer.MAX_VALUE);
     }
-
-
 }

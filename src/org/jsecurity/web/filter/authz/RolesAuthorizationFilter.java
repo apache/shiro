@@ -19,6 +19,7 @@
 package org.jsecurity.web.filter.authz;
 
 import org.jsecurity.subject.Subject;
+import org.jsecurity.util.CollectionUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,22 +40,15 @@ public class RolesAuthorizationFilter extends AuthorizationFilter {
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
         Subject subject = getSubject(request, response);
-        Set<String> roles = (Set<String>) mappedValue;
+        String[] rolesArray = (String[]) mappedValue;
 
-        boolean hasRoles = true;
-        if (roles != null && !roles.isEmpty()) {
-            if (roles.size() == 1) {
-                if (!subject.hasRole(roles.iterator().next())) {
-                    hasRoles = false;
-                }
-            } else {
-                if (!subject.hasAllRoles(roles)) {
-                    hasRoles = false;
-                }
-            }
+        if (rolesArray == null || rolesArray.length == 0) {
+            //no roles specified, so nothing to check - allow access.
+            return true;
         }
 
-        return hasRoles;
+        Set<String> roles = CollectionUtils.asSet(rolesArray);
+        return subject.hasAllRoles(roles);
     }
 
 }
