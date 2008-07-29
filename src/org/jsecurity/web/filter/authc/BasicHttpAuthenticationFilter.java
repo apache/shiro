@@ -86,14 +86,14 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
-        boolean allowed = false; //denied by default
+        boolean loggedIn = false; //false by default or we wouldn't be in this method
         if (isLoginAttempt(request, response)) {
-            allowed = executeLogin(request, response);
+            loggedIn = executeLogin(request, response);
         }
-        if (!allowed) {
+        if (!loggedIn) {
             sendChallenge(request, response);
         }
-        return allowed;
+        return loggedIn;
     }
 
     /**
