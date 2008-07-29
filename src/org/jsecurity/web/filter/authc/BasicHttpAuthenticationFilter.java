@@ -70,16 +70,93 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      */
     private String applicationName = "application";
 
+    private String authcHeaderScheme = HttpServletRequest.BASIC_AUTH;
+    private String authzHeaderScheme = HttpServletRequest.BASIC_AUTH;
+
+    /**
+     * Returns the name to use in the ServletResponse's <b><code>WWW-Authenticate</code></b> header.
+     * <p/>
+     * Per RFC 2617, this name name is displayed to the end user when they are asked to authenticate.  Unless overridden
+     * by the {@link #setApplicationName(String) setApplicationName(String)} method, the default value is 'application'.
+     * <p/>
+     * Please see {@link #setApplicationName(String) setApplicationName(String)} for an example of how this functions.
+     *
+     * @return the name to use in the ServletResponse's 'WWW-Authenticate' header.
+     */
     public String getApplicationName() {
         return applicationName;
     }
 
+    /**
+     * Sets the name to use in the ServletResponse's 'WWW-Authenticate' header.
+     * <p/>
+     * Per RFC 2617, this name name is displayed to the end user when they are asked to authenticate.  Unless overridden
+     * by this method, the default value is 'application'.
+     * <p/>
+     * For example, setting this property to <b><code>Awesome Webapp</code></b> will result in the following header:
+     * <pre>WWW-Authenticate: Basic realm=&quot;<b>Awesome Webapp</b>&quot;</pre>
+     * <p/>
+     * Side note: As you can see from the header text, the HTTP Basic specification calls
+     * this the authentication 'realm', but we call this the 'applicationName' instead to avoid confusion with
+     * JSecurity's Realm constructs.
+     *
+     * @param applicationName the name to use in the ServletResponse's 'WWW-Authenticate' header.
+     */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
 
     /**
-     * Method processes unauthenticated requests. It handles the two-stage request/challenge authentication request.
+     * Returns the HTTP 'Authorization' header value that this filter will respond to as indicating a login request.
+     * <p/>
+     * Unless overridden by the {@link #setAuthzHeaderScheme(String) setAuthzHeaderScheme(String)} method, the
+     * default value is {@link HttpServletRequest#BASIC_AUTH HttpServletRequest.BASIC_AUTH}, i.e. &quot;BASIC&quot;
+     *
+     * @return the Http 'Authorization' header value that this filter will respond to as indicating a login request
+     */
+    public String getAuthzHeaderScheme() {
+        return authzHeaderScheme;
+    }
+
+    /**
+     * Sets the HTTP 'Authorization' header value that this filter will respond to as indicating a login request.
+     * <p/>
+     * Unless overridden by this method, the default value is
+     * {@link HttpServletRequest#BASIC_AUTH HttpServletRequest.BASIC_AUTH}, i.e. &quot;BASIC&quot;
+     *
+     * @param authzHeaderScheme the HTTP 'Authorization' header value that this filter will respond to as indicating
+     *                          a login request.
+     */
+    public void setAuthzHeaderScheme(String authzHeaderScheme) {
+        this.authzHeaderScheme = authzHeaderScheme;
+    }
+
+    /**
+     * Returns the HTTP 'WWW-Authenticate' header scheme that this filter will use when sending the Http Basic
+     * challenge response.  The default value is <code>BASIC</code>.
+     *
+     * @return the HTTP 'WWW-Authenticate' header scheme that this filter will use when sending the Http Basic
+     *         challenge response.
+     * @see #sendChallenge
+     */
+    public String getAuthcHeaderScheme() {
+        return authcHeaderScheme;
+    }
+
+    /**
+     * Sets the HTTP 'WWW-Authenticate' header scheme that this filter will use when sending the Http Basic
+     * challenge response.  The default value is <code>BASIC</code>.
+     *
+     * @param authcHeaderScheme the HTTP 'WWW-Authenticate' header scheme that this filter will use when sending the
+     *                          Http Basic challenge response.
+     * @see #sendChallenge
+     */
+    public void setAuthcHeaderScheme(String authcHeaderScheme) {
+        this.authcHeaderScheme = authcHeaderScheme;
+    }
+
+    /**
+     * Processes unauthenticated requests. It handles the two-stage request/challenge authentication request.
      *
      * @param request  incoming ServletRequest
      * @param response outgoing ServletResponse
@@ -98,19 +175,46 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
 
     /**
      * Determines whether the incoming request is an attempt to log in.
+     * <p/>
+     * The default implementation obtains the value of the request's
+     * {@link #AUTHORIZATION_HEADER AUTHORIZATION_HEADER}, and if it is not <code>null</code>, delegates
+     * to {@link #isLoginAttempt(String) isLoginAttempt(authzHeaderValue)}. If the header is <code>null</code>,
+     * <code>false</code> is returned.
      *
      * @param request  incoming ServletRequest
      * @param response outgoing ServletResponse
-     * @return true if the incoming request is an attempt to log in, false otherwise
+     * @return true if the incoming request is an attempt to log in based, false otherwise
      */
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = toHttp(request);
-        String authorizationHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
-        return authorizationHeader != null;
+        String authzHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
+        return authzHeader != null && isLoginAttempt(authzHeader);
+    }
+
+    /**
+     * Default implementation that returns <code>true</code> if the specified <code>authzHeader</code>
+     * starts with the same (case-insensitive) characters specified by the
+     * {@link #getAuthzHeaderScheme() authzHeaderScheme}, <code>false</code> otherwise.
+     * <p/>
+     * That is:
+     * <pre>       String authzHeaderScheme = getAuthzHeaderScheme().toLowerCase();
+     * return authzHeader.toLowerCase().startsWith(authzHeaderScheme);</pre>
+     *
+     * @param authzHeader the 'Authorization' header value (guaranteed to be non-null if the
+     *                    {@link #isLoginAttempt(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method is not overriden).
+     * @return <code>true</code> if the authzHeader value matches that configured as defined by
+     *         the {@link #getAuthzHeaderScheme() authzHeaderScheme}.
+     */
+    protected boolean isLoginAttempt(String authzHeader) {
+        String authzHeaderScheme = getAuthzHeaderScheme().toLowerCase();
+        return authzHeader.toLowerCase().startsWith(authzHeaderScheme);
     }
 
     /**
      * Builds the challenge for authorization.
+     * <p>
+     * The header constructed is equal to:
+     * <pre>{@link #getAuthcHeaderScheme() getAuthcHeaderScheme()} + " realm=\"" + {@link #getApplicationName() getApplicationName()} + "\"";</pre>
      *
      * @param request  incoming ServletRequest
      * @param response outgoing ServletResponse
@@ -122,8 +226,8 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
         }
         HttpServletResponse httpResponse = toHttp(response);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        String authenticateHeader = HttpServletRequest.BASIC_AUTH + " realm=\"" + getApplicationName() + "\"";
-        httpResponse.setHeader(AUTHENTICATE_HEADER, authenticateHeader);
+        String authcHeader = getAuthcHeaderScheme() + " realm=\"" + getApplicationName() + "\"";
+        httpResponse.setHeader(AUTHENTICATE_HEADER, authcHeader);
         return false;
     }
 
