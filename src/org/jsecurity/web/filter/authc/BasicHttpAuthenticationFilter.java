@@ -86,11 +86,14 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
+        boolean allowed = false; //denied by default
         if (isLoginAttempt(request, response)) {
-            return executeLogin(request, response);
-        } else {
-            return sendChallenge(request, response);
+            allowed = executeLogin(request, response);
         }
+        if (!allowed) {
+            sendChallenge(request, response);
+        }
+        return allowed;
     }
 
     /**
@@ -174,8 +177,8 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
             }
         }
 
-        //always default to sending the challenge.  If we've made it to this point in the code, that
+        //always default to false.  If we've made it to this point in the code, that
         //means the authentication attempt either never occured, or wasn't successful:
-        return sendChallenge(request, response);
+        return false;
     }
 }
