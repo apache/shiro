@@ -26,8 +26,9 @@ import java.util.Set;
  * Simple value object implementation of the {@link AuthorizationInfo} interface that stores roles and permissions.
  *
  * @author Jeremy Haile
- * @since 0.9
+ * @author Les Hazlewood
  * @see org.jsecurity.realm.AuthorizingRealm
+ * @since 0.9
  */
 public class SimpleAuthorizationInfo implements AuthorizationInfo {
 
@@ -52,18 +53,18 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
         this.roles = roles;
     }
 
-    public void addRole( String role ) {
-        if( this.roles == null ) {
+    public void addRole(String role) {
+        if (this.roles == null) {
             this.roles = new HashSet<String>();
         }
-        this.roles.add( role );
+        this.roles.add(role);
     }
 
-    public void addRoles( Collection<String> roles ) {
-        if( this.roles == null ) {
+    public void addRoles(Collection<String> roles) {
+        if (this.roles == null) {
             this.roles = new HashSet<String>();
         }
-        this.roles.addAll( roles );
+        this.roles.addAll(roles);
     }
 
     public Set<String> getStringPermissions() {
@@ -74,19 +75,19 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
         this.stringPermissions = stringPermissions;
     }
 
-    public void addStringPermission( String permission ) {
-        if( this.stringPermissions == null ) {
+    public void addStringPermission(String permission) {
+        if (this.stringPermissions == null) {
             this.stringPermissions = new HashSet<String>();
         }
-        this.stringPermissions.add( permission );
+        this.stringPermissions.add(permission);
     }
 
 
-    public void addStringPermissions( Collection<String> permissions ) {
-        if( this.stringPermissions == null ) {
+    public void addStringPermissions(Collection<String> permissions) {
+        if (this.stringPermissions == null) {
             this.stringPermissions = new HashSet<String>();
         }
-        this.stringPermissions.addAll( permissions );
+        this.stringPermissions.addAll(permissions);
     }
 
     public Set<Permission> getObjectPermissions() {
@@ -97,17 +98,17 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
         this.objectPermissions = objectPermissions;
     }
 
-    public void addObjectPermission( Permission permission ) {
-        if( this.objectPermissions == null ) {
+    public void addObjectPermission(Permission permission) {
+        if (this.objectPermissions == null) {
             this.objectPermissions = new HashSet<Permission>();
         }
-        this.objectPermissions.add( permission );
+        this.objectPermissions.add(permission);
     }
 
-    public void addObjectPermissions( Collection<Permission> permissions ) {
-        if( this.objectPermissions == null ) {
+    public void addObjectPermissions(Collection<Permission> permissions) {
+        if (this.objectPermissions == null) {
             this.objectPermissions = new HashSet<Permission>();
         }
-        this.objectPermissions.addAll( permissions );
+        this.objectPermissions.addAll(permissions);
     }
 }

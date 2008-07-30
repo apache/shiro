@@ -24,6 +24,19 @@ import java.util.Collection;
  * <code>AuthorizationInfo</code> represents a single Subject's stored authorization data (roles, permissions, etc)
  * used during authorization (access control) checks only.
  * <p/>
+ * Roles are represented as a <code>Collection</code> of Strings
+ * ({@link java.util.Collection Collection}<{@link String String}>), typically each element being the Role name.
+ * <p/>
+ * {@link Permission Permission}s are provided in two ways:
+ * <ul>
+ * <li>A <code>Collection</code> of Strings, where each String can usually be converted into <code>Permission</code>
+ * objects by a <code>Realm</code>'s
+ * {@link org.jsecurity.authz.permission.PermissionResolver PermissionResolver}</li>
+ * <li>A <code>Collection</code> of {@link Permission Permission} objects</li>
+ * </ul>
+ * Both permission collections together represent the total aggregate collection of permissions.  You may use one
+ * or both depending on your preference and needs.
+ * <p/>
  * Because the act of authorization (access control) is orthoganal to authentication (log-in), this interface is
  * intended to represent only the account data needed by JSecurity during an access control check
  * (role, permission, etc).  JSecurity also has a parallel
@@ -59,10 +72,11 @@ public interface AuthorizationInfo {
      * <p/>
      * This method is a convenience mechanism that allows Realms to represent permissions as Strings if they choose.
      * When performing a security check, a <code>Realm</code> usually converts these strings to object
-     * {@link Permission Permission}s via a {@link org.jsecurity.authz.permission.PermissionResolver PermissionResolver}
+     * {@link Permission Permission}s via an internal
+     * {@link org.jsecurity.authz.permission.PermissionResolver PermissionResolver}
      * in order to perform the actual permission check.  This is not a requirement of course, since <code>Realm</code>s
      * can perform security checks in whatever manner deemed necessary, but this explains the conversion mechanism that
-     * most JSecurity execute during authorization checks.
+     * most JSecurity Realms execute for string-based permission checks.
      *
      * @return all string-based permissions assigned to the corresponding Subject.
      */

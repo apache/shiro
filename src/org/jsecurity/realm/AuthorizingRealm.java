@@ -34,16 +34,21 @@ import java.util.*;
  * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding Authorization
  * (access control) support.
  *
- * <p>This implementation can only support Authorization operations if the subclass implementation's
- * {@link #getAuthorizationInfo(org.jsecurity.subject.PrincipalCollection)} method returns an {@link AuthorizationInfo}.
+ * <p>This implementation will perform all role and permission checks automatically (and subclasses do not have to
+ * write this logic) as long as the
+ * {@link #getAuthorizationInfo(org.jsecurity.subject.PrincipalCollection)} method returns an
+ * {@link AuthorizationInfo}.  Please see that method's JavaDoc for an in-depth explanation.
  *
- * <p>If your Realm implementation does not want the default authorization behavior, you are of course
- * free to subclass the {@link AuthorizingRealm AuthorizingRealm} directly and implement the remaining
- * interface methods yourself.  Many people do this if they want to have better control over how the
- * Role and Permission checks occur for their specific data source.
+ * <p>If you find that you do not want to utilize the {@link AuthorizationInfo AuthorizationInfo} construct,
+ * you are of course free to subclass the {@link AuthenticatingRealm AuthenticatingRealm} directly instead and
+ * implement the remaining Realm interface methods directly.  You might do this if you want have better control
+ * over how the Role and Permission checks occur for your specific data source.  However, using AuthorizationInfo
+ * (and its default implementation {@link SimpleAuthorizationInfo SimpleAuthorizationInfo}) is sufficient in the large
+ * majority of Realm cases.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @see SimpleAuthorizationInfo
  * @since 0.2
  */
 public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, PermissionResolverAware {
@@ -185,10 +190,14 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     /**
      * Returns an account's authorization-specific information for the specified <code>principals</code>,
-     * or <tt>null</tt> if no account could be found.
+     * or <tt>null</tt> if no account could be found.  The resulting <code>AuthorizationInfo</code> object is used
+     * by the other method implementations in this class to automatically perform access control checks for the
+     * corresponding <code>Subject</code>.
      *
-     * <p>This resulting <code>AuthorizationInfo</code> data is used by AuthorizingRealms to perform access control checks for
-     * the corresponding <code>Subject</code>.
+     * <p>This implementation obtains the actual <code>AuthorizationInfo</code> object from the subclass's
+     * implementation of
+     * {@link #doGetAuthorizationInfo(org.jsecurity.subject.PrincipalCollection) doGetAuthorizationInfo}, and then
+     * caches it for efficient reuse if caching is enabled (see below).
      *
      * <p>Invocations of this method should be thought of as completely orthogonal to acquiring
      * {@link #getAuthenticationInfo(org.jsecurity.authc.AuthenticationToken) authenticationInfo}, since either could
@@ -297,10 +306,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     /**
-     * Retrieves the AuthorizationInfo for the given principals from the underlying data store.
+     * Retrieves the AuthorizationInfo for the given principals from the underlying data store.  When returning
+     * an instance from this method, you might want to consider using an instance of
+     * {@link SimpleAuthorizationInfo SimpleAuthorizationInfo}, as it is suitable in most cases.
      *
      * @param principals the primary identifying principals of the AuthorizationInfo that should be retrieved.
      * @return the AuthorizationInfo associated with this principals.
+     * @see SimpleAuthorizationInfo
      */
     protected abstract AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals);
 
