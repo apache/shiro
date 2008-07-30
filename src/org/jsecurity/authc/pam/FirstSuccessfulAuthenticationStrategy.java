@@ -38,12 +38,10 @@ public class FirstSuccessfulAuthenticationStrategy extends AbstractAuthenticatio
         return null;
     }
 
-    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t) throws AuthenticationException {
-        if (aggregateInfo != null) {
-            //just keep the value, ignore all other realms
-            return aggregateInfo;
-        } else {
-            return singleRealmInfo;
+    protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
+        if (aggregate != null && aggregate.getPrincipals() != null && !aggregate.getPrincipals().isEmpty()) {
+            return aggregate;
         }
+        return info != null ? info : aggregate;
     }
 }
