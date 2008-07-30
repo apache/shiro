@@ -200,12 +200,25 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * execute any necessary authorization checks.  For this reason, authentication and authorization should be
      * loosely coupled and not depend on each other.
      *
-     * <p>If caching is enabled, the authorization cache will be checked first and if found, will return the cached {@link AuthorizationInfo}.
-     * If caching is disabled, or there is a cache miss from the cache lookup, the authorization info will be looked up from
-     * the underlying data store via the {@link #doGetAuthorizationInfo(PrincipalCollection)} method, which must be implemented by subclasses.
+     * <h4>Caching</h4>
      *
-     * <p>If caching is enabled, the retrieved AuthorizationInfo from {@link #doGetAuthorizationInfo(org.jsecurity.subject.PrincipalCollection)}
-     * will be added to the authorization cache first and then returned.
+     * <p>The <code>AuthorizationInfo</code> values returned from this method are cached for performant reuse
+     * if caching is enabled.  Caching is enabled automatically when a <code>CacheManager</code> has been
+     * {@link #setCacheManager injected} and then the realm is {@link #init initialized}.  It can also be enabled by explictly
+     * calling {@link #initAuthorizationCache() initAuthorizationCache()}.
+     *
+     * <p>If caching is enabled, the authorization cache will be checked first and if found, will return the cached
+     * <code>AuthorizationInfo</code> immediately.  If caching is disabled, or there is a cache miss from the cache
+     * lookup, the authorization info will be looked up from the underlying data store via the
+     * {@link #doGetAuthorizationInfo(PrincipalCollection)} method, which must be implemented by subclasses.
+     *
+     * <p><b>Please note:</b>  If caching is enabled and if any authorization data for an account is changed at
+     * runtime, such as adding or removing roles and/or permissions, the subclass imlementation should clear the
+     * cached AuthorizationInfo for that account via the
+     * {@link #clearCachedAuthorizationInfo(org.jsecurity.subject.PrincipalCollection) clearCachedAuthorizationInfo}
+     * method.  This ensures that the next call to <code>getAuthorizationInfo(PrincipalCollection)</code> will
+     * acquire the account's fresh authorization data, where it will then be cached for efficient reuse.  This
+     * ensures that stale authorization data will not be reused.
      *
      * @param principals the corresponding Subject's identifying principals with which to look up the Subject's
      *                   <code>AuthorizationInfo</code>.
@@ -262,13 +275,36 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     /**
-     * Template-pattern method to be implemented by subclasses to retrieve the AuthorizationIfno for the given principals.
+     * Clears out the AuthorizationInfo cache entry for the specified account.
+     * <p/>
+     * This method is provided as a convenience to subclasses so they can invalidate a cache entry when they
+     * change an account's authorization data (add/remove roles or permissions) during runtime.  Because an account's
+     * AuthorizationInfo can be cached, there needs to be a way to invalidate the cache for only that account so that
+     * subsequent authorization operations don't used the (old) cached value if account data changes.
+     * <p/>
+     * After this method is called, the next authorization check for that same account will result in a call to
+     * {@link #getAuthorizationInfo(org.jsecurity.subject.PrincipalCollection) getAuthorizationInfo}, and the
+     * resulting return value will be cached before being returned so it can be reused for later authorization checks.
+     *
+     * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
+     */
+    protected void clearCachedAuthorizationInfo(PrincipalCollection principals) {
+        Object key = getAuthorizationCacheKey(principals);
+        Cache cache = getAuthorizationCache();
+        if (key != null && cache != null) {
+            cache.remove(key);
+        }
+    }
+
+    /**
+     * Retrieves the AuthorizationInfo for the given principals from the underlying data store.
      *
      * @param principals the primary identifying principals of the AuthorizationInfo that should be retrieved.
      * @return the AuthorizationInfo associated with this principals.
      */
     protected abstract AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals);
 
+    @SuppressWarnings({"unchecked"})
     private Collection<Permission> getPermissions(AuthorizationInfo info) {
         Set<Permission> permissions = new HashSet<Permission>();
 
@@ -285,7 +321,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             }
         }
 
-        return Collections.unmodifiableSet(permissions);
+        if (permissions.isEmpty()) {
+            return Collections.EMPTY_SET;
+        } else {
+            return Collections.unmodifiableSet(permissions);
+        }
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permission) {
