@@ -273,14 +273,16 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     private Collection<Permission> getPermissions(AuthorizationInfo info) {
         Set<Permission> permissions = new HashSet<Permission>();
 
-        if( info.getObjectPermissions() != null ) {
-            permissions.addAll( info.getObjectPermissions() );
-        }
+        if( info != null ) {
+            if( info.getObjectPermissions() != null ) {
+                permissions.addAll( info.getObjectPermissions() );
+            }
 
-        if( info.getStringPermissions() != null ) {
-            for( String strPermission : info.getStringPermissions() ) {
-                Permission permission = getPermissionResolver().resolvePermission( strPermission );
-                permissions.add( permission );
+            if( info.getStringPermissions() != null ) {
+                for( String strPermission : info.getStringPermissions() ) {
+                    Permission permission = getPermissionResolver().resolvePermission( strPermission );
+                    permissions.add( permission );
+                }
             }
         }
 
@@ -443,7 +445,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         if( info instanceof AuthorizingAccount ) {
             return ((AuthorizingAccount)info).hasRole(roleIdentifier);
         }
-        return info.getRoles() != null && info.getRoles().contains( roleIdentifier );
+        return info != null && info.getRoles() != null && info.getRoles().contains( roleIdentifier );
     }
 
     public boolean[] hasRoles(PrincipalCollection principal, List<String> roleIdentifiers) {

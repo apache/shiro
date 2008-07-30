@@ -22,11 +22,15 @@ import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizationInfo;
+import org.jsecurity.authz.UnauthorizedException;
+import org.jsecurity.authz.permission.WildcardPermission;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.PrincipalCollection;
+import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
 import org.junit.After;
 import static org.junit.Assert.*;
@@ -35,10 +39,8 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * Simple test case for AuthorizingRealm.
@@ -132,6 +134,74 @@ public class AuthorizingRealmTest {
         assertEquals(USERNAME, ((UsernamePrincipal) subject.getPrincipal()).getUsername());
 
 
+    }
+
+    @Test
+    public void testNullAuthzInfo() {
+        Realm realm = new AuthorizingRealm() {
+            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) { return null; }
+            protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {return null;}
+        };
+
+        Principal principal = new UsernamePrincipal("blah");
+        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "nullAuthzRealm");
+        List<Permission> permList = new ArrayList<Permission>();
+        permList.add( new WildcardPermission("stringPerm1") );
+        permList.add( new WildcardPermission("stringPerm2") );
+        List<String> roleList = new ArrayList<String>();
+        roleList.add( "role1" );
+        roleList.add( "role2" );
+
+        boolean thrown = false;
+        try { realm.checkPermission(pCollection, "stringPermission" );
+        } catch( UnauthorizedException e) { thrown = true; }
+        assertTrue( thrown );
+        thrown = false;
+
+        try { realm.checkPermission(pCollection, new WildcardPermission("stringPermission") );
+        } catch( UnauthorizedException e) { thrown = true; }
+        assertTrue( thrown );
+        thrown = false;
+
+        try { realm.checkPermissions(pCollection, "stringPerm1", "stringPerm2");
+        } catch( UnauthorizedException e) { thrown = true; }
+        assertTrue( thrown );
+        thrown = false;
+
+        try { realm.checkPermissions(pCollection, permList );
+        } catch( UnauthorizedException e) { thrown = true; }
+        assertTrue( thrown );
+        thrown = false;
+
+        try { realm.checkRole(pCollection, "role1" );
+        } catch( UnauthorizedException e) { thrown = true; }
+        assertTrue( thrown );
+        thrown = false;
+
+        try { realm.checkRoles(pCollection, roleList );
+        } catch( UnauthorizedException e) { thrown = true; }
+        assertTrue( thrown );
+
+        assertFalse( realm.hasAllRoles(pCollection, roleList) );
+        assertFalse( realm.hasRole(pCollection, "role1") );
+        assertArrayEquals( new boolean[] { false, false }, realm.hasRoles(pCollection, roleList) );
+        assertFalse( realm.isPermitted(pCollection, "perm1") );
+        assertFalse( realm.isPermitted(pCollection, new WildcardPermission( "perm1" ) ) );
+        assertArrayEquals( new boolean[] { false, false }, realm.isPermitted(pCollection, "perm1", "perm2") );
+        assertArrayEquals( new boolean[] { false, false }, realm.isPermitted(pCollection, permList) );
+        assertFalse( realm.isPermittedAll( pCollection, "perm1", "perm2") );
+        assertFalse( realm.isPermittedAll(pCollection, permList) );
+    }
+
+    private void assertArrayEquals(boolean[] expected, boolean[] actual) {
+        if( expected.length != actual.length ) {
+            fail("Expected array of length [" + expected.length + "] but received array of length [" + actual.length + "]" );
+        }
+        for(int i = 0; i < expected.length; i++ ) {
+            if( expected[i] != actual[i] ) {
+                fail( "Expected index [" + i + "] to be [" + expected[i] + "] but was [" + actual[i] + "]" );
+            }
+        }
     }
 
     public class AllowAllRealm extends AuthorizingRealm {
