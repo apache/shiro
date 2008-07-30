@@ -183,24 +183,48 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     public PrincipalCollection getRememberedPrincipals() {
-        PrincipalCollection principals = null;
-        byte[] bytes = getSerializedRememberedIdentity();
-        if (bytes != null) {
-            if (getCipher() != null) {
-                bytes = decrypt(bytes);
-            }
-            try {
-                principals = deserialize(bytes);
-            } catch (SerializationException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to deserialize stored identity byte array.  Remembered identity " +
-                            "cannot be reconstituted!  This is a non fatal exception as RememberMe identity services " +
-                            "are not considered critical and execution can continue as normal, but please " +
-                            "investigate and resolve to prevent seeing this message again.", e);
+        try {
+
+            PrincipalCollection principals = null;
+            byte[] bytes = getSerializedRememberedIdentity();
+            if (bytes != null) {
+                if (getCipher() != null) {
+                    bytes = decrypt(bytes);
+                }
+                try {
+                    principals = deserialize(bytes);
+                } catch (SerializationException e) {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Unable to deserialize stored identity byte array.  Remembered identity " +
+                                "cannot be reconstituted!  This is a non fatal exception as RememberMe identity services " +
+                                "are not considered critical and execution can continue as normal, but please " +
+                                "investigate and resolve to prevent seeing this message again.", e);
+                    }
                 }
             }
+            return principals;
+
+        } catch( Exception e ) {
+            return onRememberedPrincipalFailure( e );
         }
-        return principals;
+    }
+
+    /**
+     * Called when an exception is thrown while trying to retrieve principals.  The default implementation logs a
+     * warning and forgets the problem identity.  This most commonly would occur when an encryption key is
+     * updated and old principals are retrieved that have been encrypted with the previous key.
+     * @param e the exception that was thrown.
+     * @return the principal collection to be returned.
+     */
+    protected PrincipalCollection onRememberedPrincipalFailure(Exception e) {
+        if(log.isWarnEnabled() ) {
+            log.warn("There was a failure while trying to retrieve remembered principals.  This could be due to a " +
+                    "configuration problem or corrupted principals.  This could also be due to a recently " +
+                    "changed encryption key.  The remembered identity will be forgotten and not used for this " +
+                    "request.", e);
+        }
+        forgetIdentity();
+        return null;
     }
 
     protected byte[] encrypt(byte[] serialized) {
