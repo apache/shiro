@@ -188,7 +188,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return value != null && value;
     }
 
-    protected boolean isAuthenticated(ServletRequest servletRequest, ServletResponse servletResponse, Session existing) {
+    protected boolean isAuthenticated(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
         return isAuthenticated(existing);
     }
 
@@ -211,15 +211,15 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public Subject createSubject(Session existing, ServletRequest request, ServletResponse response) {
         PrincipalCollection principals = getPrincipals(existing, request, response);
-        boolean authenticated = isAuthenticated(request, response, existing);
-        return createSubject(request, response, existing, principals, authenticated);
+        boolean authenticated = isAuthenticated(existing, request, response);
+        return createSubject(principals, authenticated, existing, request, response);
     }
 
-    protected Subject createSubject(ServletRequest request,
-                                    ServletResponse response,
+    protected Subject createSubject(PrincipalCollection principals,
+                                    boolean authenticated,
                                     Session existing,
-                                    PrincipalCollection principals,
-                                    boolean authenticated) {
+                                    ServletRequest request,
+                                    ServletResponse response) {
         InetAddress inetAddress = WebUtils.getInetAddress(request);
         return createSubject(principals, existing, authenticated, inetAddress);
     }

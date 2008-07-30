@@ -184,7 +184,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
 
     /**
-     * /**
      * Returns an account's authorization-specific information for the specified <code>principals</code>,
      * or <tt>null</tt> if no account could be found.
      *
@@ -273,20 +272,20 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     private Collection<Permission> getPermissions(AuthorizationInfo info) {
         Set<Permission> permissions = new HashSet<Permission>();
 
-        if( info != null ) {
-            if( info.getObjectPermissions() != null ) {
-                permissions.addAll( info.getObjectPermissions() );
+        if (info != null) {
+            if (info.getObjectPermissions() != null) {
+                permissions.addAll(info.getObjectPermissions());
             }
 
-            if( info.getStringPermissions() != null ) {
-                for( String strPermission : info.getStringPermissions() ) {
-                    Permission permission = getPermissionResolver().resolvePermission( strPermission );
-                    permissions.add( permission );
+            if (info.getStringPermissions() != null) {
+                for (String strPermission : info.getStringPermissions()) {
+                    Permission permission = getPermissionResolver().resolvePermission(strPermission);
+                    permissions.add(permission);
                 }
             }
         }
 
-        return Collections.unmodifiableSet( permissions );  
+        return Collections.unmodifiableSet(permissions);
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permission) {
@@ -302,8 +301,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     private boolean isPermitted(Permission permission, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            return ((AuthorizingAccount)info).isPermitted(permission);
+        if (info instanceof AuthorizingAccount) {
+            return ((AuthorizingAccount) info).isPermitted(permission);
         }
 
         Collection<Permission> perms = getPermissions(info);
@@ -333,8 +332,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected boolean[] isPermitted(List<Permission> permissions, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            return ((AuthorizingAccount)info).isPermitted(permissions);
+        if (info instanceof AuthorizingAccount) {
+            return ((AuthorizingAccount) info).isPermitted(permissions);
         }
 
         boolean[] result;
@@ -370,8 +369,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected boolean isPermittedAll(Collection<Permission> permissions, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            return ((AuthorizingAccount)info).isPermittedAll(permissions);
+        if (info instanceof AuthorizingAccount) {
+            return ((AuthorizingAccount) info).isPermittedAll(permissions);
         }
 
         if (permissions != null && !permissions.isEmpty()) {
@@ -397,8 +396,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected void checkPermission(Permission permission, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            ((AuthorizingAccount)info).checkPermission(permission);
+        if (info instanceof AuthorizingAccount) {
+            ((AuthorizingAccount) info).checkPermission(permission);
         } else {
             if (!isPermitted(permission, info)) {
                 String msg = "User is not permitted [" + permission + "]";
@@ -423,8 +422,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected void checkPermissions(Collection<Permission> permissions, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            ((AuthorizingAccount)info).checkPermissions(permissions);
+        if (info instanceof AuthorizingAccount) {
+            ((AuthorizingAccount) info).checkPermissions(permissions);
         } else {
             if (permissions != null && !permissions.isEmpty()) {
                 for (Permission p : permissions) {
@@ -442,10 +441,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected boolean hasRole(String roleIdentifier, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            return ((AuthorizingAccount)info).hasRole(roleIdentifier);
+        if (info instanceof AuthorizingAccount) {
+            return ((AuthorizingAccount) info).hasRole(roleIdentifier);
         }
-        return info != null && info.getRoles() != null && info.getRoles().contains( roleIdentifier );
+        return info != null && info.getRoles() != null && info.getRoles().contains(roleIdentifier);
     }
 
     public boolean[] hasRoles(PrincipalCollection principal, List<String> roleIdentifiers) {
@@ -460,8 +459,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected boolean[] hasRoles(List<String> roleIdentifiers, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            return ((AuthorizingAccount)info).hasRoles(roleIdentifiers);
+        if (info instanceof AuthorizingAccount) {
+            return ((AuthorizingAccount) info).hasRoles(roleIdentifiers);
         }
 
         boolean[] result;
@@ -486,8 +485,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     private boolean hasAllRoles(Collection<String> roleIdentifiers, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            return ((AuthorizingAccount)info).hasAllRoles(roleIdentifiers);
+        if (info instanceof AuthorizingAccount) {
+            return ((AuthorizingAccount) info).hasAllRoles(roleIdentifiers);
         }
 
         if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
@@ -508,8 +507,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected void checkRole(String role, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            ((AuthorizingAccount)info).checkRole(role);
+        if (info instanceof AuthorizingAccount) {
+            ((AuthorizingAccount) info).checkRole(role);
         } else {
             if (!hasRole(role, info)) {
                 String msg = "User does not have role [" + role + "]";
@@ -526,8 +525,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     @SuppressWarnings("deprecation")
     protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {
         //todo Remove this once AuthorizingAccount class is deleted
-        if( info instanceof AuthorizingAccount ) {
-            ((AuthorizingAccount)info).checkRoles(roles);
+        if (info instanceof AuthorizingAccount) {
+            ((AuthorizingAccount) info).checkRoles(roles);
         } else {
             if (roles != null && !roles.isEmpty()) {
                 for (String roleName : roles) {
