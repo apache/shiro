@@ -28,7 +28,7 @@ import java.net.InetAddress;
  * authentication attempt is occuring.</p>
  *
  * <p>&quot;Remember Me&quot; authentications are disabled by default, but if the application developer wishes to allow
- * it for a login attempt, all it has to do is call {@link #setRememberMe setRememberMe(true)}.  If the underlying
+ * it for a login attempt, all that is necessary is to call {@link #setRememberMe setRememberMe(true)}.  If the underlying
  * <tt>SecurityManager</tt> implementation also supports <tt>RememberMe</tt> services, the user's identity will be
  * remembered across sessions.
  *
