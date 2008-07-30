@@ -22,9 +22,9 @@ import java.net.InetAddress;
 
 /**
  * <p>A simple username/password authentication token to support the most widely-used authentication mechanism.  This
- * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} to support
+ * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} interface to support
  * &quot;Remember Me&quot; services across user sessions as well as the
- * {@link InetAuthenticationToken InetAuthenticationToken} to retain the IP address location from where the
+ * {@link InetAuthenticationToken InetAuthenticationToken} interface to retain the IP address location from where the
  * authentication attempt is occuring.</p>
  *
  * <p>&quot;Remember Me&quot; authentications are disabled by default, but if the application developer wishes to allow
