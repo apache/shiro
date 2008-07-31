@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 public abstract class ResourceConfiguration implements Configuration, Serializable {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(ResourceConfiguration.class);
     protected transient SecurityManager securityManager;
 
     public ResourceConfiguration() {

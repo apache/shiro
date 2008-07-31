@@ -18,6 +18,8 @@
  */
 package org.jsecurity.mgt;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.realm.Realm;
@@ -36,6 +38,8 @@ import java.util.Collection;
  * @since 0.9
  */
 public abstract class RealmSecurityManager extends CachingSecurityManager {
+
+    private static final Log log = LogFactory.getLog(RealmSecurityManager.class);    
 
     protected Collection<Realm> realms;
 

@@ -18,6 +18,8 @@
  */
 package org.jsecurity.mgt;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.crypto.Cipher;
@@ -66,6 +68,8 @@ import java.util.Collection;
  * @since 0.2
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {
+
+    private static final Log log = LogFactory.getLog(DefaultSecurityManager.class);    
 
     protected RememberMeManager rememberMeManager;
 

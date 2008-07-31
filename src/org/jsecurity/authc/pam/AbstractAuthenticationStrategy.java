@@ -32,7 +32,7 @@ import java.util.Collection;
  */
 public abstract class AbstractAuthenticationStrategy implements ModularAuthenticationStrategy {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AbstractAuthenticationStrategy.class);
 
     public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
         return new SimpleAuthenticationInfo();

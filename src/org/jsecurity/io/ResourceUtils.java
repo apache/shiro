@@ -48,7 +48,7 @@ public class ResourceUtils {
      */
     public static final String FILE_PREFIX = "file:";
 
-    protected static transient final Log log = LogFactory.getLog(ResourceUtils.class);
+    private static final Log log = LogFactory.getLog(ResourceUtils.class);
 
 
     /**

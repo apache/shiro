@@ -56,7 +56,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(DefaultLdapContextFactory.class);
 
     protected String authentication = "simple";
 

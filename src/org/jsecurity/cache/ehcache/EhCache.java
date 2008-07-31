@@ -39,7 +39,7 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class EhCache implements Cache {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(EhCache.class);
 
     /**
      * The wrapped Ehcache instance.

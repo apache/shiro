@@ -18,6 +18,9 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -35,6 +38,8 @@ import java.io.IOException;
  * @since 0.9
  */
 public abstract class AdviceFilter extends OncePerRequestFilter {
+
+    private static final Log log = LogFactory.getLog(AdviceFilter.class);
 
     /**
      * Returns <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.

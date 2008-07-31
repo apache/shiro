@@ -46,7 +46,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AbstractAuthenticator.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

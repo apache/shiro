@@ -18,6 +18,8 @@
  */
 package org.jsecurity.authc.credential;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.codec.CodecSupport;
@@ -39,6 +41,8 @@ import java.util.Arrays;
  * @since 0.9
  */
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
+
+    private static final Log log = LogFactory.getLog(SimpleCredentialsMatcher.class);
 
     /**
      * Returns the <tt>token</tt>'s credentials.

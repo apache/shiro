@@ -45,7 +45,7 @@ public class JndiLocator {
     /**
      * Log, available to subclasses.
      */
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(JndiLocator.class);
 
     /**
      * JNDI prefix used in a J2EE container

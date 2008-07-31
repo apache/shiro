@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.servlet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.Nameable;
 
 import javax.servlet.*;
@@ -40,6 +42,8 @@ import java.io.IOException;
  * @since 0.1
  */
 public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter, Nameable {
+
+    private static final Log log = LogFactory.getLog(OncePerRequestFilter.class);
 
     /**
      * Suffix that gets appended to the filter name for the "already filtered" request attribute.

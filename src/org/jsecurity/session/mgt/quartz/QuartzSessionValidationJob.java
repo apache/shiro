@@ -47,7 +47,7 @@ public class QuartzSessionValidationJob implements Job {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(QuartzSessionValidationJob.class);
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |

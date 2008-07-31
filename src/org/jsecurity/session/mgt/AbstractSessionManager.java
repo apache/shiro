@@ -35,7 +35,7 @@ import java.util.Date;
  */
 public abstract class AbstractSessionManager implements SessionManager, SessionListenerRegistrar {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AbstractSessionManager.class);
 
     protected Collection<SessionListener> listeners = new ArrayList<SessionListener>();
 

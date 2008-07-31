@@ -18,6 +18,8 @@
  */
 package org.jsecurity.samples.sprhib.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.samples.sprhib.entity.Entity;
 import org.jsecurity.samples.sprhib.party.User;
@@ -31,6 +33,8 @@ import java.util.Set;
  * @author Les Hazlewood
  */
 public class Role extends Entity {
+
+    private static final Log log = LogFactory.getLog(Role.class);
 
     public static final String ROOT_ROLE_NAME = "root";
     public static final String PRIVATE_ROLE_NAME = "private";

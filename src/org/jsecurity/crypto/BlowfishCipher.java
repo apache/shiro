@@ -65,7 +65,7 @@ public class BlowfishCipher implements Cipher {
     private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(BlowfishCipher.class);
 
     private Key defaultKey = DEFAULT_CIPHER_KEY;
 

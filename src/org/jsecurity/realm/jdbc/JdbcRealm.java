@@ -18,6 +18,8 @@
  */
 package org.jsecurity.realm.jdbc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.AuthorizationInfo;
@@ -76,6 +78,7 @@ public class JdbcRealm extends AuthorizingRealm {
      */
     protected static final String DEFAULT_PERMISSIONS_QUERY = "select permission from roles_permissions where role_name = ?";
 
+    private static final Log log = LogFactory.getLog(JdbcRealm.class);    
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

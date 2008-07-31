@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
  */
 public abstract class CodecSupport {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(CodecSupport.class);
 
     /**
      * JSecurity's default preferred Character encoding, equal to <b><code>UTF-8</code></b>.

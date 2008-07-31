@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.attr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -35,6 +37,8 @@ import java.beans.PropertyEditor;
  * @since 0.2
  */
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
+
+    private static final Log log = LogFactory.getLog(CookieAttribute.class);    
 
     /**
      * The number of seconds in one year (= 60 * 60 * 24 * 365).

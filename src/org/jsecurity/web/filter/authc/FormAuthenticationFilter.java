@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.filter.authc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.web.WebUtils;
@@ -62,6 +64,8 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
     public static final String DEFAULT_USERNAME_PARAM = "username";
     public static final String DEFAULT_PASSWORD_PARAM = "password";
     public static final String DEFAULT_REMEMBER_ME_PARAM = "rememberMe";
+
+    private static final Log log = LogFactory.getLog(FormAuthenticationFilter.class);    
 
     private String usernameParam = DEFAULT_USERNAME_PARAM;
     private String passwordParam = DEFAULT_PASSWORD_PARAM;

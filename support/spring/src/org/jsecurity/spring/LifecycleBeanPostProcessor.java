@@ -42,7 +42,7 @@ import org.springframework.beans.factory.config.DestructionAwareBeanPostProcesso
  */
 public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(LifecycleBeanPostProcessor.class);
 
     /**
      * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.jsecurity.util.Initializable}

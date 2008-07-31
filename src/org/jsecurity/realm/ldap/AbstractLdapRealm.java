@@ -18,6 +18,8 @@
  */
 package org.jsecurity.realm.ldap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
@@ -56,6 +58,8 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm implements Init
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+
+    private static final Log log = LogFactory.getLog(AbstractLdapRealm.class);    
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

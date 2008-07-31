@@ -18,6 +18,8 @@
  */
 package org.jsecurity.realm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.AllowAllCredentialsMatcher;
 import org.jsecurity.authc.credential.CredentialsMatcher;
@@ -47,6 +49,8 @@ import org.jsecurity.subject.PrincipalCollection;
  * @since 0.2
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {
+
+    private static final Log log = LogFactory.getLog(AuthenticatingRealm.class);    
 
     /**
      * Password matcher used to determine if the provided password matches

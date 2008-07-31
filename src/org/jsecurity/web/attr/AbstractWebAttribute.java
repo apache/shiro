@@ -44,7 +44,7 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T>, Initia
 
     public static final String DEFAULT_NAME = "name";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AbstractWebAttribute.class);
 
     protected String name = DEFAULT_NAME;
 

@@ -56,7 +56,7 @@ public class BootstrapDataPopulator implements InitializingBean {
             "    primary key (role_name, permission)\n" +
             ");";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(BootstrapDataPopulator.class);
 
     protected DataSource dataSource = null;
 

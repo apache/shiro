@@ -30,7 +30,7 @@ import java.lang.reflect.Constructor;
  */
 public class ClassUtils {
 
-    private static transient final Log log = LogFactory.getLog(ClassUtils.class);
+    private static final Log log = LogFactory.getLog(ClassUtils.class);
 
     /**
      * Returns the specified resource by checking the current thread's

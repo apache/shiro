@@ -41,7 +41,7 @@ import org.jsecurity.util.LifecycleUtils;
  */
 public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(CachingSecurityManager.class);
 
     protected CacheManager cacheManager;
 

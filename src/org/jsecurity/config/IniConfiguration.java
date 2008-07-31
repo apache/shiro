@@ -18,6 +18,8 @@
  */
 package org.jsecurity.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.io.IniResource;
 import org.jsecurity.io.ResourceUtils;
@@ -38,6 +40,8 @@ import java.util.*;
  * @since 0.9
  */
 public class IniConfiguration extends TextConfiguration {
+
+    private static final Log log = LogFactory.getLog(IniConfiguration.class);    
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:jsecurity.ini";
 

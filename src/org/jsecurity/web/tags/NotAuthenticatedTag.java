@@ -18,6 +18,9 @@
  */
 package org.jsecurity.web.tags;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -31,6 +34,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @since 0.2
  */
 public class NotAuthenticatedTag extends SecureTag {
+
+    private static final Log log = LogFactory.getLog(NotAuthenticatedTag.class);    
 
     public int onDoStartTag() throws JspException {
         if (getSubject() == null || !getSubject().isAuthenticated()) {

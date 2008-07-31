@@ -46,7 +46,7 @@ import java.util.Properties;
  */
 public class JndiTemplate {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(JndiTemplate.class);
 
     private Properties environment;
 

@@ -62,7 +62,7 @@ import java.util.List;
  */
 public class DelegatingSubject implements Subject {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(DelegatingSubject.class);
 
     protected PrincipalCollection principals = new SimplePrincipalCollection();
     protected boolean authenticated = false;

@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.filter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.AntPathMatcher;
 import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.WebUtils;
@@ -36,6 +38,8 @@ import java.util.Map;
  * @since 0.9
  */
 public abstract class PathMatchingFilter extends AdviceFilter implements PathConfigProcessor {
+
+    private static final Log log = LogFactory.getLog(PathMatchingFilter.class);    
 
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
 

@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceSessionValidationScheduler implements SessionValidationScheduler, Runnable {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(ExecutorServiceSessionValidationScheduler.class);
 
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;

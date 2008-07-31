@@ -41,7 +41,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class ReflectionBuilder {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(ReflectionBuilder.class);
 
     private static final String GLOBAL_PROPERTY_PREFIX = "jsecurity";
     protected Map objects;

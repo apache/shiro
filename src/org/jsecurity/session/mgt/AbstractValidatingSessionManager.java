@@ -18,6 +18,8 @@
  */
 package org.jsecurity.session.mgt;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.ExpiredSessionException;
 import org.jsecurity.session.InvalidSessionException;
@@ -41,9 +43,11 @@ import java.util.Date;
 public abstract class AbstractValidatingSessionManager extends AbstractSessionManager
         implements ValidatingSessionManager, Destroyable {
 
+    private static final Log log = LogFactory.getLog(AbstractValidatingSessionManager.class);    
+
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
-    private static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
+    protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
     /**
      * Default main session timeout value (30 * 60 * 1000 milliseconds = 30 minutes).

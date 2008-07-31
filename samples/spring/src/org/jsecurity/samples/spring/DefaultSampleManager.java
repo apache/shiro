@@ -44,7 +44,7 @@ public class DefaultSampleManager implements SampleManager {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(DefaultSampleManager.class);
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
