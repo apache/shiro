@@ -64,6 +64,22 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         return session.getId();
     }
 
+    /**
+     * Returns the session instance to use to pass to registered <code>SessionListener</code>s for notification
+     * that the session has been validated (stopped or expired).
+     * <p/>
+     * The default implementation returns an
+     * {@link org.jsecurity.session.mgt.ImmutableProxiedSession ImmutableProxiedSession} instance to ensure
+     * that the specified <code>session</code> argument is not modified by any listeners.
+     *
+     * @param session the <code>Session</code> object being invalidated.
+     * @return the <code>Session</code> instance to use to pass to registered <code>SessionListener</code>s for
+     *         notification.
+     */
+    protected Session beforeInvalidNotification(Session session) {
+        return new ImmutableProxiedSession(session);
+    }
+
     protected void notifyStart(Session session) {
         for (SessionListener listener : this.listeners) {
             listener.onStart(session);
@@ -71,14 +87,16 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     }
 
     protected void notifyStop(Session session) {
+        Session forNotification = beforeInvalidNotification(session);
         for (SessionListener listener : this.listeners) {
-            listener.onStop(session);
+            listener.onStop(forNotification);
         }
     }
 
     protected void notifyExpiration(Session session) {
+        Session forNotification = beforeInvalidNotification(session);
         for (SessionListener listener : this.listeners) {
-            listener.onExpiration(session);
+            listener.onExpiration(forNotification);
         }
     }
 
