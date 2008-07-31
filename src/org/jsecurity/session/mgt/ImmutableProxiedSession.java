@@ -28,7 +28,7 @@ import java.util.Date;
 
 /**
  * Implementation of the {@link Session Session} interface that proxies another <code>Session</code>, but does not
- * allow any write operations to the underlying session. It allows read-only operations only.
+ * allow any 'write' operations to the underlying session. It allows 'read' operations only.
  * <p/>
  * The <code>Session</code> write operations are defined as follows.  A call to any of these methods on this
  * proxy will immediately result in an {@link InvalidSessionException} being thrown:

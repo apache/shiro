@@ -24,8 +24,8 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * A <tt>Session</tt> is a data/state context associated with a single Subject (user, 3rd party process,
- * etc) that interacts with a software system over a period of time.
+ * A <tt>Session</tt> is a stateful data context associated with a single Subject (user, 3rd party process,
+ * etc) who interacts with a software system over a period of time.
  *
  * <p>A <tt>Session</tt> is intended to be managed by the business tier and accessible via other
  * tiers without being tied to any given client technology.  This is a <em>great</em> benefit to Java
