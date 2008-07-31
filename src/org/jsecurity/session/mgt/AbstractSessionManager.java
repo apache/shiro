@@ -66,7 +66,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     /**
      * Returns the session instance to use to pass to registered <code>SessionListener</code>s for notification
-     * that the session has been validated (stopped or expired).
+     * that the session has been invalidated (stopped or expired).
      * <p/>
      * The default implementation returns an
      * {@link org.jsecurity.session.mgt.ImmutableProxiedSession ImmutableProxiedSession} instance to ensure
