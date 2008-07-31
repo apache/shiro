@@ -41,7 +41,7 @@ import java.sql.Statement;
  */
 public class JdbcUtils {
 
-    protected static transient final Log log = LogFactory.getLog(JdbcUtils.class);
+    private static final Log log = LogFactory.getLog(JdbcUtils.class);
 
     /**
      * Private constructor to prevent instantiation.

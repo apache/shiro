@@ -30,7 +30,7 @@ import java.util.Collection;
  */
 public abstract class LifecycleUtils {
 
-    protected static transient final Log log = LogFactory.getLog(LifecycleUtils.class);
+    private static final Log log = LogFactory.getLog(LifecycleUtils.class);
 
     public static void init(Object o) throws JSecurityException {
         if (o instanceof Initializable) {

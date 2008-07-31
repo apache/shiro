@@ -19,6 +19,8 @@
 package org.jsecurity.web.servlet;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.config.Configuration;
 import org.jsecurity.config.ConfigurationException;
 import org.jsecurity.mgt.SecurityManager;
@@ -180,6 +182,8 @@ public class JSecurityFilter extends OncePerRequestFilter {
     public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";
     public static final String CONFIG_INIT_PARAM_NAME = "config";
     public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
+
+    private static final Log log = LogFactory.getLog(JSecurityFilter.class);    
 
     protected String config;
     protected String configUrl;

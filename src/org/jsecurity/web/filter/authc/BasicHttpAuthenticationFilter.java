@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.filter.authc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.codec.Base64;
@@ -61,6 +63,8 @@ import javax.servlet.http.HttpServletResponse;
  * @since 0.9
  */
 public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
+
+    private static final Log log = LogFactory.getLog(BasicHttpAuthenticationFilter.class);    
 
     protected static final String AUTHORIZATION_HEADER = "Authorization";
     protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";

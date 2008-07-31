@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.config.ConfigurationException;
 import org.jsecurity.config.IniConfiguration;
 import org.jsecurity.config.ReflectionBuilder;
@@ -46,6 +48,8 @@ import java.util.*;
  * @since Jun 1, 2008 11:02:44 PM
  */
 public class IniWebConfiguration extends IniConfiguration implements WebConfiguration {
+
+    private static final Log log = LogFactory.getLog(IniWebConfiguration.class);    
 
     public static final String FILTERS = "filters";
     public static final String URLS = "urls";

@@ -32,7 +32,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class SecureTag extends TagSupport {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(SecureTag.class);
 
     public SecureTag() {
     }

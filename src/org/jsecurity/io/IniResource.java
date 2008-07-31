@@ -18,6 +18,8 @@
  */
 package org.jsecurity.io;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import static org.jsecurity.util.StringUtils.clean;
 import static org.jsecurity.util.StringUtils.splitKeyValue;
 
@@ -33,6 +35,8 @@ import java.util.Scanner;
  * @since 0.9
  */
 public class IniResource extends TextResource {
+
+    private static final Log log = LogFactory.getLog(IniResource.class);    
 
     public static final String COMMENT_POUND = "#";
     public static final String COMMENT_SEMICOLON = ";";

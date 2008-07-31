@@ -39,7 +39,7 @@ import java.io.Serializable;
  */
 public abstract class Entity implements Identifiable, Serializable, Cloneable {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(Entity.class);
 
     /**
      * RDBMS Primary key, aka 'surrogate key'.  <code>Long</code> surrogate keys are best

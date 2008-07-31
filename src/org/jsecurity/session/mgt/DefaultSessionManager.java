@@ -18,6 +18,8 @@
  */
 package org.jsecurity.session.mgt;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.InvalidSessionException;
@@ -38,6 +40,8 @@ import java.util.Date;
  * @since 0.1
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
+
+    private static final Log log = LogFactory.getLog(DefaultSessionManager.class);    
 
     protected SessionDAO sessionDAO = new MemorySessionDAO();
 

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class FilterChainWrapper implements FilterChain {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(FilterChainWrapper.class);
 
     private FilterChain orig;
     private List<Filter> filters;

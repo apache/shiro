@@ -18,6 +18,8 @@
  */
 package org.jsecurity.realm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.*;
 import org.jsecurity.authz.permission.PermissionResolver;
@@ -56,6 +58,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    private static final Log log = LogFactory.getLog(AuthorizingRealm.class);
+
     /**
      * The default postfix appended to the realm name for caching AuthorizationInfos.
      */

@@ -18,6 +18,8 @@
  */
 package org.jsecurity.authz.aop;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
@@ -39,6 +41,8 @@ import java.util.Collection;
  * @since 0.2
  */
 public abstract class AnnotationsAuthorizingMethodInterceptor extends AuthorizingMethodInterceptor {
+
+    private static final Log log = LogFactory.getLog(AnnotationsAuthorizingMethodInterceptor.class);    
 
     protected Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors = null;
 

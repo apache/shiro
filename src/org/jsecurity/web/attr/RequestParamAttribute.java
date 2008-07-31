@@ -18,6 +18,9 @@
  */
 package org.jsecurity.web.attr;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -26,6 +29,8 @@ import javax.servlet.ServletResponse;
  * @since 0.2
  */
 public class RequestParamAttribute<T> extends AbstractWebAttribute<T> {
+
+    private static final Log log = LogFactory.getLog(RequestParamAttribute.class);    
 
     public RequestParamAttribute() {
         setMutable(false);

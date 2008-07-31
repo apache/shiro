@@ -18,6 +18,8 @@
  */
 package org.jsecurity.realm.activedirectory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.SimpleAuthenticationInfo;
@@ -54,6 +56,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+
+    private static final Log log = LogFactory.getLog(ActiveDirectoryRealm.class);    
 
     private static final String ROLE_NAMES_DELIMETER = ",";
 

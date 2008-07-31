@@ -18,6 +18,8 @@
  */
 package org.jsecurity.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.io.ResourceException;
 import org.jsecurity.mgt.SecurityManager;
@@ -32,6 +34,8 @@ import java.util.Scanner;
  * @since 0.9
  */
 public abstract class TextConfiguration extends ResourceConfiguration implements Initializable {
+
+    private static final Log log = LogFactory.getLog(TextConfiguration.class);    
 
     private String config;
 

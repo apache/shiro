@@ -43,7 +43,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(SimpleAccount.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

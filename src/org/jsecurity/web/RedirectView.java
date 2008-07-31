@@ -75,7 +75,7 @@ public class RedirectView {
      */
     public static final String DEFAULT_ENCODING_SCHEME = "UTF-8";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(RedirectView.class);
 
     private String url;
 

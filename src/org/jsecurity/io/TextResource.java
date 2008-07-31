@@ -18,6 +18,9 @@
  */
 package org.jsecurity.io;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.*;
 import java.util.Scanner;
 
@@ -26,6 +29,8 @@ import java.util.Scanner;
  * @since 0.9
  */
 public abstract class TextResource extends AbstractResource {
+
+    private static final Log log = LogFactory.getLog(TextResource.class);    
 
     protected String charsetName;
 

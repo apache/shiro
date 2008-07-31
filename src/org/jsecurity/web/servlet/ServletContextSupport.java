@@ -36,7 +36,7 @@ public class ServletContextSupport {
     public static final String HTTP_SESSION_MODE = DefaultWebSecurityManager.HTTP_SESSION_MODE;
     public static final String JSECURITY_SESSION_MODE = DefaultWebSecurityManager.JSECURITY_SESSION_MODE;
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(ServletContextSupport.class);
 
     private ServletContext servletContext = null;
 

@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web.session;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.session.InvalidSessionException;
@@ -42,6 +44,8 @@ import java.net.InetAddress;
  * @since 0.9
  */
 public class DefaultWebSessionManager extends DefaultSessionManager implements WebSessionManager {
+
+    private static final Log log = LogFactory.getLog(DefaultWebSessionManager.class);    
 
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be

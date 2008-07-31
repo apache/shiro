@@ -18,6 +18,8 @@
  */
 package org.jsecurity.spring;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.mgt.SecurityManager;
@@ -59,6 +61,8 @@ public class SpringWebConfiguration extends IniWebConfiguration {
 
     public static final String SECURITY_MANAGER_BEAN_NAME_PARAM_NAME = "securityManagerBeanName";
     public static final String DEFAULT_SECURITY_MANAGER_BEAN_ID = "securityManager";
+
+    private static final Log log = LogFactory.getLog(SpringWebConfiguration.class);    
 
     protected String securityManagerBeanName;
 

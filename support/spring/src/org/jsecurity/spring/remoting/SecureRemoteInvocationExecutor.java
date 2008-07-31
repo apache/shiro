@@ -53,7 +53,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(SecureRemoteInvocationExecutor.class);
 
     /**
      * The SecurityManager used to retrieve realms that should be associated with the

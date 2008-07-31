@@ -18,6 +18,8 @@
  */
 package org.jsecurity.authc.pam;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.PrincipalCollection;
@@ -66,6 +68,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    private static final Log log = LogFactory.getLog(ModularRealmAuthenticator.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

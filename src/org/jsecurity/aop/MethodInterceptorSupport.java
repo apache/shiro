@@ -33,7 +33,7 @@ import org.jsecurity.subject.Subject;
  */
 public abstract class MethodInterceptorSupport implements MethodInterceptor {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(MethodInterceptorSupport.class);
 
     public MethodInterceptorSupport() {
     }

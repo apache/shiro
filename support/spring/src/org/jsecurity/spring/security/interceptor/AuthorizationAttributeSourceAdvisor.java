@@ -35,7 +35,7 @@ import java.lang.reflect.Method;
 public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor
         implements InitializingBean {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AuthorizationAttributeSourceAdvisor.class);
 
     protected SecurityManager securityManager = null;
 

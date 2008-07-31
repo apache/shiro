@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.Session;
@@ -42,6 +44,8 @@ import java.util.Collection;
  * @since 0.2
  */
 public class DefaultWebSecurityManager extends DefaultSecurityManager {
+
+    private static final Log log = LogFactory.getLog(DefaultWebSecurityManager.class);    
 
     public static final String HTTP_SESSION_MODE = "http";
     public static final String JSECURITY_SESSION_MODE = "jsecurity";

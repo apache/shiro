@@ -18,6 +18,8 @@
  */
 package org.jsecurity.realm.text;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.util.Destroyable;
@@ -103,6 +105,8 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    private static final Log log = LogFactory.getLog(PropertiesRealm.class);
+
     protected ExecutorService scheduler = null;
     protected boolean useXmlFormat = false;
     protected String resourcePath = DEFAULT_RESOURCE_PATH;

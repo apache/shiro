@@ -45,7 +45,7 @@ import org.jsecurity.io.Serializer;
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager {
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AbstractRememberMeManager.class);
 
     private Serializer serializer = new DefaultSerializer();
     private Cipher cipher = new BlowfishCipher();

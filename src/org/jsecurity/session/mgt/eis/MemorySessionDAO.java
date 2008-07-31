@@ -18,6 +18,8 @@
  */
 package org.jsecurity.session.mgt.eis;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SimpleSession;
@@ -51,6 +53,8 @@ import java.util.Random;
  * @since 0.1
  */
 public class MemorySessionDAO extends CachingSessionDAO {
+
+    private static final Log log = LogFactory.getLog(MemorySessionDAO.class);
 
     private static final String RANDOM_NUM_GENERATOR_ALGORITHM_NAME = "SHA1PRNG";
     private Random randomNumberGenerator = null;

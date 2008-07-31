@@ -52,7 +52,7 @@ public class PrincipalTag extends SecureTag {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(PrincipalTag.class);
 
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.

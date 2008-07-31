@@ -50,7 +50,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
     public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(EhCacheManager.class);
 
     /**
      * The EhCache cache manager used by this implementation to create caches.

@@ -46,7 +46,7 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(CachingSessionDAO.class);
 
     private CacheManager cacheManager;
     private Cache activeSessions;

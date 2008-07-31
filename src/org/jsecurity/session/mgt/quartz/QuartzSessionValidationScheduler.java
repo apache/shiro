@@ -57,7 +57,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(QuartzSessionValidationScheduler.class);
 
     /**
      * The configured Quartz scheduler to use to schedule the Quartz job.  If no scheduler is

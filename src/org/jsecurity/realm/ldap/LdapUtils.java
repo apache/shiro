@@ -38,7 +38,7 @@ import java.util.Set;
  */
 public class LdapUtils {
 
-    protected static transient final Log log = LogFactory.getLog(LdapUtils.class);
+    private static final Log log = LogFactory.getLog(LdapUtils.class);
 
     /**
      * Private constructor to prevent instantiation

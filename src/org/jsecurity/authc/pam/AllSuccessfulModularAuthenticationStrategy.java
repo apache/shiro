@@ -18,6 +18,8 @@
  */
 package org.jsecurity.authc.pam;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
 import org.jsecurity.realm.Realm;
 
@@ -33,6 +35,8 @@ import org.jsecurity.realm.Realm;
  * @since 0.2
  */
 public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
+
+    private static final Log log = LogFactory.getLog(AllSuccessfulModularAuthenticationStrategy.class);    
 
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
         if (!realm.supports(token)) {

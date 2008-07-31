@@ -44,7 +44,7 @@ import java.util.List;
 public class HibernateDAO extends HibernateDaoSupport
         implements HibernateOperations, DataAccessObject {
 
-    protected final transient Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(HibernateDAO.class);
 
     public Object execute(HibernateCallback action) throws DataAccessException {
         return getHibernateTemplate().execute(action);
