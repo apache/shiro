@@ -187,11 +187,10 @@ public class ImmutableProxiedSession implements Session {
 
     /**
      * Immediately delegates to the underlying proxied session.
-     * param key the unique name of the object bound to this session
      *
+     * @param key the unique name of the object bound to this session
      * @return the object bound under the specified <tt>key</tt> name or <tt>null</tt> if there is
      *         no object bound under that name.
-     * @throws InvalidSessionException
      */
     public Object getAttribute(Object key) throws InvalidSessionException {
         return this.session.getAttribute(key);
