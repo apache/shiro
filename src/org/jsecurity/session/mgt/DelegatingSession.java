@@ -33,8 +33,7 @@ import java.util.Date;
  * which will return the proper results for each method call.
  *
  * <p>A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
- * only communicating with the server when necessary (for example, when determining if
- * {@link #isExpired() isExpired()}, which can only be accurately known by the server).
+ * only communicating with the server when necessary.
  *
  * <p>Of course, if used in-process with a SessionManager business POJO, as might be the case in a
  * web-based application where the web classes and server-side business pojos exist in the same
@@ -50,7 +49,6 @@ public class DelegatingSession implements Session {
 
     //cached fields to avoid a server-side method call if out-of-process:
     private Date startTimestamp = null;
-    private Date stopTimestamp = null;
     private InetAddress hostAddress = null;
 
     /**
@@ -127,29 +125,11 @@ public class DelegatingSession implements Session {
     }
 
     /**
-     * @see Session#getStopTimestamp()
-     */
-    public Date getStopTimestamp() {
-        if (stopTimestamp == null) {
-            stopTimestamp = sessionManager.getStopTimestamp(id);
-        }
-        return stopTimestamp;
-    }
-
-    /**
      * @see org.jsecurity.session.Session#getLastAccessTime()
      */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
         return sessionManager.getLastAccessTime(id);
-    }
-
-    /**
-     * @see org.jsecurity.session.Session#isExpired()
-     */
-    public boolean isExpired() {
-        //can't cache - only business pojo knows the accurate time for expiration:
-        return sessionManager.isExpired(id);
     }
 
     public long getTimeout() throws InvalidSessionException {

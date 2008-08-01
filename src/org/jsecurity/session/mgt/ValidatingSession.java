@@ -16,32 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.session;
+package org.jsecurity.session.mgt;
+
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface SessionListener {
+public interface ValidatingSession extends Session {
 
-    /**
-     * Notification callback that occurs when the corresponding Session has started.
-     *
-     * @param session the session that has started.
-     */
-    void onStart(Session session);
+    boolean isValid();
 
-    /**
-     * Notification callback that occurs when the corresponding Session has stopped.
-     *
-     * @param session the session that has stopped.
-     */
-    void onStop(Session session);
-
-    /**
-     * Notification callback that occurs when the corresponding Session has expired.
-     *
-     * @param session the session that has expired.
-     */
-    void onExpiration(Session session);
+    void validate() throws InvalidSessionException;
 }

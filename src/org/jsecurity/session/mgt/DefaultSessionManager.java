@@ -41,7 +41,7 @@ import java.util.Date;
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
 
-    private static final Log log = LogFactory.getLog(DefaultSessionManager.class);    
+    private static final Log log = LogFactory.getLog(DefaultSessionManager.class);
 
     protected SessionDAO sessionDAO = new MemorySessionDAO();
 
@@ -82,10 +82,10 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     protected void onStop(Session session) {
         if (session instanceof SimpleSession) {
-            Date stopTs = session.getStopTimestamp();
+            Date stopTs = ((SimpleSession) session).getStopTimestamp();
             ((SimpleSession) session).setLastAccessTime(stopTs);
         }
-        onChange(session);
+        super.onStop(session);
     }
 
     protected void onExpiration(Session session) {

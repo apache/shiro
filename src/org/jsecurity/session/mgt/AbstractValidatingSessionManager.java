@@ -29,9 +29,7 @@ import org.jsecurity.util.LifecycleUtils;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.text.DateFormat;
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
@@ -43,7 +41,7 @@ import java.util.Date;
 public abstract class AbstractValidatingSessionManager extends AbstractSessionManager
         implements ValidatingSessionManager, Destroyable {
 
-    private static final Log log = LogFactory.getLog(AbstractValidatingSessionManager.class);    
+    private static final Log log = LogFactory.getLog(AbstractValidatingSessionManager.class);
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
@@ -164,90 +162,22 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected abstract Session doCreateSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException;
 
     protected void validate(Session session) throws InvalidSessionException {
-
-        if (isExpired(session)) {
-            //update EIS entry if it hasn't been updated already:
-            if (!session.isExpired()) {
-                expire(session);
+        if (session instanceof ValidatingSession) {
+            try {
+                ((ValidatingSession) session).validate();
+            } catch (ExpiredSessionException ese) {
+                notifyExpiration(session);
+                onExpiration(session);
+                //propagate to caller:
+                throw ese;
             }
-
-            //throw an exception explaining details of why it expired:
-            Date lastAccessTime = session.getLastAccessTime();
-            long timeout = getTimeout(session);
-
-            Serializable sessionId = session.getId();
-
-            DateFormat df = DateFormat.getInstance();
-            String msg = "Session with id [" + sessionId + "] has expired. " +
-                    "Last access time: " + df.format(lastAccessTime) +
-                    ".  Current time: " + df.format(new Date()) +
-                    ".  Session timeout is set to " + timeout / MILLIS_PER_SECOND + " seconds (" +
-                    timeout / MILLIS_PER_MINUTE + " minutes)";
-            if (log.isTraceEnabled()) {
-                log.trace(msg);
-            }
-            throw new ExpiredSessionException(msg, sessionId);
-        }
-
-        //check for stopped (but not expired):
-        if (session.getStopTimestamp() != null) {
-            //timestamp is set, so the session is considered stopped:
-            String msg = "Session with id [" + session.getId() + "] has been " +
-                    "explicitly stopped.  No further interaction under this session is " +
-                    "allowed.";
-            throw new InvalidSessionException(msg, session.getId());
-        }
-    }
-
-    /**
-     * Determines if the specified session is expired.
-     *
-     * @param session the persistent pojo Session implementation to check for expiration.
-     * @return true if the specified session has expired, false otherwise.
-     */
-    protected boolean isExpired(Session session) {
-
-        //If the EIS data has already been set as expired, return true:
-
-        //WARNING:  This will cause an infinite loop if the session argument is a proxy back
-        //to this instance (e.g. as would be the case if passing in a DelegatingSession instace.
-        //To be safe, make sure the argument is representative of EIS data and
-        //the isExpired method returns a boolean class attribute and does not call another object.
-        if (session.isExpired()) {
-            return true;
-        }
-
-        long timeout = getTimeout(session);
-
-        if (timeout >= 0l) {
-
-            Date lastAccessTime = session.getLastAccessTime();
-
-            if (lastAccessTime == null) {
-                String msg = "session.lastAccessTime for session with id [" +
-                        session.getId() + "] is null.  This value must be set at " +
-                        "least once, preferably at least upon instantiation.  Please check the " +
-                        session.getClass().getName() + " implementation and ensure " +
-                        "this value will be set (perhaps in the constructor?)";
-                throw new IllegalStateException(msg);
-            }
-
-            // Calculate at what time a session would have been last accessed
-            // for it to be expired at this point.  In other words, subtract
-            // from the current time the amount of time that a session can
-            // be inactive before expiring.  If the session was last accessed
-            // before this time, it is expired.
-            long expireTimeMillis = System.currentTimeMillis() - timeout;
-            Date expireTime = new Date(expireTimeMillis);
-            return lastAccessTime.before(expireTime);
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("No timeout for session with id [" + session.getId() +
-                        "].  Session is not considered expired.");
-            }
+            String msg = "The " + getClass().getName() + " implementation only supports validating " +
+                    "Session implementations of the " + ValidatingSession.class.getName() + " interface.  " +
+                    "Please either implement this interface in your session implementation or override the " +
+                    getClass().getName() + ".validate(Session) method to perform validation.";
+            throw new IllegalStateException(msg);
         }
-
-        return false;
     }
 
     /**
