@@ -21,15 +21,18 @@ package org.jsecurity.web.filter.authc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.subject.Subject;
+import org.jsecurity.web.WebUtils;
 import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.InetAddress;
 
 /**
  * Requires the requesting user to be {@link org.jsecurity.subject.Subject#isAuthenticated() authenticated} for the
@@ -190,9 +193,13 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * @return true if the incoming request is an attempt to log in based, false otherwise
      */
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest httpRequest = toHttp(request);
-        String authzHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
+        String authzHeader = getAuthzHeader(request);
         return authzHeader != null && isLoginAttempt(authzHeader);
+    }
+
+    protected String getAuthzHeader( ServletRequest request ) {
+        HttpServletRequest httpRequest = toHttp(request);
+        return httpRequest.getHeader(AUTHORIZATION_HEADER);
     }
 
     /**
@@ -236,7 +243,18 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
     }
 
     /**
-     * Initiates a login attempt with the provided credentials in the http header.
+     * Executes a login attempt with the provided credentials in the http header and returns <code>true</code>
+     * if the login attempt is successful and <code>false</code> otherwise.
+     * <p/>
+     * This implementation:
+     * <ol><li>acquires the username and password based on the request's
+     * {@link #getAuthzHeader(javax.servlet.ServletRequest) authorization header} via the
+     * {@link #getPrincipalsAndCredentials(String, javax.servlet.ServletRequest) getPrincipalsAndCredentials} method</li>
+     * <li>The return value of that method is converted to an <code>AuthenticationToken</code> via the
+     * {@link #createToken(String, String, javax.servlet.ServletRequest) createToken} method</li>
+     * <li>Finally, the login attempt is executed using that token by calling
+     * {@link #executeLogin(org.jsecurity.authc.AuthenticationToken, javax.servlet.ServletRequest, javax.servlet.ServletResponse)}</li>
+     * </ol>
      *
      * @param request  incoming ServletRequest
      * @param response outgoing ServletResponse
@@ -247,46 +265,152 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
             log.debug("Attempting to authenticate Subject based on Http BASIC Authentication request...");
         }
 
-        HttpServletRequest httpRequest = toHttp(request);
-        String authorizationHeader = httpRequest.getHeader(AUTHORIZATION_HEADER);
+        String authorizationHeader = getAuthzHeader(request);
+        if (authorizationHeader == null || authorizationHeader.length() == 0 ) {
+            return false;
+        }
 
-        if (authorizationHeader != null && authorizationHeader.length() > 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Executing login with headers [" + authorizationHeader + "]");
-            }
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to execute login with headers [" + authorizationHeader + "]");
+        }
 
-            String[] authTokens = authorizationHeader.split(" ");
+        String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
+        if ( prinCred == null || prinCred.length < 2 ) {
+            return false;
+        }
 
-            if (authTokens[0].trim().equalsIgnoreCase(HttpServletRequest.BASIC_AUTH)) {
-                String encodedCredentials = authTokens[1];
+        String username = prinCred[0];
+        String password = prinCred[1];
 
-                String decodedCredentials = Base64.decodeToString(encodedCredentials);
+        if (log.isDebugEnabled()) {
+            log.debug("Processing login request for username [" + username + "]");
+        }
 
-                String[] credentials = decodedCredentials.split(":");
-
-                if (credentials != null && credentials.length > 1) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Processing login request [" + credentials[0] + "]");
-                    }
-                    Subject subject = getSubject(request, response);
-                    UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(credentials[0], credentials[1]);
-                    try {
-                        subject.login(usernamePasswordToken);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Successfully logged in user [" + credentials[0] + "]");
-                        }
-                        return true;
-                    } catch (AuthenticationException ae) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Unable to log in subject [" + credentials[0] + "]", ae);
-                        }
-                    }
-                }
-            }
+        AuthenticationToken token = createToken(username, password, request );
+        if ( token != null ) {
+            return executeLogin(token, request, response );
         }
 
         //always default to false.  If we've made it to this point in the code, that
         //means the authentication attempt either never occured, or wasn't successful:
         return false;
     }
+
+    /**
+     * Executes a login attmept for the
+     * {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) currently executing}
+     * <code>Subject</code> using the specified authentication <code>token</code>.
+     * <p/>
+     * The login attempt constitutes calling {@link Subject#login currentSubject.login(token)}.  If the method
+     * call returns successfully, <code>true</code> is returned, <code>false</code> otherwise.
+     * 
+     * @param token the <code>AuthenticationToken</code> representing the submitted username and password.
+     * @param request the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @return <code>true</code> if the authentication attempt is successful, <code>false</code> otherwise.
+     */
+    protected boolean executeLogin( AuthenticationToken token, ServletRequest request, ServletResponse response ) {
+        Subject subject = getSubject(request, response);
+        if ( token != null && subject != null ) {
+            try {
+                subject.login(token);
+                if (log.isDebugEnabled()) {
+                    log.debug("Successfully logged in user [" + token.getPrincipal() + "]");
+                }
+                return true;
+            } catch (AuthenticationException ae) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to log in user [" + token.getPrincipal()+ "]", ae);
+                }
+            }
+        }
+
+        //always default to false - authentication attempt never occurred or wasn't successful:
+        return false;
+    }
+
+    /**
+     * Returns the username (at String[] index 0) and password (at String[] index 1) obtained from the
+     * {@link #getAuthzHeader(javax.servlet.ServletRequest) authorizationHeader}.
+     * @param authorizationHeader the authorization header obtained from the request.
+     * @param request the incoming ServletRequest
+     * @return the username/password pair submitted by the user for the given header value and request.
+     * @see #getAuthzHeader(javax.servlet.ServletRequest)
+     */
+    protected String[] getPrincipalsAndCredentials( String authorizationHeader, ServletRequest request ) {
+        if ( authorizationHeader == null ) {
+            return null;
+        }
+        String[] authTokens = authorizationHeader.split(" ");
+        String scheme = getAuthcHeaderScheme();
+        if ( authTokens == null || authTokens.length < 2 || !authTokens[0].equalsIgnoreCase(scheme) ) {
+            return null;
+        }
+
+        String encodedCredentials = authTokens[1];
+        String decodedCredentials = Base64.decodeToString(encodedCredentials);
+        return decodedCredentials.split(":");
+    }
+
+    /**
+     * Creates an AuthenticationToken based on the username and password and incoming request to be submitted to
+     * the {@link Subject#login Subject.login} method for authentication.
+     * <p/>
+     * The default implementation acquires the request's associated
+     * {@link #getInetAddress(javax.servlet.ServletRequest) inetAddress} as well as a potential
+     * {@link #isRememberMeEnabled(javax.servlet.ServletRequest) rememberMe} status, and with the given
+     * <code>username</code> and <code>password</code>, returns a
+     * <code>new {@link org.jsecurity.authc.UsernamePasswordToken UsernamePasswordToken}</code>.  That is:
+     * <br/><br/>
+     * <pre>       InetAddress addr = getInetAddress(request);
+     * boolean rememberMe = isRememberMeEnabled(request);
+     * return new UsernamePasswordToken(username, password, rememberMe, addr );</pre>
+     * <p/>
+     * It should be noted that Basic HTTP Authentication does not support any concept of <code>rememberMe</code, but
+     * we still allow subclasses to enable this feature for any given request via the
+     * {@link #isRememberMeEnabled(javax.servlet.ServletRequest) isRememberMeEnabled} method if subclasses wish to
+     * override that method in custom environments.
+     *
+     * @param username the username obtained from the request's 'Authorization' header.
+     * @param password the password obtained from the request's 'Authorization' header.
+     * @param request the incoming ServletRequest.
+     * @return a constructed <code>AuthenticationToken</code> that will be used to execute a login attempt for the
+     * current <code>Subject</code>.
+     */
+    protected AuthenticationToken createToken( String username, String password, ServletRequest request ) {
+        InetAddress addr = getInetAddress(request);
+        boolean rememberMe = isRememberMeEnabled(request);
+        return new UsernamePasswordToken(username, password, rememberMe, addr );
+    }
+
+    /**
+     * Returns the InetAddress associated with the current subject.  This method is primarily provided for use
+     * during construction of an <code>AuthenticationToken</code>.
+     * <p/>
+     * The default implementation merely returns
+     * {@link WebUtils#getInetAddress(javax.servlet.ServletRequest) WebUtils.getInetAddress(request)}.
+     *
+     * @param request the incoming ServletRequest
+     * @return the <code>InetAddress</code> to associate with the login attempt.
+     */
+    protected InetAddress getInetAddress( ServletRequest request ) {
+        return WebUtils.getInetAddress(request);
+    }
+
+    /**
+     * Returns <code>true</code> if &quot;rememberMe&quot; should be enabled for the login attempt associated with the
+     * current <code>request</code>, <code>false</code> otherwise.
+     * <p/>
+     * This implementation always returns <code>false</code> in all cases because Basic HTTP Authentication does not
+     * support the concept of <code>rememberMe</code>.  However, this method is provided as a template hook to
+     * subclasses that might wish to determine <code>rememberMe</code> in a custom mannner based on the current
+     * <code>request</code>.
+     * @param request the incoming ServletRequest
+     * @return <code>true</code> if &quot;rememberMe&quot; should be enabled for the login attempt associated with the
+     * current <code>request</code>, <code>false</code> otherwise.
+     */
+    protected boolean isRememberMeEnabled( ServletRequest request ) {
+        return false;
+    }
+
 }

@@ -216,6 +216,20 @@ public class WebUtils {
         return enc;
     }
 
+    /**
+     * Returns the <code>InetAddress</code> associated with the current request, or <code>null</code> if the
+     * address cannot be resolved/determined.
+     * <p/>
+     * This implementation returns the InetAddress resolved from the request's
+     * {@link javax.servlet.ServletRequest#getRemoteHost() remoteHost} value.  The returned <code>String</code>
+     * is resolved to an InetAddress by calling
+     * {@link InetAddress#getByName(String) InetAddress.getByName(remoteHost)}. If the remote host is null or
+     * <code>getByName(remoteHost)</code> throws an exception, <code>null</code> is returned.
+     *
+     * @param request the incoming ServletRequest
+     * @return the <code>InetAddress</code> associated with the current request, or <code>null</code> if the
+     * address cannot be resolved/determined.
+     */
     public static InetAddress getInetAddress(ServletRequest request) {
         InetAddress clientAddress = null;
         //get the Host/IP the client is coming from:
