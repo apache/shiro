@@ -98,28 +98,8 @@ public class AbstractAuthenticatorTest {
         assertNotNull(authcInfo);
     }
 
-    @Test(expected = AuthenticationException.class)
-    public void createFailureEventReturnsNull() {
-        abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
-                throw new AuthenticationException();
-            }
-        };
-        abstractAuthenticator.authenticate(newToken());
-    }
-
     @Test
-    public void createSuccessEventReturnsNull() {
-        abstractAuthenticator = new AbstractAuthenticator() {
-            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
-                return info;
-            }
-        };
-        abstractAuthenticator.authenticate(newToken());
-    }
-
-    @Test
-    public void sendSuccessEventAfterDoAuthenticate() {
+    public void notifySuccessAfterDoAuthenticate() {
         AuthenticationListener mockListener = createMock(AuthenticationListener.class);
         abstractAuthenticator.add(mockListener);
         AuthenticationToken token = newToken();
@@ -131,11 +111,11 @@ public class AbstractAuthenticatorTest {
     }
 
     @Test
-    public void sendFailedEventAfterDoAuthenticateThrowsAuthenticationException() {
+    public void notifyFailureAfterDoAuthenticateThrowsAuthenticationException() {
         AuthenticationListener mockListener = createMock(AuthenticationListener.class);
         AuthenticationToken token = newToken();
 
-        final AuthenticationException ae = new AuthenticationException("dummy exception to test event sending");
+        final AuthenticationException ae = new AuthenticationException("dummy exception to test notification");
 
         abstractAuthenticator = new AbstractAuthenticator() {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
@@ -157,21 +137,18 @@ public class AbstractAuthenticatorTest {
         verify(mockListener);
 
         if (!exceptionThrown) {
-            fail("An AuthenticationException should have been thrown during the sendFailedEvent test case.");
+            fail("An AuthenticationException should have been thrown during the notifyFailure test case.");
         }
     }
 
     @Test(expected = AuthenticationException.class)
-    public void sendFailedEventAfterDoAuthenticateThrowsNonAuthenticationException() {
-
+    public void notifyFailureAfterDoAuthenticateThrowsNonAuthenticationException() {
         abstractAuthenticator = new AbstractAuthenticator() {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw new IllegalArgumentException("not an AuthenticationException subclass");
             }
         };
-
         AuthenticationToken token = newToken();
-
         abstractAuthenticator.authenticate(token);
     }
 

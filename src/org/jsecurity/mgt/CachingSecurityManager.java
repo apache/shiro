@@ -67,8 +67,8 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * children components.
      * <p/>
      * After the cacheManager attribute has been set, the template method
-     * {@link #afterCacheManagerSet afterCacheManagerSet()} is executed to allow subclasses to adjust to the event
-     * that a cacheManager is available.
+     * {@link #afterCacheManagerSet afterCacheManagerSet()} is executed to allow subclasses to adjust when a
+     * cacheManager is available.
      *
      * @param cacheManager the CacheManager used by this <code>SecurityManager</code> and potentially any of its
      *                     children components.

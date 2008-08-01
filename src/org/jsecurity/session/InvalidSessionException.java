@@ -24,7 +24,7 @@ import java.io.Serializable;
  * Exception thrown when attempting to interact with the system under an established session
  * when that session is considered invalid.  The meaning of the term 'invalid' is based on
  * application behavior.  For example, a Session is considered invalid if it has been explicitly
- * stopped (e.g. in the event of a user log-out or when explicitly
+ * stopped (e.g. when a user logs-out or when explicitly
  * {@link org.jsecurity.session.Session#stop() stopped} programmatically.  A Session can also be
  * considered invalid if it has expired.
  *

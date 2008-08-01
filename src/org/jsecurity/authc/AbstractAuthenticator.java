@@ -112,11 +112,11 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * <ol>
      * <li>Calls template {@link #doAuthenticate doAuthenticate} method for subclass execution of the actual
      * authentication behavior.</li>
-     * <li>If an <tt>AuthenticationException</tt> is thrown during <tt>doAuthenticate</tt>, create and send a
-     * failure <tt>AuthenticationEvent</tt> that represents this failure, and then propogate this exception
+     * <li>If an <tt>AuthenticationException</tt> is thrown during <tt>doAuthenticate</tt>, notify any registered
+     * {@link AuthenticationListener AuthenticationListener}s of the exception and then propogate the exception
      * for the caller to handle.</li>
-     * <li>If no exception is thrown (indicating a successful login), send a success <tt>AuthenticationEvent</tt>
-     * noting the successful authentication.</li>
+     * <li>If no exception is thrown (indicating a successful login), notify any registered
+     * <code>AuthenticationListener</code>s of the successful attempt.</li>
      * <li>Return the <tt>AuthenticationInfo</tt></li>
      * </ol>
      *

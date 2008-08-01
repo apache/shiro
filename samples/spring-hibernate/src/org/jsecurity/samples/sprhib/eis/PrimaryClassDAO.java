@@ -38,7 +38,7 @@ public interface PrimaryClassDAO extends DataAccessObject {
 
     /**
      * Returns the primary class for which this DAO is responsible. Most Data Access Objects will
-     * work on behalf of a specific object type (e.g. User, Event, etc.).  Implementations of this
+     * work on behalf of a specific object type (e.g. User, Post, etc.).  Implementations of this
      * interface may of course work with any other classes as needed, but a PrimaryClassDAO always
      * has one primary target class it &quot;knows&quot; about for convenience.
      *
