@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity;
+package org.jsecurity.realm.activedirectory;
 
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
@@ -24,7 +24,8 @@ import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.AuthorizingRealm;
-import org.jsecurity.realm.activedirectory.ActiveDirectoryRealm;
+import org.jsecurity.realm.UserIdPrincipal;
+import org.jsecurity.realm.UsernamePrincipal;
 import org.jsecurity.realm.ldap.LdapContextFactory;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;

@@ -19,12 +19,8 @@
 package org.jsecurity.session.mgt;
 
 import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.ProxiedSession;
 import org.jsecurity.session.Session;
-
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.Date;
 
 /**
  * Implementation of the {@link Session Session} interface that proxies another <code>Session</code>, but does not
@@ -47,79 +43,15 @@ import java.util.Date;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ImmutableProxiedSession implements Session {
-
-    /**
-     * The proxied Session
-     */
-    protected final Session session;
+public class ImmutableProxiedSession extends ProxiedSession {
 
     /**
      * Constructs a new instance of this class proxying the specified <code>Session</code>.
      *
-     * @param toProxy the <code>Session</code> to proxy.
+     * @param target the target <code>Session</code> to proxy.
      */
-    public ImmutableProxiedSession(Session toProxy) {
-        this.session = toProxy;
-        if (toProxy == null) {
-            throw new IllegalArgumentException("Session to proxy cannot be null.");
-        }
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return The unique identifier assigned to the session upon creation.
-     */
-    public Serializable getId() {
-        return this.session.getId();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return The time the system created the session.
-     */
-    public Date getStartTimestamp() {
-        return this.session.getStartTimestamp();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return The time the session was stopped, or <tt>null</tt> if the session is still
-     *         active.
-     */
-    public Date getStopTimestamp() {
-        return this.session.getStopTimestamp();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return The time the user last interacted with the system.
-     */
-    public Date getLastAccessTime() {
-        return this.session.getLastAccessTime();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return true if this session has expired, false otherwise.
-     */
-    public boolean isExpired() {
-        return this.session.isExpired();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return the time in milliseconds the session may remain idle before expiring.
-     * @throws InvalidSessionException
-     */
-    public long getTimeout() throws InvalidSessionException {
-        return this.session.getTimeout();
+    public ImmutableProxiedSession(Session target) {
+        super(target);
     }
 
     /**
@@ -137,29 +69,14 @@ public class ImmutableProxiedSession implements Session {
     /**
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
-     *
-     * @param maxIdleTimeInMillis ignored
-     * @throws InvalidSessionException in all cases because this proxy is immutable.
      */
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         throwImmutableException();
     }
 
     /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
-     *         if the host address is unknown.
-     */
-    public InetAddress getHostAddress() {
-        return this.session.getHostAddress();
-    }
-
-    /**
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
-     *
-     * @throws InvalidSessionException in all cases because this proxy is immutable.
      */
     public void touch() throws InvalidSessionException {
         throwImmutableException();
@@ -168,41 +85,14 @@ public class ImmutableProxiedSession implements Session {
     /**
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
-     *
-     * @throws InvalidSessionException in all cases because this proxy is immutable.
      */
     public void stop() throws InvalidSessionException {
         throwImmutableException();
     }
 
     /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @return the keys of all attributes stored under this session, or an empty collection if
-     *         there are no session attributes.
-     */
-    public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-        return this.session.getAttributeKeys();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     *
-     * @param key the unique name of the object bound to this session
-     * @return the object bound under the specified <tt>key</tt> name or <tt>null</tt> if there is
-     *         no object bound under that name.
-     */
-    public Object getAttribute(Object key) throws InvalidSessionException {
-        return this.session.getAttribute(key);
-    }
-
-    /**
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
-     *
-     * @param key   ignored
-     * @param value ignored
-     * @throws InvalidSessionException in all cases because this proxy is immutable.
      */
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
         throwImmutableException();
@@ -211,9 +101,6 @@ public class ImmutableProxiedSession implements Session {
     /**
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
-     *
-     * @param key ignored
-     * @throws InvalidSessionException in all cases because this proxy is immutable.
      */
     public Object removeAttribute(Object key) throws InvalidSessionException {
         throwImmutableException();

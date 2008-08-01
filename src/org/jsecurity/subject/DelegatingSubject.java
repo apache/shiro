@@ -27,6 +27,8 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.UnauthenticatedException;
 import org.jsecurity.mgt.SecurityManager;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.ProxiedSession;
 import org.jsecurity.session.Session;
 import org.jsecurity.util.ThreadContext;
 
@@ -99,7 +101,9 @@ public class DelegatingSubject implements Subject {
         } else {
             this.inetAddress = getLocalHost();
         }
-        this.session = session;
+        if (session != null) {
+            this.session = new StoppingAwareProxiedSession(session, this);
+        }
     }
 
     protected void assertValid() throws InvalidSubjectException {
@@ -267,7 +271,12 @@ public class DelegatingSubject implements Subject {
             throw new IllegalStateException(msg);
         }
         this.principals = principals;
-        this.session = authcSecCtx.getSession(false);
+        Session session = authcSecCtx.getSession(false);
+        if (session != null && !(session instanceof StoppingAwareProxiedSession)) {
+            this.session = new StoppingAwareProxiedSession(session, this);
+        } else {
+            this.session = null;
+        }
         this.authenticated = true;
         if (token instanceof InetAuthenticationToken) {
             InetAddress addy = ((InetAuthenticationToken) token).getInetAddress();
@@ -298,7 +307,8 @@ public class DelegatingSubject implements Subject {
             if (log.isTraceEnabled()) {
                 log.trace("starting session for address [" + getInetAddress() + "]");
             }
-            this.session = securityManager.start(getInetAddress());
+            Session target = securityManager.start(getInetAddress());
+            this.session = new StoppingAwareProxiedSession(target, this);
         }
         return this.session;
     }
@@ -317,6 +327,25 @@ public class DelegatingSubject implements Subject {
             this.authenticated = false;
             this.inetAddress = null;
             this.securityManager = null;
+        }
+    }
+
+    private void sessionStopped() {
+        this.session = null;
+    }
+
+    private class StoppingAwareProxiedSession extends ProxiedSession {
+
+        private final DelegatingSubject owner;
+
+        private StoppingAwareProxiedSession(Session target, DelegatingSubject owningSubject) {
+            super(target);
+            owner = owningSubject;
+        }
+
+        public void stop() throws InvalidSessionException {
+            proxy.stop();
+            owner.sessionStopped();
         }
     }
 
