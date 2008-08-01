@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity;
+package org.jsecurity.mgt;
 
 import org.jsecurity.authc.UsernamePasswordToken;
-import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;

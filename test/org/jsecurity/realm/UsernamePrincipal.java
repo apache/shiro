@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity;
+package org.jsecurity.realm;
 
 import java.io.Serializable;
 import java.security.Principal;
 
-public class UserIdPrincipal implements Principal, Serializable {
+public class UsernamePrincipal implements Principal, Serializable {
 
-    private int userId;
+    private String username;
 
-    public UserIdPrincipal(int userId) {
-        this.userId = userId;
+    public UsernamePrincipal(String username) {
+        this.username = username;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
     public String getName() {
-        return String.valueOf(userId);
+        return String.valueOf(username);
     }
 }
