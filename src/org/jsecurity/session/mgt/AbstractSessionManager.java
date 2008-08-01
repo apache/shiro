@@ -104,26 +104,8 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         return getSession(sessionId).getStartTimestamp();
     }
 
-    public Date getStopTimestamp(Serializable sessionId) {
-        return getSession(sessionId).getStartTimestamp();
-    }
-
     public Date getLastAccessTime(Serializable sessionId) {
         return getSession(sessionId).getStartTimestamp();
-    }
-
-    public boolean isStopped(Serializable sessionId) {
-        Session session = getSession(sessionId);
-        return session.getStopTimestamp() != null || session.isExpired();
-    }
-
-    public boolean isExpired(Serializable sessionId) {
-        try {
-            Session session = getSession(sessionId);
-            return session.isExpired();
-        } catch (ExpiredSessionException e) {
-            return true;
-        }
     }
 
     public long getTimeout(Serializable sessionId) throws InvalidSessionException {
@@ -164,15 +146,6 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         onChange(session);
     }
 
-    protected void expire(Session session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Expiring session with id [" + session.getId() + "]");
-        }
-        notifyExpiration(session);
-        session.stop();
-        onExpiration(session);
-    }
-
     protected void onExpiration(Session session) {
         onChange(session);
     }
@@ -211,6 +184,15 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
             throw new UnknownSessionException(msg);
         }
         return session;
+    }
+
+    public boolean isValid(Serializable sessionId) {
+        try {
+            getSession(sessionId);
+        } catch (InvalidSessionException e) {
+            return false;
+        }
+        return true;
     }
 
     protected void onChange(Session s) {

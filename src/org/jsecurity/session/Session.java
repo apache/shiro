@@ -61,40 +61,12 @@ public interface Session {
     Date getStartTimestamp();
 
     /**
-     * Returns the time the session was stopped, or <tt>null</tt> if the session is still active.
-     *
-     * <p>A session may become stopped under a number of conditions:
-     * <ul>
-     * <li>If the user logs out of the system, their current session is terminated (released).</li>
-     * <li>If the session expires</li>
-     * <li>The application explicitly calls {@link #stop() destroy()}</li>
-     * <li>If there is an internal system error and the session state can no longer accurately
-     * reflect the user's behavior, such in the case of a system crash</li>
-     * </ul>
-     * </p>
-     *
-     * <p>Once stopped, a session may no longer be used.  It is locked from all further activity.
-     *
-     * @return The time the session was stopped, or <tt>null</tt> if the session is still
-     *         active.
-     */
-    Date getStopTimestamp();
-
-    /**
      * Returns the last time the user associated with the session interacted with the system.
      *
      * @return The time the user last interacted with the system.
      * @see #touch()
      */
     Date getLastAccessTime();
-
-    /**
-     * Returns true if this session has expired, false otherwise.  If the session has
-     * expired, no further user interaction with the system may be done under this session.
-     *
-     * @return true if this session has expired, false otherwise.
-     */
-    boolean isExpired();
 
     /**
      * Returns the time in milliseconds that the session session may remain idle before expiring.
@@ -173,21 +145,21 @@ public interface Session {
     void touch() throws InvalidSessionException;
 
     /**
-     * Explicitly stops this session and releases all associated resources.
+     * Explicitly stops (invalidates) this session and releases all associated resources.
      *
-     * <p>If this session has already been authenticated (i.e. the user associated with this
-     * session has logged-in and has a {@link org.jsecurity.subject.Subject Subject} ),
-     * this method should only be called during the logout process, when it is
-     * considered a graceful operation.
+     * <p>If this session has already been authenticated (i.e. the <code>Subject</code> that
+     * owns this session has logged-in), calling this method explicitly might have undesired side effects:
+     * <p/>
+     * It is common for a <code>Subject</code> implementation to retain authentication state in the
+     * <code>Session</code>.  If the session
+     * is explicitly stopped by application code by calling this method directly, it could clear out any
+     * authentication state that might exist, thereby effectively &quot;unauthenticating&quot; the <code>Subject</code>.
+     * <p/>
+     * As such, you might consider {@link org.jsecurity.subject.Subject#logout logging-out} the 'owning'
+     * <code>Subject</code> instead of manually calling this method, as a log out is expected to stop the
+     * corresponding session automatically, and also allows framework code to execute additional cleanup logic.
      *
-     * <p><b>N.B.</b> Under most applications' circumstances, it is usually far better to stop the session implicitly
-     * by logging-out the 'owning' <tt>Subject</tt> instead.  This is done by calling the
-     * {@link org.jsecurity.subject.Subject#logout Subject#logout} method, since
-     * <tt>logout</tt> is expected to stop the corresponding session automatically, and also allows the framework
-     * to do any other additional cleanup.
-     *
-     * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     *                                 this method.
+     * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
      * @see #getStopTimestamp
      */
     void stop() throws InvalidSessionException;

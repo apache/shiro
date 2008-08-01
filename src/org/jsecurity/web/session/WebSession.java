@@ -67,16 +67,8 @@ public class WebSession implements Session {
         return new Date(httpSession.getCreationTime());
     }
 
-    public Date getStopTimestamp() {
-        return null;
-    }
-
     public Date getLastAccessTime() {
         return new Date(httpSession.getLastAccessedTime());
-    }
-
-    public boolean isExpired() {
-        return false;
     }
 
     public long getTimeout() throws InvalidSessionException {

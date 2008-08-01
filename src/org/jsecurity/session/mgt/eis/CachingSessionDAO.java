@@ -18,13 +18,12 @@
  */
 package org.jsecurity.session.mgt.eis;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.UnknownSessionException;
+import org.jsecurity.session.mgt.ValidatingSession;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -45,8 +44,6 @@ import java.util.Collections;
 public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware {
 
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
-
-    private static final Log log = LogFactory.getLog(CachingSessionDAO.class);
 
     private CacheManager cacheManager;
     private Cache activeSessions;
@@ -186,8 +183,13 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
 
         if (s == null) {
             s = doReadSession(sessionId);
-            if (cache != null && s != null && !s.isExpired() && s.getStopTimestamp() == null) {
-                cache.put(sessionId, s);
+            if (cache != null && s != null) {
+                if ((s instanceof ValidatingSession) && ((ValidatingSession) s).isValid()) {
+                    //only put it in the cache if it is valid
+                    cache.put(sessionId, s);
+                } else {
+                    cache.put(sessionId, s);
+                }
             }
         }
 
@@ -208,9 +210,8 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     /**
      * Updates the state of the given session to the EIS.
      *
-     * <p>If the specified session was previously cached, and the session is now
-     * {@link org.jsecurity.session.Session#getStopTimestamp() stopped} or
-     * {@link org.jsecurity.session.Session#isExpired() expired}, it will be removed from the cache.
+     * <p>If the specified session was previously cached, and the session is now invalid,
+     * it will be removed from the cache.
      *
      * <p>If the specified session is not stopped or expired, and was not yet in the cache, it will be added to the
      * cache.
@@ -228,14 +229,15 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         Cache cache = getActiveSessionsCacheLazy();
         Serializable id = session.getId();
 
-        if (session.getStopTimestamp() != null || session.isExpired()) {
+        if (session instanceof ValidatingSession && !((ValidatingSession) session).isValid()) {
             if (cache != null) {
                 cache.remove(id);
             }
-        } else {
-            if (cache != null) {
-                cache.put(id, session);
-            }
+            return;
+        }
+
+        if (cache != null) {
+            cache.put(id, session);
         }
     }
 

@@ -22,7 +22,10 @@ import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
-import org.jsecurity.session.*;
+import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.Session;
+import org.jsecurity.session.SessionListener;
+import org.jsecurity.session.SessionListenerRegistrar;
 import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.session.mgt.DelegatingSession;
 import org.jsecurity.session.mgt.SessionManager;
@@ -178,14 +181,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         SessionManager sm = getSessionManager();
-        if (sm.isExpired(sessionId)) {
-            String msg = "Session with id [" + sessionId + "] has expired and may not be used.";
-            throw new ExpiredSessionException(msg);
-        } else if (sm.isStopped(sessionId)) {
-            String msg = "Session with id [" + sessionId + "] has been stopped and may not be used.";
-            throw new StoppedSessionException(msg);
+        if (!sm.isValid(sessionId)) {
+            String msg = "Specified id [" + sessionId + "] does not correspond to a valid Session  It either " +
+                    "does not exist or the corresponding session has been stopped or expired.";
+            throw new InvalidSessionException(msg, sessionId);
         }
-
         return new DelegatingSession(sm, sessionId);
     }
 

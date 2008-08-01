@@ -65,19 +65,6 @@ public interface SessionManager {
     Date getStartTimestamp(Serializable sessionId);
 
     /**
-     * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> was
-     * stopped or expired in the system, or <tt>null</tt> if the session is still active. A
-     * session could be stopped for a number of reasons.  See the
-     * {@link org.jsecurity.session.Session#stop() Session.destroy()} method for more details.
-     *
-     * @param sessionId the session ID whose stop timestamp is being retrieved.
-     * @return the system time the session stopped or expired, or <tt>null</tt> if the session
-     *         is still active.
-     * @see org.jsecurity.session.Session#getStopTimestamp()
-     */
-    Date getStopTimestamp(Serializable sessionId);
-
-    /**
      * Returns the time the <tt>Session</tt> identified by the specified <tt>sessionId</tt> last
      * interacted with the system.
      *
@@ -88,30 +75,14 @@ public interface SessionManager {
      */
     Date getLastAccessTime(Serializable sessionId);
 
-    /**
-     * Returns <tt>true</tt> if the session with the specified <tt>sessionId</tt> has been
-     * stopped, <tt>false</tt> otherwise.
-     *
-     * @param sessionId the id of the session to check
-     * @return <tt>true</tt> if the session has been stopped, <tt>false</tt> otherwise.
-     */
-    boolean isStopped(Serializable sessionId);
 
     /**
-     * Returns whether or not the session identified by the given <tt>sessionId</tt> has expired
-     * in the system.
+     * Returns <tt>true</tt> if the session is valid (it exists and is not stopped nor expired), <tt>false</tt> otherwise.
      *
-     * <p>This method can be used in conjunction with {@link #isStopped} to determine if the
-     * user has logged out, depending upon an application's inference of business rules.
-     * Assuming the only way for a session to be stopped (other than from
-     * expiration) is due to an explicit user log-out you can infer that if the session
-     * {@link #isStopped} but not {@link #isExpired}, then the user has logged-out.  Of course,
-     * this is dependent upon the above assumption and may not be true for every application.
-     *
-     * @param sessionId the system identifier of the session of interest
-     * @return true if the session has expired, false otherwise.
+     * @param sessionId the id of the session to check
+     * @return <tt>true</tt> if the session is valid (exists and is not stopped or expired), <tt>false</tt> otherwise.
      */
-    boolean isExpired(Serializable sessionId);
+    boolean isValid(Serializable sessionId);
 
     /**
      * Returns the time in milliseconds that the specified session may remain idle before expiring.

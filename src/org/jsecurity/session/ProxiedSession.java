@@ -70,22 +70,8 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
-    public Date getStopTimestamp() {
-        return proxy.getStopTimestamp();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     */
     public Date getLastAccessTime() {
         return proxy.getLastAccessTime();
-    }
-
-    /**
-     * Immediately delegates to the underlying proxied session.
-     */
-    public boolean isExpired() {
-        return proxy.isExpired();
     }
 
     /**
