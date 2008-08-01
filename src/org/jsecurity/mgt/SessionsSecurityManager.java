@@ -116,24 +116,24 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     /**
-     * This is a convenience method that allows registration of SessionEventListeners with the underlying delegate
+     * This is a convenience method that allows registration of SessionListeners with the underlying delegate
      * SessionManager at startup.
      *
      * <p>This is more convenient than having to configure your own SessionManager instance, inject the listeners on
      * it, and then set that SessionManager instance as an attribute of this class.  Instead, you can just rely
-     * on the <tt>SecurityManager</tt> to apply these <tt>SessionEventListener</tt>s on your behalf.
+     * on the <tt>SecurityManager</tt> to apply these <tt>SessionListener</tt>s on your behalf.
      *
      * <p>One notice however: The underlying SessionManager delegate must implement the
      * {@link SessionListenerRegistrar SessionListenerRegistrar} interface in order for these listeners to
      * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
      * will be thrown.
      *
-     * @param sessionEventListeners the <tt>SessionEventListener</tt>s to register with the underlying delegate
-     *                              <tt>SessionManager</tt> at startup.
+     * @param sessionListeners the <tt>SessionListener</tt>s to register with the underlying delegate
+     *                         <tt>SessionManager</tt> at startup.
      */
-    public void setSessionListeners(Collection<SessionListener> sessionEventListeners) {
+    public void setSessionListeners(Collection<SessionListener> sessionListeners) {
         assertSessionListenerSupport();
-        ((SessionListenerRegistrar) this.sessionManager).setSessionListeners(sessionEventListeners);
+        ((SessionListenerRegistrar) this.sessionManager).setSessionListeners(sessionListeners);
     }
 
     private void assertSessionListenerSupport() {

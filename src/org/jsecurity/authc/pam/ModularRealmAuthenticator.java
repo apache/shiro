@@ -280,7 +280,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
     /**
-     * First calls <code>super.onLogout(principals)</code> to ensure a logout event is sent, and for each
+     * First calls <code>super.onLogout(principals)</code> to ensure a logout notification is issued, and for each
      * wrapped <tt>Realm</tt> that implements the {@link LogoutAware LogoutAware} interface, calls
      * <code>((LogoutAware)realm).onLogout(principals)</code> to allow each realm the opportunity to perform
      * logout/cleanup operations during an user-logout.

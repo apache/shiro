@@ -95,7 +95,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * <p>This is more convenient than having to configure your own Authenticator instance, inject the listeners on
      * it, and then set that Authenticator instance as an attribute of this class.  Instead, you can just rely
      * on the <tt>SecurityManager</tt>'s default initialization logic to create the Authenticator instance for you
-     * and then apply these <tt>AuthenticationEventListener</tt>s on your behalf.
+     * and then apply these <tt>AuthenticationListener</tt>s on your behalf.
      *
      * <p>One notice however: The underlying Authenticator delegate must implement the
      * {@link org.jsecurity.authc.AuthenticationListenerRegistrar AuthenticationListenerRegistrar}
