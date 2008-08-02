@@ -47,6 +47,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     protected Map<String, SimpleRole> roles = null;
 
     public SimpleAccountRealm() {
+        init();
     }
 
     public void afterAuthorizationCacheSet() {

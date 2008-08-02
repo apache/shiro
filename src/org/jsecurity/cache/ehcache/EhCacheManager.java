@@ -62,6 +62,9 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      */
     private String cacheManagerConfigFile = "classpath:org/jsecurity/cache/ehcache/ehcache.xml";
 
+    public EhCacheManager() {
+    }
+
     /**
      * Returns the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
      *

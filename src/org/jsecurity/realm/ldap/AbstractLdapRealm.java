@@ -27,7 +27,6 @@ import org.jsecurity.authz.AuthorizationInfo;
 import org.jsecurity.realm.AuthorizingRealm;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.util.Initializable;
 
 import javax.naming.NamingException;
 
@@ -53,7 +52,7 @@ import javax.naming.NamingException;
  * @see # queryForAuthorizationInfo (PrincipalCollection, LdapContextFactory)
  * @since 0.1
  */
-public abstract class AbstractLdapRealm extends AuthorizingRealm implements Initializable {
+public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |

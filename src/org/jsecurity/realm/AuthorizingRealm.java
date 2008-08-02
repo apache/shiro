@@ -101,6 +101,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     ============================================*/
     public void setAuthorizationCache(Cache authorizationCache) {
         this.authorizationCache = authorizationCache;
+        if ( this.authorizationCache != null ) {
+            afterAuthorizationCacheSet();
+        }
     }
 
     public Cache getAuthorizationCache() {
@@ -148,13 +151,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      */
     public final void init() {
         initAuthorizationCache();
-        afterAuthorizationCacheSet();
     }
 
     protected void afterAuthorizationCacheSet() {
     }
 
-    protected void initAuthorizationCache() {
+    public void initAuthorizationCache() {
         if (log.isTraceEnabled()) {
             log.trace("Initializing authorization cache.");
         }

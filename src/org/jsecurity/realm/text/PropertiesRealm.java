@@ -21,6 +21,7 @@ package org.jsecurity.realm.text;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
+import org.jsecurity.cache.CacheManager;
 import org.jsecurity.io.ResourceUtils;
 import org.jsecurity.util.Destroyable;
 
@@ -114,6 +115,15 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     protected int reloadIntervalSeconds = DEFAULT_RELOAD_INTERVAL_SECONDS;
 
     public PropertiesRealm() {
+        init();
+    }
+
+    public PropertiesRealm( CacheManager cacheManager ) {
+        if ( cacheManager == null ) {
+            throw new IllegalArgumentException( "cacheManager argument cannot be null." );
+        }
+        setCacheManager(cacheManager);
+        init();
     }
 
     public void afterRoleCacheSet() {
