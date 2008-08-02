@@ -34,8 +34,7 @@ import java.util.Set;
 public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
     public RoleAnnotationMethodInterceptor() {
-        setAnnotationClass(RequiresRoles.class);
-        init();
+        super(RequiresRoles.class);
     }
 
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {

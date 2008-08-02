@@ -44,19 +44,12 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
 
     private static final Log log = LogFactory.getLog(AnnotationsAuthorizingMethodInterceptor.class);    
 
-    protected Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors = null;
+    protected Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors;
 
-    public void init() {
-        if (methodInterceptors == null) {
-            if (log.isInfoEnabled()) {
-                log.info("No methodAuthorizers configured.  " +
-                        "Enabling default Role and Permission annotation support...");
-            }
-            methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(2);
-            methodInterceptors.add(new RoleAnnotationMethodInterceptor());
-            methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
-        }
-
+    public AnnotationsAuthorizingMethodInterceptor() {
+        methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(2);
+        methodInterceptors.add(new RoleAnnotationMethodInterceptor());
+        methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
     }
 
     public Collection<AuthorizingAnnotationMethodInterceptor> getMethodInterceptors() {

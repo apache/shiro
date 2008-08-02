@@ -32,14 +32,15 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
 
     protected Class<? extends Annotation> annotationClass;
 
-    public void init() {
-        if (annotationClass == null) {
-            String msg = "annotationClass property must be set";
-            throw new IllegalStateException(msg);
-        }
+    public AnnotationMethodInterceptor( Class<? extends Annotation> annotationClass ) {
+        setAnnotationClass(annotationClass);
     }
 
-    public void setAnnotationClass(Class<? extends Annotation> annotationClass) {
+    protected void setAnnotationClass(Class<? extends Annotation> annotationClass) {
+        if (annotationClass == null) {
+            String msg = "annotationClass argument cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
         this.annotationClass = annotationClass;
     }
 

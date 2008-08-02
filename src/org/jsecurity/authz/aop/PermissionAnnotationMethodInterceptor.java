@@ -37,8 +37,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
     private static final char ARRAY_CLOSE_CHAR = ']';
 
     public PermissionAnnotationMethodInterceptor() {
-        setAnnotationClass(RequiresPermissions.class);
-        init();
+        super(RequiresPermissions.class);
     }
 
     protected String inferTargetFromPath(Object[] methodArgs, String namePath) throws Exception {

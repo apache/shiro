@@ -93,12 +93,13 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
     }
 
     protected Realm createDefaultRealm() {
-        PropertiesRealm realm = new PropertiesRealm();
+        PropertiesRealm realm;
         CacheManager cacheManager = getCacheManager();
         if (cacheManager != null) {
-            realm.setCacheManager(cacheManager);
+            realm = new PropertiesRealm(cacheManager);
+        } else {
+            realm = new PropertiesRealm();
         }
-        realm.init();
         return realm;
     }
 

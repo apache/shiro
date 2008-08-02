@@ -47,8 +47,7 @@ public class AllSuccessfulModularAuthenticationStrategyTest {
 
     @Test
     public void beforeAttemptSupportingToken() {
-        SimpleAccountRealm realm = new SimpleAccountRealm();
-        realm.init();
+        new SimpleAccountRealm();
     }
 
     @Test(expected = UnsupportedTokenException.class)

@@ -78,9 +78,8 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
                         "default instance of type [" +
                         AopAllianceAnnotationsAuthorizingMethodInterceptor.class.getName() + "]");
             }
-            AopAllianceAnnotationsAuthorizingMethodInterceptor interceptor = new AopAllianceAnnotationsAuthorizingMethodInterceptor();
-            interceptor.init();
-
+            AopAllianceAnnotationsAuthorizingMethodInterceptor interceptor =
+                    new AopAllianceAnnotationsAuthorizingMethodInterceptor();
             setAdvice(interceptor);
         }
     }

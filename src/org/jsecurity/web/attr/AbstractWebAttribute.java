@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.JSecurityException;
 import org.jsecurity.util.ClassUtils;
-import org.jsecurity.util.Initializable;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -40,7 +39,7 @@ import java.beans.PropertyEditor;
  * @author Les Hazlewood
  * @since 0.2
  */
-public abstract class AbstractWebAttribute<T> implements WebAttribute<T>, Initializable {
+public abstract class AbstractWebAttribute<T> implements WebAttribute<T> {
 
     public static final String DEFAULT_NAME = "name";
 
@@ -136,9 +135,6 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T>, Initia
 
     public void setMutable(boolean mutable) {
         this.mutable = mutable;
-    }
-
-    public void init() {
     }
 
     @SuppressWarnings({"unchecked"})

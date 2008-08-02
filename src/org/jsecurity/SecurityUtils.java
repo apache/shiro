@@ -85,7 +85,6 @@ public abstract class SecurityUtils {
      *
      * <code>DefaultSecurityManager securityManager = new {@link org.jsecurity.mgt.DefaultSecurityManager DefaultSecurityManager}();<br/>
      * securityManager.setRealms( ... ); //one or more Realms<br/>
-     * securityManager.init();<br/>
      * <b>SecurityUtils.setSecurityManager( securityManager );</b></code>
      *
      * <p>And then anywhere in the application code, the following call will return the application's Subject:</p>

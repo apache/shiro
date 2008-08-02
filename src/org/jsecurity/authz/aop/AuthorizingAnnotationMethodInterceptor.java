@@ -22,6 +22,8 @@ import org.jsecurity.aop.AnnotationMethodInterceptor;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
+import java.lang.annotation.Annotation;
+
 /**
  * An <tt>AnnotationMethodInterceptor</tt> that asserts the calling code is authorized to execute the method
  * before allowing the invocation to continue.
@@ -30,6 +32,10 @@ import org.jsecurity.authz.AuthorizationException;
  * @since 0.1
  */
 public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationMethodInterceptor {
+
+    public AuthorizingAnnotationMethodInterceptor(Class<? extends Annotation> annotationClass) {
+        super(annotationClass);
+    }
 
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         assertAuthorized(methodInvocation);
