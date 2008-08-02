@@ -171,11 +171,22 @@ public class SimpleSession implements ValidatingSession, Serializable {
         }
     }
 
+    protected boolean isStopped() {
+        return getStopTimestamp() != null;
+    }
+
+    protected void expire() {
+        stop();
+        if ( !this.expired ) {
+            this.expired = true;
+        }
+    }
+
     /**
      * @since 0.9
      */
     public boolean isValid() {
-        return getStopTimestamp() != null && !isExpired();
+        return !isStopped() && !isExpired();
     }
 
     /**
@@ -223,9 +234,18 @@ public class SimpleSession implements ValidatingSession, Serializable {
     }
 
     public void validate() throws InvalidSessionException {
+        //check for stopped:
+        if (isStopped()) {
+            //timestamp is set, so the session is considered stopped:
+            String msg = "Session with id [" + getId() + "] has been " +
+                    "explicitly stopped.  No further interaction under this session is " +
+                    "allowed.";
+            throw new StoppedSessionException(msg, getId());
+        }
+
+        //check for expiration
         if (isTimedOut()) {
-            stop();
-            this.expired = true;
+            expire();
 
             //throw an exception explaining details of why it expired:
             Date lastAccessTime = getLastAccessTime();
@@ -243,15 +263,6 @@ public class SimpleSession implements ValidatingSession, Serializable {
                 log.trace(msg);
             }
             throw new ExpiredSessionException(msg, sessionId);
-        }
-
-        //check for stopped (but not expired):
-        if (getStopTimestamp() != null) {
-            //timestamp is set, so the session is considered stopped:
-            String msg = "Session with id [" + getId() + "] has been " +
-                    "explicitly stopped.  No further interaction under this session is " +
-                    "allowed.";
-            throw new StoppedSessionException(msg, getId());
         }
     }
 
