@@ -84,13 +84,14 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * attempts to {@link #createCacheManager() create one} and uses that to set the class attribute.
      * <p/>
      * The default implementation functions as follows:
-     * <pre>       CacheManager cm = getCacheManager();
+     * <pre><code>
+     * CacheManager cm = getCacheManager();
      * if (cm == null) {
      *     cm = createCacheManager();
      *     if (cm != null) {
      *         setCacheManager(cm);
      *     }
-     * }</pre>
+     * }</code></pre>
      */
     protected void ensureCacheManager() {
         CacheManager cm = getCacheManager();

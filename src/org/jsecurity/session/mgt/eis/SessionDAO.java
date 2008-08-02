@@ -36,13 +36,13 @@ public interface SessionDAO {
     /**
      * Inserts a new Session record into the underling EIS (e.g. Relational database, file system, mainframe,
      * etc, depending on the DAO implementation).
-     *
-     * <p>After this method is invoked, the {@link org.jsecurity.session.Session#getId()}
+     * <p/>
+     * After this method is invoked, the {@link org.jsecurity.session.Session#getId()}
      * method executed on the argument must return a valid session identifier.  That is, the following should
      * always be true:
-     * <br/><br/><code>
-     * <pre>Serializable id = create( session );
-     * id.equals( session.getId() ) == true</pre></code>
+     * <p/>
+     * <code>Serializable id = create( session );<br/>
+     * id.equals( session.getId() ) == true</code>
      *
      * <p>Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.

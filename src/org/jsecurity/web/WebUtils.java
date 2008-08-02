@@ -248,7 +248,9 @@ public class WebUtils {
     /**
      * A convenience method that merely casts the incoming <code>ServletRequest</code> to an
      * <code>HttpServletRequest</code>:
-     * <pre>return (HttpServletRequest)request;</pre>
+     * <p/>
+     * <code>return (HttpServletRequest)request;</code>
+     * <p/>
      * Logic could be changed in the future for logging or throwing an meaningful exception in
      * non HTTP request environments (e.g. Portlet API).
      *
@@ -262,7 +264,9 @@ public class WebUtils {
     /**
      * A convenience method that merely casts the incoming <code>ServletResponse</code> to an
      * <code>HttpServletResponse</code>:
-     * <pre>return (HttpServletResponse)response;</pre>
+     * <p/>
+     * <code>return (HttpServletResponse)response;</code>
+     * <p/>
      * Logic could be changed in the future for logging or throwing an meaningful exception in
      * non HTTP request environments (e.g. Portlet API).
      *
@@ -288,10 +292,10 @@ public class WebUtils {
      * Convenience method that simplifies retrieval of a thread-bound ServletRequest.  If there is no
      * ServletRequest bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
      * for the following:
-     * <pre>
-     * return (ServletRequest)get( SERVLET_REQUEST_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
+     * <p/>
+     * <code>return (ServletRequest)get( SERVLET_REQUEST_KEY );</code>
+     * <p/>
+     * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
      *
      * @return the ServletRequest bound to the thread, or <tt>null</tt> if there isn't one bound.
@@ -322,14 +326,13 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies removal of a thread-local ServletRequest from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * <p/>
+     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (ServletRequest)ThreadContext.remove( SERVLET_REQUEST_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * <p/>
+     * <code>return (ServletRequest)ThreadContext.remove( SERVLET_REQUEST_KEY );</code>
+     * <p/>
+     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
      * thread execution), you should use the {@link #getServletRequest() getServletRequest()} method for that purpose.
      *
      * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
@@ -342,10 +345,10 @@ public class WebUtils {
      * Convenience method that simplifies retrieval of a thread-bound ServletResponse.  If there is no
      * ServletResponse bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
      * for the following:
-     * <pre>
-     * return (ServletResponse)ThreadContext.get( SERVLET_RESPONSE_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
+     * <p/>
+     * <code>return (ServletResponse)ThreadContext.get( SERVLET_RESPONSE_KEY );</code>
+     * <p/>
+     * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindServletResponse() unbindServletResponse} instead.
      *
      * @return the ServletResponse bound to the thread, or <tt>null</tt> if there isn't one bound.
@@ -376,14 +379,13 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies removal of a thread-local ServletResponse from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * <p/>
+     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (ServletResponse)ThreadContext.remove( SERVLET_RESPONSE_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * <p/>
+     * <code>return (ServletResponse)ThreadContext.remove( SERVLET_RESPONSE_KEY );</code>
+     * <p/>
+     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
      * thread execution), you should use the {@link #getServletResponse() getServletResponse()} method for that purpose.
      *
      * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.

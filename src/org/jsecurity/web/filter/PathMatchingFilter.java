@@ -82,9 +82,9 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * <p/>
      * The default implementation acquires the <code>request</code>'s path within the application and determines
      * if that matches:
-     *
-     * <pre>       String requestURI = {@link #getPathWithinApplication(javax.servlet.ServletRequest) getPathWithinApplication(request)};
-     * return {@link #pathsMatch(String, String) pathsMatch(path,requestURI)}</pre>
+     * <p/>
+     * <code>String requestURI = {@link #getPathWithinApplication(javax.servlet.ServletRequest) getPathWithinApplication(request)};<br/>
+     * return {@link #pathsMatch(String, String) pathsMatch(path,requestURI)}</code>
      *
      * @param path    the configured url pattern to check the incoming request against.
      * @param request the incoming ServletRequest

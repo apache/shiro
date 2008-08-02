@@ -68,10 +68,10 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
 
     /**
      * Sets the FilterConfig <em>and</em> the <code>ServletContext</code> as attributes of this class for use by
-     * subclasses.
-     * That is:
-     * <pre>       this.filterConfig = filterConfig;
-     * setServletContext(filterConfig.getServletContext());</pre>
+     * subclasses.  That is:
+     * <p/>
+     * <code>this.filterConfig = filterConfig;<br/>
+     * setServletContext(filterConfig.getServletContext());</code>
      *
      * @param filterConfig the FilterConfig instance provided by the Servlet container at startup.
      */
@@ -85,7 +85,8 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      * <p/>
      * Unless overridden by calling the {@link #setName(String) setName(String)} method, this value defaults to the
      * filter name as specified by the servlet container at startup:
-     * <pre>this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</pre>
+     * <p/>
+     * <code>this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</code>
      *
      * @return the filter name, or <code>null</code> if none available
      * @see javax.servlet.GenericServlet#getServletName()
@@ -107,7 +108,8 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      * <p/>
      * Unless overridden by calling this method, this value defaults to the filter name as specified by the
      * servlet container at startup:
-     * <pre>this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</pre>
+     * <p/>
+     * <code>this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</code>
      *
      * @param name the name of the filter.
      */

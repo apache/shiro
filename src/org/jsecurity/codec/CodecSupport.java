@@ -38,11 +38,11 @@ public abstract class CodecSupport {
 
     /**
      * Converts the specified character array to a byte array using the JSecurity's preferred encoding (UTF-8).
-     *
-     * <p>This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
+     * <p/>
+     * This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
      * a wrapping String and {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}, i.e.
-     * <pre><code>toBytes( new String(chars), {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING} );</code></pre>
-     * </p>
+     * <p/>
+     * <code>toBytes( new String(chars), {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING} );</code>
      *
      * @param chars the character array to be converted to a byte array.
      * @return the byte array of the UTF-8 encoded character array.
@@ -53,11 +53,11 @@ public abstract class CodecSupport {
 
     /**
      * Converts the specified character array into a byte array using the specified character encoding.
-     *
-     * <p>This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
+     * <p/>
+     * This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
      * a wrapping String and the specified encoding, i.e.
-     * <pre><code>toBytes( new String(chars), encoding );</code></pre>
-     * </p>
+     * <p/>
+     * <code>toBytes( new String(chars), encoding );</code>
      *
      * @param chars    the character array to be converted to a byte array
      * @param encoding the character encoding to use to when converting to bytes.

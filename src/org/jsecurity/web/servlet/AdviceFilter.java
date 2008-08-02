@@ -89,8 +89,8 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Actually executes the specified filter chain by calling
-     * <pre>chain.doFilter(request,response);</pre>
+     * Actually executes the specified filter chain by calling <code>chain.doFilter(request,response);</code>.
+     * <p/>
      * Can be overridden by subclasses for custom logic.
      *
      * @param request  the incoming ServletRequest

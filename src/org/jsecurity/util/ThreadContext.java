@@ -178,13 +178,12 @@ public abstract class ThreadContext {
      * Convenience method that simplifies retrieval of the application's SecurityManager instance from the current
      * thread. If there is no SecurityManager bound to the thread (probably because framework code did not bind it
      * to the thread), this method returns <tt>null</tt>.
-     *
-     * <p>
+     * <p/>
      * It is merely a convenient wrapper for the following:
-     * <pre>
-     * return (SecurityManager)get( SECURITY_MANAGER_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
+     * <p/>
+     * <code>return (SecurityManager)get( SECURITY_MANAGER_KEY );</code>
+     * <p/>
+     * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindSecurityManager() unbindSecurityManager()} instead.
      *
      * @return the Subject object bound to the thread, or <tt>null</tt> if there isn't one bound.
@@ -219,14 +218,13 @@ public abstract class ThreadContext {
 
     /**
      * Convenience method that simplifies removal of the application's SecurityManager instance from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * <p/>
+     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (SecurityManager)remove( SECURITY_MANAGER_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later
+     * <p/>
+     * <code>return (SecurityManager)remove( SECURITY_MANAGER_KEY );</code>
+     * <p/>
+     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later
      * during thread execution), use the {@link #getSecurityManager() getSecurityManager()} method instead.
      *
      * @return the application's SecurityManager instance previously bound to the thread, or <tt>null</tt> if there
@@ -241,10 +239,10 @@ public abstract class ThreadContext {
      * Convenience method that simplifies retrieval of a thread-bound Subject.  If there is no
      * Subject bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
      * for the following:
-     * <pre>
-     * return (Subject)get( SUBJECT_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
+     * <p/>
+     * <code>return (Subject)get( SUBJECT_KEY );</code>
+     * <p/>
+     * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindSubject() unbindSubject()} instead.
      *
      * @return the Subject object bound to the thread, or <tt>null</tt> if there isn't one bound.
@@ -278,14 +276,13 @@ public abstract class ThreadContext {
 
     /**
      * Convenience method that simplifies removal of a thread-local Subject from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * <p/>
+     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (Subject)remove( SUBJECT_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * <p/>
+     * <code>return (Subject)remove( SUBJECT_KEY );</code>
+     * <p/>
+     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
      * thread execution), you should use the {@link #getSubject() getSubject()} method for that purpose.
      *
      * @return the Subject object previously bound to the thread, or <tt>null</tt> if there was none bound.
@@ -299,10 +296,10 @@ public abstract class ThreadContext {
      * Convenience method that simplifies retrieval of a thread-bound InetAddress.  If there is no
      * InetAddress bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
      * for the following:
-     * <pre>
-     * return (InetAddress)get( INET_ADDRESS_KEY );</pre>
-     *
-     * <p>This method only returns the bound value if it exists - it does not remove it
+     * <p/>
+     * <code>return (InetAddress)get( INET_ADDRESS_KEY );</code>
+     * <p/>
+     * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindInetAddress() unbindInetAddress} instead.
      *
      * @return the InetAddress object bound to the thread, or <tt>null</tt> if there isn't one bound.
@@ -335,14 +332,13 @@ public abstract class ThreadContext {
 
     /**
      * Convenience method that simplifies removal of a thread-local InetAddress from the thread.
-     *
-     * <p>The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
+     * <p/>
+     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
      * merely a conveient wrapper for the following:
-     *
-     * <pre>
-     * return (InetAddress)remove( INET_ADDRESS_KEY );</pre>
-     *
-     * <p>If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
+     * <p/>
+     * <code>return (InetAddress)remove( INET_ADDRESS_KEY );</code>
+     * <p/>
+     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
      * thread execution), you should use the {@link #getInetAddress() getInetAddress()} method for that purpose.
      *
      * @return the InetAddress object previously bound to the thread, or <tt>null</tt> if there was none bound.

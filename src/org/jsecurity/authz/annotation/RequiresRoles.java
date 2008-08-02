@@ -19,19 +19,15 @@
 package org.jsecurity.authz.annotation;
 
 /**
- * <p>
- * Requires the current executor to have one or more specified roles in order to execute the
- * annotated method.  If the executor's associated
- * {@link org.jsecurity.subject.Subject Subject} determines that the
- * executor does not have the specified role(s), the method will not be executed.
- * </p>
- * <p>For example,<br>
- * <blockquote><pre>
- * &#64;RequiresRoles("aRoleName")
- * void someMethod();
- * </pre>
- * </blockquote>
- *
+ * Requires the currently executing {@link org.jsecurity.subject.Subject Subject} to have one or more specified roles
+ * in order to execute the annotated method. If they do not have the role(s), the method will not be executed and
+ * an {@link org.jsecurity.authz.AuthorizationException AuthorizationException} is thrown.
+ * <p/>
+ * For example,
+ * <p/>
+ * <code>&#64;RequiresRoles("aRoleName");<br/>
+ * void someMethod();</code>
+ * <p/>
  * means <tt>someMethod()</tt> could only be executed by subjects who have been assigned the
  * 'aRoleName' role.
  *

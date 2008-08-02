@@ -83,14 +83,14 @@ public abstract class SecurityUtils {
      *
      * <p>For example, in these environments, this will work:</p>
      *
-     * <pre>       DefaultSecurityManager securityManager = new {@link org.jsecurity.mgt.DefaultSecurityManager DefaultSecurityManager}();
-     * securityManager.setRealms( ... ); //one or more Realms
-     * securityManager.init();
-     * <b>SecurityUtils.setSecurityManager( securityManager );</b></pre>
+     * <code>DefaultSecurityManager securityManager = new {@link org.jsecurity.mgt.DefaultSecurityManager DefaultSecurityManager}();<br/>
+     * securityManager.setRealms( ... ); //one or more Realms<br/>
+     * securityManager.init();<br/>
+     * <b>SecurityUtils.setSecurityManager( securityManager );</b></code>
      *
      * <p>And then anywhere in the application code, the following call will return the application's Subject:</p>
      *
-     * <pre>Subject currentUser = SecurityUtils.getSubject()</pre>
+     * <p><code>Subject currentUser = SecurityUtils.getSubject()</code></p>
      *
      * <p>by calling the VM static {@link org.jsecurity.mgt.SecurityManager#getSubject() securityManager.getSubject()}
      * method.  Note that the underlying injected SecurityManager still needs to know how to acquire a Subject

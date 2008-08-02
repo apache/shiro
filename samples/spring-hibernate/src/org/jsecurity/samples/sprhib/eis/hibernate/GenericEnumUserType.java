@@ -44,11 +44,12 @@ import java.util.Properties;
  * indentifier. The valueOfMethod's name can be specified by setting the 'valueOfMethod' property.
  * The default valueOfMethod's name is 'valueOf'.</li> </ul> </p> <p>Example of an enum type
  * represented by an int value:
- * <code><pre>public enum SimpleNumber {
+ * <pre><code>
+ * public enum SimpleNumber {
  *     Unknown(-1), Zero(0), One(1), Two(2), Three(3);
- * <p/>
+ *
  *     public int toInt() { return value; }
- * <p/>
+ *
  *     public SimpleNumber fromInt(int value) {
  *         switch(value) {
  *             case 0: return Zero;
@@ -58,10 +59,11 @@ import java.util.Properties;
  *             default: return Unknown;
  *         }
  *     }
- * }</pre></code>
+ * }</code></pre>
  *
  * <p>The Mapping would look like this:
- * <code><pre>&lt;typedef name=&quot;SimpleNumber&quot; class=&quot;GenericEnumUserType&quot;&gt;
+ * <pre><code>
+ * &lt;typedef name=&quot;SimpleNumber&quot; class=&quot;GenericEnumUserType&quot;&gt;
  * &lt;param name="enumClass">SimpleNumber&lt;/param&gt;
  * &lt;param name="identifierMethod">toInt&lt;/param&gt;
  * &lt;param name="valueOfMethod">fromInt&lt;/param&gt;
@@ -69,8 +71,7 @@ import java.util.Properties;
  * &lt;class ...&gt;
  * ...
  * &lt;property name="number" column="number" type="SimpleNumber"/&gt;
- * &lt;/class&gt;
- * </pre></code>
+ * &lt;/class&gt;</code></pre>
  *
  * @author Martin Kersten
  * @author Les Hazlewood
