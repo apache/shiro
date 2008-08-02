@@ -47,13 +47,12 @@ public class StringUtils {
      * Check whether the given String has actual text.
      * More specifically, returns <code>true</code> if the string not <code>null</code>,
      * its length is greater than 0, and it contains at least one non-whitespace character.
-     * <p><pre>
-     * StringUtils.hasText(null) = false
-     * StringUtils.hasText("") = false
-     * StringUtils.hasText(" ") = false
-     * StringUtils.hasText("12345") = true
-     * StringUtils.hasText(" 12345 ") = true
-     * </pre>
+     * <p/>
+     * <code>StringUtils.hasText(null) == false<br/>
+     * StringUtils.hasText("") == false<br/>
+     * StringUtils.hasText(" ") == false<br/>
+     * StringUtils.hasText("12345") == true<br/>
+     * StringUtils.hasText(" 12345 ") == true</code>
      *
      * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
      *
@@ -78,14 +77,13 @@ public class StringUtils {
     /**
      * Check that the given String is neither <code>null</code> nor of length 0.
      * Note: Will return <code>true</code> for a String that purely consists of whitespace.
-     * <p><pre>
-     * StringUtils.hasLength(null) = false
-     * StringUtils.hasLength("") = false
-     * StringUtils.hasLength(" ") = true
-     * StringUtils.hasLength("Hello") = true
-     * </pre>
-     *
-     * <p>Copied from the Spring Framework while retaining all license, copyright and author information.
+     * <p/>
+     * <code>StringUtils.hasLength(null) == false<br/>
+     * StringUtils.hasLength("") == false<br/>
+     * StringUtils.hasLength(" ") == true<br/>
+     * StringUtils.hasLength("Hello") == true</code>
+     * <p/>
+     * Copied from the Spring Framework while retaining all license, copyright and author information.
      *
      * @param str the String to check (may be <code>null</code>)
      * @return <code>true</code> if the String is not null and has length

@@ -31,13 +31,11 @@ import java.lang.annotation.Target;
  * executor does not imply the specified permission, the method will not be executed.
  * </p>
  *
- * <p>For example, this declaration<br>
- * <blockquote><pre>
- * &#64;RequiresPermissions( "file:read,write:aFile.txt" )
- * void someMethod();
- * </pre>
- * </blockquote>
- *
+ * <p>For example, this declaration:
+ * <p/>
+ * <code>&#64;RequiresPermissions( "file:read,write:aFile.txt" )<br/>
+ * void someMethod();</code>
+ * <p/>
  * indicates the current user must be able to both <tt>read</tt> and <tt>write</tt>
  * to the file <tt>aFile.txt</tt> in order for the <tt>someMethod()</tt> to execute, otherwise
  * an {@link org.jsecurity.authz.AuthorizationException AuthorizationException} will be thrown.

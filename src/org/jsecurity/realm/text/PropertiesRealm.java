@@ -75,17 +75,17 @@ import java.util.concurrent.TimeUnit;
  * <p>Here is an example of a very simple properties definition that conforms to the above format rules and corresponding
  * method JavaDocs:
  *
- * <code><pre>   user.root = <em>rootPassword</em>,administrator
- * user.jsmith = <em>jsmithPassword</em>,manager,engineer,employee
- * user.abrown = <em>abrownPassword</em>,qa,employee
- * user.djones = <em>djonesPassword</em>,qa,contractor
- *
- * role.administrator = org.jsecurity.authz.support.AllPermission
- * role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute
- * role.engineer = com.domain.FilePermission,/usr/local/tomcat/bin/startup.sh,read,execute
- * role.employee = com.domain.IntranetPermission,useWiki
- * role.qa = com.domain.QAServerPermission,*,view,start,shutdown,restart;com.domain.ProductionServerPermission,*,view
- * role.contractor = com.domain.IntranetPermission,useTimesheet</pre></code>
+ * <code>user.root = <em>rootPassword</em>,administrator<br/>
+ * user.jsmith = <em>jsmithPassword</em>,manager,engineer,employee<br/>
+ * user.abrown = <em>abrownPassword</em>,qa,employee<br/>
+ * user.djones = <em>djonesPassword</em>,qa,contractor<br/>
+ * <br/>
+ * role.administrator = org.jsecurity.authz.support.AllPermission<br/>
+ * role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute<br/>
+ * role.engineer = com.domain.FilePermission,/usr/local/tomcat/bin/startup.sh,read,execute<br/>
+ * role.employee = com.domain.IntranetPermission,useWiki<br/>
+ * role.qa = com.domain.QAServerPermission,*,view,start,shutdown,restart;com.domain.ProductionServerPermission,*,view<br/>
+ * role.contractor = com.domain.IntranetPermission,useTimesheet</code>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile

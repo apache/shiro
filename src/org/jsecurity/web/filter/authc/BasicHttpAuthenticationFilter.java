@@ -39,14 +39,14 @@ import java.net.InetAddress;
  * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
  *
- * <p>This implementation supports Basic HTTP Authentication as specified in
+ * <p>This implementation is a 'clean room' Java implementation of Basic HTTP Authentication as specified in
  * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
  *
  * <p>Basic authentication works as follows:</p>
  *
  * <ol>
  * <li>A request comes in for a resource that requires authentication.</li>
- * <li>The server replies with a 401 response code, a <code>WWW-Authenticate</code> header, and the contents of a
+ * <li>The server replies with a 401 response status, sets the <code>WWW-Authenticate</code> header, and the contents of a
  * page informing the user that the incoming resource requires authentication.</li>
  * <li>Upon receiving this <code>WWW-Authenticate</code> challenge from the server, the client then takes a
  * username and a password and puts them in the following format:
@@ -67,6 +67,7 @@ import java.net.InetAddress;
  */
 public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
 
+    /** This class's private logger. */
     private static final Log log = LogFactory.getLog(BasicHttpAuthenticationFilter.class);    
 
     /** HTTP Authorization header, equal to <code>Authorization</code> */
@@ -173,7 +174,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
     }
 
     /**
-     * Processes unauthenticated requests. It handles the two-stage request/challenge authentication request.
+     * Processes unauthenticated requests. It handles the two-stage request/challenge authentication protocol.
      *
      * @param request  incoming ServletRequest
      * @param response outgoing ServletResponse
@@ -229,8 +230,9 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * {@link #getAuthzScheme() authzHeaderScheme}, <code>false</code> otherwise.
      * <p/>
      * That is:
-     * <pre>       String authzHeaderScheme = getAuthzHeaderScheme().toLowerCase();
-     * return authzHeader.toLowerCase().startsWith(authzHeaderScheme);</pre>
+     * <p/>
+     * <code>String authzHeaderScheme = getAuthzHeaderScheme().toLowerCase();<br/>
+     * return authzHeader.toLowerCase().startsWith(authzHeaderScheme);</code>
      *
      * @param authzHeader the 'Authorization' header value (guaranteed to be non-null if the
      *                    {@link #isLoginAttempt(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method is not overriden).
@@ -245,9 +247,10 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
     /**
      * Builds the challenge for authorization by setting a HTTP <code>401</code> (Unauthorized) status as well as the
      * response's {@link #AUTHENTICATE_HEADER AUTHENTICATE_HEADER}.
-     * <p>
+     * <p/>
      * The header value constructed is equal to:
-     * <pre>{@link #getAuthcScheme() getAuthcHeaderScheme()} + " realm=\"" + {@link #getApplicationName() getApplicationName()} + "\"";</pre>
+     * <p/>
+     * <code>{@link #getAuthcScheme() getAuthcHeaderScheme()} + " realm=\"" + {@link #getApplicationName() getApplicationName()} + "\"";</code>
      *
      * @param request  incoming ServletRequest, ignored by this implementation
      * @param response outgoing ServletResponse
@@ -405,10 +408,10 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * {@link #isRememberMeEnabled(javax.servlet.ServletRequest) rememberMe} status, and with the given
      * <code>username</code> and <code>password</code>, returns a
      * <code>new {@link org.jsecurity.authc.UsernamePasswordToken UsernamePasswordToken}</code>.  That is:
-     * <br/><br/>
-     * <pre>       InetAddress addr = getInetAddress(request);
-     * boolean rememberMe = isRememberMeEnabled(request);
-     * return new UsernamePasswordToken(username, password, rememberMe, addr );</pre>
+     * <p/>
+     * <code>InetAddress addr = getInetAddress(request);<br/>
+     * boolean rememberMe = isRememberMeEnabled(request);<br/>
+     * return new UsernamePasswordToken(username, password, rememberMe, addr );</code>
      * <p/>
      * It should be noted that Basic HTTP Authentication does not support any concept of <code>rememberMe</code, but
      * we still allow subclasses to enable this feature for any given request via the
