@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 /**
  * JSecurity's default symmetric block Cipher using the Blowfish algorithm.  As it is a symmetric Cipher, it uses the
- * same <tt>Key</tt> to both encrypt and decrypt data.  If one is not provided via the {@link #setDefaultKey setKey} method,
+ * same <tt>Key</tt> to both encrypt and decrypt data.  If one is not provided via the {@link #setKey setKey} method,
  * a default one will be used, BUT NOTE:
  *
  * <p>Because JSecurity is an open-source project, if anyone knew that you were using JSecurity's default
@@ -43,9 +43,9 @@ import java.util.Arrays;
  * to you and you think the default key still makes things 'sufficiently difficult', then you can ignore this issue.
  *
  * <p>However, if you do feel this constitutes sensitive information, it is recommended that you provide your own
- * <tt>Key</tt> via the {@link # setDefaultKey setKey} method to a Key known only to your application, guaranteeing that no
- * third party can decrypt your data.  If you want to know how to do this, you can browse this class's source code
- * for the {@link #generateNewKey()} method to see how we created our default.  Then you can duplicate the same in
+ * <tt>Key</tt> via the {@link # setKey setDefaultKey} method to a Key known only to your application,
+ * guaranteeing that no third party can decrypt your data.  If you want to know how to do this, you can browse this
+ * class's source code for the {@link #generateNewKey()} method to see how we created our default.  Then you can duplicate the same in
  * your environment and set the result on an instance of this class via the <code>setKey</code> method.
  *
  * @author Les Hazlewood
@@ -67,17 +67,17 @@ public class BlowfishCipher implements Cipher {
 
     private static final Log log = LogFactory.getLog(BlowfishCipher.class);
 
-    private Key defaultKey = DEFAULT_CIPHER_KEY;
+    private Key key = DEFAULT_CIPHER_KEY;
 
     public BlowfishCipher() {
     }
 
-    public Key getDefaultKey() {
-        return defaultKey;
+    public Key getKey() {
+        return key;
     }
 
-    public void setDefaultKey(Key defaultKey) {
-        this.defaultKey = defaultKey;
+    public void setKey(Key key) {
+        this.key = key;
     }
 
     public byte[] encrypt(byte[] raw, byte[] key) {
@@ -132,7 +132,7 @@ public class BlowfishCipher implements Cipher {
 
         java.security.Key jdkKey;
         if (key == null) {
-            jdkKey = getDefaultKey();
+            jdkKey = getKey();
         } else {
             jdkKey = new SecretKeySpec(key, ALGORITHM);
         }
