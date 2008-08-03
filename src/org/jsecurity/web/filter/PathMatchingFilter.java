@@ -39,8 +39,10 @@ import java.util.Map;
  */
 public abstract class PathMatchingFilter extends AdviceFilter implements PathConfigProcessor {
 
-    private static final Log log = LogFactory.getLog(PathMatchingFilter.class);    
+    /** Log available to this class only */
+    private static final Log log = LogFactory.getLog(PathMatchingFilter.class);
 
+    /** PathMatcher used in determining which paths to react to for a given request. */
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
 
     /**
@@ -53,6 +55,22 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
 
+    /**
+     * Splits any comma-delmited values that might be found in the <code>config</code> argument and sets the resulting
+     * <code>String[]</code> array on the <code>appliedPaths</code> internal Map.
+     * <p/>
+     * That is:
+     * <pre><code>
+     * String[] values = null;
+     * if (config != null) {
+     *     values = split(config);
+     * }
+     *
+     * this.{@link #appliedPaths appliedPaths}.put(path, values);
+     * </code></pre>
+     * @param path the application context path to match for executing this filter.
+     * @param config the specified for <em>this particular filter only</em> for the given <code>path</code>
+     */
     public void processPathConfig(String path, String config) {
         String[] values = null;
         if (config != null) {
@@ -69,8 +87,8 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * {@link WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest) WebUtils.getPathWithinApplication(request)},
      * but can be overridden by subclasses for custom logic.
      *
-     * @param request
-     * @return
+     * @param request the incoming <code>ServletRequest</code>
+     * @return the context path within the application.
      */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
@@ -162,12 +180,12 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      *
      * @param request     the incoming ServletRequest
      * @param response    the outgoing ServletResponse
-     * @param configValue the configured value for this filter for the matching path.
+     * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return <code>true</code> if the request should be able to continue, <code>false</code> if the filter will
-     *         handle the request directly.
+     *         handle the response directly.
      * @throws Exception if an error occurs
      */
-    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object configValue) throws Exception {
+    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         return true;
     }
 }

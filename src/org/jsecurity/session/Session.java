@@ -160,7 +160,6 @@ public interface Session {
      * corresponding session automatically, and also allows framework code to execute additional cleanup logic.
      *
      * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
-     * @see #getStopTimestamp
      */
     void stop() throws InvalidSessionException;
 

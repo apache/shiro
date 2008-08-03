@@ -23,26 +23,32 @@ package org.jsecurity.session.mgt;
  * basis.  This interface is used as a delegate for session validation by the {@link DefaultSessionManager}
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @see DefaultSessionManager#setSessionValidationScheduler(SessionValidationScheduler)
  * @since 0.1
  */
 public interface SessionValidationScheduler {
 
     /**
-     * Indicates that this Scheduler has been started - not that it is currently actively validating sessions.
+     * Returns <code>true</code> if this Scheduler is enabled and ready to begin validation at the appropriate time,
+     * <code>false</code> otherwise.
+     * <p/>
+     * It does <em>not</em> indicate if the validation is actually executing at that instant - only that it is prepared
+     * to do so at the appropriate time.
      *
-     * @return
+     * @return <code>true</code> if this Scheduler is enabled and ready to begin validation at the appropriate time,
+     * <code>false</code> otherwise.
      */
-    boolean isRunning();
+    boolean isEnabled();
 
     /**
-     * Starts the session validation job.
+     * Enables the session validation job.
      */
-    void startSessionValidation();
+    void enableSessionValidation();
 
     /**
-     * Stops the session validation job.
+     * Disables the session validation job.
      */
-    void stopSessionValidation();
+    void disableSessionValidation();
 
 }

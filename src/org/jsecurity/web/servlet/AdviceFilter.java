@@ -39,18 +39,21 @@ import java.io.IOException;
  */
 public abstract class AdviceFilter extends OncePerRequestFilter {
 
+    /** The static logger available to this class only */
     private static final Log log = LogFactory.getLog(AdviceFilter.class);
 
     /**
      * Returns <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.
-     * Called before the chain is actually consulted/executed.
+     * It is called before the chain is actually consulted/executed.
+     * <p/>
+     * The default implementation returns <code>true</code> always and exists as a template method for subclasses.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
      * @return <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.
      * @throws Exception if there is any error.
      */
-    public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         return true;
     }
 
@@ -62,13 +65,13 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * implementation, which is guaranteed to be called for every request, even when the chain processing throws
      * an Exception.
      * <p/>
-     * The default implementation is a no-op, and exists as a template method for subclasses.
+     * The default implementation does nothing (no-op) and exists as a template method for subclasses.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
      * @throws Exception if an error occurs.
      */
-    public void postHandle(ServletRequest request, ServletResponse response) throws Exception {
+    protected void postHandle(ServletRequest request, ServletResponse response) throws Exception {
     }
 
     /**
@@ -76,7 +79,7 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * <code>false</code> or if an exception is thrown during filter chain processing.  Can be used for resource
      * cleanup if so desired.
      * <p/>
-     * The default implementation is a no-op, and exists as a template method for subclasses.
+     * The default implementation does nothing (no-op) and exists as a template method for subclasses.
      *
      * @param request   the incoming ServletRequest
      * @param response  the outgoing ServletResponse
@@ -103,7 +106,11 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Actually implements the chain execution logic, utilizing pre, post, and after advice hooks.
+     * Actually implements the chain execution logic, utilizing
+     * {@link #preHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) pre},
+     * {@link #postHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) post}, and
+     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) after}
+     * advice hooks.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
@@ -136,27 +143,49 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             exception = e;
         } finally {
-            try {
-                afterCompletion(request, response, exception);
-                if (log.isTraceEnabled()) {
-                    log.trace("Successfully invoked afterCompletion method.");
-                }
-            } catch (Exception e) {
-                if (exception == null) {
-                    exception = e;
-                }
+            cleanup( request, response, exception );
+        }
+    }
+
+    /**
+     * Executes cleanup logic in the <code>finally</code> code block in the
+     * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain) doFilterInternal}
+     * implementation.
+     * <p/>
+     * This implementation specifically calls
+     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
+     * as well as handles any exceptions properly.
+     *
+     * @param request the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @param existing any exception that might have occurred while executing the <code>FilterChain</code> or
+     * pre or post advice, or <code>null</code> if the pre/chain/post excution did not throw an <code>Exception</code>.
+     * @throws ServletException if any exception other than an <code>IOException</code> is thrown.
+     * @throws IOException if the pre/chain/post execution throw an <code>IOException</code>
+     */
+    protected void cleanup( ServletRequest request, ServletResponse response, Exception existing )
+        throws ServletException, IOException {
+        Exception exception = existing;
+        try {
+            afterCompletion(request, response, exception);
+            if (log.isTraceEnabled()) {
+                log.trace("Successfully invoked afterCompletion method.");
             }
-            if (exception != null) {
-                if (exception instanceof ServletException) {
-                    throw (ServletException) exception;
-                } else if (exception instanceof IOException) {
-                    throw (IOException) exception;
-                } else {
-                    String msg = "Filter execution resulted in an unexpected Exception " +
-                            "(not IOException or ServletException as the Filter api recommends).  " +
-                            "Wrapping in ServletException and propagating.";
-                    throw new ServletException(msg, exception);
-                }
+        } catch (Exception e) {
+            if (exception == null) {
+                exception = e;
+            }
+        }
+        if (exception != null) {
+            if (exception instanceof ServletException) {
+                throw (ServletException) exception;
+            } else if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else {
+                String msg = "Filter execution resulted in an unexpected Exception " +
+                        "(not IOException or ServletException as the Filter api recommends).  " +
+                        "Wrapping in ServletException and propagating.";
+                throw new ServletException(msg, exception);
             }
         }
     }

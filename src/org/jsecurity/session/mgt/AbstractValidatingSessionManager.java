@@ -86,10 +86,10 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return sessionValidationScheduler;
     }
 
-    public void startSessionValidationIfNecessary() {
+    public void enableSessionValidationIfNecessary() {
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
-        if (isSessionValidationSchedulerEnabled() && (scheduler == null || !scheduler.isRunning())) {
-            startSessionValidation();
+        if (isSessionValidationSchedulerEnabled() && (scheduler == null || !scheduler.isEnabled())) {
+            enableSessionValidation();
         }
     }
 
@@ -148,14 +148,14 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     }
 
     protected final Session doGetSession(Serializable sessionId) throws InvalidSessionException {
-        startSessionValidationIfNecessary();
+        enableSessionValidationIfNecessary();
         return retrieveSession(sessionId);
     }
 
     protected abstract Session retrieveSession(Serializable sessionId) throws InvalidSessionException;
 
     protected final Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
-        startSessionValidationIfNecessary();
+        enableSessionValidationIfNecessary();
         return doCreateSession(originatingHost);
     }
 
@@ -207,34 +207,34 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return scheduler;
     }
 
-    protected void startSessionValidation() {
+    protected void enableSessionValidation() {
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (scheduler == null) {
             scheduler = createSessionValidationScheduler();
             setSessionValidationScheduler(scheduler);
         }
         if (log.isInfoEnabled()) {
-            log.info("Starting session validation scheduler...");
+            log.info("Enabling session validation scheduler...");
         }
-        scheduler.startSessionValidation();
-        afterSessionValidationStarted();
+        scheduler.enableSessionValidation();
+        afterSessionValidationEnabled();
     }
 
-    protected void afterSessionValidationStarted() {
+    protected void afterSessionValidationEnabled() {
     }
 
-    protected void stopSessionValidation() {
-        beforeSessionValidationStopped();
+    protected void disableSessionValidation() {
+        beforeSessionValidationDisabled();
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (scheduler != null) {
             try {
-                scheduler.stopSessionValidation();
+                scheduler.disableSessionValidation();
                 if (log.isInfoEnabled()) {
-                    log.info("Stopped session validation scheduler.");
+                    log.info("Disabled session validation scheduler.");
                 }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    String msg = "Unable to stop SessionValidationScheduler.  Ignoring (shutting down)...";
+                    String msg = "Unable to disable SessionValidationScheduler.  Ignoring (shutting down)...";
                     log.debug(msg, e);
                 }
             }
@@ -243,11 +243,11 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         }
     }
 
-    protected void beforeSessionValidationStopped() {
+    protected void beforeSessionValidationDisabled() {
     }
 
     public void destroy() {
-        stopSessionValidation();
+        disableSessionValidation();
     }
 
     /**

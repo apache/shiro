@@ -173,7 +173,7 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
      * @return <code>true</code> if the request is an HTTP <code>POST</code>, <code>false</code> otherwise.
      */
     protected boolean isLoginSubmission(ServletRequest request, ServletResponse response) {
-        return (request instanceof HttpServletRequest) && toHttp(request).getMethod().equalsIgnoreCase("POST");
+        return (request instanceof HttpServletRequest) && toHttp(request).getMethod().equalsIgnoreCase(POST_METHOD);
     }
 
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {

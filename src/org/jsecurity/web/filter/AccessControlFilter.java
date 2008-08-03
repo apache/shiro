@@ -45,7 +45,10 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     public static final String DEFAULT_LOGIN_URL = "/login.jsp";
 
     /** Constant representing the HTTP 'GET' request method, equal to <code>GET</code>. */
-    protected static final String GET_METHOD = "GET";
+    public static final String GET_METHOD = "GET";
+
+    /** Constant representing the HTTP 'POST' request method, equal to <code>POST</code>. */
+    public static final String POST_METHOD = "POST";
 
     /** The login url to used to authenticate a user, used when redirecting users if authentication is required. */
     private String loginUrl = DEFAULT_LOGIN_URL;
@@ -125,9 +128,6 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * otherwise returns the result of
      * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
      *
-     * @param request     the incoming <code>ServletRequest</code>
-     * @param response    the outgoing <code>ServletResponse</code>
-     * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return <code>true</code> if
      *         {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
      *         otherwise returns the result of

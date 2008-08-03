@@ -33,6 +33,7 @@ import javax.servlet.ServletResponse;
  *
  * @author Allan Ditzel
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AuthenticationFilter extends AccessControlFilter {
@@ -40,7 +41,6 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
     public static final String DEFAULT_SUCCESS_URL = "/index.jsp";
 
     private String successUrl = DEFAULT_SUCCESS_URL;
-
 
     protected String getSuccessUrl() {
         return successUrl;
@@ -60,10 +60,11 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
 
     /**
      * Determines whether the current subject is authenticated.
+     * <p/>
+     * The default implementation {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) acquires}
+     * the currently executing Subject and then returns
+     * {@link org.jsecurity.subject.Subject#isAuthenticated() subject.isAuthenticated()};
      *
-     * @param request     the servlet request.
-     * @param response    the servlet response.
-     * @param mappedValue
      * @return true if the subject is authenticated; false if the subject is unauthenticated
      */
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
