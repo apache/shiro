@@ -30,7 +30,8 @@ import javax.servlet.ServletResponse;
  * on a login submission (by default an HTTP POST to the login URL), the <code>FormAuthenticationFilter</code> filter
  * attempts to automatically authenticate the user by passing the <code>username</code> and <code>password</code>
  * request parameter values to
- * {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken) Subject.login(usernamePasswordToken)}.
+ * {@link org.jsecurity.subject.Subject#login(org.jsecurity.authc.AuthenticationToken) Subject.login(usernamePasswordToken)}
+ * directly.
  * <p/>
  * Conversely, this controller always passes all requests to the {@link #setLoginUrl loginUrl} through, both GETs and
  * POSTs.  This is useful in cases where the developer wants to write their own login behavior, which should include a

@@ -43,10 +43,11 @@ import java.util.Arrays;
  * to you and you think the default key still makes things 'sufficiently difficult', then you can ignore this issue.
  *
  * <p>However, if you do feel this constitutes sensitive information, it is recommended that you provide your own
- * <tt>Key</tt> via the {@link # setKey setDefaultKey} method to a Key known only to your application,
+ * <tt>Key</tt> via the {@link #setKey setKey} method to a Key known only to your application,
  * guaranteeing that no third party can decrypt your data.  If you want to know how to do this, you can browse this
- * class's source code for the {@link #generateNewKey()} method to see how we created our default.  Then you can duplicate the same in
- * your environment and set the result on an instance of this class via the <code>setKey</code> method.
+ * class's source code for the {@link #generateNewKey()} method to see how we created our default.  Then you can
+ * duplicate the same in your environment and set the result on an instance of this class via the
+ * <code>setKey</code> method.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile

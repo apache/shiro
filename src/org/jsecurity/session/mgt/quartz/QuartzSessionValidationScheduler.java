@@ -67,7 +67,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     private boolean schedulerImplicitlyCreated = false;
 
-    private boolean running = false;
+    private boolean enabled = false;
 
     /**
      * The session manager used to validate sessions.
@@ -118,8 +118,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         this.sessionManager = sessionManager;
     }
 
-    public boolean isRunning() {
-        return this.running;
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     /**
@@ -142,7 +142,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      * Starts session validation by creating a Quartz simple trigger, linking it to
      * the {@link QuartzSessionValidationJob}, and scheduling it with the Quartz scheduler.
      */
-    public void startSessionValidation() {
+    public void enableSessionValidation() {
 
         if (log.isDebugEnabled()) {
             log.debug("Scheduling session validation job using Quartz with " +
@@ -167,7 +167,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                     log.debug("Successfully started implicitly created Quartz Scheduler instance.");
                 }
             }
-            this.running = true;
+            this.enabled = true;
 
             if (log.isDebugEnabled()) {
                 log.debug("Session validation job successfully scheduled with Quartz.");
@@ -180,7 +180,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         }
     }
 
-    public void stopSessionValidation() {
+    public void disableSessionValidation() {
         if (log.isDebugEnabled()) {
             log.debug("Stopping Quartz session validation job...");
         }
@@ -215,7 +215,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             }
         }
 
-        this.running = false;
+        this.enabled = false;
 
         if (schedulerImplicitlyCreated) {
             try {

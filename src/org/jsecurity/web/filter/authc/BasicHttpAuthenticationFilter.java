@@ -39,10 +39,10 @@ import java.net.InetAddress;
  * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
  *
- * <p>This implementation is a 'clean room' Java implementation of Basic HTTP Authentication as specified in
+ * <p>This implementation is a 'clean room' Java implementation of Basic HTTP Authentication specification per
  * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
  *
- * <p>Basic authentication works as follows:</p>
+ * <p>Basic authentication functions as follows:</p>
  *
  * <ol>
  * <li>A request comes in for a resource that requires authentication.</li>
@@ -63,6 +63,7 @@ import java.net.InetAddress;
  * @author Allan Ditzel
  * @author Les Hazlewood
  * @see <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>
+ * @see <a href="http://en.wikipedia.org/wiki/Basic_access_authentication">Basic Access Authentication</a>
  * @since 0.9
  */
 public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
@@ -227,21 +228,21 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
     /**
      * Default implementation that returns <code>true</code> if the specified <code>authzHeader</code>
      * starts with the same (case-insensitive) characters specified by the
-     * {@link #getAuthzScheme() authzHeaderScheme}, <code>false</code> otherwise.
+     * {@link #getAuthzScheme() authzScheme}, <code>false</code> otherwise.
      * <p/>
      * That is:
      * <p/>
-     * <code>String authzHeaderScheme = getAuthzHeaderScheme().toLowerCase();<br/>
-     * return authzHeader.toLowerCase().startsWith(authzHeaderScheme);</code>
+     * <code>String authzScheme = getAuthzScheme().toLowerCase();<br/>
+     * return authzHeader.toLowerCase().startsWith(authzScheme);</code>
      *
      * @param authzHeader the 'Authorization' header value (guaranteed to be non-null if the
      *                    {@link #isLoginAttempt(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method is not overriden).
      * @return <code>true</code> if the authzHeader value matches that configured as defined by
-     *         the {@link # getAuthzScheme () authzHeaderScheme}.
+     *         the {@link #getAuthzScheme() authzScheme}.
      */
     protected boolean isLoginAttempt(String authzHeader) {
-        String authzHeaderScheme = getAuthzScheme().toLowerCase();
-        return authzHeader.toLowerCase().startsWith(authzHeaderScheme);
+        String authzScheme = getAuthzScheme().toLowerCase();
+        return authzHeader.toLowerCase().startsWith(authzScheme);
     }
 
     /**
@@ -250,7 +251,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * <p/>
      * The header value constructed is equal to:
      * <p/>
-     * <code>{@link #getAuthcScheme() getAuthcHeaderScheme()} + " realm=\"" + {@link #getApplicationName() getApplicationName()} + "\"";</code>
+     * <code>{@link #getAuthcScheme() getAuthcScheme()} + " realm=\"" + {@link #getApplicationName() getApplicationName()} + "\"";</code>
      *
      * @param request  incoming ServletRequest, ignored by this implementation
      * @param response outgoing ServletResponse
@@ -388,7 +389,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticationFilter {
      * <code>String decoded = Base64.decodeToString(encoded);<br/>
      * return decoded.split(":");</code>
      *
-     * @param scheme the {@link #getAuthcScheme() authcHeaderScheme} found in the request
+     * @param scheme the {@link #getAuthcScheme() authcScheme} found in the request
      * {@link #getAuthzHeader(javax.servlet.ServletRequest) authzHeader}.  It is ignored by this implementation,
      * but available to overriding implementations should they find it useful.
      * @param encoded the Base64-encoded username:password value found after the scheme in the header

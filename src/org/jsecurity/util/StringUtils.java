@@ -39,8 +39,13 @@ import java.util.StringTokenizer;
  */
 public class StringUtils {
 
+    /** Constant representing the empty string, equal to &quot;&quot; */
     public static final String EMPTY_STRING = "";
+
+    /** Constant representing the default delimiter character (comma), equal to <code>','</code> */
     public static final char DEFAULT_DELIMITER_CHAR = ',';
+
+    /** Constant representing the default quote character (double quote), equal to '&quot;'</code> */
     public static final char DEFAULT_QUOTE_CHAR = '"';
 
     /**
@@ -120,6 +125,22 @@ public class StringUtils {
         return lcStr.equals(lcPrefix);
     }
 
+    /**
+     * Returns a 'cleaned' representation of the specified argument.  'Cleaned' is defined as the following:
+     *
+     * <ol>
+     * <li>If the specified <code>String</code> is <code>null</code>, return <code>null</code></li>
+     * <li>If not <code>null</code>, {@link String#trim() trim()} it.</li>
+     * <li>If the trimmed string is equal to the empty String (i.e. &quot;&quot;), return <code>null</code></li>
+     * <li>If the trimmed string is not the empty string, return the trimmed version</li>.
+     * </ol>
+     *
+     * Therefore this method always ensures that any given string has trimmed text, and if it doesn't, <code>null</code>
+     * is returned.
+     *
+     * @param in the input String to clean.
+     * @return a populated-but-trimmed String or <code>null</code> otherwise
+     */
     public static String clean(String in) {
         String out = in;
 

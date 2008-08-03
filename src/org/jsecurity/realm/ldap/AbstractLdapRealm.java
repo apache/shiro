@@ -48,8 +48,8 @@ import javax.naming.NamingException;
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see # queryForAuthenticationInfo (org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
- * @see # queryForAuthorizationInfo (PrincipalCollection, LdapContextFactory)
+ * @see #queryForAuthenticationInfo(org.jsecurity.authc.AuthenticationToken, LdapContextFactory)
+ * @see #queryForAuthorizationInfo(PrincipalCollection, LdapContextFactory)
  * @since 0.1
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm {

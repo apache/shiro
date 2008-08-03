@@ -40,7 +40,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;
     private long interval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
-    private boolean running = false;
+    private boolean enabled = false;
 
     public ExecutorServiceSessionValidationScheduler() {
         super();
@@ -66,15 +66,15 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         this.interval = interval;
     }
 
-    public boolean isRunning() {
-        return this.running;
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
-    public void startSessionValidation() {
+    public void enableSessionValidation() {
         if (this.interval > 0l) {
             this.service = Executors.newSingleThreadScheduledExecutor();
             this.service.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
-            this.running = true;
+            this.enabled = true;
         }
     }
 
@@ -90,8 +90,8 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         }
     }
 
-    public void stopSessionValidation() {
+    public void disableSessionValidation() {
         this.service.shutdownNow();
-        this.running = false;
+        this.enabled = false;
     }
 }

@@ -58,8 +58,13 @@ public class ResourceUtils {
     }
 
     /**
-     * @param resourcePath
-     * @return
+     * Returns <code>true</code> if the resource path is not null and starts with one of the recognized
+     * resource prefixes ({@link #CLASSPATH_PREFIX CLASSPATH_PREFIX}, 
+     * {@link #URL_PREFIX URL_PREFIX}, or {@link #FILE_PREFIX FILE_PREFIX}), <code>false</code> otherwise.
+     *
+     * @param resourcePath the resource path to check
+     * @return <code>true</code> if the resource path is not null and starts with one of the recognized
+     * resource prefixes, <code>false</code> otherwise.
      * @since 0.9
      */
     public static boolean hasResourcePrefix(String resourcePath) {
@@ -70,8 +75,9 @@ public class ResourceUtils {
     }
 
     /**
-     * @param resourcePath
-     * @return
+     * Returns <code>true</code> if the resource at the specified path exists, <code>false</code> otherwise.
+     * @param resourcePath the path of the resource to check.
+     * @return <code>true</code> if the resource at the specified path exists, <code>false</code> otherwise.
      * @since 0.9
      */
     public static boolean resourceExists(String resourcePath) {
