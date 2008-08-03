@@ -39,15 +39,15 @@ import java.io.IOException;
 public abstract class AccessControlFilter extends PathMatchingFilter {
 
     /**
-     * Simple default login URL equal to <code>/login.jsp</code>, which will probably be overridden in most
-     * applications.
+     * Simple default login URL equal to <code>/login.jsp</code>, which can be overridden by calling the
+     * {@link #setLoginUrl(String) setLoginUrl} method.
      */
     public static final String DEFAULT_LOGIN_URL = "/login.jsp";
+
+    /** Constant representing the HTTP 'GET' request method, equal to <code>GET</code>. */
     protected static final String GET_METHOD = "GET";
 
-    /**
-     * The login url to used to authenticate a user, used when redirecting users if authentication is required.
-     */
+    /** The login url to used to authenticate a user, used when redirecting users if authentication is required. */
     private String loginUrl = DEFAULT_LOGIN_URL;
 
     /**
@@ -79,7 +79,8 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     /**
      * Convenience method that acquires the Subject associated with the request.
      * <p/>
-     * This implementation simply returns {@link org.jsecurity.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
+     * The default implementation simply returns
+     * {@link org.jsecurity.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
      *
      * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>
