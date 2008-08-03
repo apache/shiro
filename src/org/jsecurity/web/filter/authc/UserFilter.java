@@ -25,19 +25,29 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * <p>Filter that allows access to resources if the accessor is a known user, which is defined as
+ * Filter that allows access to resources if the accessor is a known user, which is defined as
  * having a known principal.  This means that any user who is authenticated or remembered via a
- * 'remember me' feature will be allowed access from this filter.</p>
- *
- * <p>If the accessor is not a known user, then they will be redirected to the login page, as set by
- * {@link #setLoginUrl(String)}</p>
+ * 'remember me' feature will be allowed access from this filter.
+ * <p/>
+ * If the accessor is not a known user, then they will be redirected to the {@link #setLoginUrl(String) loginUrl}</p>
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
  * @since 0.9
  */
 public class UserFilter extends AccessControlFilter {
 
-
+    /**
+     * Returns <code>true</code> if the request is a
+     * {@link #isLoginRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse) loginRequest} or
+     * if the current {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject}
+     * is not <code>null</code>, <code>false</code> otherwise.
+     *
+     * @return <code>true</code> if the request is a
+     * {@link #isLoginRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse) loginRequest} or
+     * if the current {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject}
+     * is not <code>null</code>, <code>false</code> otherwise.
+     */
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         if (isLoginRequest(request, response)) {
             return true;
@@ -48,6 +58,12 @@ public class UserFilter extends AccessControlFilter {
         }
     }
 
+    /**
+     * This default implementation simply calls
+     * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse) saveRequestAndRedirectToLogin}
+     * and then immediately returns <code>false</code>, thereby preventing the chain from continuing so the redirect may
+     * execute.
+     */
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         saveRequestAndRedirectToLogin(request, response);
         return false;
