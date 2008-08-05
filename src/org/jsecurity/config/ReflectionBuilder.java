@@ -18,6 +18,7 @@
  */
 package org.jsecurity.config;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -168,20 +169,18 @@ public class ReflectionBuilder {
         }
     }
 
-
     protected void applyProperty(Object object, String propertyName, String value) {
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Applying property [" + propertyName + "] value [" + value + "] on object of type [" + object.getClass().getName() + "]");
             }
-            PropertyUtils.setProperty(object, propertyName, value);
+            BeanUtils.setProperty(object, propertyName, value);
         } catch (Exception e) {
             //perhaps the value was a reference to an object already defined:
-
             Object o = (objects != null && !objects.isEmpty() ? objects.get(value) : null);
             if (o != null) {
                 try {
-                    PropertyUtils.setProperty(object, propertyName, o);
+                    BeanUtils.setProperty(object, propertyName, o);
                     return;
                 } catch (Exception ignored) {
                 }
