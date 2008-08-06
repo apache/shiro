@@ -69,7 +69,7 @@ import java.util.Collection;
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {
 
-    private static final Log log = LogFactory.getLog(DefaultSecurityManager.class);    
+    private static final Log log = LogFactory.getLog(DefaultSecurityManager.class);
 
     protected RememberMeManager rememberMeManager;
 
@@ -198,7 +198,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         assertPrincipals(info);
 
         //get any existing session that may exist - we don't want to lose it:
-        Subject subject = getSubject();
+        Subject subject = getSubject(false);
         Session session = null;
         if (subject != null) {
             session = subject.getSession(false);
