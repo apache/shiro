@@ -238,15 +238,19 @@ public class DelegatingSubject implements Subject {
         PrincipalCollection principals = authcSecCtx.getPrincipals();
         if (principals == null || principals.isEmpty()) {
             String msg = "Principals returned from securityManager.login( token ) returned a null or " +
-                    "empty value.  This value must be non null, and if a collection, the collection must " +
-                    "be populated with one or more elements.  Please check the SecurityManager " +
-                    "implementation to ensure this happens after a successful login attempt.";
+                    "empty value.  This value must be non null and populated with one or more elements.  " +
+                    "Please check the SecurityManager implementation to ensure this happens after a " +
+                    "successful login attempt.";
             throw new IllegalStateException(msg);
         }
         this.principals = principals;
         Session session = authcSecCtx.getSession(false);
-        if (session != null && !(session instanceof StoppingAwareProxiedSession)) {
-            this.session = new StoppingAwareProxiedSession(session, this);
+        if (session != null) {
+            if (session instanceof StoppingAwareProxiedSession) {
+                this.session = session;
+            } else {
+                this.session = new StoppingAwareProxiedSession(session, this);
+            }
         } else {
             this.session = null;
         }
