@@ -4,5 +4,8 @@
 * DelegatingSubject is now still usable after it is logged out (no invalid exceptions thrown).
   The Subject is now just considered 'anonymous' again at that point.
 
+* ReflectionBuilder (used in JSecurity .ini and web.xml based text configuration) now handles setting
+  primitive attributes correctly, performing proper string-to-primitive conversion (BeanUtils does this automatically).
+
 
 
