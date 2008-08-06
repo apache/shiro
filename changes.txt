@@ -4,8 +4,5 @@
 * DelegatingSubject is now still usable after it is logged out (no invalid exceptions thrown).
   The Subject is now just considered 'anonymous' again at that point.
 
-!!! API CHANGES !!!
-RememberMeManager 
-
 
 
