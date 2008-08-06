@@ -110,8 +110,9 @@ public class DelegatingSubject implements Subject {
         return securityManager;
     }
 
-    protected boolean hasPrincipal() {
-        return getPrincipal() != null;
+    protected boolean hasPrincipals() {
+        PrincipalCollection pc = getPrincipals();
+        return pc != null && !pc.isEmpty();
     }
 
     /**
@@ -139,15 +140,15 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean isPermitted(String permission) {
-        return hasPrincipal() && securityManager.isPermitted(getPrincipals(), permission);
+        return hasPrincipals() && securityManager.isPermitted(getPrincipals(), permission);
     }
 
     public boolean isPermitted(Permission permission) {
-        return hasPrincipal() && securityManager.isPermitted(getPrincipals(), permission);
+        return hasPrincipals() && securityManager.isPermitted(getPrincipals(), permission);
     }
 
     public boolean[] isPermitted(String... permissions) {
-        if (hasPrincipal()) {
+        if (hasPrincipals()) {
             return securityManager.isPermitted(getPrincipals(), permissions);
         } else {
             return new boolean[permissions.length];
@@ -155,7 +156,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean[] isPermitted(List<Permission> permissions) {
-        if (hasPrincipal()) {
+        if (hasPrincipals()) {
             return securityManager.isPermitted(getPrincipals(), permissions);
         } else {
             return new boolean[permissions.size()];
@@ -163,20 +164,20 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean isPermittedAll(String... permissions) {
-        return hasPrincipal() && securityManager.isPermittedAll(getPrincipals(), permissions);
+        return hasPrincipals() && securityManager.isPermittedAll(getPrincipals(), permissions);
     }
 
     public boolean isPermittedAll(Collection<Permission> permissions) {
-        return hasPrincipal() && securityManager.isPermittedAll(getPrincipals(), permissions);
+        return hasPrincipals() && securityManager.isPermittedAll(getPrincipals(), permissions);
     }
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
-        if (!hasPrincipal()) {
+        if (!hasPrincipals()) {
             String msg = "Identity principals are not associated with this Subject instance - " +
                     "authorization operations require an identity to check against.  A Subject instance will " +
                     "acquire these identifying principals automatically after a successful login is performed " +
                     "be executing " + Subject.class.getName() + ".login(AuthenticationToken) or when 'Remember Me' " +
-                    "functionality is enabled.  This exception can also occur when the current subject has logged out, " +
+                    "functionality is enabled.  This exception can also occur when the current Subject has logged out, " +
                     "which relinquishes its identity and essentially makes it anonymous again.  " +
                     "Because an identity is currently not known due to any of these conditions, " +
                     "authorization is denied.";
@@ -207,11 +208,11 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean hasRole(String roleIdentifier) {
-        return hasPrincipal() && securityManager.hasRole(getPrincipals(), roleIdentifier);
+        return hasPrincipals() && securityManager.hasRole(getPrincipals(), roleIdentifier);
     }
 
     public boolean[] hasRoles(List<String> roleIdentifiers) {
-        if (hasPrincipal()) {
+        if (hasPrincipals()) {
             return securityManager.hasRoles(getPrincipals(), roleIdentifiers);
         } else {
             return new boolean[roleIdentifiers.size()];
@@ -219,7 +220,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
-        return hasPrincipal() && securityManager.hasAllRoles(getPrincipals(), roleIdentifiers);
+        return hasPrincipals() && securityManager.hasAllRoles(getPrincipals(), roleIdentifiers);
     }
 
     public void checkRole(String role) throws AuthorizationException {
