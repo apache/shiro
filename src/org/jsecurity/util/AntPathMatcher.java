@@ -60,7 +60,7 @@ package org.jsecurity.util;
  * @author Rob Harrop
  * @since 16.07.2003
  */
-public class AntPathMatcher {
+public class AntPathMatcher implements PatternMatcher {
 
     /**
      * Default path separator: "/"
@@ -81,6 +81,10 @@ public class AntPathMatcher {
 
     public boolean isPattern(String path) {
         return (path.indexOf('*') != -1 || path.indexOf('?') != -1);
+    }
+
+    public boolean matches(String pattern, String source) {
+        return match(pattern, source);
     }
 
     public boolean match(String pattern, String path) {

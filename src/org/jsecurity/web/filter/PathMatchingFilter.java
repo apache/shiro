@@ -21,6 +21,7 @@ package org.jsecurity.web.filter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.util.AntPathMatcher;
+import org.jsecurity.util.PatternMatcher;
 import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.servlet.AdviceFilter;
@@ -39,11 +40,15 @@ import java.util.Map;
  */
 public abstract class PathMatchingFilter extends AdviceFilter implements PathConfigProcessor {
 
-    /** Log available to this class only */
+    /**
+     * Log available to this class only
+     */
     private static final Log log = LogFactory.getLog(PathMatchingFilter.class);
 
-    /** PathMatcher used in determining which paths to react to for a given request. */
-    protected AntPathMatcher pathMatcher = new AntPathMatcher();
+    /**
+     * PatternMatcher used in determining which paths to react to for a given request.
+     */
+    protected PatternMatcher pathMatcher = new AntPathMatcher();
 
     /**
      * A collection of path-to-config entries where the key is a path which this filter should process and
@@ -68,7 +73,8 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      *
      * this.{@link #appliedPaths appliedPaths}.put(path, values);
      * </code></pre>
-     * @param path the application context path to match for executing this filter.
+     *
+     * @param path   the application context path to match for executing this filter.
      * @param config the specified for <em>this particular filter only</em> for the given <code>path</code>
      */
     public void processPathConfig(String path, String config) {
@@ -122,7 +128,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * <code>false</code> otherwise.
      * <p/>
      * Simply delegates to
-     * <b><code>this.pathMatcher.{@link AntPathMatcher#match(String, String) match(pattern,path)}</code></b>,
+     * <b><code>this.pathMatcher.{@link PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
      * but can be overridden by subclasses for custom matching behavior.
      *
      * @param pattern the pattern to match against
@@ -131,7 +137,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      *         <code>false</code> otherwise.
      */
     protected boolean pathsMatch(String pattern, String path) {
-        return pathMatcher.match(pattern, path);
+        return pathMatcher.matches(pattern, path);
     }
 
     /**
