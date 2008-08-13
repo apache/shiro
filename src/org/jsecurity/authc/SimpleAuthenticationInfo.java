@@ -70,38 +70,43 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
     @SuppressWarnings("unchecked")
     public void merge(AuthenticationInfo info) {
-        if (info == null || info.getPrincipals() == null) {
+        if (info == null || info.getPrincipals() == null || info.getPrincipals().isEmpty()) {
             return;
         }
 
         if (this.principals == null) {
-            this.principals = new SimplePrincipalCollection();
-        }
-
-        if (this.principals instanceof MutablePrincipalCollection) {
-            ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
+            this.principals = info.getPrincipals();
         } else {
-            throw new IllegalStateException("Attempt to merge authentication info, but PrincipalCollection is not an " +
-                    "instance of MutablePrincipalCollection.");
+            if (this.principals instanceof MutablePrincipalCollection) {
+                ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
+            } else {
+                this.principals = new SimplePrincipalCollection(this.principals);
+            }
         }
 
         Object thisCredentials = getCredentials();
         Object otherCredentials = info.getCredentials();
 
+        if (otherCredentials == null) {
+            return;
+        }
+
+        if (thisCredentials == null) {
+            this.credentials = otherCredentials;
+            return;
+        }
+
         if (!(thisCredentials instanceof Collection)) {
             Set newSet = new HashSet();
-            if (thisCredentials != null) {
-                newSet.add(thisCredentials);
-                setCredentials(newSet);
-            }
+            newSet.add(thisCredentials);
+            setCredentials(newSet);
         }
 
         // At this point, the credentials should be a collection
         Collection credentialCollection = (Collection) getCredentials();
         if (otherCredentials instanceof Collection) {
             credentialCollection.addAll((Collection) otherCredentials);
-
-        } else if (otherCredentials != null) {
+        } else {
             credentialCollection.add(otherCredentials);
         }
     }
