@@ -25,6 +25,7 @@ import org.jsecurity.config.IniConfiguration;
 import org.jsecurity.config.ReflectionBuilder;
 import org.jsecurity.mgt.RealmSecurityManager;
 import org.jsecurity.util.AntPathMatcher;
+import org.jsecurity.util.PatternMatcher;
 import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.DefaultWebSecurityManager;
 import org.jsecurity.web.WebUtils;
@@ -49,7 +50,7 @@ import java.util.*;
  */
 public class IniWebConfiguration extends IniConfiguration implements WebConfiguration {
 
-    private static final Log log = LogFactory.getLog(IniWebConfiguration.class);    
+    private static final Log log = LogFactory.getLog(IniWebConfiguration.class);
 
     public static final String FILTERS = "filters";
     public static final String URLS = "urls";
@@ -58,7 +59,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
 
     protected Map<String, List<Filter>> chains;
 
-    protected AntPathMatcher pathMatcher = new AntPathMatcher();
+    protected PatternMatcher pathMatcher = new AntPathMatcher();
 
     public IniWebConfiguration() {
         chains = new LinkedHashMap<String, List<Filter>>();
@@ -82,7 +83,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
         for (String path : this.chains.keySet()) {
 
             // If the path does match, then pass on to the subclass implementation for specific checks:
-            if (pathMatcher.match(path, requestURI)) {
+            if (pathMatches(path, requestURI)) {
                 if (log.isTraceEnabled()) {
                     log.trace("Matched path [" + path + "] for requestURI [" + requestURI + "].  " +
                             "Utilizing corresponding filter chain...");
@@ -95,6 +96,23 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
         }
 
         return null;
+    }
+
+    /**
+     * Returns <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
+     * <code>false</code> otherwise.
+     * <p/>
+     * Simply delegates to
+     * <b><code>this.pathMatcher.{@link org.jsecurity.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
+     * but can be overridden by subclasses for custom matching behavior.
+     *
+     * @param pattern the pattern to match against
+     * @param path    the value to match with the specified <code>pattern</code>
+     * @return <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
+     *         <code>false</code> otherwise.
+     */
+    protected boolean pathMatches(String pattern, String path) {
+        return pathMatcher.matches(pattern, path);
     }
 
     protected String getPathWithinApplication(ServletRequest request) {
