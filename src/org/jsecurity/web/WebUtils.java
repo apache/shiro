@@ -20,6 +20,9 @@ package org.jsecurity.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
+import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.StringUtils;
 import org.jsecurity.util.ThreadContext;
 
@@ -27,7 +30,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
@@ -228,7 +230,7 @@ public class WebUtils {
      *
      * @param request the incoming ServletRequest
      * @return the <code>InetAddress</code> associated with the current request, or <code>null</code> if the
-     * address cannot be resolved/determined.
+     *         address cannot be resolved/determined.
      */
     public static InetAddress getInetAddress(ServletRequest request) {
         InetAddress clientAddress = null;
@@ -491,9 +493,9 @@ public class WebUtils {
     }
 
     public static void saveRequest(ServletRequest request) {
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
         HttpServletRequest httpRequest = toHttp(request);
-        HttpSession session = httpRequest.getSession();
-
         SavedRequest savedRequest = new SavedRequest(httpRequest);
         session.setAttribute(SAVED_REQUEST_KEY, savedRequest);
     }
@@ -501,7 +503,8 @@ public class WebUtils {
     public static SavedRequest getAndClearSavedRequest(ServletRequest request) {
         SavedRequest savedRequest = getSavedRequest(request);
         if (savedRequest != null) {
-            HttpSession session = WebUtils.toHttp(request).getSession();
+            Subject subject = SecurityUtils.getSubject();
+            Session session = subject.getSession();
             session.removeAttribute(SAVED_REQUEST_KEY);
         }
         return savedRequest;
@@ -509,12 +512,11 @@ public class WebUtils {
 
     public static SavedRequest getSavedRequest(ServletRequest request) {
         SavedRequest savedRequest = null;
-
-        HttpSession session = WebUtils.toHttp(request).getSession(false);
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession(false);
         if (session != null) {
             savedRequest = (SavedRequest) session.getAttribute(SAVED_REQUEST_KEY);
         }
-
         return savedRequest;
     }
 

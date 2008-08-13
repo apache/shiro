@@ -85,8 +85,8 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
         }
 
         if (successUrl == null) {
-            throw new IllegalArgumentException("Success URL not available via saved request or by calling getSuccessUrl().  " +
-                    "One of these must be non-null for issueSuccessRedirect() to work.");
+            throw new IllegalStateException("Success URL not available via saved request or by calling " +
+                    "getSuccessUrl().  One of these must be non-null for issueSuccessRedirect() to work.");
         }
 
         WebUtils.issueRedirect(request, response, successUrl);

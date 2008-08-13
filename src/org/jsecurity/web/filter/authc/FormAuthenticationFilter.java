@@ -21,14 +21,14 @@ package org.jsecurity.web.filter.authc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.web.WebUtils;
-import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.net.InetAddress;
 
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
@@ -57,7 +57,7 @@ import java.net.InetAddress;
  * @see org.jsecurity.web.filter.authc.PassThruAuthenticationFilter
  * @since 0.9
  */
-public class FormAuthenticationFilter extends AuthenticationFilter {
+public class FormAuthenticationFilter extends AuthenticatingFilter {
 
     public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "jsecLoginFailure";
 
@@ -65,7 +65,7 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
     public static final String DEFAULT_PASSWORD_PARAM = "password";
     public static final String DEFAULT_REMEMBER_ME_PARAM = "rememberMe";
 
-    private static final Log log = LogFactory.getLog(FormAuthenticationFilter.class);    
+    private static final Log log = LogFactory.getLog(FormAuthenticationFilter.class);
 
     private String usernameParam = DEFAULT_USERNAME_PARAM;
     private String passwordParam = DEFAULT_PASSWORD_PARAM;
@@ -173,31 +173,31 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
      * @return <code>true</code> if the request is an HTTP <code>POST</code>, <code>false</code> otherwise.
      */
     protected boolean isLoginSubmission(ServletRequest request, ServletResponse response) {
-        return (request instanceof HttpServletRequest) && toHttp(request).getMethod().equalsIgnoreCase(POST_METHOD);
+        return (request instanceof HttpServletRequest) && WebUtils.toHttp(request).getMethod().equalsIgnoreCase(POST_METHOD);
     }
 
-    protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
-        String username = getUsername(request, response);
-        String password = getPassword(request, response);
-        boolean rememberMe = isRememberMe(request, response);
-        InetAddress inet = getInetAddress(request, response);
+    protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
+        String username = getUsername(request);
+        String password = getPassword(request);
+        return createToken(username, password, request, response);
+    }
 
-        char[] passwordChars = null;
-        if (password != null) {
-            passwordChars = password.toCharArray();
-        }
+    protected boolean isRememberMe(ServletRequest request) {
+        return WebUtils.isTrue(request, getRememberMeParam());
+    }
 
-        UsernamePasswordToken token = new UsernamePasswordToken(username, passwordChars, rememberMe, inet);
+    protected boolean onLoginSuccess(AuthenticationToken token, Subject subject,
+                                     ServletRequest request, ServletResponse response) throws Exception {
+        issueSuccessRedirect(request, response);
+        //we handled the success redirect directly, prevent the chain from continuing:
+        return false;
+    }
 
-        try {
-            getSubject(request, response).login(token);
-            issueSuccessRedirect(request, response);
-            return false;
-        } catch (AuthenticationException e) {
-            setFailureAttribute(request, e);
-            //login failed, let request continue back to the login page:
-            return true;
-        }
+    protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
+                                     ServletRequest request, ServletResponse response) {
+        setFailureAttribute(request, e);
+        //login failed, let request continue back to the login page:
+        return true;
     }
 
     protected void setFailureAttribute(ServletRequest request, AuthenticationException ae) {
@@ -205,19 +205,13 @@ public class FormAuthenticationFilter extends AuthenticationFilter {
         request.setAttribute(getFailureKeyAttribute(), className);
     }
 
-    protected String getUsername(ServletRequest request, ServletResponse response) {
+    protected String getUsername(ServletRequest request) {
         return WebUtils.getCleanParam(request, getUsernameParam());
     }
 
-    protected String getPassword(ServletRequest request, ServletResponse response) {
+    protected String getPassword(ServletRequest request) {
         return WebUtils.getCleanParam(request, getPasswordParam());
     }
 
-    protected boolean isRememberMe(ServletRequest request, ServletResponse response) {
-        return WebUtils.isTrue(request, getRememberMeParam());
-    }
 
-    protected InetAddress getInetAddress(ServletRequest request, ServletResponse response) {
-        return WebUtils.getInetAddress(request);
-    }
 }
