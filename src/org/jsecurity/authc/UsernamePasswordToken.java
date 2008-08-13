@@ -98,7 +98,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @param password the password string submitted for authentication
      */
     public UsernamePasswordToken(final String username, final String password) {
-        this(username, password.toCharArray(), false, null);
+        this(username, password != null ? password.toCharArray() : null, false, null);
     }
 
     /**
@@ -128,7 +128,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @since 0.2
      */
     public UsernamePasswordToken(final String username, final String password, final InetAddress inetAddress) {
-        this(username, password.toCharArray(), false, inetAddress);
+        this(username, password != null ? password.toCharArray() : null, false, inetAddress);
     }
 
     /**
@@ -158,7 +158,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * @since 0.9
      */
     public UsernamePasswordToken(final String username, final String password, final boolean rememberMe) {
-        this(username, password.toCharArray(), rememberMe, null);
+        this(username, password != null ? password.toCharArray() : null, rememberMe, null);
     }
 
     /**
@@ -197,7 +197,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      */
     public UsernamePasswordToken(final String username, final String password,
                                  final boolean rememberMe, final InetAddress inetAddress) {
-        this(username, password.toCharArray(), rememberMe, inetAddress);
+        this(username, password != null ? password.toCharArray() : null, rememberMe, inetAddress);
     }
 
     /*--------------------------------------------

@@ -44,13 +44,19 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      */
     public static final String DEFAULT_LOGIN_URL = "/login.jsp";
 
-    /** Constant representing the HTTP 'GET' request method, equal to <code>GET</code>. */
+    /**
+     * Constant representing the HTTP 'GET' request method, equal to <code>GET</code>.
+     */
     public static final String GET_METHOD = "GET";
 
-    /** Constant representing the HTTP 'POST' request method, equal to <code>POST</code>. */
+    /**
+     * Constant representing the HTTP 'POST' request method, equal to <code>POST</code>.
+     */
     public static final String POST_METHOD = "POST";
 
-    /** The login url to used to authenticate a user, used when redirecting users if authentication is required. */
+    /**
+     * The login url to used to authenticate a user, used when redirecting users if authentication is required.
+     */
     private String loginUrl = DEFAULT_LOGIN_URL;
 
     /**
@@ -136,11 +142,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      */
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         //mapped value is ignored - not needed for most (if not all) authc Filters.
-        if (isAccessAllowed(request, response, mappedValue)) {
-            return true;
-        } else {
-            return onAccessDenied(request, response);
-        }
+        return isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response);
     }
 
     /**
