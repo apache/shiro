@@ -7,5 +7,11 @@
 * ReflectionBuilder (used in JSecurity .ini and web.xml based text configuration) now handles setting
   primitive attributes correctly, performing proper string-to-primitive conversion (BeanUtils does this automatically).
 
+* ReflectionBuilder (used for JSecurity .ini and web.xml configuration) now supports setting other previously configured
+  objects by '$' reference. For example:
+  bar = some.package.class.Bar
+  foo = some.package.class.Foo
+  foo.bar = $bar
+
 
 
