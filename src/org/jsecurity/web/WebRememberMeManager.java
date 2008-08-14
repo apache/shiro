@@ -18,6 +18,8 @@
  */
 package org.jsecurity.web;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsecurity.codec.Base64;
 import org.jsecurity.subject.AbstractRememberMeManager;
 import org.jsecurity.web.attr.CookieAttribute;
@@ -57,6 +59,8 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
      * The default name of the underlying rememberMe cookie which is <code>rememberMe</code>.
      */
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
+
+    private static final Log log = LogFactory.getLog(WebRememberMeManager.class);
 
     protected WebAttribute<String> identityAttribute = null;
 
