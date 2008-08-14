@@ -53,6 +53,15 @@ public class WebUtils {
 
     private static final Log log = LogFactory.getLog(WebUtils.class);
 
+
+    /**
+     * Message displayed when a servlet request or response is not bound to the current thread context.
+     */
+    private static final String NOT_BOUND_ERROR_MESSAGE =
+            "Make sure WebUtils.bind() is being called. (typically called by JSecurityFilter)  " +
+            "This could also happen when running integration tests that don't properly call WebUtils.bind().";
+
+
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
@@ -300,10 +309,15 @@ public class WebUtils {
      * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
      *
-     * @return the ServletRequest bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @return the ServletRequest bound to the thread.  Never returns null.
+     * @throws IllegalStateException if no servlet request is bound in the thread context.
      */
     public static ServletRequest getServletRequest() {
-        return (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
+        ServletRequest request = (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
+        if( request == null ) {
+            throw new IllegalStateException( "No ServletRequest found in ThreadContext. " + NOT_BOUND_ERROR_MESSAGE );
+        }        
+        return request;
     }
 
     /**
@@ -353,10 +367,15 @@ public class WebUtils {
      * This method only returns the bound value if it exists - it does not remove it
      * from the thread.  To remove it, one must call {@link #unbindServletResponse() unbindServletResponse} instead.
      *
-     * @return the ServletResponse bound to the thread, or <tt>null</tt> if there isn't one bound.
+     * @return the ServletResponse bound to the thread.  Never returns null.
+     * @throws IllegalStateException if no servlet response is bound in the thread context.
      */
     public static ServletResponse getServletResponse() {
-        return (ServletResponse) ThreadContext.get(SERVLET_RESPONSE_KEY);
+        ServletResponse response = (ServletResponse) ThreadContext.get(SERVLET_RESPONSE_KEY);
+        if( response == null ) {
+            throw new IllegalStateException( "No ServletResponse found in ThreadContext. " + NOT_BOUND_ERROR_MESSAGE );
+        }
+        return response;
     }
 
     /**
