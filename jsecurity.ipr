@@ -518,6 +518,20 @@
         <root url="file://C:/java/spring/spring-framework-2.5.4/src" />
       </SOURCES>
     </library>
+    <library name="quickstart-libs">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/test/log4j.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/commons-beanutils.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/ehcache.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/standard.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/commons-logging.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/backport-util-concurrent.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/jstl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/test/commons-collections.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 
