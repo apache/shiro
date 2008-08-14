@@ -49,6 +49,19 @@ public class ReflectionBuilderTest {
     }
 
     @Test
+    public void testSimpleConfigWithDollarSignStringValue() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("testBean", "org.jsecurity.config.TestBean");
+        defs.put("testBean.stringProp", "\\$500");
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map beans = builder.buildObjects(defs);
+
+        TestBean testBean = (TestBean) beans.get("testBean");
+        assertEquals(testBean.getStringProp(), "$500");
+    }
+
+    @Test
     public void testObjectReferenceConfig() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("otherTestBean", "org.jsecurity.config.OtherTestBean");
