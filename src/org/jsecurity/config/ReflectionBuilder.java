@@ -44,7 +44,11 @@ public class ReflectionBuilder {
 
     private static final Log log = LogFactory.getLog(ReflectionBuilder.class);
 
+    private static final String OBJECT_REFERENCE_BEGIN_TOKEN = "$";
+    private static final String ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN = "\\$";
     private static final String GLOBAL_PROPERTY_PREFIX = "jsecurity";
+
+
     protected Map objects;
 
     public ReflectionBuilder() {
@@ -169,24 +173,58 @@ public class ReflectionBuilder {
         }
     }
 
-    protected void applyProperty(Object object, String propertyName, String value) {
+    protected boolean isReference(String value) {
+        return value != null && value.startsWith(OBJECT_REFERENCE_BEGIN_TOKEN);
+    }
+
+    protected String getId(String referenceToken) {
+        return referenceToken.substring(OBJECT_REFERENCE_BEGIN_TOKEN.length());
+    }
+
+    protected Object getReferencedObject(String id) {
+        Object o = objects != null && !objects.isEmpty() ? objects.get(id) : null;
+        if (o == null) {
+            String msg = "The object with id [" + id + "] has not yet been defined and therefore cannot be " +
+                    "referenced.  Please ensure objects are defined in the order in which they should be " +
+                    "created and made avaialable for future reference.";
+            throw new UnresolveableReferenceException(msg);
+        }
+        return o;
+    }
+
+    protected String unescapeIfNecessary(String value) {
+        if (value != null && value.startsWith(ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN)) {
+            return value.substring(ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN.length() - 1);
+        }
+        return value;
+    }
+
+    protected void applyProperty(Object object, String propertyName, String stringValue) {
+
+        Object value;
+
+        if (isReference(stringValue)) {
+            String id = getId(stringValue);
+            if (log.isDebugEnabled()) {
+                log.debug("Encountered object reference [" + stringValue + "].  Looking up object " +
+                        "with id [" + id + "]");
+            }
+            value = getReferencedObject(id);
+        } else {
+            value = unescapeIfNecessary(stringValue);
+        }
+
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Applying property [" + propertyName + "] value [" + value + "] on object of type [" + object.getClass().getName() + "]");
             }
             BeanUtils.setProperty(object, propertyName, value);
         } catch (Exception e) {
-            //perhaps the value was a reference to an object already defined:
-            Object o = (objects != null && !objects.isEmpty() ? objects.get(value) : null);
-            if (o != null) {
-                try {
-                    BeanUtils.setProperty(object, propertyName, o);
-                    return;
-                } catch (Exception ignored) {
-                }
-            }
-
-            String msg = "Unable to set property [" + propertyName + "] with value [" + value + "]";
+            String msg = "Unable to set property [" + propertyName + "] with value [" + stringValue + "].  If " +
+                    "'" + stringValue + "' is a reference to another (previously defined) object, please prefix it with " +
+                    "'" + OBJECT_REFERENCE_BEGIN_TOKEN + "' to indicate that the referenced " +
+                    "object should be used as the actual value.  " +
+                    "For example, " + OBJECT_REFERENCE_BEGIN_TOKEN + stringValue;
             throw new ConfigurationException(msg, e);
         }
     }

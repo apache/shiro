@@ -55,7 +55,7 @@ public class ReflectionBuilderTest {
         defs.put("otherTestBean.intProp", "101");
         defs.put("testBean", "org.jsecurity.config.TestBean");
         defs.put("testBean.stringProp", "blah");
-        defs.put("testBean.otherTestBean", "otherTestBean");
+        defs.put("testBean.otherTestBean", "$otherTestBean");
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map beans = builder.buildObjects(defs);
@@ -68,5 +68,25 @@ public class ReflectionBuilderTest {
         assertNotNull(testBean.getOtherTestBean());
         assertEquals(otherTestBean, testBean.getOtherTestBean());
         assertEquals(otherTestBean.getIntProp(), 101);
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void testObjectReferenceConfigWithTypeMismatch() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("otherTestBean", "org.jsecurity.config.OtherTestBean");
+        defs.put("testBean", "org.jsecurity.config.TestBean");
+        defs.put("testBean.otherTestBean", "otherTestBean");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        builder.buildObjects(defs);
+    }
+
+    @Test(expected = UnresolveableReferenceException.class)
+    public void testObjectReferenceConfigWithInvalidReference() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("otherTestBean", "org.jsecurity.config.OtherTestBean");
+        defs.put("testBean", "org.jsecurity.config.TestBean");
+        defs.put("testBean.otherTestBean", "$foo");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        builder.buildObjects(defs);
     }
 }
