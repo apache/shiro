@@ -330,6 +330,11 @@
             <!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
           <arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
             <doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
+            <!-- The following <bottom> block is to enable UA tracking via Google Analytics, but it fails the
+                 JavaDoc task on a Windows Sun JDK.  It works fine on Mac OS X JavaDoc.  Since we want this UA
+                 tracking, we use a Mac to build the release that end-users will download, so we leave this block
+                 enabled.  If you want to run JavaDoc in a Windows environment, remove this block, and it will
+                 run successfully. -->
             <bottom>
                 <![CDATA[
                 <i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i>
