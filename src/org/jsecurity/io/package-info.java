@@ -16,4 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Support for reading and writing (input/output) raw data from multiple resource locations.
+ */
 package org.jsecurity.io;

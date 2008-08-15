@@ -16,4 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Components for encoding and decoding of data across multiple formats, especially useful in JSecurity's
+ * cryptography and web functionality.
+ */
 package org.jsecurity.codec;

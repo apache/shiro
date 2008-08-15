@@ -25,7 +25,7 @@ import javax.servlet.ServletResponse;
  * A <tt>WebAttribute</tt> is a storage mechanism for a single object accessible during a web request.
  *
  * <p>It is used to make objects associated with the transient request persistent beyond the request so that they can
- * be retrieved upon a later request.
+ * be retrieved at a later time.
  *
  * @author Les Hazlewood
  * @since 0.2

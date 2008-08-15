@@ -16,4 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Realms that acquire security data from text-based data sources such as <code>File</code>s or
+ * text streams.
+ */
 package org.jsecurity.realm.text;

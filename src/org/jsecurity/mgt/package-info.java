@@ -16,4 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Provides the master {@link org.jsecurity.mgt.SecurityManager SecurityManager} interface and a default implementation
+ * hierarchy for managing all aspects of JSecurity's functionality in an application.
+ */
 package org.jsecurity.mgt;
