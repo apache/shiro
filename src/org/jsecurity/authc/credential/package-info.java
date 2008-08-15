@@ -16,4 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Support for validating <em>credentials</em> (such as passwords or X509 certificates) during
+ * authentication via the {@link org.jsecurity.authc.credential.CredentialsMatcher CredentialsMatcher}
+ * interface and its supporting implementations.
+ */
 package org.jsecurity.authc.credential;

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache}.
+ * JSecurity {@link org.jsecurity.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

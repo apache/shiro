@@ -16,4 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * <a href="http://ehcache.sourceforge.net" target="_top">Ehcache</a>-based implementations of JSecurity's
+ * cache interfaces.
+ */
 package org.jsecurity.cache.ehcache;

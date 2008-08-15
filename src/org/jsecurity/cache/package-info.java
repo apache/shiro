@@ -16,4 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/**
+ * Caching support used to enhance performance for any security operation.
+ */
 package org.jsecurity.cache;

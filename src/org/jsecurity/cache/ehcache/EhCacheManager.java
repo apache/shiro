@@ -37,11 +37,11 @@ import java.io.InputStream;
  * <p>This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
  *
- * <p>Please see the <a href="http://ehcache.sf.net">Ehcache website</a> for their documentation.</p>
+ * <p>Please see the <a href="http://ehcache.sf.net" target="_top">Ehcache website</a> for their documentation.</p>
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @see <a href="http://ehcache.sf.net">The Ehcache website</a>
+ * @see <a href="http://ehcache.sf.net" target="_top">The Ehcache website</a>
  * @since 0.2
  */
 public class EhCacheManager implements CacheManager, Initializable, Destroyable {
