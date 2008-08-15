@@ -45,7 +45,7 @@ import java.net.InetAddress;
  */
 public class DefaultWebSessionManager extends DefaultSessionManager implements WebSessionManager {
 
-    private static final Log log = LogFactory.getLog(DefaultWebSessionManager.class);    
+    private static final Log log = LogFactory.getLog(DefaultWebSessionManager.class);
 
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be
@@ -214,8 +214,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     }
 
     public Serializable start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         return start(request, response, hostAddress);
     }
 
@@ -231,8 +231,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if (sessionId != null) {
             return super.retrieveSession(sessionId);
         } else {
-            ServletRequest request = WebUtils.getServletRequest();
-            ServletResponse response = WebUtils.getServletResponse();
+            ServletRequest request = WebUtils.getRequiredServletRequest();
+            ServletResponse response = WebUtils.getRequiredServletResponse();
             return getSession(request, response);
         }
     }
@@ -307,8 +307,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     protected void onStop(Session session) {
         super.onStop(session);
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         getSessionIdCookieAttribute().removeValue(request, response);
     }
 }

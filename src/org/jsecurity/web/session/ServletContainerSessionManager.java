@@ -59,8 +59,8 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
     protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
         //Ignore session id since there is no way to acquire a session based on an id in a servlet container
         //(that is implementation agnostic)
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         return getSession(request, response);
     }
 
@@ -74,7 +74,7 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
     }
 
     protected Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
-        ServletRequest request = WebUtils.getServletRequest();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
         HttpSession httpSession = ((HttpServletRequest) request).getSession();
         return createSession(httpSession, originatingHost);
     }
