@@ -24,26 +24,29 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * <p>An <tt>AuthorizingAccount</tt> is an {@link Account Account} that knows about its assiged roles and permissions
+ * An <tt>AuthorizingAccount</tt> is an {@link Account Account} that knows about its assiged roles and permissions
  * and can perform its own authorization (access control) checks.  It primarily exists as a support class for Realm
  * implementations that want to cache authorization state when doing an account lookup so multiple authorization checks
  * do not need to access the Realm's underlying data store repeatedly.
- *
- * <p>Of course, an <tt>AuthorizingAccount</tt> concept is only a convenience mechansim if JSecurity account caching
+ * <p/>
+ * Of course, an <tt>AuthorizingAccount</tt> concept is only a convenience mechansim if JSecurity account caching
  * is enabled.  Realm implementations are free to ignore this interface entirely and implement/override any of their
  * <tt>Realm</tt>'s {@link Authorizer Authorizer} methods to execute the authorization checks as they see fit.
  * ({@link org.jsecurity.realm.Realm Realm} is a sub-interface of {@link Authorizer Authorizer} and therefore must
  * implement those methods as well).
- *
- * <p>Note: This class is deprecated and will be removed prior to 1.0 being released.  Instead, either just
- * return an {@link Account} instance or if you want fine-grained control over authorization behavior, extend
- * a subclass of {@link org.jsecurity.realm.AuthorizingRealm} and implement your own security checks.</p>
+ * <p/>
+ * <b>DEPRECATION NOTE</b>: This interface and its default {@link SimpleAuthorizingAccount SimpleAuthorizingAccount}
+ * implementation is deprecated and will be removed prior to 1.0 being released.  Instead, either just
+ * return an {@link Account} instance, or if you want fine-grained control over authorization behavior, extend
+ * a subclass of {@link org.jsecurity.realm.AuthorizingRealm} and implement your own security checks in the
+ * Realm itself instead of forcing this logic in your entity/domain classes where it could be error prone and
+ * unnecessarily couple these objects to JSecurity.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
- * @deprecated
  * @see org.jsecurity.realm.AuthorizingRealm
  * @since 0.9
+ * @deprecated
  */
 public interface AuthorizingAccount extends Account {
 

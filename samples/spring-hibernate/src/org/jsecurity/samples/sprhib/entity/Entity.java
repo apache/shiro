@@ -18,9 +18,6 @@
  */
 package org.jsecurity.samples.sprhib.entity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.Serializable;
 
 /**
@@ -38,8 +35,6 @@ import java.io.Serializable;
  * @author Les Hazlewood
  */
 public abstract class Entity implements Identifiable, Serializable, Cloneable {
-
-    private static final Log log = LogFactory.getLog(Entity.class);
 
     /**
      * RDBMS Primary key, aka 'surrogate key'.  <code>Long</code> surrogate keys are best
@@ -111,9 +106,9 @@ public abstract class Entity implements Identifiable, Serializable, Cloneable {
      * already populated, then they have already been inserted in the database, and
      * because of unique constraints on the database (i.e. your 'business key'), you
      * can <em>guarantee</em> that the objects are not the same and there is no need
-     * to incur attribute-based comparisons for equals() checks.</p>
+     * to incur the (sometimes costly) attribute-based comparisons for equals() checks.</p>
      *
-     * <p>This little technique is a massive performance improvement given the number of times
+     * <p>This little technique is a big performance improvement given the number of times
      * equals checks happen in most applications.</p>
      */
     public final boolean equals(Object o) {
