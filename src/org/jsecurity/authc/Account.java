@@ -21,15 +21,15 @@ package org.jsecurity.authc;
 import org.jsecurity.authz.AuthorizationInfo;
 
 /**
- * <p>An <tt>Account</tt> is a convenience interface that extends both {@link AuthenticationInfo} and
+ * An <tt>Account</tt> is a convenience interface that extends both {@link AuthenticationInfo} and
  * {@link AuthorizationInfo}.  This interface can be useful when an application uses a single object to
- * encapsulate both the authentication and authorization information required by a {@link org.jsecurity.realm.Realm Realm}</p>
- *
- * <p>Please note:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
+ * encapsulate both the authentication and authorization information required by a {@link org.jsecurity.realm.Realm Realm}.
+ * <p/>
+ * <b>Please Note</b>:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
  * out for any reason.  If you're using JSecurity's default implementations of this interface, they only ever print the
- * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
+ * account {@link #getPrincipals() principals}, so you do not need to do anything additional.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

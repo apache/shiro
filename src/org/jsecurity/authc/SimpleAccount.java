@@ -18,8 +18,6 @@
  */
 package org.jsecurity.authc;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.SimpleAuthorizationInfo;
 import org.jsecurity.subject.PrincipalCollection;
@@ -41,15 +39,10 @@ import java.util.Set;
 public class SimpleAccount implements Account, MergableAuthenticationInfo, Serializable {
 
     /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-    private static final Log log = LogFactory.getLog(SimpleAccount.class);
-
-    /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * The principals that apply to the authenticated Subject/user.
+     * The authentication information (principals and credentials) for this account.
      */
     private SimpleAuthenticationInfo authcInfo;
 
@@ -97,21 +90,20 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     public SimpleAccount(Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principal, realmName), credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
-        this.authzInfo.setObjectPermissions( permissions );
+        this.authzInfo.setObjectPermissions(permissions);
     }
 
     public SimpleAccount(Collection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principals, realmName), credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
-        this.authzInfo.setObjectPermissions( permissions );
+        this.authzInfo.setObjectPermissions(permissions);
     }
 
     public SimpleAccount(PrincipalCollection principals, Object credentials, Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(principals, credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
-        this.authzInfo.setObjectPermissions( permissions );
+        this.authzInfo.setObjectPermissions(permissions);
     }
-
 
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
@@ -121,63 +113,64 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
         return authcInfo.getPrincipals();
     }
 
-    public void setPrincipals( PrincipalCollection principals ) {
-        this.authcInfo.setPrincipals( principals );
+    public void setPrincipals(PrincipalCollection principals) {
+        this.authcInfo.setPrincipals(principals);
     }
 
     public Object getCredentials() {
         return authcInfo.getCredentials();
     }
 
-    public void setCredentials( Object credentials ) {
-        this.authcInfo.setCredentials( credentials );
+    public void setCredentials(Object credentials) {
+        this.authcInfo.setCredentials(credentials);
     }
 
     public Collection<String> getRoles() {
         return authzInfo.getRoles();
     }
 
-    public void setRoles( Set<String> roles ) {
-        this.authzInfo.setRoles( roles );
+    public void setRoles(Set<String> roles) {
+        this.authzInfo.setRoles(roles);
     }
 
-    public void addRole( String role ) {
-        this.authzInfo.addRole( role );
+    public void addRole(String role) {
+        this.authzInfo.addRole(role);
     }
-    public void addRole( Collection<String> roles ) {
-        this.authzInfo.addRoles( roles );
+
+    public void addRole(Collection<String> roles) {
+        this.authzInfo.addRoles(roles);
     }
 
     public Collection<String> getStringPermissions() {
         return authzInfo.getStringPermissions();
     }
 
-    public void setStringPermissions( Set<String> permissions ) {
-        this.authzInfo.setStringPermissions( permissions );
+    public void setStringPermissions(Set<String> permissions) {
+        this.authzInfo.setStringPermissions(permissions);
     }
 
-    public void addStringPermission( String permission ) {
-        this.authzInfo.addStringPermission( permission );
+    public void addStringPermission(String permission) {
+        this.authzInfo.addStringPermission(permission);
     }
 
-    public void addStringPermissions( Collection<String> permissions ) {
-        this.authzInfo.addStringPermissions( permissions );
+    public void addStringPermissions(Collection<String> permissions) {
+        this.authzInfo.addStringPermissions(permissions);
     }
 
     public Collection<Permission> getObjectPermissions() {
         return authzInfo.getObjectPermissions();
     }
 
-    public void setObjectPermissions( Set<Permission> permissions ) {
-        this.authzInfo.setObjectPermissions( permissions );
+    public void setObjectPermissions(Set<Permission> permissions) {
+        this.authzInfo.setObjectPermissions(permissions);
     }
 
-    public void addObjectPermission( Permission permission ) {
-        this.authzInfo.addObjectPermission( permission );
+    public void addObjectPermission(Permission permission) {
+        this.authzInfo.addObjectPermission(permission);
     }
 
-    public void addObjectPermissions( Collection<Permission> permissions ) {
-        this.authzInfo.addObjectPermissions( permissions );
+    public void addObjectPermissions(Collection<Permission> permissions) {
+        this.authzInfo.addObjectPermissions(permissions);
     }
 
     public boolean isLocked() {
@@ -201,7 +194,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
         authcInfo.merge(info);
 
         // Merge SimpleAccount specific info
-        if( info instanceof SimpleAccount ) {
+        if (info instanceof SimpleAccount) {
             SimpleAccount otherAccount = (SimpleAccount) info;
             if (otherAccount.isLocked()) {
                 setLocked(true);

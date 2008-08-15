@@ -50,7 +50,7 @@ import org.jsecurity.subject.PrincipalCollection;
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {
 
-    private static final Log log = LogFactory.getLog(AuthenticatingRealm.class);    
+    private static final Log log = LogFactory.getLog(AuthenticatingRealm.class);
 
     /**
      * Password matcher used to determine if the provided password matches
@@ -214,14 +214,16 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
     /**
      * Default implementation that does nothing (no-op) and exists as a convenience mechanism in case subclasses
      * wish to override it to implement realm-specific logout logic for the given user account logging out.</p>
-     *
-     * <p>In a single-realm JSecurity configuration (most applications), the <code>principals</code> method
+     * <p/>
+     * In a single-realm JSecurity configuration (most applications), the <code>principals</code> method
      * argument will be the same as that which is contained in the <code>AuthenticationInfo</code> object returned by the
      * {@link #doGetAuthenticationInfo} method (that is, {@link AuthenticationInfo#getPrincipals info.getPrincipals()}).
-     *
-     * <p>In a multi-realm JSecurity configuration, the given <code>principals</code> method
+     * <p/>
+     * In a multi-realm JSecurity configuration, the given <code>principals</code> method
      * argument could contain principals returned by many realms.  Therefore the subclass implementation would need
-     * to know how to extract the principal(s) relevant to only itself and ignore other realms' principals.</p>
+     * to know how to extract the principal(s) relevant to only itself and ignore other realms' principals.  This is
+     * usually done by calling {@link PrincipalCollection#fromRealm(String) principals.fromRealm(name)},
+     * using the realm's own {@link org.jsecurity.realm.Realm#getName() name}.
      *
      * @param principals the application-specific Subject/user identifier that is logging out.
      */

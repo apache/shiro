@@ -25,8 +25,6 @@ import java.util.Set;
 
 /**
  * A collection of all principals associated with a corresponding {@link Subject Subject}.
- * <p/>
- * A <em>principal</em>
  *
  * @author Les Hazlewood
  * @since 0.9

@@ -18,8 +18,6 @@
  */
 package org.jsecurity.realm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 
@@ -34,11 +32,6 @@ import org.jsecurity.cache.CacheManagerAware;
 public abstract class CachingRealm implements Realm, CacheManagerAware {
 
     private static int INSTANCE_COUNT = 0;
-
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-    private static final Log log = LogFactory.getLog(CachingRealm.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

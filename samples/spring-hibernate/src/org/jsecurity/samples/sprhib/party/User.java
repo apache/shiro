@@ -43,8 +43,8 @@ import java.util.regex.Pattern;
  * in a 2nd-level cache when using JPA and/or Hibernate.  The hibernate xml configuration for this sample application
  * does in fact do this for your reference (see User.hbm.xml - the 'roles' declaration).</p>
  *
- * <p>If you ever decide not to use JSecurity, the only domain change should be to remove the
- * <code>AuthorizingAccount</code> interface declaration and its methods.</p>
+ * <p>If you ever decide not to use JSecurity, the only domain change would be to simply remove the
+ * <code>Account</code> interface declaration</p>
  *
  * @author Les Hazlewood
  */
@@ -360,7 +360,7 @@ public class User extends Person implements Account {
     }
 
     /* ===========
-       JSecurity AuthorizingAccount implementations below here.
+       JSecurity Account implementations below here.
        =========== */
     public PrincipalCollection getPrincipals() {
         //The realm name must match the name of the configured realm.
@@ -390,8 +390,8 @@ public class User extends Person implements Account {
 
     public Collection<Permission> getObjectPermissions() {
         Set<Permission> permissions = new HashSet<Permission>();
-        for( Role role : getUserRoles() ) {
-            permissions.addAll( role.getPermissions() );
+        for (Role role : getUserRoles()) {
+            permissions.addAll(role.getPermissions());
         }
         return permissions;
     }
