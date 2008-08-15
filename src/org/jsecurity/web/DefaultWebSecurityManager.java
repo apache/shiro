@@ -45,7 +45,7 @@ import java.util.Collection;
  */
 public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
-    private static final Log log = LogFactory.getLog(DefaultWebSecurityManager.class);    
+    private static final Log log = LogFactory.getLog(DefaultWebSecurityManager.class);
 
     public static final String HTTP_SESSION_MODE = "http";
     public static final String JSECURITY_SESSION_MODE = "jsecurity";
@@ -197,8 +197,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     public Subject createSubject() {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         return createSubject(request, response);
     }
 
@@ -230,8 +230,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     protected void bind(Subject subject) {
         super.bind(subject);
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         bind(subject, request, response);
     }
 

@@ -193,16 +193,16 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     }
 
     protected void rememberSerializedIdentity(byte[] serialized) {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         //base 64 encode it and store as a cookie:
         String base64 = Base64.encodeToString(serialized);
         getIdentityAttribute().storeValue(base64, request, response);
     }
 
     protected byte[] getSerializedRememberedIdentity() {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         String base64 = getIdentityAttribute().retrieveValue(request, response);
         if (base64 != null) {
             return Base64.decode(base64);
@@ -213,8 +213,8 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     }
 
     protected void forgetIdentity() {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
+        ServletRequest request = WebUtils.getRequiredServletRequest();
+        ServletResponse response = WebUtils.getRequiredServletResponse();
         getIdentityAttribute().removeValue(request, response);
     }
 }
