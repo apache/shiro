@@ -16,20 +16,19 @@
         <customNs />
       </configuration>
     </facet>
-    <facet type="web" name="jsecurity-quickstart">
+    <facet type="web" name="jsecurity-web">
       <configuration>
         <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/samples/quickstart/WEB-INF/web.xml" optional="false" version="2.5" />
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/samples/web/WEB-INF/web.xml" optional="false" version="2.5" />
         </descriptors>
         <webroots>
-          <root url="file://$MODULE_DIR$/samples/quickstart" relative="/" />
+          <root url="file://$MODULE_DIR$/samples/web" relative="/" />
         </webroots>
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/test" />
         </sourceRoots>
         <building>
-          <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/jsecurity-quickstart" />
+          <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/samples/web" />
           <setting name="EXPLODED_ENABLED" value="true" />
           <setting name="JAR_URL" value="file://$MODULE_DIR$/out/Quickstart Webapp.war" />
           <setting name="JAR_ENABLED" value="false" />
@@ -47,10 +46,6 @@
           <containerElement type="library" name="all-libs" level="project">
             <attribute name="method" value="0" />
             <attribute name="URI" value="&lt;N/A&gt;" />
-          </containerElement>
-          <containerElement type="library" name="quickstart-libs" level="project">
-            <attribute name="method" value="1" />
-            <attribute name="URI" value="/WEB-INF/lib" />
           </containerElement>
           <containerElement type="library" level="module">
             <attribute name="method" value="0" />
