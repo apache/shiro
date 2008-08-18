@@ -18,7 +18,6 @@
  */
 package org.jsecurity.mgt;
 
-import org.jsecurity.SecurityUtils;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.session.Session;
@@ -43,7 +42,6 @@ public class DefaultSecurityManagerTest {
     public void setup() {
         sm = new DefaultSecurityManager();
         ThreadContext.clear();
-        SecurityUtils.setSecurityManager(sm);
     }
 
     @After
@@ -54,7 +52,7 @@ public class DefaultSecurityManagerTest {
 
     @Test
     public void testDefaultConfig() {
-        Subject subject = SecurityUtils.getSubject();
+        Subject subject = sm.getSubject();
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
@@ -71,23 +69,5 @@ public class DefaultSecurityManagerTest {
         assertNull(subject.getSession(false));
         assertNull(subject.getPrincipal());
         assertNull(subject.getPrincipals());
-    }
-
-    @Test
-    public void testSingleRealmConfig() {
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-
-        subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
-        assertTrue(subject.isAuthenticated());
-        assertTrue(subject.hasRole("schwartz"));
-        assertTrue(subject.hasRole("goodguy"));
-
-        session.setAttribute("someKey", "aValue");
-        assertEquals(session.getAttribute("someKey"), "aValue");
-
-        subject.logout();
-
-        assertNull(subject.getSession(false));
     }
 }
