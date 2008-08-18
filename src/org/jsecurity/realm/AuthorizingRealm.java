@@ -101,7 +101,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     ============================================*/
     public void setAuthorizationCache(Cache authorizationCache) {
         this.authorizationCache = authorizationCache;
-        if ( this.authorizationCache != null ) {
+        if (this.authorizationCache != null) {
             afterAuthorizationCacheSet();
         }
     }
@@ -150,6 +150,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * </ol>
      */
     public final void init() {
+        initAuthorizationCache();
+    }
+
+    protected void afterCacheManagerSet() {
+        this.authorizationCache = null;
         initAuthorizationCache();
     }
 

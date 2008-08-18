@@ -135,7 +135,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
             SimpleRole role = getRole(rolename);
             if (role == null) {
                 role = new SimpleRole(rolename);
-                addRole(role);
+                add(role);
             }
 
             Set<Permission> permissions = PermissionUtils.resolveDelimitedPermissions(value, getPermissionResolver());
@@ -176,8 +176,8 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
                     account.addRole(rolename);
 
                     SimpleRole role = getRole(rolename);
-                    if( role != null ) {
-                        account.addObjectPermissions( role.getPermissions() );
+                    if (role != null) {
+                        account.addObjectPermissions(role.getPermissions());
                     }
                 }
             } else {
