@@ -174,9 +174,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
             throw ae;
         }
 
-        if (log.isInfoEnabled()) {
-            log.info("Authentication successful for token [" + token + "].  " +
-                    "Returned account: [" + info + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Authentication successful for token [" + token + "].  Returned account: [" + info + "]");
         }
 
         notifySuccess(token, info);

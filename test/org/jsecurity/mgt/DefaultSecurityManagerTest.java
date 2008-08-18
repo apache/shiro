@@ -18,16 +18,16 @@
  */
 package org.jsecurity.mgt;
 
+import org.jsecurity.SecurityUtils;
+import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * TODO class JavaDoc
@@ -43,6 +43,7 @@ public class DefaultSecurityManagerTest {
     public void setup() {
         sm = new DefaultSecurityManager();
         ThreadContext.clear();
+        SecurityUtils.setSecurityManager(sm);
     }
 
     @After
@@ -53,19 +54,40 @@ public class DefaultSecurityManagerTest {
 
     @Test
     public void testDefaultConfig() {
-        InetAddress localhost = null;
-        try {
-            localhost = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        Subject subject = sm.getSubject();
-        subject.login(new UsernamePasswordToken("guest", "guest", localhost));
-        assert subject.isAuthenticated();
-        assert "guest".equals(subject.getPrincipal());
-        assert subject.hasRole("guest");
+        Subject subject = SecurityUtils.getSubject();
+
+        AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
+        subject.login(token);
+        assertTrue(subject.isAuthenticated());
+        assertTrue("guest".equals(subject.getPrincipal()));
+        assertTrue(subject.hasRole("guest"));
+
         Session session = subject.getSession();
         session.setAttribute("key", "value");
+        assertEquals(session.getAttribute("key"), "value");
+
         subject.logout();
+
+        assertNull(subject.getSession(false));
+        assertNull(subject.getPrincipal());
+        assertNull(subject.getPrincipals());
+    }
+
+    @Test
+    public void testSingleRealmConfig() {
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+
+        subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
+        assertTrue(subject.isAuthenticated());
+        assertTrue(subject.hasRole("schwartz"));
+        assertTrue(subject.hasRole("goodguy"));
+
+        session.setAttribute("someKey", "aValue");
+        assertEquals(session.getAttribute("someKey"), "aValue");
+
+        subject.logout();
+
+        assertNull(subject.getSession(false));
     }
 }

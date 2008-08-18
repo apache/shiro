@@ -19,9 +19,12 @@
 package org.jsecurity.realm;
 
 import org.jsecurity.authc.*;
+import org.jsecurity.authz.AuthorizationInfo;
+import org.jsecurity.authz.SimpleAuthorizingAccount;
 import org.jsecurity.authz.SimpleRole;
 import org.jsecurity.cache.Cache;
 import org.jsecurity.subject.PrincipalCollection;
+import org.jsecurity.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +53,11 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         init();
     }
 
+    public SimpleAccountRealm(String name) {
+        setName(name);
+        init();
+    }
+
     public void afterAuthorizationCacheSet() {
         initRoleCache();
         afterRoleCacheSet();
@@ -71,6 +79,20 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         return (SimpleAccount) getAuthorizationCache().get(username);
     }
 
+    public boolean accountExists(String username) {
+        return getUser(username) != null;
+    }
+
+    public void addAccount(String username, String password) {
+        addAccount(username, password, null);
+    }
+
+    public void addAccount(String username, String password, String... roles) {
+        Set<String> roleNames = CollectionUtils.asSet(roles);
+        SimpleAccount account = new SimpleAuthorizingAccount(username, password, getName(), roleNames, null);
+        add(account);
+    }
+
     protected void add(SimpleAccount account) {
         Object key = getAuthorizationCacheKey(account.getPrincipals());
         getAuthorizationCache().put(key, account);
@@ -80,7 +102,15 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         return roles.get(rolename);
     }
 
-    protected void addRole(SimpleRole role) {
+    public boolean roleExists(String name) {
+        return getRole(name) != null;
+    }
+
+    public void addRole(String name) {
+        add(new SimpleRole(name));
+    }
+
+    protected void add(SimpleRole role) {
         roles.put(role.getName(), role);
     }
 
@@ -119,7 +149,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         return account;
     }
 
-    protected Account doGetAuthorizationInfo(PrincipalCollection principals) {
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         return (Account) getAuthorizationCache().get(getAuthorizationCacheKey(principals));
     }
 
