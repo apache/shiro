@@ -20,8 +20,8 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC1" status="milestone"
-          publication="20080425000800">
+    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC2" status="release-candidate"
+          publication="200808142340">
         <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
         <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
         <description homepage="http://www.jsecurity.org">
