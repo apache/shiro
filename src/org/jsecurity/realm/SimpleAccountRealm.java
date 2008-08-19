@@ -84,7 +84,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     public void addAccount(String username, String password) {
-        addAccount(username, password, null);
+        addAccount(username, password, (String[])null);
     }
 
     public void addAccount(String username, String password, String... roles) {
