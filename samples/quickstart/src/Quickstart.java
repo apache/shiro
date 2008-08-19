@@ -36,6 +36,8 @@ public class Quickstart {
 
     public static void main( String[] args ) {
 
+        System.out.println("Name: " + javax.xml.parsers.SAXParserFactory.newInstance().getClass().getName());
+
         //Most applications would never instantiate a SecurityManager directly - you would instead configure
         //JSecurity in web.xml or a container (JEE, Spring, etc).
         //But, since this is a quickstart, we just want you to get a feel for how the JSecurity API looks, so this
