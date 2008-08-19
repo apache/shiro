@@ -279,6 +279,10 @@
         <ant dir="samples/quickstart"/>
     </target>
 
+    <target name="samples.quickstart.run" depends="samples.quickstart" description="Runs the sample quickstart class">
+        <ant dir="samples/quickstart" target="run"/>
+    </target>
+
     <target name="samples.web" depends="jar" description="Creates the JSecurity sample webapp .war">
         <ant dir="samples/web"/>
     </target>

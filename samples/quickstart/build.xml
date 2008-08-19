@@ -41,6 +41,19 @@
         <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
     </path>
 
+    <path id="run.path">
+        <pathelement location="${classes.dir}"/>
+        <fileset dir="${lib.dir}/samples">
+            <include name="ehcache.jar"/>
+            <!-- needed by ehcache, not jsecurity: -->
+            <include name="backport-util-concurrent.jar"/>
+            <include name="commons-logging.jar"/>
+            <!-- Not normally needed, but mac os x JDK needs it for some reason: -->
+            <include name="xercesImpl.jar"/>
+        </fileset>
+        <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
+    </path>
+
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
@@ -90,5 +103,11 @@
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
     <target name="dist" depends="compile,jar" description="Creates the quickstart .jar"/>
+
+    <target name="run" depends="dist" description="Runs the simple quickstart class">
+
+        <java classname="Quickstart" classpathref="run.path"/>
+
+    </target>
 
 </project>
