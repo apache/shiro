@@ -20,7 +20,7 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-RC2" status="release-candidate"
+    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0-snapshot" status="snapshot"
           publication="200808142340">
         <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
         <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
@@ -70,8 +70,8 @@
         <dependency org="taglibs" name="standard" rev="1.1.2" transitive="false" conf="samples"/>
         <dependency org="hsqldb" name="hsqldb" rev="1.8.0.7" transitive="false" conf="samples"/>
         <dependency org="org.hibernate" name="hibernate" rev="3.2.6.ga" conf="samples">
-            <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so
-we have to download it explictly from another location (we use Geronimo's version) -->
+            <!-- JTA 1.0.1b jar is not allowed in the Maven repo because of Sun's binary license, so we have to
+                 download it explictly from another location (we use Geronimo's version) -->
             <exclude org="javax.transaction"/>
         </dependency>
         <dependency org="org.apache.geronimo.specs" name="geronimo-jta_1.0.1B_spec" rev="1.1.1" conf="samples"/>

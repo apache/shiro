@@ -18,195 +18,195 @@
   ~ under the License.
   -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "../../../lib/docbook/docbook-dtd/docbookx.dtd"
-  [
-    <!ENTITY preface       SYSTEM "preface.xml">
-    <!ENTITY terminology    SYSTEM "terminology.xml">
-    <!ENTITY overview      SYSTEM "overview.xml">
-    <!ENTITY security-manager  SYSTEM "security-manager.xml">
-    <!ENTITY realms             SYSTEM "realms.xml">
-    <!ENTITY authentication    SYSTEM "authentication.xml">
-    <!ENTITY authorization    SYSTEM "authorization.xml">
-    <!ENTITY sessions      SYSTEM "sessions.xml">
-    <!ENTITY cryptography    SYSTEM "cryptography.xml">
-    <!ENTITY caching            SYSTEM "caching.xml">
-    <!ENTITY web-support    SYSTEM "web-support.xml">
-    <!ENTITY web-filter         SYSTEM "web-filter.xml">
-    <!ENTITY web-taglibs        SYSTEM "web-taglibs.xml">
-    <!ENTITY jsecurity.tld      SYSTEM "jsecurity.tld.xml">
-    ]>
+        [
+                <!ENTITY preface       SYSTEM "preface.xml">
+                <!ENTITY terminology    SYSTEM "terminology.xml">
+                <!ENTITY overview      SYSTEM "overview.xml">
+                <!ENTITY security-manager  SYSTEM "security-manager.xml">
+                <!ENTITY realms             SYSTEM "realms.xml">
+                <!ENTITY authentication    SYSTEM "authentication.xml">
+                <!ENTITY authorization    SYSTEM "authorization.xml">
+                <!ENTITY sessions      SYSTEM "sessions.xml">
+                <!ENTITY cryptography    SYSTEM "cryptography.xml">
+                <!ENTITY caching            SYSTEM "caching.xml">
+                <!ENTITY web-support    SYSTEM "web-support.xml">
+                <!ENTITY web-filter         SYSTEM "web-filter.xml">
+                <!ENTITY web-taglibs        SYSTEM "web-taglibs.xml">
+                <!ENTITY jsecurity.tld      SYSTEM "jsecurity.tld.xml">
+                ]>
 <book>
-  <bookinfo>
-    <title>JSecurity Reference Documentation</title>
-    <releaseinfo>0.9.0-RC2</releaseinfo>
-    <authorgroup>
-      <author>
-        <firstname>Les</firstname>
-        <surname>Hazlewood</surname>
-      </author>
-    </authorgroup>
-    <legalnotice>
-      <para>Copies of this document may be made for your own use and for
-        distribution to others, provided that you do not charge any
-        fee for such copies and further provided that each copy
-        contains this Copyright Notice, whether distributed in print
-        or electronically.
-      </para>
-    </legalnotice>
-  </bookinfo>
-  <!-- front matter -->
-  <toc/>
-  &preface;
-  &terminology;
-  &overview;
-  <part id="jsecurity-core">
-    <title>JSecurity Core</title>
-    <partintro id="jsecurity-core-intro">
-      <para>
-        This initial part of the reference documentation covers
-        JSecurity's core architectural components that support
-        functionality in all environments, from
-        constrained Applets and cell phones to full n-tier
-        enterprise clustered applications.
-      </para>
-      <para>
-        Most important among these are the Subject and
-        SecurityManager components. These are then followed
-        by comprehensive coverage of the supporting compnents
-        responsiple for handling logging in, called an
-        <interfacename>Authenticator</interfacename>
-        and access control, called an
-        <interfacename>Authorizer</interfacename>.
-      </para>
-      <para>
-        Coverage of Spring's integration with AspectJ (currently
-        the richest - in terms of features - and certainly most
-        mature AOP implementation in the Java enterprise space)
-        is also provided.
-      </para>
-      <para>
-        Finally, the adoption of the test-driven-development (TDD)
-        approach to software development is certainly advocated by
-        the Spring team, and so coverage of Spring's support for
-        integration testing is covered (alongside best practices for
-        unit testing). The Spring team have found that the correct
-        use of IoC certainly does make both unit and integration
-        testing easier (in that the presence of setter methods and
-        appropriate constructors on classes makes them
-        easier to wire together on a test without having to set up
-        service locator registries and suchlike)... the chapter
-        dedicated solely to testing will hopefully convince you of
-        this as well.
-      </para>
-      <itemizedlist>
-        <listitem>
-          <para>
-            <xref linkend="security-manager"/>
-          </para>
-        </listitem>
-        <!-- <listitem>
-            <para><xref linkend="authentication"/></para>
-          </listitem>
-          <listitem>
-            <para><xref linkend="authorization"/></para>
-          </listitem>
-          <listitem>
-            <para><xref linkend="realms"/></para>
-          </listitem>
-          <listitem>
-            <para><xref linkend="sessions"/></para>
-          </listitem>
-          <listitem>
-            <para><xref linkend="cryptography"/></para>
-          </listitem> -->
-      </itemizedlist>
-    </partintro>
-    &security-manager;
-    &authentication;
-    &authorization;
-    &realms;
-    &sessions;
-    &cryptography;
-  </part>
-  <!-- <part id="jsecurity-web">
-    <title>Web Support</title>
-    <partintro id="jsecurity-web-intro">
-      <para>
-        This part of the reference documentation covers
-                JSecurity's web support, specifically using JSecurity in
-                a Servlet container for web-based applications.
-      </para>
-      <para>
-        The Spring Framework's own web framework,
-        <link linkend="mvc">Spring Web MVC</link>, is covered in
-        the first couple of chapters. A number of the remaining
-        chapters in this part of the reference documentation are
-        concerned with the Spring Framework's integration with
-        other web technologies, such as <link linkend="struts">Struts</link>
-        and <link linkend="jsf">JSF</link> (to name but two).
-      </para>
-      <para>
-        This section concludes with coverage of Spring's MVC
-        <link linkend="portlet">portlet framework</link>.
-      </para>
-      <itemizedlist>
-        <listitem>
-          <para><xref linkend="mvc"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="view"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="web-integration"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="portlet"/></para>
-        </listitem>
-      </itemizedlist>
-    </partintro>
-    &mvc;
-    &view;
-    &web-integration;
-    &portlet;
-  </part>
-  <part id="jsecurity-integration">
-    <title>Integration</title>
-    <partintro id="jsecurity-integration-intro">
-      <para>
-        This part of the reference documentation covers JSecurity's
-                integration with other technologies that might be
-                useful in application deployments.
-      </para>
-      <itemizedlist>
-        <listitem>
-          <para><xref linkend="remoting"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="ejb"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="jms"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="jmx"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="cci"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="mail"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="scheduling"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="dynamic-language"/></para>
-        </listitem>
-        <listitem>
-          <para><xref linkend="metadata"/></para>
-        </listitem>
-      </itemizedlist>
-    </partintro>
-  </part> -->
-  <!-- back matter -->
-  &jsecurity.tld;
+    <bookinfo>
+        <title>JSecurity Reference Documentation</title>
+        <releaseinfo>0.9.0-snapshot</releaseinfo>
+        <authorgroup>
+            <author>
+                <firstname>Les</firstname>
+                <surname>Hazlewood</surname>
+            </author>
+        </authorgroup>
+        <legalnotice>
+            <para>Copies of this document may be made for your own use and for
+                distribution to others, provided that you do not charge any
+                fee for such copies and further provided that each copy
+                contains this Copyright Notice, whether distributed in print
+                or electronically.
+            </para>
+        </legalnotice>
+    </bookinfo>
+    <!-- front matter -->
+    <toc/>
+    &preface;
+    &terminology;
+    &overview;
+    <part id="jsecurity-core">
+        <title>JSecurity Core</title>
+        <partintro id="jsecurity-core-intro">
+            <para>
+                This initial part of the reference documentation covers
+                JSecurity's core architectural components that support
+                functionality in all environments, from
+                constrained Applets and cell phones to full n-tier
+                enterprise clustered applications.
+            </para>
+            <para>
+                Most important among these are the Subject and
+                SecurityManager components. These are then followed
+                by comprehensive coverage of the supporting compnents
+                responsiple for handling logging in, called an
+                <interfacename>Authenticator</interfacename>
+                and access control, called an
+                <interfacename>Authorizer</interfacename>.
+            </para>
+            <para>
+                Coverage of Spring's integration with AspectJ (currently
+                the richest - in terms of features - and certainly most
+                mature AOP implementation in the Java enterprise space)
+                is also provided.
+            </para>
+            <para>
+                Finally, the adoption of the test-driven-development (TDD)
+                approach to software development is certainly advocated by
+                the Spring team, and so coverage of Spring's support for
+                integration testing is covered (alongside best practices for
+                unit testing). The Spring team have found that the correct
+                use of IoC certainly does make both unit and integration
+                testing easier (in that the presence of setter methods and
+                appropriate constructors on classes makes them
+                easier to wire together on a test without having to set up
+                service locator registries and suchlike)... the chapter
+                dedicated solely to testing will hopefully convince you of
+                this as well.
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <xref linkend="security-manager"/>
+                    </para>
+                </listitem>
+                <!-- <listitem>
+                 <para><xref linkend="authentication"/></para>
+               </listitem>
+               <listitem>
+                 <para><xref linkend="authorization"/></para>
+               </listitem>
+               <listitem>
+                 <para><xref linkend="realms"/></para>
+               </listitem>
+               <listitem>
+                 <para><xref linkend="sessions"/></para>
+               </listitem>
+               <listitem>
+                 <para><xref linkend="cryptography"/></para>
+               </listitem> -->
+            </itemizedlist>
+        </partintro>
+        &security-manager;
+        &authentication;
+        &authorization;
+        &realms;
+        &sessions;
+        &cryptography;
+    </part>
+    <!-- <part id="jsecurity-web">
+     <title>Web Support</title>
+     <partintro id="jsecurity-web-intro">
+       <para>
+         This part of the reference documentation covers
+                 JSecurity's web support, specifically using JSecurity in
+                 a Servlet container for web-based applications.
+       </para>
+       <para>
+         The Spring Framework's own web framework,
+         <link linkend="mvc">Spring Web MVC</link>, is covered in
+         the first couple of chapters. A number of the remaining
+         chapters in this part of the reference documentation are
+         concerned with the Spring Framework's integration with
+         other web technologies, such as <link linkend="struts">Struts</link>
+         and <link linkend="jsf">JSF</link> (to name but two).
+       </para>
+       <para>
+         This section concludes with coverage of Spring's MVC
+         <link linkend="portlet">portlet framework</link>.
+       </para>
+       <itemizedlist>
+         <listitem>
+           <para><xref linkend="mvc"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="view"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="web-integration"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="portlet"/></para>
+         </listitem>
+       </itemizedlist>
+     </partintro>
+     &mvc;
+     &view;
+     &web-integration;
+     &portlet;
+   </part>
+   <part id="jsecurity-integration">
+     <title>Integration</title>
+     <partintro id="jsecurity-integration-intro">
+       <para>
+         This part of the reference documentation covers JSecurity's
+                 integration with other technologies that might be
+                 useful in application deployments.
+       </para>
+       <itemizedlist>
+         <listitem>
+           <para><xref linkend="remoting"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="ejb"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="jms"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="jmx"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="cci"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="mail"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="scheduling"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="dynamic-language"/></para>
+         </listitem>
+         <listitem>
+           <para><xref linkend="metadata"/></para>
+         </listitem>
+       </itemizedlist>
+     </partintro>
+   </part> -->
+    <!-- back matter -->
+    &jsecurity.tld;
 </book>
