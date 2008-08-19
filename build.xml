@@ -135,6 +135,7 @@
  -  =================================================================== -->
     <target name="clean" description="Cleans the entire project">
         <delete dir="${build.dir}"/>
+        <ant dir="samples/quickstart" target="clean"/>
         <ant dir="samples/spring" target="clean"/>
     </target>
 
@@ -274,6 +275,10 @@
         </copy>
     </target>
 
+    <target name="samples.quickstart" depends="jar" description="Creates the quickstart .jar">
+        <ant dir="samples/quickstart"/>
+    </target>
+
     <target name="samples.web" depends="jar" description="Creates the JSecurity sample webapp .war">
         <ant dir="samples/web"/>
     </target>
@@ -287,7 +292,7 @@
         <ant dir="samples/spring-hibernate"/>
     </target>
 
-    <target name="samples" depends="samples.web,samples.spring,samples.spring-hibernate"
+    <target name="samples" depends="samples.quickstart,samples.web,samples.spring,samples.spring-hibernate"
             description="Creates all sample applications"/>
 
     <target name="samples.web.deploy" depends="samples.web"

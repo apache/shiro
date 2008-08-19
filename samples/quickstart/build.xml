@@ -17,50 +17,42 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="spring-sample" default="dist">
+<project name="quickstart" default="dist">
 
     <property name="root.base.dir" value="../.."/>
 
     <!-- "extend" parent build definition -->
     <import file="../../build.xml"/>
 
-    <property name="module.name" value="spring"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
+    <property name="module.name" value="quickstart"/>
+    <property name="module.base.dir" value="${root.base.dir}/samples/quickstart"/>
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
 
     <!-- Module properties -->
+    <property name="module.name" value="quickstart"/>
     <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
     <property name="dist.war" value="${root.base.dir}/build/${dist.war.name}"/>
 
     <property name="dist.dir" value="${build.dir}/dist"/>
 
-    <!-- Deployment properties for development -->
-    <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
-
     <path id="compile.path">
         <fileset dir="${lib.dir}/samples" includes="**/*.jar"/>
+        <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
     </path>
 
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
-    <target name="clean" depends="clean-deploy-dir" description="Cleans the Spring build">
+    <target name="clean" description="Cleans the quickstart build">
         <echo message="cleaning ${module.name} module"/>
-        <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
-    </target>
-
-    <target name="clean-deploy-dir" description="Removes the deployed war directory">
-        <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
-        <delete file="${deploy.dir}/${dist.war.name}"/>
-        <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
     </target>
 
     <!-- ===================================================================
  -  compile - compile Java source files
  -  =================================================================== -->
-    <target name="compile" description="Compiles the Spring sample app classes">
+    <target name="compile" description="Compiles the quickstart classes">
 
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${classes.dir}/META-INF"/>
@@ -72,7 +64,6 @@
                failonerror="true"
                classpathref="compile.path">
             <src path="${src.dir}"/>
-            <classpath location="${root.dist.dir}/jsecurity.jar"/>
         </javac>
 
     </target>
@@ -81,17 +72,10 @@
 
         <mkdir dir="${dist.dir}"/>
 
-        <jar jarfile="${dist.dir}/jsecurity-spring-sample.jar">
+        <jar jarfile="${dist.dir}/jsecurity-quickstart.jar">
             <fileset dir="${classes.dir}">
                 <include name="**/*.class"/>
-            </fileset>
-            <fileset dir="${etc.dir}">
-                <include name="*.xml"/>
-                <include name="*.properties"/>
-            </fileset>
-            <!-- grabbing logo from webroot-->
-            <fileset dir="webroot">
-                <include name="logo.png"/>
+                <include name="**/*.properties"/>
             </fileset>
             <manifest>
                 <attribute name="Implementation-Title"
@@ -105,43 +89,6 @@
     <!-- ===================================================================
  -  dist - create distribution war (which will be used for deployment)
  -  =================================================================== -->
-    <target name="dist" depends="compile,jar" description="Creates the sample Spring application .war">
-
-        <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
-        <mkdir dir="${webstart.lib.dir}"/>
-        <copy todir="${webstart.lib.dir}" preservelastmodified="true" flatten="true">
-            <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
-            <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
-            <fileset dir="${lib.dir}/samples" includes="spring.jar"/>
-            <fileset dir="${lib.dir}/samples" includes="commons-*.jar"/>
-        </copy>
-        <signjar keystore="${etc.dir}/jsecurity-sample.jks"
-                 alias="jsecurity"
-                 keypass="jsecurity"
-                 storepass="jsecurity">
-            <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
-        </signjar>
-
-        <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
-            <lib dir="${lib.dir}/samples" includes="*.jar" excludes="servlet-api.jar"/>
-            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
-            <webinf dir="${basedir}" includes="resources/**"/>
-            <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
-
-            <lib dir="${dist.dir}" includes="*.jar"/>
-
-            <!-- Jar for webstart application -->
-            <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
-        </war>
-    </target>
-
-    <target name="quick-deploy" description="Blindly deploys the sample Spring .war to Tomcat">
-        <echo>Deploying application to Tomcat...</echo>
-        <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
-        <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
-    </target>
-
-    <target name="deploy" depends="dist,quick-deploy"
-            description="Creates and deploys the sample Spring .war to Tomcat"/>
+    <target name="dist" depends="compile,jar" description="Creates the quickstart .jar"/>
 
 </project>
