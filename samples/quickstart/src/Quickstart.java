@@ -20,7 +20,7 @@
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
-import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.authc.*;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
@@ -35,8 +35,6 @@ public class Quickstart {
 
 
     public static void main( String[] args ) {
-
-        System.out.println("Name: " + javax.xml.parsers.SAXParserFactory.newInstance().getClass().getName());
 
         //Most applications would never instantiate a SecurityManager directly - you would instead configure
         //JSecurity in web.xml or a container (JEE, Spring, etc).
@@ -61,7 +59,7 @@ public class Quickstart {
         session.setAttribute( "someKey", "aValue" );
         String value = (String)session.getAttribute("someKey");
         if ( value.equals( "aValue" ) ) {
-            System.out.println("Retrieved the correct value!");
+            log.info( "Retrieved the correct value! [" + value + "]" );
         }
 
 
@@ -69,29 +67,46 @@ public class Quickstart {
         if ( !currentUser.isAuthenticated() ) {
             UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa" );
             token.setRememberMe(true);
-            currentUser.login(token);
+            try {
+                currentUser.login(token);
+            } catch (UnknownAccountException uae) {
+                log.info( "There is no user with username of " + token.getPrincipal() );
+            } catch ( IncorrectCredentialsException ice ) {
+                log.info("Password for account " + token.getPrincipal() + " was incorrect!");
+            } catch ( LockedAccountException lae ) {
+                log.info("The account for username " + token.getPrincipal() + " is locked.  " +
+                         "Please contact your administrator to unlock it.");
+            }
+            // ... catch more exceptions here (maybe custom ones specific to your application?
+            catch ( AuthenticationException ae ) {
+                //unexpected condition?  error?
+            }
         }
+
+        //say who they are:
+        //print their identifying principal (in this case, a username):
+        log.info( "User [" + currentUser.getPrincipal() + "] logged in successfully." );
 
         //test a role:
         if ( currentUser.hasRole( "schwartz" ) ) {
-            System.out.println("May the Schwartz be with you!" );
+            log.info("May the Schwartz be with you!" );
         } else {
-            System.out.println("A mere mortal.");
+            log.info( "Hello, mere mortal." );
         }
 
         //test a typed permission (not instance-level)
         if ( currentUser.isPermitted( "lightsaber:weild" ) ) {
-            System.out.println("You may use a lightsaber ring.  Use it wisely.");
+            log.info("You may use a lightsaber ring.  Use it wisely.");
         } else {
-            System.out.println("Sorry, lightsaber rings are for schwartz masters only.");
+            log.info("Sorry, lightsaber rings are for schwartz masters only.");
         }
 
         //a (very powerful) Instance Level permission:
         if ( currentUser.isPermitted( "winnebago:drive:eagle5" ) ) {
-            System.out.println("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  " +
-                    "Here are the keys - have fun!");
+            log.info("You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  " +
+                     "Here are the keys - have fun!");
         } else {
-            System.out.println("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
+            log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
         }
 
         //all done - log out!
