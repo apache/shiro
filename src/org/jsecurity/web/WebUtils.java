@@ -336,7 +336,7 @@ public class WebUtils {
      *
      * <pre>
      * if (servletRequest != null) {
-     *     ThreadContext.put( SERVLET_REQUEST_KEY, session );
+     *     ThreadContext.put( SERVLET_REQUEST_KEY, servletRequest );
      * }</pre>
      *
      * @param servletRequest the ServletRequest object to bind to the thread.  If the argument is null, nothing will be done.
@@ -399,7 +399,7 @@ public class WebUtils {
      *
      * <pre>
      * if (servletResponse != null) {
-     *     ThreadContext.put( SERVLET_RESPONSE_KEY, session );
+     *     ThreadContext.put( SERVLET_RESPONSE_KEY, servletResponse );
      * }</pre>
      *
      * @param servletResponse the ServletResponse object to bind to the thread.  If the argument is null, nothing will be done.
