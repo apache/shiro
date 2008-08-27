@@ -37,10 +37,19 @@ import org.jsecurity.crypto.hash.Sha1Hash;
  */
 public class Sha1CredentialsMatcher extends HashedCredentialsMatcher {
 
+    /**
+     * Creates a new <em>uninitialized</em> {@link Sha1Hash Sha1Hash} instance, without it's byte array set.
+     *
+     * @return a new <em>uninitialized</em> {@link Sha1Hash Sha1Hash} instance, without it's byte array set.
+     */
     protected AbstractHash newHashInstance() {
         return new Sha1Hash();
     }
 
+    /**
+     * This implementation merely returns
+     * <code>new {@link Sha1Hash#Sha1Hash(Object, Object, int) Sha1Hash(credentials,salt,hashIterations)}</code>.
+     */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         return new Sha1Hash(credentials, salt, hashIterations);
     }

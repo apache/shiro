@@ -31,10 +31,19 @@ import org.jsecurity.crypto.hash.Sha256Hash;
  */
 public class Sha256CredentialsMatcher extends HashedCredentialsMatcher {
 
+    /**
+     * Creates a new <em>uninitialized</em> {@link Sha256Hash Sha256Hash} instance, without it's byte array set.
+     *
+     * @return a new <em>uninitialized</em> {@link Sha256Hash Sha256Hash} instance, without it's byte array set.
+     */
     protected AbstractHash newHashInstance() {
         return new Sha256Hash();
     }
 
+    /**
+     * This implementation merely returns
+     * <code>new {@link Sha256Hash#Sha256Hash(Object, Object, int) Sha256Hash(credentials,salt,hashIterations)}</code>.
+     */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         return new Sha256Hash(credentials, salt, hashIterations);
     }

@@ -18,8 +18,6 @@
  */
 package org.jsecurity.aop;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.SecurityUtils;
 import org.jsecurity.subject.Subject;
 
@@ -33,11 +31,19 @@ import org.jsecurity.subject.Subject;
  */
 public abstract class MethodInterceptorSupport implements MethodInterceptor {
 
-    private static final Log log = LogFactory.getLog(MethodInterceptorSupport.class);
-
+    /**
+     * Default no-argument constructor for subclasses.
+     */
     public MethodInterceptorSupport() {
     }
 
+    /**
+     * Returns the {@link Subject Subject} associated with the currently-executing code.
+     * <p/>
+     * This default implementation merely calls <code>{@link SecurityUtils#getSubject SecurityUtils.getSubject()}</code>.
+     *
+     * @return the {@link Subject Subject} associated with the currently-executing code.
+     */
     protected Subject getSubject() {
         return SecurityUtils.getSubject();
     }

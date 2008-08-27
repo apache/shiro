@@ -30,13 +30,29 @@ import java.lang.reflect.Method;
  */
 public abstract class AnnotationMethodInterceptor extends MethodInterceptorSupport {
 
+    /**
+     * The type of annotation this interceptor will inspect on methods at runtime.
+     */
     protected Class<? extends Annotation> annotationClass;
 
-    public AnnotationMethodInterceptor( Class<? extends Annotation> annotationClass ) {
+    /**
+     * Constructs an <code>AnnotationMethodInterceptor</code> who processes annotations of the
+     * specified type.  Immediately calls {@link #setAnnotationClass(Class)}.
+     *
+     * @param annotationClass the type of annotation this interceptor will process.
+     */
+    public AnnotationMethodInterceptor(Class<? extends Annotation> annotationClass) {
         setAnnotationClass(annotationClass);
     }
 
-    protected void setAnnotationClass(Class<? extends Annotation> annotationClass) {
+    /**
+     * Sets the type of annotation this interceptor will inspect on methods at runtime.
+     *
+     * @param annotationClass the type of annotation this interceptor will process.
+     * @throws IllegalArgumentException if the argument is <code>null</code>.
+     */
+    protected void setAnnotationClass(Class<? extends Annotation> annotationClass)
+            throws IllegalArgumentException {
         if (annotationClass == null) {
             String msg = "annotationClass argument cannot be null";
             throw new IllegalArgumentException(msg);
@@ -44,15 +60,45 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
         this.annotationClass = annotationClass;
     }
 
+    /**
+     * Returns the type of annotation this interceptor inspects on methods at runtime.
+     *
+     * @return the type of annotation this interceptor inspects on methods at runtime.
+     */
     public Class<? extends Annotation> getAnnotationClass() {
         return this.annotationClass;
     }
 
+    /**
+     * Returns <code>true</code> if this interceptor supports, that is, should inspect, the specified
+     * <code>MethodInvocation</code>, <code>false</code> otherwise.
+     * <p/>
+     * The default implementation simply does the following:
+     * <p/>
+     * <code>return {@link #getAnnotation(MethodInvocation) getAnnotation(mi)} != null</code>
+     *
+     * @param mi the <code>MethodInvocation</code> for the method being invoked.
+     * @return <code>true</code> if this interceptor supports, that is, should inspect, the specified
+     *         <code>MethodInvocation</code>, <code>false</code> otherwise.
+     */
     public boolean supports(MethodInvocation mi) {
         return getAnnotation(mi) != null;
     }
 
-    protected Annotation getAnnotation(MethodInvocation mi) {
+    /**
+     * Returns the Annotation that this interceptor will process for the specified method invocation.
+     * <p/>
+     * The default implementation merely gets the underlying {@link Method Method} from the supplied
+     * <code>MethodInvocation</code> argument, and returns:
+     * <p/>
+     * <code>mi.{@link Method#getAnnotation(Class) getAnnotation}({@link #getAnnotationClass() getAnnotationClass()});</code>
+     *
+     * @param mi the MethodInvocation wrapping the Method from which the Annotation will be acquired.
+     * @return the Annotation that this interceptor will process for the specified method invocation.
+     * @throws IllegalArgumentException if the supplied <code>MethodInvocation</code> argument is <code>null</code> or
+     *                                  its underlying <code>Method</code> is <code>null</code>.
+     */
+    protected Annotation getAnnotation(MethodInvocation mi) throws IllegalArgumentException {
         if (mi == null) {
             throw new IllegalArgumentException("method argument cannot be null");
         }
@@ -64,7 +110,6 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
 
         }
         return m.getAnnotation(getAnnotationClass());
-
     }
 
 }

@@ -27,9 +27,13 @@ import java.util.Collection;
 
 /**
  * {@link ModularAuthenticationStrategy} implementation that only accepts the account data from
- * the first successfully consulted Realm and ignores all subsequent realms.
+ * the first successfully consulted Realm and ignores all subsequent realms.  This is slightly
+ * different behavior than
+ * {@link org.jsecurity.authc.pam.AtLeastOneSuccessfulModularAuthenticationStrategy AtLeastOneSuccessfulModularAuthenticationStrategy},
+ * so please review both to see which one meets your needs better.
  *
  * @author Les Hazlewood
+ * @see org.jsecurity.authc.pam.AtLeastOneSuccessfulModularAuthenticationStrategy AtLeastOneSuccessfulModularAuthenticationStrategy
  * @since 0.9
  */
 public class FirstSuccessfulAuthenticationStrategy extends AbstractAuthenticationStrategy {

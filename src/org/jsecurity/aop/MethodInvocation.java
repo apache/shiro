@@ -39,16 +39,16 @@ public interface MethodInvocation {
     Object proceed() throws Throwable;
 
     /**
-     * The method that is being invoked.
+     * Returns the actual {@link Method Method} to be invoked.
      *
-     * @return a {@link Method} object representing the invoked method.
+     * @return the actual {@link Method Method} to be invoked.
      */
     Method getMethod();
 
     /**
-     * The arguments given to the method invocation.
+     * Returns the (possibly null) arguments to be supplied to the method invocation.
      *
-     * @return the arguments passed to the method invocation.
+     * @return the (possibly null) arguments to be supplied to the method invocation.
      */
     Object[] getArguments();
 
