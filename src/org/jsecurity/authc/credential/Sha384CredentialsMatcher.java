@@ -31,10 +31,19 @@ import org.jsecurity.crypto.hash.Sha384Hash;
  */
 public class Sha384CredentialsMatcher extends HashedCredentialsMatcher {
 
+    /**
+     * Creates a new <em>uninitialized</em> {@link Sha384Hash Sha384Hash} instance, without it's byte array set.
+     *
+     * @return a new <em>uninitialized</em> {@link Sha384Hash Sha384Hash} instance, without it's byte array set.
+     */
     protected AbstractHash newHashInstance() {
         return new Sha384Hash();
     }
 
+    /**
+     * This implementation merely returns
+     * <code>new {@link Sha384Hash#Sha384Hash(Object, Object, int) Sha384Hash(credentials,salt,hashIterations)}</code>.
+     */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         return new Sha384Hash(credentials, salt, hashIterations);
     }

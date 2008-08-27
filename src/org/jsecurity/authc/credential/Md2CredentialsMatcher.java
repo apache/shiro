@@ -37,10 +37,19 @@ import org.jsecurity.crypto.hash.Md2Hash;
  */
 public class Md2CredentialsMatcher extends HashedCredentialsMatcher {
 
+    /**
+     * Creates a new <em>uninitialized</em> {@link Md2Hash Md2Hash} instance, without it's byte array set.
+     *
+     * @return a new <em>uninitialized</em> {@link Md2Hash Md2Hash} instance, without it's byte array set.
+     */
     protected AbstractHash newHashInstance() {
         return new Md2Hash();
     }
 
+    /**
+     * This implementation merely returns
+     * <code>new {@link Md2Hash#Md2Hash(Object, Object, int) Md2Hash(credentials,salt,hashIterations)}</code>.
+     */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         return new Md2Hash(credentials, salt, hashIterations);
     }

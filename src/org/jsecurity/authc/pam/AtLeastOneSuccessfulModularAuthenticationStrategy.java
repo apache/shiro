@@ -41,6 +41,12 @@ import org.jsecurity.authc.AuthenticationToken;
  */
 public class AtLeastOneSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
+    /**
+     * Ensures that the <code>aggregate</code> method argument is not <code>null</code> and
+     * <code>aggregate.{@link org.jsecurity.authc.AuthenticationInfo#getPrincipals() getPrincipals()}</code>
+     * <code>null</code>, and if either is <code>null</code>, throws an AuthenticationException to indicate
+     * that none of the realms authenticated successfully.
+     */
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
         //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
