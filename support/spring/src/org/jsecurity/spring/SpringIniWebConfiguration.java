@@ -35,21 +35,27 @@ import java.util.Map;
 
 /**
  * <p>JSecurity configuration that relies on Spring to define and initialize the JSecurity SecurityManager
- * instance (and all of its dependencies) and makes it avaialble to this filter by performing a Spring bean
- * lookup.  The URL/filter behavior is still loaded according to the behavior of the parent class
+ * instance (and all of its dependencies) and makes it available to the JSecurityFilter by performing a Spring bean
+ * lookup.  The URL/filter definitions are still .ini based and loaded according to the behavior of the parent class
  * {@link org.jsecurity.web.config.IniWebConfiguration}</p>
- *
- * <p>The behavior used by this filter is as follow:
+ * <p/>
+ * That is, this class is offers a hybrid means of configuring JSecurity in Spring apps deployed in a web container:
+ * Spring XML config for the SecurityManager and its dependencies (realms, etc), and .ini format for configuring
+ * the filters and the url chains in web.xml, which many people like to maintain separation of concerns:
+ * the web/filter/url config stays in web.xml, whereas the SecurityManager config (really a business-tier concern)
+ * stays in Spring .xml files.
+ * <p/>
+ * The behavior used to acquire the JSecurity <code>SecurityManager</code> is as follows:
  * <ol>
  * <li>If a 'securityManagerBeanName' init-param is set, retrieve that sec manager from Spring.</li>
- * <li>if not, look for beans of type {@link SecurityManager} - if there is one instance, use that.
+ * <li>If not, look for beans of type {@link SecurityManager} - if there is one instance, use that.
  * If more than one exist, use the one named "securityManager".  If none of them are named "securityManager"
  * throw an exception that says you have to set the init-param to specify the bean name.</li>
  * <li>if no beans of type {@link SecurityManager}, look for any beans of type {@link Realm}.
- * If some are found, create a security manager by calling
+ * If some are found, create a default security manager by calling
  * {@link org.jsecurity.web.config.IniWebConfiguration#createSecurityManager(java.util.Map) super.createSecurityManager(Map)}
- * and set the Realms on the default security manager returned.</li>
- * <li>if none of the above, throw an exception that explains the options.</li>
+ * and set the Realms on that SecurityManager instance.</li>
+ * <li>If none of the above, throw an exception that explains the options.</li>
  * <ol>
  * </p>
  *
@@ -57,12 +63,12 @@ import java.util.Map;
  * @see IniWebConfiguration
  * @since 0.9
  */
-public class SpringWebConfiguration extends IniWebConfiguration {
+public class SpringIniWebConfiguration extends IniWebConfiguration {
 
     public static final String SECURITY_MANAGER_BEAN_NAME_PARAM_NAME = "securityManagerBeanName";
     public static final String DEFAULT_SECURITY_MANAGER_BEAN_ID = "securityManager";
 
-    private static final Log log = LogFactory.getLog(SpringWebConfiguration.class);    
+    private static final Log log = LogFactory.getLog(SpringIniWebConfiguration.class);
 
     protected String securityManagerBeanName;
 
@@ -74,7 +80,7 @@ public class SpringWebConfiguration extends IniWebConfiguration {
         this.securityManagerBeanName = securityManagerBeanName;
     }
 
-    public SpringWebConfiguration() {
+    public SpringIniWebConfiguration() {
     }
 
     @Override
