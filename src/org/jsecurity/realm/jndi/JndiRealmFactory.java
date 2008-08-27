@@ -105,8 +105,8 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
                     getClass().getName() + " to locate Realms.";
             throw new IllegalStateException(msg);
         }
-        List<Realm> realms = new ArrayList<Realm>(this.jndiNames.size());
-        for (String name : this.jndiNames) {
+        List<Realm> realms = new ArrayList<Realm>(jndiNames.size());
+        for (String name : jndiNames) {
             try {
                 Realm realm = (Realm) lookup(name, Realm.class);
                 realms.add(realm);
