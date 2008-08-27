@@ -43,7 +43,7 @@ public class SpringJSecurityFilterTest {
         expect(mockConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null);
         expect(mockConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null);
         expect(mockConfig.getInitParameter(JSecurityFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null);
-        expect(mockConfig.getInitParameter(SpringWebConfiguration.SECURITY_MANAGER_BEAN_NAME_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(SpringIniWebConfiguration.SECURITY_MANAGER_BEAN_NAME_PARAM_NAME)).andReturn(null);
 
         ServletContext mockContext = createMock(ServletContext.class);
         WebApplicationContext appCtx = createMock(WebApplicationContext.class);
