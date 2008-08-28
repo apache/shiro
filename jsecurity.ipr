@@ -280,6 +280,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/jsecurity.iml" filepath="$PROJECT_DIR$/jsecurity.iml" />
       <module fileurl="file://$PROJECT_DIR$/samples/quickstart/quickstart.iml" filepath="$PROJECT_DIR$/samples/quickstart/quickstart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/samples/standalone/standalone.iml" filepath="$PROJECT_DIR$/samples/standalone/standalone.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK">
