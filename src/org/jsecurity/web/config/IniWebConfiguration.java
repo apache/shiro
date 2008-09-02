@@ -43,14 +43,15 @@ import javax.servlet.*;
 import java.util.*;
 
 /**
- * TODO - Class JavaDoc
+ * A <code>WebConfiguration</code> that supports configuration via the
+ * <a href="http://en.wikipedia.org/wiki/INI_file">.ini format</a>.
  *
  * @author Les Hazlewood
  * @since Jun 1, 2008 11:02:44 PM
  */
 public class IniWebConfiguration extends IniConfiguration implements WebConfiguration {
 
-    private static final Log log = LogFactory.getLog(IniWebConfiguration.class);
+    private static final transient Log log = LogFactory.getLog(IniWebConfiguration.class);
 
     public static final String FILTERS = "filters";
     public static final String URLS = "urls";
@@ -65,14 +66,60 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
         chains = new LinkedHashMap<String, List<Filter>>();
     }
 
+    /**
+     * Returns the <code>PatternMatcher</code> used when determining if an incoming request's path
+     * matches a configured filter chain path in the <code>[urls]</code> section.  Unless overridden, the
+     * default implementation is an {@link org.jsecurity.util.AntPathMatcher AntPathMatcher}.
+     *
+     * @return the <code>PatternMatcher</code> used when determining if an incoming request's path
+     *         matches a configured filter chain path in the <code>[urls]</code> section.
+     * @since 0.9.0 final
+     */
+    public PatternMatcher getPathMatcher() {
+        return pathMatcher;
+    }
+
+    /**
+     * Sets the <code>PatternMatcher</code> used when determining if an incoming request's path
+     * matches a configured filter chain path in the <code>[urls]</code> section.  Unless overridden, the
+     * default implementation is an {@link org.jsecurity.util.AntPathMatcher AntPathMatcher}.
+     *
+     * @param pathMatcher the <code>PatternMatcher</code> used when determining if an incoming request's path
+     *                    matches a configured filter chain path in the <code>[urls]</code> section.
+     * @since 0.9.0 final
+     */
+    public void setPathMatcher(PatternMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+    }
+
+    /**
+     * Returns the <code>FilterConfig</code> provided by the Servlet container at webapp startup.
+     *
+     * @return the <code>FilterConfig</code> provided by the Servlet container at webapp startup.
+     */
     public FilterConfig getFilterConfig() {
         return filterConfig;
     }
 
+    /**
+     * Sets the <code>FilterConfig</code> provided by the Servlet container at webapp startup.
+     *
+     * @param filterConfig the <code>FilterConfig</code> provided by the Servlet container at webapp startup.
+     */
     public void setFilterConfig(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
     }
 
+    /**
+     * This implementation:
+     * <ol>
+     * <li>
+     *
+     * @param request
+     * @param response
+     * @param originalChain
+     * @return
+     */
     public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
         if (this.chains == null || this.chains.isEmpty()) {
             return null;
@@ -88,10 +135,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
                     log.trace("Matched path [" + path + "] for requestURI [" + requestURI + "].  " +
                             "Utilizing corresponding filter chain...");
                 }
-                List<Filter> pathFilters = this.chains.get(path);
-                if (pathFilters != null && !pathFilters.isEmpty()) {
-                    return new FilterChainWrapper(originalChain, pathFilters);
-                }
+                return getChain(path, originalChain);
             }
         }
 
@@ -99,36 +143,101 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     }
 
     /**
-     * Returns <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
+     * Returns the <code>FilterChain</code> to use for the specified application path, or <code>null</code> if the
+     * original <code>FilterChain</code> should be used.
+     * <p/>
+     * The default implementation simply calls <code>this.chains.get(chainUrl)</code> to acquire the configured
+     * <code>List&lt;Filter&gt;</code> filter chain.  If that configured chain is non-null and not empty, it is
+     * returned, otherwise <code>null</code> is returned to indicate that the <code>originalChain</code> should be
+     * used instead.
+     *
+     * @param chainUrl      the configured filter chain url
+     * @param originalChain the original FilterChain given by the Servlet container.
+     * @return the <code>FilterChain</code> to use for the specified application path, or <code>null</code> if the
+     *         original <code>FilterChain</code> should be used.
+     */
+    protected FilterChain getChain(String chainUrl, FilterChain originalChain) {
+        List<Filter> pathFilters = this.chains.get(chainUrl);
+        if (pathFilters != null && !pathFilters.isEmpty()) {
+            return createChain(pathFilters, originalChain);
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new FilterChain based on the specified configured url filter chain and original chain.
+     * <p/>
+     * The input arguments are expected be be non-null and non-empty, since these conditions are accounted for in the
+     * {@link #getChain(String, javax.servlet.FilterChain) getChain(chainUrl,originalChain)} implementation that
+     * calls this method.
+     * <p/>
+     * The default implementation merely returns
+     * <code>new {@link org.jsecurity.web.servlet.FilterChainWrapper FilterChainWrapper(filters, originalChain)}</code>,
+     * and can be overridden by subclasses for custom creation.
+     *
+     * @param filters       the configured filter chain for the incoming request application path
+     * @param originalChain the original FilterChain given by the Servlet container.
+     * @return a new FilterChain based on the specified configured url filter chain and original chain.
+     */
+    protected FilterChain createChain(List<Filter> filters, FilterChain originalChain) {
+        return new FilterChainWrapper(originalChain, filters);
+    }
+
+    /**
+     * Returns <code>true</code> if an incoming request's path (the <code>path</code> argument)
+     * matches a configured filter chain path in the <code>[urls]</code> section (the <code>pattern</code> argument),
      * <code>false</code> otherwise.
      * <p/>
      * Simply delegates to
-     * <b><code>this.pathMatcher.{@link org.jsecurity.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
+     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.jsecurity.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
      * but can be overridden by subclasses for custom matching behavior.
      *
      * @param pattern the pattern to match against
      * @param path    the value to match with the specified <code>pattern</code>
-     * @return <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
+     * @return <code>true</code> if the request <code>path</code> matches the specified filter chain url <code>pattern</code>,
      *         <code>false</code> otherwise.
      */
     protected boolean pathMatches(String pattern, String path) {
+        PatternMatcher pathMatcher = getPathMatcher();
         return pathMatcher.matches(pattern, path);
     }
 
+    /**
+     * Merely returns
+     * <code>WebUtils.{@link WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest) getPathWithinApplication(request)}</code>
+     * and can be overridden by subclasses for custom request-to-application-path resolution behavior.
+     *
+     * @param request the incoming <code>ServletRequest</code>
+     * @return the request's path within the appliation.
+     */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
     }
 
+    /**
+     * Creates a new, uninitialized <code>SecurityManager</code> instance that will be used to build up
+     * the JSecurity environment for the web application.
+     * <p/>
+     * The default implementation simply returns
+     * <code>new {@link org.jsecurity.web.DefaultWebSecurityManager DefaultWebSecurityManager()};</code>
+     *
+     * @return a new, uninitialized <code>SecurityManager</code> instance that will be used to build up
+     *         the JSecurity environment for the web application.
+     */
     protected RealmSecurityManager newSecurityManagerInstance() {
         return new DefaultWebSecurityManager();
     }
 
     /**
-     * 1.  First builds the filter instances.
-     * 2.  Applys url mappings to these filters
-     * 3.  Creates a collection of Filter chains (list of Filter objects) that will be used by the JSecurityFilter.
+     * This implementation:
+     * <ol>
+     * <li>First builds the filter instances by processing the [filters] section</li>
+     * <li>Builds a collection filter chains according to the definitions in the [urls] section</li>
+     * <li>Initializes the filter instances in the order in which they were defined</li>
+     * </ol>
      *
-     * @param sections
+     * @param sections the configured .ini sections where the key is the section name (without [] brackets)
+     *                 and the value is the key/value pairs inside that section.
      */
     protected void afterSecurityManagerSet(Map<String, Map<String, String>> sections) {
         //filters section:

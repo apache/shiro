@@ -26,7 +26,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * TODO - Class JavaDoc
+ * A <code>WebConfiguration</code> configures JSecurity components in a web-enabled application.
+ * <p/>
+ * In addition to enabling configuration of a <code>SecurityManager</code>, as required by the parent interface,
+ * it also allows configuration of arbitrary filter chains to be executed for any given request or URI/URL.
+ * <p/>
+ * This is incredibly powerful and <em>much</em> more flexible than normal servlet filter definitions or Servlet
+ * security: it allows arbitrary filter chains to be defined per URL in a much more concise and easy to read manner,
+ * and even allows filter chains to be dynamically resolved or construtected at runtime if the underlying implementation
+ * supports it.
  *
  * @author Les Hazlewood
  * @since Jun 1, 2008 11:13:32 PM
