@@ -118,11 +118,44 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
     public Serializable create(Session session) {
         Serializable sessionId = doCreate(session);
         verifySessionId(sessionId);
-        Cache cache = getActiveSessionsCacheLazy();
-        if (cache != null) {
-            cache.put(sessionId, session);
-        }
+        cacheValidSession(session, sessionId);
         return sessionId;
+    }
+
+    protected Session getCachedSession(Serializable sessionId) {
+        Session cached = null;
+        if (sessionId != null) {
+            Cache cache = getActiveSessionsCacheLazy();
+            if (cache != null) {
+                cached = getCachedSession(sessionId, cache);
+            }
+        }
+        return cached;
+    }
+
+    protected Session getCachedSession(Serializable sessionId, Cache cache) {
+        return (Session) cache.get(sessionId);
+    }
+
+    protected void cacheValidSession(Session session, Serializable sessionId) {
+        if (session == null || sessionId == null) {
+            return;
+        }
+
+        Cache cache = getActiveSessionsCacheLazy();
+        if (cache == null) {
+            return;
+        }
+
+        if (session instanceof ValidatingSession && !((ValidatingSession) session).isValid()) {
+            uncache(session);
+        } else {
+            cache(session, sessionId, cache);
+        }
+    }
+
+    protected void cache(Session session, Serializable sessionId, Cache cache) {
+        cache.put(sessionId, session);
     }
 
     /**
@@ -174,22 +207,13 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      * @throws UnknownSessionException if the id specified does not correspond to any session in the cache or EIS.
      */
     public Session readSession(Serializable sessionId) throws UnknownSessionException {
-        Session s = null;
 
-        Cache cache = getActiveSessionsCacheLazy();
-        if (cache != null) {
-            s = (Session) cache.get(sessionId);
-        }
+        Session s = getCachedSession(sessionId);
 
         if (s == null) {
             s = doReadSession(sessionId);
-            if (cache != null && s != null) {
-                if ((s instanceof ValidatingSession) && ((ValidatingSession) s).isValid()) {
-                    //only put it in the cache if it is valid
-                    cache.put(sessionId, s);
-                } else {
-                    cache.put(sessionId, s);
-                }
+            if (s != null) {
+                cacheValidSession(s, sessionId);
             }
         }
 
@@ -223,22 +247,8 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      *                                 identifier of {@link Session#getId() session.getId()}
      */
     public void update(Session session) throws UnknownSessionException {
-
         doUpdate(session);
-
-        Cache cache = getActiveSessionsCacheLazy();
-        Serializable id = session.getId();
-
-        if (session instanceof ValidatingSession && !((ValidatingSession) session).isValid()) {
-            if (cache != null) {
-                cache.remove(id);
-            }
-            return;
-        }
-
-        if (cache != null) {
-            cache.put(id, session);
-        }
+        cacheValidSession(session, session.getId());
     }
 
     /**
@@ -255,12 +265,8 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      * @param session the session to remove from caches and permanently delete from the EIS.
      */
     public void delete(Session session) {
-        Serializable id = session.getId();
         doDelete(session);
-        Cache cache = getActiveSessionsCacheLazy();
-        if (cache != null) {
-            cache.remove(id);
-        }
+        uncache(session);
     }
 
     /**
@@ -269,6 +275,20 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      * @param session the session instance to permanently delete from the EIS.
      */
     protected abstract void doDelete(Session session);
+
+    protected void uncache(Session session) {
+        if (session == null) {
+            return;
+        }
+        Serializable id = session.getId();
+        if (id == null) {
+            return;
+        }
+        Cache cache = getActiveSessionsCacheLazy();
+        if (cache != null) {
+            cache.remove(id);
+        }
+    }
 
     /**
      * Returns all active sessions in the system.
