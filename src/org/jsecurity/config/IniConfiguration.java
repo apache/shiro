@@ -35,13 +35,15 @@ import java.io.Reader;
 import java.util.*;
 
 /**
+ * A Configuration based on the <a href="http://en.wikipedia.org/wiki/INI_file">.ini format</a>.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
  */
 public class IniConfiguration extends TextConfiguration {
 
-    private static final Log log = LogFactory.getLog(IniConfiguration.class);    
+    private static final Log log = LogFactory.getLog(IniConfiguration.class);
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:jsecurity.ini";
 
