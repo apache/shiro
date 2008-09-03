@@ -309,9 +309,14 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
      */
     protected void clearCachedAuthorizationInfo(PrincipalCollection principals) {
-        Object key = getAuthorizationCacheKey(principals);
+        if ( principals == null ) {
+            return;
+        }
+
         Cache cache = getAuthorizationCache();
-        if (key != null && cache != null) {
+        //cache instance will be non-null if caching is enabled:
+        if (cache != null) {
+            Object key = getAuthorizationCacheKey(principals);
             cache.remove(key);
         }
     }
@@ -607,11 +612,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @param principals the application-specific Subject/user identifier.
      */
     public void onLogout(PrincipalCollection principals) {
-        Cache cache = getAuthorizationCache();
-        //cache instance will be non-null if caching is enabled:
-        if (cache != null && principals != null) {
-            Object key = getAuthorizationCacheKey(principals);
-            cache.remove(key);
-        }
+        clearCachedAuthorizationInfo(principals);
     }
 }
