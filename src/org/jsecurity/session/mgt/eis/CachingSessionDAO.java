@@ -64,7 +64,6 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         this.cacheManager = cacheManager;
         //force cache reload:
         this.activeSessions = null;
-        getActiveSessionsCacheLazy();
     }
 
     /**

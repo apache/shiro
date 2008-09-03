@@ -17,23 +17,18 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="quickstart" default="dist">
+<project name="standalone" default="dist">
 
     <property name="root.base.dir" value="../.."/>
 
     <!-- "extend" parent build definition -->
     <import file="../../build.xml"/>
 
-    <property name="module.name" value="quickstart"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/quickstart"/>
+    <!-- Module properties -->
+    <property name="module.name" value="standalone"/>
+    <property name="module.base.dir" value="${root.base.dir}/samples/${module.name}"/>
     <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
-
-    <!-- Module properties -->
-    <property name="module.name" value="quickstart"/>
-    <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
-    <property name="dist.war" value="${root.base.dir}/build/${dist.war.name}"/>
-
     <property name="dist.dir" value="${build.dir}/dist"/>
 
     <path id="compile.path">
@@ -45,6 +40,7 @@
         <pathelement location="${classes.dir}"/>
         <fileset dir="${lib.dir}/samples">
             <include name="ehcache.jar"/>
+            <include name="commons-beanutils.jar"/>
             <include name="commons-logging.jar"/>
             <include name="log4j.jar"/>
             <!-- needed by ehcache, not jsecurity: -->
@@ -58,7 +54,7 @@
     <!-- ===================================================================
   -  clean - clean all build remnants from this submodule
   - ==================================================================== -->
-    <target name="clean" description="Cleans the quickstart build">
+    <target name="clean" description="Cleans the ${module.name} build">
         <echo message="cleaning ${module.name} module"/>
         <delete dir="${build.dir}"/>
     </target>
@@ -66,7 +62,7 @@
     <!-- ===================================================================
  -  compile - compile Java source files
  -  =================================================================== -->
-    <target name="compile" description="Compiles the quickstart classes">
+    <target name="compile" description="Compiles the ${module.name} classes">
 
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${classes.dir}/META-INF"/>
@@ -89,7 +85,7 @@
 
     </target>
 
-    <target name="jar" depends="compile" description="Creates a .jar of the quickstart classes">
+    <target name="jar" depends="compile" description="Creates a .jar of the ${module.name} classes">
 
         <mkdir dir="${dist.dir}"/>
 
@@ -114,7 +110,7 @@
 
     <target name="run" depends="dist" description="Runs the simple ${module.name} class">
 
-        <java classname="Quickstart" classpathref="run.path"/>
+        <java classname="Standalone" classpathref="run.path"/>
 
     </target>
 
