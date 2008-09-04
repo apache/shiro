@@ -20,8 +20,7 @@
 
 <html>
 <head>
-    <meta http-equiv="Refresh" content="0; url=<c:url value="
-    /s/login"/>">
+    <meta http-equiv="Refresh" content="0; url=<c:url value="/s/login"/>">
 </head>
 <body>
 Please wait...
