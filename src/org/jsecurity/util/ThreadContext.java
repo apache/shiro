@@ -57,6 +57,14 @@ public abstract class ThreadContext {
                 protected Map<Object, Object> initialValue() {
                     return new HashMap<Object, Object>();
                 }
+
+                protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
+                    if (parentValue != null) {
+                        return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
+                    } else {
+                        return null;
+                    }
+                }
             };
 
     protected ThreadContext() {
