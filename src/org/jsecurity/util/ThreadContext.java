@@ -58,6 +58,13 @@ public abstract class ThreadContext {
                     return new HashMap<Object, Object>();
                 }
 
+                /**
+                 * This implementation was added to address a
+                 * <a href="http://jsecurity.markmail.org/search/?q=#query:+page:1+mid:xqi2yxurwmrpqrvj+state:results">
+                 * user-reported issue</a>.
+                 * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
+                 * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
+                 */
                 protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
                     if (parentValue != null) {
                         return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
