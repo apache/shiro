@@ -232,7 +232,35 @@
         </copy>
     </target>
 
-    <target name="compile" depends="compile.core, compile.web, compile.spring" description="Compiles all classes"/>
+    <target name="compile.quartz" depends="compile.core" description="Compiles Quartz support">
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               target="1.5"
+               failonerror="true">
+            <classpath refid="all.libs"/>
+            <classpath location="${classes.dir}"/>
+            <src path="${root.base.dir}/support/quartz/src"/>
+        </javac>
+
+        <copy todir="${classes.dir}" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/support/quartz/src">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${root.base.dir}/support/quartz/src">
+                <include name="**/*.tld"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile" depends="compile.core, compile.web, compile.spring, compile.quartz" description="Compiles all classes"/>
 
     <target name="jar" depends="compile" description="Create full JAR file with all JSecurity classes">
 
@@ -330,6 +358,7 @@
         <path id="javadocSrcPath">
             <pathelement location="${src.dir}"/>
             <pathelement location="${root.base.dir}/support/spring/src"/>
+            <pathelement location="${root.base.dir}/support/quartz/src"/>
         </path>
 
         <echo message="Generating JavaDoc API..."/>
@@ -371,6 +400,9 @@
                 <include name="org/jsecurity/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/spring/src">
+                <include name="org/jsecurity/**"/>
+            </packageset>
+            <packageset dir="${root.base.dir}/support/quartz/src">
                 <include name="org/jsecurity/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5/docs/api"/>
@@ -666,6 +698,9 @@ up the transform (feel free to fix this more elegantly)
                 <include name="org/jsecurity/**"/>
             </fileset>
             <fileset dir="${root.base.dir}/support/spring/src">
+                <include name="org/jsecurity/**"/>
+            </fileset>
+            <fileset dir="${root.base.dir}/support/quartz/src">
                 <include name="org/jsecurity/**"/>
             </fileset>
         </zip>
