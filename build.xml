@@ -157,7 +157,7 @@
                optimize="${compile.optimize}"
                target="1.5"
                failonerror="true"
-               srcdir=""
+               srcdir="${src.dir}"
                classpathref="all.libs"
                sourcepathref="core.src"/>
 
