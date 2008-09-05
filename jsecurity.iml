@@ -69,6 +69,7 @@
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/etc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/support/ehcache/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/quartz/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/test" isTestSource="true" />

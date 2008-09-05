@@ -93,6 +93,14 @@
     <property name="dist.jarName" value="${project.name}.jar"/>
     <property name="dist.jar" value="${root.dist.dir}/${dist.jarName}"/>
 
+    <path id="core.src">
+        <fileset dir="${src.dir}">
+            <include name="**"/>
+            <exclude name="org/jsecurity/web/**"/>
+        </fileset>
+        <pathelement location="${root.base.dir}/support/ehcache/src"/>
+    </path>
+
     <path id="all.libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -150,13 +158,16 @@
                target="1.5"
                failonerror="true"
                classpathref="all.libs"
-               sourcepath=""
-               srcdir="${src.dir}">
-            <exclude name="org/jsecurity/web/**"/>
-        </javac>
+               sourcepathref="core.src"/>
 
         <copy todir="${classes.dir}" preservelastmodified="true">
             <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+            <fileset dir="${root.base.dir}/support/ehcache/src">
                 <include name="**/*.properties"/>
                 <include name="**/*.xml"/>
                 <include name="**/*.dtd"/>
@@ -356,7 +367,7 @@
     <target name="javadoc" description="Generate Javadocs">
 
         <path id="javadocSrcPath">
-            <pathelement location="${src.dir}"/>
+            <path refid="core.src"/>
             <pathelement location="${root.base.dir}/support/spring/src"/>
             <pathelement location="${root.base.dir}/support/quartz/src"/>
         </path>
@@ -397,6 +408,9 @@
             </bottom>
             <classpath refid="all.libs"/>
             <packageset dir="${src.dir}">
+                <include name="org/jsecurity/**"/>
+            </packageset>
+            <packageset dir="${root.base.dir}/support/ehcache/src">
                 <include name="org/jsecurity/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/spring/src">
@@ -695,6 +709,9 @@ up the transform (feel free to fix this more elegantly)
         <delete file="${root.dist.dir}/${project.name}.src.zip"/>
         <zip destfile="${root.dist.dir}/${project.name}.src.zip">
             <fileset dir="${src.dir}">
+                <include name="org/jsecurity/**"/>
+            </fileset>
+            <fileset dir="${root.base.dir}/support/ehcache/src">
                 <include name="org/jsecurity/**"/>
             </fileset>
             <fileset dir="${root.base.dir}/support/spring/src">
