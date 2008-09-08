@@ -38,6 +38,9 @@ import java.beans.PropertyEditor;
  */
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
+    //TODO - complete JavaDoc
+    
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(CookieAttribute.class);    
 
     /**

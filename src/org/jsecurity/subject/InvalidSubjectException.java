@@ -28,18 +28,37 @@ package org.jsecurity.subject;
  */
 public class InvalidSubjectException extends SubjectException {
 
+    /**
+     * Creates a new InvalidSubjectException.
+     */
     public InvalidSubjectException() {
         super();
     }
 
+    /**
+     * Constructs a new InvalidSubjectException.
+     *
+     * @param message the reason for the exception
+     */
     public InvalidSubjectException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new InvalidSubjectException.
+     *
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public InvalidSubjectException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Constructs a new InvalidSubjectException.
+     *
+     * @param message the reason for the exception
+     * @param cause   the underlying Throwable that caused this exception to be thrown.
+     */
     public InvalidSubjectException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -43,6 +43,8 @@ import java.util.Map;
  */
 public class DefaultLdapContextFactory implements LdapContextFactory {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

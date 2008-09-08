@@ -29,6 +29,8 @@ import org.jsecurity.web.servlet.JSecurityFilter;
  */
 public class SpringJSecurityFilter extends JSecurityFilter {
 
+    //TODO - complete JavaDoc
+
     public SpringJSecurityFilter() {
         this.configClassName = SpringIniWebConfiguration.class.getName();
     }

@@ -55,6 +55,8 @@ import java.util.*;
  */
 public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, PermissionResolverAware {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

@@ -45,6 +45,8 @@ import java.io.IOException;
  */
 public class PrincipalTag extends SecureTag {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

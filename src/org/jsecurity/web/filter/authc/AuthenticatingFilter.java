@@ -37,6 +37,8 @@ import java.net.InetAddress;
  */
 public abstract class AuthenticatingFilter extends AuthenticationFilter {
 
+    //TODO - complete JavaDoc
+
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         AuthenticationToken token = createToken(request, response);
         if (token == null) {

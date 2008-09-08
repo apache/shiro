@@ -177,6 +177,8 @@ import java.net.InetAddress;
  */
 public class JSecurityFilter extends OncePerRequestFilter {
 
+    //TODO - complete JavaDoc
+
     public static final String SECURITY_MANAGER_CONTEXT_KEY = SecurityManager.class.getName() + "_SERVLET_CONTEXT_KEY";
 
     public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";

@@ -38,6 +38,8 @@ import java.util.*;
  */
 public class SimpleSession implements ValidatingSession, Serializable {
 
+    //TODO - complete JavaDoc
+
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;

@@ -39,6 +39,8 @@ import java.util.Collection;
  */
 public abstract class RealmSecurityManager extends CachingSecurityManager {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(RealmSecurityManager.class);    
 
     protected Collection<Realm> realms;

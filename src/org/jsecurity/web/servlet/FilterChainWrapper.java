@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class FilterChainWrapper implements FilterChain {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(FilterChainWrapper.class);
 
     private FilterChain orig;

@@ -35,6 +35,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceSessionValidationScheduler implements SessionValidationScheduler, Runnable {
 
+    //TODO - complete JavaDoc
+
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(ExecutorServiceSessionValidationScheduler.class);
 
     ValidatingSessionManager sessionManager;

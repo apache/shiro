@@ -54,6 +54,8 @@ import javax.naming.NamingException;
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

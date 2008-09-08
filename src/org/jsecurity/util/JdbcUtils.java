@@ -27,20 +27,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * <p>
  * A set of static helper methods for managing JDBC API objects.
- * </p>
- *
- * <p>
- * Some parts of this class were copied from the Spring Framework and then modified.
- * They were copied here to prevent Spring dependencies in the JSecurity core API.
- * </p>
+ * <p/>
+ * <em>Note:</em> Some parts of this class were copied from the Spring Framework and then modified.
+ * They were copied here to prevent Spring dependencies in the JSecurity core API.  The original license conditions
+ * (Apache 2.0) have been maintained.
  *
  * @author Jeremy Haile
  * @since 0.2
  */
 public class JdbcUtils {
 
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(JdbcUtils.class);
 
     /**

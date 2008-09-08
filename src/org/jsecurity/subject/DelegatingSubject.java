@@ -65,6 +65,8 @@ import java.util.List;
  */
 public class DelegatingSubject implements Subject {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(DelegatingSubject.class);
 
     protected PrincipalCollection principals = new SimplePrincipalCollection();

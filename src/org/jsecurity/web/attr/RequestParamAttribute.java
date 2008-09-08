@@ -30,6 +30,8 @@ import javax.servlet.ServletResponse;
  */
 public class RequestParamAttribute<T> extends AbstractWebAttribute<T> {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(RequestParamAttribute.class);    
 
     public RequestParamAttribute() {

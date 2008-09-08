@@ -60,6 +60,8 @@ import java.util.Set;
  */
 public class JdbcRealm extends AuthorizingRealm {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

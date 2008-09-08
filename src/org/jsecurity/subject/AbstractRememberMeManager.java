@@ -36,8 +36,8 @@ import org.jsecurity.io.Serializer;
  * Abstract implementation of the <code>RememberMeManager</code> interface that handles
  * {@link #setSerializer(org.jsecurity.io.Serializer) serialization} and
  * {@link #setCipher(org.jsecurity.crypto.Cipher) encryption} of the remembered user identity.
- *
- * <p>The remembered identity storage location is implementation-specific.
+ * <p/>
+ * The remembered identity storage location is implementation-specific.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -45,6 +45,9 @@ import org.jsecurity.io.Serializer;
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager {
 
+    //TODO - complete JavaDoc
+
+    /** private inner log instance. */
     private static final Log log = LogFactory.getLog(AbstractRememberMeManager.class);
 
     private Serializer serializer = new DefaultSerializer();

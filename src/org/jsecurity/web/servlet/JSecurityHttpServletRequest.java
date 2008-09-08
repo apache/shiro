@@ -37,6 +37,8 @@ import java.security.Principal;
 @SuppressWarnings({"deprecated", "deprecation"})
 public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
+    //TODO - complete JavaDoc
+
     //The following 7 constants support the JSecurity's implementation of the Servlet Specification
     public static final String COOKIE_SESSION_ID_SOURCE = "cookie";
     public static final String URL_SESSION_ID_SOURCE = "url";

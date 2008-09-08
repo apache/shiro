@@ -24,6 +24,8 @@ package org.jsecurity.web.tags;
  */
 public class LacksRoleTag extends RoleTag {
 
+    //TODO - complete JavaDoc
+
     public LacksRoleTag() {
     }
 

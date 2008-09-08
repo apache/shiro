@@ -39,6 +39,7 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public class EhCache implements Cache {
 
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(EhCache.class);
 
     /**

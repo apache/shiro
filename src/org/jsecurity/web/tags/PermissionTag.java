@@ -28,6 +28,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class PermissionTag extends SecureTag {
 
+    //TODO - complete JavaDoc
+
     private String name = null;
 
     public PermissionTag() {

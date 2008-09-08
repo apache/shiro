@@ -46,6 +46,8 @@ import java.io.InputStream;
  */
 public class EhCacheManager implements CacheManager, Initializable, Destroyable {
 
+    //TODO - complete JavaDoc
+
     public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
     public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
     public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;

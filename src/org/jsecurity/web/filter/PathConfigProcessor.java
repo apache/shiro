@@ -26,5 +26,7 @@ package org.jsecurity.web.filter;
  */
 public interface PathConfigProcessor {
 
+    //TODO - complete JavaDoc
+
     void processPathConfig(String path, String config);
 }

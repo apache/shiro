@@ -45,6 +45,8 @@ import java.util.*;
  */
 public class TextConfigurationRealm extends SimpleAccountRealm {
 
+    //TODO - complete JavaDoc
+
     private String userDefinitions;
     private String roleDefinitions;
 

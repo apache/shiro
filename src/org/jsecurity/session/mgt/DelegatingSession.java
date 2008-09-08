@@ -45,6 +45,8 @@ import java.util.Date;
  */
 public class DelegatingSession implements Session {
 
+    //TODO - complete JavaDoc
+
     private Serializable id = null;
 
     //cached fields to avoid a server-side method call if out-of-process:

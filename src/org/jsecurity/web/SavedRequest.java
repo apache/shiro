@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SavedRequest {
 
+    //TODO - complete JavaDoc
+
     private String method;
     private String queryString;
     private String requestURI;

@@ -32,6 +32,8 @@ import javax.servlet.ServletResponse;
  */
 public interface WebSessionManager extends SessionManager {
 
+    //TODO - complete JavaDoc
+
     Session getSession(ServletRequest request, ServletResponse response);
 
 }

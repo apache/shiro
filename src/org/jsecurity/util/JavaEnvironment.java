@@ -63,11 +63,20 @@ public abstract class JavaEnvironment {
      */
     public static final int JAVA_17 = 4;
 
-
+    /** The virtual machine version, i.e. <code>System.getProperty("java.version");</code>. */
     private static final String version;
 
+    /**
+     * The virtual machine <em>major</em> version.  For example, with a <code>version</code> of
+     * <code>1.5.6_10</code>, this would be <code>1.5</code>
+     */
     private static final int majorVersion;
 
+    /**
+     * Static code initialization block that sets the
+     * <code>version</code> and <code>majorVersion</code> Class constants
+     * upon initialization.
+     */
     static {
         version = System.getProperty("java.version");
         // version String should look like "1.4.2_10"

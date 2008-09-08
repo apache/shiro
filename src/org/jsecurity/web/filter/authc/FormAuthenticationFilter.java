@@ -59,6 +59,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FormAuthenticationFilter extends AuthenticatingFilter {
 
+    //TODO - complete JavaDoc
+
     public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "jsecLoginFailure";
 
     public static final String DEFAULT_USERNAME_PARAM = "username";

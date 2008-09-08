@@ -29,6 +29,8 @@ import java.util.*;
  */
 public class CollectionUtils {
 
+    //TODO - complete JavaDoc
+
     /**
      * Simple method that just returns <code>Collections.EMPTY_SET</code>.
      * This exists to enable type-safe empty collections so other locations in JSecurity code

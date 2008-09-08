@@ -74,6 +74,27 @@ public interface Subject {
     Object getPrincipal();
 
 
+    /**
+     * Returns all of this Subject's principals (identifying attributes) in the form of a <code>PrincipalCollection</code>.
+     * <p/>
+     * The word &quot;principals&quot; is nothing more than a fancy security term for identifying attributes associated
+     * with a Subject, aka, application user.  For example, user id, a surname (family/last name), given (first) name,
+     * social security number, nickname, username, etc, are all examples of a principal.
+     * <p/>
+     * This method returns all of the principals associated with the Subject, and it is expected that at least one of
+     * the principals contained within this collection represent an absolute unique identifier for the application.  
+     * User IDs, such a <code>Long</code> database primary key or UUID, or maybe a globally unique username or email
+     * address are all good candidates for such a unique identifier.  Non-unique things, such as surnames and
+     * given names, are often poor candidates.
+     * <p/>
+     * For convenience's sake, it is convention that the first principal in this collection be the application's
+     * &quot;primary&quot; principal.  That is, <code>getPrincipals().iterator().next();</code> would return this
+     * primary uniquely-identifying principal.
+     * In fact, this logic is often the implementation of the {@link #getPrincipal() getPrincipal()} method.
+     *
+     * @return all of this Subject's principals (identifying attributes).
+     * @see #getPrincipal()
+     */
     PrincipalCollection getPrincipals();
 
 

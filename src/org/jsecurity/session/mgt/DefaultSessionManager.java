@@ -41,6 +41,8 @@ import java.util.Date;
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(DefaultSessionManager.class);
 
     protected SessionDAO sessionDAO = new MemorySessionDAO();

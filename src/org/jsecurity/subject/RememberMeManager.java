@@ -31,6 +31,8 @@ import org.jsecurity.authc.AuthenticationToken;
  */
 public interface RememberMeManager {
 
+    //TODO - complete JavaDoc
+
     PrincipalCollection getRememberedPrincipals();
 
     void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info);

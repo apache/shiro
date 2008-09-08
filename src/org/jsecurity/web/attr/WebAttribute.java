@@ -32,6 +32,8 @@ import javax.servlet.ServletResponse;
  */
 public interface WebAttribute<T> {
 
+    //TODO - complete JavaDoc
+
     T retrieveValue(ServletRequest request, ServletResponse response);
 
     void storeValue(T value, ServletRequest request, ServletResponse response);

@@ -40,6 +40,8 @@ import java.io.IOException;
  */
 public abstract class AuthorizationFilter extends AccessControlFilter {
 
+    //TODO - complete JavaDoc
+
     private String unauthorizedUrl;
 
     protected String getUnauthorizedUrl() {

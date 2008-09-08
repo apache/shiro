@@ -37,6 +37,8 @@ import java.util.*;
 @SuppressWarnings({"deprecation"})
 public class JSecurityHttpSession implements HttpSession {
 
+    //TODO - complete JavaDoc
+
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
 
     private static final Enumeration EMPTY_ENUMERATION = new Enumeration() {

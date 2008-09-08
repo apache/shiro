@@ -38,6 +38,7 @@ import java.util.Set;
  */
 public class LdapUtils {
 
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(LdapUtils.class);
 
     /**

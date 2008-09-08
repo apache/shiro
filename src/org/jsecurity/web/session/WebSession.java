@@ -38,6 +38,8 @@ import java.util.Enumeration;
  */
 public class WebSession implements Session {
 
+    //TODO - complete JavaDoc
+
     private static final String INET_ADDRESS_SESSION_KEY = WebSession.class.getName() + "_INET_ADDRESS_SESSION_KEY";
     private static final String TOUCH_OBJECT_SESSION_KEY = WebSession.class.getName() + "_TOUCH_OBJECT_SESSION_KEY";
 
