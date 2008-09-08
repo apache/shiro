@@ -43,6 +43,7 @@ import java.io.IOException;
  */
 public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter, Nameable {
 
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(OncePerRequestFilter.class);
 
     /**
@@ -52,8 +53,10 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      */
     public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
 
+    /** FilterConfig provided by the Servlet container at startup. */
     protected FilterConfig filterConfig;
 
+    /** The name of this filter, unique within an application. */
     private String name;
 
     /**

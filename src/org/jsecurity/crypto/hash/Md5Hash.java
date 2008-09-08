@@ -33,6 +33,8 @@ import org.jsecurity.codec.Hex;
  */
 public class Md5Hash extends AbstractHash {
 
+    //TODO - complete JavaDoc
+
     public static final String ALGORITHM_NAME = "MD5";
 
     public Md5Hash() {

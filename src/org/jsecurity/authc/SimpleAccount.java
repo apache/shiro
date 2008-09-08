@@ -32,6 +32,8 @@ import java.util.Set;
  * contains principal and credential information as instance variables and exposes them
  * via getters and setters using standard JavaBean notation.
  *
+ * TODO - JavaDoc remaining methods.
+ *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.1

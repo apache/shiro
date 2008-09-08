@@ -28,6 +28,8 @@ import java.lang.annotation.Annotation;
  * An <tt>AnnotationMethodInterceptor</tt> that asserts the calling code is authorized to execute the method
  * before allowing the invocation to continue.
  *
+ * TODO - JavaDoc remaining methods.
+ *
  * @author Les Hazlewood
  * @since 0.1
  */

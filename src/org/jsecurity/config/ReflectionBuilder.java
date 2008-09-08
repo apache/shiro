@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
  * map of "property values".  Typically these come from the JSecurity INI configuration and are used
- * to construct or modify the SecurityManager and web-based security filters.
+ * to construct or modify the SecurityManager, its dependencies, and web-based security filters.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -41,6 +41,8 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public class ReflectionBuilder {
+
+    //TODO - complete JavaDoc
 
     private static final Log log = LogFactory.getLog(ReflectionBuilder.class);
 

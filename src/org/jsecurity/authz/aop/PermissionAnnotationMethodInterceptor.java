@@ -29,6 +29,7 @@ import org.jsecurity.util.PermissionUtils;
 import java.util.Set;
 
 /**
+ * TODO - class and method JavaDoc
  * @author Les Hazlewood
  * @since 0.9
  */

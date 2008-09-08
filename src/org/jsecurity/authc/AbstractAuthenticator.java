@@ -46,16 +46,22 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
+    /** Private class log instance. */
     private static final Log log = LogFactory.getLog(AbstractAuthenticator.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+    /** Any registered listeners that wish to know about things during the authentication process. */
     private Collection<AuthenticationListener> listeners;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    /**
+     * Default no-argument constructor. Ensures the internal
+     * {@link AuthenticationListener AuthenticationListener} collection is a non-null <code>ArrayList</code>.
+     */
     public AbstractAuthenticator() {
         listeners = new ArrayList<AuthenticationListener>();
     }
@@ -63,7 +69,6 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-
     public void setAuthenticationListeners(Collection<AuthenticationListener> listeners) {
         if (listeners == null) {
             this.listeners = new ArrayList<AuthenticationListener>();
@@ -83,28 +88,60 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /*-------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+    /**
+     * Notifies any registered {@link org.jsecurity.authc.AuthenticationListener AuthenticationListener}s that
+     * authentication was successful for the specified <code>token</code> which resulted in the specified
+     * <code>info</code>.  This implementation merely iterates over the internal <code>listeners</code> collection and
+     * calls {@link org.jsecurity.authc.AuthenticationListener#onSuccess(AuthenticationToken, AuthenticationInfo) onSuccess}
+     * for each.
+     * @param token the submitted <code>AuthenticationToken</code> that resulted in a successful authentication.
+     * @param info the returned <code>AuthenticationInfo</code> resulting from the successful authentication.
+     */
     protected void notifySuccess(AuthenticationToken token, AuthenticationInfo info) {
         for (AuthenticationListener listener : this.listeners) {
             listener.onSuccess(token, info);
         }
     }
 
+    /**
+     * Notifies any registered {@link org.jsecurity.authc.AuthenticationListener AuthenticationListener}s that
+     * authentication failed for the
+     * specified <code>token</code> which resulted in the specified <code>ae</code> exception.  This implementation merely
+     * iterates over the internal <code>listeners</code> collection and calls
+     * {@link org.jsecurity.authc.AuthenticationListener#onFailure(AuthenticationToken, AuthenticationException) onFailure}
+     * for each.
+     * @param token the submitted <code>AuthenticationToken</code> that resulted in a failed authentication.
+     * @param ae the resulting <code>AuthenticationException<code> that caused the authentication to fail.
+     */
     protected void notifyFailure(AuthenticationToken token, AuthenticationException ae) {
         for (AuthenticationListener listener : this.listeners) {
             listener.onFailure(token, ae);
         }
     }
 
+    /**
+     * Notifies any registered {@link org.jsecurity.authc.AuthenticationListener AuthenticationListener}s that a
+     * <code>Subject</code> has logged-out.  This implementation merely
+     * iterates over the internal <code>listeners</code> collection and calls
+     * {@link org.jsecurity.authc.AuthenticationListener#onLogout(org.jsecurity.subject.PrincipalCollection) onLogout}
+     * for each.
+     * @param principals the identifying principals of the <code>Subject</code>/account logging out.
+     */
     protected void notifyLogout(PrincipalCollection principals) {
         for (AuthenticationListener listener : this.listeners) {
             listener.onLogout(principals);
         }
     }
 
+    /**
+     * This implementation merely calls
+     * {@link #notifyLogout(org.jsecurity.subject.PrincipalCollection) notifyLogout} to allow any registered listeners
+     * to react to the logout.
+     * @param principals the identifying principals of the <code>Subject</code>/account logging out.
+     */
     public void onLogout(PrincipalCollection principals) {
         notifyLogout(principals);
     }
-
 
     /**
      * Implementation of the {@link Authenticator} interface that functions in the following manner:
@@ -112,11 +149,13 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * <ol>
      * <li>Calls template {@link #doAuthenticate doAuthenticate} method for subclass execution of the actual
      * authentication behavior.</li>
-     * <li>If an <tt>AuthenticationException</tt> is thrown during <tt>doAuthenticate</tt>, notify any registered
+     * <li>If an <tt>AuthenticationException</tt> is thrown during <tt>doAuthenticate</tt>,
+     * {@link #notifyFailure(AuthenticationToken, AuthenticationException) notify} any registered
      * {@link AuthenticationListener AuthenticationListener}s of the exception and then propogate the exception
      * for the caller to handle.</li>
-     * <li>If no exception is thrown (indicating a successful login), notify any registered
-     * <code>AuthenticationListener</code>s of the successful attempt.</li>
+     * <li>If no exception is thrown (indicating a successful login),
+     * {@link #notifySuccess(AuthenticationToken, AuthenticationInfo) notify} any registered
+     * {@link AuthenticationListener AuthenticationListener}s of the successful attempt.</li>
      * <li>Return the <tt>AuthenticationInfo</tt></li>
      * </ol>
      *

@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAware {
 
+    //TODO - JavaDoc methods
+
     protected Collection<Realm> realms;
 
     public ModularRealmAuthorizer() {

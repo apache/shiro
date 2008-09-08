@@ -43,6 +43,8 @@ import java.util.*;
  */
 public class IniConfiguration extends TextConfiguration {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(IniConfiguration.class);
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:jsecurity.ini";

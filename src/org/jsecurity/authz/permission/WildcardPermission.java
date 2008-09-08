@@ -106,6 +106,8 @@ import java.util.Set;
  */
 public class WildcardPermission implements Permission, Serializable {
 
+    //TODO - JavaDoc methods
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

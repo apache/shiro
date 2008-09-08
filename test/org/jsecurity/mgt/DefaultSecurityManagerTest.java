@@ -29,8 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * TODO class JavaDoc
- *
  * @author Les Hazlewood
  * @since 0.2
  */

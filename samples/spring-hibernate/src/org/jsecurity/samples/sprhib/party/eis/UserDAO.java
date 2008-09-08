@@ -22,8 +22,6 @@ import org.jsecurity.samples.sprhib.eis.PrimaryClassDAO;
 import org.jsecurity.samples.sprhib.party.User;
 
 /**
- * TODO class JavaDoc
- *
  * @author Les Hazlewood
  */
 public interface UserDAO extends PrimaryClassDAO {

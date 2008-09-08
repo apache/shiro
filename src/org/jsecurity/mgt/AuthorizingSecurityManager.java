@@ -86,6 +86,11 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
         this.authorizer = authorizer;
     }
 
+    /**
+     * Ensures that this instance's {@link Authorizer Authorizer} has been
+     * set, and if not, lazily creates one via the {@link #createAuthorizer() createAuthorizer()} method and then
+     * immediately sets it via the {@link #setAuthorizer(org.jsecurity.authz.Authorizer) setAuthorizer} method.  
+     */
     protected void ensureAuthorizer() {
         Authorizer authorizer = getAuthorizer();
         if (authorizer == null) {
@@ -94,6 +99,13 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
         }
     }
 
+    /**
+     * Creates a new {@link Authorizer Authorizer} instance to be used by this <code>AuthorizingSecurityManager</code> instance.
+     * <p/>
+     * This default implementation merely returns
+     * <code>new {@link org.jsecurity.authz.ModularRealmAuthorizer ModularRealmAuthorizer}()</code>
+     * @return a new {@link Authorizer Authorizer} instance to be used by this <code>AuthorizingSecurityManager</code> instance.
+     */
     protected Authorizer createAuthorizer() {
         return new ModularRealmAuthorizer();
     }
@@ -124,6 +136,18 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
         }
     }
 
+    /**
+     * First calls <code>super.realms</code> and then sets these same <code>Realm</code> objects on this instance's
+     * {@link Authorizer Authorizer}.
+     * <p/>
+     * The setting on the Authorizer will only occur if it is an instance of
+     * {@link org.jsecurity.authz.ModularRealmAuthorizer ModularRealmAuthorizer}, that is:
+     * <pre>       Authorizer authz = getAuthorizer();
+     * if ( authz instanceof ModularRealmAuthorizer ) {
+     *     ((ModularRealmAuthorizer)authz).setRealms(realms);
+     * }</pre>
+     * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
+     */
     public void setRealms(Collection<Realm> realms) {
         super.setRealms(realms);
         Authorizer authz = getAuthorizer();
@@ -141,6 +165,9 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
 
     /**
      * Cleanup method that destroys/cleans up the wrapped {@link #getAuthorizer Authorizer} instance.
+     * <p/>
+     * The default implementation merely delegates to
+     * <code>{@link LifecycleUtils#destroy LifecycleUtils.destroy}({@link #getAuthorizer getAuthorizer()})</code>.
      */
     protected void destroyAuthorizer() {
         LifecycleUtils.destroy(getAuthorizer());

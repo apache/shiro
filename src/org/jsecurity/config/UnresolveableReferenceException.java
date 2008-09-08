@@ -27,18 +27,37 @@ package org.jsecurity.config;
  */
 public class UnresolveableReferenceException extends ConfigurationException {
 
+    /**
+     * Creates a new UnresolveableReferenceException.
+     */
     public UnresolveableReferenceException() {
         super();
     }
 
+    /**
+     * Constructs a new UnresolveableReferenceException.
+     *
+     * @param message the reason for the exception
+     */
     public UnresolveableReferenceException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new UnresolveableReferenceException.
+     *
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public UnresolveableReferenceException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Constructs a new UnresolveableReferenceException.
+     *
+     * @param message the reason for the exception
+     * @param cause   the underlying Throwable that caused this exception to be thrown.
+     */
     public UnresolveableReferenceException(String message, Throwable cause) {
         super(message, cause);
     }

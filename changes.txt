@@ -1,6 +1,7 @@
 [0.9 final]
 
-
+* org.jsecurity.spring.SpringWebConfiguration renamed to org.jsecurity.spring.SpringIniWebConfiguration
+* org.jsecurity.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
 
 [0.9 RC2]
 

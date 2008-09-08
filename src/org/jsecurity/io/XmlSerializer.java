@@ -26,11 +26,25 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
+ * Serializer implementation that uses the JavaBeans
+ * {@link java.beans.XMLEncoder XMLEncoder} and {@link java.beans.XMLDecoder XMLDecoder} to serialize
+ * and deserialize, respectively.
+ * <p/>
+ * <b>NOTE:</b> The JavaBeans XMLEncoder/XMLDecoder only successfully encode/decode objects when they are
+ * JavaBeans compatible!
+ * 
  * @author Les Hazlewood
  * @since 0.9
  */
 public class XmlSerializer implements Serializer {
 
+    /**
+     * Serializes the specified <code>source</code> into a byte[] array by using the
+     * {@link java.beans.XMLEncoder XMLEncoder} to encode the object out to a
+     * {@link java.io.ByteArrayOutputStream ByteArrayOutputStream}, where the resulting byte[] array is returned.
+     * @param source the Object to convert into a byte[] array.
+     * @return the byte[] array representation of the XML encoded output.
+     */
     public byte[] serialize(Object source) {
         if (source == null) {
             String msg = "argument cannot be null.";
@@ -45,6 +59,14 @@ public class XmlSerializer implements Serializer {
         return bos.toByteArray();
     }
 
+    /**
+     * Deserializes the specified <code>serialized</code> source back into an Object by using a
+     * {@link java.io.ByteArrayInputStream ByteArrayInputStream} to wrap the argument and then decode this
+     * stream via an {@link java.beans.XMLDecoder XMLDecoder}, where the
+     * {@link java.beans.XMLDecoder#readObject() readObject} call results in the original Object to return.
+     * @param serialized the byte[] array representation of the XML encoded output.
+     * @return the original source Object in reconstituted form.
+     */
     public Object deserialize(byte[] serialized) {
         if (serialized == null) {
             throw new IllegalArgumentException("Argument cannot be null.");

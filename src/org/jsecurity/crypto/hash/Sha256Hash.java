@@ -35,6 +35,8 @@ import org.jsecurity.codec.Hex;
  */
 public class Sha256Hash extends AbstractHash {
 
+    //TODO - complete JavaDoc
+
     public static final String ALGORITHM_NAME = "SHA-256";
 
     public Sha256Hash() {

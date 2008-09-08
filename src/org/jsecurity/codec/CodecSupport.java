@@ -18,18 +18,15 @@
  */
 package org.jsecurity.codec;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.UnsupportedEncodingException;
 
 /**
+ * Base abstract class that provides useful encoding and decoding operations, especially for character data.
+ * 
  * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class CodecSupport {
-
-    private static final Log log = LogFactory.getLog(CodecSupport.class);
 
     /**
      * JSecurity's default preferred Character encoding, equal to <b><code>UTF-8</code></b>.

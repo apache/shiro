@@ -23,6 +23,7 @@ import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
+ * TODO - class and method JavaDoc
  * @author Les Hazlewood
  * @since 0.9
  */

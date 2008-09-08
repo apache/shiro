@@ -52,10 +52,6 @@ public class HashtableCache implements Cache {
         this.name = name;
     }
 
-    public Object read(Object key) throws CacheException {
-        return hashtable.get(key);
-    }
-
     public Object get(Object key) throws CacheException {
         return hashtable.get(key);
     }
