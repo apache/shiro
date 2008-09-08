@@ -27,6 +27,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class RoleTag extends SecureTag {
 
+    //TODO - complete JavaDoc
+
     private String name = null;
 
     public RoleTag() {

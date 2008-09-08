@@ -40,6 +40,8 @@ import org.quartz.impl.StdSchedulerFactory;
  */
 public class QuartzSessionValidationScheduler implements SessionValidationScheduler {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

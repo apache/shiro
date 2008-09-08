@@ -65,6 +65,8 @@ import java.util.Map;
  */
 public class SpringIniWebConfiguration extends IniWebConfiguration {
 
+    //TODO - complete JavaDoc
+
     public static final String SECURITY_MANAGER_BEAN_NAME_PARAM_NAME = "securityManagerBeanName";
     public static final String DEFAULT_SECURITY_MANAGER_BEAN_ID = "securityManager";
 

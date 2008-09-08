@@ -41,6 +41,8 @@ import java.util.Collection;
 public abstract class AbstractValidatingSessionManager extends AbstractSessionManager
         implements ValidatingSessionManager, Destroyable {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(AbstractValidatingSessionManager.class);
 
     protected static final long MILLIS_PER_SECOND = 1000;

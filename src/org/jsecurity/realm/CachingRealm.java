@@ -31,6 +31,8 @@ import org.jsecurity.cache.CacheManagerAware;
  */
 public abstract class CachingRealm implements Realm, CacheManagerAware {
 
+    //TODO - complete JavaDoc
+
     private static int INSTANCE_COUNT = 0;
 
     /*--------------------------------------------

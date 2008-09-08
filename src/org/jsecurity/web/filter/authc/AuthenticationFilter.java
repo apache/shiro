@@ -38,6 +38,8 @@ import javax.servlet.ServletResponse;
  */
 public abstract class AuthenticationFilter extends AccessControlFilter {
 
+    //TODO - complete JavaDoc
+
     public static final String DEFAULT_SUCCESS_URL = "/index.jsp";
 
     private String successUrl = DEFAULT_SUCCESS_URL;

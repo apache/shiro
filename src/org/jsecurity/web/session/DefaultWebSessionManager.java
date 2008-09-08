@@ -45,6 +45,8 @@ import java.net.InetAddress;
  */
 public class DefaultWebSessionManager extends DefaultSessionManager implements WebSessionManager {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(DefaultWebSessionManager.class);
 
     /**

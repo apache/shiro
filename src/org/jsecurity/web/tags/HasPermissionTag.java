@@ -25,6 +25,8 @@ package org.jsecurity.web.tags;
  */
 public class HasPermissionTag extends PermissionTag {
 
+    //TODO - complete JavaDoc
+
     public HasPermissionTag() {
     }
 

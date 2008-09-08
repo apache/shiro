@@ -55,6 +55,8 @@ import javax.servlet.ServletResponse;
  */
 public class WebRememberMeManager extends AbstractRememberMeManager {
 
+    //TODO - complete JavaDoc
+
     /**
      * The default name of the underlying rememberMe cookie which is <code>rememberMe</code>.
      */

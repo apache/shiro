@@ -69,6 +69,8 @@ import java.util.Collection;
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(DefaultSecurityManager.class);
 
     protected RememberMeManager rememberMeManager;

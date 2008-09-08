@@ -47,6 +47,8 @@ import java.util.Set;
  */
 public class SimpleAccountRealm extends AuthorizingRealm {
 
+    //TODO - complete JavaDoc
+
     protected Map<String, SimpleRole> roles = null;
 
     public SimpleAccountRealm() {

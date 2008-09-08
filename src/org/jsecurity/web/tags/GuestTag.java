@@ -36,6 +36,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class GuestTag extends SecureTag {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(GuestTag.class);    
 
     public int onDoStartTag() throws JspException {

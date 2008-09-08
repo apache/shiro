@@ -53,6 +53,8 @@ import java.util.Collection;
  */
 public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionListenerRegistrar {
 
+    //TODO - complete JavaDoc
+
     protected SessionManager sessionManager;
 
     /**

@@ -30,6 +30,8 @@ import java.util.*;
 @SuppressWarnings({"unchecked"})
 public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
+    //TODO - complete JavaDoc
+
     private Map<String, Set> realmPrincipals;
 
     public SimplePrincipalCollection() {

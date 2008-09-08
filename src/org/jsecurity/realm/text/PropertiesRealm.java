@@ -94,6 +94,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class PropertiesRealm extends TextConfigurationRealm implements Destroyable, Runnable {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

@@ -28,6 +28,8 @@ import org.jsecurity.subject.Subject;
  */
 public class HasAnyRolesTag extends RoleTag {
 
+    //TODO - complete JavaDoc
+
     // Delimeter that separates role names in tag attribute
     private static final String ROLE_NAMES_DELIMETER = ",";
 

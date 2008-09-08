@@ -38,6 +38,8 @@ import org.springframework.remoting.support.RemoteInvocationFactory;
  */
 public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactory {
 
+    //TODO - complete JavaDoc
+
     public static final String SESSION_ID_KEY = Session.class.getName() + "_ID_KEY";
 
     private static final String SESSION_ID_SYSTEM_PROPERTY_NAME = "jsecurity.session.id";

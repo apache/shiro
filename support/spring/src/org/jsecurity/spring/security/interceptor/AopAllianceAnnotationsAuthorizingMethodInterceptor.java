@@ -25,11 +25,14 @@ import org.jsecurity.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 import java.lang.reflect.Method;
 
 /**
+ * TODO - complete JavaDoc
  * @author Les Hazlewood
  * @since 0.2
  */
 public class AopAllianceAnnotationsAuthorizingMethodInterceptor
         extends AnnotationsAuthorizingMethodInterceptor implements MethodInterceptor {
+
+    //TODO - complete JavaDoc
 
     protected org.jsecurity.aop.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
         final MethodInvocation mi = (MethodInvocation) implSpecificMethodInvocation;

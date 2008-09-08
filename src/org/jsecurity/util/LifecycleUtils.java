@@ -25,6 +25,7 @@ import org.jsecurity.JSecurityException;
 import java.util.Collection;
 
 /**
+ * TODO - complete JavaDoc
  * @author Les Hazlewood
  * @since 0.2
  */

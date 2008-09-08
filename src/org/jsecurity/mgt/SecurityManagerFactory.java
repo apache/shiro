@@ -25,5 +25,7 @@ package org.jsecurity.mgt;
  */
 public interface SecurityManagerFactory {
 
+    //TODO - complete JavaDoc
+    
     SecurityManager getSecurityManager();
 }

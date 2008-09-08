@@ -36,6 +36,8 @@ import java.util.Set;
  */
 public class RolesAuthorizationFilter extends AuthorizationFilter {
 
+    //TODO - complete JavaDoc
+
     @SuppressWarnings({"unchecked"})
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 

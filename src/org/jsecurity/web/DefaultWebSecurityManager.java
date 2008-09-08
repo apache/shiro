@@ -45,6 +45,8 @@ import java.util.Collection;
  */
 public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(DefaultWebSecurityManager.class);
 
     public static final String HTTP_SESSION_MODE = "http";

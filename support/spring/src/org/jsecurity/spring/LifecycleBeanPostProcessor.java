@@ -42,6 +42,8 @@ import org.springframework.beans.factory.config.DestructionAwareBeanPostProcesso
  */
 public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(LifecycleBeanPostProcessor.class);
 
     /**

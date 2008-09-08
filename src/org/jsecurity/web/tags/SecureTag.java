@@ -32,6 +32,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class SecureTag extends TagSupport {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(SecureTag.class);
 
     public SecureTag() {

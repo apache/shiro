@@ -21,7 +21,7 @@ package org.jsecurity.subject;
 import org.jsecurity.JSecurityException;
 
 /**
- * <p>Throw when there is an error accessing or interacting with a {@link Subject}.
+ * Throws when there is an error accessing or interacting with a {@link Subject}.
  *
  * @author Jeremy Haile
  * @since 0.1

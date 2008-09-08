@@ -43,6 +43,8 @@ import java.util.Collections;
  */
 public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware {
 
+    //TODO - complete JavaDoc
+
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
 
     private CacheManager cacheManager;

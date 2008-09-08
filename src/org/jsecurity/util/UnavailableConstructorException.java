@@ -29,18 +29,37 @@ import org.jsecurity.JSecurityException;
  */
 public class UnavailableConstructorException extends JSecurityException {
 
+    /**
+     * Creates a new UnavailableConstructorException.
+     */
     public UnavailableConstructorException() {
         super();
     }
 
+    /**
+     * Constructs a new UnavailableConstructorException.
+     *
+     * @param message the reason for the exception
+     */
     public UnavailableConstructorException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new UnavailableConstructorException.
+     *
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public UnavailableConstructorException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Constructs a new UnavailableConstructorException.
+     *
+     * @param message the reason for the exception
+     * @param cause   the underlying Throwable that caused this exception to be thrown.
+     */
     public UnavailableConstructorException(String message, Throwable cause) {
         super(message, cause);
     }

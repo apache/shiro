@@ -62,6 +62,8 @@ package org.jsecurity.util;
  */
 public class AntPathMatcher implements PatternMatcher {
 
+    //TODO - complete JavaDoc
+
     /**
      * Default path separator: "/"
      */

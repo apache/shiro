@@ -51,6 +51,8 @@ import java.util.*;
  */
 public class IniWebConfiguration extends IniConfiguration implements WebConfiguration {
 
+    //TODO - complete JavaDoc
+
     private static final transient Log log = LogFactory.getLog(IniWebConfiguration.class);
 
     public static final String FILTERS = "filters";

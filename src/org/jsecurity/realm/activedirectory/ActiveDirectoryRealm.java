@@ -53,6 +53,8 @@ import java.util.*;
  */
 public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
+    //TODO - complete JavaDoc
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/

@@ -41,6 +41,8 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class UserTag extends SecureTag {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(UserTag.class);    
 
     public int onDoStartTag() throws JspException {

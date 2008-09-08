@@ -41,6 +41,8 @@ import java.beans.PropertyEditor;
  */
 public abstract class AbstractWebAttribute<T> implements WebAttribute<T> {
 
+    //TODO - complete JavaDoc
+
     public static final String DEFAULT_NAME = "name";
 
     private static final Log log = LogFactory.getLog(AbstractWebAttribute.class);

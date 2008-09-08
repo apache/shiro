@@ -50,6 +50,8 @@ import org.jsecurity.subject.PrincipalCollection;
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {
 
+    //TODO - complete JavaDoc
+
     private static final Log log = LogFactory.getLog(AuthenticatingRealm.class);
 
     /**
