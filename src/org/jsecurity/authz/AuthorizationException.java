@@ -21,7 +21,7 @@ package org.jsecurity.authz;
 import org.jsecurity.JSecurityException;
 
 /**
- * Exception thrown if there is a problem during authorization.
+ * Exception thrown if there is a problem during authorization (access control check).
  *
  * @author Les Hazlewood
  * @since 0.1

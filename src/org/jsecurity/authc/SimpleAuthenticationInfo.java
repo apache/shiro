@@ -30,6 +30,8 @@ import java.util.Set;
  * Simple value object implementation of the {@link MergableAuthenticationInfo} interface that holds the principals and
  * credentials.
  *
+ * TODO - JavaDoc remaining methods.
+ *
  * @author Jeremy Haile
  * @see org.jsecurity.realm.AuthenticatingRealm
  * @since 0.9

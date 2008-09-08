@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 
 /**
+ * //TODO - complete JavaDoc
  * @author Les Hazlewood
  * @since 0.9
  */

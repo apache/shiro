@@ -21,25 +21,44 @@ package org.jsecurity.io;
 import org.jsecurity.JSecurityException;
 
 /**
- * TODO - class javadoc
+ * Root exception for problems either serializing or de-serializing data.
  *
  * @author Les Hazlewood
  * @since Apr 23, 2008 8:58:22 AM
  */
 public class SerializationException extends JSecurityException {
 
+    /**
+     * Creates a new SerializationException.
+     */
     public SerializationException() {
         super();
     }
 
+    /**
+     * Constructs a new SerializationException.
+     *
+     * @param message the reason for the exception
+     */
     public SerializationException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new SerializationException.
+     *
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public SerializationException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Constructs a new SerializationException.
+     *
+     * @param message the reason for the exception
+     * @param cause   the underlying Throwable that caused this exception to be thrown.
+     */
     public SerializationException(String message, Throwable cause) {
         super(message, cause);
     }

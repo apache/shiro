@@ -35,6 +35,8 @@ import org.jsecurity.codec.Hex;
  */
 public class Sha512Hash extends AbstractHash {
 
+    //TODO - complete JavaDoc
+
     public static final String ALGORITHM_NAME = "SHA-512";
 
     public Sha512Hash() {

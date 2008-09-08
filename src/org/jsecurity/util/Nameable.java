@@ -19,8 +19,6 @@
 package org.jsecurity.util;
 
 /**
- * TODO - Class JavaDoc
- *
  * @author Les Hazlewood
  * @since Jun 23, 2008 11:29:55 PM
  */

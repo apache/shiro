@@ -21,6 +21,13 @@ package org.jsecurity.config;
 import org.jsecurity.mgt.SecurityManagerFactory;
 
 /**
+ * A <code>Configuration</code> is responsible for 'wiring' together all the JSecurity components for an
+ * application, such as the {@link org.jsecurity.mgt.SecurityManager SecurityManager}, and any of its
+ * dependencies.
+ * <p/>
+ * Once the SecurityManager is built by the <code>Configuration</code> it is then consulted for all security
+ * operations during the application's lifetime.
+ * 
  * @author Les Hazlewood
  * @since 0.9
  */

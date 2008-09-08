@@ -33,6 +33,8 @@ import org.jsecurity.codec.Hex;
  */
 public class Md2Hash extends AbstractHash {
 
+    //TODO - complete JavaDoc
+
     public static final String ALGORITHM_NAME = "MD2";
 
     public Md2Hash() {

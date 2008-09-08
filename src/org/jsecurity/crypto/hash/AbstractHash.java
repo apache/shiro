@@ -124,8 +124,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
     }
 
     /**
-     * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm to use
-     * when performing the hash.
+     * Implemented by subclasses, this specifies the name of the {@link MessageDigest MessageDigest} algorithm
+     * to use when performing the hash.
      *
      * @return the {@link MessageDigest MessageDigest} algorithm to use when performing the hash.
      */

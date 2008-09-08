@@ -32,6 +32,8 @@ import java.util.Set;
  */
 public class SimpleAuthorizationInfo implements AuthorizationInfo {
 
+    //TODO - JavaDoc
+
     protected Set<String> roles;
 
     protected Set<String> stringPermissions;

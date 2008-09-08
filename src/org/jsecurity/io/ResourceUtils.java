@@ -35,6 +35,8 @@ import java.net.URL;
  */
 public class ResourceUtils {
 
+    //TODO complete JavaDoc
+
     /**
      * Resource path prefix that specifies to load from a classpath location, value is <b><code>classpath:</code></b>
      */
@@ -48,6 +50,7 @@ public class ResourceUtils {
      */
     public static final String FILE_PREFIX = "file:";
 
+    /** Private internal log instance. */
     private static final Log log = LogFactory.getLog(ResourceUtils.class);
 
 

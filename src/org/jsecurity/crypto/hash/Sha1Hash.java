@@ -33,6 +33,8 @@ import org.jsecurity.codec.Hex;
  */
 public class Sha1Hash extends AbstractHash {
 
+    //TODO - complete JavaDoc
+
     public static final String ALGORITHM_NAME = "SHA-1";
 
     public Sha1Hash() {

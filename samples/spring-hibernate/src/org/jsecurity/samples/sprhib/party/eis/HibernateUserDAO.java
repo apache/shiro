@@ -22,8 +22,6 @@ import org.jsecurity.samples.sprhib.eis.hibernate.PrimaryClassHibernateDAO;
 import org.jsecurity.samples.sprhib.party.User;
 
 /**
- * TODO class JavaDoc
- *
  * @author Les Hazlewood
  */
 public class HibernateUserDAO extends PrimaryClassHibernateDAO implements UserDAO {

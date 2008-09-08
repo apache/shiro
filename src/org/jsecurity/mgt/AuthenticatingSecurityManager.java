@@ -44,6 +44,8 @@ import java.util.Collection;
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         implements AuthenticationListenerRegistrar {
 
+    //TODO - complete JavaDoc
+
     private Authenticator authenticator;
 
     /**

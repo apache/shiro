@@ -29,8 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * TODO - Class JavaDoc
- *
  * @author Les Hazlewood
  * @since May 8, 2008 12:26:23 AM
  */

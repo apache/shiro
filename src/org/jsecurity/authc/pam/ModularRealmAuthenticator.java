@@ -78,20 +78,43 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     private Collection<Realm> realms;
 
+    /**
+     * The authentication strategy to use during authentication attempts.
+     */
     private ModularAuthenticationStrategy modularAuthenticationStrategy;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    /**
+     * Default no-argument constructor which
+     * {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy) enables}  a
+     * {@link org.jsecurity.authc.pam.AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy}
+     * by default.
+     */
     public ModularRealmAuthenticator() {
         ModularAuthenticationStrategy strategy = new AllSuccessfulModularAuthenticationStrategy();
         setModularAuthenticationStrategy(strategy);
     }
 
+    /**
+     * Constructor which initializes this <code>Authenticator</code> with a single realm to use during
+     * an authentiation attempt.  Because
+     * this would set a single realm, no {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy)
+     * modularAuthenticationStrategy} would be used during authentication attempts.
+     * @param realm the realm to consult during an authentication attempt.
+     */
     public ModularRealmAuthenticator(Realm realm) {
         setRealm(realm);
     }
 
+    /**
+     * Constructor which initializes this <code>Authenticator</code> with multiple realms that will be
+     * consulted during an authentication attempt, effectively enabling PAM (Pluggable Authentication Module)
+     * behavior according to the configured
+     * {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy) ModularAuthenticationStrategy}.
+     * @param realms the realms to consult during an authentication attempt.
+     */
     public ModularRealmAuthenticator(List<Realm> realms) {
         setRealms(realms);
     }
@@ -120,6 +143,10 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         this.realms = realms;
     }
 
+    /**
+     * Returns the realm(s) used by this <code>Authenticator</code> during an authentication attempt.
+     * @return the realm(s) used by this <code>Authenticator</code> during an authentication attempt.
+     */
     protected Collection<Realm> getRealms() {
         return this.realms;
     }

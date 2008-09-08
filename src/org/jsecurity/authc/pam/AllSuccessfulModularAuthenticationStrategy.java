@@ -20,7 +20,10 @@ package org.jsecurity.authc.pam;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authc.*;
+import org.jsecurity.authc.AuthenticationException;
+import org.jsecurity.authc.AuthenticationInfo;
+import org.jsecurity.authc.AuthenticationToken;
+import org.jsecurity.authc.UnknownAccountException;
 import org.jsecurity.realm.Realm;
 
 /**
@@ -36,8 +39,16 @@ import org.jsecurity.realm.Realm;
  */
 public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenticationStrategy {
 
-    private static final Log log = LogFactory.getLog(AllSuccessfulModularAuthenticationStrategy.class);    
+    /** Private class log instance. */
+    private static final Log log = LogFactory.getLog(AllSuccessfulModularAuthenticationStrategy.class);
 
+    /**
+     * Because all realms in this strategy must complete successfully, this implementation ensures that the given
+     * <code>Realm</code> {@link Realm#supports(org.jsecurity.authc.AuthenticationToken) supports} the given
+     * <code>token</code> argument.  If it does not, this method throws an
+     * {@link org.jsecurity.authc.pam.UnsupportedTokenException UnsupportedTokenException} to end the authentication
+     * process immediately. If the realm does support the token, the <code>info</code> argument is returned immediately.
+     */
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
         if (!realm.supports(token)) {
             String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support " +
@@ -50,6 +61,16 @@ public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenti
         return info;
     }
 
+    /**
+     * Merges the specified <code>info</code> into the <code>aggregate</code> argument and returns it (just as the
+     * parent implementation does), but additionally ensures the following:
+     * <ol>
+     * <li>if the <code>Throwable</code> argument is not <code>null</code>, re-throws it to immediately cancel the
+     * authentication process, since this strategy requires all realms to authenticate successfully.</li>
+     * <li>neither the <code>info</code> or <code>aggregate</code> argument is <code>null</code> to ensure that each
+     * realm did in fact authenticate successfully</li>
+     * </ol>
+     */
     public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
             throws AuthenticationException {
         if (t != null) {
@@ -77,12 +98,8 @@ public class AllSuccessfulModularAuthenticationStrategy extends AbstractAuthenti
             log.debug("Account successfully authenticated using realm of type [" + realm.getClass().getName() + "]");
         }
 
-        if( aggregate instanceof MergableAuthenticationInfo ) {
-            ((MergableAuthenticationInfo)aggregate).merge(info);
-            return aggregate;
-        } else {
-            throw new IllegalArgumentException( "Attempt to merge authentication info from multiple realms, but aggreagate " +
-                      "AuthenticationInfo is not of type MergableAuthenticationInfo." );
-        }
+        merge(info, aggregate);
+
+        return aggregate;
     }
 }

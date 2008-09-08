@@ -55,6 +55,8 @@ import java.util.Arrays;
  */
 public class BlowfishCipher implements Cipher {
 
+    //TODO - complete JavaDoc
+
     private static final String ALGORITHM = "Blowfish";
 
     private static final String TRANSFORMATION_STRING = ALGORITHM + "/ECB/PKCS5Padding";

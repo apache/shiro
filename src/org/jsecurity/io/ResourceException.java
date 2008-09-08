@@ -21,23 +21,44 @@ package org.jsecurity.io;
 import org.jsecurity.JSecurityException;
 
 /**
+ * Root exception when a problem occurs acquiring or processing a resource.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
 public class ResourceException extends JSecurityException {
 
+    /**
+     * Creates a new ResourceException.
+     */
     public ResourceException() {
         super();
     }
 
+    /**
+     * Constructs a new ResourceException.
+     *
+     * @param message the reason for the exception
+     */
     public ResourceException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new ResourceException.
+     *
+     * @param cause the underlying Throwable that caused this exception to be thrown.
+     */
     public ResourceException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * Constructs a new ResourceException.
+     *
+     * @param message the reason for the exception
+     * @param cause   the underlying Throwable that caused this exception to be thrown.
+     */
     public ResourceException(String message, Throwable cause) {
         super(message, cause);
     }
