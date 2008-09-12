@@ -18,8 +18,6 @@
  */
 package org.jsecurity.authz.aop;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
@@ -37,31 +35,60 @@ import java.util.Collection;
  * <p>It is essentially a convenience mechanism to allow multiple annotations to be processed in a single method
  * interceptor.
  *
- * TODO - JavaDoc remaining methods.
- *
  * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class AnnotationsAuthorizingMethodInterceptor extends AuthorizingMethodInterceptor {
 
-    private static final Log log = LogFactory.getLog(AnnotationsAuthorizingMethodInterceptor.class);    
-
+    /**
+     * The method interceptors to execute for the annotated method.
+     */
     protected Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors;
 
+    /**
+     * Default no-argument constructor that defaults the 
+     * {@link #methodInterceptors methodInterceptors} attribute to contain two interceptors by default - the
+     * {@link org.jsecurity.authz.aop.RoleAnnotationMethodInterceptor RoleAnnotationMethodInterceptor} and the
+     * {@link org.jsecurity.authz.aop.PermissionAnnotationMethodInterceptor PermissionAnnotationMethodInterceptor} to
+     * support role and permission annotations.
+     */
     public AnnotationsAuthorizingMethodInterceptor() {
         methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(2);
         methodInterceptors.add(new RoleAnnotationMethodInterceptor());
         methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
     }
 
+    /**
+     * Returns the method interceptors to execute for the annotated method.
+     * <p/>
+     * Unless overridden by the {@link #setMethodInterceptors(java.util.Collection)} method, the default collection
+     * contains a
+     * {@link org.jsecurity.authz.aop.RoleAnnotationMethodInterceptor RoleAnnotationMethodInterceptor} and a
+     * {@link org.jsecurity.authz.aop.PermissionAnnotationMethodInterceptor PermissionAnnotationMethodInterceptor} to
+     * support role and permission annotations automatically.
+     * @return the method interceptors to execute for the annotated method.
+     */
     public Collection<AuthorizingAnnotationMethodInterceptor> getMethodInterceptors() {
         return methodInterceptors;
     }
 
+    /**
+     * Sets the method interceptors to execute for the annotated method.
+     * @param methodInterceptors the method interceptors to execute for the annotated method.
+     * @see #getMethodInterceptors()
+     */
     public void setMethodInterceptors(Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors) {
         this.methodInterceptors = methodInterceptors;
     }
 
+    /**
+     * Iterates over the internal {@link #getMethodInterceptors() methodInterceptors} collection, and for each one,
+     * ensures that if the interceptor
+     * {@link org.jsecurity.authz.aop.AuthorizingAnnotationMethodInterceptor#supports(org.jsecurity.aop.MethodInvocation) supports}
+     * the invocation, that the interceptor
+     * {@link org.jsecurity.authz.aop.AuthorizingAnnotationMethodInterceptor#assertAuthorized(org.jsecurity.aop.MethodInvocation) asserts}
+     * that the invocation is authorized to proceed.
+     */
     protected void assertAuthorized(MethodInvocation methodInvocation) throws AuthorizationException {
         //default implementation just ensures no deny votes are cast:
         Collection<AuthorizingAnnotationMethodInterceptor> aamis = getMethodInterceptors();

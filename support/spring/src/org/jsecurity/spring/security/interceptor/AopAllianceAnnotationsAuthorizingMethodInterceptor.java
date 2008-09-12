@@ -25,15 +25,24 @@ import org.jsecurity.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 import java.lang.reflect.Method;
 
 /**
- * TODO - complete JavaDoc
+ * Allows JSecurity Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>
+ * specific implementation environment (for example, Spring).
+ *
  * @author Les Hazlewood
  * @since 0.2
  */
 public class AopAllianceAnnotationsAuthorizingMethodInterceptor
         extends AnnotationsAuthorizingMethodInterceptor implements MethodInterceptor {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Creates a {@link MethodInvocation MethodInvocation} that wraps an
+     * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} instance,
+     * enabling JSecurity Annotations in <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a> environments
+     * (Spring, etc).
+     *
+     * @param implSpecificMethodInvocation AOP Alliance {@link org.aopalliance.intercept.MethodInvocation MethodInvocation}
+     * @return a JSecurity {@link MethodInvocation MethodInvocation} instance that wraps the AOP Alliance instance.
+     */
     protected org.jsecurity.aop.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
         final MethodInvocation mi = (MethodInvocation) implSpecificMethodInvocation;
 
@@ -56,11 +65,27 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
         };
     }
 
+    /**
+     * Simply casts the method argument to an
+     * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} and then
+     * calls <code>methodInvocation.{@link org.aopalliance.intercept.MethodInvocation#proceed proceed}()</code>
+     * @param aopAllianceMethodInvocation the {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation}
+     * @return the {@link org.aopalliance.intercept.MethodInvocation#proceed() org.aopalliance.intercept.MethodInvocation.proceed()} method call result.
+     * @throws Throwable if the underlying AOP Alliance <code>proceed()</code> call throws a <code>Throwable</code>.
+     */
     protected Object continueInvocation(Object aopAllianceMethodInvocation) throws Throwable {
         MethodInvocation mi = (MethodInvocation) aopAllianceMethodInvocation;
         return mi.proceed();
     }
 
+    /**
+     * Creates a JSecurity {@link MethodInvocation MethodInvocation} instance and then immediately calls
+     * {@link org.jsecurity.authz.aop.AuthorizingMethodInterceptor#invoke super.invoke}.
+     *
+     * @param methodInvocation the AOP Alliance-specific <code>methodInvocation</code> instance.
+     * @return the return value from invoking the method invocation.
+     * @throws Throwable if the underlying AOP Alliance method invocation throws a <code>Throwable</code>.
+     */
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         org.jsecurity.aop.MethodInvocation mi = createMethodInvocation(methodInvocation);
         return super.invoke(mi);
