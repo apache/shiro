@@ -61,8 +61,12 @@ public interface AuthenticationInfo {
      * Returns all principals associated with the corresponding Subject.  Each principal is an identifying piece of
      * information useful to the application such as a username, or user id, a given name, etc - anything useful
      * to the application to identify the current <code>Subject</code>.
-     *
-     * <p>The returned PrincipalCollection should <em>not</em> contain any credentials used to verify principals, such
+     * <p/>
+     * At least one of these attributes should be the account's 'primary' identifier, such as a username or unique
+     * user id.  By convention, usually  the first principal (that is, <code>principals.iterator().next()</code>) is the
+     * 'primary' one.
+     * <p/>
+     * The returned PrincipalCollection should <em>not</em> contain any credentials used to verify principals, such
      * as passwords, private keys, etc.  Those should be instead returned by {@link #getCredentials() getCredentials()}.
      *
      * @return all principals associated with the corresponding Subject.
