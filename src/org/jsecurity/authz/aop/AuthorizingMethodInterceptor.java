@@ -23,17 +23,29 @@ import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
 /**
- * TODO - class and method JavaDoc
+ * Basic abstract class to support intercepting methods that perform authorization (access control) checks.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AuthorizingMethodInterceptor extends MethodInterceptorSupport {
 
+    /**
+     * Invokes the specified method (<code>methodInvocation.{@link org.jsecurity.aop.MethodInvocation#proceed proceed}()</code>
+     * if authorization is allowed by first
+     * calling {@link #assertAuthorized(org.jsecurity.aop.MethodInvocation) assertAuthorized}.
+     */
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         assertAuthorized(methodInvocation);
         return methodInvocation.proceed();
     }
 
+    /**
+     * Asserts that the specified MethodInvocation is allowed to continue by performing any necessary authorization
+     * (access control) checks first.
+     * @param methodInvocation the <code>MethodInvocation</code> to invoke.
+     * @throws AuthorizationException if the <code>methodInvocation</code> should not be allowed to continue/execute.
+     */
     protected abstract void assertAuthorized(MethodInvocation methodInvocation) throws AuthorizationException;
 
 }
