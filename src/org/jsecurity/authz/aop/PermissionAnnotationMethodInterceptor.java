@@ -29,18 +29,33 @@ import org.jsecurity.util.PermissionUtils;
 import java.util.Set;
 
 /**
- * TODO - class and method JavaDoc
+ * Checks to see if a @{@link RequiresPermissions RequiresPermissions} annotation is declared, and if so, performs
+ * a permission check to see if the calling <code>Subject</code> is allowed to call the method.
  * @author Les Hazlewood
  * @since 0.9
  */
 public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
+    /**
+     * The character to look for that closes a permission definition.
+     */
     private static final char ARRAY_CLOSE_CHAR = ']';
 
+    /**
+     * Default no-argument constructor that ensures this interceptor looks for
+     * @{@link RequiresPermissions RequiresPermissions} annotations in a method declaration.
+     */
     public PermissionAnnotationMethodInterceptor() {
         super(RequiresPermissions.class);
     }
 
+    /**
+     * Infers the permission from the specified name path in the annotation.
+     * @param methodArgs the <code>MethodInvocation</code> method arguments.
+     * @param namePath the Annotation 'name' value, which is a string-based permission definition.
+     * @return the String permission representation.
+     * @throws Exception if there is an error infering the target.
+     */
     protected String inferTargetFromPath(Object[] methodArgs, String namePath) throws Exception {
         int propertyStartIndex = -1;
 
@@ -67,6 +82,11 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
         return targetValue.toString();
     }
 
+    /**
+     * Returns the <code>MethodInvocation</code>'s arguments, or <code>null</code> if there were none.
+     * @param invocation the methodInvocation to inspect.
+     * @return the method invocation's method arguments, or <code>null</code> if there were none.
+     */
     protected Object[] getMethodArguments(MethodInvocation invocation) {
         if (invocation != null) {
             return invocation.getArguments();
@@ -75,11 +95,25 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
         }
     }
 
+    /**
+     * Returns the annotation {@link RequiresPermissions#value value}, from which the Permission will be constructed.
+     *
+     * @param invocation the method being invoked.
+     * @return the method annotation's <code>value</code>, from which the Permission will be constructed.
+     */
     protected String getAnnotationValue(MethodInvocation invocation) {
         RequiresPermissions prAnnotation = (RequiresPermissions) getAnnotation(invocation);
         return prAnnotation.value();
     }
 
+    /**
+     * Ensures that the calling <code>Subject</code> has the Annotation's specified permissions, and if not, throws an
+     * <code>AuthorizingException</code> indicating the method is not allowed to be executed.
+     *
+     * @param mi the method invocation to check for one or more permissions
+     * @throws AuthorizationException if the calling <code>Subject</code> does not have the permission(s) necessary to
+     * invoke the method.
+     */
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         String p = getAnnotationValue(mi);
         Set<String> perms = PermissionUtils.toPermissionStrings(p);
