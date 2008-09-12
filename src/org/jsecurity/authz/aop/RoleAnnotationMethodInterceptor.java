@@ -28,16 +28,30 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * TODO - class and method JavaDoc
+ * Checks to see if a @{@link RequiresRoles RequiresRoles} annotation is declared, and if so, performs
+ * a role check to see if the calling <code>Subject</code> is allowed to invoke the method.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
 public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 
+    /**
+     * Default no-argument constructor that ensures this interceptor looks for
+     * @{@link RequiresRoles RequiresRoles} annotations in a method declaration.
+     */
     public RoleAnnotationMethodInterceptor() {
         super(RequiresRoles.class);
     }
 
+    /**
+     * Ensures that the calling <code>Subject</code> has the Annotation's specified roles, and if not, throws an
+     * <code>AuthorizingException</code> indicating the method is not allowed to be executed.
+     *
+     * @param mi the method invocation to check for one or more roles
+     * @throws AuthorizationException if the calling <code>Subject</code> does not have the role(s) necessary to
+     * invoke the method.
+     */
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         RequiresRoles rrAnnotation = (RequiresRoles) getAnnotation(mi);
 
