@@ -42,10 +42,12 @@ import java.util.Arrays;
  */
 public abstract class AbstractHash extends CodecSupport implements Hash {
 
+    /** The hashed data */
     private byte[] bytes = null;
 
-    //cache string ops to ensure multiple calls won't incur repeated overhead:
+    /** Cached value of the {@link #toHex() toHex()} call so multiple calls won't incur repeated overhead. */
     private String hexEncoded = null;
+    /** Cached value of the {@link #toBase64() toBase64()} call so multiple calls won't incur repeated overhead. */
     private String base64Encoded = null;
 
     /**
@@ -213,8 +215,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * Returns a hex-encoded string of the underlying {@link #getBytes byte array}.
      *
      * <p>This implementation caches the resulting hex string so multiple calls to this method remain performant.
-     * (However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
-     * next time this method is called).
+     * However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
+     * next time this method is called.
      *
      * @return a hex-encoded string of the underlying {@link #getBytes byte array}.
      */
@@ -229,8 +231,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash {
      * Returns a Base64-encoded string of the underlying {@link #getBytes byte array}.
      *
      * <p>This implementation caches the resulting Base64 string so multiple calls to this method remain performant.
-     * (However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
-     * next time this method is called).
+     * However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
+     * next time this method is called.
      *
      * @return a Base64-encoded string of the underlying {@link #getBytes byte array}.
      */

@@ -32,7 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * <p>JSecurity <code>CacheManager</code> implementation utilizing the Ehcache framework for all cache functionality.</p>
+ * JSecurity <code>CacheManager</code> implementation utilizing the Ehcache framework for all cache functionality.
+ * <p/>
+ * This class can {@link #setCacheManager(net.sf.ehcache.CacheManager) accept} a manually configured
+ * {@link net.sf.ehcache.CacheManager net.sf.ehcache.CacheManager} instance,
+ * or an <code>ehcache.xml</code> path location can be specified instead and one will be constructed. If neither are
+ * specified, JSecurity's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
  *
  * <p>This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
@@ -46,24 +51,46 @@ import java.io.InputStream;
  */
 public class EhCacheManager implements CacheManager, Initializable, Destroyable {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * The default name for the active sessions cache, equal to
+     * {@link CachingSessionDAO#ACTIVE_SESSION_CACHE_NAME CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME}.
+     */
     public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
+
+    /**
+     * The default maximum number of active sessions in cache <em>memory</em>, equal to <code>20,000</code>.
+     */
     public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
+
+    /**
+     * The default time the active sessions disk expiration thread will run, equal to <code>600</code> (10 minutes).
+     */
     public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
 
+    /**
+     * This class's private log instance.
+     */
     private static final Log log = LogFactory.getLog(EhCacheManager.class);
 
     /**
      * The EhCache cache manager used by this implementation to create caches.
      */
     protected net.sf.ehcache.CacheManager manager;
-    private boolean cacheManagerImplicitlyCreated = false;
+
     /**
-     * Classpath file location.
+     * Indicates if the CacheManager instance was implicitly/automatically created by this instance, indicating that
+     * it should be automatically cleaned up as well on shutdown.
+     */
+    private boolean cacheManagerImplicitlyCreated = false;
+
+    /**
+     * Classpath file location of the ehcache CacheManager config file.
      */
     private String cacheManagerConfigFile = "classpath:org/jsecurity/cache/ehcache/ehcache.xml";
 
+    /**
+     * Default no argument constructor
+     */
     public EhCacheManager() {
     }
 
@@ -115,6 +142,13 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         this.cacheManagerConfigFile = classpathLocation;
     }
 
+    /**
+     * Acquires the InputStream for the ehcache configuration file using
+     * {@link ResourceUtils#getInputStreamForPath(String) ResourceUtils.getInputStreamForPath} with the
+     * path returned from {@link #getCacheManagerConfigFile() getCacheManagerConfigFile()}.
+     *
+     * @return the InputStream for the ehcache configuration file.
+     */
     protected InputStream getCacheManagerConfigFileInputStream() {
         String configFile = getCacheManagerConfigFile();
         try {

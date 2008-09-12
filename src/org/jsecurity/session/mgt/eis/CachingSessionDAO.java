@@ -43,16 +43,28 @@ import java.util.Collections;
  */
 public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * The default active sessions cache name, equal to <code>jsecurity-activeSessionCache</code>.
+     */
     public static final String ACTIVE_SESSION_CACHE_NAME = "jsecurity-activeSessionCache";
 
+    /**
+     * The CacheManager to use to acquire the Session cache.
+     */
     private CacheManager cacheManager;
+
+    /**
+     * The Cache instance responsible for caching Sessions.
+     */
     private Cache activeSessions;
+
+    /**
+     * The name of the session cache, defaults to {@link #ACTIVE_SESSION_CACHE_NAME}.
+     */
     private String activeSessionsCacheName = ACTIVE_SESSION_CACHE_NAME;
 
     /**
-     * JavaBeans compatible constructor.
+     * Default no-arg constructor.
      */
     public CachingSessionDAO() {
     }
@@ -77,18 +89,41 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         return cacheManager;
     }
 
+    /**
+     * Returns the name of the actives sessions cache to be returned by the <code>CacheManager</code>.  Unless
+     * overridden by {@link #setActiveSessionsCacheName(String)}, defaults to {@link #ACTIVE_SESSION_CACHE_NAME}.
+     * @return the name of the active sessions cache.
+     */
     public String getActiveSessionsCacheName() {
         return activeSessionsCacheName;
     }
 
+    /**
+     * Sets the name of the active sessions cache to be returned by the <code>CacheManager</code>.  Defaults to
+     * {@link #ACTIVE_SESSION_CACHE_NAME}.
+     * @param activeSessionsCacheName the name of the active sessions cache to be returned by the <code>CacheManager</code>. 
+     */
     public void setActiveSessionsCacheName(String activeSessionsCacheName) {
         this.activeSessionsCacheName = activeSessionsCacheName;
     }
 
+    /**
+     * Returns the cache instance to use for storing active sessions.
+     * @return the cache instance to use for storing active sessions.
+     */
     public Cache getActiveSessionsCache() {
         return this.activeSessions;
     }
 
+    /**
+     * Returns the active sessions cache, but if that cache instance is null, first lazily creates the cache instance
+     * via the {@link #createActiveSessionsCache()} method and then returns the instance.
+     * <p/>
+     * Note that this method will only return a non-null value code if the <code>CacheManager</code> has been set.  If
+     * not set, there will be no cache.
+     * 
+     * @return the active sessions cache instance.
+     */
     protected Cache getActiveSessionsCacheLazy() {
         if (this.activeSessions == null) {
             this.activeSessions = createActiveSessionsCache();
@@ -96,10 +131,23 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         return this.activeSessions;
     }
 
+    /**
+     * Sets the cache instance to use for storing active sessions.
+     * @param cache the cache instance to use for storing active sessions.
+     */
     public void setActiveSessionsCache(Cache cache) {
         this.activeSessions = cache;
     }
 
+    /**
+     * Creates a cache instance used to store active sessions.  Creation is done by first
+     * {@link #getCacheManager() acquiring} the <code>CacheManager</code>.  If the cache manager is not null, the
+     * cache returned is that resulting from the following call:
+     * <pre>       String name = {@link #getActiveSessionsCacheName() getActiveSessionsCacheName()};
+     * cacheManager.getCache(name);</pre>
+     * @return a cache instance used to store active sessions, or <em>null</code> if the <code>CacheManager</code> has
+     * not been set.
+     */
     protected Cache createActiveSessionsCache() {
         Cache cache = null;
         CacheManager mgr = getCacheManager();
@@ -123,6 +171,14 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         return sessionId;
     }
 
+    /**
+     * Returns the cached session with the corresponding <code>sessionId</code> or <code>null</code> if there is
+     * no session cached under that id (or if there is no Cache).
+     *
+     * @param sessionId the id of the cached session to acquire.
+     * @return the cached session with the corresponding <code>sessionId</code>, or <code>null</code> if the session
+     * does not exist or is not cached.
+     */
     protected Session getCachedSession(Serializable sessionId) {
         Session cached = null;
         if (sessionId != null) {
@@ -134,10 +190,25 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         return cached;
     }
 
+    /**
+     * Returns the Session with the specified id from the specified cache.  This method simply calls
+     * <code>cache.get(sessionId)</code> and can be overridden by subclasses for custom acquisition behavior.
+     * @param sessionId the id of the session to acquire.
+     * @param cache the cache to acquire the session from
+     * @return the cached session, or <code>null</code> if the session wasn't in the cache.
+     */
     protected Session getCachedSession(Serializable sessionId, Cache cache) {
         return (Session) cache.get(sessionId);
     }
 
+    /**
+     * Caches the specified session under the key <code>sessionId</code>.  If the Session is an instance of
+     * {@link org.jsecurity.session.mgt.ValidatingSession ValidatingSession}, it will only be cached if the
+     * session is {@link org.jsecurity.session.mgt.ValidatingSession#isValid() valid}.
+     *
+     * @param session the session to cache
+     * @param sessionId the id of the session, to be used as the cache key.
+     */
     protected void cacheValidSession(Session session, Serializable sessionId) {
         if (session == null || sessionId == null) {
             return;
@@ -155,6 +226,14 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
         }
     }
 
+    /**
+     * Caches the specified session in the given cache under the key of <code>sessionId</code>.  This implementation
+     * simply calls <code>cache.put(sessionId, session)</code> and can be overridden for custom behavior.
+     * 
+     * @param session the session to cache
+     * @param sessionId the id of the session, expected to be the cache key.
+     * @param cache the cache to store the session
+     */
     protected void cache(Session session, Serializable sessionId, Cache cache) {
         cache.put(sessionId, session);
     }
@@ -277,6 +356,11 @@ public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware
      */
     protected abstract void doDelete(Session session);
 
+    /**
+     * Removes the specified Session from the cache.
+     *
+     * @param session the session to remove from the cache.
+     */
     protected void uncache(Session session) {
         if (session == null) {
             return;
