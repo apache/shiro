@@ -18,8 +18,6 @@
  */
 package org.jsecurity.samples.sprhib.eis.hibernate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Filter;
 import org.hibernate.LockMode;
 import org.hibernate.ReplicationMode;
@@ -43,8 +41,6 @@ import java.util.List;
  */
 public class HibernateDAO extends HibernateDaoSupport
         implements HibernateOperations, DataAccessObject {
-
-    private static final Log log = LogFactory.getLog(HibernateDAO.class);
 
     public Object execute(HibernateCallback action) throws DataAccessException {
         return getHibernateTemplate().execute(action);

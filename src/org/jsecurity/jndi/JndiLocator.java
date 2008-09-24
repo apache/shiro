@@ -43,7 +43,7 @@ import java.util.Properties;
 public class JndiLocator {
 
     /**
-     * Log, available to subclasses.
+     * Private class log.
      */
     private static final Log log = LogFactory.getLog(JndiLocator.class);
 

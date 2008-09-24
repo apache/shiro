@@ -18,9 +18,6 @@
  */
 package org.jsecurity.io;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -32,8 +29,6 @@ import java.io.Serializable;
  * @since 0.9
  */
 public abstract class AbstractResource implements Serializable {
-
-    private static final Log log = LogFactory.getLog(AbstractResource.class);
 
     public AbstractResource() {
     }

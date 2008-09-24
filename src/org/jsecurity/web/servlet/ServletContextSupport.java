@@ -18,8 +18,6 @@
  */
 package org.jsecurity.web.servlet;
 
-import org.jsecurity.web.DefaultWebSecurityManager;
-
 import javax.servlet.ServletContext;
 
 /**
@@ -31,11 +29,6 @@ import javax.servlet.ServletContext;
 public class ServletContextSupport {
 
     //TODO - complete JavaDoc
-
-    public static final String SESSION_MODE_CONTEXT_PARAM_NAME = "sessionMode";
-    public static final String HTTP_SESSION_MODE = DefaultWebSecurityManager.HTTP_SESSION_MODE;
-    public static final String JSECURITY_SESSION_MODE = DefaultWebSecurityManager.JSECURITY_SESSION_MODE;
-
     private ServletContext servletContext = null;
 
     public ServletContext getServletContext() {
