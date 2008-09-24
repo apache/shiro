@@ -18,8 +18,6 @@
  */
 package org.jsecurity.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
 
 import java.io.InputStream;
@@ -32,7 +30,6 @@ import java.io.Serializable;
  */
 public abstract class ResourceConfiguration implements Configuration, Serializable {
 
-    private static final Log log = LogFactory.getLog(ResourceConfiguration.class);
     protected transient SecurityManager securityManager;
 
     public ResourceConfiguration() {

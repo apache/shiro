@@ -45,9 +45,10 @@ public class IniResource extends TextResource {
     public static final String HEADER_PREFIX = "[";
     public static final String HEADER_SUFFIX = "]";
 
-    protected Map<String, Map<String, String>> sections = new LinkedHashMap<String, Map<String, String>>();
+    protected Map<String, Map<String, String>> sections;
 
     public IniResource() {
+        sections = new LinkedHashMap<String, Map<String, String>>();
     }
 
     public IniResource(String configBodyOrResourcePath) {
