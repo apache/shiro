@@ -23,7 +23,7 @@ import org.jsecurity.authc.AuthenticationInfo;
 import org.jsecurity.authc.AuthenticationToken;
 
 /**
- * A RememberMeManager is responsible for remembering a Subject's identity across that subject's sessions with
+ * A RememberMeManager is responsible for remembering a Subject's identity across that Subject's sessions with
  * the application.
  *
  * @author Les Hazlewood

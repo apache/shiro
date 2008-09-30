@@ -2,6 +2,7 @@
 
 * org.jsecurity.spring.SpringWebConfiguration renamed to org.jsecurity.spring.SpringIniWebConfiguration
 * org.jsecurity.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
+* org.jsecurity.web.servlet.FilterChainWrapper renamed to org.jsecurity.web.servlet.ProxiedFilterChain to maintain parallel naming conventions with ProxiedSession.
 
 [0.9 RC2]
 

@@ -44,41 +44,54 @@ import java.util.Collection;
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         implements AuthenticationListenerRegistrar {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * The internal <code>Authenticator</code> delegate instance that this SecurityManager instance will use
+     * to perform all authentication operations.
+     */
     private Authenticator authenticator;
 
     /**
-     * Default no-arg constructor.
+     * Default no-arg constructor that initializes its internal
+     * <code>authenticator</code> instance to be a {@link ModularRealmAuthenticator ModularRealmAuthenticator}.
      */
     public AuthenticatingSecurityManager() {
-        ensureAuthenticator();
+        this.authenticator = new ModularRealmAuthenticator();
     }
 
+    /**
+     * Returns the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
+     * authentication operations.  Unless overridden by the 
+     * {@link #setAuthenticator(org.jsecurity.authc.Authenticator) setAuthenticator}, the default instance is a
+     * {@link org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
+     * @return the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
+     * authentication operations.
+     */
     public Authenticator getAuthenticator() {
         return authenticator;
     }
 
-    public void setAuthenticator(Authenticator authenticator) {
+    /**
+     * Sets the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
+     * authentication operations.  Unless overridden by this method, the default instance is a
+     * {@link org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
+     * @param authenticator the delegate <code>Authenticator</code> instance that this SecurityManager will use to 
+     * perform all authentication operations.
+     * @throws IllegalArgumentException if the argument is <code>null</code>.
+     */
+    public void setAuthenticator(Authenticator authenticator) throws IllegalArgumentException {
         if (authenticator == null) {
-            String msg = "Authenticator instance cannot be null.";
+            String msg = "Authenticator argument cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         this.authenticator = authenticator;
     }
 
-    protected void ensureAuthenticator() {
-        Authenticator authc = getAuthenticator();
-        if (authc == null) {
-            authc = createAuthenticator();
-            setAuthenticator(authc);
-        }
-    }
-
-    protected Authenticator createAuthenticator() {
-        return new ModularRealmAuthenticator();
-    }
-
+    /**
+     * Sets the {@link org.jsecurity.authc.pam.ModularAuthenticationStrategy ModularAuthenticationStrategy} to use
+     * in multi-realm environments.
+     *
+     * @param strategy the <code>ModularAuthenticationStrategy</code> to use in multi-realm environments.
+     */
     public void setModularAuthenticationStrategy(ModularAuthenticationStrategy strategy) {
         if (!(this.authenticator instanceof ModularRealmAuthenticator)) {
             String msg = "Configuring a ModularAuthenticationStrategy is only applicable when the underlying " +
@@ -124,6 +137,11 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         ((AuthenticationListenerRegistrar) this.authenticator).setAuthenticationListeners(listeners);
     }
 
+    /**
+     * Ensures that <code>this.authenticator</code> implements the
+     * {@link org.jsecurity.authc.AuthenticationListenerRegistrar AuthenticationListenerRegistrar} interface to ensure
+     * listeners can be registered.
+     */
     private void assertAuthenticatorListenerSupport() {
         if (!(this.authenticator instanceof AuthenticationListenerRegistrar)) {
             String msg = "AuthenticationListener registration failed:  The underlying Authenticator instance of " +
@@ -146,6 +164,13 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
                 ((AuthenticationListenerRegistrar) authc).remove(listener);
     }
 
+    /**
+     * Immediately calls {@link RealmSecurityManager#setRealms(java.util.Collection) super.setRealms} and then
+     * additionally passes on those realms to the internal delegate <code>Authenticator</code> instance so
+     * that it may use them during authentication attempts.
+     * @param realms realms the realms managed by this <tt>SecurityManager</tt> instance and subsequently the internal
+     * delegate <code>Authenticator</code> instance.
+     */
     public void setRealms(Collection<Realm> realms) {
         super.setRealms(realms);
         if (this.authenticator instanceof ModularRealmAuthenticator) {
@@ -153,14 +178,25 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         }
     }
 
+    /**
+     * Lifecycle cleanup method that first calls {@link #beforeAuthenticatorDestroyed() beforeAuthenticatorDestroyed()}
+     * to allow subclass cleanup and then calls {@link #destroyAuthenticator() destroyAuthenticator()} to actually
+     * clean up the internal delegate instance.
+     */
     protected void beforeRealmsDestroyed() {
         beforeAuthenticatorDestroyed();
         destroyAuthenticator();
     }
 
+    /**
+     * Template hook to allow subclass cleanup when the SecurityManager is being shut down.
+     */
     protected void beforeAuthenticatorDestroyed() {
     }
 
+    /**
+     * Cleans up ('destroys') the internal delegate <code>Authenticator</code> instance.  Called during shut down.
+     */
     protected void destroyAuthenticator() {
         LifecycleUtils.destroy(getAuthenticator());
     }

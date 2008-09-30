@@ -64,11 +64,13 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
     /**
      * Logs in a user, returning a Subject instance if the authentication is successful or throwing an
      * <code>AuthenticationException</code> if it is not.
-     *
-     * <p>Note that using this method is an alternative to calling
-     * <code>{@link Subject#login(org.jsecurity.authc.AuthenticationToken) Subject.login(authenticationToken)}</code>.
-     * However most application developers find calling <code>subject.login(token)</code> more convenient than calling
-     * this method on the <code>SecurityManager</code> directly.
+     * <p/>
+     * Note that most application developers should probably not call this method directly unless they have a good
+     * reason for doing so.  The preferred way to log in a Subject is to call 
+     * <code>{@link Subject#login Subject.login(authenticationToken)}</code> (usually after acquiring the
+     * Subject by calling {@link org.jsecurity.SecurityUtils#getSubject() SecurityUtils.getSubject()}).
+     * <p/>
+     * Framework developers on the other hand might find calling this method directly useful in certain cases.
      *
      * @param authenticationToken the token representing the Subject's principal(s) and credential(s)
      * @return an authenticated Subject upon a successful attempt
@@ -83,6 +85,8 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionFacto
      * <p>Note that most application developers should not call this method unless they have a good reason for doing
      * so.  The preferred way to logout a Subject is to call <code>{@link Subject#logout Subject.logout()}</code>, not
      * the <code>SecurityManager</code> directly.
+     * <p/>
+     * Framework developers on the other hand might find calling this method directly useful in certain cases.
      *
      * @param subjectIdentifier the identifier of the subject/user to log out.
      * @see #getSubject()

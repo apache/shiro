@@ -37,7 +37,7 @@ import org.jsecurity.web.filter.authc.UserFilter;
 import org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter;
 import org.jsecurity.web.filter.authz.RolesAuthorizationFilter;
 import org.jsecurity.web.servlet.AdviceFilter;
-import org.jsecurity.web.servlet.FilterChainWrapper;
+import org.jsecurity.web.servlet.ProxiedFilterChain;
 
 import javax.servlet.*;
 import java.util.*;
@@ -174,7 +174,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
      * calls this method.
      * <p/>
      * The default implementation merely returns
-     * <code>new {@link org.jsecurity.web.servlet.FilterChainWrapper FilterChainWrapper(filters, originalChain)}</code>,
+     * <code>new {@link org.jsecurity.web.servlet.ProxiedFilterChain FilterChainWrapper(filters, originalChain)}</code>,
      * and can be overridden by subclasses for custom creation.
      *
      * @param filters       the configured filter chain for the incoming request application path
@@ -182,7 +182,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
      * @return a new FilterChain based on the specified configured url filter chain and original chain.
      */
     protected FilterChain createChain(List<Filter> filters, FilterChain originalChain) {
-        return new FilterChainWrapper(originalChain, filters);
+        return new ProxiedFilterChain(originalChain, filters);
     }
 
     /**

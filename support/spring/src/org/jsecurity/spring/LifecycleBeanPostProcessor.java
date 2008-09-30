@@ -42,8 +42,9 @@ import org.springframework.beans.factory.config.DestructionAwareBeanPostProcesso
  */
 public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Private internal class log instance.
+     */
     private static final Log log = LogFactory.getLog(LifecycleBeanPostProcessor.class);
 
     /**
@@ -70,6 +71,9 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     }
 
 
+    /**
+     * Does nothing - merely returns the object argument immediately.
+     */
     public Object postProcessAfterInitialization(Object object, String name) throws BeansException {
         // Does nothing after initialization
         return object;

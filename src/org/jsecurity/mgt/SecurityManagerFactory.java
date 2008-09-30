@@ -25,7 +25,9 @@ package org.jsecurity.mgt;
  */
 public interface SecurityManagerFactory {
 
-    //TODO - complete JavaDoc
-    
+    /**
+     * Returns a fully configured and initialized <code>SecurityManager</code>.
+     * @return a fully configured and initialized <code>SecurityManager</code>.
+     */
     SecurityManager getSecurityManager();
 }

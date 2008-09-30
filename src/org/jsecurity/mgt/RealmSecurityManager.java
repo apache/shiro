@@ -39,10 +39,14 @@ import java.util.Collection;
  */
 public abstract class RealmSecurityManager extends CachingSecurityManager {
 
-    //TODO - complete JavaDoc
+    /**
+     * Internal private log instance.
+     */
+    private static final Log log = LogFactory.getLog(RealmSecurityManager.class);
 
-    private static final Log log = LogFactory.getLog(RealmSecurityManager.class);    
-
+    /**
+     * Internal collection of <code>Realm</code>s used for all authentication and authorization operations.
+     */
     protected Collection<Realm> realms;
 
     /**
@@ -83,6 +87,13 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         applyCacheManagerToRealms();
     }
 
+    /**
+     * Ensures at least one realm exists, and if not calls {@link #createDefaultRealm() createDefaultRealm()} and sets
+     * it on this instance via the {@link #setRealm(Realm) setRealm} method.
+     * <p/>
+     * This method is used to lazily ensure at least one default Realm exists in all environments, even if it is just
+     * with demo data, to ensure that JSecurity is usuable with the smallest (even no) configuration.
+     */
     protected void ensureRealms() {
         Collection<Realm> realms = getRealms();
         if (realms == null || realms.isEmpty()) {
@@ -94,6 +105,13 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         }
     }
 
+    /**
+     * Creates a default Realm implementation to use in lazy-initialization use cases.
+     * <p/>
+     * The implementation returned is a {@link PropertiesRealm PropertiesRealm}, which supports very simple
+     * properties-based user/role/permission configuration in testing, sample, and simple applications.
+     * @return the default Realm implementation (a {@link PropertiesRealm PropertiesRealm} to use in lazy-init use cases.
+     */
     protected Realm createDefaultRealm() {
         PropertiesRealm realm;
         CacheManager cacheManager = getCacheManager();
@@ -114,6 +132,18 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         return realms;
     }
 
+    /**
+     * Sets the internal {@link #getCacheManager CacheManager} on any internal configured
+     * {@link #getRealms Realms} that implement the {@link CacheManagerAware CacheManagerAware} interface.
+     * <p/>
+     * This method is called after setting a cacheManager on this securityManager via the
+     * {@link #setCacheManager(org.jsecurity.cache.CacheManager) setCacheManager} method to allow it to be propagated
+     * down to all the internal Realms that would need to use it.
+     * <p/>
+     * It is also called after setting one or more realms via the {@link #setRealm setRealm} or
+     * {@link #setRealms setRealms} methods to allow these newly available realms to be given the cache manager
+     * already in use.
+     */
     protected void applyCacheManagerToRealms() {
         CacheManager cacheManager = getCacheManager();
         Collection<Realm> realms = getRealms();
@@ -126,25 +156,38 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         }
     }
 
+    /**
+     * Simply calls {@link #applyCacheManagerToRealms() applyCacheManagerToRealms()} to allow the
+     * newly set {@link CacheManager CacheManager} to be propagated to the internal collection of <code>Realm</code>
+     * that would need to use it.
+     *
+     */
     protected void afterCacheManagerSet() {
         applyCacheManagerToRealms();
     }
 
+    /**
+     * First calls {@link #beforeRealmsDestroyed() beforeRealmsDestroyed()} to allow subclasses to clean up
+     * first, then calls {@link #destroyRealms() destroyRealms()} to clean up the internal <code>Realm</code>s
+     * collection.
+     */
     protected void beforeCacheManagerDestroyed() {
         beforeRealmsDestroyed();
         destroyRealms();
     }
 
+    /**
+     * Template hook for subclasses to perform clean up logic during shut-down.
+     */
     protected void beforeRealmsDestroyed() {
     }
 
+    /**
+     * Cleans up ('destroys') the internal collection of Realms by calling
+     * {@link LifecycleUtils#destroy(Collection) LifecycleUtils.destroy(getRealms())}.
+     */
     protected void destroyRealms() {
-        Collection<Realm> realms = getRealms();
-        if (realms != null && !realms.isEmpty()) {
-            for (Realm realm : realms) {
-                LifecycleUtils.destroy(realm);
-            }
-        }
+        LifecycleUtils.destroy(getRealms());
         this.realms = null;
     }
 
