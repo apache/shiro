@@ -233,7 +233,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
         String stringValue;
         Cookie cookie = getCookie(toHttp(request), getName());
-        if (cookie != null) {
+        if (cookie != null && cookie.getMaxAge() != 0 ) {
             stringValue = cookie.getValue();
             if (log.isInfoEnabled()) {
                 log.info("Found string value [" + stringValue + "] from HttpServletRequest Cookie [" + getName() + "]");
