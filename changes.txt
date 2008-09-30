@@ -3,6 +3,7 @@
 * org.jsecurity.spring.SpringWebConfiguration renamed to org.jsecurity.spring.SpringIniWebConfiguration
 * org.jsecurity.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
 * org.jsecurity.web.servlet.FilterChainWrapper renamed to org.jsecurity.web.servlet.ProxiedFilterChain to maintain parallel naming conventions with ProxiedSession.
+* org.jsecurity.web.attr.CookieAttribute#onRetrieveValue would return deleted cookies (maxAge of 0) on Tomcat.  It now only returns a value if the cookie is non null and maxAge != 0 (-1 or positive only).
 
 [0.9 RC2]
 
