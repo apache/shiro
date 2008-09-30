@@ -44,7 +44,7 @@ public class AtLeastOneSuccessfulModularAuthenticationStrategy extends AbstractA
     /**
      * Ensures that the <code>aggregate</code> method argument is not <code>null</code> and
      * <code>aggregate.{@link org.jsecurity.authc.AuthenticationInfo#getPrincipals() getPrincipals()}</code>
-     * <code>null</code>, and if either is <code>null</code>, throws an AuthenticationException to indicate
+     * is not <code>null</code>, and if either is <code>null</code>, throws an AuthenticationException to indicate
      * that none of the realms authenticated successfully.
      */
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {

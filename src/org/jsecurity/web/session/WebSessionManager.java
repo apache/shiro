@@ -25,15 +25,24 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * TODO - class javadoc
+ * A <code>WebSessionManager</code> is a <code>SessionManager</code> that has the ability to obtain
+ * {@link Session Session}s based on a {@link ServletRequest ServletRequest}/{@link ServletResponse ServletResponse}
+ * pair.
  *
  * @author Les Hazlewood
- * @since Apr 22, 2008 10:16:22 AM
+ * @since 0.9
  */
 public interface WebSessionManager extends SessionManager {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Returns the current {@link Session Session} associated with the specified request pair, or
+     * <code>null</code> if there is no session associated with the request.
+     * 
+     * @param request the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @return the current {@link Session Session} associated with the specified request pair, or
+     * <code>null</code> if there is no session associated with the request. 
+     */
     Session getSession(ServletRequest request, ServletResponse response);
 
 }

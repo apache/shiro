@@ -34,8 +34,9 @@ import java.util.Collection;
  * attempt must be successful for all realms, only 1 or more realms, no realms, etc.
  *
  * @author Les Hazlewood
- * @see AllSuccessfulModularAuthenticationStrategy
- * @see AtLeastOneSuccessfulModularAuthenticationStrategy
+ * @see org.jsecurity.authc.pam.AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy
+ * @see org.jsecurity.authc.pam.AtLeastOneSuccessfulModularAuthenticationStrategy AtLeastOneSuccessfulModularAuthenticationStrategy
+ * @see org.jsecurity.authc.pam.FirstSuccessfulAuthenticationStrategy FirstSuccessfulAuthenticationStrategy
  * @since 0.2
  */
 public interface ModularAuthenticationStrategy {

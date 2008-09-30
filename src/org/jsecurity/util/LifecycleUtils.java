@@ -77,7 +77,10 @@ public abstract class LifecycleUtils {
     }
 
     /**
-     * @param c
+     * Calls {@link #destroy destroy) for each object in the collection.  If the collection is <code>null</code> or
+     * empty, this method returns quietly.
+     *
+     * @param c the collection of objects to {@link #destroy destroy}.
      * @since 0.9
      */
     public static void destroy(Collection c) {

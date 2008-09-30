@@ -41,15 +41,18 @@ import org.jsecurity.util.LifecycleUtils;
  */
 public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Internal private static log instance.
+     */
     private static final Log log = LogFactory.getLog(CachingSecurityManager.class);
 
+    /**
+     * The CacheManager to use to perform caching operations to enhance performance.  Can be null.
+     */
     protected CacheManager cacheManager;
 
     /**
      * Default no-arg constructor that will automatically attempt to initialize a default cacheManager
-     * by calling {@link #ensureCacheManager() ensureCacheManager()}.
      */
     public CachingSecurityManager() {
         ensureCacheManager();
@@ -148,14 +151,25 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
         return manager;
     }
 
+    /**
+     * First calls {@link #beforeCacheManagerDestroyed() beforeCacheManagerDestroyed()} to allow subclasses to clean up
+     * first, then calls {@link #destroyCacheManager() destroyCacheManager()} to clean up the internal
+     * {@link CacheManager CacheManager}.
+     */
     public void destroy() {
         beforeCacheManagerDestroyed();
         destroyCacheManager();
     }
 
+    /**
+     * Template hook for subclasses to perform cleanup behavior during shutdown.
+     */
     protected void beforeCacheManagerDestroyed() {
     }
 
+    /**
+     * Cleans up the internal <code>CacheManager</code> instance during shutdown.
+     */
     protected void destroyCacheManager() {
         LifecycleUtils.destroy(getCacheManager());
     }

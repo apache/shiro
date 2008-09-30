@@ -22,7 +22,7 @@ import java.util.Collection;
 
 /**
  * A <code>SessionListenerRegistrar</code> is a component that is capable of registering interested
- * {@link SessionListener AuthenticationListener}s that wish to be notified during
+ * {@link SessionListener SessionListener}s that wish to be notified during
  * {@link Session Session} lifecycle events.
  * <p/>
  * This interface only guarantees that registered listeners will be notified during a <code>Session</code>'s

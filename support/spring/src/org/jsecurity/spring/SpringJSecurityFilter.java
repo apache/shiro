@@ -21,7 +21,26 @@ package org.jsecurity.spring;
 import org.jsecurity.web.servlet.JSecurityFilter;
 
 /**
- * <p>Extension of JSecurityFilter that uses {@link SpringIniWebConfiguration} to configure the JSecurity instance.</p>
+ * Extension of JSecurityFilter that uses {@link SpringIniWebConfiguration} to configure JSecurity in a Spring web
+ * environment.
+ * <p/>
+ * Using this class in web.xml essentially enables the following:
+ * <pre>&lt;filter&gt;
+ * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;configClassName&lt;/param-name&gt;
+ *     &lt;param-value&gt;org.jsecurity.spring.SpringIniWebConfiguration&lt;param-value&gt;
+ * &lt;/init-param&gt;
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;config&lt;/param-name&gt;
+ *     &lt;param-value&gt;
+ *     ... normal .ini config ...
+ *     &lt;param-value&gt;
+ * &lt;/init-param&gt;
+&lt;filter&gt;</pre>
+ * <p/>
+ * That is, you don't have to specify the additional <code>configClassName</code> <code>init-param</code>.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -31,6 +50,10 @@ public class SpringJSecurityFilter extends JSecurityFilter {
 
     //TODO - complete JavaDoc
 
+    /**
+     * Default constructor, merely calls
+     * <code>{@link #configClassName this.configClassName} = {@link SpringIniWebConfiguration SpringIniWebConfiguration}.class.getName()}</code>.
+     */
     public SpringJSecurityFilter() {
         this.configClassName = SpringIniWebConfiguration.class.getName();
     }

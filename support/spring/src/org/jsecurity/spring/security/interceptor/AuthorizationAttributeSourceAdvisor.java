@@ -46,7 +46,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     public AuthorizationAttributeSourceAdvisor() {
     }
 
-    public org.jsecurity.mgt.SecurityManager getSecurityManager() {
+    public SecurityManager getSecurityManager() {
         return securityManager;
     }
 

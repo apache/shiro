@@ -31,7 +31,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 /**
- * Simple {@link org.jsecurity.session.Session} implementation, intended to be used on the business/server tier.
+ * Simple {@link org.jsecurity.session.Session} POJO implementation, intended to be used on the business/server tier.
  *
  * @author Les Hazlewood
  * @since 0.1
