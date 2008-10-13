@@ -53,9 +53,12 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
      * support role and permission annotations.
      */
     public AnnotationsAuthorizingMethodInterceptor() {
-        methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(2);
+        methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(5);
         methodInterceptors.add(new RoleAnnotationMethodInterceptor());
         methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
+        methodInterceptors.add(new AuthenticatedAnnotationMethodInterceptor());
+        methodInterceptors.add(new UserAnnotationMethodInterceptor());
+        methodInterceptors.add(new GuestAnnotationMethodInterceptor());
     }
 
     /**

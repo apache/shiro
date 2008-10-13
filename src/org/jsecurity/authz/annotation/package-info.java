@@ -17,6 +17,7 @@
  * under the License.
  */
 /**
- * Annotations used to restrict which methods may be invoked depending on the caller's access abilities.
+ * Annotations used to restrict which classes, instances, or methods may be accessed or invoked depending on the
+ * caller's access abilities or authentication state.
  */
 package org.jsecurity.authz.annotation;
