@@ -18,6 +18,11 @@
  */
 package org.jsecurity.authz.annotation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Requires the currently executing {@link org.jsecurity.subject.Subject Subject} to have one or more specified roles
  * in order to execute the annotated method. If they do not have the role(s), the method will not be executed and
@@ -47,8 +52,8 @@ package org.jsecurity.authz.annotation;
  * @see org.jsecurity.subject.Subject#hasRole(String)
  * @since 0.1
  */
-@java.lang.annotation.Target(java.lang.annotation.ElementType.METHOD)
-@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresRoles {
 
     /**
