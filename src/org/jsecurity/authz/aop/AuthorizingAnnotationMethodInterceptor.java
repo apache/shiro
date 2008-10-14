@@ -22,8 +22,6 @@ import org.jsecurity.aop.AnnotationMethodInterceptor;
 import org.jsecurity.aop.MethodInvocation;
 import org.jsecurity.authz.AuthorizationException;
 
-import java.lang.annotation.Annotation;
-
 /**
  * An <tt>AnnotationMethodInterceptor</tt> that asserts the calling code is authorized to execute the method
  * before allowing the invocation to continue by inspecting code annotations to perform an access control check.
@@ -32,14 +30,15 @@ import java.lang.annotation.Annotation;
  * @since 0.1
  */
 public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationMethodInterceptor {
-
+    
     /**
-     * Default constructor that merely calls {@link org.jsecurity.aop.AnnotationMethodInterceptor super(annotationClass)}
-     * @param annotationClass the specific annotatation class this interceptor will look for when performing an
-     * authorization check.
+     * Constructor that ensures the internal <code>handler</code> is set which will be used to perform the
+     * authorization assertion checks when a supported annotation is encountered.
+     * @param handler the internal <code>handler</code> used to perform authorization assertion checks when a 
+     * supported annotation is encountered.
      */
-    public AuthorizingAnnotationMethodInterceptor(Class<? extends Annotation> annotationClass) {
-        super(annotationClass);
+    public AuthorizingAnnotationMethodInterceptor( AuthorizingAnnotationHandler handler ) {
+        super(handler);
     }
 
     /**
@@ -59,12 +58,15 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
     /**
      * Ensures the calling Subject is authorized to execute the specified <code>MethodInvocation</code>.
      * <p/>
-     * As this is an AnnotationMethodInterceptor, the implementations of this method typically inspect the method to
-     * see if it has a specific Annotation, and if it does, performs an authorization check based on the information
-     * defined by the Annotation.
+     * As this is an AnnotationMethodInterceptor, this implementation merely delegates to the internal
+     * {@link AuthorizingAnnotationHandler AuthorizingAnnotationHandler} by first acquiring the annotation by
+     * calling {@link #getAnnotation(MethodInvocation) getAnnotation(methodInvocation)} and then calls
+     * {@link AuthorizingAnnotationHandler#assertAuthorized(java.lang.annotation.Annotation) handler.assertAuthorized(annotation)}.
      *
      * @param mi the <code>MethodInvocation</code> to check to see if it is allowed to proceed/execute.
      * @throws AuthorizationException if the method invocation is not allowed to continue/execute.
      */
-    public abstract void assertAuthorized(MethodInvocation mi) throws AuthorizationException;
+    public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
+        ((AuthorizingAnnotationHandler)getHandler()).assertAuthorized(getAnnotation(mi));
+    }
 }

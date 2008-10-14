@@ -18,6 +18,12 @@
  */
 package org.jsecurity.authz.aop;
 
+import org.jsecurity.authz.AuthorizationException;
+import org.jsecurity.authz.UnauthenticatedException;
+import org.jsecurity.authz.annotation.RequiresGuest;
+
+import java.lang.annotation.Annotation;
+
 /**
  * Checks to see if a @{@link org.jsecurity.authz.annotation.RequiresGuest RequiresGuest} annotation
  * is declared, and if so, ensures the calling <code>Subject</code> does <em>not</em>
@@ -28,14 +34,33 @@ package org.jsecurity.authz.aop;
  * @author Les Hazlewood
  * @since 0.9.0 RC3
  */
-public class GuestAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
+public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
+     *
      * {@link org.jsecurity.authz.annotation.RequiresGuest RequiresGuest} annotations in a method
      * declaration.
      */
-    public GuestAnnotationMethodInterceptor() {
-        super(new GuestAnnotationHandler());
+    public GuestAnnotationHandler() {
+        super(RequiresGuest.class);
+    }
+
+    /**
+     * Ensures that the calling <code>Subject</code> is NOT a <em>user</em>, that is, they do not
+     * have an {@link org.jsecurity.subject.Subject#getPrincipal() identity} before continuing.  If they are
+     * a user ({@link org.jsecurity.subject.Subject#getPrincipal() Subject.getPrincipal()} != null), an
+     * <code>AuthorizingException</code> will be thrown indicating that execution is not allowed to continue.
+     *
+     * @param a the annotation to check for one or more roles
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if the calling <code>Subject</code> is not a &quot;guest&quot;.
+     */
+    public void assertAuthorized(Annotation a) throws AuthorizationException {
+        if (a instanceof RequiresGuest && getSubject().getPrincipal() != null) {
+            throw new UnauthenticatedException("Attempting to perform a guest-only operation.  The current Subject is " +
+                    "not a guest (they have been authenticated or remembered from a previous login).  Access " +
+                    "denied.");
+        }
     }
 }

@@ -17,6 +17,7 @@
  * under the License.
  */
 /**
- * Contains AOP implementation support classes specifically used for authorization operations.
+ * Contains AOP implementation support classes specifically used for authorization operations, particularly supporting
+ * AOP Method Interceptors and JSR-175 metadata Annotations.
  */
 package org.jsecurity.authz.aop;

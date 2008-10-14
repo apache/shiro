@@ -34,7 +34,8 @@ import org.jsecurity.authz.Authorizer;
  * <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
  *
  * <p>Because most of these datasources usually contain Subject (a.k.a. User) information such as usernames and
- * passwords, a Realm can act as a pluggable authentication module in a PAM configuration.  This allows a Realm to
+ * passwords, a Realm can act as a pluggable authentication module in a
+ * <a href="http://en.wikipedia.org/wiki/Pluggable_Authentication_Modules">PAM</a> configuration.  This allows a Realm to
  * perform <i>both</i> authentication and authorization duties for a single datasource, which caters to the large
  * majority of applications.  If for some reason you don't want your Realm implementation to perform authentication
  * duties, you should override the {@link #supports(org.jsecurity.authc.AuthenticationToken)} method to always
