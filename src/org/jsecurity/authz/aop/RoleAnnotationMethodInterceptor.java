@@ -18,14 +18,7 @@
  */
 package org.jsecurity.authz.aop;
 
-import org.jsecurity.aop.MethodInvocation;
-import org.jsecurity.authz.AuthorizationException;
-import org.jsecurity.authz.UnauthorizedException;
 import org.jsecurity.authz.annotation.RequiresRoles;
-
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Checks to see if a @{@link RequiresRoles RequiresRoles} annotation is declared, and if so, performs
@@ -38,40 +31,9 @@ public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
-     * @{@link RequiresRoles RequiresRoles} annotations in a method declaration.
+     * {@link RequiresRoles RequiresRoles} annotations in a method declaration.
      */
     public RoleAnnotationMethodInterceptor() {
-        super(RequiresRoles.class);
-    }
-
-    /**
-     * Ensures that the calling <code>Subject</code> has the Annotation's specified roles, and if not, throws an
-     * <code>AuthorizingException</code> indicating the method is not allowed to be executed.
-     *
-     * @param mi the method invocation to check for one or more roles
-     * @throws AuthorizationException if the calling <code>Subject</code> does not have the role(s) necessary to
-     * invoke the method.
-     */
-    public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
-        RequiresRoles rrAnnotation = (RequiresRoles) getAnnotation(mi);
-
-        String roleId = rrAnnotation.value();
-
-        String[] roles = roleId.split(",");
-
-        if (roles.length == 1) {
-            if (!getSubject().hasRole(roles[0])) {
-                String msg = "Calling Subject does not have required role [" + roleId + "].  " +
-                        "MethodInvocation denied.";
-                throw new UnauthorizedException(msg);
-            }
-        } else {
-            Set<String> rolesSet = new LinkedHashSet<String>(Arrays.asList(roles));
-            if (!getSubject().hasAllRoles(rolesSet)) {
-                String msg = "Calling Subject does not have required roles [" + roleId + "].  " +
-                        "MethodInvocation denied.";
-                throw new UnauthorizedException(msg);
-            }
-        }
+        super( new RoleAnnotationHandler() );
     }
 }

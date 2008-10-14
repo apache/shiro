@@ -18,10 +18,6 @@
  */
 package org.jsecurity.authz.aop;
 
-import org.jsecurity.aop.MethodInvocation;
-import org.jsecurity.authz.UnauthenticatedException;
-import org.jsecurity.authz.annotation.RequiresAuthentication;
-
 /**
  * Checks to see if a @{@link org.jsecurity.authz.annotation.RequiresAuthentication RequiresAuthenticated} annotation
  * is declared, and if so, ensures the calling
@@ -35,27 +31,10 @@ public class AuthenticatedAnnotationMethodInterceptor extends AuthorizingAnnotat
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
-     * @{@link org.jsecurity.authz.annotation.RequiresAuthentication RequiresAuthentication} annotations in a method
+     * {@link org.jsecurity.authz.annotation.RequiresAuthentication RequiresAuthentication} annotations in a method
      * declaration.
      */
     public AuthenticatedAnnotationMethodInterceptor() {
-        super(RequiresAuthentication.class);
-    }
-
-    /**
-     * Ensures that the calling <code>Subject</code> is authenticated, and if not, throws an
-     * {@link UnauthenticatedException UnauthenticatedException} indicating the method is not allowed to be executed.
-     *
-     * @param mi the method invocation to check for authentication
-     * @throws UnauthenticatedException if the calling <code>Subject</code> has not yet
-     * authenticated.
-     */
-    public void assertAuthorized(MethodInvocation mi) throws UnauthenticatedException {
-        RequiresAuthentication annotation = (RequiresAuthentication)getAnnotation(mi);
-        if ( annotation != null ) {
-            if ( !getSubject().isAuthenticated() ) {
-                throw new UnauthenticatedException( "The current Subject is not authenticated.  Method invocation denied." );
-            }
-        }
+        super( new AuthenticatedAnnotationHandler() );
     }
 }

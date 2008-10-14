@@ -30,43 +30,25 @@ import java.lang.reflect.Method;
  */
 public abstract class AnnotationMethodInterceptor extends MethodInterceptorSupport {
 
-    /**
-     * The type of annotation this interceptor will inspect on methods at runtime.
-     */
-    protected Class<? extends Annotation> annotationClass;
+    private AnnotationHandler handler;
 
     /**
-     * Constructs an <code>AnnotationMethodInterceptor</code> who processes annotations of the
-     * specified type.  Immediately calls {@link #setAnnotationClass(Class)}.
+     * Constructs an <code>AnnotationMethodInterceptor</code> with the
+     * {@link AnnotationHandler AnnotationHandler} that will be used to process annotations of a corresponding
+     * type.
      *
-     * @param annotationClass the type of annotation this interceptor will process.
+     * @param handler the handler to delegate to for processing the annotation.
      */
-    public AnnotationMethodInterceptor(Class<? extends Annotation> annotationClass) {
-        setAnnotationClass(annotationClass);
+    public AnnotationMethodInterceptor(AnnotationHandler handler) {
+        setHandler(handler);
     }
 
-    /**
-     * Sets the type of annotation this interceptor will inspect on methods at runtime.
-     *
-     * @param annotationClass the type of annotation this interceptor will process.
-     * @throws IllegalArgumentException if the argument is <code>null</code>.
-     */
-    protected void setAnnotationClass(Class<? extends Annotation> annotationClass)
-            throws IllegalArgumentException {
-        if (annotationClass == null) {
-            String msg = "annotationClass argument cannot be null";
-            throw new IllegalArgumentException(msg);
-        }
-        this.annotationClass = annotationClass;
+    public AnnotationHandler getHandler() {
+        return handler;
     }
 
-    /**
-     * Returns the type of annotation this interceptor inspects on methods at runtime.
-     *
-     * @return the type of annotation this interceptor inspects on methods at runtime.
-     */
-    public Class<? extends Annotation> getAnnotationClass() {
-        return this.annotationClass;
+    public void setHandler(AnnotationHandler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -91,7 +73,7 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
      * The default implementation merely gets the underlying {@link Method Method} from the supplied
      * <code>MethodInvocation</code> argument, and returns:
      * <p/>
-     * <code>mi.{@link Method#getAnnotation(Class) getAnnotation}({@link #getAnnotationClass() getAnnotationClass()});</code>
+     * <code>mi.{@link Method#getAnnotation(Class) getAnnotation}({@link AnnotationHandler#getAnnotationClass() handler.getAnnotationClass()});</code>
      *
      * @param mi the MethodInvocation wrapping the Method from which the Annotation will be acquired.
      * @return the Annotation that this interceptor will process for the specified method invocation.
@@ -109,7 +91,7 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
             throw new IllegalArgumentException(msg);
 
         }
-        return m.getAnnotation(getAnnotationClass());
+        return m.getAnnotation(getHandler().getAnnotationClass());
     }
 
 }

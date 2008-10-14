@@ -112,16 +112,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
         this.filterConfig = filterConfig;
     }
 
-    /**
-     * This implementation:
-     * <ol>
-     * <li>
-     *
-     * @param request
-     * @param response
-     * @param originalChain
-     * @return
-     */
+    //TODO - JAVADOC
     public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
         if (this.chains == null || this.chains.isEmpty()) {
             return null;

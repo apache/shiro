@@ -152,7 +152,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
 
     /**
      * Returns <code>true</code> if any of the configured realms' 
-     * {@link Realm#isPermitted(org.jsecurity.subject.PrincipalCollection, List<Permission>)} call returns <code>true</code>,
+     * {@link Realm#isPermitted(org.jsecurity.subject.PrincipalCollection, List)} call returns <code>true</code>,
      * <code>false</code> otherwise.
      */
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
