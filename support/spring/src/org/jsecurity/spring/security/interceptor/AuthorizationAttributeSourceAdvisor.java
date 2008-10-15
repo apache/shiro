@@ -20,8 +20,7 @@ package org.jsecurity.spring.security.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.authz.annotation.RequiresPermissions;
-import org.jsecurity.authz.annotation.RequiresRoles;
+import org.jsecurity.authz.annotation.*;
 import org.jsecurity.mgt.SecurityManager;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
@@ -55,20 +54,27 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     /**
-     * Returns <tt>true</tt> if the method has a JSecurity <tt>RequiresRoles</tt> or
-     * <tt>RequiresPermissions</tt> annotation, false otherwise.
+     * Returns <tt>true</tt> if the method has any JSecurity annotations, false otherwise.
+     * The annotations inspected are:
+     * <ul>
+     * <li>{@link org.jsecurity.authz.annotation.RequiresAuthentication RequiresAuthentication}</li>
+     * <li>{@link org.jsecurity.authz.annotation.RequiresUser RequiresUser}</li>
+     * <li>{@link org.jsecurity.authz.annotation.RequiresGuest RequiresGuest}</li>
+     * <li>{@link org.jsecurity.authz.annotation.RequiresRoles RequiresRoles}</li>
+     * <li>{@link org.jsecurity.authz.annotation.RequiresPermissions RequiresPermissions}</li>
+     * </ul>
      *
      * @param method      the method to check for a JSecurity annotation
      * @param targetClass the class potentially declaring JSecurity annotations
-     * @return <tt>true</tt> if the method has a JSecurity <tt>RequiresRoles</tt> or
-     *         <tt>RequiresPermissions</tt> annotation, false otherwise.
-     * @see org.jsecurity.authz.annotation.RequiresRoles
-     * @see org.jsecurity.authz.annotation.RequiresPermissions
+     * @return <tt>true</tt> if the method has a JSecurity annotation, false otherwise.
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
     public boolean matches(Method method, Class targetClass) {
         return ((method.getAnnotation(RequiresPermissions.class) != null) ||
-                (method.getAnnotation(RequiresRoles.class) != null));
+                (method.getAnnotation(RequiresRoles.class) != null) ||
+                (method.getAnnotation(RequiresUser.class) != null) ||
+                (method.getAnnotation(RequiresGuest.class) != null ) ||
+                (method.getAnnotation(RequiresAuthentication.class) != null ));
     }
 
     public void afterPropertiesSet() throws Exception {
