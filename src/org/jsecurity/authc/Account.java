@@ -22,8 +22,11 @@ import org.jsecurity.authz.AuthorizationInfo;
 
 /**
  * An <tt>Account</tt> is a convenience interface that extends both {@link AuthenticationInfo} and
- * {@link AuthorizationInfo}.  This interface can be useful when an application uses a single object to
- * encapsulate both the authentication and authorization information required by a {@link org.jsecurity.realm.Realm Realm}.
+ * {@link AuthorizationInfo} and represents authentication and authorization for a <em>single account</em> in a
+ * <em>single Realm</em>.
+ * <p/>
+ * This interface can be useful when an Realm implementation finds it more convenient to use a single object to
+ * encapsulate both the authentication and authorization information used by both authc and authz operations.
  * <p/>
  * <b>Please Note</b>:  Since JSecurity sometimes logs account operations, please ensure your Account's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to

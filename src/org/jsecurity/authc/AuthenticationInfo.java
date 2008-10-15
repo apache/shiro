@@ -63,7 +63,7 @@ public interface AuthenticationInfo {
      * to the application to identify the current <code>Subject</code>.
      * <p/>
      * At least one of these attributes should be the account's 'primary' identifier, such as a username or unique
-     * user id.  By convention, usually  the first principal (that is, <code>principals.iterator().next()</code>) is the
+     * user id.  By convention, usually  the first principal (that is, <code>getPrincipals().iterator().next()</code>) is the
      * 'primary' one.
      * <p/>
      * The returned PrincipalCollection should <em>not</em> contain any credentials used to verify principals, such
@@ -75,7 +75,9 @@ public interface AuthenticationInfo {
 
     /**
      * Returns the credentials associated with the corresponding Subject.  A credential verifies one or more of the
-     * {@link #getPrincipals() principals} associated with the Subject, such as a password or private key.
+     * {@link #getPrincipals() principals} associated with the Subject, such as a password or private key.  Credentials
+     * are used by JSecurity particularly during the authentication process to ensure that submitted credentials
+     * during a login attempt match exactly the credentials here in the <code>AuthenticationInfo</code> instance.
      *
      * @return the credentials associated with the corresponding Subject.
      */
