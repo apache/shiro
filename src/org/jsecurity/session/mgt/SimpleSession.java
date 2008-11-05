@@ -156,10 +156,12 @@ public class SimpleSession implements ValidatingSession, Serializable {
     }
 
     public Map<Object, Object> getAttributes() {
+        touch();
         return attributes;
     }
 
     public void setAttributes(Map<Object, Object> attributes) {
+        touch();
         this.attributes = attributes;
     }
 
