@@ -83,7 +83,7 @@ import java.net.InetAddress;
  * #
  * # Form-based Authentication filter:
  * #<a name="authc"></a>authc = {@link org.jsecurity.web.filter.authc.FormAuthenticationFilter}
- * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setLoginUrl(String) url} = /login.jsp
+ * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setLoginUrl(String) loginUrl} = /login.jsp
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setUsernameParam(String) usernameParam} = username
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setPasswordParam(String) passwordParam} = password
  * #authc.{@link org.jsecurity.web.filter.authc.FormAuthenticationFilter#setRememberMeParam(String) rememberMeParam} = rememberMe
@@ -97,17 +97,17 @@ import java.net.InetAddress;
  * # Roles filter: requires the requesting user to have one or more roles for the request to continue.
  * # If they do not have the specified roles, they are redirected to the specified URL.
  * #<a name="roles"></a>roles = {@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter}
- * #roles.{@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter#setUnauthorizedUrl(String) url} =
+ * #roles.{@link org.jsecurity.web.filter.authz.RolesAuthorizationFilter#setUnauthorizedUrl(String) unauthorizedUrl} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.
  * #
  * # Permissions filter: requires the requesting user to have one or more permissions for the request to
  * # continue, and if they do not, redirects them to the specified URL.
  * #<a name="perms"></a>perms = {@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter}
- * #perms.{@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter#setUnauthorizedUrl(String) url} =
+ * #perms.{@link org.jsecurity.web.filter.authz.PermissionsAuthorizationFilter#setUnauthorizedUrl(String) unauthorizedUrl} =
  * # (note the above url is null by default, which will cause an HTTP 403 (Access Denied) response instead
  * # of redirecting to a page.  If you want to show a 'nice page' instead, you should specify that url.  Many
- * # applications like to use the same url specified in roles.url above.
+ * # applications like to use the same url specified in roles.unauthorizedUrl above.
  * #
  * #
  * # Define your own filters here.  To properly handle url path matching (see the [urls] section below), your
