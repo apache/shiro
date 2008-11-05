@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
-import org.jsecurity.cache.ehcache.EhCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -139,9 +138,12 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
         }
 
         try {
-            EhCacheManager ehCacheManager = new EhCacheManager();
-            ehCacheManager.init();
-            manager = ehCacheManager;
+            /**
+             * TODO: JSEC-24
+             EhCacheManager ehCacheManager = new EhCacheManager();
+             ehCacheManager.init();
+             manager = ehCacheManager;
+             */
         } catch (NoClassDefFoundError e) {
             if (log.isDebugEnabled()) {
                 log.debug("Ehcache was not found in the classpath. A default EhCacheManager cannot be created.");
