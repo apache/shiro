@@ -33,62 +33,62 @@ public class ReflectionBuilderTest {
     @Test
     public void testSimpleConfig() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
-        defs.put("testBean", "org.jsecurity.config.TestBean");
-        defs.put("testBean.stringProp", "blah");
-        defs.put("testBean.booleanProp", "true");
-        defs.put("testBean.intProp", "42");
+        defs.put("compositeBean", "org.jsecurity.config.CompositeBean");
+        defs.put("compositeBean.stringProp", "blah");
+        defs.put("compositeBean.booleanProp", "true");
+        defs.put("compositeBean.intProp", "42");
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map beans = builder.buildObjects(defs);
 
-        TestBean testBean = (TestBean) beans.get("testBean");
-        assertNotNull(testBean);
-        assertEquals(testBean.getStringProp(), "blah");
-        assertTrue(testBean.isBooleanProp());
-        assertEquals(testBean.getIntProp(), 42);
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertNotNull(compositeBean);
+        assertEquals(compositeBean.getStringProp(), "blah");
+        assertTrue(compositeBean.isBooleanProp());
+        assertEquals(compositeBean.getIntProp(), 42);
     }
 
     @Test
     public void testSimpleConfigWithDollarSignStringValue() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
-        defs.put("testBean", "org.jsecurity.config.TestBean");
-        defs.put("testBean.stringProp", "\\$500");
+        defs.put("compositeBean", "org.jsecurity.config.CompositeBean");
+        defs.put("compositeBean.stringProp", "\\$500");
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map beans = builder.buildObjects(defs);
 
-        TestBean testBean = (TestBean) beans.get("testBean");
-        assertEquals(testBean.getStringProp(), "$500");
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertEquals(compositeBean.getStringProp(), "$500");
     }
 
     @Test
     public void testObjectReferenceConfig() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
-        defs.put("otherTestBean", "org.jsecurity.config.OtherTestBean");
-        defs.put("otherTestBean.intProp", "101");
-        defs.put("testBean", "org.jsecurity.config.TestBean");
-        defs.put("testBean.stringProp", "blah");
-        defs.put("testBean.otherTestBean", "$otherTestBean");
+        defs.put("simpleBean", "org.jsecurity.config.SimpleBean");
+        defs.put("simpleBean.intProp", "101");
+        defs.put("compositeBean", "org.jsecurity.config.CompositeBean");
+        defs.put("compositeBean.stringProp", "blah");
+        defs.put("compositeBean.simpleBean", "$simpleBean");
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map beans = builder.buildObjects(defs);
 
-        TestBean testBean = (TestBean) beans.get("testBean");
-        assertNotNull(testBean);
-        assertEquals(testBean.getStringProp(), "blah");
-        OtherTestBean otherTestBean = (OtherTestBean) beans.get("otherTestBean");
-        assertNotNull(otherTestBean);
-        assertNotNull(testBean.getOtherTestBean());
-        assertEquals(otherTestBean, testBean.getOtherTestBean());
-        assertEquals(otherTestBean.getIntProp(), 101);
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertNotNull(compositeBean);
+        assertEquals(compositeBean.getStringProp(), "blah");
+        SimpleBean simpleBean = (SimpleBean) beans.get("simpleBean");
+        assertNotNull(simpleBean);
+        assertNotNull(compositeBean.getSimpleBean());
+        assertEquals(simpleBean, compositeBean.getSimpleBean());
+        assertEquals(simpleBean.getIntProp(), 101);
     }
 
     @Test(expected = ConfigurationException.class)
     public void testObjectReferenceConfigWithTypeMismatch() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
-        defs.put("otherTestBean", "org.jsecurity.config.OtherTestBean");
-        defs.put("testBean", "org.jsecurity.config.TestBean");
-        defs.put("testBean.otherTestBean", "otherTestBean");
+        defs.put("simpleBean", "org.jsecurity.config.SimpleBean");
+        defs.put("compositeBean", "org.jsecurity.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", "simpleBean");
         ReflectionBuilder builder = new ReflectionBuilder();
         builder.buildObjects(defs);
     }
@@ -96,9 +96,9 @@ public class ReflectionBuilderTest {
     @Test(expected = UnresolveableReferenceException.class)
     public void testObjectReferenceConfigWithInvalidReference() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
-        defs.put("otherTestBean", "org.jsecurity.config.OtherTestBean");
-        defs.put("testBean", "org.jsecurity.config.TestBean");
-        defs.put("testBean.otherTestBean", "$foo");
+        defs.put("simpleBean", "org.jsecurity.config.SimpleBean");
+        defs.put("compositeBean", "org.jsecurity.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", "$foo");
         ReflectionBuilder builder = new ReflectionBuilder();
         builder.buildObjects(defs);
     }

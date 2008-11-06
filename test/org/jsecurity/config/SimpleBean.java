@@ -22,12 +22,13 @@ package org.jsecurity.config;
  * @author Les Hazlewood
  * @since Aug 5, 2008 10:18:01 AM
  */
-public class OtherTestBean {
+public class SimpleBean
+{
 
     private String stringProp = null;
     private int intProp;
 
-    public OtherTestBean() {
+    public SimpleBean() {
     }
 
     public String getStringProp() {
