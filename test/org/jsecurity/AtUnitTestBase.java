@@ -32,5 +32,5 @@ import org.junit.runner.RunWith;*/
 /*@RunWith(AtUnit.class)
 @Container(Container.Option.SPRING)
 @MockFramework(MockFramework.Option.EASYMOCK)*/
-public class AtUnitTest {
+public class AtUnitTestBase {
 }

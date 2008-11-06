@@ -22,13 +22,14 @@ package org.jsecurity.config;
  * @author Les Hazlewood
  * @since Aug 5, 2008 10:17:37 AM
  */
-public class TestBean {
+public class CompositeBean
+{
     private String stringProp;
     private boolean booleanProp;
     private int intProp;
-    private OtherTestBean otherTestBean;
+    private SimpleBean simpleBean;
 
-    public TestBean() {
+    public CompositeBean() {
     }
 
     public String getStringProp() {
@@ -55,11 +56,11 @@ public class TestBean {
         this.intProp = intProp;
     }
 
-    public OtherTestBean getOtherTestBean() {
-        return otherTestBean;
+    public SimpleBean getSimpleBean() {
+        return simpleBean;
     }
 
-    public void setOtherTestBean(OtherTestBean otherTestBean) {
-        this.otherTestBean = otherTestBean;
+    public void setSimpleBean(SimpleBean simpleBean) {
+        this.simpleBean = simpleBean;
     }
 }
