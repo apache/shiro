@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
+import org.jsecurity.cache.HashtableCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -138,6 +139,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
         }
 
         try {
+            manager = new HashtableCacheManager();
             /**
              * TODO: JSEC-24
              EhCacheManager ehCacheManager = new EhCacheManager();
