@@ -24,7 +24,7 @@ package org.jsecurity.authz.aop;
  * <code>Subject</code>.{@link org.jsecurity.subject.Subject#isAuthenticated() isAuthenticated()} before invoking
  * the method.
  *
- * @since 0.9.0 RC3
+ * @since 0.9.0
  * @author Les Hazlewood
  */
 public class AuthenticatedAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {

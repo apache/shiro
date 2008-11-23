@@ -24,7 +24,7 @@
 
     <groupId>org.jsecurity</groupId>
     <artifactId>jsecurity</artifactId>
-    <version>0.9.0-snapshot</version>
+    <version>0.9.0</version>
     <name>JSecurity</name>
     <url>http://www.jsecurity.org</url>
     <description>JSecurity is a powerful and flexible open-source Java security framework that cleanly handles
@@ -41,13 +41,13 @@
 
     <issueManagement>
         <system>Jira</system>
-        <url>http://issues.jsecurity.org</url>
+        <url>http://issues.apache.org/jira/browse/JSEC</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:svn:http://jsecurity.svn.sourceforge.net/svnroot/jsecurity/trunk</connection>
-        <developerConnection>scm:svn:https://jsecurity.svn.sourceforge.net/svnroot/jsecurity/trunk</developerConnection>
-        <url>http://jsecurity.svn.sourceforge.net/viewvc/jsecurity/trunk/</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</developerConnection>
+        <url>http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</url>
     </scm>
 
     <dependencies>

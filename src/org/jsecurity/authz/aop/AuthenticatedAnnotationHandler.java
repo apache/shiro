@@ -28,7 +28,7 @@ import java.lang.annotation.Annotation;
  * authenticated before allowing access.
  *
  * @author Les Hazlewood
- * @since 0.9.0 RC3
+ * @since 0.9.0
  */
 public class AuthenticatedAnnotationHandler extends AuthorizingAnnotationHandler {
 

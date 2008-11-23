@@ -37,7 +37,7 @@
 <book>
     <bookinfo>
         <title>JSecurity Reference Documentation</title>
-        <releaseinfo>0.9.0-snapshot</releaseinfo>
+        <releaseinfo>0.9.0</releaseinfo>
         <authorgroup>
             <author>
                 <firstname>Les</firstname>

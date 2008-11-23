@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
  * Base support class for implementations that reads and processes JSR-175 annotations.
  *
  * @author Les Hazlewood
- * @since 0.9.0 RC3
+ * @since 0.9.0
  */
 public abstract class AnnotationHandler {
 

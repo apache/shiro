@@ -32,7 +32,7 @@ import java.lang.annotation.Annotation;
  * This annotation essentially ensures that <code>subject.{@link org.jsecurity.subject.Subject#getPrincipal() getPrincipal()} == null</code>.
  *
  * @author Les Hazlewood
- * @since 0.9.0 RC3
+ * @since 0.9.0
  */
 public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {
 
