@@ -33,7 +33,7 @@ import java.util.Set;
  * access.
  *
  * @author Les Hazlewood
- * @since 0.9.0 RC3
+ * @since 0.9.0
  */
 public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
 

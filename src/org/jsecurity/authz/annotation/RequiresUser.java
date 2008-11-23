@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * @see RequiresAuthentication
  * @see RequiresGuest
  *
- * @since 0.9.0 RC3
+ * @since 0.9.0
  * @author Les Hazlewood
  */
 @Target(ElementType.METHOD)

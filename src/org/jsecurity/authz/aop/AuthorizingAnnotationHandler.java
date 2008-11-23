@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
  * An AnnotationHandler that executes authorization (access control) behavior based on directive(s) found in a
  * JSR-175 Annotation.
  *
- * @since 0.9.0 RC3
+ * @since 0.9.0
  * @author Les Hazlewood
  */
 public abstract class AuthorizingAnnotationHandler extends AnnotationHandler {

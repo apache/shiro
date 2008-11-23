@@ -75,7 +75,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
      *
      * @return the <code>PatternMatcher</code> used when determining if an incoming request's path
      *         matches a configured filter chain path in the <code>[urls]</code> section.
-     * @since 0.9.0 final
+     * @since 0.9.0
      */
     public PatternMatcher getPathMatcher() {
         return pathMatcher;
@@ -88,7 +88,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
      *
      * @param pathMatcher the <code>PatternMatcher</code> used when determining if an incoming request's path
      *                    matches a configured filter chain path in the <code>[urls]</code> section.
-     * @since 0.9.0 final
+     * @since 0.9.0
      */
     public void setPathMatcher(PatternMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;

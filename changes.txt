@@ -1,4 +1,4 @@
-[0.9 RC3]
+[0.9 Final]
 
 * org.jsecurity.spring.SpringWebConfiguration renamed to org.jsecurity.spring.SpringIniWebConfiguration
 * org.jsecurity.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
@@ -9,6 +9,7 @@
   done to ensure Annotations could be processed independently of where they are declared (method, class, etc).
 * New Feature: added @RequiresGuest, @RequiresUser, @RequiresAuthentication annotations (and corresponding
   AnnotationHandler implementations to support them).
+* Native SimpleSession session timeout bug fixed [JSEC-23]
 
 [0.9 RC2]
 
