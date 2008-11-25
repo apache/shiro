@@ -1,0 +1,29 @@
+[0.9 Final]
+
+* org.jsecurity.spring.SpringWebConfiguration renamed to org.jsecurity.spring.SpringIniWebConfiguration
+* org.jsecurity.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
+* org.jsecurity.web.servlet.FilterChainWrapper renamed to org.jsecurity.web.servlet.ProxiedFilterChain to maintain parallel naming conventions with ProxiedSession.
+* org.jsecurity.web.attr.CookieAttribute#onRetrieveValue would return deleted cookies (maxAge of 0) on Tomcat.  It now only returns a value if the cookie is non null and maxAge != 0 (-1 or positive only).
+* Added *AnnotationHandler implementations and refactored the AuthorizingAnnotationMethodInterceptor implementations
+  to delegate to internal AnnotationHandler instances for performing authorization checks based on annotations.  This was
+  done to ensure Annotations could be processed independently of where they are declared (method, class, etc).
+* New Feature: added @RequiresGuest, @RequiresUser, @RequiresAuthentication annotations (and corresponding
+  AnnotationHandler implementations to support them).
+* Native SimpleSession session timeout bug fixed [JSEC-23]
+
+[0.9 RC2]
+
+* DelegatingSubject is now still usable after it is logged out (no invalid exceptions thrown).
+  The Subject is now just considered 'anonymous' again at that point.
+
+* ReflectionBuilder (used in JSecurity .ini and web.xml based text configuration) now handles setting
+  primitive attributes correctly, performing proper string-to-primitive conversion (BeanUtils does this automatically).
+
+* ReflectionBuilder (used for JSecurity .ini and web.xml configuration) now supports setting other previously configured
+  objects by '$' reference. For example:
+  bar = some.package.class.Bar
+  foo = some.package.class.Foo
+  foo.bar = $bar
+
+
+

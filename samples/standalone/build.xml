@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<project name="standalone" default="dist">
+
+    <property name="root.base.dir" value="../.."/>
+
+    <!-- "extend" parent build definition -->
+    <import file="../../build.xml"/>
+
+    <!-- Module properties -->
+    <property name="module.name" value="standalone"/>
+    <property name="module.base.dir" value="${root.base.dir}/samples/${module.name}"/>
+    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
+    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
+    <property name="dist.dir" value="${build.dir}/dist"/>
+
+    <path id="compile.path">
+        <fileset dir="${lib.dir}/samples" includes="**/*.jar"/>
+        <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
+    </path>
+
+    <path id="run.path">
+        <pathelement location="${classes.dir}"/>
+        <fileset dir="${lib.dir}/samples">
+            <include name="ehcache.jar"/>
+            <include name="commons-beanutils.jar"/>
+            <include name="commons-logging.jar"/>
+            <include name="log4j.jar"/>
+            <!-- needed by ehcache, not jsecurity: -->
+            <include name="backport-util-concurrent.jar"/>
+            <!-- Not normally needed, but mac os x JDK needs it for some reason: -->
+            <include name="xercesImpl.jar"/>
+        </fileset>
+        <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
+    </path>
+
+    <!-- ===================================================================
+  -  clean - clean all build remnants from this submodule
+  - ==================================================================== -->
+    <target name="clean" description="Cleans the ${module.name} build">
+        <echo message="cleaning ${module.name} module"/>
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <!-- ===================================================================
+ -  compile - compile Java source files
+ -  =================================================================== -->
+    <target name="compile" description="Compiles the ${module.name} classes">
+
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${classes.dir}/META-INF"/>
+
+        <javac destdir="${classes.dir}"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               failonerror="true"
+               classpathref="compile.path">
+            <src path="${src.dir}"/>
+        </javac>
+
+        <copy todir="${classes.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.ini"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="jar" depends="compile" description="Creates a .jar of the ${module.name} classes">
+
+        <mkdir dir="${dist.dir}"/>
+
+        <jar jarfile="${dist.dir}/jsecurity-${module.name}.jar">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+                <include name="**/*.properties"/>
+            </fileset>
+            <manifest>
+                <attribute name="Implementation-Title"
+                           value="${project.name}-${module.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="${project.name}-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- ===================================================================
+ -  dist - create distribution war (which will be used for deployment)
+ -  =================================================================== -->
+    <target name="dist" depends="compile,jar" description="Creates the ${module.name} .jar"/>
+
+    <target name="run" depends="dist" description="Runs the simple ${module.name} class">
+
+        <java classname="Standalone" classpathref="run.path"/>
+
+    </target>
+
+</project>
