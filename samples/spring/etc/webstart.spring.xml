@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context for JSecurity WebStart sample application
+  -->
+<beans>
+
+  <bean id="webStartView"
+        class="org.jsecurity.samples.spring.ui.WebStartView">
+    <property name="sampleManager" ref="sampleManager"/>
+  </bean>
+
+  <bean id="sampleManager"
+        class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+    <property name="serviceUrl" value="http://localhost:8080/jsecurity-spring/remoting/sampleManager"/>
+    <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
+    <property name="remoteInvocationFactory" ref="secureRemoteInvocationFactory"/>
+  </bean>
+
+  <bean id="secureRemoteInvocationFactory"
+        class="org.jsecurity.spring.remoting.SecureRemoteInvocationFactory"/>
+
+</beans>
