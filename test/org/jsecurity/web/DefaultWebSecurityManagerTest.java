@@ -29,26 +29,23 @@ import org.junit.Test;
  */
 public class DefaultWebSecurityManagerTest {
 
+    private DefaultWebSecurityManager sm;
+
     @Before
     public void setup() {
+        sm = new DefaultWebSecurityManager();
         ThreadContext.clear();
     }
 
     @After
     public void tearDown() {
+        sm.destroy();
         ThreadContext.clear();
     }
 
     @Test
-    public void simpleWebSecurityManagerInit() {
-        DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
-        dwsm.destroy();
+    public void jsecuritySessionModeInit() {
+        sm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
     }
 
-    @Test
-    public void jsecuritySessionModeWebSecurityManagerInit() {
-        DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
-        dwsm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
-        dwsm.destroy();
-    }
 }

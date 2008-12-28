@@ -9,11 +9,6 @@
           <file>file://$MODULE_DIR$/samples/spring/webroot/WEB-INF/sample-servlet.xml</file>
           <file>file://$MODULE_DIR$/samples/spring/webroot/WEB-INF/remoting-servlet.xml</file>
         </fileset>
-        <options>
-          <option name="enableValidation" value="true" />
-          <option name="reportErrorsAsWarnings" value="true" />
-        </options>
-        <customNs />
       </configuration>
     </facet>
     <facet type="web" name="jsecurity-web">
@@ -32,11 +27,7 @@
           <setting name="EXPLODED_ENABLED" value="true" />
           <setting name="JAR_URL" value="file://$MODULE_DIR$/out/Quickstart Webapp.war" />
           <setting name="JAR_ENABLED" value="false" />
-          <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
-          <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="true" />
-          <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
           <containerElement type="module" name="jsecurity">
@@ -89,7 +80,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="quickstart-libs" level="project" />
-    <orderEntryProperties />
   </component>
   <component name="copyright">
     <Base>
