@@ -18,82 +18,30 @@
  */
 package org.jsecurity.cache;
 
-import java.util.*;
+import java.util.Hashtable;
 
 /**
  * An implementation of the JSecurity {@link Cache} interface that uses a
  * {@link Hashtable} to store cached objects.  This implementation is only suitable for
- * development/testing use.  A more robust caching solution should be used for production
- * systems such as the {@link org.jsecurity.cache.ehcache.EhCacheManager}
+ * development/testing use as it is prone to a potential memory leak if objects are not explicitly removed
+ * from the cache.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.2
  */
-@SuppressWarnings("unchecked")
-public class HashtableCache implements Cache {
+public class HashtableCache extends MapCache {
 
     /**
-     * The underlying hashtable.
-     */
-    private final Map hashtable = new Hashtable();
-
-    /**
-     * The name of this cache.
-     */
-    private final String name;
-
-    /**
-     * Creates a new cache with the given name.
+     * Creates a new <code>HashtableCache</code> instance with the specified name.
+     * <p/>
+     * This constructor simply calls <code>super(name, new {@link Hashtable Hashtable}());</code>
      *
-     * @param name the name of this cache.
+     * @param name the name to assign to the cache.
+     * @since 1.0
      */
     public HashtableCache(String name) {
-        this.name = name;
+        super(name, new Hashtable());
     }
 
-    public Object get(Object key) throws CacheException {
-        return hashtable.get(key);
-    }
-
-    public void put(Object key, Object value) throws CacheException {
-        hashtable.put(key, value);
-    }
-
-    public void remove(Object key) throws CacheException {
-        hashtable.remove(key);
-    }
-
-    public void clear() throws CacheException {
-        hashtable.clear();
-    }
-
-    public int size() {
-        return hashtable.size();
-    }
-
-    public Set keys() {
-        if (!hashtable.isEmpty()) {
-            return Collections.unmodifiableSet(hashtable.keySet());
-        } else {
-            return Collections.EMPTY_SET;
-        }
-    }
-
-    public Set values() {
-        if (!hashtable.isEmpty()) {
-            Collection values = hashtable.values();
-            if (values instanceof Set) {
-                return Collections.unmodifiableSet((Set) values);
-            } else {
-                return Collections.unmodifiableSet(new LinkedHashSet(values));
-            }
-        } else {
-            return Collections.EMPTY_SET;
-        }
-    }
-
-    public String toString() {
-        return "HashtableCache [" + name + "]";
-    }
 }

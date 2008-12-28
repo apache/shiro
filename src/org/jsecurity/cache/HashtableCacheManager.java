@@ -20,6 +20,10 @@ package org.jsecurity.cache;
 
 /**
  * A {@link CacheManager} that returns {@link HashtableCache} caches.
+ * <p/>
+ * This implementation is only suitable for development/testing as hashtable-based caches are prone to
+ * potential memory leaks if objects are not explicitly removed from these caches over time.  If you are configuring
+ * your own cache manager, consider using a production quality
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
