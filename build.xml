@@ -94,17 +94,21 @@
     <property name="dist.jar" value="${root.dist.dir}/${dist.jarName}"/>
 
     <path id="core.src">
-        <fileset dir="${src.dir}">
+        <fileset dir="${base.dir}/core/src">
             <include name="**"/>
-            <exclude name="org/jsecurity/web/**"/>
         </fileset>
         <pathelement location="${root.base.dir}/support/ehcache/src"/>
+    </path>
+
+    <path id="web.src">
+        <pathelement location="${base.dir}/web/src"/>
     </path>
 
     <path id="all.libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
         </fileset>
+        <pathelement location="${classes.dir}"/>
     </path>
 
     <!-- To disable this task (maybe behind a firewall?), use the -Doffline=true command-line switch -->
@@ -157,12 +161,12 @@
                optimize="${compile.optimize}"
                target="1.5"
                failonerror="true"
-               srcdir="${src.dir}"
+               srcdir="${base.dir}/core/src"
                classpathref="all.libs"
                sourcepathref="core.src"/>
 
         <copy todir="${classes.dir}" preservelastmodified="true">
-            <fileset dir="${src.dir}">
+            <fileset dir="${base.dir}/core/src">
                 <include name="**/*.properties"/>
                 <include name="**/*.xml"/>
                 <include name="**/*.dtd"/>
@@ -195,12 +199,10 @@
                failonerror="true"
                classpathref="all.libs"
                sourcepath=""
-               srcdir="${src.dir}">
-            <include name="org/jsecurity/web/**"/>
-        </javac>
+               srcdir="${base.dir}/web/src"/>
 
-        <copy todir="${classes.dir}" preservelastmodified="true">
-            <fileset dir="${src.dir}/org/jsecurity/web">
+        <copy todir="${build.dir}/web-classes" preservelastmodified="true">
+            <fileset dir="${base.dir}/web/src">
                 <include name="**/*.properties"/>
                 <include name="**/*.xml"/>
                 <include name="**/*.dtd"/>
@@ -208,8 +210,8 @@
             </fileset>
         </copy>
 
-        <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${src.dir}">
+        <copy todir="${build.dir}/web-classes/META-INF" preservelastmodified="true">
+            <fileset dir="${base.dir}/web/src">
                 <include name="**/*.tld"/>
             </fileset>
         </copy>
