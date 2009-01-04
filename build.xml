@@ -181,7 +181,7 @@
         </copy>
 
         <copy todir="${classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${src.dir}">
+            <fileset dir="${base.dir}/core/src">
                 <include name="**/*.tld"/>
             </fileset>
         </copy>
@@ -410,7 +410,7 @@
                 ]]>
             </bottom>
             <classpath refid="all.libs"/>
-            <packageset dir="${src.dir}">
+            <packageset dir="${base.dir}/core/src">
                 <include name="org/jsecurity/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/ehcache/src">
@@ -711,7 +711,7 @@ up the transform (feel free to fix this more elegantly)
         <mkdir dir="${root.dist.dir}"/>
         <delete file="${root.dist.dir}/${project.name}.src.zip"/>
         <zip destfile="${root.dist.dir}/${project.name}.src.zip">
-            <fileset dir="${src.dir}">
+            <fileset dir="${base.dir}/core/src">
                 <include name="org/jsecurity/**"/>
             </fileset>
             <fileset dir="${root.base.dir}/support/ehcache/src">
