@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
-import org.jsecurity.cache.ehcache.EhCacheManager;
+import org.jsecurity.cache.DefaultCacheManager;
 import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -120,9 +120,9 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * Creates a {@link CacheManager CacheManager} instance to be used by this <code>SecurityManager</code>
      * and potentially any of its children components.
      * <p/>
-     * This default implementation attempts to create an {@link org.jsecurity.cache.ehcache.EhCacheManager EhCacheManager}, assuming that
-     * ehcache is in the classpath.  If Ehcache is not in the classpath, no cache manager will be created and this
-     * method does nothing.
+     * This default implementation returns a new
+     * {@link org.jsecurity.cache.DefaultCacheManager DefaultCacheManager}, which uses in-memory (memory-leak safe)
+     * caches.
      * <p/>
      * This can be overridden by subclasses for a different implementation, but it is often easier to set a
      * different implementation via the {@link #setCacheManager(org.jsecurity.cache.CacheManager) setCacheManager}
@@ -132,23 +132,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * @see #ensureCacheManager() ensureCacheManager()
      */
     protected CacheManager createCacheManager() {
-        CacheManager manager = null;
-
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to initialize default CacheManager using EhCache...");
-        }
-
-        try {
-             EhCacheManager ehCacheManager = new EhCacheManager();
-             ehCacheManager.init();
-             manager = ehCacheManager;
-        } catch (NoClassDefFoundError e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Ehcache was not found in the classpath. A default EhCacheManager cannot be created.");
-            }
-        }
-
-        return manager;
+        return new DefaultCacheManager();
     }
 
     /**
