@@ -34,13 +34,14 @@
     </info>
 
     <configurations defaultconfmapping="*->default">
-        <conf name="runtime" description="Minimum required runtime dependencies."/>
-        <conf name="runtime-web" extends="runtime"
-              description="Minimum required runtime dependencies when running a web application."/>
-        <conf name="compile" extends="runtime-web"
-              description="Required dependencies when building JSecurity from scratch."/>
-        <conf name="samples" extends="runtime-web"
+        <conf name="core" description="Dependencies for the core module."/>
+        <conf name="web" extends="core" description="Depdencies for the web module."/>
+        <conf name="ehcache" extends="core" description="Dependencies for the ehcache module."/>
+        <conf name="quartz" extends="core" description="Dependencies for the quartz module."/>
+        <conf name="spring" extends="web" description="Dependencies for the spring module."/>
+        <conf name="samples" extends="web,ehcache,quartz,spring"
               description="Required dependencies when running one of the sample web applications."/>
+        <conf name="retroweaver"/>
         <conf name="test" extends="*" description="Any and all dependencies so all functionality can be tested."/>
         <conf name="docbook"/>
     </configurations>
@@ -48,21 +49,22 @@
     <dependencies>
 
         <!-- Minimal deps, depending on VM: -->
-        <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false" conf="runtime"/>
-        <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="runtime-web"/>
+        <dependency org="commons-logging" name="commons-logging" rev="1.1.1" transitive="false" conf="core"/>
+        <dependency org="commons-beanutils" name="commons-beanutils" rev="1.7.0" transitive="false" conf="core"/>
 
         <!-- Feature-based dependencies: -->
-        <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="compile"/>
-        <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="compile"/>
-        <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="compile,samples"/>
+        <dependency org="net.sourceforge.retroweaver" name="retroweaver" rev="2.0.5" conf="retroweaver"/>
+        <dependency org="net.sourceforge.retroweaver" name="retroweaver-rt" rev="2.0.5" conf="retroweaver"/>
+        <dependency org="net.sf.ehcache" name="ehcache" rev="1.4.1" transitive="false" conf="ehcache,samples"/>
         <dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="3.1" transitive="false"
                     conf="samples"/>
         <dependency org="xerces" name="xercesImpl" rev="2.8.1" transitive="false" conf="samples"/>
-        <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="compile"/>
-        <dependency org="org.springframework" name="spring" rev="2.5.1" transitive="false" conf="compile,samples"/>
-        <dependency org="org.springframework" name="spring-webmvc" rev="2.5.1" transitive="false" conf="samples"/>
-        <dependency org="javax.servlet" name="servlet-api" rev="2.4" transitive="false" conf="compile,samples"/>
-        <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="compile"/>
+        <dependency org="quartz" name="quartz" rev="1.5.2" transitive="false" conf="quartz"/>
+        <dependency org="org.springframework" name="spring" rev="2.5.6" transitive="false" conf="spring,samples"/>
+        <dependency org="org.springframework" name="spring-webmvc" rev="2.5.6" transitive="false"
+                    conf="spring,samples"/>
+        <dependency org="javax.servlet" name="servlet-api" rev="2.4" transitive="false" conf="web,samples"/>
+        <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0" transitive="false" conf="web"/>
 
         <!-- Sample application dependencies: -->
         <dependency org="log4j" name="log4j" rev="1.2.15" transitive="false" conf="samples"/>

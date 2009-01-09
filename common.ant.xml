@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+
+<project name="common" default="package">
+
+    <!-- Static property definitions.  These will remain the same for any module or submodule. -->
+    <property name="project.name" value="jsecurity"/>
+
+    <property name="root.base.dir" value="${basedir}"/>
+
+    <!-- Allow override of default build properties from properties file. -->
+    <property file="build.properties"/>
+    <property file="${root.base.dir}/build.properties"/>
+    <property file="${user.home}/.jsecurity/build.properties"/>
+
+    <!-- Environment variables (e.g. to pickup CATALINA_HOME for test deployment) -->
+    <property environment="env"/>
+
+    <!-- version of the product, see http://apr.apache.org/versioning.html for details on this convention -->
+    <property name="version.major" value="0"/>
+    <property name="version.minor" value="9"/>
+    <property name="version.revision" value="0"/>
+    <property name="version" value="${version.major}.${version.minor}.${version.revision}"/>
+    <property name="release.name" value="${project.name}-${version}"/>
+
+    <!-- application-wide config files: (all other config files should be in a respective module or submodule) -->
+    <property name="root.etc.dir" value="${root.base.dir}/etc"/>
+    <property name="root.dist.dir" value="${root.base.dir}/build/${project.name}-${version}"/>
+
+    <!-- All 3rd party libraries are in here: -->
+    <property name="lib.dir" value="${root.base.dir}/lib"/>
+
+    <!-- *RELATIVE* definitions.  These properties will reflect a directory structure relative to where the
+         sbuild is being executed -->
+    <property name="base.dir" value="."/>
+    <property name="etc.dir" value="${base.dir}/etc"/>
+    <property name="src.dir" value="${base.dir}/src"/>
+    <property name="test.dir" value="${base.dir}/test"/>
+    <property name="build.dir" value="${base.dir}/build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="test.classes.dir" value="${build.dir}/test-classes"/>
+    <property name="docs.dir" value="${build.dir}/docs"/>
+    <property name="test.docs.dir" value="${docs.dir}/test-reports"/>
+    <property name="api.dir" value="${docs.dir}/api"/>
+    <property name="dist.dir" value="${root.dist.dir}"/>
+
+    <!-- compile flags, can be overridden on the command line using the -D flag -->
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="false"/>
+
+    <path id="all.libs">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement location="${classes.dir}"/>
+    </path>
+
+    <path id="test.path">
+        <path refid="all.libs"/>
+        <fileset dir="${dist.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- ===================================================================
+      -  Clean all build files
+      -  =================================================================== -->
+    <target name="clean" description="Cleans the entire project">
+        <delete file="${dist.jar}"/>
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <macrodef name="compileMacro">
+        <attribute name="classpathref" default="compile.path"/>
+        <attribute name="srcdir" default="${src.dir}"/>
+        <attribute name="destdir" default="${classes.dir}"/>
+
+        <sequential>
+            <mkdir dir="@{destdir}"/>
+            <mkdir dir="@{destdir}/META-INF"/>
+
+            <!-- 'compile.path' is expected to be defined in the module build.xml file -->
+            <javac destdir="@{destdir}"
+                   debug="${compile.debug}"
+                   deprecation="${compile.deprecation}"
+                   optimize="${compile.optimize}"
+                   failonerror="true"
+                   srcdir="@{srcdir}"
+                   classpathref="@{classpathref}">
+                <!-- <compilerarg value="-Xlint:unchecked"/> -->
+            </javac>
+            <copy todir="@{destdir}" preservelastmodified="true">
+                <fileset dir="@{srcdir}">
+                    <include name="**/*"/>
+                    <exclude name="**/*.java"/>
+                </fileset>
+            </copy>
+            <copy todir="@{destdir}" preservelastmodified="true">
+                <fileset dir="@{srcdir}">
+                    <include name="**/*.tld"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="compile.src" description="Compiles sources">
+        <!-- defaults are fine: -->
+        <compileMacro/>
+    </target>
+
+    <target name="compile.test" description="Compiles test sources only">
+        <compileMacro classpathref="test.path" srcdir="${test.dir}" destdir="${test.classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="compile.src, compile.test" description="Compiles all sources"/>
+
+    <target name="jar.jdk15" depends="compile" description="Create module jar file">
+        <jar jarfile="${dist.jar}">
+            <fileset dir="${classes.dir}">
+                <include name="**"/>
+            </fileset>
+            <metainf dir="${classes.dir}/META-INF">
+                <include name="**"/>
+            </metainf>
+            <manifest>
+                <attribute name="Implementation-Title" value="${project.name}-${module.name}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+                <attribute name="${project.name}-Version" value="${version}"/>
+                <!-- Allow use of this JAR as a Java agent -->
+                <!-- <attribute name="Premain-Class" value="org.jsecurity.instrument.InstrumentationSavingAgent" /> -->
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jar.retroweaver" depends="jar.jdk15" description="Create module jar file for JDK 1.3 and 1.4">
+        <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask"
+                 classpathref="all.libs"/>
+        <mkdir dir="${dist.dir}/jdk13"/>
+        <mkdir dir="${dist.dir}/jdk14"/>
+        <retroweaver target="1.3" inputjar="${dist.jar}"
+                     outputjar="${dist.dir}/jdk13/${project.name}-${module.name}-jdk13.jar"/>
+        <retroweaver target="1.4" inputjar="${dist.jar}"
+                     outputjar="${dist.dir}/jdk14/${project.name}-${module.name}-jdk14.jar"/>
+    </target>
+
+    <target name="jar" depends="jar.retroweaver"/>
+
+    <target name="package" depends="jar"/>
+
+</project>
