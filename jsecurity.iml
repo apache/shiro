@@ -63,7 +63,6 @@
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/etc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/spring/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/samples/standalone/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/ehcache/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/quartz/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/support/spring/src" isTestSource="false" />
@@ -71,6 +70,16 @@
       <sourceFolder url="file://$MODULE_DIR$/web/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/web/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/core/build" />
+      <excludeFolder url="file://$MODULE_DIR$/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
+      <excludeFolder url="file://$MODULE_DIR$/samples/quickstart/build" />
+      <excludeFolder url="file://$MODULE_DIR$/samples/spring-hibernate/build" />
+      <excludeFolder url="file://$MODULE_DIR$/samples/spring/build" />
+      <excludeFolder url="file://$MODULE_DIR$/support/ehcache/build" />
+      <excludeFolder url="file://$MODULE_DIR$/support/quartz/build" />
+      <excludeFolder url="file://$MODULE_DIR$/support/spring/build" />
+      <excludeFolder url="file://$MODULE_DIR$/web/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

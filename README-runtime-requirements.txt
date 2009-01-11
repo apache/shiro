@@ -15,8 +15,6 @@ Java 1.3 and 1.4 only: jsecurity.jar, commons-logging.jar and retroweaver.jar an
 
 Feature-based dependencies
 --------------------------
-- If you want to use JSecurity's enterprise session management (heterogeneous clients, SSO support, etc):
-  . include ehcache.jar and backport-util-concurrent.jar
-
-- JSecurity Web Filter text-based config ('config' init param) in web.xml or JSecurity code Annotations:
+- .ini based configuration, either for a jsecurity.ini file in the classpath or embedded .ini in the JSecurityFilter
+  in web.xml:
   . include Jakarta commons-beanutils-core.jar

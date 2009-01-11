@@ -521,46 +521,14 @@
   <component name="libraryTable">
     <library name="all-libs">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/test/dom4j.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/servlet-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/junit.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/spring.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/backport-util-concurrent.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/ehcache.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/jsp-api.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/asm.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/jstl.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/geronimo-jta_1.0.1B_spec.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/commons-beanutils.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/retroweaver-rt.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/log4j.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/quartz.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/hsqldb.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/hibernate.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/docbook-libs.zip!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/spring-webmvc.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/commons-logging.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/asm-util.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/commons-collections.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/asm-commons.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/antlr.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/standard.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/cglib.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/easymockclassextension.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/retroweaver.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/asm-attrs.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/asm-tree.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/test/easymock.jar!/" />
+        <root url="file://$PROJECT_DIR$/lib/test" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib/test" recursive="false" />
     </library>
     <library name="quickstart-libs">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/samples/commons-logging.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/samples/ehcache.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/samples/backport-util-concurrent.jar!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC />
       <SOURCES />
     </library>
