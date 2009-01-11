@@ -528,9 +528,12 @@
       <jarDirectory url="file://$PROJECT_DIR$/lib/test" recursive="false" />
     </library>
     <library name="quickstart-libs">
-      <CLASSES />
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib/samples" />
+      </CLASSES>
       <JAVADOC />
       <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib/samples" recursive="false" />
     </library>
   </component>
 </project>
