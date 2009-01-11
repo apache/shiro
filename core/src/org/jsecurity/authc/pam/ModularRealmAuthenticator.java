@@ -102,6 +102,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * an authentiation attempt.  Because
      * this would set a single realm, no {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy)
      * modularAuthenticationStrategy} would be used during authentication attempts.
+     *
      * @param realm the realm to consult during an authentication attempt.
      */
     public ModularRealmAuthenticator(Realm realm) {
@@ -113,6 +114,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * consulted during an authentication attempt, effectively enabling PAM (Pluggable Authentication Module)
      * behavior according to the configured
      * {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy) ModularAuthenticationStrategy}.
+     *
      * @param realms the realms to consult during an authentication attempt.
      */
     public ModularRealmAuthenticator(List<Realm> realms) {
@@ -145,6 +147,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /**
      * Returns the realm(s) used by this <code>Authenticator</code> during an authentication attempt.
+     *
      * @return the realm(s) used by this <code>Authenticator</code> during an authentication attempt.
      */
     protected Collection<Realm> getRealms() {
@@ -293,6 +296,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @param authenticationToken the token containing the authentication principal and credentials for the
      *                            user being authenticated.
      * @return account information attributed to the authenticated user.
+     * @throws IllegalStateException   if no realms have been configured at the time this method is invoked
      * @throws AuthenticationException if the user could not be authenticated or the user is denied authentication
      *                                 for the given principal and credentials.
      */
