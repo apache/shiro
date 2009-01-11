@@ -36,20 +36,42 @@ import java.util.Date;
 public interface SessionManager {
 
     /**
-     * Starts a new session within the system for the host with the specified originating IP
-     * address.
+     * Starts a new session within the system for the host with the specified originating IP address.
      *
-     * <p><b>Note</b>: see the
-     * {@link org.jsecurity.session.SessionFactory#start(java.net.InetAddress) SessionFactory.init(InetAddress)} method
-     * about the implications of using <tt>InetAddress</tt>es in access control policies.
+     * <p>An implementation of this interface may be configured to allow a <tt>null</tt> argument,
+     * thereby indicating the originating IP is either unknown or has been
+     * explicitly omitted by the caller.  However, if the implementation is configured to require
+     * a valid <tt>hostAddress</tt> and the argument is <tt>null</tt>, an
+     * {@link IllegalArgumentException IllegalArgumentException} will be thrown.
+     *
+     * <p>In web-based systems, this InetAddress can be inferred from the
+     * {@link javax.servlet.ServletRequest#getRemoteAddr() javax.servlet.ServletRequest.getRemoteAddr()}
+     * method, or in socket-based systems, it can be obtained via inspecting the socket
+     * initiator's host IP.
+     *
+     * <p>Most secure environments <em>should</em> require that a valid, non-<tt>null</tt>
+     * <tt>hostAddress</tt> be specified, since knowing the <tt>hostAddress</tt> allows for more
+     * flexibility when securing a system: by requiring an InetAddress, access control policies
+     * can also ensure access is restricted to specific client <em>locations</em> in
+     * addition to user principals, if so desired.
+     *
+     * <p><b>Caveat</b> - if clients to your system are on a
+     * public network (as would be the case for a public web site), odds are high the clients can be
+     * behind a NAT (Network Address Translation) router or HTTP proxy server.  If so, all clients
+     * accessing your system behind that router or proxy will have the same originating IP address.
+     * If your system is configured to allow only one session per IP, then the next request from a
+     * different NAT or proxy client will fail and access will be deny for that client.  Just be
+     * aware that ip-based security policies are best utilized in LAN or private WAN environments
+     * when you can be ensure clients will not share IPs or be behind such NAT routers or
+     * proxy servers.
      *
      * @param originatingHost the originating host InetAddress of the external party
      *                        (user, 3rd party product, etc) that is attempting to interact with the system.
-     * @return the system identifier of the newly created session.
-     * @throws IllegalArgumentException if the host specified is not valid.
-     * @throws org.jsecurity.authz.HostUnauthorizedException
-     *                                  if the host specified is not allowed to start sessions.
-     * @see org.jsecurity.session.SessionFactory#start(InetAddress)
+     * @return a handle to the newly created session.
+     * @throws HostUnauthorizedException if the system access control policy restricts access based
+     *                                   on client location/IP and the specified hostAddress hasn't been enabled.
+     * @throws IllegalArgumentException  if the system is configured to require a valid,
+     *                                   non-<tt>null</tt> argument and the specified <tt>hostAddress</tt> is null.
      */
     Serializable start(InetAddress originatingHost)
             throws HostUnauthorizedException, IllegalArgumentException;
