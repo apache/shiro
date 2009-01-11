@@ -30,8 +30,10 @@ import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.ProxiedSession;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.mgt.DelegatingSession;
 import org.jsecurity.util.ThreadContext;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
@@ -283,7 +285,8 @@ public class DelegatingSubject implements Subject {
             if (log.isTraceEnabled()) {
                 log.trace("starting session for address [" + getInetAddress() + "]");
             }
-            Session target = securityManager.start(getInetAddress());
+            Serializable sessionId = this.securityManager.start(getInetAddress());
+            Session target = new DelegatingSession(this.securityManager, sessionId);
             this.session = new StoppingAwareProxiedSession(target, this);
         }
         return this.session;

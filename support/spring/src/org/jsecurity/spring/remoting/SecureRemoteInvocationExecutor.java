@@ -111,6 +111,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
             Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);
 
             if (sessionId != null) {
+
                 session = securityManager.getSession(sessionId);
                 principals = getPrincipals(invocation, targetObject, session);
                 authenticated = isAuthenticated(invocation, targetObject, session, principals);

@@ -34,6 +34,7 @@ import org.jsecurity.util.LifecycleUtils;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * JSecurity support of a {@link SecurityManager} class hierarchy that delegates all
@@ -216,6 +217,58 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
                 ((SessionListenerRegistrar) sm).remove(listener);
     }
 
+    public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
+        return getSessionManager().start(originatingHost);
+    }
+
+    public Date getStartTimestamp(Serializable sessionId) {
+        return getSessionManager().getStartTimestamp(sessionId);
+    }
+
+    public Date getLastAccessTime(Serializable sessionId) {
+        return getSessionManager().getLastAccessTime(sessionId);
+    }
+
+    public boolean isValid(Serializable sessionId) {
+        return getSessionManager().isValid(sessionId);
+    }
+
+    public long getTimeout(Serializable sessionId) throws InvalidSessionException {
+        return getSessionManager().getTimeout(sessionId);
+    }
+
+    public void setTimeout(Serializable sessionId, long maxIdleTimeInMillis) throws InvalidSessionException {
+        getSessionManager().setTimeout(sessionId, maxIdleTimeInMillis);
+    }
+
+    public void touch(Serializable sessionId) throws InvalidSessionException {
+        getSessionManager().touch(sessionId);
+    }
+
+    public InetAddress getHostAddress(Serializable sessionId) {
+        return getSessionManager().getHostAddress(sessionId);
+    }
+
+    public void stop(Serializable sessionId) throws InvalidSessionException {
+        getSessionManager().stop(sessionId);
+    }
+
+    public Collection<Object> getAttributeKeys(Serializable sessionId) {
+        return getSessionManager().getAttributeKeys(sessionId);
+    }
+
+    public Object getAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
+        return getSessionManager().getAttribute(sessionId, key);
+    }
+
+    public void setAttribute(Serializable sessionId, Object key, Object value) throws InvalidSessionException {
+        getSessionManager().setAttribute(sessionId, key, value);
+    }
+
+    public Object removeAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
+        return getSessionManager().removeAttribute(sessionId, key);
+    }
+
     /**
      * Template hook for subclasses that wish to perform clean up behavior during shutdown.
      */
@@ -238,12 +291,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected void beforeAuthorizerDestroyed() {
         beforeSessionManagerDestroyed();
         destroySessionManager();
-    }
-
-    public Session start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
-        SessionManager sm = getSessionManager();
-        Serializable sessionId = sm.start(hostAddress);
-        return new DelegatingSession(sm, sessionId);
     }
 
     public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {

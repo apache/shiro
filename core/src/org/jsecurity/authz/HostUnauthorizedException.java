@@ -26,7 +26,7 @@ import java.net.InetAddress;
  * or access a particular resource.
  *
  * @author Les Hazlewood
- * @see org.jsecurity.session.SessionFactory#start(java.net.InetAddress)
+ * @see org.jsecurity.session.mgt.SessionManager#start(java.net.InetAddress)
  * @since 0.1
  */
 public class HostUnauthorizedException extends UnauthorizedException {
