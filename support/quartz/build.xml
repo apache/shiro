@@ -5,7 +5,7 @@
     <property name="root.base.dir" value="../.."/>
     <property name="module.name" value="quartz"/>
     <import file="${root.base.dir}/common.ant.xml"/>
-    <property name="dist.jarName" value="${project.name}-${module.name}"/>
+    <property name="dist.jarName" value="${project.name}-${module.name}-${version}"/>
     <property name="dist.jar" value="${dist.dir}/${dist.jarName}.jar"/>
 
     <path id="compile.path">
@@ -13,7 +13,7 @@
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${dist.dir}">
-            <include name="${project.name}-core.jar"/>
+            <include name="${project.name}-core-${version}.jar"/>
         </fileset>
     </path>
 

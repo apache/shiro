@@ -133,11 +133,31 @@
         </antcall>
     </target>
 
+    <macrodef name="jarjar">
+        <attribute name="jardir" default="${dist.dir}"/>
+        <attribute name="jdksuffix" default=""/>
+        <sequential>
+            <jar destfile="@{jardir}/${project.name}@{jdksuffix}-${version}.jar" duplicate="fail">
+                <zipfileset src="@{jardir}/${project.name}-core@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{jardir}/${project.name}-web@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{jardir}/${project.name}-ehcache@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{jardir}/${project.name}-quartz@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{jardir}/${project.name}-spring@{jdksuffix}-${version}.jar"/>
+            </jar>
+        </sequential>
+    </macrodef>
+
     <target name="package" depends="retrieve-dependencies,init" description="Creates project artifacts">
         <echo message="Packaging all modules..."/>
         <antcall target="template">
             <param name="target" value="package"/>
         </antcall>
+
+        <!-- Now that each module has been packaged, make a 'master' .jar that includes everything.  This allows
+             end-users to choose to use a single jar or multiple jars depending on their preference: -->
+        <jarjar/>
+        <jarjar jardir="${dist.dir}/jdk14" jdksuffix="-jdk14"/>
+        <jarjar jardir="${dist.dir}/jdk13" jdksuffix="-jdk13"/>
 
     </target>
 

@@ -16,9 +16,9 @@
     <property environment="env"/>
 
     <!-- version of the product, see http://apr.apache.org/versioning.html for details on this convention -->
-    <property name="version.major" value="0"/>
-    <property name="version.minor" value="9"/>
-    <property name="version.revision" value="0"/>
+    <property name="version.major" value="1"/>
+    <property name="version.minor" value="0"/>
+    <property name="version.revision" value="0-SNAPSHOT"/>
     <property name="version" value="${version.major}.${version.minor}.${version.revision}"/>
     <property name="release.name" value="${project.name}-${version}"/>
 
@@ -138,9 +138,9 @@
         <mkdir dir="${dist.dir}/jdk13"/>
         <mkdir dir="${dist.dir}/jdk14"/>
         <retroweaver target="1.3" inputjar="${dist.jar}"
-                     outputjar="${dist.dir}/jdk13/${project.name}-${module.name}-jdk13.jar"/>
+                     outputjar="${dist.dir}/jdk13/${project.name}-${module.name}-jdk13-${version}.jar"/>
         <retroweaver target="1.4" inputjar="${dist.jar}"
-                     outputjar="${dist.dir}/jdk14/${project.name}-${module.name}-jdk14.jar"/>
+                     outputjar="${dist.dir}/jdk14/${project.name}-${module.name}-jdk14-${version}.jar"/>
     </target>
 
     <target name="jar" depends="jar.retroweaver"/>
