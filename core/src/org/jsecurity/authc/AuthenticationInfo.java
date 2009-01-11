@@ -21,6 +21,8 @@ package org.jsecurity.authc;
 
 import org.jsecurity.subject.PrincipalCollection;
 
+import java.io.Serializable;
+
 /**
  * <code>AuthenticationInfo</code> represents a Subject's (aka user's) stored account information relevant to the
  * authentication/log-in process only.
@@ -55,7 +57,7 @@ import org.jsecurity.subject.PrincipalCollection;
  * @see Account
  * @since 0.9
  */
-public interface AuthenticationInfo {
+public interface AuthenticationInfo extends Serializable {
 
     /**
      * Returns all principals associated with the corresponding Subject.  Each principal is an identifying piece of

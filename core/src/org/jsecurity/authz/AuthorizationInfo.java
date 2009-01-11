@@ -18,6 +18,7 @@
  */
 package org.jsecurity.authz;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -56,7 +57,7 @@ import java.util.Collection;
  * @see org.jsecurity.authc.Account
  * @since 0.9
  */
-public interface AuthorizationInfo {
+public interface AuthorizationInfo extends Serializable {
 
     /**
      * Returns the names of all roles assigned to a corresponding Subject.

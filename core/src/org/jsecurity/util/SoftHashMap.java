@@ -140,17 +140,14 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
     public V put(K key, V value) {
         processQueue(); // throw out garbage collected values first
         SoftValue<V, K> sv = new SoftValue<V, K>(value, key, queue);
-        return map.put(key, sv).get();
+        SoftValue<V, K> previous = map.put(key, sv);
+        return previous != null ? previous.get() : null;
     }
 
     public V remove(Object key) {
         processQueue(); // throw out garbage collected values first
         SoftValue<V, K> raw = map.remove(key);
-        V removed = null;
-        if (raw != null) {
-            removed = raw.get();
-        }
-        return removed;
+        return raw != null ? raw.get() : null;
     }
 
     public void clear() {
