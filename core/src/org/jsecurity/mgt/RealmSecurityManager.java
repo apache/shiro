@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.util.ArrayList;
@@ -88,42 +87,6 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
     }
 
     /**
-     * Ensures at least one realm exists, and if not calls {@link #createDefaultRealm() createDefaultRealm()} and sets
-     * it on this instance via the {@link #setRealm(Realm) setRealm} method.
-     * <p/>
-     * This method is used to lazily ensure at least one default Realm exists in all environments, even if it is just
-     * with demo data, to ensure that JSecurity is usuable with the smallest (even no) configuration.
-     */
-    protected void ensureRealms() {
-        Collection<Realm> realms = getRealms();
-        if (realms == null || realms.isEmpty()) {
-            if (log.isInfoEnabled()) {
-                log.info("No Realms configured.  Defaulting to failsafe PropertiesRealm.");
-            }
-            Realm realm = createDefaultRealm();
-            setRealm(realm);
-        }
-    }
-
-    /**
-     * Creates a default Realm implementation to use in lazy-initialization use cases.
-     * <p/>
-     * The implementation returned is a {@link PropertiesRealm PropertiesRealm}, which supports very simple
-     * properties-based user/role/permission configuration in testing, sample, and simple applications.
-     * @return the default Realm implementation (a {@link PropertiesRealm PropertiesRealm} to use in lazy-init use cases.
-     */
-    protected Realm createDefaultRealm() {
-        PropertiesRealm realm;
-        CacheManager cacheManager = getCacheManager();
-        if (cacheManager != null) {
-            realm = new PropertiesRealm(cacheManager);
-        } else {
-            realm = new PropertiesRealm();
-        }
-        return realm;
-    }
-
-    /**
      * Returns the {@link Realm Realm}s managed by this SecurityManager instance.
      *
      * @return the {@link Realm Realm}s managed by this SecurityManager instance.
@@ -160,7 +123,6 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
      * Simply calls {@link #applyCacheManagerToRealms() applyCacheManagerToRealms()} to allow the
      * newly set {@link CacheManager CacheManager} to be propagated to the internal collection of <code>Realm</code>
      * that would need to use it.
-     *
      */
     protected void afterCacheManagerSet() {
         applyCacheManagerToRealms();

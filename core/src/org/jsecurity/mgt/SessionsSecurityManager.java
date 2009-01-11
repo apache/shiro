@@ -61,10 +61,10 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     /**
      * Default no-arg constructor, internally creates a suitable default {@link SessionManager SessionManager} delegate
-     * instance via the {@link #ensureSessionManager() ensureSessionManager()} method. 
+     * instance via the {@link #createSessionManager() createSessionManager()} method.
      */
     public SessionsSecurityManager() {
-        ensureSessionManager();
+        setSessionManager(createSessionManager());
     }
 
     /**
@@ -86,24 +86,12 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     /**
      * Returns this security manager's internal delegate {@link SessionManager SessionManager}.
+     *
      * @return this security manager's internal delegate {@link SessionManager SessionManager}.
      * @see #setSessionManager(org.jsecurity.session.mgt.SessionManager) setSessionManager
      */
     public SessionManager getSessionManager() {
         return this.sessionManager;
-    }
-
-    /**
-     * Ensures that the internal delegate <code>SessionManager</code> exists, and if not, calls
-     * {@link #createSessionManager createSessionManager} and sets the resulting instance via the
-     * {@link #setSessionManager(org.jsecurity.session.mgt.SessionManager) setSessionManager} method. 
-     */
-    protected void ensureSessionManager() {
-        SessionManager sessionManager = getSessionManager();
-        if (sessionManager == null) {
-            sessionManager = createSessionManager();
-            setSessionManager(sessionManager);
-        }
     }
 
     /**
@@ -114,7 +102,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * internal caching needs.
      *
      * @return a new initialized {@link SessionManager SessionManager} to use as this security manager's internal
-     * delegate.
+     *         delegate.
      */
     protected SessionManager createSessionManager() {
         SessionManager sm = newSessionManagerInstance();
@@ -130,6 +118,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     /**
      * Merely instantiates (but does not initalize) the default <code>SessionManager</code> implementation.  This method
      * merely returns <code>new {@link DefaultSessionManager DefaultSessionManager}()</code>.
+     *
      * @return a new, uninitialized {@link SessionManager SessionManager} instance.
      */
     protected SessionManager newSessionManagerInstance() {
@@ -185,8 +174,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * Ensures the internal SessionManager instance is an <code>instanceof</code>
      * {@link org.jsecurity.session.SessionListenerRegistrar SessionListenerRegistrar} to ensure that any
      * listeners attempting to be registered can actually do so with the internal delegate instance.
+     *
      * @throws IllegalStateException if the internal delegate SessionManager instance does not implement the
-     * <code>SessionListenerRegistrar</code> interface.
+     *                               <code>SessionListenerRegistrar</code> interface.
      */
     private void assertSessionListenerSupport() throws IllegalStateException {
         if (!(this.sessionManager instanceof SessionListenerRegistrar)) {
@@ -203,6 +193,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * {@link #assertSessionListenerSupport() supports session listener registration} and then
      * {@link SessionListenerRegistrar#add adds} the listener to the
      * delegate instance.
+     *
      * @param listener the <code>SessionListener</code> to register for session events.
      */
     public void add(SessionListener listener) {
@@ -217,7 +208,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      *
      * @param listener the listener to remove that no longer wishes to be notified of session events.
      * @return <code>true</code> if the listener was removed from the internal delegate <code>SessionManager</code>
-     * instance, <code>false</code> otherwise.
+     *         instance, <code>false</code> otherwise.
      */
     public boolean remove(SessionListener listener) {
         SessionManager sm = getSessionManager();
@@ -242,7 +233,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     /**
      * Calls {@link #beforeSessionManagerDestroyed() beforeSessionManagerDestroyed()} to allow subclass clean up and
      * then immediatley calls {@link #destroySessionManager() destroySessionManager()} to clean up the internal
-     * delegate instance. 
+     * delegate instance.
      */
     protected void beforeAuthorizerDestroyed() {
         beforeSessionManagerDestroyed();

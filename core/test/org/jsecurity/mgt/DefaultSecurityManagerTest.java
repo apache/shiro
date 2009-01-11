@@ -20,6 +20,7 @@ package org.jsecurity.mgt;
 
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.session.Session;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
@@ -39,6 +40,7 @@ public class DefaultSecurityManagerTest {
     @Before
     public void setup() {
         sm = new DefaultSecurityManager();
+        sm.setRealm(new PropertiesRealm());
         ThreadContext.clear();
     }
 

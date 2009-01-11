@@ -41,8 +41,7 @@ import java.util.Collection;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
-        implements AuthenticationListenerRegistrar {
+public abstract class AuthenticatingSecurityManager extends RealmSecurityManager implements AuthenticationListenerRegistrar {
 
     /**
      * The internal <code>Authenticator</code> delegate instance that this SecurityManager instance will use
@@ -52,19 +51,20 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
 
     /**
      * Default no-arg constructor that initializes its internal
-     * <code>authenticator</code> instance to be a {@link ModularRealmAuthenticator ModularRealmAuthenticator}.
+     * <code>authenticator</code> instance by just calling {@link #createAuthenticator() createAuthenticator()}.
      */
     public AuthenticatingSecurityManager() {
-        this.authenticator = new ModularRealmAuthenticator();
+        setAuthenticator(createAuthenticator());
     }
 
     /**
      * Returns the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
-     * authentication operations.  Unless overridden by the 
+     * authentication operations.  Unless overridden by the
      * {@link #setAuthenticator(org.jsecurity.authc.Authenticator) setAuthenticator}, the default instance is a
      * {@link org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
+     *
      * @return the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
-     * authentication operations.
+     *         authentication operations.
      */
     public Authenticator getAuthenticator() {
         return authenticator;
@@ -74,8 +74,9 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * Sets the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
      * authentication operations.  Unless overridden by this method, the default instance is a
      * {@link org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
-     * @param authenticator the delegate <code>Authenticator</code> instance that this SecurityManager will use to 
-     * perform all authentication operations.
+     *
+     * @param authenticator the delegate <code>Authenticator</code> instance that this SecurityManager will use to
+     *                      perform all authentication operations.
      * @throws IllegalArgumentException if the argument is <code>null</code>.
      */
     public void setAuthenticator(Authenticator authenticator) throws IllegalArgumentException {
@@ -84,6 +85,17 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
             throw new IllegalArgumentException(msg);
         }
         this.authenticator = authenticator;
+    }
+
+    /**
+     * Creates the default <code>Authenticator</code> instance to use at startup.  This simple default implementation
+     * merely returns <code>new {@link ModularRealmAuthenticator ModularRealmAuthenticator}()</code>.
+     *
+     * @return the default <code>Authenticator</code> instance to use at startup.
+     * @since 1.0
+     */
+    protected Authenticator createAuthenticator() {
+        return new ModularRealmAuthenticator();
     }
 
     /**
@@ -168,8 +180,9 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * Immediately calls {@link RealmSecurityManager#setRealms(java.util.Collection) super.setRealms} and then
      * additionally passes on those realms to the internal delegate <code>Authenticator</code> instance so
      * that it may use them during authentication attempts.
+     *
      * @param realms realms the realms managed by this <tt>SecurityManager</tt> instance and subsequently the internal
-     * delegate <code>Authenticator</code> instance.
+     *               delegate <code>Authenticator</code> instance.
      */
     public void setRealms(Collection<Realm> realms) {
         super.setRealms(realms);
@@ -205,7 +218,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * Delegates to the wrapped {@link Authenticator Authenticator} for authentication.
      */
     public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
-        ensureRealms();
         return this.authenticator.authenticate(token);
     }
 }

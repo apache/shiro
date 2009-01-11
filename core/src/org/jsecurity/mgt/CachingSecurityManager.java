@@ -30,8 +30,8 @@ import org.jsecurity.util.LifecycleUtils;
  * A very basic extension point for the SecurityManager interface that merely provides logging and caching
  * support.  All <tt>SecurityManager</tt> method implementations are left to subclasses.
  *
- * <p>Upon instantiation, a sensible default {@link CacheManager CacheManager} will be attempt to be created
- * automatically by the {@link #ensureCacheManager() ensureCacheManager()} method.  This <code>CacheManager</code>
+ * <p>Upon instantiation, a sensible default {@link CacheManager CacheManager} will be created automatically via the
+ * {@link #createCacheManager() createCacheManager() method.  This <code>CacheManager</code>
  * can then be used by subclass implementations and children components for use to achieve better application
  * performance.
  *
@@ -55,7 +55,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * Default no-arg constructor that will automatically attempt to initialize a default cacheManager
      */
     public CachingSecurityManager() {
-        ensureCacheManager();
+        setCacheManager(createCacheManager());
     }
 
     /**
@@ -83,30 +83,6 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
         afterCacheManagerSet();
     }
 
-    /**
-     * Simple lazy-initialization method that checks to see if a
-     * {@link #setCacheManager(org.jsecurity.cache.CacheManager) cacheManager} has been set, and if not,
-     * attempts to {@link #createCacheManager() create one} and uses that to set the class attribute.
-     * <p/>
-     * The default implementation functions as follows:
-     * <pre><code>
-     * CacheManager cm = getCacheManager();
-     * if (cm == null) {
-     *     cm = createCacheManager();
-     *     if (cm != null) {
-     *         setCacheManager(cm);
-     *     }
-     * }</code></pre>
-     */
-    protected void ensureCacheManager() {
-        CacheManager cm = getCacheManager();
-        if (cm == null) {
-            cm = createCacheManager();
-            if (cm != null) {
-                setCacheManager(cm);
-            }
-        }
-    }
 
     /**
      * Template callback to notify subclasses that a
@@ -122,14 +98,13 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * <p/>
      * This default implementation returns a new
      * {@link org.jsecurity.cache.DefaultCacheManager DefaultCacheManager}, which uses in-memory (memory-leak safe)
-     * caches.
+     * caches which are production safe.
      * <p/>
      * This can be overridden by subclasses for a different implementation, but it is often easier to set a
      * different implementation via the {@link #setCacheManager(org.jsecurity.cache.CacheManager) setCacheManager}
      * method, for example in code or Dependency Injection frameworks (a la Spring or JEE 3).
      *
      * @return a newly created <code>CacheManager</code> instance.
-     * @see #ensureCacheManager() ensureCacheManager()
      */
     protected CacheManager createCacheManager() {
         return new DefaultCacheManager();

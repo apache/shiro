@@ -55,10 +55,11 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     protected Authorizer authorizer;
 
     /**
-     * Default no-arg constructor.
+     * Default no-arg constructor that initializes its internal <code>authorizer</code> instance by just
+     * calling {@link #createAuthorizer() createAuthorizer()}.
      */
     public AuthorizingSecurityManager() {
-        ensureAuthorizer();
+        setAuthorizer(createAuthorizer());
     }
 
     /**
@@ -87,23 +88,11 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     /**
-     * Ensures that this instance's {@link Authorizer Authorizer} has been
-     * set, and if not, lazily creates one via the {@link #createAuthorizer() createAuthorizer()} method and then
-     * immediately sets it via the {@link #setAuthorizer(org.jsecurity.authz.Authorizer) setAuthorizer} method.  
-     */
-    protected void ensureAuthorizer() {
-        Authorizer authorizer = getAuthorizer();
-        if (authorizer == null) {
-            authorizer = createAuthorizer();
-            setAuthorizer(authorizer);
-        }
-    }
-
-    /**
      * Creates a new {@link Authorizer Authorizer} instance to be used by this <code>AuthorizingSecurityManager</code> instance.
      * <p/>
      * This default implementation merely returns
      * <code>new {@link org.jsecurity.authz.ModularRealmAuthorizer ModularRealmAuthorizer}()</code>
+     *
      * @return a new {@link Authorizer Authorizer} instance to be used by this <code>AuthorizingSecurityManager</code> instance.
      */
     protected Authorizer createAuthorizer() {
@@ -146,6 +135,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      * if ( authz instanceof ModularRealmAuthorizer ) {
      *     ((ModularRealmAuthorizer)authz).setRealms(realms);
      * }</pre>
+     *
      * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
      */
     public void setRealms(Collection<Realm> realms) {
@@ -186,77 +176,62 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permissionString) {
-        ensureRealms();
         return getAuthorizer().isPermitted(principals, permissionString);
     }
 
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
-        ensureRealms();
         return getAuthorizer().isPermitted(principals, permission);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
-        ensureRealms();
         return getAuthorizer().isPermitted(principals, permissions);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
-        ensureRealms();
         return getAuthorizer().isPermitted(principals, permissions);
     }
 
     public boolean isPermittedAll(PrincipalCollection principals, String... permissions) {
-        ensureRealms();
         return getAuthorizer().isPermittedAll(principals, permissions);
     }
 
     public boolean isPermittedAll(PrincipalCollection principals, Collection<Permission> permissions) {
-        ensureRealms();
         return getAuthorizer().isPermittedAll(principals, permissions);
     }
 
     public void checkPermission(PrincipalCollection principals, String permission) throws AuthorizationException {
-        ensureRealms();
         getAuthorizer().checkPermission(principals, permission);
     }
 
     public void checkPermission(PrincipalCollection principals, Permission permission) throws AuthorizationException {
-        ensureRealms();
         getAuthorizer().checkPermission(principals, permission);
     }
 
     public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
-        ensureRealms();
         getAuthorizer().checkPermissions(principals, permissions);
     }
 
     public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions) throws AuthorizationException {
-        ensureRealms();
         getAuthorizer().checkPermissions(principals, permissions);
     }
 
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
-        ensureRealms();
         return getAuthorizer().hasRole(principals, roleIdentifier);
     }
 
     public boolean[] hasRoles(PrincipalCollection principals, List<String> roleIdentifiers) {
-        ensureRealms();
         return getAuthorizer().hasRoles(principals, roleIdentifiers);
     }
 
     public boolean hasAllRoles(PrincipalCollection principals, Collection<String> roleIdentifiers) {
-        ensureRealms();
         return getAuthorizer().hasAllRoles(principals, roleIdentifiers);
     }
 
     public void checkRole(PrincipalCollection principals, String role) throws AuthorizationException {
-        ensureRealms();
         getAuthorizer().checkRole(principals, role);
     }
 
     public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
-        ensureRealms();
         getAuthorizer().checkRoles(principals, roles);
     }
 }

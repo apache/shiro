@@ -21,6 +21,7 @@ package org.jsecurity.mgt;
 import org.jsecurity.SecurityUtils;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
+import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.junit.After;
@@ -47,6 +48,7 @@ public class VMSingletonDefaultSecurityManagerTest {
     @Test
     public void testVMSingleton() {
         DefaultSecurityManager sm = new DefaultSecurityManager();
+        sm.setRealm(new PropertiesRealm());
         SecurityUtils.setSecurityManager(sm);
 
         Subject subject = SecurityUtils.getSubject();
