@@ -22,18 +22,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.DefaultSecurityManager;
 import org.jsecurity.realm.Realm;
-import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SessionManager;
-import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.Subject;
 import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.session.DefaultWebSessionManager;
 import org.jsecurity.web.session.ServletContainerSessionManager;
 import org.jsecurity.web.session.WebSessionManager;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import java.net.InetAddress;
 import java.util.Collection;
 
 /**
@@ -66,6 +60,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public DefaultWebSecurityManager() {
         setRememberMeManager(new WebRememberMeManager());
+        setSubjectFactory(new WebSubjectFactory(this, (WebSessionManager) getSessionManager()));
     }
 
     public DefaultWebSecurityManager(Realm singleRealm) {
@@ -145,6 +140,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             LifecycleUtils.destroy(getSessionManager());
             SessionManager sm = createSessionManager();
             setSessionManager(sm);
+            setSubjectFactory(new WebSubjectFactory(this, (WebSessionManager) getSessionManager()));
         }
     }
 
@@ -163,101 +159,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
                 log.info(JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
             }
             return new DefaultWebSessionManager();
-        }
-    }
-
-    protected PrincipalCollection getPrincipals(Session session) {
-        PrincipalCollection principals = null;
-        if (session != null) {
-            principals = (PrincipalCollection) session.getAttribute(PRINCIPALS_SESSION_KEY);
-        }
-        return principals;
-    }
-
-    protected PrincipalCollection getPrincipals(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
-        PrincipalCollection principals = getPrincipals(existing);
-        if (principals == null) {
-            //check remember me:
-            principals = getRememberedIdentity();
-            if (principals != null && existing != null) {
-                existing.setAttribute(PRINCIPALS_SESSION_KEY, principals);
-            }
-        }
-        return principals;
-    }
-
-    protected boolean isAuthenticated(Session session) {
-        Boolean value = null;
-        if (session != null) {
-            value = (Boolean) session.getAttribute(AUTHENTICATED_SESSION_KEY);
-        }
-        return value != null && value;
-    }
-
-    protected boolean isAuthenticated(Session existing, ServletRequest servletRequest, ServletResponse servletResponse) {
-        return isAuthenticated(existing);
-    }
-
-    public Subject createSubject() {
-        ServletRequest request = WebUtils.getRequiredServletRequest();
-        ServletResponse response = WebUtils.getRequiredServletResponse();
-        return createSubject(request, response);
-    }
-
-    public Subject createSubject(ServletRequest request, ServletResponse response) {
-        Session session = ((WebSessionManager) getSessionManager()).getSession(request, response);
-        if (session == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("No session found for the incoming request.  The Subject instance created for " +
-                        "the incoming request will not have an associated Session.");
-            }
-        }
-        return createSubject(session, request, response);
-    }
-
-    public Subject createSubject(Session existing, ServletRequest request, ServletResponse response) {
-        PrincipalCollection principals = getPrincipals(existing, request, response);
-        boolean authenticated = isAuthenticated(existing, request, response);
-        return createSubject(principals, authenticated, existing, request, response);
-    }
-
-    protected Subject createSubject(PrincipalCollection principals,
-                                    boolean authenticated,
-                                    Session existing,
-                                    ServletRequest request,
-                                    ServletResponse response) {
-        InetAddress inetAddress = WebUtils.getInetAddress(request);
-        return createSubject(principals, existing, authenticated, inetAddress);
-    }
-
-    protected void bind(Subject subject) {
-        super.bind(subject);
-        ServletRequest request = WebUtils.getRequiredServletRequest();
-        ServletResponse response = WebUtils.getRequiredServletResponse();
-        bind(subject, request, response);
-    }
-
-    protected void bind(Subject subject, ServletRequest request, ServletResponse response) {
-
-        PrincipalCollection principals = subject.getPrincipals();
-        if (principals != null && !principals.isEmpty()) {
-            Session session = subject.getSession();
-            session.setAttribute(PRINCIPALS_SESSION_KEY, principals);
-        } else {
-            Session session = subject.getSession(false);
-            if (session != null) {
-                session.removeAttribute(PRINCIPALS_SESSION_KEY);
-            }
-        }
-
-        if (subject.isAuthenticated()) {
-            Session session = subject.getSession();
-            session.setAttribute(AUTHENTICATED_SESSION_KEY, subject.isAuthenticated());
-        } else {
-            Session session = subject.getSession(false);
-            if (session != null) {
-                session.removeAttribute(AUTHENTICATED_SESSION_KEY);
-            }
         }
     }
 }
