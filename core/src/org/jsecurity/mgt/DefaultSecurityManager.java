@@ -26,10 +26,12 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.subject.*;
+import org.jsecurity.subject.AbstractRememberMeManager;
+import org.jsecurity.subject.PrincipalCollection;
+import org.jsecurity.subject.RememberMeManager;
+import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
-import java.net.InetAddress;
 import java.util.Collection;
 
 /**
@@ -75,10 +77,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     protected RememberMeManager rememberMeManager;
 
+    protected SubjectFactory subjectFactory;
+
+    protected SubjectBinder subjectBinder;
+
     /**
      * Default no-arg constructor.
      */
     public DefaultSecurityManager() {
+        setSubjectBinder(new SessionSubjectBinder());
+        setSubjectFactory(new DefaultSubjectFactory(this));
     }
 
     /**
@@ -87,6 +95,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @param singleRealm the single realm used by this SecurityManager.
      */
     public DefaultSecurityManager(Realm singleRealm) {
+        this();
         setRealm(singleRealm);
     }
 
@@ -96,7 +105,24 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @param realms the realm instances backing this SecurityManager.
      */
     public DefaultSecurityManager(Collection<Realm> realms) {
+        this();
         setRealms(realms);
+    }
+
+    public SubjectFactory getSubjectFactory() {
+        return subjectFactory;
+    }
+
+    public void setSubjectFactory(SubjectFactory subjectFactory) {
+        this.subjectFactory = subjectFactory;
+    }
+
+    public SubjectBinder getSubjectBinder() {
+        return subjectBinder;
+    }
+
+    public void setSubjectBinder(SubjectBinder subjectBinder) {
+        this.subjectBinder = subjectBinder;
     }
 
     public RememberMeManager getRememberMeManager() {
@@ -158,34 +184,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         getRememberMeManagerForCipherAttributes().setDecryptionCipherKeyBase64(base64);
     }
 
-    private void assertPrincipals(AuthenticationInfo info) {
-        PrincipalCollection principals = info.getPrincipals();
-        if (principals == null || principals.isEmpty()) {
-            String msg = "Authentication info returned from Authenticator must have non null and non empty principals.";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
     protected Subject createSubject() {
         PrincipalCollection principals = getRememberedIdentity();
-        return createSubject(principals);
-    }
-
-    protected Subject createSubject(PrincipalCollection subjectPrincipals) {
-        return createSubject(subjectPrincipals, null);
-    }
-
-    protected Subject createSubject(PrincipalCollection principals, Session existing) {
-        return createSubject(principals, existing, false);
-    }
-
-    protected Subject createSubject(PrincipalCollection principals, Session existing, boolean authenticated) {
-        return createSubject(principals, existing, authenticated, null);
-    }
-
-    protected Subject createSubject(PrincipalCollection principals, Session existing,
-                                    boolean authenticated, InetAddress inetAddress) {
-        return new DelegatingSubject(principals, authenticated, inetAddress, existing, this);
+        return getSubjectFactory().createSubject(principals, null, false, null);
     }
 
     /**
@@ -197,25 +198,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *         authenticated user.
      */
     protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info) {
-        assertPrincipals(info);
-
-        //get any existing session that may exist - we don't want to lose it:
-        Subject subject = getSubject(false);
-        Session session = null;
-        if (subject != null) {
-            session = subject.getSession(false);
-        }
-
-        InetAddress authcSourceIP = null;
-        if (token instanceof InetAuthenticationToken) {
-            authcSourceIP = ((InetAuthenticationToken) token).getInetAddress();
-        }
-        if (authcSourceIP == null) {
-            //try the thread local:
-            authcSourceIP = ThreadContext.getInetAddress();
-        }
-
-        return createSubject(info.getPrincipals(), session, true, authcSourceIP);
+        return getSubjectFactory().createSubject(token, info, getSubject(false));
     }
 
     /**
@@ -228,10 +211,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *                for later use.
      */
     protected void bind(Subject subject) {
-        if (log.isTraceEnabled()) {
-            log.trace("Binding Subject [" + subject + "] to a thread local...");
-        }
-        ThreadContext.bind(subject);
+        getSubjectBinder().bind(subject);
     }
 
     private void assertCreation(Subject subject) throws IllegalStateException {
@@ -358,16 +338,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Subject subject = getSubject(false);
         if (subject != null) {
             try {
-                stopSession(subject);
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    String msg = "Unable to cleanly stop Session for Subject [" + subject.getPrincipal() + "] " +
-                            "Ignoring (logging out).";
-                    log.debug(msg, e);
-                }
-            }
-            try {
                 unbind(subject);
+                try {
+                    stopSession(subject);
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        String msg = "Unable to cleanly stop Session for Subject [" + subject.getPrincipal() + "] " +
+                                "Ignoring (logging out).";
+                        log.debug(msg, e);
+                    }
+                }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     String msg = "Unable to cleanly unbind Subject.  Ignoring (logging out).";
@@ -394,7 +374,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected void unbind(Subject subject) {
-        ThreadContext.unbindSubject();
+        getSubjectBinder().unbind(subject);
     }
 
     protected PrincipalCollection getRememberedIdentity() {
@@ -414,7 +394,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected Subject getSubject(boolean create) {
-        Subject subject = ThreadContext.getSubject();
+        Subject subject = getSubjectBinder().getSubject();
         if (subject == null && create) {
             subject = createSubject();
             bind(subject);
