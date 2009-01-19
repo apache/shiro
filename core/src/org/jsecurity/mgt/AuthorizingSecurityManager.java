@@ -52,14 +52,14 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     /**
      * The wrapped instance to which all of this <tt>SecurityManager</tt> authorization calls are delegated.
      */
-    protected Authorizer authorizer;
+    private Authorizer authorizer;
 
     /**
-     * Default no-arg constructor that initializes its internal <code>authorizer</code> instance by just
-     * calling {@link #createAuthorizer() createAuthorizer()}.
+     * Default no-arg constructor that initializes an internal default
+     * {@link ModularRealmAuthorizer ModularRealmAuthorizer}.
      */
     public AuthorizingSecurityManager() {
-        setAuthorizer(createAuthorizer());
+        this.authorizer = new ModularRealmAuthorizer();
     }
 
     /**
@@ -85,18 +85,6 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
             throw new IllegalArgumentException(msg);
         }
         this.authorizer = authorizer;
-    }
-
-    /**
-     * Creates a new {@link Authorizer Authorizer} instance to be used by this <code>AuthorizingSecurityManager</code> instance.
-     * <p/>
-     * This default implementation merely returns
-     * <code>new {@link org.jsecurity.authz.ModularRealmAuthorizer ModularRealmAuthorizer}()</code>
-     *
-     * @return a new {@link Authorizer Authorizer} instance to be used by this <code>AuthorizingSecurityManager</code> instance.
-     */
-    protected Authorizer createAuthorizer() {
-        return new ModularRealmAuthorizer();
     }
 
     /**
@@ -140,9 +128,8 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      */
     public void setRealms(Collection<Realm> realms) {
         super.setRealms(realms);
-        Authorizer authz = getAuthorizer();
-        if (authz instanceof ModularRealmAuthorizer) {
-            ((ModularRealmAuthorizer) authz).setRealms(realms);
+        if (this.authorizer instanceof ModularRealmAuthorizer) {
+            ((ModularRealmAuthorizer) this.authorizer).setRealms(realms);
         }
     }
 
@@ -176,62 +163,62 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permissionString) {
-        return getAuthorizer().isPermitted(principals, permissionString);
+        return this.authorizer.isPermitted(principals, permissionString);
     }
 
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
-        return getAuthorizer().isPermitted(principals, permission);
+        return this.authorizer.isPermitted(principals, permission);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
-        return getAuthorizer().isPermitted(principals, permissions);
+        return this.authorizer.isPermitted(principals, permissions);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
-        return getAuthorizer().isPermitted(principals, permissions);
+        return this.authorizer.isPermitted(principals, permissions);
     }
 
     public boolean isPermittedAll(PrincipalCollection principals, String... permissions) {
-        return getAuthorizer().isPermittedAll(principals, permissions);
+        return this.authorizer.isPermittedAll(principals, permissions);
     }
 
     public boolean isPermittedAll(PrincipalCollection principals, Collection<Permission> permissions) {
-        return getAuthorizer().isPermittedAll(principals, permissions);
+        return this.authorizer.isPermittedAll(principals, permissions);
     }
 
     public void checkPermission(PrincipalCollection principals, String permission) throws AuthorizationException {
-        getAuthorizer().checkPermission(principals, permission);
+        this.authorizer.checkPermission(principals, permission);
     }
 
     public void checkPermission(PrincipalCollection principals, Permission permission) throws AuthorizationException {
-        getAuthorizer().checkPermission(principals, permission);
+        this.authorizer.checkPermission(principals, permission);
     }
 
     public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
-        getAuthorizer().checkPermissions(principals, permissions);
+        this.authorizer.checkPermissions(principals, permissions);
     }
 
     public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions) throws AuthorizationException {
-        getAuthorizer().checkPermissions(principals, permissions);
+        this.authorizer.checkPermissions(principals, permissions);
     }
 
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
-        return getAuthorizer().hasRole(principals, roleIdentifier);
+        return this.authorizer.hasRole(principals, roleIdentifier);
     }
 
     public boolean[] hasRoles(PrincipalCollection principals, List<String> roleIdentifiers) {
-        return getAuthorizer().hasRoles(principals, roleIdentifiers);
+        return this.authorizer.hasRoles(principals, roleIdentifiers);
     }
 
     public boolean hasAllRoles(PrincipalCollection principals, Collection<String> roleIdentifiers) {
-        return getAuthorizer().hasAllRoles(principals, roleIdentifiers);
+        return this.authorizer.hasAllRoles(principals, roleIdentifiers);
     }
 
     public void checkRole(PrincipalCollection principals, String role) throws AuthorizationException {
-        getAuthorizer().checkRole(principals, role);
+        this.authorizer.checkRole(principals, role);
     }
 
     public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
-        getAuthorizer().checkRoles(principals, roles);
+        this.authorizer.checkRoles(principals, roles);
     }
 }

@@ -21,16 +21,10 @@ package org.jsecurity.mgt;
 import org.jsecurity.authc.AuthenticationException;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.Authenticator;
-import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
-import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.session.InvalidSessionException;
-import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.Subject;
-
-import java.io.Serializable;
 
 /**
  * A <tt>SecurityManager</tt> executes all security operations for <em>all</em> Subjects (aka users) across a
@@ -107,37 +101,4 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * @since 0.9
      */
     Subject getSubject();
-
-    /**
-     * Acquires a handle to the session identified by the specified <tt>sessionId</tt>.
-     *
-     * <p><b>Although simple, this method finally enables behavior absent in Java for years:</b>
-     *
-     * <p>the
-     * ability to participate in a server-side session across clients of different mediums,
-     * such as web appliations, Java applets, standalone C# clients over XMLRPC and/or SOAP, and
-     * many others.  This is a <em>huge</em> benefit in heterogeneous enterprise applications.
-     *
-     * <p>To maintain session integrity across client mediums, the sessionId must be transmitted
-     * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
-     * is nothing new - all web applications are susceptible to the same problem when transmitting
-     * {@link javax.servlet.http.Cookie Cookie}s or when using URL rewriting.  As long as the
-     * <tt>sessionId</tt> is transmitted securely, session integrity can be maintained.
-     *
-     * @param sessionId the id of the session to acquire.
-     * @return a handle to the session identified by <tt>sessionId</tt>
-     * @throws org.jsecurity.session.InvalidSessionException
-     *          if the session identified by <tt>sessionId</tt> has
-     *          been stopped, expired, or doesn't exist.
-     * @throws org.jsecurity.authz.AuthorizationException
-     *          if the executor of this method is not allowed to acquire
-     *          (i.e. join) the session identified by <tt>sessionId</tt>.  The reason for the exception
-     *          is implementation specific and could be for any number of reasons.  A common reason in many
-     *          systems would be if one host tried to acquire/join a session that originated on an entirely
-     *          different host (although it is not a JSecurity requirement this scenario is disallowed -
-     *          its just an example that <em>may</em> throw an Exception in many systems).
-     * @see HostUnauthorizedException
-     * @since 1.0
-     */
-    Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException;
 }

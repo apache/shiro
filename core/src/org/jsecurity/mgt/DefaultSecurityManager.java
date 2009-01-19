@@ -21,17 +21,19 @@ package org.jsecurity.mgt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.authc.*;
+import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.Authorizer;
 import org.jsecurity.crypto.Cipher;
 import org.jsecurity.realm.Realm;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
-import org.jsecurity.subject.AbstractRememberMeManager;
+import org.jsecurity.session.mgt.DelegatingSession;
 import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.RememberMeManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
+import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.Collection;
 
 /**
@@ -42,11 +44,9 @@ import java.util.Collection;
  * implementation.</p>
  *
  * <p>To greatly reduce and simplify configuration, this implementation (and its superclasses) will
- * create suitable defaults for <em>all</em> of its required dependencies.  Therefore, you only need to override
- * attributes for custom behavior.  But, note the following:</p>
- *
- * <p>Unless you're happy with the default simple {@link org.jsecurity.realm.text.PropertiesRealm properties file}-based realm, which may or
- * may not be flexible enough for enterprise applications, you might want to specify at least one custom
+ * create suitable defaults for all of its required dependencies, <em>except</em> the required one or more
+ * {@link Realm Realm}s.  Because <code>Realm</code> implementations usually interact with an application's data model,
+ * they are almost always application specific;  you will want to specify at least one custom
  * <tt>Realm</tt> implementation that 'knows' about your application's data/security model
  * (via {@link #setRealm} or one of the overloaded constructors).  All other attributes in this class hierarchy
  * will have suitable defaults for most enterprise applications.</p>
@@ -58,7 +58,7 @@ import java.util.Collection;
  *
  * <p>Because RememberMe services are inherently client tier-specific and
  * therefore aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an
- * instance yourself via the {@link #setRememberMeManager(org.jsecurity.subject.RememberMeManager) setRememberMeManager}
+ * instance yourself via the {@link #setRememberMeManager(RememberMeManager) setRememberMeManager}
  * mutator.  However if you're reading this JavaDoc with the
  * expectation of operating in a Web environment, take a look at the
  * {@link org.jsecurity.web.DefaultWebSecurityManager DefaultWebSecurityManager} implementation, which
@@ -85,8 +85,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * Default no-arg constructor.
      */
     public DefaultSecurityManager() {
+        setSubjectFactory(new DefaultSubjectFactory());
         setSubjectBinder(new SessionSubjectBinder());
-        setSubjectFactory(new DefaultSubjectFactory(this));
     }
 
     /**
@@ -115,6 +115,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void setSubjectFactory(SubjectFactory subjectFactory) {
         this.subjectFactory = subjectFactory;
+        if (this.subjectFactory instanceof SecurityManagerAware) {
+            ((SecurityManagerAware) this.subjectFactory).setSecurityManager(this);
+        }
     }
 
     public SubjectBinder getSubjectBinder() {
@@ -134,14 +137,13 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     private AbstractRememberMeManager getRememberMeManagerForCipherAttributes() {
-        RememberMeManager rmm = getRememberMeManager();
-        if (!(rmm instanceof AbstractRememberMeManager)) {
+        if (!(this.rememberMeManager instanceof AbstractRememberMeManager)) {
             String msg = "The convenience passthrough methods for setting remember me cipher attributes " +
                     "are only available when the underlying RememberMeManager implementation is a subclass of " +
                     AbstractRememberMeManager.class.getName() + ".";
             throw new IllegalStateException(msg);
         }
-        return (AbstractRememberMeManager) rmm;
+        return (AbstractRememberMeManager) this.rememberMeManager;
     }
 
     public void setRememberMeCipher(Cipher cipher) {
@@ -185,8 +187,32 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected Subject createSubject() {
-        PrincipalCollection principals = getRememberedIdentity();
-        return getSubjectFactory().createSubject(principals, null, false, null);
+        Subject subject = null;
+
+        Serializable sessionId = ThreadContext.getSessionId();
+        if (sessionId != null) {
+            try {
+                subject = getSubjectBySessionId(sessionId);
+            } catch (InvalidSessionException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Session id referenced on the current thread [" + sessionId + "] is invalid.  " +
+                            "Ignoring and creating a new Subject instance to continue.  This message can be " +
+                            "safely ignored.", e);
+                }
+            } catch (AuthorizationException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Session id referenced on the current thread [" + sessionId + "] is not allowed to be " +
+                            "referenced.  Ignoring and creating a Subject instance without a session to continue.", e);
+                }
+            }
+        }
+
+        if (subject == null) {
+            PrincipalCollection principals = getRememberedIdentity();
+            return getSubjectFactory().createSubject(principals, null, false, null);
+        }
+
+        return subject;
     }
 
     /**
@@ -404,5 +430,63 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public Subject getSubject() {
         return getSubject(true);
+    }
+
+    protected PrincipalCollection getPrincipals(Session session) {
+        return (PrincipalCollection) session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY);
+    }
+
+    protected boolean isAuthenticated(Session session, PrincipalCollection principals) {
+        if (principals != null) {
+            Boolean authc = (Boolean) session.getAttribute(SessionSubjectBinder.AUTHENTICATED_SESSION_KEY);
+            return authc != null && authc;
+        }
+        return false;
+    }
+
+    /**
+     * Acquires the {@link Subject Subject} that owns the {@link Session Session} with the specified {@code sessionId}.
+     *
+     * <p><b>Although simple in concept, this method provides incredibly powerful functionality:</b>
+     *
+     * <p>The ability to reference a {@code Subject} and their server-side session
+     * <em>across clients of different mediums</em> such as web applications, Java applets,
+     * standalone C# clients over XMLRPC and/or SOAP, and many others. This is a <em>huge</em>
+     * benefit in heterogeneous enterprise applications.
+     *
+     * <p>To maintain session integrity across client mediums, the {@code sessionId} <b>must</b> be transmitted
+     * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
+     * is nothing new - all web applications are susceptible to the same problem when transmitting
+     * {@link javax.servlet.http.Cookie Cookie}s or when using URL rewriting.  As long as the
+     * {@code sessionId} is transmitted securely, session integrity can be maintained.
+     *
+     * @param sessionId the id of the session that backs the desired Subject being acquired.
+     * @return the {@code Subject} that owns the {@code Session Session} with the specified {@code sessionId}
+     * @throws org.jsecurity.session.InvalidSessionException
+     *          if the session identified by <tt>sessionId</tt> has
+     *          been stopped, expired, or doesn't exist.
+     * @throws org.jsecurity.authz.AuthorizationException
+     *          if the executor of this method is not allowed to acquire the owning {@code Subject}.  The reason
+     *          for the exception is implementation-specific and could be for any number of reasons.  A common
+     *          reason in many systems would be if one host tried to acquire a {@code Subject} based on a
+     *          {@code Session} that originated on an entirely different host (although it is not a JSecurity
+     *          requirement this scenario is disallowed - its just an example that <em>may</em> throw an Exception in
+     *          some systems).
+     * @see org.jsecurity.authz.HostUnauthorizedException
+     * @since 1.0
+     */
+    protected Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+        if (!isValid(sessionId)) {
+            String msg = "Specified id [" + sessionId + "] does not correspond to a valid Session  It either " +
+                    "does not exist or the corresponding session has been stopped or expired.";
+            throw new InvalidSessionException(msg, sessionId);
+        }
+
+        Session existing = new DelegatingSession(this, sessionId);
+        PrincipalCollection principals = getPrincipals(existing);
+        boolean authenticated = isAuthenticated(existing, principals);
+        InetAddress host = existing.getHostAddress();
+
+        return getSubjectFactory().createSubject(principals, existing, authenticated, host);
     }
 }

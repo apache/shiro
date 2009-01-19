@@ -94,9 +94,10 @@ public class BlowfishCipher implements Cipher {
      * Returns the default {@link Key Key} to use for symmetric encryption and decryption if one is not specified during
      * encryption/decryption.  For truly secure applications,
      * you should always specify your own key via the {@link #setKey(java.security.Key) setKey} method.
+     *
      * @return the {@link Key Key} to use for symmetric encryption and decryption.
      * @see #encrypt(byte[], byte[])
-     * @see #decrypt(byte[], byte[]) 
+     * @see #decrypt(byte[], byte[])
      */
     public Key getKey() {
         return key;
@@ -106,6 +107,7 @@ public class BlowfishCipher implements Cipher {
      * Sets the internal default {@link Key Key} to use for symmetric encryption and decryption if one is not
      * specified during encryption/decryption.   For truly secure applications, you should always specify your own
      * key via this method.
+     *
      * @param key the key to use for symmetric encryption and decryption.
      * @see #encrypt(byte[], byte[])
      * @see #decrypt(byte[], byte[])
@@ -142,9 +144,10 @@ public class BlowfishCipher implements Cipher {
     /**
      * Returns a new {@link javax.crypto.Cipher Cipher} instance to use for encryption/decryption operations, based on
      * the {@link #TRANSFORMATION_STRING TRANSFORMATION_STRING} constant.
+     *
      * @return a new Cipher instance.
      * @throws IllegalStateException if a new Cipher instance cannot be constructed based on the
-     * {@link #TRANSFORMATION_STRING TRANSFORMATION_STRING} constant.
+     *                               {@link #TRANSFORMATION_STRING TRANSFORMATION_STRING} constant.
      */
     protected javax.crypto.Cipher newCipherInstance() throws IllegalStateException {
         try {
@@ -163,8 +166,8 @@ public class BlowfishCipher implements Cipher {
      * potential {@link InvalidKeyException InvalidKeyException} that might arise.
      *
      * @param cipher the JDK Cipher to {@link javax.crypto.Cipher#init(int, java.security.Key) init}.
-     * @param mode the Cipher mode
-     * @param key the Cipher's Key
+     * @param mode   the Cipher mode
+     * @param key    the Cipher's Key
      */
     protected void init(javax.crypto.Cipher cipher, int mode, java.security.Key key) {
         try {
@@ -178,8 +181,9 @@ public class BlowfishCipher implements Cipher {
     /**
      * Calls the {@link javax.crypto.Cipher#doFinal(byte[]) doFinal(bytes)} method, propagating any exception that
      * might arise in an {@link IllegalStateException IllegalStateException}
+     *
      * @param cipher the JDK Cipher to finalize (perform the actual cryption)
-     * @param bytes the bytes to crypt
+     * @param bytes  the bytes to crypt
      * @return the resulting crypted byte array.
      */
     protected byte[] crypt(javax.crypto.Cipher cipher, byte[] bytes) {
@@ -195,9 +199,10 @@ public class BlowfishCipher implements Cipher {
      * Calls the {@link #init(javax.crypto.Cipher, int, java.security.Key)} and then
      * {@link #crypt(javax.crypto.Cipher, byte[])}.  Ensures that the key is never null by using the
      * {@link #getKey() default key} if the method argument key is <code>null</code>.
+     *
      * @param bytes the bytes to crypt
-     * @param mode the JDK Cipher mode
-     * @param key the key to use to do the cryption.  If <code>null</code> the {@link #getKey() default key} will be used.
+     * @param mode  the JDK Cipher mode
+     * @param key   the key to use to do the cryption.  If <code>null</code> the {@link #getKey() default key} will be used.
      * @return the resulting crypted byte array
      */
     protected byte[] crypt(byte[] bytes, int mode, byte[] key) {
@@ -216,7 +221,8 @@ public class BlowfishCipher implements Cipher {
 
     /**
      * Generates a new {@link Key Key} suitable for this Cipher by calling
-     * {@link #generateNewKey() generateNewKey(128)} (uses a 128 bit size by default).
+     * {@link #generateNewKey(int) generateNewKey(128)} (uses a 128 bit size by default).
+     *
      * @return a new {@link Key Key}, 128 bits in length.
      */
     public static Key generateNewKey() {
@@ -226,6 +232,7 @@ public class BlowfishCipher implements Cipher {
     /**
      * Generates a new {@link Key Key} of the specified size suitable for this Cipher
      * (based on the {@link #ALGORITHM ALGORITHM} using the JDK {@link KeyGenerator KeyGenerator}.
+     *
      * @param keyBitSize the bit size of the key to create
      * @return the created key suitable for use with this Cipher.
      */
@@ -243,6 +250,7 @@ public class BlowfishCipher implements Cipher {
 
     /**
      * Simple test main method to ensure functionality is correct.  Should really be moved to a proper test case.
+     *
      * @param unused ignored
      * @throws Exception if anything unexpected happens.
      */

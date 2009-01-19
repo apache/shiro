@@ -21,24 +21,18 @@ package org.jsecurity.spring.remoting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
-import org.jsecurity.session.Session;
-import org.jsecurity.subject.DelegatingSubject;
-import org.jsecurity.subject.PrincipalCollection;
-import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
-import org.jsecurity.web.DefaultWebSecurityManager;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
- * that binds the correct {@link Session} and {@link org.jsecurity.subject.Subject} to the
- * remote invocation thread during a remote execution.
+ * that binds a {@code sessionId} to the incoming thread to make it available to the {@code SecurityManager}
+ * implementation during the thread execution.  The {@code SecurityManager} implementation can use this sessionId
+ * to reconstitute the {@code Subject} instance based on persistent state in the corresponding {@code Session}.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -78,59 +72,23 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
-    protected InetAddress getInetAddress(RemoteInvocation invocation, Object targetObject) {
-        try {
-            return InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            return null;
-        }
-    }
-
-    protected PrincipalCollection getPrincipals(RemoteInvocation invocation, Object targetObject, Session session) {
-        return (PrincipalCollection) session.getAttribute(DefaultWebSecurityManager.PRINCIPALS_SESSION_KEY);
-    }
-
-    protected boolean isAuthenticated(RemoteInvocation invocation, Object targetObject, Session session, PrincipalCollection principals) {
-        if (principals != null) {
-            Boolean authc = (Boolean) session.getAttribute(DefaultWebSecurityManager.AUTHENTICATED_SESSION_KEY);
-            return authc != null && authc;
-        }
-        return false;
-    }
-
     @SuppressWarnings({"unchecked"})
     public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
         try {
-            PrincipalCollection principals = null;
-            boolean authenticated = false;
-            InetAddress inetAddress = getInetAddress(invocation, targetObject);
-            Session session = null;
-
             Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);
-
             if (sessionId != null) {
-
-                session = securityManager.getSession(sessionId);
-                principals = getPrincipals(invocation, targetObject, session);
-                authenticated = isAuthenticated(invocation, targetObject, session, principals);
+                ThreadContext.bindSessionId(sessionId);
             } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("RemoteInvocation object did not contain a JSecurity Session id under " +
-                            "attribute name [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Session will not " +
-                            "be available to the method.  Ensure that clients are using a " +
-                            "SecureRemoteInvocationFactory to prevent this problem.");
+                if (log.isTraceEnabled()) {
+                    log.trace("RemoteInvocation did not contain a JSecurity Session id attribute under " +
+                            "key [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Subject based " +
+                            "on an existing Session will not be available during the method invocatin.");
                 }
             }
-
-            Subject subject = new DelegatingSubject(principals, authenticated, inetAddress, session, securityManager);
-
             ThreadContext.bind(securityManager);
-            ThreadContext.bind(subject);
+            ThreadContext.bind(securityManager.getSubject());
 
             return super.invoke(invocation, targetObject);
-
         } catch (NoSuchMethodException nsme) {
             throw nsme;
         } catch (IllegalAccessException iae) {

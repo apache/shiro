@@ -45,9 +45,10 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     private static final Log log = LogFactory.getLog(DefaultSessionManager.class);
 
-    protected SessionDAO sessionDAO = new MemorySessionDAO();
+    protected SessionDAO sessionDAO;
 
     public DefaultSessionManager() {
+        this.sessionDAO = new MemorySessionDAO();
     }
 
     public void setSessionDAO(SessionDAO sessionDAO) {
@@ -59,7 +60,9 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     }
 
     public void setCacheManager(CacheManager cacheManager) {
-        ((CacheManagerAware) getSessionDAO()).setCacheManager(cacheManager);
+        if (this.sessionDAO instanceof CacheManagerAware) {
+            ((CacheManagerAware) this.sessionDAO).setCacheManager(cacheManager);
+        }
     }
 
     protected Session doCreateSession(InetAddress originatingHost) {

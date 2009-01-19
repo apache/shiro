@@ -30,12 +30,13 @@ import org.jsecurity.util.ThreadContext;
 import java.net.InetAddress;
 
 /**
- * TODO - Class JavaDoc
+ * Default {@link SubjectFactory SubjectFactory} implementation that creates {@link DelegatingSubject DelegatingSubject}
+ * instances.
  *
  * @author Les Hazlewood
  * @since 1.0
  */
-public class DefaultSubjectFactory implements SubjectFactory {
+public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAware {
 
     private SecurityManager securityManager;
 
@@ -43,7 +44,7 @@ public class DefaultSubjectFactory implements SubjectFactory {
     }
 
     public DefaultSubjectFactory(SecurityManager securityManager) {
-        setSecurityManager(securityManager);
+        this.securityManager = securityManager;
     }
 
     public SecurityManager getSecurityManager() {
@@ -54,11 +55,6 @@ public class DefaultSubjectFactory implements SubjectFactory {
         this.securityManager = securityManager;
     }
 
-    public Subject createSubject(PrincipalCollection principals, Session existing,
-                                 boolean authenticated, InetAddress inetAddress) {
-        return new DelegatingSubject(principals, authenticated, inetAddress, existing, getSecurityManager());
-    }
-
     private void assertPrincipals(AuthenticationInfo info) {
         PrincipalCollection principals = info.getPrincipals();
         if (principals == null || principals.isEmpty()) {
@@ -67,14 +63,6 @@ public class DefaultSubjectFactory implements SubjectFactory {
         }
     }
 
-    /**
-     * Creates a <tt>Subject</tt> instance for the user represented by the given method arguments.
-     *
-     * @param token the <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param info  the <tt>AuthenticationInfo</tt> of a newly authenticated user.
-     * @return the <tt>Subject</tt> instance that represents the user and session data for the newly
-     *         authenticated user.
-     */
     public Subject createSubject(AuthenticationToken token, AuthenticationInfo info, Subject existing) {
         assertPrincipals(info);
 
@@ -94,5 +82,10 @@ public class DefaultSubjectFactory implements SubjectFactory {
         }
 
         return createSubject(info.getPrincipals(), session, true, authcSourceIP);
+    }
+
+    public Subject createSubject(PrincipalCollection principals, Session existing,
+                                 boolean authenticated, InetAddress inetAddress) {
+        return new DelegatingSubject(principals, authenticated, inetAddress, existing, getSecurityManager());
     }
 }

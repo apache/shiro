@@ -24,19 +24,32 @@ import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 
 /**
- * TODO - Class JavaDoc
+ * Associates a {@link Subject Subject} instance to the currently executing thread via the {
  *
  * @author Les Hazlewood
+ * @link ThreadContext ThreadContext} to ensure that the <code>Subject</code> is accessible to any caller during
+ * thread execution.
+ * @see org.jsecurity.SecurityUtils#getSubject SecurityUtils.getSubject()
  * @since 1.0
  */
 public class ThreadContextSubjectBinder implements SubjectBinder {
 
     private static final Log log = LogFactory.getLog(ThreadContextSubjectBinder.class);
 
+    /**
+     * This implementation returns the {@link Subject Subject} from the {@link ThreadContext ThreadContext}.
+     *
+     * @return the {@link Subject Subject} in the {@link ThreadContext ThreadContext}
+     */
     public Subject getSubject() {
         return ThreadContext.getSubject();
     }
 
+    /**
+     * Associates the specified subject to the currently executing thread via the {@link ThreadContext ThreadContext}.
+     *
+     * @param subject the subject to accosiate to the currently executing thread.
+     */
     public void bind(Subject subject) {
         if (log.isTraceEnabled()) {
             log.trace("Binding Subject [" + subject + "] to a thread local...");
@@ -44,6 +57,12 @@ public class ThreadContextSubjectBinder implements SubjectBinder {
         ThreadContext.bind(subject);
     }
 
+    /**
+     * Removes the specified Subject instance from the currently executing thread by removing it from the
+     * {@link ThreadContext ThreadContext}
+     *
+     * @param subject the <code>Subject</code> instance to unbind from the currently executing thread.
+     */
     public void unbind(Subject subject) {
         ThreadContext.unbindSubject();
     }

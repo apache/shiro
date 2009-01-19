@@ -51,10 +51,11 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
 
     /**
      * Default no-arg constructor that initializes its internal
-     * <code>authenticator</code> instance by just calling {@link #createAuthenticator() createAuthenticator()}.
+     * <code>authenticator</code> instance to a
+     * {@link org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
      */
     public AuthenticatingSecurityManager() {
-        setAuthenticator(createAuthenticator());
+        this.authenticator = new ModularRealmAuthenticator();
     }
 
     /**
@@ -85,17 +86,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
             throw new IllegalArgumentException(msg);
         }
         this.authenticator = authenticator;
-    }
-
-    /**
-     * Creates the default <code>Authenticator</code> instance to use at startup.  This simple default implementation
-     * merely returns <code>new {@link ModularRealmAuthenticator ModularRealmAuthenticator}()</code>.
-     *
-     * @return the default <code>Authenticator</code> instance to use at startup.
-     * @since 1.0
-     */
-    protected Authenticator createAuthenticator() {
-        return new ModularRealmAuthenticator();
     }
 
     /**
@@ -149,6 +139,16 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
         ((AuthenticationListenerRegistrar) this.authenticator).setAuthenticationListeners(listeners);
     }
 
+    public void add(AuthenticationListener listener) {
+        assertAuthenticatorListenerSupport();
+        ((AuthenticationListenerRegistrar) this.authenticator).add(listener);
+    }
+
+    public boolean remove(AuthenticationListener listener) {
+        return (this.authenticator instanceof AuthenticationListenerRegistrar) &&
+                ((AuthenticationListenerRegistrar) this.authenticator).remove(listener);
+    }
+
     /**
      * Ensures that <code>this.authenticator</code> implements the
      * {@link org.jsecurity.authc.AuthenticationListenerRegistrar AuthenticationListenerRegistrar} interface to ensure
@@ -162,18 +162,6 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
                     "runtime registration of AuthenticationListeners.";
             throw new IllegalStateException(msg);
         }
-    }
-
-    public void add(AuthenticationListener listener) {
-        assertAuthenticatorListenerSupport();
-        Authenticator authc = getAuthenticator();
-        ((AuthenticationListenerRegistrar) authc).add(listener);
-    }
-
-    public boolean remove(AuthenticationListener listener) {
-        Authenticator authc = getAuthenticator();
-        return (authc instanceof AuthenticationListenerRegistrar) &&
-                ((AuthenticationListenerRegistrar) authc).remove(listener);
     }
 
     /**

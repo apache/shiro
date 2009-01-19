@@ -18,8 +18,6 @@
  */
 package org.jsecurity.mgt;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.cache.DefaultCacheManager;
@@ -27,13 +25,12 @@ import org.jsecurity.util.Destroyable;
 import org.jsecurity.util.LifecycleUtils;
 
 /**
- * A very basic extension point for the SecurityManager interface that merely provides logging and caching
- * support.  All <tt>SecurityManager</tt> method implementations are left to subclasses.
+ * A very basic starting point for the SecurityManager interface that merely provides logging and caching
+ * support.  All actual {@code SecurityManager} method implementations are left to subclasses.
  *
- * <p>Upon instantiation, a sensible default {@link CacheManager CacheManager} will be created automatically via the
- * {@link #createCacheManager() createCacheManager() method.  This <code>CacheManager</code>
- * can then be used by subclass implementations and children components for use to achieve better application
- * performance.
+ * <p>Upon instantiation, a sensible default {@link CacheManager CacheManager} will be created automatically.  This
+ * {@code CacheManager} can then be used by subclass implementations and children components for use to achieve better
+ * application performance if so desired.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -42,20 +39,15 @@ import org.jsecurity.util.LifecycleUtils;
 public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware {
 
     /**
-     * Internal private static log instance.
-     */
-    private static final Log log = LogFactory.getLog(CachingSecurityManager.class);
-
-    /**
      * The CacheManager to use to perform caching operations to enhance performance.  Can be null.
      */
-    protected CacheManager cacheManager;
+    private CacheManager cacheManager;
 
     /**
      * Default no-arg constructor that will automatically attempt to initialize a default cacheManager
      */
     public CachingSecurityManager() {
-        setCacheManager(createCacheManager());
+        this.cacheManager = new DefaultCacheManager();
     }
 
     /**
@@ -90,24 +82,6 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * {@link #getCacheManager getCacheManager()} method.
      */
     protected void afterCacheManagerSet() {
-    }
-
-    /**
-     * Creates a {@link CacheManager CacheManager} instance to be used by this <code>SecurityManager</code>
-     * and potentially any of its children components.
-     * <p/>
-     * This default implementation returns a new
-     * {@link org.jsecurity.cache.DefaultCacheManager DefaultCacheManager}, which uses in-memory (memory-leak safe)
-     * caches which are production safe.
-     * <p/>
-     * This can be overridden by subclasses for a different implementation, but it is often easier to set a
-     * different implementation via the {@link #setCacheManager(org.jsecurity.cache.CacheManager) setCacheManager}
-     * method, for example in code or Dependency Injection frameworks (a la Spring or JEE 3).
-     *
-     * @return a newly created <code>CacheManager</code> instance.
-     */
-    protected CacheManager createCacheManager() {
-        return new DefaultCacheManager();
     }
 
     /**
