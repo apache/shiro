@@ -19,10 +19,16 @@
 package org.jsecurity.spring.remoting;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.session.Session;
+import org.jsecurity.subject.Subject;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
+
+import java.io.Serializable;
 
 /**
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
@@ -38,7 +44,7 @@ import org.springframework.remoting.support.RemoteInvocationFactory;
  */
 public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactory {
 
-    //TODO - complete JavaDoc
+    private static final Log log = LogFactory.getLog(SecureRemoteInvocationFactory.class);
 
     public static final String SESSION_ID_KEY = Session.class.getName() + "_ID_KEY";
 
@@ -53,13 +59,30 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @return a remote invocation object containing the current session ID as an attribute.
      */
     public RemoteInvocation createRemoteInvocation(MethodInvocation methodInvocation) {
-        String sessionId = System.getProperty(SESSION_ID_SYSTEM_PROPERTY_NAME);
+        Serializable sessionId = null;
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null) {
+            Session session = subject.getSession(false);
+            if (session != null) {
+                sessionId = session.getId();
+            }
+        }
+
         if (sessionId == null) {
-            throw new IllegalStateException("System property [" + SESSION_ID_SYSTEM_PROPERTY_NAME + "] is not set.  " +
-                    "This property must be set to the JSecurity session ID for remote calls to function.");
+            if (log.isTraceEnabled()) {
+                log.trace("No Session found for the currently executing subject via subject.getSession(false).  " +
+                        "Attempting to revert back to the 'jsecurity.session.id' system property...");
+            }
+        }
+        sessionId = System.getProperty(SESSION_ID_SYSTEM_PROPERTY_NAME);
+        if (sessionId == null && log.isTraceEnabled()) {
+            log.trace("No 'jsecurity.session.id' system property found.  Heuristics have been exhausted; " +
+                    "RemoteInvocation will not contain a sessionId.");
         }
         RemoteInvocation ri = new RemoteInvocation(methodInvocation);
-        ri.addAttribute(SESSION_ID_KEY, sessionId);
+        if (sessionId != null) {
+            ri.addAttribute(SESSION_ID_KEY, sessionId);
+        }
 
         return ri;
     }
