@@ -16,28 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.subject;
-
-import org.jsecurity.authc.AuthenticationException;
-import org.jsecurity.authc.AuthenticationInfo;
-import org.jsecurity.authc.AuthenticationToken;
+package org.jsecurity.mgt;
 
 /**
- * A RememberMeManager is responsible for remembering a Subject's identity across that Subject's sessions with
- * the application.
+ * Interface providing a callback method that allows an implementation of this interface to receive a reference to
+ * the {@link SecurityManager SecurityManager} if they require one.  This is mostly used by core implementation classes
+ * for framework code and is rarely necessary for software developers enabling JSecurity in their applications.
  *
  * @author Les Hazlewood
- * @since 0.9
+ * @since 1.0
  */
-public interface RememberMeManager {
+public interface SecurityManagerAware {
 
-    //TODO - complete JavaDoc
-
-    PrincipalCollection getRememberedPrincipals();
-
-    void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info);
-
-    void onFailedLogin(AuthenticationToken token, AuthenticationException ae);
-
-    void onLogout(PrincipalCollection subjectPrincipals);
+    /**
+     * Callback method that allows a component to receive the {@link SecurityManager SecurityManager} instance if it
+     * requires one.
+     *
+     * @param securityManager the application's <code>SecurityManager</code>
+     */
+    void setSecurityManager(SecurityManager securityManager);
 }

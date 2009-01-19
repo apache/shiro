@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.mgt.SecurityManager;
 import org.jsecurity.subject.Subject;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,11 +47,14 @@ import java.util.Map;
 @SuppressWarnings(value = {"unchecked", "unsafe"})
 public abstract class ThreadContext {
 
-    /** Private internal log instance. */
+    /**
+     * Private internal log instance.
+     */
     private static final Log log = LogFactory.getLog(ThreadContext.class);
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
+    public static final String SESSION_ID_KEY = ThreadContext.class.getName() + "_SESSION_ID_KEY";
     public static final String INET_ADDRESS_KEY = ThreadContext.class.getName() + "_INET_ADDRESS_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =
@@ -365,6 +369,23 @@ public abstract class ThreadContext {
      */
     public static InetAddress unbindInetAddress() {
         return (InetAddress) remove(INET_ADDRESS_KEY);
+    }
+
+    //TODO - complete JavaDoc
+
+    public static Serializable getSessionId() {
+        return (Serializable) get(SESSION_ID_KEY);
+    }
+
+    public static void bindSessionId(Serializable sessionId) {
+        if (sessionId != null) {
+            put(SESSION_ID_KEY, sessionId);
+        }
+    }
+
+    public Serializable unbindSessionId() {
+        return (Serializable) remove(SESSION_ID_KEY);
+
     }
 }
 

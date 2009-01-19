@@ -21,7 +21,7 @@ package org.jsecurity.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsecurity.codec.Base64;
-import org.jsecurity.subject.AbstractRememberMeManager;
+import org.jsecurity.mgt.AbstractRememberMeManager;
 import org.jsecurity.web.attr.CookieAttribute;
 import org.jsecurity.web.attr.WebAttribute;
 
@@ -57,7 +57,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     //TODO - complete JavaDoc
 
-    private static transient final Log log = LogFactory.getLog( WebRememberMeManager.class );
+    private static transient final Log log = LogFactory.getLog(WebRememberMeManager.class);
 
     /**
      * The default name of the underlying rememberMe cookie which is <code>rememberMe</code>.
@@ -207,12 +207,12 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         ServletResponse response = WebUtils.getRequiredServletResponse();
         String base64 = getIdentityAttribute().retrieveValue(request, response);
         if (base64 != null) {
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Acquired Base64 encoded identity [" + base64 + "]" );
+            if (log.isTraceEnabled()) {
+                log.trace("Acquired Base64 encoded identity [" + base64 + "]");
             }
             byte[] decoded = Base64.decode(base64);
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Base64 decoded byte array length: " + (decoded != null ? decoded.length : 0) + " bytes." );
+            if (log.isTraceEnabled()) {
+                log.trace("Base64 decoded byte array length: " + (decoded != null ? decoded.length : 0) + " bytes.");
             }
             return decoded;
         } else {

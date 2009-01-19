@@ -18,8 +18,6 @@
  */
 package org.jsecurity.mgt;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.realm.Realm;
@@ -30,7 +28,7 @@ import java.util.Collection;
 
 /**
  * JSecurity support of a {@link SecurityManager} class hierarchy based around a collection of
- * {@link org.jsecurity.realm.Realm}s.  All actual <tt>SecurityManager</tt> method implementations are left to
+ * {@link org.jsecurity.realm.Realm}s.  All actual {@code SecurityManager} method implementations are left to
  * subclasses.
  *
  * @author Les Hazlewood
@@ -39,14 +37,9 @@ import java.util.Collection;
 public abstract class RealmSecurityManager extends CachingSecurityManager {
 
     /**
-     * Internal private log instance.
-     */
-    private static final Log log = LogFactory.getLog(RealmSecurityManager.class);
-
-    /**
      * Internal collection of <code>Realm</code>s used for all authentication and authorization operations.
      */
-    protected Collection<Realm> realms;
+    private Collection<Realm> realms;
 
     /**
      * Default no-arg constructor.
@@ -74,6 +67,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
      * Sets the realms managed by this <tt>SecurityManager</tt> instance.
      *
      * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
+     * @throws IllegalArgumentException if the realms collection is null or empty.
      */
     public void setRealms(Collection<Realm> realms) {
         if (realms == null) {
@@ -110,7 +104,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
     protected void applyCacheManagerToRealms() {
         CacheManager cacheManager = getCacheManager();
         Collection<Realm> realms = getRealms();
-        if (cacheManager != null && realms != null && !realms.isEmpty()) {
+        if (realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
                 if (realm instanceof CacheManagerAware) {
                     ((CacheManagerAware) realm).setCacheManager(cacheManager);

@@ -18,16 +18,13 @@
  */
 package org.jsecurity.mgt;
 
-import org.jsecurity.authz.AuthorizationException;
 import org.jsecurity.authz.HostUnauthorizedException;
-import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionListener;
 import org.jsecurity.session.SessionListenerRegistrar;
 import org.jsecurity.session.mgt.DefaultSessionManager;
-import org.jsecurity.session.mgt.DelegatingSession;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -41,12 +38,12 @@ import java.util.Date;
  * {@link org.jsecurity.session.Session session} operations to a wrapped {@link SessionManager SessionManager}
  * instance.  That is, this class implements the methods in the
  * {@link SessionManager SessionManager} interface, but in reality, those methods are merely passthrough calls to
- * the underlying 'real' <tt>SessionManager</tt> instance.
- *
- * <p>The remaining <tt>SecurityManager</tt> methods not implemented by this class or its parents are left to be
+ * the underlying 'real' {@code SessionManager} instance.
+ * <p/>
+ * The remaining {@code SecurityManager} methods not implemented by this class or its parents are left to be
  * implemented by subclasses.
- *
- * <p>In keeping with the other classes in this hierarchy and JSecurity's desire to minimize configuration whenever
+ * <p/>
+ * In keeping with the other classes in this hierarchy and JSecurity's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies will be created upon instantiation.
  *
  * @author Les Hazlewood
@@ -58,14 +55,19 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * The internal delegate <code>SessionManager</code> used by this security manager that manages all the
      * application's {@link Session Session}s.
      */
-    protected SessionManager sessionManager;
+    private SessionManager sessionManager;
 
     /**
      * Default no-arg constructor, internally creates a suitable default {@link SessionManager SessionManager} delegate
-     * instance via the {@link #createSessionManager() createSessionManager()} method.
+     * instance.
      */
     public SessionsSecurityManager() {
-        setSessionManager(createSessionManager());
+        applySessionManager(new DefaultSessionManager());
+    }
+
+    protected final void applySessionManager(SessionManager sm) {
+        setSessionManager(sm);
+        applyCacheManagerToSessionManager();
     }
 
     /**
@@ -96,37 +98,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     /**
-     * Constructs a new <code>SessionManager</code> instance to be used as the internal delegate for this security
-     * manager.  After creation via the {@link #newSessionManagerInstance() newSessionManagerInstance()} call, the
-     * internal {@link #getCacheManager CacheManager} is set on it if the session manager instance implements the
-     * {@link CacheManagerAware CacheManagerAware} interface to allow it to utilize the cache manager for its own
-     * internal caching needs.
-     *
-     * @return a new initialized {@link SessionManager SessionManager} to use as this security manager's internal
-     *         delegate.
-     */
-    protected SessionManager createSessionManager() {
-        SessionManager sm = newSessionManagerInstance();
-        CacheManager cm = getCacheManager();
-        if (cm != null) {
-            if (sm instanceof CacheManagerAware) {
-                ((CacheManagerAware) sm).setCacheManager(cm);
-            }
-        }
-        return sm;
-    }
-
-    /**
-     * Merely instantiates (but does not initalize) the default <code>SessionManager</code> implementation.  This method
-     * merely returns <code>new {@link DefaultSessionManager DefaultSessionManager}()</code>.
-     *
-     * @return a new, uninitialized {@link SessionManager SessionManager} instance.
-     */
-    protected SessionManager newSessionManagerInstance() {
-        return new DefaultSessionManager();
-    }
-
-    /**
      * Calls {@link AuthorizingSecurityManager#afterCacheManagerSet() super.afterCacheManagerSet()} and then immediately calls
      * {@link #applyCacheManagerToSessionManager() applyCacheManagerToSessionManager()} to ensure the
      * <code>CacheManager</code> is applied to the SessionManager as necessary.
@@ -144,9 +115,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * instance implements the {@link CacheManagerAware CacheManagerAware} interface.
      */
     protected void applyCacheManagerToSessionManager() {
-        SessionManager sm = getSessionManager();
-        if (sm instanceof CacheManagerAware) {
-            ((CacheManagerAware) sm).setCacheManager(cacheManager);
+        if (this.sessionManager instanceof CacheManagerAware) {
+            ((CacheManagerAware) this.sessionManager).setCacheManager(getCacheManager());
         }
     }
 
@@ -199,8 +169,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      */
     public void add(SessionListener listener) {
         assertSessionListenerSupport();
-        SessionManager sm = getSessionManager();
-        ((SessionListenerRegistrar) sm).add(listener);
+        ((SessionListenerRegistrar) this.sessionManager).add(listener);
     }
 
     /**
@@ -212,61 +181,60 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      *         instance, <code>false</code> otherwise.
      */
     public boolean remove(SessionListener listener) {
-        SessionManager sm = getSessionManager();
-        return (sm instanceof SessionListenerRegistrar) &&
-                ((SessionListenerRegistrar) sm).remove(listener);
+        return (this.sessionManager instanceof SessionListenerRegistrar) &&
+                ((SessionListenerRegistrar) this.sessionManager).remove(listener);
     }
 
     public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
-        return getSessionManager().start(originatingHost);
+        return this.sessionManager.start(originatingHost);
     }
 
     public Date getStartTimestamp(Serializable sessionId) {
-        return getSessionManager().getStartTimestamp(sessionId);
+        return this.sessionManager.getStartTimestamp(sessionId);
     }
 
     public Date getLastAccessTime(Serializable sessionId) {
-        return getSessionManager().getLastAccessTime(sessionId);
+        return this.sessionManager.getLastAccessTime(sessionId);
     }
 
     public boolean isValid(Serializable sessionId) {
-        return getSessionManager().isValid(sessionId);
+        return this.sessionManager.isValid(sessionId);
     }
 
     public long getTimeout(Serializable sessionId) throws InvalidSessionException {
-        return getSessionManager().getTimeout(sessionId);
+        return this.sessionManager.getTimeout(sessionId);
     }
 
     public void setTimeout(Serializable sessionId, long maxIdleTimeInMillis) throws InvalidSessionException {
-        getSessionManager().setTimeout(sessionId, maxIdleTimeInMillis);
+        this.sessionManager.setTimeout(sessionId, maxIdleTimeInMillis);
     }
 
     public void touch(Serializable sessionId) throws InvalidSessionException {
-        getSessionManager().touch(sessionId);
+        this.sessionManager.touch(sessionId);
     }
 
     public InetAddress getHostAddress(Serializable sessionId) {
-        return getSessionManager().getHostAddress(sessionId);
+        return this.sessionManager.getHostAddress(sessionId);
     }
 
     public void stop(Serializable sessionId) throws InvalidSessionException {
-        getSessionManager().stop(sessionId);
+        this.sessionManager.stop(sessionId);
     }
 
     public Collection<Object> getAttributeKeys(Serializable sessionId) {
-        return getSessionManager().getAttributeKeys(sessionId);
+        return this.sessionManager.getAttributeKeys(sessionId);
     }
 
     public Object getAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
-        return getSessionManager().getAttribute(sessionId, key);
+        return this.sessionManager.getAttribute(sessionId, key);
     }
 
     public void setAttribute(Serializable sessionId, Object key, Object value) throws InvalidSessionException {
-        getSessionManager().setAttribute(sessionId, key, value);
+        this.sessionManager.setAttribute(sessionId, key, value);
     }
 
     public Object removeAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
-        return getSessionManager().removeAttribute(sessionId, key);
+        return this.sessionManager.removeAttribute(sessionId, key);
     }
 
     /**
@@ -277,10 +245,10 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     /**
      * Cleans up ('destroys') the internal delegate <code>SessionManager</code> by calling
-     * {@link LifecycleUtils#destroy LifecycleUtils.destroy(getSessionManager())}.
+     * {@link LifecycleUtils#destroy LifecycleUtils.destroy(this.sessionManager)}.
      */
     protected void destroySessionManager() {
-        LifecycleUtils.destroy(getSessionManager());
+        LifecycleUtils.destroy(this.sessionManager);
     }
 
     /**
@@ -291,16 +259,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected void beforeAuthorizerDestroyed() {
         beforeSessionManagerDestroyed();
         destroySessionManager();
-    }
-
-    public Session getSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        SessionManager sm = getSessionManager();
-        if (!sm.isValid(sessionId)) {
-            String msg = "Specified id [" + sessionId + "] does not correspond to a valid Session  It either " +
-                    "does not exist or the corresponding session has been stopped or expired.";
-            throw new InvalidSessionException(msg, sessionId);
-        }
-        return new DelegatingSession(sm, sessionId);
     }
 
 }

@@ -33,9 +33,6 @@ import java.util.Date;
  * {@link javax.servlet.http.HttpSession HttpSession} or Stateful Session EJB's, which many times
  * unnecessarily coupled applications to web or ejb technologies.
  *
- * <p>See the {@link org.jsecurity.mgt.SecurityManager#getSession(java.io.Serializable) SecurityManager.getSession(Serializable)}
- * JavaDoc for more on the benefits of a POJO-based <tt>Session</tt> framework.
- *
  * @author Les Hazlewood
  * @since 0.1
  */

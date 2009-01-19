@@ -23,10 +23,10 @@ package org.jsecurity.crypto;
  * an uninterpretable format.  The resulting encrypted output is only able to be converted back to original form with
  * a <tt>Key</tt> as well.
  *
- * <p>In what is known as <em>Symmetric</em> <tt>Cipher</tt>s, the <tt>Key</tt> used to encrypt the source is the same
+ * <p>For what is known as <em>Symmetric</em> <tt>Cipher</tt>s, the <tt>Key</tt> used to encrypt the source is the same
  * as (or trivially similar to) the <tt>Key</tt> used to decrypt it.
  *
- * <p>In <em>Assymetric</em> <tt>Cipher</tt>s, the encryption <tt>Key</tt> is not the same as the decryption <tt>Key</tt>.
+ * <p>For <em>Assymetric</em> <tt>Cipher</tt>s, the encryption <tt>Key</tt> is not the same as the decryption <tt>Key</tt>.
  * The most common type of Assymetric Ciphers are based on what is called public/private key pairs:
  *
  * <p>A <em>private</em> key is known only to a single party, and as its name implies, is supposed be kept very private

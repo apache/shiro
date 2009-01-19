@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.subject;
+package org.jsecurity.mgt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +31,7 @@ import org.jsecurity.crypto.Cipher;
 import org.jsecurity.io.DefaultSerializer;
 import org.jsecurity.io.SerializationException;
 import org.jsecurity.io.Serializer;
+import org.jsecurity.subject.PrincipalCollection;
 
 /**
  * Abstract implementation of the <code>RememberMeManager</code> interface that handles
@@ -47,7 +48,9 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     //TODO - complete JavaDoc
 
-    /** private inner log instance. */
+    /**
+     * private inner log instance.
+     */
     private static final Log log = LogFactory.getLog(AbstractRememberMeManager.class);
 
     private Serializer serializer = new DefaultSerializer();
@@ -207,20 +210,22 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
             }
             return principals;
 
-        } catch( Exception e ) {
-            return onRememberedPrincipalFailure( e );
+        } catch (Exception e) {
+            return onRememberedPrincipalFailure(e);
         }
     }
 
     /**
      * Called when an exception is thrown while trying to retrieve principals.  The default implementation logs a
-     * warning and forgets the problem identity.  This most commonly would occur when an encryption key is
-     * updated and old principals are retrieved that have been encrypted with the previous key.
+     * warning and forgets ('unremembers') the problem identity by calling {@link #forgetIdentity() forgetIdentity()}.
+     * This most commonly would occur when an encryption key is updated and old principals are retrieved that have
+     * been encrypted with the previous key.\
+     *
      * @param e the exception that was thrown.
-     * @return the principal collection to be returned.
+     * @return <code>null</code> in all cases.
      */
     protected PrincipalCollection onRememberedPrincipalFailure(Exception e) {
-        if(log.isWarnEnabled() ) {
+        if (log.isWarnEnabled()) {
             log.warn("There was a failure while trying to retrieve remembered principals.  This could be due to a " +
                     "configuration problem or corrupted principals.  This could also be due to a recently " +
                     "changed encryption key.  The remembered identity will be forgotten and not used for this " +

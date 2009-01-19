@@ -59,15 +59,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     private String sessionMode = HTTP_SESSION_MODE; //default
 
     public DefaultWebSecurityManager() {
+        WebSessionManager sm = new DefaultWebSessionManager();
+        applySessionManager(sm);
         setRememberMeManager(new WebRememberMeManager());
-        setSubjectFactory(new WebSubjectFactory(this, (WebSessionManager) getSessionManager()));
+        setSubjectFactory(new WebSubjectFactory(this, sm));
     }
 
     public DefaultWebSecurityManager(Realm singleRealm) {
+        this();
         setRealm(singleRealm);
     }
 
     public DefaultWebSecurityManager(Collection<Realm> realms) {
+        this();
         setRealms(realms);
     }
 
@@ -126,8 +130,12 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     }
 
     public void setSessionMode(String sessionMode) {
-        if (sessionMode == null ||
-                (!sessionMode.equals(HTTP_SESSION_MODE) && !sessionMode.equals(JSECURITY_SESSION_MODE))) {
+        String mode = sessionMode;
+        if (mode == null) {
+            throw new IllegalArgumentException("sessionMode argument cannot be null.");
+        }
+        mode = sessionMode.toLowerCase();
+        if (!HTTP_SESSION_MODE.equals(mode) && !JSECURITY_SESSION_MODE.equals(mode)) {
             String msg = "Invalid sessionMode [" + sessionMode + "].  Allowed values are " +
                     "public static final String constants in the " + getClass().getName() + " class: '"
                     + HTTP_SESSION_MODE + "' or '" + JSECURITY_SESSION_MODE + "', with '" +
@@ -138,9 +146,9 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         this.sessionMode = sessionMode;
         if (recreate) {
             LifecycleUtils.destroy(getSessionManager());
-            SessionManager sm = createSessionManager();
-            setSessionManager(sm);
-            setSubjectFactory(new WebSubjectFactory(this, (WebSessionManager) getSessionManager()));
+            SessionManager sessionManager = newSessionManagerInstance();
+            applySessionManager(sessionManager);
+            setSubjectFactory(new WebSubjectFactory(this, (WebSessionManager) sessionManager));
         }
     }
 
