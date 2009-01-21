@@ -20,6 +20,7 @@ package org.jsecurity.web.attr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsecurity.util.StringUtils;
 import static org.jsecurity.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -39,9 +40,11 @@ import java.beans.PropertyEditor;
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
     //TODO - complete JavaDoc
-    
-    /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(CookieAttribute.class);    
+
+    /**
+     * Private internal log instance.
+     */
+    private static final Log log = LogFactory.getLog(CookieAttribute.class);
 
     /**
      * The number of seconds in one year (= 60 * 60 * 24 * 365).
@@ -58,6 +61,11 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
      * <code>null</code>, indicating the cookie should be set on the request context root.
      */
     public static final String DEFAULT_PATH = null;
+
+    /**
+     * Root path to use when the path hasn't been set and request context root is empty or null.
+     */
+    public static final String ROOT_PATH = "/";
     /**
      * <code>-1</code>, indicating the cookie should expire when the browser closes.
      */
@@ -233,7 +241,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
         String stringValue;
         Cookie cookie = getCookie(toHttp(request), getName());
-        if (cookie != null && cookie.getMaxAge() != 0 ) {
+        if (cookie != null && cookie.getMaxAge() != 0) {
             stringValue = cookie.getValue();
             if (log.isInfoEnabled()) {
                 log.info("Found string value [" + stringValue + "] from HttpServletRequest Cookie [" + getName() + "]");
@@ -256,6 +264,12 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         String name = getName();
         int maxAge = getMaxAge();
         String path = getPath() != null ? getPath() : request.getContextPath();
+
+        //fix for http://issues.apache.org/jira/browse/JSEC-34:
+        path = StringUtils.clean(path);
+        if (path == null) {
+            path = ROOT_PATH;
+        }
 
         String stringValue = toStringValue(value);
         Cookie cookie = new Cookie(name, stringValue);
