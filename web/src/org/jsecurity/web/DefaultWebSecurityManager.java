@@ -59,8 +59,9 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     private String sessionMode = HTTP_SESSION_MODE; //default
 
     public DefaultWebSecurityManager() {
-        WebSessionManager sm = new DefaultWebSessionManager();
-        applySessionManager(sm);
+        super();
+        WebSessionManager sm = new ServletContainerSessionManager();
+        setSessionManager(sm);
         setRememberMeManager(new WebRememberMeManager());
         setSubjectFactory(new WebSubjectFactory(this, sm));
     }
@@ -142,13 +143,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
                     HTTP_SESSION_MODE + "' being the default.";
             throw new IllegalArgumentException(msg);
         }
-        boolean recreate = this.sessionMode == null || !this.sessionMode.equals(sessionMode);
-        this.sessionMode = sessionMode;
+        boolean recreate = this.sessionMode == null || !this.sessionMode.equals(mode);
+        this.sessionMode = mode;
         if (recreate) {
             LifecycleUtils.destroy(getSessionManager());
-            SessionManager sessionManager = newSessionManagerInstance();
-            applySessionManager(sessionManager);
-            setSubjectFactory(new WebSubjectFactory(this, (WebSessionManager) sessionManager));
+            WebSessionManager sessionManager = createSessionManager(mode);
+            setSessionManager(sessionManager);
+            setSubjectFactory(new WebSubjectFactory(this, sessionManager));
         }
     }
 
@@ -156,17 +157,18 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return this.sessionMode == null || this.sessionMode.equals(HTTP_SESSION_MODE);
     }
 
-    protected SessionManager newSessionManagerInstance() {
-        if (isHttpSessionMode()) {
+    protected WebSessionManager createSessionManager(String sessionMode) {
+        if (sessionMode == null || sessionMode.equalsIgnoreCase(HTTP_SESSION_MODE)) {
             if (log.isInfoEnabled()) {
-                log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (Http Sessions)");
+                log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (HTTP-only Sessions)");
             }
             return new ServletContainerSessionManager();
         } else {
             if (log.isInfoEnabled()) {
-                log.info(JSECURITY_SESSION_MODE + " mode - enabling WebSessionManager (JSecurity heterogenous sessions)");
+                log.info(JSECURITY_SESSION_MODE + " mode - enabling DefaultWebSessionManager (HTTP + heterogeneous-client sessions)");
             }
             return new DefaultWebSessionManager();
         }
     }
+
 }

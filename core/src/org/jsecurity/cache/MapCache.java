@@ -18,6 +18,8 @@
  */
 package org.jsecurity.cache;
 
+import org.jsecurity.util.Destroyable;
+
 import java.util.*;
 
 /**
@@ -27,7 +29,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class MapCache implements Cache {
+public class MapCache implements Cache, Destroyable {
 
     /**
      * Backing instance.
@@ -40,6 +42,12 @@ public class MapCache implements Cache {
     private final String name;
 
     public MapCache(String name, Map backingMap) {
+        if (name == null) {
+            throw new IllegalArgumentException("Cache name cannot be null.");
+        }
+        if (backingMap == null) {
+            throw new IllegalArgumentException("Backing map cannot be null.");
+        }
         this.name = name;
         this.map = backingMap;
     }
@@ -89,6 +97,10 @@ public class MapCache implements Cache {
     }
 
     public String toString() {
-        return "MapCache [" + name + "]";
+        return getClass().getName() + " : [" + name + "]";
+    }
+
+    public void destroy() throws Exception {
+        clear();
     }
 }

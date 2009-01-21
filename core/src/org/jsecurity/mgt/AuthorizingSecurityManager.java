@@ -24,7 +24,6 @@ import org.jsecurity.authz.ModularRealmAuthorizer;
 import org.jsecurity.authz.Permission;
 import org.jsecurity.authz.permission.PermissionResolver;
 import org.jsecurity.authz.permission.PermissionResolverAware;
-import org.jsecurity.realm.Realm;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -59,6 +58,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      * {@link ModularRealmAuthorizer ModularRealmAuthorizer}.
      */
     public AuthorizingSecurityManager() {
+        super();
         this.authorizer = new ModularRealmAuthorizer();
     }
 
@@ -114,52 +114,27 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     }
 
     /**
-     * First calls <code>super.realms</code> and then sets these same <code>Realm</code> objects on this instance's
-     * {@link Authorizer Authorizer}.
+     * First calls <code>super.afterRealmsSet()</code> and then sets these same <code>Realm</code> objects on this
+     * instance's wrapped {@link Authorizer Authorizer}.
      * <p/>
-     * The setting on the Authorizer will only occur if it is an instance of
+     * The setting of realms the Authorizer will only occur if it is an instance of
      * {@link org.jsecurity.authz.ModularRealmAuthorizer ModularRealmAuthorizer}, that is:
-     * <pre>       Authorizer authz = getAuthorizer();
-     * if ( authz instanceof ModularRealmAuthorizer ) {
-     *     ((ModularRealmAuthorizer)authz).setRealms(realms);
+     * <pre>
+     * if ( this.authorizer instanceof ModularRealmAuthorizer ) {
+     *     ((ModularRealmAuthorizer)this.authorizer).setRealms(realms);
      * }</pre>
-     *
-     * @param realms the realms managed by this <tt>SecurityManager</tt> instance.
      */
-    public void setRealms(Collection<Realm> realms) {
-        super.setRealms(realms);
+    protected void afterRealmsSet() {
+        super.afterRealmsSet();
         if (this.authorizer instanceof ModularRealmAuthorizer) {
-            ((ModularRealmAuthorizer) this.authorizer).setRealms(realms);
+            ((ModularRealmAuthorizer) this.authorizer).setRealms(getRealms());
         }
     }
 
-    /**
-     * Template hook for subclasses to implement destruction/cleanup logic.  This will be called before this
-     * instance's <tt>Authorizer</tt> instance will be cleaned up.
-     */
-    protected void beforeAuthorizerDestroyed() {
-    }
-
-    /**
-     * Cleanup method that destroys/cleans up the wrapped {@link #getAuthorizer Authorizer} instance.
-     * <p/>
-     * The default implementation merely delegates to
-     * <code>{@link LifecycleUtils#destroy LifecycleUtils.destroy}({@link #getAuthorizer getAuthorizer()})</code>.
-     */
-    protected void destroyAuthorizer() {
+    public void destroy() {
         LifecycleUtils.destroy(getAuthorizer());
-    }
-
-    /**
-     * Implementation of parent class's template hook for destruction/cleanup logic.
-     *
-     * <p>This implementation ensures subclasses are cleaned up first by calling
-     * {@link #beforeAuthorizerDestroyed() beforeAuthorizerDestroyed()} and then actually cleans up the
-     * wrapped <tt>Authorizer</tt> via the {@link #destroyAuthorizer() desroyAuthorizer()} method.
-     */
-    protected void beforeAuthenticatorDestroyed() {
-        beforeAuthorizerDestroyed();
-        destroyAuthorizer();
+        this.authorizer = null;
+        super.destroy();
     }
 
     public boolean isPermitted(PrincipalCollection principals, String permissionString) {

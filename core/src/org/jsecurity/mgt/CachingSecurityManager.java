@@ -75,7 +75,6 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
         afterCacheManagerSet();
     }
 
-
     /**
      * Template callback to notify subclasses that a
      * {@link CacheManager CacheManager} has been set and is available for use via the
@@ -85,25 +84,10 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     }
 
     /**
-     * First calls {@link #beforeCacheManagerDestroyed() beforeCacheManagerDestroyed()} to allow subclasses to clean up
-     * first, then calls {@link #destroyCacheManager() destroyCacheManager()} to clean up the internal
-     * {@link CacheManager CacheManager}.
+     * Destroys the {@link #getCacheManager() cacheManager} via {@link LifecycleUtils#destroy LifecycleUtils.destroy}.
      */
     public void destroy() {
-        beforeCacheManagerDestroyed();
-        destroyCacheManager();
-    }
-
-    /**
-     * Template hook for subclasses to perform cleanup behavior during shutdown.
-     */
-    protected void beforeCacheManagerDestroyed() {
-    }
-
-    /**
-     * Cleans up the internal <code>CacheManager</code> instance during shutdown.
-     */
-    protected void destroyCacheManager() {
         LifecycleUtils.destroy(getCacheManager());
+        this.cacheManager = null;
     }
 }

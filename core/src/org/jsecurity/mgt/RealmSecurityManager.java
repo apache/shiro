@@ -45,6 +45,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
      * Default no-arg constructor.
      */
     public RealmSecurityManager() {
+        super();
     }
 
     /**
@@ -77,6 +78,10 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
             throw new IllegalArgumentException("Realms collection argument cannot be empty.");
         }
         this.realms = realms;
+        afterRealmsSet();
+    }
+
+    protected void afterRealmsSet() {
         applyCacheManagerToRealms();
     }
 
@@ -122,29 +127,10 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         applyCacheManagerToRealms();
     }
 
-    /**
-     * First calls {@link #beforeRealmsDestroyed() beforeRealmsDestroyed()} to allow subclasses to clean up
-     * first, then calls {@link #destroyRealms() destroyRealms()} to clean up the internal <code>Realm</code>s
-     * collection.
-     */
-    protected void beforeCacheManagerDestroyed() {
-        beforeRealmsDestroyed();
-        destroyRealms();
-    }
-
-    /**
-     * Template hook for subclasses to perform clean up logic during shut-down.
-     */
-    protected void beforeRealmsDestroyed() {
-    }
-
-    /**
-     * Cleans up ('destroys') the internal collection of Realms by calling
-     * {@link LifecycleUtils#destroy(Collection) LifecycleUtils.destroy(getRealms())}.
-     */
-    protected void destroyRealms() {
+    public void destroy() {
         LifecycleUtils.destroy(getRealms());
         this.realms = null;
+        super.destroy();
     }
 
 }

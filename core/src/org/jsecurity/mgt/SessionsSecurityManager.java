@@ -24,6 +24,8 @@ import org.jsecurity.session.InvalidSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionListener;
 import org.jsecurity.session.SessionListenerRegistrar;
+import org.jsecurity.session.mgt.AbstractSessionManager;
+import org.jsecurity.session.mgt.AbstractValidatingSessionManager;
 import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.util.LifecycleUtils;
@@ -62,11 +64,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * instance.
      */
     public SessionsSecurityManager() {
-        applySessionManager(new DefaultSessionManager());
-    }
-
-    protected final void applySessionManager(SessionManager sm) {
-        setSessionManager(sm);
+        super();
+        this.sessionManager = new DefaultSessionManager();
         applyCacheManagerToSessionManager();
     }
 
@@ -85,6 +84,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      */
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
+        afterSessionManagerSet();
+    }
+
+    protected void afterSessionManagerSet() {
+        applyCacheManagerToSessionManager();
     }
 
     /**
@@ -139,6 +143,55 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     public void setSessionListeners(Collection<SessionListener> sessionListeners) {
         assertSessionListenerSupport();
         ((SessionListenerRegistrar) this.sessionManager).setSessionListeners(sessionListeners);
+    }
+
+    private void assertSessionManager(Class<? extends SessionManager> requiredType) {
+        if (this.sessionManager == null) {
+            throw new IllegalStateException("SessionManager is null - cannot configure property!");
+        }
+        if (!(this.sessionManager instanceof AbstractValidatingSessionManager)) {
+            String msg = "Property configuration failed.  The target property is only configurable when the " +
+                    "underlying SessionManager instance is a part of the " +
+                    "[" + requiredType.getName() + "] class hierarchy.  " +
+                    "The current SessionManager is of type [" + this.sessionManager.getClass().getName() + "].  " +
+                    "This might occur for example if you're trying to set the validation interval " +
+                    "in a servlet container-backed session environment ('http' session mode).  If that is the case " +
+                    "however, that property is only useful when using 'jsecurity' session mode and using " +
+                    "JSecurity enterprise sessions which do not rely on a servlet container.";
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    /**
+     * Passthrough configuration property to the underlying {@link AbstractSessionManager AbstractSessionManager}
+     * instance.  Please read the
+     * {@link org.jsecurity.session.mgt.AbstractSessionManager#getGlobalSessionTimeout() AbstractSessionManager.getGlobalSessionTimeout()}
+     * for more.
+     *
+     * @return the time in milliseconds that any {@link Session Session} may remain idle before expiring.
+     * @throws IllegalStateException if the underlying {@code SessionManager} instance is not a subclass of
+     *                               {@link AbstractSessionManager AbstractSessionManager}.
+     * @see org.jsecurity.session.mgt.AbstractSessionManager#getGlobalSessionTimeout()
+     */
+    public long getGlobalSessionTimeout() {
+        assertSessionManager(AbstractSessionManager.class);
+        return ((AbstractSessionManager) this.sessionManager).getGlobalSessionTimeout();
+    }
+
+    /**
+     * Passthrough configuration property to the underlying {@link AbstractSessionManager AbstractSessionManager}
+     * instance.  Please read the
+     * {@link org.jsecurity.session.mgt.AbstractSessionManager#setGlobalSessionTimeout(long) AbstractSessionManager.setGlobalSessionTimeout(long)}
+     * for more.
+     *
+     * @param globalSessionTimeout the time in milliseconds that any {@link Session Session} may remain idle before expiring.
+     * @throws IllegalStateException if the underlying {@code SessionManager} instance is not a subclass of
+     *                               {@link AbstractSessionManager AbstractSessionManager}.
+     * @see org.jsecurity.session.mgt.AbstractSessionManager#setGlobalSessionTimeout(long)
+     */
+    public void setGlobalSessionTimeout(long globalSessionTimeout) {
+        assertSessionManager(AbstractSessionManager.class);
+        ((AbstractSessionManager) this.sessionManager).setGlobalSessionTimeout(globalSessionTimeout);
     }
 
     /**
@@ -237,28 +290,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         return this.sessionManager.removeAttribute(sessionId, key);
     }
 
-    /**
-     * Template hook for subclasses that wish to perform clean up behavior during shutdown.
-     */
-    protected void beforeSessionManagerDestroyed() {
-    }
-
-    /**
-     * Cleans up ('destroys') the internal delegate <code>SessionManager</code> by calling
-     * {@link LifecycleUtils#destroy LifecycleUtils.destroy(this.sessionManager)}.
-     */
-    protected void destroySessionManager() {
-        LifecycleUtils.destroy(this.sessionManager);
-    }
-
-    /**
-     * Calls {@link #beforeSessionManagerDestroyed() beforeSessionManagerDestroyed()} to allow subclass clean up and
-     * then immediatley calls {@link #destroySessionManager() destroySessionManager()} to clean up the internal
-     * delegate instance.
-     */
-    protected void beforeAuthorizerDestroyed() {
-        beforeSessionManagerDestroyed();
-        destroySessionManager();
+    public void destroy() {
+        LifecycleUtils.destroy(getSessionManager());
+        this.sessionManager = null;
     }
 
 }

@@ -31,16 +31,63 @@ import java.util.Date;
 
 /**
  * TODO - complete JavaDoc
+ *
  * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class AbstractSessionManager implements SessionManager, SessionListenerRegistrar {
 
+    protected static final long MILLIS_PER_SECOND = 1000;
+    protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
+    protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
+
+    /**
+     * Default main session timeout value, equal to {@code 30} minutes.
+     */
+    public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
+
     private static final Log log = LogFactory.getLog(AbstractSessionManager.class);
 
-    protected Collection<SessionListener> listeners = new ArrayList<SessionListener>();
+    private long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
+    private Collection<SessionListener> listeners = new ArrayList<SessionListener>();
 
     public AbstractSessionManager() {
+    }
+
+    /**
+     * Returns the system-wide default time in milliseconds that any session may remain idle before expiring. This
+     * value is just a main default for all sessions and may be overridden on a <em>per-session</em> basis by calling
+     * {@code Subject.getSession().}{@link Session#setTimeout setTimeout(long)} if so desired.
+     * <ul>
+     * <li>A negative return value means sessions never expire.</li>
+     * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
+     * </ul>
+     * <p/>
+     * Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
+     * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
+     *
+     * @return the time in milliseconds that any session may remain idle before expiring.
+     */
+    public long getGlobalSessionTimeout() {
+        return this.globalSessionTimeout;
+    }
+
+    /**
+     * Sets the system-wide default time in milliseconds that any session may remain idle before expiring. This
+     * value is just a main default for all sessions and may be overridden on a <em>per-session</em> basis by calling
+     * {@code Subject.getSession().}{@link Session#setTimeout setTimeout(long)} if so desired.
+     *
+     * <ul>
+     * <li>A negative return value means sessions never expire.</li>
+     * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
+     * </ul>
+     * <p/>
+     * Unless overridden by calling this method, the default value is {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
+     *
+     * @param globalSessionTimeout the time in milliseconds that any session may remain idel before expiring.
+     */
+    public void setGlobalSessionTimeout(long globalSessionTimeout) {
+        this.globalSessionTimeout = globalSessionTimeout;
     }
 
     public void setSessionListeners(Collection<SessionListener> listeners) {
@@ -188,12 +235,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     }
 
     public boolean isValid(Serializable sessionId) {
-        try {
-            getSession(sessionId);
-        } catch (InvalidSessionException e) {
-            return false;
-        }
-        return true;
+        return doGetSession(sessionId) != null;
     }
 
     protected void onChange(Session s) {

@@ -21,7 +21,6 @@ package org.jsecurity.mgt;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.pam.ModularAuthenticationStrategy;
 import org.jsecurity.authc.pam.ModularRealmAuthenticator;
-import org.jsecurity.realm.Realm;
 import org.jsecurity.util.LifecycleUtils;
 
 import java.util.Collection;
@@ -55,6 +54,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * {@link org.jsecurity.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
      */
     public AuthenticatingSecurityManager() {
+        super();
         this.authenticator = new ModularRealmAuthenticator();
     }
 
@@ -165,41 +165,14 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     }
 
     /**
-     * Immediately calls {@link RealmSecurityManager#setRealms(java.util.Collection) super.setRealms} and then
-     * additionally passes on those realms to the internal delegate <code>Authenticator</code> instance so
+     * Passes on the {@link #getRealms() realms} to the internal delegate <code>Authenticator</code> instance so
      * that it may use them during authentication attempts.
-     *
-     * @param realms realms the realms managed by this <tt>SecurityManager</tt> instance and subsequently the internal
-     *               delegate <code>Authenticator</code> instance.
      */
-    public void setRealms(Collection<Realm> realms) {
-        super.setRealms(realms);
+    protected void afterRealmsSet() {
+        super.afterRealmsSet();
         if (this.authenticator instanceof ModularRealmAuthenticator) {
-            ((ModularRealmAuthenticator) this.authenticator).setRealms(realms);
+            ((ModularRealmAuthenticator) this.authenticator).setRealms(getRealms());
         }
-    }
-
-    /**
-     * Lifecycle cleanup method that first calls {@link #beforeAuthenticatorDestroyed() beforeAuthenticatorDestroyed()}
-     * to allow subclass cleanup and then calls {@link #destroyAuthenticator() destroyAuthenticator()} to actually
-     * clean up the internal delegate instance.
-     */
-    protected void beforeRealmsDestroyed() {
-        beforeAuthenticatorDestroyed();
-        destroyAuthenticator();
-    }
-
-    /**
-     * Template hook to allow subclass cleanup when the SecurityManager is being shut down.
-     */
-    protected void beforeAuthenticatorDestroyed() {
-    }
-
-    /**
-     * Cleans up ('destroys') the internal delegate <code>Authenticator</code> instance.  Called during shut down.
-     */
-    protected void destroyAuthenticator() {
-        LifecycleUtils.destroy(getAuthenticator());
     }
 
     /**
@@ -207,5 +180,11 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      */
     public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
         return this.authenticator.authenticate(token);
+    }
+
+    public void destroy() {
+        LifecycleUtils.destroy(getAuthenticator());
+        this.authenticator = null;
+        super.destroy();
     }
 }

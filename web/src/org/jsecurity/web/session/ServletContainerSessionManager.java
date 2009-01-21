@@ -35,18 +35,19 @@ import java.net.InetAddress;
 /**
  * SessionManager implementation providing Session implementations that are merely wrappers for the
  * Servlet container's HttpSession.
- *
- * <p>Despite its name, this implementation <em>does not</em> itself manage Sessions since the Servlet container
+ * <p/>
+ * Despite its name, this implementation <em>does not</em> itself manage Sessions since the Servlet container
  * provides the actual management support.  This class mainly exists to 'impersonate' a regular JSecurity
  * <tt>SessionManager</tt> so it can be pluggable into a normal JSecurity configuration in a pure web application.
+ * <p/>
+ * Note that because this implementation relies on the {@link HttpSession HttpSession}, it is only functional in a
+ * servlet container.  I.e. it is <em>NOT</em> capable of supporting Sessions any clients other than
+ * {@code HttpRequest/HttpResponse} based clients.
  *
- * <p>Note that because this implementation relies on the <tt>HttpSession</tt>, it is only functional in a servlet
- * container.  I.e. it is <em>NOT</em> capable of supporting Sessions any clients other than HttpRequest/HttpResponse
- * based clients.
- *
- * <p>Therefore, if you need heterogenous Session support across multiple client mediums (e.g. web pages,
- * Flash applets, Java Web Start applications, etc.), use the {@link DefaultWebSessionManager WebSessionManager} instead.  The
- * <tt>WebSessionManager</tt> supports both traditional web-based access as well as non web-based clients.
+ * <p>Therefore, if you need {@code Session} access from heterogenous client mediums (e.g. web pages,
+ * Flash applets, Java Web Start applications, etc.), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
+ * instead.  The {@code DefaultWebSessionManager} supports both traditional web-based access as well as non web-based
+ * clients.
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -54,6 +55,8 @@ import java.net.InetAddress;
 public class ServletContainerSessionManager extends AbstractSessionManager implements WebSessionManager {
 
     //TODO - complete JavaDoc
+
+    //TODO - read session timeout value from web.xml
 
     public ServletContainerSessionManager() {
     }
@@ -78,6 +81,11 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
     protected Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
         ServletRequest request = WebUtils.getRequiredServletRequest();
         HttpSession httpSession = ((HttpServletRequest) request).getSession();
+
+        //ensure that the httpSession timeout reflects what is configured:
+        long timeoutMillis = getGlobalSessionTimeout();
+        httpSession.setMaxInactiveInterval((int) (timeoutMillis / MILLIS_PER_SECOND));
+
         return createSession(httpSession, originatingHost);
     }
 

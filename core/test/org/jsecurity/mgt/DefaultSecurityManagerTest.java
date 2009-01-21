@@ -39,9 +39,9 @@ public class DefaultSecurityManagerTest {
 
     @Before
     public void setup() {
+        ThreadContext.clear();
         sm = new DefaultSecurityManager();
         sm.setRealm(new PropertiesRealm());
-        ThreadContext.clear();
     }
 
     @After
