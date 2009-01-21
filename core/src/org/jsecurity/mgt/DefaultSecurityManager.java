@@ -85,8 +85,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * Default no-arg constructor.
      */
     public DefaultSecurityManager() {
-        setSubjectFactory(new DefaultSubjectFactory());
-        setSubjectBinder(new SessionSubjectBinder());
+        super();
+        this.subjectFactory = new DefaultSubjectFactory(this);
+        this.subjectBinder = new SessionSubjectBinder();
     }
 
     /**

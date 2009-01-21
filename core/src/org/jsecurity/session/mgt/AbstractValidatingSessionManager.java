@@ -45,15 +45,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     private static final Log log = LogFactory.getLog(AbstractValidatingSessionManager.class);
 
-    protected static final long MILLIS_PER_SECOND = 1000;
-    protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
-    protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
-
-    /**
-     * Default main session timeout value (30 * 60 * 1000 milliseconds = 30 minutes).
-     */
-    public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
-
     /**
      * The default interval at which sessions will be validated (1 hour);
      * This can be overridden by calling {@link #setSessionValidationInterval(long)}
@@ -67,7 +58,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected SessionValidationScheduler sessionValidationScheduler = null;
 
     protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
-    protected long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
+
 
     public AbstractValidatingSessionManager() {
     }
@@ -88,43 +79,11 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return sessionValidationScheduler;
     }
 
-    public void enableSessionValidationIfNecessary() {
+    private void enableSessionValidationIfNecessary() {
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (isSessionValidationSchedulerEnabled() && (scheduler == null || !scheduler.isEnabled())) {
             enableSessionValidation();
         }
-    }
-
-    /**
-     * Returns the time in milliseconds that any session may remain idle before expiring.  This
-     * value is just a main default for all sessions and may be overridden by subclasses on a
-     * <em>per-session</em> basis by overriding the {@link #getTimeout(Session)} method if
-     * so desired.
-     *
-     * <ul>
-     * <li>A negative return value means sessions never expire.</li>
-     * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
-     * </ul>
-     *
-     * <p>Unless overridden via the {@link #setGlobalSessionTimeout} method, the default value is
-     * {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
-     *
-     * @return the time in milliseconds that any session may remain idle before expiring.
-     */
-    public long getGlobalSessionTimeout() {
-        return globalSessionTimeout;
-    }
-
-    /**
-     * Sets the time in milliseconds that any session may remain idle before expiring.  This
-     * value is just a main default for all sessions.  Subclasses may override the
-     * {@link #getTimeout} method to determine time-out values on a <em>per-session</em> basis.
-     *
-     * @param globalSessionTimeout the time in milliseconds any session may remain idle before
-     *                             expiring.
-     */
-    public void setGlobalSessionTimeout(int globalSessionTimeout) {
-        this.globalSessionTimeout = globalSessionTimeout;
     }
 
     /**
@@ -196,13 +155,13 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     }
 
     protected SessionValidationScheduler createSessionValidationScheduler() {
-        SessionValidationScheduler scheduler;
+        ExecutorServiceSessionValidationScheduler scheduler;
 
         if (log.isDebugEnabled()) {
             log.debug("No sessionValidationScheduler set.  Attempting to create default instance.");
         }
         scheduler = new ExecutorServiceSessionValidationScheduler(this);
-        ((ExecutorServiceSessionValidationScheduler) scheduler).setInterval(getSessionValidationInterval());
+        scheduler.setInterval(getSessionValidationInterval());
         if (log.isTraceEnabled()) {
             log.trace("Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "].");
         }

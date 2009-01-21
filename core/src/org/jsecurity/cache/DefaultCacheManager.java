@@ -18,6 +18,9 @@
  */
 package org.jsecurity.cache;
 
+import org.jsecurity.util.Destroyable;
+import org.jsecurity.util.LifecycleUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +35,7 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class DefaultCacheManager implements CacheManager {
+public class DefaultCacheManager implements CacheManager, Destroyable {
 
     /**
      * Retains all Cache objects maintained by this cache manager.
@@ -55,5 +58,14 @@ public class DefaultCacheManager implements CacheManager {
         }
 
         return cache;
+    }
+
+    public void destroy() throws Exception {
+        synchronized (caches) {
+            for (Cache cache : caches.values()) {
+                LifecycleUtils.destroy(cache);
+            }
+            caches.clear();
+        }
     }
 }
