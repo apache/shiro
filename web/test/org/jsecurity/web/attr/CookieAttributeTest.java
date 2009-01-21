@@ -20,6 +20,7 @@ package org.jsecurity.web.attr;
 
 import junit.framework.TestCase;
 import static org.easymock.EasyMock.*;
+import org.easymock.IArgumentMatcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,5 +67,58 @@ public class CookieAttributeTest extends TestCase {
 
         assertTrue(cookie.getMaxAge() == 0);
         assertTrue(cookie.getPath().equals("/somepath"));
+    }
+
+    private void testContextPath(String contextPath) {
+        Cookie cookie = new Cookie("test", "blah");
+        cookie.setMaxAge(-1);
+        cookie.setPath("/");
+
+        expect(mockRequest.getContextPath()).andReturn(contextPath);
+
+        mockResponse.addCookie(eqCookie(cookie));
+
+        replay(mockRequest);
+        replay(mockResponse);
+
+        cookieAttribute.setName("test");
+        cookieAttribute.storeValue("blah", mockRequest, mockResponse);
+
+        verify(mockRequest);
+        verify(mockResponse);
+    }
+
+    @Test
+    /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (1 of 2)*/
+    public void testEmptyContextPath() throws Exception {
+        testContextPath("");
+    }
+
+
+    @Test
+    /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (2 of 2)*/
+    public void testNullContextPath() throws Exception {
+        testContextPath(null);
+    }
+
+    private static <T extends Cookie> T eqCookie(final T in) {
+        reportMatcher(new IArgumentMatcher() {
+            public boolean matches(Object o) {
+                Cookie c = (Cookie) o;
+                return c.getName().equals(in.getName()) &&
+                        c.getPath().equals(in.getPath()) &&
+                        c.getMaxAge() == in.getMaxAge() &&
+                        c.getSecure() == in.getSecure() &&
+                        c.getValue().equals(in.getValue());
+            }
+
+            public void appendTo(StringBuffer sb) {
+                sb.append("eqCookie(");
+                sb.append(in.getClass().getName());
+                sb.append(")");
+
+            }
+        });
+        return null;
     }
 }
