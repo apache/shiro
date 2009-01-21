@@ -25,7 +25,6 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionListener;
 import org.jsecurity.session.SessionListenerRegistrar;
 import org.jsecurity.session.mgt.AbstractSessionManager;
-import org.jsecurity.session.mgt.AbstractValidatingSessionManager;
 import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.util.LifecycleUtils;
@@ -149,7 +148,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         if (this.sessionManager == null) {
             throw new IllegalStateException("SessionManager is null - cannot configure property!");
         }
-        if (!(this.sessionManager instanceof AbstractValidatingSessionManager)) {
+        if (!(requiredType.isInstance(this.sessionManager))) {
             String msg = "Property configuration failed.  The target property is only configurable when the " +
                     "underlying SessionManager instance is a part of the " +
                     "[" + requiredType.getName() + "] class hierarchy.  " +
