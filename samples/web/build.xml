@@ -17,105 +17,67 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="web" default="dist">
+<project name="samples-web" default="package">
 
     <property name="root.base.dir" value="../.."/>
-
-    <!-- "extend" parent build definition -->
-    <import file="../../build.xml"/>
-
-    <property name="module.name" value="web"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/web"/>
-    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
-    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
-
-    <!-- Module properties -->
-    <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
-    <property name="dist.war" value="${root.base.dir}/build/${dist.war.name}"/>
-
-    <property name="dist.dir" value="${build.dir}/dist"/>
-
-    <!-- Deployment properties for development -->
-    <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
+    <property name="module.name" value="samples-web"/>
+    <import file="${root.base.dir}/common.ant.xml"/>
+    <property name="dist.jarName" value="${project.name}-${module.name}-${version}"/>
+    <property name="dist.jar" value="${dist.dir}/samples/${dist.jarName}.jar"/>
+    <property name="dist.warName" value="${project.name}-${module.name}-${version}"/>
+    <property name="dist.war" value="${dist.dir}/samples/${dist.warName}.war"/>
 
     <path id="compile.path">
-        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}/samples">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${dist.dir}/modules">
+            <include name="${project.name}-core-${version}.jar"/>
+            <include name="${project.name}-web-${version}.jar"/>
+        </fileset>
     </path>
 
     <!-- ===================================================================
-  -  clean - clean all build remnants from this submodule
-  - ==================================================================== -->
-    <target name="clean" description="Cleans the samples webapp build">
+         clean - clean all build remnants from this submodule
+         ==================================================================== -->
+    <target name="clean-deploy-dir" description="Removes the deployed war directory">
+        <echo message="cleaning ${dist.warName} module from ${deploy.dir}"/>
+        <delete file="${deploy.dir}/${dist.warName}.war"/>
+        <delete dir="${deploy.dir}/${dist.warName}"/>
+    </target>
+    <target name="clean" depends="clean-deploy-dir" description="Cleans the Spring/Hibernate sample webapp build">
         <echo message="cleaning ${module.name} module"/>
+        <delete file="${dist.jar}"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
     </target>
 
-    <!-- ===================================================================
- -  compile - compile Java source files
- -  =================================================================== -->
-    <target name="compile" description="Compiles the sample webapp classes">
-
-        <!-- <mkdir dir="${classes.dir}"/>
-    <mkdir dir="${classes.dir}/META-INF"/>
-
-    <javac destdir="${classes.dir}"
-              debug="${compile.debug}"
-              deprecation="${compile.deprecation}"
-              optimize="${compile.optimize}"
-              failonerror="true"
-              classpathref="all.libs">
-     <src path="${src.dir}"/>
-           <classpath location="${root.dist.dir}/jsecurity.jar"/>
-       </javac> -->
-
-    </target>
-
-    <target name="jar" depends="compile" description="Creates a jar of the sample webapp classes">
-
-        <!-- <mkdir dir="${dist.dir}"/>
-
-       <jar jarfile="${dist.jar}">
-           <fileset dir="${classes.dir}">
-               <include name="**/*.class"/>
-           </fileset>
-           <fileset dir="${etc.dir}">
-               <include name="*.xml"/>
-               <include name="*.gif"/>
-               <include name="*.jpg"/>
-               <include name="*.properties"/>
-           </fileset>
-           <manifest>
-               <attribute name="Implementation-Title" value="${project.name}-${module.name}"/>
-               <attribute name="Implementation-Version" value="${version}"/>
-               <attribute name="${project.name}-Version" value="${version}"/>
-           </manifest>
-       </jar> -->
-    </target>
 
     <!-- ===================================================================
- -  dist - create distribution war (which will be used for deployment)
- -  =================================================================== -->
-    <target name="dist" description="Creates the samples webapp .war">
+         war - create distribution war (which will be used for deployment)
+         =================================================================== -->
+    <target name="war" description="Creates the samples webapp .war">
         <war warfile="${dist.war}" webxml="../web/WEB-INF/web.xml">
-            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
-            <lib dir="${lib.dir}/samples" includes="jstl.jar"/>
-            <lib dir="${lib.dir}/samples" includes="standard.jar"/>
-            <lib dir="${lib.dir}/samples" includes="log4j.jar"/>
+            <lib dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
+            <lib dir="${lib.dir}/samples" includes="jstl-*.jar"/>
+            <lib dir="${lib.dir}/samples" includes="standard-*.jar"/>
+            <lib dir="${lib.dir}/samples" includes="log4j-*.jar"/>
             <lib dir="${lib.dir}/samples" includes="commons-*.jar"/>
-            <lib dir="${lib.dir}/samples" includes="ehcache.jar"/>
-            <lib dir="${lib.dir}/samples" includes="backport-util-concurrent.jar"/>
-            <fileset dir="${module.base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
-            <!-- <lib dir="${dist.dir}" includes="*.jar"/> -->
+            <lib dir="${lib.dir}/samples" includes="ehcache-*.jar"/>
+            <lib dir="${lib.dir}/samples" includes="backport-util-concurrent-*.jar"/>
+            <fileset dir="${base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
         </war>
     </target>
 
-    <target name="quick-deploy" description="Blindly deploys the samples webapp .war to Tomcat">
+    <target name="package" depends="war"/>
+
+    <target name="quick-deploy" description="Blindly deploys the sample web .war to Tomcat">
         <echo>Deploying application to Tomcat...</echo>
         <unzip src="${dist.war}" dest="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}"/>
         <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
 
-    <target name="deploy" depends="dist,quick-deploy" description="Creates and deploys the samples webapp .war to Tomcat"/>
+    <target name="deploy" depends="package,quick-deploy"
+            description="Creates and deploys the sample web .war to Tomcat"/>
 
 </project>

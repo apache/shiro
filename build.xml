@@ -90,7 +90,8 @@
     </target>
 
     <target name="init">
-        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/modules"/>
+        <mkdir dir="${dist.dir}/samples"/>
     </target>
 
     <!-- ==================================================================
@@ -112,13 +113,17 @@
         <ant dir="support/spring" target="${target}"/>
         <echo message="Executing '${target}' for the quartz module..."/>
         <ant dir="support/quartz" target="${target}"/>
-        <!-- <echo message="Executing '${target}' for the samples/spring module..."/>
+        <echo message="Executing '${target}' for the samples/quickstart module..."/>
+        <ant dir="samples/quickstart" target="${target}"/>
+        <echo message="Executing '${target}' for the samples/standalone module..."/>
+        <ant dir="samples/standalone" target="${target}"/>
+        <echo message="Executing '${target}' for the samples/spring module..."/>
         <ant dir="samples/spring" target="${target}"/>
         <echo message="Executing '${target}' for the samples/spring-hibernate module..."/>
         <ant dir="samples/spring-hibernate" target="${target}"/>
         <echo message="Executing '${target}' for the samples/web module..."/>
-        <ant dir="samples/web" target="${target}"/> -->
-
+        <ant dir="samples/web" target="${target}"/>
+        
     </target>
 
     <!-- ===================================================================
@@ -141,15 +146,16 @@
     </target>
 
     <macrodef name="jarjar">
-        <attribute name="jardir" default="${dist.dir}"/>
+        <attribute name="srcdir" default="${dist.dir}/modules"/>
+        <attribute name="todir" default="${dist.dir}"/>
         <attribute name="jdksuffix" default=""/>
         <sequential>
-            <jar destfile="@{jardir}/${project.name}@{jdksuffix}-${version}.jar" duplicate="fail">
-                <zipfileset src="@{jardir}/${project.name}-core@{jdksuffix}-${version}.jar"/>
-                <zipfileset src="@{jardir}/${project.name}-web@{jdksuffix}-${version}.jar"/>
-                <zipfileset src="@{jardir}/${project.name}-ehcache@{jdksuffix}-${version}.jar"/>
-                <zipfileset src="@{jardir}/${project.name}-quartz@{jdksuffix}-${version}.jar"/>
-                <zipfileset src="@{jardir}/${project.name}-spring@{jdksuffix}-${version}.jar"/>
+            <jar destfile="@{todir}/${project.name}@{jdksuffix}-${version}.jar" duplicate="fail">
+                <zipfileset src="@{srcdir}/${project.name}-core@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{srcdir}/${project.name}-web@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{srcdir}/${project.name}-ehcache@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{srcdir}/${project.name}-quartz@{jdksuffix}-${version}.jar"/>
+                <zipfileset src="@{srcdir}/${project.name}-spring@{jdksuffix}-${version}.jar"/>
             </jar>
         </sequential>
     </macrodef>
@@ -163,54 +169,22 @@
         <!-- Now that each module has been packaged, make a 'master' .jar that includes everything.  This allows
              end-users to choose to use a single jar or multiple jars depending on their preference: -->
         <jarjar/>
-        <jarjar jardir="${dist.dir}/jdk14" jdksuffix="-jdk14"/>
-        <jarjar jardir="${dist.dir}/jdk13" jdksuffix="-jdk13"/>
+        <jarjar srcdir="${dist.dir}/jdk14" todir="${dist.dir}/jdk14" jdksuffix="-jdk14"/>
+        <jarjar srcdir="${dist.dir}/jdk13" todir="${dist.dir}/jdk13" jdksuffix="-jdk13"/>
 
     </target>
 
-    <target name="samples.quickstart" depends="jar" description="Creates the quickstart .jar">
-        <ant dir="samples/quickstart"/>
-    </target>
-
-    <target name="samples.quickstart.run" depends="samples.quickstart" description="Runs the quickstart class">
-        <ant dir="samples/quickstart" target="run"/>
-    </target>
-
-    <target name="samples.standalone" depends="jar" description="Creates the standalone .jar">
-        <ant dir="samples/standalone"/>
-    </target>
-
-    <target name="samples.standalone.run" depends="samples.standalone" description="Runs the standalone sample class">
-        <ant dir="samples/standalone" target="run"/>
-    </target>
-
-    <target name="samples.web" depends="jar" description="Creates the JSecurity sample webapp .war">
-        <ant dir="samples/web"/>
-    </target>
-
-    <target name="samples.spring" depends="jar" description="Creates the sample JSecurity/Spring .war">
-        <ant dir="samples/spring"/>
-    </target>
-
-    <target name="samples.spring-hibernate" depends="jar"
-            description="Creates the sample JSecurity Spring/Hibernate .war">
-        <ant dir="samples/spring-hibernate"/>
-    </target>
-
-    <target name="samples" depends="samples.quickstart,samples.web,samples.spring,samples.spring-hibernate"
-            description="Creates all sample applications"/>
-
-    <target name="samples.web.deploy" depends="samples.web"
+    <target name="samples.web.deploy" depends="package"
             description="Deploys the JSecurity quickstart .war">
         <ant dir="samples/web" target="deploy"/>
     </target>
 
-    <target name="samples.spring.deploy" depends="samples.spring"
+    <target name="samples.spring.deploy" depends="package"
             description="Deploys the sample JSecurity/Spring .war">
         <ant dir="samples/spring" target="deploy"/>
     </target>
 
-    <target name="samples.spring-hibernate.deploy" depends="samples.spring-hibernate"
+    <target name="samples.spring-hibernate.deploy" depends="package"
             description="Deploys the sample JSecurity Spring/Hibernate .war">
         <ant dir="samples/spring-hibernate" target="deploy"/>
     </target>

@@ -48,6 +48,8 @@
     <property name="compile.deprecation" value="false"/>
     <property name="compile.optimize" value="false"/>
 
+    <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
+
     <path id="all.libs">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -58,7 +60,7 @@
     <path id="test.path">
         <path refid="all.libs"/>
         <fileset dir="${dist.dir}">
-            <include name="*.jar"/>
+            <include name="**/*.jar"/>
         </fileset>
     </path>
 

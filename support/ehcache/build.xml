@@ -6,13 +6,13 @@
     <property name="module.name" value="ehcache"/>
     <import file="${root.base.dir}/common.ant.xml"/>
     <property name="dist.jarName" value="${project.name}-${module.name}-${version}"/>
-    <property name="dist.jar" value="${dist.dir}/${dist.jarName}.jar"/>
+    <property name="dist.jar" value="${dist.dir}/modules/${dist.jarName}.jar"/>
 
     <path id="compile.path">
         <fileset dir="${lib.dir}/${module.name}">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${dist.dir}">
+        <fileset dir="${dist.dir}/modules">
             <include name="${project.name}-core-${version}.jar"/>
         </fileset>
     </path>
