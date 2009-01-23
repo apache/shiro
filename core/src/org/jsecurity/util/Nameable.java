@@ -18,6 +18,8 @@
  */
 package org.jsecurity.util;
 
+BREAK BUILD
+
 /**
  * Interface implemented by components that can be named, such as via configuration, and wish to have that name
  * set once it has been configured.
