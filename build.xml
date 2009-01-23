@@ -31,7 +31,7 @@
 
     <import file="./common.ant.xml"/>
 
-    <property name="ivy.install.version" value="2.0.0-beta2"/>
+    <property name="ivy.install.version" value="2.0.0"/>
     <condition property="ivy.home" value="${env.IVY_HOME}">
         <isset property="env.IVY_HOME"/>
     </condition>
@@ -112,6 +112,13 @@
         <ant dir="support/spring" target="${target}"/>
         <echo message="Executing '${target}' for the quartz module..."/>
         <ant dir="support/quartz" target="${target}"/>
+        <!-- <echo message="Executing '${target}' for the samples/spring module..."/>
+        <ant dir="samples/spring" target="${target}"/>
+        <echo message="Executing '${target}' for the samples/spring-hibernate module..."/>
+        <ant dir="samples/spring-hibernate" target="${target}"/>
+        <echo message="Executing '${target}' for the samples/web module..."/>
+        <ant dir="samples/web" target="${target}"/> -->
+
     </target>
 
     <!-- ===================================================================

@@ -17,94 +17,63 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="spring-sample" default="dist">
+<?xml version="1.0"?>
+
+<project name="spring" default="package">
 
     <property name="root.base.dir" value="../.."/>
-
-    <!-- "extend" parent build definition -->
-    <import file="../../build.xml"/>
-
-    <property name="module.name" value="spring"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/spring"/>
-    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
-    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
-
-    <!-- Module properties -->
-    <property name="dist.war.name" value="${project.name}-${module.name}.war"/>
-    <property name="dist.war" value="${root.base.dir}/build/${dist.war.name}"/>
-
-    <property name="dist.dir" value="${build.dir}/dist"/>
-
-    <!-- Deployment properties for development -->
-    <property name="deploy.dir" value="${env.CATALINA_HOME}/webapps"/>
+    <property name="module.name" value="samples-spring"/>
+    <import file="${root.base.dir}/common.ant.xml"/>
+    <property name="dist.jarName" value="${project.name}-${module.name}-${version}"/>
+    <property name="dist.jar" value="${dist.dir}/${dist.jarName}.jar"/>
 
     <path id="compile.path">
-        <fileset dir="${lib.dir}/samples" includes="**/*.jar"/>
+        <fileset dir="${lib.dir}/${module.name}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${dist.dir}">
+            <include name="${project.name}-core-${version}.jar"/>
+            <include name="${project.name}-web-${version}.jar"/>
+        </fileset>
     </path>
 
     <!-- ===================================================================
-  -  clean - clean all build remnants from this submodule
-  - ==================================================================== -->
+         clean - clean all build remnants from this submodule
+         ==================================================================== -->
+    <target name="clean-deploy-dir" description="Removes the deployed war directory">
+        <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
+        <delete file="${deploy.dir}/${dist.war.name}"/>
+        <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
+    </target>
     <target name="clean" depends="clean-deploy-dir" description="Cleans the Spring build">
         <echo message="cleaning ${module.name} module"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="clean-deploy-dir" description="Removes the deployed war directory">
-        <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
-        <delete file="${deploy.dir}/${dist.war.name}"/>
-        <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
-    </target>
-
-    <!-- ===================================================================
- -  compile - compile Java source files
- -  =================================================================== -->
-    <target name="compile" description="Compiles the Spring sample app classes">
-
-        <mkdir dir="${classes.dir}"/>
-        <mkdir dir="${classes.dir}/META-INF"/>
-
-        <javac destdir="${classes.dir}"
-               debug="${compile.debug}"
-               deprecation="${compile.deprecation}"
-               optimize="${compile.optimize}"
-               failonerror="true"
-               classpathref="compile.path">
-            <src path="${src.dir}"/>
-            <classpath location="${root.dist.dir}/jsecurity.jar"/>
-        </javac>
-
-    </target>
-
-    <target name="jar" depends="compile" description="Creates a .jar of the Spring sample app classes">
-
-        <mkdir dir="${dist.dir}"/>
-
-        <jar jarfile="${dist.dir}/jsecurity-spring-sample.jar">
-            <fileset dir="${classes.dir}">
-                <include name="**/*.class"/>
-            </fileset>
-            <fileset dir="${etc.dir}">
-                <include name="*.xml"/>
-                <include name="*.properties"/>
-            </fileset>
-            <!-- grabbing logo from webroot-->
+    <target name="grabLogo" description="Ensures the JSecurity logo is available to the jar task for inclusion in the jar">
+        <copy todir="${classes.dir}">
             <fileset dir="webroot">
                 <include name="logo.png"/>
             </fileset>
-            <manifest>
-                <attribute name="Implementation-Title"
-                           value="${project.name}-${module.name}"/>
-                <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="${project.name}-Version" value="${version}"/>
-            </manifest>
-        </jar>
+        </copy>
     </target>
 
+    <target name="compile" depends="compile.src"/> <!-- no test classes, no need to depend on compile.test -->
+
+
+    <target name="jar" depends="compile,grabLogo,jar.jdk15,jar.retroweaver"
+            description="Creates a .jar of the Spring sample app classes"/>
+
+    <target name="war">
+
+    </target>
+
+    <target name="package" depends="jar,war"/>
+
     <!-- ===================================================================
- -  dist - create distribution war (which will be used for deployment)
- -  =================================================================== -->
+         dist - create distribution war (which will be used for deployment)
+         =================================================================== -->
     <target name="dist" depends="compile,jar" description="Creates the sample Spring application .war">
 
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
@@ -143,5 +112,6 @@
 
     <target name="deploy" depends="dist,quick-deploy"
             description="Creates and deploys the sample Spring .war to Tomcat"/>
+
 
 </project>
