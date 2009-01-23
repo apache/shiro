@@ -17,101 +17,40 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="standalone" default="dist">
+<project name="standalone" default="package">
 
     <property name="root.base.dir" value="../.."/>
-
-    <!-- "extend" parent build definition -->
-    <import file="../../build.xml"/>
-
-    <!-- Module properties -->
-    <property name="module.name" value="standalone"/>
-    <property name="module.base.dir" value="${root.base.dir}/samples/${module.name}"/>
-    <property name="dist.jar.name" value="${project.name}-${module.name}.jar"/>
-    <property name="dist.jar" value="${root.dist.dir}/${dist.jar.name}"/>
-    <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="module.name" value="samples-standalone"/>
+    <import file="${root.base.dir}/common.ant.xml"/>
+    <property name="dist.jarName" value="${project.name}-${module.name}-${version}"/>
+    <property name="dist.jar" value="${dist.dir}/samples/${dist.jarName}.jar"/>
+    <property name="dist.warName" value="${project.name}-${module.name}-${version}"/>
+    <property name="dist.war" value="${dist.dir}/samples/${dist.warName}.war"/>
 
     <path id="compile.path">
-        <fileset dir="${lib.dir}/samples" includes="**/*.jar"/>
-        <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
+        <fileset dir="${lib.dir}/samples">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${dist.dir}/modules">
+            <include name="${project.name}-core-${version}.jar"/>
+        </fileset>
     </path>
 
     <path id="run.path">
         <pathelement location="${classes.dir}"/>
         <fileset dir="${lib.dir}/samples">
-            <include name="ehcache.jar"/>
-            <include name="commons-beanutils.jar"/>
-            <include name="commons-logging.jar"/>
-            <include name="log4j.jar"/>
-            <!-- needed by ehcache, not jsecurity: -->
-            <include name="backport-util-concurrent.jar"/>
+            <include name="commons-logging-*.jar"/>
+            <include name="log4j-*.jar"/>
             <!-- Not normally needed, but mac os x JDK needs it for some reason: -->
-            <include name="xercesImpl.jar"/>
+            <include name="xercesImpl-*.jar"/>
         </fileset>
-        <fileset dir="${root.dist.dir}" includes="jsecurity.jar"/>
+        <fileset dir="${root.dist.dir}" includes="${project.name}-${version}.jar"/>
     </path>
 
-    <!-- ===================================================================
-  -  clean - clean all build remnants from this submodule
-  - ==================================================================== -->
-    <target name="clean" description="Cleans the ${module.name} build">
-        <echo message="cleaning ${module.name} module"/>
-        <delete dir="${build.dir}"/>
-    </target>
+    <target name="compile" depends="compile.src"/> <!-- no test classes, no need to depend on compile.test -->
 
-    <!-- ===================================================================
- -  compile - compile Java source files
- -  =================================================================== -->
-    <target name="compile" description="Compiles the ${module.name} classes">
-
-        <mkdir dir="${classes.dir}"/>
-        <mkdir dir="${classes.dir}/META-INF"/>
-
-        <javac destdir="${classes.dir}"
-               debug="${compile.debug}"
-               deprecation="${compile.deprecation}"
-               optimize="${compile.optimize}"
-               failonerror="true"
-               classpathref="compile.path">
-            <src path="${src.dir}"/>
-        </javac>
-
-        <copy todir="${classes.dir}">
-            <fileset dir="${src.dir}">
-                <include name="**/*.properties"/>
-                <include name="**/*.ini"/>
-            </fileset>
-        </copy>
-
-    </target>
-
-    <target name="jar" depends="compile" description="Creates a .jar of the ${module.name} classes">
-
-        <mkdir dir="${dist.dir}"/>
-
-        <jar jarfile="${dist.dir}/jsecurity-${module.name}.jar">
-            <fileset dir="${classes.dir}">
-                <include name="**/*.class"/>
-                <include name="**/*.properties"/>
-            </fileset>
-            <manifest>
-                <attribute name="Implementation-Title"
-                           value="${project.name}-${module.name}"/>
-                <attribute name="Implementation-Version" value="${version}"/>
-                <attribute name="${project.name}-Version" value="${version}"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <!-- ===================================================================
- -  dist - create distribution war (which will be used for deployment)
- -  =================================================================== -->
-    <target name="dist" depends="compile,jar" description="Creates the ${module.name} .jar"/>
-
-    <target name="run" depends="dist" description="Runs the simple ${module.name} class">
-
+    <target name="run" depends="package" description="Runs the simple ${module.name} class">
         <java classname="Standalone" classpathref="run.path"/>
-
     </target>
 
 </project>

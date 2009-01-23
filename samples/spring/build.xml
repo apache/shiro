@@ -17,21 +17,21 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<?xml version="1.0"?>
-
-<project name="spring" default="package">
+<project name="samples-spring" default="package">
 
     <property name="root.base.dir" value="../.."/>
     <property name="module.name" value="samples-spring"/>
     <import file="${root.base.dir}/common.ant.xml"/>
     <property name="dist.jarName" value="${project.name}-${module.name}-${version}"/>
-    <property name="dist.jar" value="${dist.dir}/${dist.jarName}.jar"/>
+    <property name="dist.jar" value="${dist.dir}/samples/${dist.jarName}.jar"/>
+    <property name="dist.warName" value="${project.name}-${module.name}-${version}"/>
+    <property name="dist.war" value="${dist.dir}/samples/${dist.warName}.war"/>
 
     <path id="compile.path">
-        <fileset dir="${lib.dir}/${module.name}">
+        <fileset dir="${lib.dir}/samples">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${dist.dir}">
+        <fileset dir="${dist.dir}/modules">
             <include name="${project.name}-core-${version}.jar"/>
             <include name="${project.name}-web-${version}.jar"/>
         </fileset>
@@ -41,12 +41,13 @@
          clean - clean all build remnants from this submodule
          ==================================================================== -->
     <target name="clean-deploy-dir" description="Removes the deployed war directory">
-        <echo message="cleaning ${dist.war.name} module from ${deploy.dir}"/>
-        <delete file="${deploy.dir}/${dist.war.name}"/>
-        <delete dir="${deploy.dir}/${project.name}-${module.name}"/>
+        <echo message="cleaning ${dist.warName} module from ${deploy.dir}"/>
+        <delete file="${deploy.dir}/${dist.warName}.war"/>
+        <delete dir="${deploy.dir}/${dist.warName}"/>
     </target>
-    <target name="clean" depends="clean-deploy-dir" description="Cleans the Spring build">
+    <target name="clean" depends="clean-deploy-dir" description="Cleans the Spring sample webapp build">
         <echo message="cleaning ${module.name} module"/>
+        <delete file="${dist.jar}"/>
         <delete file="${dist.war}"/>
         <delete dir="${build.dir}"/>
     </target>
@@ -66,22 +67,12 @@
             description="Creates a .jar of the Spring sample app classes"/>
 
     <target name="war">
-
-    </target>
-
-    <target name="package" depends="jar,war"/>
-
-    <!-- ===================================================================
-         dist - create distribution war (which will be used for deployment)
-         =================================================================== -->
-    <target name="dist" depends="compile,jar" description="Creates the sample Spring application .war">
-
         <property name="webstart.lib.dir" value="${build.dir}/webstart"/>
         <mkdir dir="${webstart.lib.dir}"/>
         <copy todir="${webstart.lib.dir}" preservelastmodified="true" flatten="true">
-            <fileset dir="${dist.dir}" includes="jsecurity-spring-sample.jar"/>
-            <fileset dir="${root.base.dir}" includes="**/jsecurity.jar"/>
-            <fileset dir="${lib.dir}/samples" includes="spring.jar"/>
+            <fileset dir="${dist.dir}" includes="${dist.jarName}.jar"/>
+            <fileset dir="${dist.dir}" includes="${project.name}-${version}.jar"/>
+            <fileset dir="${lib.dir}/samples" includes="spring-*.jar" excludes="spring-webmvc-*.jar"/>
             <fileset dir="${lib.dir}/samples" includes="commons-*.jar"/>
         </copy>
         <signjar keystore="${etc.dir}/jsecurity-sample.jks"
@@ -92,8 +83,11 @@
         </signjar>
 
         <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
-            <lib dir="${lib.dir}/samples" includes="*.jar" excludes="servlet-api.jar"/>
-            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
+            <lib dir="${lib.dir}/samples">
+                <exclude name="servlet-api-*.jar"/>
+            </lib>
+            <lib dir="${lib.dir}/samples" includes="*.jar" excludes="servlet-api-*.jar"/>
+            <lib dir="${root.dist.dir}" includes="${project.name}-${version}.jar"/>
             <webinf dir="${basedir}" includes="resources/**"/>
             <fileset dir="webroot" includes="**" excludes="**/web.xml"/>
 
@@ -102,7 +96,10 @@
             <!-- Jar for webstart application -->
             <fileset dir="${webstart.lib.dir}" includes="*.jar"/>
         </war>
+
     </target>
+
+    <target name="package" depends="jar,war"/>
 
     <target name="quick-deploy" description="Blindly deploys the sample Spring .war to Tomcat">
         <echo>Deploying application to Tomcat...</echo>
@@ -110,7 +107,7 @@
         <touch file="${env.CATALINA_HOME}/webapps/${project.name}-${module.name}/WEB-INF/web.xml"/>
     </target>
 
-    <target name="deploy" depends="dist,quick-deploy"
+    <target name="deploy" depends="package,quick-deploy"
             description="Creates and deploys the sample Spring .war to Tomcat"/>
 
 
