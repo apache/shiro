@@ -28,6 +28,7 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.eis.MemorySessionDAO;
 import org.jsecurity.session.mgt.eis.SessionDAO;
 import org.jsecurity.util.CollectionUtils;
+import org.jsecurity.util.ThreadContext;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -107,26 +108,32 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     protected Session retrieveSession(Serializable sessionId) throws InvalidSessionException {
         if (log.isTraceEnabled()) {
-            log.trace("Retrieving session with id [" + sessionId + "]");
+            log.trace("Attempting to retrieve session with id [" + sessionId + "]");
         }
-        Session s = sessionDAO.readSession(sessionId);
-        if ( isAutoCreateAfterInvalidation() ) {
+        InetAddress hostAddress = null;
+        try {
+            Session s = sessionDAO.readSession(sessionId);
             //save the host address in case the session will be invalidated.  We want to retain it for the
             //replacement session:
-            InetAddress hostAddress = s.getHostAddress();
-            try {
-                validate(s);
-            } catch (InvalidSessionException e) {
+            hostAddress = s.getHostAddress();
+            validate(s);
+            return s;
+        } catch (InvalidSessionException ise) {
+            if (isAutoCreateAfterInvalidation()) {
+                if (hostAddress == null) {
+                    //try the threadContext as a last resort:
+                    hostAddress = ThreadContext.getInetAddress();
+                }
                 Serializable newId = start(hostAddress);
                 String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
                         "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
                         "new session id [" + newId + "] with exception so the caller may react accordingly.";
-                throw new ReplacedSessionException(msg, sessionId, newId);
+                throw new ReplacedSessionException(msg, ise, sessionId, newId);
+            } else {
+                //propagate original exception:
+                throw ise;
             }
-        } else {
-            validate(s);
         }
-        return s;
     }
 
     protected Collection<Session> getActiveSessions() {

@@ -36,8 +36,8 @@ public class ReplacedSessionException extends InvalidSessionException {
         super();
     }
 
-    public ReplacedSessionException(String msg, Serializable originalSessionId, Serializable newSessionId) {
-        super(msg, originalSessionId);
+    public ReplacedSessionException(String msg, Throwable cause, Serializable originalSessionId, Serializable newSessionId) {
+        super(msg, cause, originalSessionId);
         this.newSessionId = newSessionId;
     }
 
