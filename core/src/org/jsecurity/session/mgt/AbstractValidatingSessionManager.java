@@ -59,6 +59,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
 
+    /**
+     * Whether or not to automatically create a new session transparently when a referenced session has expired.
+     * True by default, for developer convenience.
+     */
+    private boolean autoCreateAfterInvalidation = true;
+
 
     public AbstractValidatingSessionManager() {
     }
@@ -106,6 +112,41 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     public long getSessionValidationInterval() {
         return sessionValidationInterval;
+    }
+
+    /**
+     * Returns <code>true</code> if this session manager should automatically create a new session when an invalid
+     * session is referenced, <code>false</code> otherwise.  Unless overridden by the
+     * {@link #setAutoCreateAfterInvalidation(boolean)} method, the default value is <code>true</code> for developer
+     * convenience and to match what most people are accustomed based on years of servlet container behavior.
+     * <p/>
+     * When true (the default), this {@code SessionManager} implementation throws an
+     * {@link org.jsecurity.session.ReplacedSessionException ReplacedSessionException} to the caller whenever a new session is created so
+     * the caller can receive the new session ID and react accordingly for future {@code SessionManager SessionManager}
+     * method invocations.
+     *
+     * @return <code>true</code> if this session manager should automatically create a new session when an invalid
+     *         session is referenced, <code>false</code> otherwise.
+     */
+    public boolean isAutoCreateAfterInvalidation() {
+        return autoCreateAfterInvalidation;
+    }
+
+    /**
+     * Sets if this session manager should automatically create a new session when an invalid
+     * session is referenced.  The default value unless overridden by this method is <code>true</code> for developer
+     * convenience and to match what most people are accustomed based on years of servlet container behavior.
+     * <p/>
+     * When true (the default), this {@code SessionManager} implementation throws an
+     * {@link org.jsecurity.session.ReplacedSessionException ReplacedSessionException} to the caller whenever a new session is created so
+     * the caller can receive the new session ID and react accordingly for future {@code SessionManager SessionManager}
+     * method invocations.
+     *
+     * @param autoCreateAfterInvalidation if this session manager should automatically create a new session when an
+     *                                    invalid session is referenced
+     */
+    public void setAutoCreateAfterInvalidation(boolean autoCreateAfterInvalidation) {
+        this.autoCreateAfterInvalidation = autoCreateAfterInvalidation;
     }
 
     protected final Session doGetSession(Serializable sessionId) throws InvalidSessionException {

@@ -22,12 +22,15 @@ import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.realm.text.PropertiesRealm;
 import org.jsecurity.session.Session;
+import org.jsecurity.session.mgt.AbstractValidatingSessionManager;
 import org.jsecurity.subject.Subject;
 import org.jsecurity.util.ThreadContext;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.Serializable;
 
 /**
  * @author Les Hazlewood
@@ -69,5 +72,35 @@ public class DefaultSecurityManagerTest {
         assertNull(subject.getSession(false));
         assertNull(subject.getPrincipal());
         assertNull(subject.getPrincipals());
+    }
+
+    /**
+     * Test that validates functionality for issue
+     * <a href="https://issues.apache.org/jira/browse/JSEC-46">JSEC-46</a>
+     */
+    @Test
+    public void testAutoCreateSessionAfterInvalidation() {
+        Subject subject = sm.getSubject();
+        Session session = subject.getSession();
+        Serializable origSessionId = session.getId();
+
+        String key = "foo";
+        String value1 = "bar";
+        session.setAttribute(key, value1);
+        assertEquals(value1, session.getAttribute(key) );
+
+        //now test auto creation:
+        session.setTimeout(100);
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            //ignored
+        }
+        session.setTimeout(AbstractValidatingSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
+        Serializable newSessionId = session.getId();
+        assertFalse(origSessionId.equals(newSessionId));
+
+        Object aValue = session.getAttribute(key);
+        assertNull(aValue);
     }
 }

@@ -19,6 +19,7 @@
 package org.jsecurity.session.mgt;
 
 import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.ReplacedSessionException;
 import org.jsecurity.session.Session;
 
 import java.io.Serializable;
@@ -121,7 +122,12 @@ public class DelegatingSession implements Session {
      */
     public Date getStartTimestamp() {
         if (startTimestamp == null) {
-            startTimestamp = sessionManager.getStartTimestamp(id);
+            try {
+                startTimestamp = sessionManager.getStartTimestamp(id);
+            } catch (ReplacedSessionException e) {
+                this.id = e.getNewSessionId();
+                startTimestamp = sessionManager.getStartTimestamp(id);
+            }
         }
         return startTimestamp;
     }
@@ -131,15 +137,30 @@ public class DelegatingSession implements Session {
      */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
-        return sessionManager.getLastAccessTime(id);
+        try {
+            return sessionManager.getLastAccessTime(id);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            return sessionManager.getLastAccessTime(id);
+        }
     }
 
     public long getTimeout() throws InvalidSessionException {
-        return sessionManager.getTimeout(id);
+        try {
+            return sessionManager.getTimeout(id);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            return sessionManager.getTimeout(id);
+        }
     }
 
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
-        sessionManager.setTimeout(id, maxIdleTimeInMillis);
+        try {
+            sessionManager.setTimeout(id, maxIdleTimeInMillis);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            sessionManager.setTimeout(id, maxIdleTimeInMillis);
+        }
     }
 
     /**
@@ -147,7 +168,12 @@ public class DelegatingSession implements Session {
      */
     public InetAddress getHostAddress() {
         if (hostAddress == null) {
-            hostAddress = sessionManager.getHostAddress(id);
+            try {
+                hostAddress = sessionManager.getHostAddress(id);
+            } catch (ReplacedSessionException e) {
+                this.id = e.getNewSessionId();
+                hostAddress = sessionManager.getHostAddress(id);
+            }
         }
         return hostAddress;
     }
@@ -156,28 +182,48 @@ public class DelegatingSession implements Session {
      * @see org.jsecurity.session.Session#touch()
      */
     public void touch() throws InvalidSessionException {
-        sessionManager.touch(id);
+        try {
+            sessionManager.touch(id);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            sessionManager.touch(id);
+        }
     }
 
     /**
      * @see org.jsecurity.session.Session#stop()
      */
     public void stop() throws InvalidSessionException {
-        sessionManager.stop(id);
+        try {
+            sessionManager.stop(id);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            sessionManager.stop(id);
+        }
     }
 
     /**
      * @see org.jsecurity.session.Session#getAttributeKeys
      */
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-        return sessionManager.getAttributeKeys(id);
+        try {
+            return sessionManager.getAttributeKeys(id);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            return sessionManager.getAttributeKeys(id);
+        }
     }
 
     /**
      * @see Session#getAttribute(Object key)
      */
     public Object getAttribute(Object key) throws InvalidSessionException {
-        return sessionManager.getAttribute(id, key);
+        try {
+            return sessionManager.getAttribute(id, key);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            return sessionManager.getAttribute(id, key);
+        }
     }
 
     /**
@@ -187,7 +233,12 @@ public class DelegatingSession implements Session {
         if (value == null) {
             removeAttribute(key);
         } else {
-            sessionManager.setAttribute(id, key, value);
+            try {
+                sessionManager.setAttribute(id, key, value);
+            } catch (ReplacedSessionException e) {
+                this.id = e.getNewSessionId();
+                sessionManager.setAttribute(id, key, value);
+            }
         }
     }
 
@@ -195,6 +246,11 @@ public class DelegatingSession implements Session {
      * @see Session#removeAttribute(Object key)
      */
     public Object removeAttribute(Object key) throws InvalidSessionException {
-        return sessionManager.removeAttribute(id, key);
+        try {
+            return sessionManager.removeAttribute(id, key);
+        } catch (ReplacedSessionException e) {
+            this.id = e.getNewSessionId();
+            return sessionManager.removeAttribute(id, key);
+        }
     }
 }

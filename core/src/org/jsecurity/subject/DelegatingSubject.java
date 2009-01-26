@@ -238,8 +238,8 @@ public class DelegatingSubject implements Subject {
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {
-        Subject authcSecCtx = securityManager.login(token);
-        PrincipalCollection principals = authcSecCtx.getPrincipals();
+        Subject subject = securityManager.login(token);
+        PrincipalCollection principals = subject.getPrincipals();
         if (principals == null || principals.isEmpty()) {
             String msg = "Principals returned from securityManager.login( token ) returned a null or " +
                     "empty value.  This value must be non null and populated with one or more elements.  " +
@@ -248,7 +248,7 @@ public class DelegatingSubject implements Subject {
             throw new IllegalStateException(msg);
         }
         this.principals = principals;
-        Session session = authcSecCtx.getSession(false);
+        Session session = subject.getSession(false);
         if (session != null) {
             if (session instanceof StoppingAwareProxiedSession) {
                 this.session = session;

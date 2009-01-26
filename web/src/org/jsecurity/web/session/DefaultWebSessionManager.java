@@ -259,8 +259,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             session = doGetSession(request, response);
         } catch (InvalidSessionException ise) {
             if (log.isTraceEnabled()) {
-                log.trace("Request Session is invalid, message: [" + ise.getMessage() + "].  Removing any " +
-                        "associated session cookie...");
+                log.trace("Request Session with id [" + ise.getSessionId() + "] is invalid, message: [" +
+                        ise.getMessage() + "].  Removing any associated session cookie...");
             }
             getSessionIdCookieAttribute().removeValue(request, response);
 
