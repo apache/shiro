@@ -64,7 +64,7 @@
                 <xsl:value-of select="bookinfo/title"/>
               </fo:block>
               <fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-                <xsl:text>Version</xsl:text>
+                <xsl:text>Version </xsl:text>
                 <xsl:value-of select="bookinfo/releaseinfo"/>
               </fo:block>
             </fo:table-cell>
@@ -79,7 +79,7 @@
           <fo:table-row>
             <fo:table-cell text-align="center">
               <fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-                <xsl:text>Copyright &copyright; 2004-2008</xsl:text>
+                <xsl:text>Copyright &copyright; 2004-2009 </xsl:text>
                 <xsl:for-each select="bookinfo/authorgroup/author">
                   <xsl:if test="position() > 1">
                     <xsl:text>,</xsl:text>

@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsecurity.cache.CacheManager;
 import org.jsecurity.cache.CacheManagerAware;
 import org.jsecurity.session.InvalidSessionException;
+import org.jsecurity.session.ReplacedSessionException;
 import org.jsecurity.session.Session;
 import org.jsecurity.session.mgt.eis.MemorySessionDAO;
 import org.jsecurity.session.mgt.eis.SessionDAO;
@@ -109,7 +110,22 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
             log.trace("Retrieving session with id [" + sessionId + "]");
         }
         Session s = sessionDAO.readSession(sessionId);
-        validate(s);
+        if ( isAutoCreateAfterInvalidation() ) {
+            //save the host address in case the session will be invalidated.  We want to retain it for the
+            //replacement session:
+            InetAddress hostAddress = s.getHostAddress();
+            try {
+                validate(s);
+            } catch (InvalidSessionException e) {
+                Serializable newId = start(hostAddress);
+                String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
+                        "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
+                        "new session id [" + newId + "] with exception so the caller may react accordingly.";
+                throw new ReplacedSessionException(msg, sessionId, newId);
+            }
+        } else {
+            validate(s);
+        }
         return s;
     }
 

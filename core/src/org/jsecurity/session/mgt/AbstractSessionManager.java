@@ -51,6 +51,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     private long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
     private Collection<SessionListener> listeners = new ArrayList<SessionListener>();
 
+
     public AbstractSessionManager() {
     }
 

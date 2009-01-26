@@ -25,6 +25,7 @@ import org.jsecurity.session.Session;
 import org.jsecurity.session.SessionListener;
 import org.jsecurity.session.SessionListenerRegistrar;
 import org.jsecurity.session.mgt.AbstractSessionManager;
+import org.jsecurity.session.mgt.AbstractValidatingSessionManager;
 import org.jsecurity.session.mgt.DefaultSessionManager;
 import org.jsecurity.session.mgt.SessionManager;
 import org.jsecurity.util.LifecycleUtils;
@@ -153,9 +154,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
                     "underlying SessionManager instance is a part of the " +
                     "[" + requiredType.getName() + "] class hierarchy.  " +
                     "The current SessionManager is of type [" + this.sessionManager.getClass().getName() + "].  " +
-                    "This might occur for example if you're trying to set the validation interval " +
-                    "in a servlet container-backed session environment ('http' session mode).  If that is the case " +
-                    "however, that property is only useful when using 'jsecurity' session mode and using " +
+                    "This might occur for example if you're trying to set the validation interval or auto session " +
+                    "creation in a servlet container-backed session environment ('http' session mode).  If that is " +
+                    "the case however, that property is only useful when using 'jsecurity' session mode and using " +
                     "JSecurity enterprise sessions which do not rely on a servlet container.";
             throw new IllegalStateException(msg);
         }
@@ -191,6 +192,47 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     public void setGlobalSessionTimeout(long globalSessionTimeout) {
         assertSessionManager(AbstractSessionManager.class);
         ((AbstractSessionManager) this.sessionManager).setGlobalSessionTimeout(globalSessionTimeout);
+    }
+
+    /**
+     * Passthrough configuration property to the wrapped {@link AbstractValidatingSessionManager} - if it should
+     * automatically create a new session when an invalid session is referenced.  The default value unless
+     * overridden by this method is <code>true</code> for developer convenience and to match what most people are
+     * accustomed based on years of servlet container behavior.
+     * <p/>
+     * When true (the default), the wrapped {@link AbstractValidatingSessionManager} implementation throws an
+     * {@link org.jsecurity.session.ReplacedSessionException ReplacedSessionException} to the caller whenever a new
+     * session is created so the caller can receive the new session ID and react accordingly for future
+     * {@link SessionManager SessionManager} method invocations.
+     *
+     * @param autoCreate if the wrapped {@link AbstractValidatingSessionManager} should automatically create a new
+     *                   session when an invalid session is referenced
+     * @see org.jsecurity.session.mgt.AbstractValidatingSessionManager#setAutoCreateAfterInvalidation(boolean)
+     */
+    public void setAutoCreateSessionAfterInvalidation(boolean autoCreate) {
+        assertSessionManager(AbstractValidatingSessionManager.class);
+        ((AbstractValidatingSessionManager) this.sessionManager).setAutoCreateAfterInvalidation(autoCreate);
+    }
+
+    /**
+     * Passthrough configuration property that returns <code>true</code> if the wrapped
+     * {@link AbstractValidatingSessionManager AbstractValidatingSessionManager} should automatically create a
+     * new session when an invalid session is referenced, <code>false</code> otherwise.  Unless overridden by the
+     * {@link #setAutoCreateSessionAfterInvalidation(boolean)} method, the default value is <code>true</code> for
+     * developer convenience and to match what most people are accustomed based on years of servlet container behavior.
+     * <p/>
+     * When true (the default), the wrapped {@link AbstractValidatingSessionManager AbstractValidatingSessionManager}
+     * implementation throws an {@link org.jsecurity.session.ReplacedSessionException ReplacedSessionException} to
+     * the caller whenever a new session is created so the caller can receive the new session ID and react accordingly
+     * for future {@link SessionManager SessionManager} method invocations.
+     *
+     * @return <code>true</code> if this session manager should automatically create a new session when an invalid
+     *         session is referenced, <code>false</code> otherwise.
+     * @see org.jsecurity.session.mgt.AbstractValidatingSessionManager#isAutoCreateAfterInvalidation()
+     */
+    public boolean isAutoCreateSessionAfterInvalidation() {
+        assertSessionManager(AbstractValidatingSessionManager.class);
+        return ((AbstractValidatingSessionManager) this.sessionManager).isAutoCreateAfterInvalidation();
     }
 
     /**

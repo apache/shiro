@@ -37,7 +37,7 @@
 <book>
     <bookinfo>
         <title>JSecurity Reference Documentation</title>
-        <releaseinfo>0.9.0</releaseinfo>
+        <releaseinfo>1.0.0</releaseinfo>
         <authorgroup>
             <author>
                 <firstname>Les</firstname>
@@ -45,7 +45,8 @@
             </author>
         </authorgroup>
         <legalnotice>
-            <para>Copies of this document may be made for your own use and for
+            <para>
+                Copies of this document may be made for your own use and for
                 distribution to others, provided that you do not charge any
                 fee for such copies and further provided that each copy
                 contains this Copyright Notice, whether distributed in print
@@ -56,17 +57,35 @@
     <!-- front matter -->
     <toc/>
     &preface;
-    &terminology;
-    &overview;
+    <part id="jsecurity-quickstart">
+        <title>JSecurity Quickstart</title>
+        <partintro id="jsecurity-quickstart-intro">
+            <para>
+                This initial part of the reference documentation walks through the simplest quickstart application
+                so that you may become familiarized JSecurity's programming API and general concepts. While this
+                application is probably the absolute simplest JSecurity-enabled application that we know of,
+                it should make you comfortable understanding what JSecurity can do, and how it can help you create
+                more secure applications. The rest of the documentation will serve as your guide to help you move
+                from this simple example to even the most complicated enterprise applications.
+            </para>
+
+            <note>
+                <para>
+                    The code for this quickstart application is in the <filename>samples/quickstart</filename>
+                    directory of the source distribution.
+                </para>
+            </note>
+        </partintro>
+    </part>
     <part id="jsecurity-core">
         <title>JSecurity Core</title>
         <partintro id="jsecurity-core-intro">
             <para>
-                This initial part of the reference documentation covers
+                This part of the reference documentation covers
                 JSecurity's core architectural components that support
                 functionality in all environments, from
                 constrained Applets and cell phones to full n-tier
-                enterprise clustered applications.
+                clustered enterprise applications.
             </para>
             <para>
                 Most important among these are the Subject and
@@ -78,10 +97,7 @@
                 <interfacename>Authorizer</interfacename>.
             </para>
             <para>
-                Coverage of Spring's integration with AspectJ (currently
-                the richest - in terms of features - and certainly most
-                mature AOP implementation in the Java enterprise space)
-                is also provided.
+
             </para>
             <para>
                 Finally, the adoption of the test-driven-development (TDD)

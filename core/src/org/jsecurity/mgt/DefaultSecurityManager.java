@@ -476,7 +476,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @see org.jsecurity.authz.HostUnauthorizedException
      * @since 1.0
      */
-    protected Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+    private Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         if (!isValid(sessionId)) {
             String msg = "Specified id [" + sessionId + "] does not correspond to a valid Session  It either " +
                     "does not exist or the corresponding session has been stopped or expired.";
