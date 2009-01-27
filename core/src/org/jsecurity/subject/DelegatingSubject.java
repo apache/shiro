@@ -299,8 +299,14 @@ public class DelegatingSubject implements Subject {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
-            this.inetAddress = null;
-            this.securityManager = null;
+            //Don't set securityManager to null here - the Subject can be continued to be
+            //used, it is just considered anonymous at this point.  The SecurityManager instance is
+            //necessary if the subject would log in again or acquire a new session.  This is in response to
+            //https://issues.apache.org/jira/browse/JSEC-22
+            //this.securityManager = null;
+
+            //also keep the inetAddress to retain their location:
+            //this.inetAddress = null;
         }
     }
 
