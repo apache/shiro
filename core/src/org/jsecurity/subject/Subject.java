@@ -357,7 +357,8 @@ public interface Subject {
 
     /**
      * Logs out this Subject and invalidates and/or removes any associated entities
-     * (such as a {@link Session Session} and authorization data.
+     * (such as a {@link Session Session} and authorization data.  After this method is called, the Subject is
+     * considered 'anonymous' and may continue to be used for another log-in if desired.
      */
     void logout();
 
