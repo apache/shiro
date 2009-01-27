@@ -18,6 +18,7 @@
  */
 package org.jsecurity.mgt;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.authc.AuthenticationToken;
 import org.jsecurity.authc.UsernamePasswordToken;
 import org.jsecurity.realm.text.PropertiesRealm;
@@ -45,17 +46,19 @@ public class DefaultSecurityManagerTest {
         ThreadContext.clear();
         sm = new DefaultSecurityManager();
         sm.setRealm(new PropertiesRealm());
+        SecurityUtils.setSecurityManager(sm);
     }
 
     @After
     public void tearDown() {
+        SecurityUtils.setSecurityManager(null);
         sm.destroy();
         ThreadContext.clear();
     }
 
     @Test
     public void testDefaultConfig() {
-        Subject subject = sm.getSubject();
+        Subject subject = SecurityUtils.getSubject();
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
@@ -80,7 +83,7 @@ public class DefaultSecurityManagerTest {
      */
     @Test
     public void testAutoCreateSessionAfterInvalidation() {
-        Subject subject = sm.getSubject();
+        Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         Serializable origSessionId = session.getId();
 
@@ -102,5 +105,47 @@ public class DefaultSecurityManagerTest {
 
         Object aValue = session.getAttribute(key);
         assertNull(aValue);
+    }
+
+    /**
+     * Test that validates functionality for issue
+     * <a href="https://issues.apache.org/jira/browse/JSEC-22">JSEC-22</a>
+     */
+    public void testSubjectReuseAfterLogout() {
+
+        Subject subject = SecurityUtils.getSubject();
+
+        AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
+        subject.login(token);
+        assertTrue(subject.isAuthenticated());
+        assertTrue("guest".equals(subject.getPrincipal()));
+        assertTrue(subject.hasRole("guest"));
+
+        Session session = subject.getSession();
+        Serializable firstSessionId = session.getId();
+
+        session.setAttribute("key", "value");
+        assertEquals(session.getAttribute("key"), "value");
+
+        subject.logout();
+
+        assertNull(subject.getSession(false));
+        assertNull(subject.getPrincipal());
+        assertNull(subject.getPrincipals());
+
+        subject.login( new UsernamePasswordToken("lonestarr", "vespa") );
+        assertTrue(subject.isAuthenticated());
+        assertTrue("lonestarr".equals(subject.getPrincipal()));
+        assertTrue(subject.hasRole("goodguy") );
+
+        assertNotNull( subject.getSession() );
+        assertFalse( firstSessionId.equals(subject.getSession().getId() ) );
+
+        subject.logout();
+
+        assertNull(subject.getSession(false));
+        assertNull(subject.getPrincipal());
+        assertNull(subject.getPrincipals());
+
     }
 }
