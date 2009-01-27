@@ -18,6 +18,7 @@
  */
 package org.jsecurity.realm.activedirectory;
 
+import org.jsecurity.SecurityUtils;
 import org.jsecurity.authc.*;
 import org.jsecurity.authc.credential.CredentialsMatcher;
 import org.jsecurity.authz.AuthorizationInfo;
@@ -30,6 +31,7 @@ import org.jsecurity.realm.ldap.LdapContextFactory;
 import org.jsecurity.subject.PrincipalCollection;
 import org.jsecurity.subject.SimplePrincipalCollection;
 import org.jsecurity.subject.Subject;
+import org.jsecurity.util.ThreadContext;
 import org.junit.After;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -63,16 +65,17 @@ public class ActiveDirectoryRealmTest {
 
     @Before
     public void setup() {
+        ThreadContext.clear();
         realm = new TestActiveDirectoryRealm();
         securityManager = new DefaultSecurityManager(realm);
-
+        SecurityUtils.setSecurityManager(securityManager);
     }
 
     @After
     public void tearDown() {
-        if (securityManager != null) {
-            securityManager.destroy();
-        }
+        SecurityUtils.setSecurityManager(null);
+        securityManager.destroy();
+        ThreadContext.clear();
     }
 
     @Test
@@ -83,7 +86,8 @@ public class ActiveDirectoryRealmTest {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        Subject subject = securityManager.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(subject.isAuthenticated());
         assertTrue(subject.hasRole(ROLE));
 
