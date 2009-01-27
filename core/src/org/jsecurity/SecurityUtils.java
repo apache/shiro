@@ -39,12 +39,24 @@ public abstract class SecurityUtils {
     /**
      * Returns the currently accessible <tt>Subject</tt> available to the calling code depending on
      * runtime environment.
-     *
-     * <p>This method is provided as a way of obtaining a <tt>Subject</tt> without having to resort to
+     * <p/>
+     * This method is provided as a way of obtaining a <tt>Subject</tt> without having to resort to
      * implementation-specific methods.  It also allows the JSecurity team to change the underlying implementation of
      * this method in the future depending on requirements/updates without affecting your code that uses it.
+     * <p/>
+     * <b>Implementation Note:</b> This implementation expects a
+     * {@link org.jsecurity.util.ThreadContext#getSecurityManager() thread-bound} or
+     * {@link #setSecurityManager static VM singleton} {@code SecurityManager} to be accessible to this method at
+     * runtime.  If not, an {@link IllegalStateException IllegalStateException} is thrown, indicating an incorrect
+     * application configuration.
      *
      * @return the currently accessible <tt>Subject</tt> accessible to the calling code.
+     *
+     * @throws IllegalStateException if no {@link SecurityManager SecurityManager} instance is available to this method
+     * at runtime, which is considered an invalid application configuration - a Subject should _always_ be available
+     * to the caller.  If you encounter an exception when calling this method, ensure that the application's
+     * {@code SecurityManager} is {@link org.jsecurity.util.ThreadContext#getSecurityManager() thread-bound} or a
+     * {@link #setSecurityManager static VM singleton} prior to calling this method.
      */
     public static Subject getSubject() {
         Subject subject;
@@ -57,6 +69,13 @@ public abstract class SecurityUtils {
                 //fall back to the VM singleton if one exists:
                 subject = SecurityUtils.securityManager.getSubject();
             }
+        }
+        if ( subject == null ) {
+            String msg = "No SecurityManager accessible to this method, either bound to the " +
+                    ThreadContext.class.getName() + " or as a vm static singleton.  See the " +
+                    SecurityUtils.class.getName() + ".getSubject() method JavaDoc for an explanation of expected " +
+                    "environment configuration.";
+            throw new IllegalStateException(msg);
         }
         return subject;
     }
@@ -96,7 +115,7 @@ public abstract class SecurityUtils {
      * instance for the calling code, which might mean from static memory, or a config file, or other
      * environment-specific means.</p>
      *
-     * @param securityManager
+     * @param securityManager the securityManager instance to set as a VM static singleton.
      */
     public static void setSecurityManager(SecurityManager securityManager) {
         SecurityUtils.securityManager = securityManager;
