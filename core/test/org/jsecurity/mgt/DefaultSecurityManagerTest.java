@@ -111,6 +111,7 @@ public class DefaultSecurityManagerTest {
      * Test that validates functionality for issue
      * <a href="https://issues.apache.org/jira/browse/JSEC-22">JSEC-22</a>
      */
+    @Test
     public void testSubjectReuseAfterLogout() {
 
         Subject subject = SecurityUtils.getSubject();
