@@ -102,6 +102,7 @@ import java.util.Set;
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @author Dain Sundstrom
  * @since 0.9
  */
 public class WildcardPermission implements Permission, Serializable {
@@ -216,4 +217,28 @@ public class WildcardPermission implements Permission, Serializable {
 
         return true;
     }
+
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        for (Set<String> part : parts) {
+            if (buffer.length() > 0) {
+                buffer.append(":");
+            }
+            buffer.append(part);
+        }
+        return buffer.toString();
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof WildcardPermission) {
+            WildcardPermission wp = (WildcardPermission) o;
+            return parts.equals(wp.parts);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return parts.hashCode();
+    }
+
 }
