@@ -56,7 +56,7 @@
 
     <properties>
         <hsqldbVersion>1.8.0.7</hsqldbVersion>
-        <jettyVersion>6.1.9</jettyVersion>
+        <jettyVersion>6.1.14</jettyVersion>
         <jsecurityVersion>1.0-SNAPSHOT</jsecurityVersion>
         <retroweaverVersion>2.0.5</retroweaverVersion>
         <springframeworkVersion>2.5.6</springframeworkVersion>
