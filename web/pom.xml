@@ -12,7 +12,18 @@
     <name>Apache JSecurity :: Web</name>
     <packaging>jar</packaging>
 
-    <build/>
+    <build>
+        <!-- non-standard source locations -->
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.tld</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
 
