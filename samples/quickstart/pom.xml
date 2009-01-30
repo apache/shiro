@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>quickstart</artifactId>
+    <artifactId>samples-quickstart</artifactId>
     <name>Apache JSecurity :: Samples :: Quick Start</name>
     <packaging>jar</packaging>
 
