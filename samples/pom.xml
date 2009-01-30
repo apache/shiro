@@ -16,6 +16,7 @@
     <modules>
         <module>quickstart</module>
         <module>spring</module>
+        <module>web</module>
     </modules>
 
 </project>
