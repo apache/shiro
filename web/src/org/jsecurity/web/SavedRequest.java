@@ -19,6 +19,7 @@
 package org.jsecurity.web;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * Maintains request data for a request that was redirected, so that after authentication
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Jeremy Haile
  * @since 0.9
  */
-public class SavedRequest {
+public class SavedRequest implements Serializable {
 
     //TODO - complete JavaDoc
 
