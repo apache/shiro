@@ -34,6 +34,10 @@
                 #
                 # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
 
+                [main]
+
+                demoRealm = org.jsecurity.realm.text.PropertiesRealm
+
                 [filters]
                 jsecurity.loginUrl = /login.jsp
 
