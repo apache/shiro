@@ -27,9 +27,6 @@
                         <resource>
                             <directory>${basedir}/etc</directory>
                         </resource>
-                        <resource>
-                            <directory>${basedir}/resources</directory>
-                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
