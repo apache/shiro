@@ -58,12 +58,13 @@
         <pathelement location="${root.base.dir}/samples/spring-hibernate/src"/>
     </path>
 
+    <property name="ivy.repository.url" value="http://repo1.maven.org/maven2"/>
     <!-- To disable this task (maybe behind a firewall?), use the -Doffline=true command-line switch -->
     <target name="download-ivy" unless="offline" description="Ensures Ivy exists for automatic dependency mgt">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
         <echo message="Installing Ivy for automated dependecy management..."/>
-        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+        <get src="${ivy.repository.url}/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
              dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 
