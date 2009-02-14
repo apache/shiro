@@ -49,7 +49,7 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
     /**
      * The internal HashMap that will hold the SoftReference.
      */
-    private final Map<K, SoftValue<V, K>> map = new HashMap<K, SoftValue<V, K>>();
+    private final Map<K, SoftValue<V, K>> map;
 
     /**
      * The number of &quot;hard&quot; references to hold internally, that is, the number of instances to prevent
@@ -72,7 +72,15 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
     }
 
     public SoftHashMap(int hardSize) {
+        super();
         HARD_SIZE = hardSize;
+        if ( JavaEnvironment.isAtLeastVersion15() ) {
+            map = new java.util.concurrent.ConcurrentHashMap<K, SoftValue<V, K>>();
+        } else {
+            //TODO - Will we still support 1.3 and 1.4 JVMs?
+            //noinspection unchecked
+            map = (Map)ClassUtils.newInstance("edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap");
+        }
     }
 
     public V get(Object key) {

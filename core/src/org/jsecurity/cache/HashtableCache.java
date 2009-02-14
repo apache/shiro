@@ -29,6 +29,9 @@ import java.util.Hashtable;
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.2
+ *
+ * @deprecated Due to potential memory leaks caused by {@code Hashtable}s, it is highly recommended to avoid using
+ * this class and instead switch to using a {@link SoftHashMapCache SoftHashMapCache}.
  */
 public class HashtableCache extends MapCache {
 
