@@ -75,7 +75,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         this();
         setRealms(realms);
     }
-
+    
     /**
      * Sets the path used to store the remember me cookie.  This determines which paths
      * are able to view the remember me cookie.
@@ -149,7 +149,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             LifecycleUtils.destroy(getSessionManager());
             WebSessionManager sessionManager = createSessionManager(mode);
             setSessionManager(sessionManager);
-            setSubjectFactory(new WebSubjectFactory(this, sessionManager));
         }
     }
 
