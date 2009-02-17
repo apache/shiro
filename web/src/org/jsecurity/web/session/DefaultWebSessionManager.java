@@ -229,7 +229,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return sessionId;
     }
 
-    public Session retrieveSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+    @Override
+    protected Session retrieveSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         if (sessionId != null) {
             return super.retrieveSession(sessionId);
         } else {

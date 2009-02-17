@@ -85,9 +85,14 @@ public class WebSubjectFactory extends DefaultSubjectFactory {
     }
 
     protected Session getWebSession() {
-        ServletRequest request = WebUtils.getRequiredServletRequest();
-        ServletResponse response = WebUtils.getRequiredServletResponse();
-        return getWebSessionManager().getSession(request, response);
+        ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
+        if ( request == null || response == null ) {
+            //no current web request - probably a remote method invocation that didn't come in via a servlet request:
+            return null;
+        } else {
+            return getWebSessionManager().getSession(request, response);
+        }
     }
 
     @Override
@@ -110,7 +115,10 @@ public class WebSubjectFactory extends DefaultSubjectFactory {
 
         InetAddress inet = inetAddress;
         if (inet == null) {
-            inet = WebUtils.getInetAddress(WebUtils.getRequiredServletRequest());
+            ServletRequest request = WebUtils.getServletRequest();
+            if ( request != null ) {
+                inet = WebUtils.getInetAddress(request);
+            }
         }
 
         return super.createSubject(pc, session, authc, inet);

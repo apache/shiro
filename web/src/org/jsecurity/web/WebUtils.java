@@ -305,6 +305,29 @@ public class WebUtils {
     }
 
     /**
+     * Returns the current thread-bound {@code ServletRequest} or {@code null} if there is not one bound.
+     * <p/>
+     * It is the case in certain enterprise environments where a web-enabled SecurityManager (and its internal mechanisms)
+     * is the primary SecurityManager but also serves as a 'central' coordinator for security operations in a cluster.
+     * In these environments, it is possible for a web-enabled SecurityManager to receive remote method invocations that
+     * are not HTTP based.
+     * <p/>
+     * In these environments, we need to acquire a thread-bound ServletRequest if it exists, but
+     * not throw an exception if one is not found (with the assumption that the incoming call is not a web request but
+     * instead a remote method invocation).  This method exists to support these environments, whereas the
+     * {@link #getRequiredServletRequest() getRequiredServletRequest()} method always assumes a
+     * servlet-only environment.
+     * <p/>
+     * <b>THIS IS NOT PART OF JSECURITY'S PUBLIC API.</b>  It exists for JSecurity implementation requirements only.
+     * 
+     * @return the current thread-bound {@code ServletRequest} or {@code null} if there is not one bound.
+     * @since 1.0
+     */
+    public static ServletRequest getServletRequest() {
+        return (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
+    }
+
+    /**
      * Convenience method that simplifies retrieval of a required thread-bound ServletRequest.  If there is no
      * ServletRequest bound to the thread when this method is called, an <code>IllegalStateException</code> is
      * thrown.
@@ -365,6 +388,29 @@ public class WebUtils {
      */
     public static ServletRequest unbindServletRequest() {
         return (ServletRequest) ThreadContext.remove(SERVLET_REQUEST_KEY);
+    }
+
+    /**
+     * Returns the current thread-bound {@code ServletResponse} or {@code null} if there is not one bound.
+     * <p/>
+     * It is the case in certain enterprise environments where a web-enabled SecurityManager (and its internal mechanisms)
+     * is the primary SecurityManager but also serves as a 'central' coordinator for security operations in a cluster.
+     * In these environments, it is possible for a web-enabled SecurityManager to receive remote method invocations that
+     * are not HTTP based.
+     * <p/>
+     * In these environments, we need to acquire a thread-bound ServletResponse if it exists, but
+     * not throw an exception if one is not found (with the assumption that the incoming call is not a web request but
+     * instead a remote method invocation).  This method exists to support these environments, whereas the
+     * {@link #getRequiredServletResponse() getRequiredServletResponse()} method always assumes a
+     * servlet-only environment.
+     * <p/>
+     * <b>THIS IS NOT PART OF JSECURITY'S PUBLIC API.</b>  It exists for JSecurity implementation requirements only.
+     *
+     * @return the current thread-bound {@code ServletResponse} or {@code null} if there is not one bound.
+     * @since 1.0
+     */
+    public static ServletResponse getServletResponse() {
+        return (ServletResponse) ThreadContext.get(SERVLET_RESPONSE_KEY);
     }
 
     /**

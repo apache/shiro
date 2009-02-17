@@ -42,21 +42,21 @@ import java.net.InetAddress;
 
 /**
  * Main ServletFilter that configures and enables all JSecurity functions within a web application.
- *
+ * <p/>
  * The following is a fully commented example that documents how to configure it:
- *
+ * <p/>
  * <pre>&lt;filter&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
- *
+ * <p/>
  * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
  * # Any commented values below are JSecurity's defaults.  If you want to change any values, you only
  * # need to uncomment the lines you want to change.
- *
+ * <p/>
  * [main]
  * # The 'main' section defines JSecurity-wide configuration.
  * #
@@ -69,7 +69,7 @@ import java.net.InetAddress;
  * #
  * #securityManager = {@link org.jsecurity.web.DefaultWebSecurityManager org.jsecurity.web.DefaultWebSecurityManager}
  * #securityManager.{@link org.jsecurity.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
- *
+ * <p/>
  * [filters]
  * # This section defines the 'pool' of all Filters available to the url path definitions in the [urls] section below.
  * #
@@ -112,7 +112,7 @@ import java.net.InetAddress;
  * #
  * # Define your own filters here.  To properly handle url path matching (see the [urls] section below), your
  * # filter should extend the {@link org.jsecurity.web.filter.PathMatchingFilter PathMatchingFilter} abstract class.
- *
+ * <p/>
  * [urls]
  * # This section defines url path mappings.  Each mapping entry must be on a single line and conform to the
  * # following representation:
@@ -158,14 +158,14 @@ import java.net.InetAddress;
  * # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
  * # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
  * # commas.)
- *
+ * <p/>
  * /account/** = <a href="#authcBasic">authcBasic</a>
  * /remoting/** = <a href="#authcBasic">authcBasic</a>, <a href="#roles">roles</a>[b2bClient], <a href="#perms">perms</a>[remote:invoke:"lan,wan"]
- *
+ * <p/>
  * &lt;/param-value&gt;&lt;/init-param&gt;
  * &lt;/filter&gt;
- *
- *
+ * <p/>
+ * <p/>
  * &lt;filter-mapping&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
@@ -185,7 +185,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
     public static final String CONFIG_INIT_PARAM_NAME = "config";
     public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
-    private static final Log log = LogFactory.getLog(JSecurityFilter.class);    
+    private static final Log log = LogFactory.getLog(JSecurityFilter.class);
 
     protected String config;
     protected String configUrl;
@@ -238,7 +238,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
         if (sm == null) {
             if (log.isInfoEnabled()) {
                 log.info("Configuration instance [" + config + "] did not provide a SecurityManager.  No config " +
-                        "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
+                    "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
             }
             sm = new DefaultWebSecurityManager();
         }
@@ -255,8 +255,8 @@ public class JSecurityFilter extends OncePerRequestFilter {
                 this.configClassName = configCN;
             } else {
                 String msg = "configClassName fully qualified class name value [" + configCN + "] is not " +
-                        "available in the classpath.  Please ensure you have typed it correctly and the " +
-                        "corresponding class or jar is in the classpath.";
+                    "available in the classpath.  Please ensure you have typed it correctly and the " +
+                    "corresponding class or jar is in the classpath.";
                 throw new ConfigurationException(msg);
             }
         }
@@ -277,7 +277,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
     protected void applyFilterConfig(WebConfiguration conf) {
         if (log.isDebugEnabled()) {
             String msg = "Attempting to inject the FilterConfig (using 'setFilterConfig' method) into the " +
-                    "instantiated WebConfiguration for any wrapped Filter initialization...";
+                "instantiated WebConfiguration for any wrapped Filter initialization...";
             log.debug(msg);
         }
         try {
@@ -301,9 +301,9 @@ public class JSecurityFilter extends OncePerRequestFilter {
                     PropertyUtils.setProperty(conf, "config", this.config);
                 } else {
                     String msg = "The 'config' filter param was specified, but there is no " +
-                            "'setConfig(String)' method on the Configuration instance [" + conf + "].  If you do " +
-                            "not require the 'config' filter param, please comment it out, or if you do need it, " +
-                            "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
+                        "'setConfig(String)' method on the Configuration instance [" + conf + "].  If you do " +
+                        "not require the 'config' filter param, please comment it out, or if you do need it, " +
+                        "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
                     throw new ConfigurationException(msg);
                 }
             } catch (Exception e) {
@@ -322,9 +322,9 @@ public class JSecurityFilter extends OncePerRequestFilter {
                     PropertyUtils.setProperty(conf, "configUrl", this.configUrl);
                 } else {
                     String msg = "The 'configUrl' filter param was specified, but there is no " +
-                            "'setConfigUrl(String)' method on the Configuration instance [" + conf + "].  If you do " +
-                            "not require the 'configUrl' filter param, please comment it out, or if you do need it, " +
-                            "please ensure your Configuration instance has a 'setConfigUrl(String)' method to receive it.";
+                        "'setConfigUrl(String)' method on the Configuration instance [" + conf + "].  If you do " +
+                        "not require the 'configUrl' filter param, please comment it out, or if you do need it, " +
+                        "please ensure your Configuration instance has a 'setConfigUrl(String)' method to receive it.";
                     throw new ConfigurationException(msg);
                 }
             } catch (Exception e) {
@@ -347,26 +347,69 @@ public class JSecurityFilter extends OncePerRequestFilter {
         return WebUtils.getInetAddress(request);
     }
 
-    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,
-                                    FilterChain origChain) throws ServletException, IOException {
+    /**
+     * Wraps the original HttpServletRequest in a {@link JSecurityHttpServletRequest}
+     * @since 1.0
+     */
+    protected ServletRequest wrapServletRequest(HttpServletRequest orig) {
+        return new JSecurityHttpServletRequest(orig, getServletContext(), isHttpSessions());
+    }
 
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
+    /** @since 1.0 */
+    protected ServletRequest prepareServletRequest(ServletRequest request, ServletResponse response,
+                                                   FilterChain chain) {
+        ServletRequest toUse = request;
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest http = (HttpServletRequest) request;
+            toUse = wrapServletRequest(http);
+        }
+        return toUse;
+    }
 
-        ThreadContext.bind(getInetAddress(request));
+    /** @since 1.0 */
+    protected ServletResponse wrapServletResponse(HttpServletResponse orig, JSecurityHttpServletRequest request) {
+        return new JSecurityHttpServletResponse(orig, getServletContext(), request);
+    }
 
-        boolean httpSessions = isHttpSessions();
-        request = new JSecurityHttpServletRequest(request, getServletContext(), httpSessions);
-        if (!httpSessions) {
+    /** @since 1.0 */
+    protected ServletResponse prepareServletResponse(ServletRequest request, ServletResponse response,
+                                                     FilterChain chain) {
+        ServletResponse toUse = response;
+        if (isHttpSessions() && (request instanceof JSecurityHttpServletRequest) &&
+            (response instanceof HttpServletResponse)) {
             //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using JSecurity sessions (i.e. not simple HttpSession based sessions):
-            response = new JSecurityHttpServletResponse(response, getServletContext(), (JSecurityHttpServletRequest) request);
+            toUse = wrapServletResponse((HttpServletResponse) response, (JSecurityHttpServletRequest) request);
         }
+        return toUse;
+    }
 
+    /** @since 1.0 */
+    protected void bind(ServletRequest request, ServletResponse response) {
+        WebUtils.bindInetAddressToThread(request);
         WebUtils.bind(request);
         WebUtils.bind(response);
         ThreadContext.bind(getSecurityManager());
         ThreadContext.bind(getSecurityManager().getSubject());
+    }
+
+    /** @since 1.0 */
+    protected void unbind(ServletRequest request, ServletResponse response) {
+        //arguments ignored, just clear the thread:
+        ThreadContext.unbindSubject();
+        ThreadContext.unbindSecurityManager();
+        WebUtils.unbindServletResponse();
+        WebUtils.unbindServletRequest();
+        ThreadContext.unbindInetAddress();
+    }
+
+    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,
+                                    FilterChain origChain) throws ServletException, IOException {
+
+        ServletRequest request = prepareServletRequest(servletRequest, servletResponse, origChain);
+        ServletResponse response = prepareServletResponse(request, servletResponse, origChain);
+
+        bind(request, response);
 
         FilterChain chain = getConfiguration().getChain(request, response, origChain);
         if (chain == null) {
@@ -383,11 +426,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
         try {
             chain.doFilter(request, response);
         } finally {
-            ThreadContext.unbindSubject();
-            ThreadContext.unbindSecurityManager();
-            WebUtils.unbindServletResponse();
-            WebUtils.unbindServletRequest();
-            ThreadContext.unbindInetAddress();
+            unbind(request, response);
         }
     }
 
