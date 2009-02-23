@@ -349,38 +349,44 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         rememberMeLogout(subjectIdentifier);
     }
 
+    protected Subject getSubject(PrincipalCollection principals) {
+        //Method arg is ignored at the moment - retrieve from the environment if it exists:
+        return getSubject(false);
+    }
+
     public void logout(PrincipalCollection principals) {
 
+        Subject subject;
+
         if (principals != null) {
-
             beforeLogout(principals);
-
             Authenticator authc = getAuthenticator();
             if (authc instanceof LogoutAware) {
                 ((LogoutAware) authc).onLogout(principals);
             }
+            subject = getSubject(principals);
+        } else {
+            subject = getSubject(false);
         }
 
-        //Method arg is ignored - get the Subject from the environment if it exists:
-        Subject subject = getSubject(false);
-        if (subject != null) {
+        try {
+            unbind(subject);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                String msg = "Unable to cleanly unbind Subject.  Ignoring (logging out).";
+                log.debug(msg, e);
+            }
+        } finally {
             try {
-                unbind(subject);
-                try {
-                    stopSession(subject);
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        String msg = "Unable to cleanly stop Session for Subject [" + subject.getPrincipal() + "] " +
-                                "Ignoring (logging out).";
-                        log.debug(msg, e);
-                    }
-                }
+                stopSession(subject);
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    String msg = "Unable to cleanly unbind Subject.  Ignoring (logging out).";
+                    String msg = "Unable to cleanly stop Session for Subject [" + subject.getPrincipal() + "] " +
+                            "Ignoring (logging out).";
                     log.debug(msg, e);
                 }
             }
+
         }
     }
 
@@ -458,7 +464,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * <p>To maintain session integrity across client mediums, the {@code sessionId} <b>must</b> be transmitted
      * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
      * is nothing new - all web applications are susceptible to the same problem when transmitting
-     * {@link javax.servlet.http.Cookie Cookie}s or when using URL rewriting.  As long as the
+     * {@code Cookie}s or when using URL rewriting.  As long as the
      * {@code sessionId} is transmitted securely, session integrity can be maintained.
      *
      * @param sessionId the id of the session that backs the desired Subject being acquired.

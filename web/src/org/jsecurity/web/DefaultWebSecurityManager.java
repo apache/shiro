@@ -27,7 +27,10 @@ import org.jsecurity.util.LifecycleUtils;
 import org.jsecurity.web.session.DefaultWebSessionManager;
 import org.jsecurity.web.session.ServletContainerSessionManager;
 import org.jsecurity.web.session.WebSessionManager;
+import org.jsecurity.web.servlet.JSecurityHttpServletRequest;
+import org.jsecurity.subject.PrincipalCollection;
 
+import javax.servlet.ServletRequest;
 import java.util.Collection;
 
 /**
@@ -170,4 +173,18 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         }
     }
 
+    @Override
+    protected void beforeLogout(PrincipalCollection subjectIdentifier) {
+        super.beforeLogout(subjectIdentifier);
+        //also ensure a request attribute is set so the Subject is not reacquired later during the request:
+        removeRequestIdentity();
+
+    }
+
+    protected void removeRequestIdentity() {
+        ServletRequest request = WebUtils.getServletRequest();
+        if ( request != null ) {
+            request.setAttribute(JSecurityHttpServletRequest.IDENTITY_REMOVED_KEY, Boolean.TRUE);
+        }
+    }
 }

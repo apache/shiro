@@ -345,7 +345,7 @@ public class WebUtils {
      * @throws IllegalStateException if no servlet request is bound in the {@link ThreadContext ThreadContext}.
      */
     public static ServletRequest getRequiredServletRequest() throws IllegalStateException {
-        ServletRequest request = (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
+        ServletRequest request = getServletRequest();
         if (request == null) {
             throw new IllegalStateException("No ServletRequest found in ThreadContext. " + NOT_BOUND_ERROR_MESSAGE);
         }
