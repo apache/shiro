@@ -24,6 +24,7 @@ import org.jsecurity.codec.Base64;
 import org.jsecurity.mgt.AbstractRememberMeManager;
 import org.jsecurity.web.attr.CookieAttribute;
 import org.jsecurity.web.attr.WebAttribute;
+import org.jsecurity.web.servlet.JSecurityHttpServletRequest;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -203,7 +204,19 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         getIdentityAttribute().storeValue(base64, request, response);
     }
 
+    protected boolean isIdentityRemoved() {
+        ServletRequest request = WebUtils.getServletRequest();
+        if ( request != null ) {
+            Boolean removed = (Boolean)request.getAttribute(JSecurityHttpServletRequest.IDENTITY_REMOVED_KEY);
+            return removed != null && removed;
+        }
+        return false;
+    }
     protected byte[] getSerializedRememberedIdentity() {
+        if ( isIdentityRemoved() ) {
+            return null;
+        }
+
         ServletRequest request = WebUtils.getRequiredServletRequest();
         ServletResponse response = WebUtils.getRequiredServletResponse();
         String base64 = getIdentityAttribute().retrieveValue(request, response);

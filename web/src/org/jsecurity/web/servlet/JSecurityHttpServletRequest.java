@@ -53,6 +53,8 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
      */
     public static final String EXPIRED_SESSION_KEY = JSecurityHttpServletRequest.class.getName() + "_EXPIRED_SESSION_KEY";
 
+    public static final String IDENTITY_REMOVED_KEY = JSecurityHttpServletRequest.class.getName() + "_IDENTITY_REMOVED_KEY";
+
     protected ServletContext servletContext = null;
 
     protected HttpSession session = null;
@@ -67,6 +69,11 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
 
     public boolean isHttpSessions() {
         return httpSessions;
+    }
+
+    protected boolean isLoggedOut() {
+        Boolean loggedOut = (Boolean)getAttribute(IDENTITY_REMOVED_KEY);
+        return loggedOut != null && loggedOut;
     }
 
     public String getRemoteUser() {
@@ -87,6 +94,9 @@ public class JSecurityHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     protected Subject getSubject() {
+        if ( isLoggedOut() ) {
+            return null;
+        }
         return SecurityUtils.getSubject();
     }
 
