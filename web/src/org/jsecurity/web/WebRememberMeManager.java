@@ -51,6 +51,7 @@ import javax.servlet.ServletResponse;
  * to be an instance of something <em>other</em> than a <code>CookieAttribute</code>.</p>
  *
  * @author Les Hazlewood
+ * @author Luis Arias
  * @since 0.9
  */
 public class WebRememberMeManager extends AbstractRememberMeManager {
@@ -207,6 +208,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         ServletResponse response = WebUtils.getRequiredServletResponse();
         String base64 = getIdentityAttribute().retrieveValue(request, response);
         if (base64 != null) {
+            base64 = ensurePadding(base64);
             if (log.isTraceEnabled()) {
                 log.trace("Acquired Base64 encoded identity [" + base64 + "]");
             }
@@ -220,6 +222,27 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
             return null;
         }
     }
+
+    /**
+     * Sometimes a user agent will send the rememberMe cookie value without padding,
+     * most likely because {@code =} is a separator in the cookie header.  Contributed
+     * by Luis Arias.
+     *
+     * @param base64 the base64 encoded String that may need to be padded
+     * @return the base64 String padded if necessary.
+     */
+    private String ensurePadding(String base64) {
+        int length = base64.length();
+        if (length % 4 != 0) {
+            StringBuffer sb = new StringBuffer(base64);
+            for (int i = 0; i < length % 4; ++i) {
+                sb.append('=');
+            }
+            base64 = sb.toString();
+        }
+        return base64;
+    }
+
 
     protected void forgetIdentity() {
         ServletRequest request = WebUtils.getRequiredServletRequest();
