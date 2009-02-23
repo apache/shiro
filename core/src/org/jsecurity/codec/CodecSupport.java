@@ -18,11 +18,11 @@
  */
 package org.jsecurity.codec;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 /**
  * Base abstract class that provides useful encoding and decoding operations, especially for character data.
- * 
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
@@ -167,6 +167,10 @@ public abstract class CodecSupport {
             return toBytes((char[]) o);
         } else if (o instanceof String) {
             return toBytes((String) o);
+        } else if (o instanceof File) {
+            return toBytes((File)o);
+        } else if (o instanceof InputStream) {
+            return toBytes((InputStream) o);
         } else {
             return objectToBytes(o);
         }
@@ -197,6 +201,54 @@ public abstract class CodecSupport {
             return (String) o;
         } else {
             return objectToString(o);
+        }
+    }
+
+    protected byte[] toBytes(File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("File argument cannot be null.");
+        }
+        try {
+            return toBytes(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            String msg = "Unable to acquire InputStream for file [" + file + "]";
+            throw new CodecException(msg, e);
+        }
+    }
+
+    /**
+     * Converts the specified {@link InputStream InputStream} into a byte array.
+     *
+     * @param in the InputStream to convert to a byte array
+     * @return the bytes of the input stream
+     * @throws IllegalArgumentException if the {@code InputStream} argument is {@code null}.
+     * @throws CodecException           if there is any problem reading from the {@link InputStream}.
+     * @since 1.0
+     */
+    protected byte[] toBytes(InputStream in) {
+        if (in == null) {
+            throw new IllegalArgumentException("InputStream argument cannot be null.");
+        }
+        final int BUFFER_SIZE = 512;
+        ByteArrayOutputStream out = new ByteArrayOutputStream(BUFFER_SIZE);
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead;
+        try {
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+            return out.toByteArray();
+        } catch (IOException ioe) {
+            throw new CodecException(ioe);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ignored) {
+            }
+            try {
+                out.close();
+            } catch (IOException ignored) {
+            }
         }
     }
 
