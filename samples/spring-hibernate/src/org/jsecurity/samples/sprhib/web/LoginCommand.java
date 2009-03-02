@@ -16,19 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter;
-
-import javax.servlet.Filter;
+package org.jsecurity.samples.sprhib.web;
 
 /**
- * A PathConfigProcessor processes configuration entries on a per path (per url) basis.
- *
- * @author Les Hazlewood
- * @since 0.9
+ * Command binding object for logging in.
  */
-public interface PathConfigProcessor {
+public class LoginCommand {
 
-    //TODO - complete JavaDoc
+    private String username;
 
-    Filter processPathConfig(String path, String config);
+    private String password;
+
+    private boolean rememberMe;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
+    }
 }

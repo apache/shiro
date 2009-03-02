@@ -16,19 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter;
+package org.jsecurity.samples.sprhib.dao;
 
-import javax.servlet.Filter;
+import org.jsecurity.samples.sprhib.model.User;
+
+import java.util.List;
 
 /**
- * A PathConfigProcessor processes configuration entries on a per path (per url) basis.
- *
- * @author Les Hazlewood
- * @since 0.9
+ * Data Access Object for User related operations.
  */
-public interface PathConfigProcessor {
+public interface UserDAO {
 
-    //TODO - complete JavaDoc
+    User getUser(Long userId);
 
-    Filter processPathConfig(String path, String config);
+    User findUser(String username);
+
+    void createUser(User user);
+
+    List<User> getAllUsers();
+
+    void deleteUser(Long userId);
+
+    void updateUser(User user);
 }

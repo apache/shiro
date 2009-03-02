@@ -55,7 +55,7 @@ public class CookieAttributeTest extends TestCase {
 
         expect(mockRequest.getCookies()).andReturn(cookies);
         //no path set on the cookie, so we expect to retrieve it from the context path
-        expect(mockRequest.getContextPath()).andReturn("/somepath");
+        expect(mockRequest.getContextPath()).andReturn("/somepath").times(2);
         mockResponse.addCookie(cookie);
         replay(mockRequest);
         replay(mockResponse);
@@ -121,4 +121,29 @@ public class CookieAttributeTest extends TestCase {
         });
         return null;
     }
+
+    @Test
+    //Verifies fix for JSEC-64
+    public void testRemoveValueWithNullContext() throws Exception {
+
+        Cookie cookie = new Cookie("test", "blah");
+        cookie.setMaxAge(2351234); //doesn't matter what the time is
+        Cookie[] cookies = new Cookie[]{cookie};
+
+        expect(mockRequest.getCookies()).andReturn(cookies);
+        //no path set on the cookie, so we expect to retrieve it from the context path
+        expect(mockRequest.getContextPath()).andReturn(null).times(2);
+        mockResponse.addCookie(cookie);
+        replay(mockRequest);
+        replay(mockResponse);
+
+        cookieAttribute.removeValue(mockRequest, mockResponse);
+
+        verify(mockRequest);
+        verify(mockResponse);
+
+        assertTrue(cookie.getMaxAge() == 0);
+        assertTrue(cookie.getPath().equals("/"));
+    }
+
 }

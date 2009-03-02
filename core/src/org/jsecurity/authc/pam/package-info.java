@@ -27,6 +27,6 @@
  * <p/>
  * How the <code>ModularRealmAuthenticator</code> actually coordinates this behavior is configurable based on your
  * application's needs using an injectible
- * {@link org.jsecurity.authc.pam.ModularAuthenticationStrategy ModularAuthenticationStrategy}.
+ * {@link AuthenticationStrategy}.
  */
 package org.jsecurity.authc.pam;

@@ -56,9 +56,11 @@
     <target name="compile" depends="compile.src"/> <!-- no test classes, no need to depend on compile.test -->
 
     <target name="war">
-        <war warfile="${dist.war}" webxml="WEB-INF/web.xml">
+            <echo message="DIST DIR: ${dist.dir}"/>
+        <war warfile="${dist.war}" webxml="web/WEB-INF/web.xml">
             <lib dir="${dist.dir}" includes="*.jar"/>
-            <lib dir="${root.dist.dir}" includes="jsecurity.jar"/>
+            <lib dir="${dist.dir}/samples" includes="jsecurity-samples-sprhib*.jar"/>
+            <lib dir="${dist.dir}/modules" includes="*.jar"/>
             <lib dir="${lib.dir}/samples">
                 <include name="jstl-*.jar"/>
                 <include name="standard-*.jar"/>
@@ -72,15 +74,16 @@
             <!-- Hibernate libs: -->
             <lib dir="${lib.dir}/samples">
                 <include name="hibernate-*.jar"/>
+                <include name="persistence-api-*.jar"/>
                 <include name="antlr-*.jar"/>
                 <include name="asm-attrs-*.jar"/>
                 <include name="asm-*.jar"/>
                 <include name="cglib-*.jar"/>
-                <include name="geronimo-jta_1.0.1B_spec.jar"/>
+                <include name="geronimo-jta_1.0.1B_spec-*.jar"/>
                 <include name="dom4j-*.jar"/>
                 <include name="commons-collections-*.jar"/>
             </lib>
-            <fileset dir="${base.dir}" includes="**" excludes="**/web.xml, **/build.xml"/>
+            <fileset dir="${base.dir}/web" includes="**" excludes="**/web.xml, **/build.xml"/>
         </war>
 
     </target>

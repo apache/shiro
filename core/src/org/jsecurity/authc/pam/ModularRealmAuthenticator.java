@@ -46,7 +46,7 @@ import java.util.List;
  * authenticator allows customized behavior for interpreting what happens when interacting with multiple realms - for
  * example, you might require all realms to be successful during the attempt, or perhaps only at least one must be
  * successful, or some other interpretation.  This customized behavior can be performed via the use of a
- * {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy) ModularAuthenticationStrategy}, which
+ * {@link #setAuthenticationStrategy(AuthenticationStrategy) AuthenticationStrategy}, which
  * you can inject as a property of this class.
  *
  * <p>The strategy object provides callback methods that allow you to
@@ -54,13 +54,13 @@ import java.util.List;
  * in a mult-realm scenario, the strategy object is only utilized when more than one Realm is configured.
  *
  * <p>For greater security in a multi-realm configuration, unless overridden, the default implementation is the
- * {@link AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy}
+ * {@link AllSuccessfulStrategy AllSuccessfulAuthenticationStrategy}
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @see #setRealms
- * @see AllSuccessfulModularAuthenticationStrategy
- * @see AtLeastOneSuccessfulModularAuthenticationStrategy
+ * @see AllSuccessfulStrategy
+ * @see AtLeastOneSuccessfulStrategy
  * @since 0.1
  */
 public class ModularRealmAuthenticator extends AbstractAuthenticator {
@@ -81,27 +81,27 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /**
      * The authentication strategy to use during authentication attempts.
      */
-    private ModularAuthenticationStrategy modularAuthenticationStrategy;
+    private AuthenticationStrategy authenticationStrategy;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
     /**
      * Default no-argument constructor which
-     * {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy) enables}  a
-     * {@link org.jsecurity.authc.pam.AllSuccessfulModularAuthenticationStrategy AllSuccessfulModularAuthenticationStrategy}
+     * {@link #setAuthenticationStrategy(AuthenticationStrategy) enables}  a
+     * {@link AllSuccessfulStrategy AllSuccessfulAuthenticationStrategy}
      * by default.
      */
     public ModularRealmAuthenticator() {
-        ModularAuthenticationStrategy strategy = new AllSuccessfulModularAuthenticationStrategy();
-        setModularAuthenticationStrategy(strategy);
+        AuthenticationStrategy strategy = new AllSuccessfulStrategy();
+        setAuthenticationStrategy(strategy);
     }
 
     /**
      * Constructor which initializes this <code>Authenticator</code> with a single realm to use during
      * an authentiation attempt.  Because
-     * this would set a single realm, no {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy)
-     * modularAuthenticationStrategy} would be used during authentication attempts.
+     * this would set a single realm, no {@link #setAuthenticationStrategy(AuthenticationStrategy)
+     * AuthenticationStrategy} would be used during authentication attempts.
      *
      * @param realm the realm to consult during an authentication attempt.
      */
@@ -113,7 +113,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * Constructor which initializes this <code>Authenticator</code> with multiple realms that will be
      * consulted during an authentication attempt, effectively enabling PAM (Pluggable Authentication Module)
      * behavior according to the configured
-     * {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy) ModularAuthenticationStrategy}.
+     * {@link #setAuthenticationStrategy(AuthenticationStrategy) AuthenticationStrategy}.
      *
      * @param realms the realms to consult during an authentication attempt.
      */
@@ -155,29 +155,29 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
     /**
-     * Returns the <tt>ModularAuthenticationStrategy</tt> utilized by this modular authenticator during a multi-realm
+     * Returns the <tt>AuthenticationStrategy</tt> utilized by this modular authenticator during a multi-realm
      * log-in attempt.  This object is only used when two or more Realms are configured.
      *
      * <p>Unless overridden by
-     * the {@link #setModularAuthenticationStrategy(ModularAuthenticationStrategy)} method, the default implementation
-     * is the {@link AllSuccessfulModularAuthenticationStrategy}.
+     * the {@link #setAuthenticationStrategy(AuthenticationStrategy)} method, the default implementation
+     * is the {@link AllSuccessfulStrategy}.
      *
-     * @return the <tt>ModularAuthenticationStrategy</tt> utilized by this modular authenticator during a log-in attempt.
+     * @return the <tt>AuthenticationStrategy</tt> utilized by this modular authenticator during a log-in attempt.
      * @since 0.2
      */
-    public ModularAuthenticationStrategy getModularAuthenticationStrategy() {
-        return modularAuthenticationStrategy;
+    public AuthenticationStrategy getAuthenticationStrategy() {
+        return authenticationStrategy;
     }
 
     /**
-     * Allows overriding the default <tt>ModularAuthenticationStrategy</tt> utilized during multi-realm log-in attempts.
+     * Allows overriding the default <tt>AuthenticationStrategy</tt> utilized during multi-realm log-in attempts.
      * This object is only used when two or more Realms are configured.
      *
-     * @param modularAuthenticationStrategy the strategy implementation to use during log-in attempts.
+     * @param authenticationStrategy the strategy implementation to use during log-in attempts.
      * @since 0.2
      */
-    public void setModularAuthenticationStrategy(ModularAuthenticationStrategy modularAuthenticationStrategy) {
-        this.modularAuthenticationStrategy = modularAuthenticationStrategy;
+    public void setAuthenticationStrategy(AuthenticationStrategy authenticationStrategy) {
+        this.authenticationStrategy = authenticationStrategy;
     }
 
     /*--------------------------------------------
@@ -223,7 +223,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     }
 
     /**
-     * Performs the multi-realm authentication attempt by calling back to a {@link ModularAuthenticationStrategy} object
+     * Performs the multi-realm authentication attempt by calling back to a {@link AuthenticationStrategy} object
      * as each realm is consulted for <tt>AuthenticationInfo</tt> for the specified <tt>token</tt>.
      *
      * @param realms the multiple realms configured on this Authenticator instance.
@@ -233,7 +233,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token) {
 
-        ModularAuthenticationStrategy strategy = getModularAuthenticationStrategy();
+        AuthenticationStrategy strategy = getAuthenticationStrategy();
 
         AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
 

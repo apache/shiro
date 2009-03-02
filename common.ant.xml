@@ -95,9 +95,10 @@
                 <fileset dir="@{srcdir}">
                     <include name="**/*"/>
                     <exclude name="**/*.java"/>
+                    <exclude name="**/*.tld"/>
                 </fileset>
             </copy>
-            <copy todir="@{destdir}" preservelastmodified="true">
+            <copy todir="@{destdir}/META-INF" flatten="true" preservelastmodified="true">
                 <fileset dir="@{srcdir}">
                     <include name="**/*.tld"/>
                 </fileset>
@@ -120,6 +121,7 @@
         <jar jarfile="${dist.jar}">
             <fileset dir="${classes.dir}">
                 <include name="**"/>
+                <exclude name="META-INF/**"/>
             </fileset>
             <metainf dir="${classes.dir}/META-INF">
                 <include name="**"/>
