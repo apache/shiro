@@ -16,19 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter;
+package org.jsecurity.samples.sprhib.web;
 
-import javax.servlet.Filter;
+import org.jsecurity.samples.sprhib.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * A PathConfigProcessor processes configuration entries on a per path (per url) basis.
- *
- * @author Les Hazlewood
- * @since 0.9
+ * Web controller used when loading the home page.
  */
-public interface PathConfigProcessor {
+@Controller
+public class HomeController {
 
-    //TODO - complete JavaDoc
+    private UserService userService;
 
-    Filter processPathConfig(String path, String config);
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @RequestMapping("/home")
+    public void viewHome(Model model) {
+        model.addAttribute( "users", userService.getAllUsers() );
+    }
+
 }

@@ -26,6 +26,7 @@ import static org.jsecurity.util.StringUtils.split;
 import org.jsecurity.web.WebUtils;
 import org.jsecurity.web.servlet.AdviceFilter;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.util.LinkedHashMap;
@@ -76,14 +77,16 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      *
      * @param path   the application context path to match for executing this filter.
      * @param config the specified for <em>this particular filter only</em> for the given <code>path</code>
+     * @return this configured filter.
      */
-    public void processPathConfig(String path, String config) {
+    public Filter processPathConfig(String path, String config) {
         String[] values = null;
         if (config != null) {
             values = split(config);
         }
 
         this.appliedPaths.put(path, values);
+        return this;
     }
 
     /**

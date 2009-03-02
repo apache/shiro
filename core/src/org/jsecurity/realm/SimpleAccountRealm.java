@@ -140,12 +140,16 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         SimpleAccount account = (SimpleAccount) getAuthorizationCache().get(upToken.getUsername());
 
-        if (account.isLocked()) {
-            throw new LockedAccountException("Account [" + account + "] is locked.");
-        }
-        if (account.isCredentialsExpired()) {
-            String msg = "The credentials for account [" + account + "] are expired";
-            throw new ExpiredCredentialsException(msg);
+        if( account != null ) {
+
+            if (account.isLocked()) {
+                throw new LockedAccountException("Account [" + account + "] is locked.");
+            }
+            if (account.isCredentialsExpired()) {
+                String msg = "The credentials for account [" + account + "] are expired";
+                throw new ExpiredCredentialsException(msg);
+            }
+            
         }
 
         return account;

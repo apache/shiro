@@ -274,7 +274,9 @@ public class JdbcRealm extends AuthorizingRealm {
 
             // Retrieve roles and permissions from database
             roleNames = getRoleNamesForUser(conn, username);
-            permissions = getPermissions(conn, username, roleNames);
+            if( permissionsLookupEnabled ) {
+                permissions = getPermissions(conn, username, roleNames);
+            }
 
         } catch (SQLException e) {
             final String message = "There was a SQL error while authorizing user [" + username + "]";

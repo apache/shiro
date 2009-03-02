@@ -205,7 +205,9 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         Map<String, String> pairs = new HashMap<String, String>();
         for (String pairString : keyValuePairs) {
             String[] pair = StringUtils.splitKeyValue(pairString);
-            pairs.put(pair[0].trim(), pair[1].trim());
+            if( pair != null ) {
+                pairs.put(pair[0].trim(), pair[1].trim());
+            }
         }
 
         return pairs;

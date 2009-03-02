@@ -16,19 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter;
+package org.jsecurity.samples.sprhib.web;
 
-import javax.servlet.Filter;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
 
 /**
- * A PathConfigProcessor processes configuration entries on a per path (per url) basis.
- *
- * @author Les Hazlewood
- * @since 0.9
+ * Validator for login.
  */
-public interface PathConfigProcessor {
+public class LoginValidator implements Validator {
+    public boolean supports(Class aClass) {
+        return LoginCommand.class.isAssignableFrom(aClass);
+    }
 
-    //TODO - complete JavaDoc
-
-    Filter processPathConfig(String path, String config);
+    public void validate(Object o, Errors errors) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "error.username.empty", "Please specify a username.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "error.password.empty", "Please specify a password.");
+    }
 }

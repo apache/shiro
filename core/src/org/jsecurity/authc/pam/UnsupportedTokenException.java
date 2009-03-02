@@ -26,7 +26,7 @@ import org.jsecurity.authc.AuthenticationException;
  * supported by one or more configured {@link org.jsecurity.realm.Realm Realm}s.
  *
  * @author Les Hazlewood
- * @see ModularAuthenticationStrategy
+ * @see AuthenticationStrategy
  * @since 0.2
  */
 public class UnsupportedTokenException extends AuthenticationException {

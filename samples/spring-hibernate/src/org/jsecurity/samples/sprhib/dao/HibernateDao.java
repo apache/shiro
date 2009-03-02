@@ -16,19 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter;
+package org.jsecurity.samples.sprhib.dao;
 
-import javax.servlet.Filter;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 /**
- * A PathConfigProcessor processes configuration entries on a per path (per url) basis.
- *
- * @author Les Hazlewood
- * @since 0.9
+ * Convenience superclass for DAOs that contains annotations for injecting the session factory
+ * and accessing the session.
  */
-public interface PathConfigProcessor {
+public abstract class HibernateDao {
 
-    //TODO - complete JavaDoc
+    private SessionFactory sessionFactory;
 
-    Filter processPathConfig(String path, String config);
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    public Session getSession() {
+        return SessionFactoryUtils.getSession(this.sessionFactory, true);
+    }    
+
 }

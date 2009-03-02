@@ -24,14 +24,14 @@ import org.jsecurity.realm.Realm;
 import java.util.Collection;
 
 /**
- * Abstract base implementation for JSecurity's concrete <code>ModularAuthenticationStrategy</code>
+ * Abstract base implementation for JSecurity's concrete <code>AuthenticationStrategy</code>
  * implementations.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AbstractAuthenticationStrategy implements ModularAuthenticationStrategy {
+public abstract class AbstractAuthenticationStrategy implements AuthenticationStrategy {
 
     /**
      * Simply returns <code>new {@link SimpleAuthenticationInfo SimpleAuthenticationInfo}();</code>, which supports

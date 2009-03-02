@@ -170,6 +170,29 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         return path;
     }
 
+
+    /**
+     * Returns the Cookie's calculated path setting.  If {@link Cookie#getPath() path} <tt>null</tt>, then the
+     * <tt>request</tt>'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
+     * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
+     * <p/>
+     * <p>The default is <code>null</code>.</p>
+     *
+     * @return the path to be used as the path when the cookie is created or removed.
+     */
+    public String calculatePath(HttpServletRequest request) {
+        String calculatePath = getPath() != null ? getPath() : request.getContextPath();
+
+        //fix for http://issues.apache.org/jira/browse/JSEC-34:
+        calculatePath = StringUtils.clean(calculatePath);
+        if (calculatePath == null) {
+            calculatePath = ROOT_PATH;
+        }
+        log.trace ("calculatePath: returning=" + calculatePath);
+        return calculatePath;
+    }
+
+
     /**
      * Sets the Cookie's {@link Cookie#getPath() path} setting.  If the argument is <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
@@ -263,7 +286,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
         String name = getName();
         int maxAge = getMaxAge();
-        String path = getPath() != null ? getPath() : request.getContextPath();
+        String path = calculatePath(request);
 
         //fix for http://issues.apache.org/jira/browse/JSEC-34:
         path = StringUtils.clean(path);
@@ -280,6 +303,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         }
 
         response.addCookie(cookie);
+        
         if (log.isTraceEnabled()) {
             log.trace("Added Cookie [" + name + "] to path [" + path + "] with value [" +
                     stringValue + "] to the HttpServletResponse.");
@@ -289,13 +313,17 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     public void removeValue(ServletRequest servletRequest, ServletResponse response) {
         HttpServletRequest request = toHttp(servletRequest);
         Cookie cookie = getCookie(request, getName());
+
         if (cookie != null) {
             cookie.setMaxAge(0);
+            cookie.setValue("forgetme");
             //JSEC-94: Must set the path on the outgoing cookie (some browsers don't retain it from the
             //retrieved cookie?)
-            cookie.setPath(getPath() == null ? request.getContextPath() : getPath());
+            // my testing shows none of these browsers will remove cookie if setPath() is not invoked: FF3, Chrome, IE7, Safari windows
+            cookie.setPath(calculatePath(request));
             cookie.setSecure(isSecure());
             toHttp(response).addCookie(cookie);
+            log.trace("Removed cookie[" + getName() + "] with path [" + calculatePath(request) + "] from HttpServletResponse.");
         }
     }
 }

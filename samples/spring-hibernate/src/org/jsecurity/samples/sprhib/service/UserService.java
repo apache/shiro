@@ -16,19 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.web.filter;
+package org.jsecurity.samples.sprhib.service;
 
-import javax.servlet.Filter;
+import org.jsecurity.samples.sprhib.model.User;
+
+import java.util.List;
 
 /**
- * A PathConfigProcessor processes configuration entries on a per path (per url) basis.
- *
- * @author Les Hazlewood
- * @since 0.9
+ * A service interface for accessing and modifying user data in the system.
  */
-public interface PathConfigProcessor {
+public interface UserService {
 
-    //TODO - complete JavaDoc
+    User getCurrentUser();
 
-    Filter processPathConfig(String path, String config);
+    void createUser(String username, String email, String password);
+
+    List<User> getAllUsers();
+
+    User getUser(Long userId);
+
+    void deleteUser(Long userId);
+
+    void updateUser(User user);
 }

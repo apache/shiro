@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Enable annotation configuration -->
+    <context:annotation-config/>
+
+    <!-- Scan sample packages for Spring annotations -->
+    <context:component-scan base-package="org.jsecurity.samples.sprhib.dao"/>
+    <context:component-scan base-package="org.jsecurity.samples.sprhib.security"/>
+    <context:component-scan base-package="org.jsecurity.samples.sprhib.service"/>
+
+    <!-- Spring AOP auto-proxy creation (required to support JSecurity annotations) -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+
+    <!-- Sample RDBMS data source that would exist in any application.  Sample is just using an in-memory HSQLDB
+         instance.  Change to your application's settings for a real app. -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:jsecurity-spring-hibernate"/>
+        <property name="username" value="sa"/>
+    </bean>
+
+    <!-- Hibernate SessionFactory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- Because we're using an in-memory database for demo purposes (which is lost every time the app
+             shuts down), we have to ensure that the HSQLDB DDL is run each time the app starts.  The
+             DDL is auto-generated based on the *.hbm.xml mapping definitions below. -->
+        <property name="schemaUpdate" value="true"/>
+        <!-- Scan packages for JPA annotations -->
+        <property name="packagesToScan" value="org.jsecurity.samples.sprhib.model"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.jdbc.fetch_size">100</prop>
+                <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</prop>
+            </props>
+        </property>
+        <property name="eventListeners">
+            <map>
+                <entry key="merge">
+                    <bean class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Transaction support beans -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <tx:annotation-driven/>
+
+
+    <!-- =========================================================
+         JSecurity Components
+         ========================================================= -->
+
+    <!-- JSecurity's main business-tier object for web-enabled applications
+         (use org.jsecurity.mgt.DefaultSecurityManager instead when there is no web environment)-->
+    <bean id="securityManager" class="org.jsecurity.web.DefaultWebSecurityManager">
+        <!-- Single realm app (realm configured next, below).  If you have multiple realms, use the 'realms'
+      property instead. -->
+        <property name="realm" ref="sampleRealm"/>
+        <!-- Uncomment this next property if you want heterogenous session access or clusterable/distributable
+             sessions.  The default value is 'http' which uses the Servlet container's HttpSession as the underlying
+             Session implementation.
+        <property name="sessionMode" value="jsecurity"/> -->
+    </bean>
+
+
+    <!-- Post processor that automatically invokes init() and destroy() methods -->
+    <bean id="lifecycleBeanPostProcessor" class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
+
+</beans>

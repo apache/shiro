@@ -19,7 +19,7 @@
 package org.jsecurity.mgt;
 
 import org.jsecurity.authc.*;
-import org.jsecurity.authc.pam.ModularAuthenticationStrategy;
+import org.jsecurity.authc.pam.AuthenticationStrategy;
 import org.jsecurity.authc.pam.ModularRealmAuthenticator;
 import org.jsecurity.util.LifecycleUtils;
 
@@ -89,20 +89,20 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     }
 
     /**
-     * Sets the {@link org.jsecurity.authc.pam.ModularAuthenticationStrategy ModularAuthenticationStrategy} to use
+     * Sets the {@link org.jsecurity.authc.pam.AuthenticationStrategy} to use
      * in multi-realm environments.
      *
-     * @param strategy the <code>ModularAuthenticationStrategy</code> to use in multi-realm environments.
+     * @param strategy the <code>AuthenticationStrategy</code> to use in multi-realm environments.
      */
-    public void setModularAuthenticationStrategy(ModularAuthenticationStrategy strategy) {
+    public void setAuthenticationStrategy(AuthenticationStrategy strategy) {
         if (!(this.authenticator instanceof ModularRealmAuthenticator)) {
-            String msg = "Configuring a ModularAuthenticationStrategy is only applicable when the underlying " +
+            String msg = "Configuring a AuthenticationStrategy is only applicable when the underlying " +
                     "Authenticator implementation is a " + ModularRealmAuthenticator.class.getName() +
                     " implementation.  This SecurityManager has been configured with an Authenticator of type " +
                     this.authenticator.getClass().getName();
             throw new IllegalStateException(msg);
         }
-        ((ModularRealmAuthenticator) this.authenticator).setModularAuthenticationStrategy(strategy);
+        ((ModularRealmAuthenticator) this.authenticator).setAuthenticationStrategy(strategy);
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     public void setAuthenticationListeners(Collection<AuthenticationListener> listeners) {
         assertAuthenticatorListenerSupport();
         if (!(this.authenticator instanceof AuthenticationListenerRegistrar)) {
-            String msg = "Configuring a ModularAuthenticationStrategy is only applicable when the underlying " +
+            String msg = "Configuring a AuthenticationStrategy is only applicable when the underlying " +
                     "Authenticator implementation is a " + AuthenticationListenerRegistrar.class.getName() +
                     " implementation.  This SecurityManager has been configured with an Authenticator of type " +
                     this.authenticator.getClass().getName() + ", which does not implement that interface.";
