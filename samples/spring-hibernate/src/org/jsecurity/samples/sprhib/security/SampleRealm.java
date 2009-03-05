@@ -45,7 +45,7 @@ public class SampleRealm extends AuthorizingRealm {
     protected UserDAO userDAO = null;
 
     public SampleRealm() {
-        setName("DefaultRealm"); //This name must match the name in the User class's getPrincipals() method
+        setName("SampleRealm"); //This name must match the name in the User class's getPrincipals() method
         setCredentialsMatcher(new Sha256CredentialsMatcher());
     }
 
