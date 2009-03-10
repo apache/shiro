@@ -2,14 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.apache.jsecurity.samples</groupId>
-        <artifactId>jsecurity-samples</artifactId>
+        <groupId>org.apache.ki.samples</groupId>
+        <artifactId>ki-samples</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>samples-web</artifactId>
-    <name>Apache JSecurity :: Samples :: Web</name>
+    <name>Apache Ki :: Samples :: Web</name>
     <packaging>war</packaging>
 
     <build>
@@ -33,7 +33,7 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>${jettyVersion}</version>
                 <configuration>
-                    <contextPath>/jsec</contextPath>
+                    <contextPath>/ki</contextPath>
                     <!-- non-standard source locations -->
                     <webAppSourceDirectory>${basedir}/webroot</webAppSourceDirectory>
                     <connectors>
@@ -83,13 +83,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.jsecurity</groupId>
-            <artifactId>jsecurity-core</artifactId>
+            <groupId>org.apache.ki</groupId>
+            <artifactId>ki-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.jsecurity</groupId>
-            <artifactId>jsecurity-web</artifactId>
+            <groupId>org.apache.ki</groupId>
+            <artifactId>ki-web</artifactId>
         </dependency>
 
         <dependency>

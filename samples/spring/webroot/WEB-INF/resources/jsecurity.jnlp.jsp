@@ -43,5 +43,5 @@
         <jar href="slf4j-api.jar"/>
         <property name="jsecurity.session.id" value="${sessionId}"/>
     </resources>
-    <application-desc main-class="org.jsecurity.samples.spring.ui.WebStartDriver"/>
+    <application-desc main-class="org.ki.samples.spring.ui.WebStartDriver"/>
 </jnlp>

@@ -29,11 +29,11 @@
 
     <!-- Enable annotation component scanning and autowiring of web package -->
     <context:annotation-config/>
-    <context:component-scan base-package="org.jsecurity.samples.sprhib.web"/>
+    <context:component-scan base-package="org.ki.samples.sprhib.web"/>
 
     <!-- Required for security annotations to work in this servlet -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
-    <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"/>
+    <bean class="org.ki.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"/>
 
 
     <!-- Enable annotation-based controllers using @Controller annotations -->

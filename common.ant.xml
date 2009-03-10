@@ -131,7 +131,7 @@
                 <attribute name="Implementation-Version" value="${version}"/>
                 <attribute name="${project.name}-Version" value="${version}"/>
                 <!-- Allow use of this JAR as a Java agent -->
-                <!-- <attribute name="Premain-Class" value="org.jsecurity.instrument.InstrumentationSavingAgent" /> -->
+                <!-- <attribute name="Premain-Class" value="org.kiment.InstrumentationSavingAgent" /> -->
             </manifest>
         </jar>
     </target>

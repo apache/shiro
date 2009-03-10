@@ -28,19 +28,19 @@
         <property name="username" value="sa"/>
     </bean>
     <!-- Populates the sample database with sample users and roles. -->
-    <bean id="bootstrapDataPopulator" class="org.jsecurity.samples.spring.BootstrapDataPopulator">
+    <bean id="bootstrapDataPopulator" class="org.ki.samples.spring.BootstrapDataPopulator">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <!-- Simulated business-tier "Manager", not JSecurity related, just an example -->
-    <bean id="sampleManager" class="org.jsecurity.samples.spring.DefaultSampleManager"/>
+    <bean id="sampleManager" class="org.ki.samples.spring.DefaultSampleManager"/>
 
     <!-- =========================================================
          JSecurity Core Components - Not Spring Specific
          ========================================================= -->
     <!-- JSecurity's main business-tier object for web-enabled applications
-         (use org.jsecurity.mgt.DefaultSecurityManager instead when there is no web environment)-->
-    <bean id="securityManager" class="org.jsecurity.web.DefaultWebSecurityManager">
+         (use org.kifaultSecurityManager instead when there is no web environment)-->
+    <bean id="securityManager" class="org.ki.web.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
         <property name="realm" ref="jdbcRealm"/>
         <property name="sessionMode" value="jsecurity"/>
@@ -49,12 +49,12 @@
     <!-- Used by the SecurityManager to access security data (users, roles, etc).
          Many other realm implementations can be used too (PropertiesRealm,
          LdapRealm, etc. -->
-    <bean id="jdbcRealm" class="org.jsecurity.realm.jdbc.JdbcRealm">
+    <bean id="jdbcRealm" class="org.ki.realm.jdbc.JdbcRealm">
         <property name="dataSource" ref="dataSource"/>
         <property name="credentialsMatcher">
             <!-- The 'bootstrapDataPopulator' Sha256 hashes the password
                  (using the username as the salt) then base64 encodes it: -->
-            <bean class="org.jsecurity.authc.credential.Sha256CredentialsMatcher">
+            <bean class="org.ki.authc.credential.Sha256CredentialsMatcher">
                 <!-- true means hex encoded, false means base64 encoded -->
                 <property name="storedCredentialsHexEncoded" value="false"/>
                 <!-- We salt the password using the username, the most common practice: -->
@@ -72,19 +72,19 @@
             definition and
          2) even know which JSecurity objects require these methods to be
             called. -->
-    <bean id="lifecycleBeanPostProcessor" class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
+    <bean id="lifecycleBeanPostProcessor" class="org.ki.spring.LifecycleBeanPostProcessor"/>
 
     <!-- Enable JSecurity Annotations for Spring-configured beans.  Only run after
          the lifecycleBeanProcessor has run: -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
           depends-on="lifecycleBeanPostProcessor"/>
-    <bean class="org.jsecurity.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+    <bean class="org.ki.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
     <!-- Secure Spring remoting:  Ensure any Spring Remoting method invocations can be associated
          with a Subject for security checks. -->
-    <bean id="secureRemoteInvocationExecutor" class="org.jsecurity.spring.remoting.SecureRemoteInvocationExecutor">
+    <bean id="secureRemoteInvocationExecutor" class="org.ki.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
 

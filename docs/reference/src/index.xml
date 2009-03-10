@@ -143,9 +143,9 @@
         &sessions;
         &cryptography;
     </part>
-    <!-- <part id="jsecurity-web">
+    <!-- <part id="ki-web">
      <title>Web Support</title>
-     <partintro id="jsecurity-web-intro">
+     <partintro id="ki-web-intro">
        <para>
          This part of the reference documentation covers
                  JSecurity's web support, specifically using JSecurity in
@@ -184,9 +184,9 @@
      &web-integration;
      &portlet;
    </part>
-   <part id="jsecurity-integration">
+   <part id="ki-integration">
      <title>Integration</title>
-     <partintro id="jsecurity-integration-intro">
+     <partintro id="ki-integration-intro">
        <para>
          This part of the reference documentation covers JSecurity's
                  integration with other technologies that might be

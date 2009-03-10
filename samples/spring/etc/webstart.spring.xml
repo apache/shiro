@@ -25,18 +25,18 @@
 <beans>
 
   <bean id="webStartView"
-        class="org.jsecurity.samples.spring.ui.WebStartView">
+        class="org.ki.samples.spring.ui.WebStartView">
     <property name="sampleManager" ref="sampleManager"/>
   </bean>
 
   <bean id="sampleManager"
         class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
     <property name="serviceUrl" value="http://localhost:8080/jsecurity-spring/remoting/sampleManager"/>
-    <property name="serviceInterface" value="org.jsecurity.samples.spring.SampleManager"/>
+    <property name="serviceInterface" value="org.ki.samples.spring.SampleManager"/>
     <property name="remoteInvocationFactory" ref="secureRemoteInvocationFactory"/>
   </bean>
 
   <bean id="secureRemoteInvocationFactory"
-        class="org.jsecurity.spring.remoting.SecureRemoteInvocationFactory"/>
+        class="org.ki.spring.remoting.SecureRemoteInvocationFactory"/>
 
 </beans>

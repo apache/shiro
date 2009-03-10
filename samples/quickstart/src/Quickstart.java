@@ -19,11 +19,11 @@
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.authc.*;
-import org.jsecurity.mgt.DefaultSecurityManager;
-import org.jsecurity.session.Session;
-import org.jsecurity.subject.Subject;
+import org.ki.SecurityUtils;
+import org.ki.authc.*;
+import org.ki.mgt.DefaultSecurityManager;
+import org.ki.session.Session;
+import org.ki.subject.Subject;
 
 /**
  * @author Les Hazlewood

@@ -20,7 +20,7 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-    <info organisation="org.jsecurity" module="jsecurity" revision="0.9.0" status="snapshot"
+    <info organisation="org.ki" module="jsecurity" revision="0.9.0" status="snapshot"
           publication="20080814234001">
         <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
         <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
@@ -87,7 +87,7 @@
         <dependency org="org.easymock" name="easymockclassextension" rev="2.3" transitive="false" conf="test"/>
         <dependency org="junit" name="junit" rev="4.4" transitive="false" conf="test"/>
 
-        <dependency org="org.jsecurity" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
+        <dependency org="org.ki" name="docbook-libs" rev="1.0.0" transitive="false" conf="docbook">
             <artifact name="docbook-libs" type="zip" ext="zip"/>
         </dependency>
 
