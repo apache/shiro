@@ -231,16 +231,16 @@
             </bottom>
             <classpath refid="all.libs"/>
             <!-- <packageset dir="${base.dir}/core/src">
-                <include name="org/jsecurity/**"/>
+                <include name="org/ki/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/ehcache/src">
-                <include name="org/jsecurity/**"/>
+                <include name="org/ki/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/spring/src">
-                <include name="org/jsecurity/**"/>
+                <include name="org/ki/**"/>
             </packageset>
             <packageset dir="${root.base.dir}/support/quartz/src">
-                <include name="org/jsecurity/**"/>
+                <include name="org/ki/**"/>
             </packageset> -->
             <link href="http://java.sun.com/j2se/1.5/docs/api"/>
             <link href="http://java.sun.com/j2ee/1.4/docs/api"/>

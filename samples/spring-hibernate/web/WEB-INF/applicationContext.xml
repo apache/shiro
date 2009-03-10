@@ -32,9 +32,9 @@
     <context:annotation-config/>
 
     <!-- Scan sample packages for Spring annotations -->
-    <context:component-scan base-package="org.jsecurity.samples.sprhib.dao"/>
-    <context:component-scan base-package="org.jsecurity.samples.sprhib.security"/>
-    <context:component-scan base-package="org.jsecurity.samples.sprhib.service"/>
+    <context:component-scan base-package="org.ki.samples.sprhib.dao"/>
+    <context:component-scan base-package="org.ki.samples.sprhib.security"/>
+    <context:component-scan base-package="org.ki.samples.sprhib.service"/>
 
     <!-- Spring AOP auto-proxy creation (required to support JSecurity annotations) -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
@@ -56,7 +56,7 @@
              DDL is auto-generated based on the *.hbm.xml mapping definitions below. -->
         <property name="schemaUpdate" value="true"/>
         <!-- Scan packages for JPA annotations -->
-        <property name="packagesToScan" value="org.jsecurity.samples.sprhib.model"/>
+        <property name="packagesToScan" value="org.ki.samples.sprhib.model"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
@@ -86,19 +86,19 @@
          ========================================================= -->
 
     <!-- JSecurity's main business-tier object for web-enabled applications
-         (use org.jsecurity.mgt.DefaultSecurityManager instead when there is no web environment)-->
-    <bean id="securityManager" class="org.jsecurity.web.DefaultWebSecurityManager">
+         (use org.kifaultSecurityManager instead when there is no web environment)-->
+    <bean id="securityManager" class="org.ki.web.DefaultWebSecurityManager">
         <!-- Single realm app (realm configured next, below).  If you have multiple realms, use the 'realms'
       property instead. -->
         <property name="realm" ref="sampleRealm"/>
         <!-- Uncomment this next property if you want heterogenous session access or clusterable/distributable
              sessions.  The default value is 'http' which uses the Servlet container's HttpSession as the underlying
              Session implementation.
-        <property name="sessionMode" value="jsecurity"/> -->
+        <property name="sessionMode" value="ki"/> -->
     </bean>
 
 
     <!-- Post processor that automatically invokes init() and destroy() methods -->
-    <bean id="lifecycleBeanPostProcessor" class="org.jsecurity.spring.LifecycleBeanPostProcessor"/>
+    <bean id="lifecycleBeanPostProcessor" class="org.ki.spring.LifecycleBeanPostProcessor"/>
 
 </beans>

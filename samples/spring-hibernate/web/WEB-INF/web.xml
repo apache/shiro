@@ -61,7 +61,7 @@
 
     <filter>
         <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.jsecurity.spring.SpringJSecurityFilter</filter-class>
+        <filter-class>org.ki.spring.SpringJSecurityFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
@@ -76,7 +76,7 @@
 
                 [filters]
                 # Override the authentication filter to pass thru so we can handle login logic in our controller
-                authc = org.jsecurity.web.filter.authc.PassThruAuthenticationFilter
+                authc = org.ki.web.filter.authc.PassThruAuthenticationFilter
                 jsecurity.loginUrl = /s/login
                 jsecurity.unauthorizedUrl = /unauthorized.jsp
                 authc.successUrl = /s/home

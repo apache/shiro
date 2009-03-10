@@ -2,14 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.apache.jsecurity</groupId>
-        <artifactId>jsecurity-root</artifactId>
+        <groupId>org.apache.ki</groupId>
+        <artifactId>ki-root</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jsecurity-spring</artifactId>
-    <name>Apache JSecurity :: Support :: Spring</name>
+    <artifactId>ki-spring</artifactId>
+    <name>Apache Ki :: Support :: Spring</name>
     <packaging>jar</packaging>
 
     <build/>
@@ -23,13 +23,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.jsecurity</groupId>
-            <artifactId>jsecurity-core</artifactId>
+            <groupId>org.apache.ki</groupId>
+            <artifactId>ki-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.jsecurity</groupId>
-            <artifactId>jsecurity-web</artifactId>
+            <groupId>org.apache.ki</groupId>
+            <artifactId>ki-web</artifactId>
         </dependency>
 
         <dependency>

@@ -24,7 +24,7 @@
 
     <filter>
         <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.jsecurity.web.servlet.JSecurityFilter</filter-class>
+        <filter-class>org.ki.web.servlet.JSecurityFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
@@ -36,7 +36,7 @@
 
                 [main]
 
-                demoRealm = org.jsecurity.realm.text.PropertiesRealm
+                demoRealm = org.ki.realm.text.PropertiesRealm
 
                 [filters]
                 jsecurity.loginUrl = /login.jsp
