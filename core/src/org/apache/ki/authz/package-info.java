@@ -35,4 +35,4 @@
  * Although it is possible for applications to implement this and other interfaces directly, it is not
  * recommended. Apache Ki already has base implementations which should be suitable for 99% of deployments.
  */
-package org.ki.authz;
+package org.apache.ki.authz;

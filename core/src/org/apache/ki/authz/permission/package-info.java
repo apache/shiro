@@ -24,4 +24,4 @@
  * it plays an important part in many of Apache Ki's {@link org.apache.ki.realm.Realm Realm} implementations
  * and AOP support.
  */
-package org.ki.authz.permission;
+package org.apache.ki.authz.permission;

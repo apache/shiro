@@ -87,7 +87,7 @@ even after a JVM restart.  -->
    diskPersistent="true"
    diskExpiryThreadIntervalSeconds="600"/> -->
 
-    <cache name="org.ki.realm.text.PropertiesRealm-0-accounts"
+    <cache name="org.apache.ki.realm.text.PropertiesRealm-0-accounts"
            maxElementsInMemory="1000"
            eternal="true"
            overflowToDisk="true"/>

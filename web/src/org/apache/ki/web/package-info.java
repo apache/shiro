@@ -19,4 +19,4 @@
 /**
  * Framework support for any web-enabled application.
  */
-package org.ki.web;
+package org.apache.ki.web;

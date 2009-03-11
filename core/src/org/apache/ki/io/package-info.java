@@ -19,4 +19,4 @@
 /**
  * Support for reading and writing (input/output) raw data from multiple resource locations.
  */
-package org.ki.io;
+package org.apache.ki.io;

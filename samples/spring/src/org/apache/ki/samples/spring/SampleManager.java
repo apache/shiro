@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring;
+package org.apache.ki.samples.spring;
 
 import org.apache.ki.authz.annotation.RequiresPermissions;
 import org.apache.ki.authz.annotation.RequiresRoles;

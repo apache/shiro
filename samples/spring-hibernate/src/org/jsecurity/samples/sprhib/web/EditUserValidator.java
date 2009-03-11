@@ -18,7 +18,7 @@
  */
 package org.jsecurity.samples.sprhib.web;
 
-import org.jsecurity.util.StringUtils;
+import org.apache.ki.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;

@@ -20,4 +20,4 @@
  * <a href="http://ehcache.sourceforge.net" target="_top">Ehcache</a>-based implementations of Apache Ki's
  * cache interfaces.
  */
-package org.ki.cache.ehcache;
+package org.apache.ki.cache.ehcache;

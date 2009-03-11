@@ -18,4 +18,4 @@
  */
 /**
  * Support for acquiring Realms from JNDI, particularly useful for configuring Apache Ki in JEE or EJB environments. */
-package org.ki.realm.jndi;
+package org.apache.ki.realm.jndi;

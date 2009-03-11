@@ -18,8 +18,8 @@
  */
 package org.jsecurity.samples.sprhib.service;
 
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.crypto.hash.Sha256Hash;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.crypto.hash.Sha256Hash;
 import org.jsecurity.samples.sprhib.dao.UserDAO;
 import org.jsecurity.samples.sprhib.model.User;
 import org.springframework.beans.factory.annotation.Autowired;

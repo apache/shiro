@@ -19,4 +19,4 @@
 /**
  * Realms that acquire security data from a Microsoft Active Directory.
  */
-package org.ki.realm.activedirectory;
+package org.apache.ki.realm.activedirectory;

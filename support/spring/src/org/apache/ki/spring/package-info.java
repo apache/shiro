@@ -20,4 +20,4 @@
  * <a href="http://www.springframework.org" target="_top">Spring Application Framework</a> support for enabling
  * Apache Ki in spring applications.
  */
-package org.ki.spring;
+package org.apache.ki.spring;

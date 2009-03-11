@@ -18,7 +18,7 @@
  */
 /**
  * Support for validating <em>credentials</em> (such as passwords or X509 certificates) during
- * authentication via the {@link org.ki.authc.credential.CredentialsMatcher CredentialsMatcher}
+ * authentication via the {@link org.apache.ki.authc.credential.CredentialsMatcher CredentialsMatcher}
  * interface and its supporting implementations.
  */
-package org.ki.authc.credential;
+package org.apache.ki.authc.credential;

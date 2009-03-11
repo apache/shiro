@@ -18,15 +18,15 @@
  */
 package org.jsecurity.samples.sprhib.security;
 
-import org.jsecurity.authc.*;
-import org.jsecurity.authc.credential.Sha256CredentialsMatcher;
-import org.jsecurity.authz.AuthorizationInfo;
-import org.jsecurity.authz.SimpleAuthorizationInfo;
-import org.jsecurity.realm.AuthorizingRealm;
+import org.apache.ki.authc.*;
+import org.apache.ki.authc.credential.Sha256CredentialsMatcher;
+import org.apache.ki.authz.AuthorizationInfo;
+import org.apache.ki.authz.SimpleAuthorizationInfo;
+import org.apache.ki.realm.AuthorizingRealm;
 import org.jsecurity.samples.sprhib.dao.UserDAO;
 import org.jsecurity.samples.sprhib.model.Role;
 import org.jsecurity.samples.sprhib.model.User;
-import org.jsecurity.subject.PrincipalCollection;
+import org.apache.ki.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

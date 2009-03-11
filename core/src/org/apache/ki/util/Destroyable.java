@@ -23,7 +23,7 @@ package org.apache.ki.util;
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @see org.ki.spring.LifecycleBeanPostProcessor
+ * @see org.apache.ki.spring.LifecycleBeanPostProcessor
  * @since 0.2
  */
 public interface Destroyable {

@@ -33,4 +33,4 @@
  * Also because of this freedom, Apache Ki naturally supports Single Sign-On for any application as well, using
  * this heterogeneous session support.
  */
-package org.ki.session;
+package org.apache.ki.session;

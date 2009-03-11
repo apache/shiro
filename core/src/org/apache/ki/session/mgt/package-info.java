@@ -19,4 +19,4 @@
 /**
  * {@link org.apache.ki.session.mgt.SessionManager SessionManager} components supporting enterprise session management.
  */
-package org.ki.session.mgt;
+package org.apache.ki.session.mgt;

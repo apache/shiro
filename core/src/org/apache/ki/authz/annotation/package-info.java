@@ -20,4 +20,4 @@
  * Annotations used to restrict which classes, instances, or methods may be accessed or invoked depending on the
  * caller's access abilities or authentication state.
  */
-package org.ki.authz.annotation;
+package org.apache.ki.authz.annotation;

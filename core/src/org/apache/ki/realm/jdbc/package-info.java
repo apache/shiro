@@ -20,4 +20,4 @@
  * Realms that acquire security data from an RDBMS (Relational Database Management System) using the 
  * JDBC API.
  */
-package org.ki.realm.jdbc;
+package org.apache.ki.realm.jdbc;

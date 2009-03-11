@@ -17,9 +17,9 @@
  * under the License.
  */
 
-import org.jsecurity.SecurityUtils;
-import org.jsecurity.config.IniConfiguration;
-import org.jsecurity.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.config.IniConfiguration;
+import org.apache.ki.subject.Subject;
 
 /**
  * @author Les Hazlewood
@@ -30,7 +30,7 @@ public class Standalone {
     public static void main(String[] args) {
 
         IniConfiguration config = new IniConfiguration();
-        //the following call will automatically use jsecurity.ini at the root of the classpath:
+        //the following call will automatically use ki.ini at the root of the classpath:
         config.init();
 
         //This is for Standalone (single-VM) applications that don't use a configuration container (Spring, JBoss, etc)

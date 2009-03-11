@@ -16,20 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring.ui;
+package org.apache.ki.samples.spring.ui;
 
-import org.apache.ki.authz.AuthorizationException;
-import org.ki.samples.spring.DefaultSampleManager;
-import org.ki.samples.spring.SampleManager;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.ClassPathResource;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.*;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.ClassPathResource;
+
+import org.apache.ki.authz.AuthorizationException;
+import org.apache.ki.samples.spring.DefaultSampleManager;
+import org.apache.ki.samples.spring.SampleManager;
 
 
 /**

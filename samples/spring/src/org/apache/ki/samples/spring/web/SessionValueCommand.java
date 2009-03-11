@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring.web;
+package org.apache.ki.samples.spring.web;
 
 /**
  * Command object used to bind parameters when submitting a value to be

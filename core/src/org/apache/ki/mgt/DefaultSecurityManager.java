@@ -67,12 +67,12 @@ import org.apache.ki.util.ThreadContext;
  * instance yourself via the {@link #setRememberMeManager(RememberMeManager) setRememberMeManager}
  * mutator.  However if you're reading this JavaDoc with the
  * expectation of operating in a Web environment, take a look at the
- * {@link org.ki.web.DefaultWebSecurityManager DefaultWebSecurityManager} implementation, which
+ * {@link org.apache.ki.web.DefaultWebSecurityManager DefaultWebSecurityManager} implementation, which
  * <em>does</em> support <tt>RememberMe</tt> services by default at startup.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @see org.ki.web.DefaultWebSecurityManager
+ * @see org.apache.ki.web.DefaultWebSecurityManager
  * @since 0.2
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {

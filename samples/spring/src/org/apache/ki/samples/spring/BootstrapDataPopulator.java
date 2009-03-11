@@ -16,15 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring;
+package org.apache.ki.samples.spring;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.crypto.hash.Sha256Hash;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.crypto.hash.Sha256Hash;
 
 /**
  * A data populator that creates a set of security tables and test data that can be used by the

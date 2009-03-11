@@ -24,4 +24,4 @@
  * security operations, and it is the handle to any accessible user security data.  All single-user
  * authentication, authorization and session operations are performed via a <code>Subject</code> instance.
  */
-package org.ki.subject;
+package org.apache.ki.subject;

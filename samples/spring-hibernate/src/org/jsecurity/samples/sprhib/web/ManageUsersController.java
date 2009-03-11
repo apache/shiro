@@ -18,7 +18,7 @@
  */
 package org.jsecurity.samples.sprhib.web;
 
-import org.jsecurity.authz.annotation.RequiresPermissions;
+import org.apache.ki.authz.annotation.RequiresPermissions;
 import org.jsecurity.samples.sprhib.model.User;
 import org.jsecurity.samples.sprhib.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

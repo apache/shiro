@@ -20,4 +20,4 @@
  * Contains AOP implementation support classes specifically used for authorization operations, particularly supporting
  * AOP Method Interceptors and JSR-175 metadata Annotations.
  */
-package org.ki.authz.aop;
+package org.apache.ki.authz.aop;
