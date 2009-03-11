@@ -16,26 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.spring;
+package org.apache.ki.spring;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.realm.Realm;
-
-import org.apache.ki.KiException;
-
-import org.apache.ki.mgt.SecurityManager;
+import java.util.Collection;
+import java.util.Map;
+import javax.servlet.ServletContext;
 
 import org.ki.web.config.IniWebConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.ServletContext;
-import java.util.Collection;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import org.apache.ki.KiException;
 import org.apache.ki.mgt.RealmSecurityManager;
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.realm.Realm;
 
 
 /**

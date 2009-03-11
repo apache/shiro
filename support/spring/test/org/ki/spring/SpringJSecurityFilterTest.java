@@ -18,16 +18,19 @@
  */
 package org.ki.spring;
 
-import static org.easymock.EasyMock.*;
-import org.apache.ki.mgt.SecurityManager;
-import org.ki.web.servlet.JSecurityFilter;
-import org.junit.Test;
-import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+
+import static org.easymock.EasyMock.*;
+import org.junit.Test;
+import org.ki.web.servlet.JSecurityFilter;
+import org.springframework.web.context.WebApplicationContext;
+
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.spring.SpringIniWebConfiguration;
+import org.apache.ki.spring.SpringJSecurityFilter;
 
 
 /**

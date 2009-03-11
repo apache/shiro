@@ -72,19 +72,19 @@
             definition and
          2) even know which JSecurity objects require these methods to be
             called. -->
-    <bean id="lifecycleBeanPostProcessor" class="org.ki.spring.LifecycleBeanPostProcessor"/>
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.ki.spring.LifecycleBeanPostProcessor"/>
 
     <!-- Enable JSecurity Annotations for Spring-configured beans.  Only run after
          the lifecycleBeanProcessor has run: -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
           depends-on="lifecycleBeanPostProcessor"/>
-    <bean class="org.ki.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+    <bean class="org.apache.ki.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
     <!-- Secure Spring remoting:  Ensure any Spring Remoting method invocations can be associated
          with a Subject for security checks. -->
-    <bean id="secureRemoteInvocationExecutor" class="org.ki.spring.remoting.SecureRemoteInvocationExecutor">
+    <bean id="secureRemoteInvocationExecutor" class="org.apache.ki.spring.remoting.SecureRemoteInvocationExecutor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
 

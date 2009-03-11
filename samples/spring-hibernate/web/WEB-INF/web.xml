@@ -61,7 +61,7 @@
 
     <filter>
         <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.ki.spring.SpringJSecurityFilter</filter-class>
+        <filter-class>org.apache.ki.spring.SpringJSecurityFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>

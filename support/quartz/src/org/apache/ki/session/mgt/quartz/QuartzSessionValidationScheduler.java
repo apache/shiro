@@ -18,17 +18,18 @@
  */
 package org.apache.ki.session.mgt.quartz;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.session.mgt.DefaultSessionManager;
-import org.apache.ki.session.mgt.SessionValidationScheduler;
-import org.apache.ki.session.mgt.ValidatingSessionManager;
-
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.session.mgt.DefaultSessionManager;
+import org.apache.ki.session.mgt.SessionValidationScheduler;
+import org.apache.ki.session.mgt.ValidatingSessionManager;
 
 
 /**

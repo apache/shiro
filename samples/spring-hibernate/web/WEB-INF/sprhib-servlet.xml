@@ -33,7 +33,7 @@
 
     <!-- Required for security annotations to work in this servlet -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
-    <bean class="org.ki.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"/>
+    <bean class="org.apache.ki.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"/>
 
 
     <!-- Enable annotation-based controllers using @Controller annotations -->

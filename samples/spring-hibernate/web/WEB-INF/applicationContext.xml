@@ -99,6 +99,6 @@
 
 
     <!-- Post processor that automatically invokes init() and destroy() methods -->
-    <bean id="lifecycleBeanPostProcessor" class="org.ki.spring.LifecycleBeanPostProcessor"/>
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.ki.spring.LifecycleBeanPostProcessor"/>
 
 </beans>

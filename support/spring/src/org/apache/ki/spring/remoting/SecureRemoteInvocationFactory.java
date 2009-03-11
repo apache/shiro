@@ -16,19 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.spring.remoting;
+package org.apache.ki.spring.remoting;
+
+import java.io.Serializable;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.SecurityUtils;
-import org.apache.ki.session.Session;
-import org.apache.ki.subject.Subject;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
 
-import java.io.Serializable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.Subject;
 
 
 /**

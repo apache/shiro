@@ -16,17 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.spring.remoting;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.mgt.SecurityManager;
-import org.apache.ki.util.ThreadContext;
-import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
-import org.springframework.remoting.support.RemoteInvocation;
+package org.apache.ki.spring.remoting;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+
+import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
+import org.springframework.remoting.support.RemoteInvocation;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.util.ThreadContext;
 
 
 /**
