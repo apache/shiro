@@ -1,4 +1,4 @@
-Apache JSecurity
+Apache Apache Ki
 Copyright 2008 The Apache Software Foundation
 
 This product includes software developed at
@@ -9,7 +9,7 @@ implementation based on initial ideas from Dr. Hienz Kabutz's
 public posted version found here:
     http://www.javaspecialists.eu/archive/Issue015.html)
 with continued modifications.  Per Heinz Kabutz: "you have my
-express permission to publish it in Apache JSecurity - please
+express permission to publish it in Apache Apache Ki - please
 leave a link in the source code pointing to my website:
     http://www.javaspecialists.eu
 

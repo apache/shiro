@@ -38,8 +38,8 @@ import org.apache.ki.web.WebUtils;
  * Servlet container's HttpSession.
  * <p/>
  * Despite its name, this implementation <em>does not</em> itself manage Sessions since the Servlet container
- * provides the actual management support.  This class mainly exists to 'impersonate' a regular JSecurity
- * <tt>SessionManager</tt> so it can be pluggable into a normal JSecurity configuration in a pure web application.
+ * provides the actual management support.  This class mainly exists to 'impersonate' a regular Apache Ki
+ * <tt>SessionManager</tt> so it can be pluggable into a normal Apache Ki configuration in a pure web application.
  * <p/>
  * Note that because this implementation relies on the {@link HttpSession HttpSession}, it is only functional in a
  * servlet container.  I.e. it is <em>NOT</em> capable of supporting Sessions any clients other than

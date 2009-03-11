@@ -33,12 +33,12 @@ import org.apache.ki.util.Destroyable;
 import org.apache.ki.util.Initializable;
 
 /**
- * JSecurity <code>CacheManager</code> implementation utilizing the Ehcache framework for all cache functionality.
+ * Apache Ki <code>CacheManager</code> implementation utilizing the Ehcache framework for all cache functionality.
  * <p/>
  * This class can {@link #setCacheManager(net.sf.ehcache.CacheManager) accept} a manually configured
  * {@link net.sf.ehcache.CacheManager net.sf.ehcache.CacheManager} instance,
  * or an <code>ehcache.xml</code> path location can be specified instead and one will be constructed. If neither are
- * specified, JSecurity's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
+ * specified, Apache Ki's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
  *
  * <p>This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.</p>
@@ -178,7 +178,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
                 }
                 if (name.equals(DEFAULT_ACTIVE_SESSIONS_CACHE_NAME)) {
                     if (log.isInfoEnabled()) {
-                        log.info("Creating " + DEFAULT_ACTIVE_SESSIONS_CACHE_NAME + " cache with default JSecurity " +
+                        log.info("Creating " + DEFAULT_ACTIVE_SESSIONS_CACHE_NAME + " cache with default Apache Ki " +
                                 "session cache settings.");
                     }
                     cache = buildDefaultActiveSessionsCache();
@@ -204,10 +204,10 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     }
 
     /**
-     * Builds the default cache instance to use for JSecurity's Session Cache when enterprise Sessions are
+     * Builds the default cache instance to use for Apache Ki's Session Cache when enterprise Sessions are
      * enabled.
      *
-     * @return the default cache instance to use for JSecurity's Session Cache when enterprise Sessions are
+     * @return the default cache instance to use for Apache Ki's Session Cache when enterprise Sessions are
      *         enabled.
      * @throws CacheException if there is a problem constructing the Cache instance.
      */
@@ -233,8 +233,8 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Ehcache will look for an <tt>ehcache.xml</tt> file at the root of the classpath.  If one is not found,
      * Ehcache will use its own failsafe configuration file.</p>
      *
-     * <p>Because JSecurity cannot use the failsafe defaults (failsafe expunges cached objects after 2 minutes,
-     * something not desireable for JSecurity sessions), this class manages an internal default configuration for
+     * <p>Because Apache Ki cannot use the failsafe defaults (failsafe expunges cached objects after 2 minutes,
+     * something not desireable for Apache Ki sessions), this class manages an internal default configuration for
      * this case.</p>
      *
      * @throws org.apache.ki.cache.CacheException

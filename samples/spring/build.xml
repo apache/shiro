@@ -52,7 +52,7 @@
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="grabLogo" description="Ensures the JSecurity logo is available to the jar task for inclusion in the jar">
+    <target name="grabLogo" description="Ensures the Apache Ki logo is available to the jar task for inclusion in the jar">
         <copy todir="${classes.dir}">
             <fileset dir="webroot">
                 <include name="logo.png"/>

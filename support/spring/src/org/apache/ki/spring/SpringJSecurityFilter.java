@@ -18,16 +18,16 @@
  */
 package org.apache.ki.spring;
 
-import org.apache.ki.web.servlet.JSecurityFilter;
+import org.apache.ki.web.servlet.Apache KiFilter;
 
 /**
- * Extension of JSecurityFilter that uses {@link SpringIniWebConfiguration} to configure JSecurity in a Spring web
+ * Extension of Apache KiFilter that uses {@link SpringIniWebConfiguration} to configure Apache Ki in a Spring web
  * environment.
  * <p/>
  * Using this class in web.xml essentially enables the following:
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
+ * &lt;filter-name&gt;Apache KiFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.jsecurity.web.servlet.Apache KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;
  *     &lt;param-name&gt;configClassName&lt;/param-name&gt;
  *     &lt;param-value&gt;org.jsecurity.spring.SpringIniWebConfiguration&lt;param-value&gt;
@@ -46,7 +46,7 @@ import org.apache.ki.web.servlet.JSecurityFilter;
  * @author Jeremy Haile
  * @since 0.2
  */
-public class SpringJSecurityFilter extends JSecurityFilter {
+public class SpringApache KiFilter extends Apache KiFilter {
 
     //TODO - complete JavaDoc
 
@@ -54,7 +54,7 @@ public class SpringJSecurityFilter extends JSecurityFilter {
      * Default constructor, merely calls
      * <code>{@link #configClassName this.configClassName} = {@link SpringIniWebConfiguration SpringIniWebConfiguration}.class.getName()}</code>.
      */
-    public SpringJSecurityFilter() {
+    public SpringApache KiFilter() {
         this.configClassName = SpringIniWebConfiguration.class.getName();
     }
 }

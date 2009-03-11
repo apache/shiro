@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Components for encoding and decoding of data across multiple formats, especially useful in JSecurity's
+ * Components for encoding and decoding of data across multiple formats, especially useful in Apache Ki's
  * cryptography and web functionality.
  */
 package org.ki.codec;

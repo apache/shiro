@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * The Spring/Hibernate sample application's one and only configured JSecurity Realm.
+ * The Spring/Hibernate sample application's one and only configured Apache Ki Realm.
  *
  * <p>Because a Realm is really just a security-specific DAO, we could have just made Hibernate calls directly
  * in the implementation and named it a 'HibernateRealm' or something similar.</p>

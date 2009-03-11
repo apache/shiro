@@ -31,9 +31,9 @@ import org.apache.ki.util.Initializable;
 
 /**
  * <p>Bean post processor for Spring that automatically calls the <tt>init()</tt> and/or
- * <tt>destroy()</tt> methods on JSecurity objects that implement the {@link org.apache.ki.util.Initializable}
+ * <tt>destroy()</tt> methods on Apache Ki objects that implement the {@link org.apache.ki.util.Initializable}
  * or {@link org.apache.ki.util.Destroyable} interfaces, respectfully.  This post processor makes it easier
- * to configure JSecurity beans in Spring, since the user never has to worry about whether or not if they
+ * to configure Apache Ki beans in Spring, since the user never has to worry about whether or not if they
  * have to specify init-method and destroy-method bean attributes.</p>
  *
  * <p><b>Warning: This post processor has no way to determine if <tt>init()</tt> or <tt>destroy()</tt> have

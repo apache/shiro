@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Spring MVC controller responsible for rendering the JSecurity Spring sample
+ * Spring MVC controller responsible for rendering the Apache Ki Spring sample
  * application index page.
  *
  * @author Jeremy Haile

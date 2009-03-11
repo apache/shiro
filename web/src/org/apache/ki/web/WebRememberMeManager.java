@@ -73,9 +73,9 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     public WebRememberMeManager() {
         CookieAttribute<String> attr = new CookieAttribute<String>(DEFAULT_REMEMBER_ME_COOKIE_NAME);
         attr.setCheckRequestParams(false);
-        //Peter (JSecurity developer) said that Jetty didn't like the CookieAttribute.INDEFINITE value
+        //Peter (Apache Ki developer) said that Jetty didn't like the CookieAttribute.INDEFINITE value
         // (Tomcat was ok with it), so just default to a few years for now.  If anyone doesn't visit a site in 3 years
-        // after last login, I doubt any JSecurity users would mind their end-users to be forced to log in. - LAH.
+        // after last login, I doubt any Apache Ki users would mind their end-users to be forced to log in. - LAH.
         attr.setMaxAge(CookieAttribute.ONE_YEAR * 3);
         this.identityAttribute = attr;
     }

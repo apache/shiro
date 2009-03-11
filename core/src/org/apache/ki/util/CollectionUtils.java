@@ -38,7 +38,7 @@ public class CollectionUtils {
 
     /**
      * Simple method that just returns <code>Collections.EMPTY_SET</code>.
-     * This exists to enable type-safe empty collections so other locations in JSecurity code
+     * This exists to enable type-safe empty collections so other locations in Apache Ki code
      * do not need to worry about suppressing warnings.
      *
      * @param clazz the class of the collection type to return

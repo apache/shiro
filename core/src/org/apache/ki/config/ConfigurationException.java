@@ -21,7 +21,7 @@ package org.apache.ki.config;
 import org.apache.ki.KiException;
 
 /**
- * Root exception indicating there was a problem parsing or processing the JSecurity configuration.
+ * Root exception indicating there was a problem parsing or processing the Apache Ki configuration.
  *
  * @author Les Hazlewood
  * @since 0.9

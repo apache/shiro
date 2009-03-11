@@ -25,7 +25,7 @@
         <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
         <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
         <description homepage="http://www.jsecurity.org">
-            JSecurity is a powerful and flexible open-source Java security framework that cleanly handles
+            Apache Ki is a powerful and flexible open-source Java security framework that cleanly handles
             authentication, authorization, enterprise session management, single sign-on and cryptography services.
 
             Our mission: To provide the most robust and comprehensive Java security framework available while

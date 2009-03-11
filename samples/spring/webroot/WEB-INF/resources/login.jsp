@@ -28,7 +28,7 @@
 
 <div id="contentBox">
 
-    <h1>JSecurity Login</h1>
+    <h1>Apache Ki Login</h1>
 
     <p>
         <span style="color: red;">

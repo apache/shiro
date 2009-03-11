@@ -30,7 +30,7 @@
 
       When a user logs out, any 'rememberMe' identity
       should always be cleared.  In a web application,
-      JSecurity uses a Cipher-encrypted Cookie to
+      Apache Ki uses a Cipher-encrypted Cookie to
       remember a user's identity by default, and it will
       automatically delete the Cookie upon a logout.
 

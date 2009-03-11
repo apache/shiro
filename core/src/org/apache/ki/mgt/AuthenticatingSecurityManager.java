@@ -32,7 +32,7 @@ import org.apache.ki.util.LifecycleUtils;
 
 
 /**
- * JSecurity support of a {@link SecurityManager} class hierarchy that delegates all
+ * Apache Ki support of a {@link SecurityManager} class hierarchy that delegates all
  * authentication operations to a wrapped {@link Authenticator Authenticator} instance.  That is, this class
  * implements all the <tt>Authenticator</tt> methods in the {@link SecurityManager SecurityManager}
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'
@@ -40,7 +40,7 @@ import org.apache.ki.util.LifecycleUtils;
  *
  * <p>All other <tt>SecurityManager</tt> (authorization, session, etc) methods are left to be implemented by subclasses.
  *
- * <p>In keeping with the other classes in this hierarchy and JSecurity's desire to minimize configuration whenever
+ * <p>In keeping with the other classes in this hierarchy and Apache Ki's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies are created upon instantiation.
  *
  * @author Les Hazlewood
@@ -125,7 +125,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * interface in order for these listeners to be applied.  If it does not implement this interface, it is
      * considered a configuration error and an exception will be thrown.
      *
-     * <p>All of JSecurity's <tt>Authenticator</tt> implementations implement the
+     * <p>All of Apache Ki's <tt>Authenticator</tt> implementations implement the
      * <tt>AuthenticationListenerRegistrar</tt> interface, so you would only need
      * to worry about an exception being thrown if you provided your own Authenticator instance and did not
      * implement it.

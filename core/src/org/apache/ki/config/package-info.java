@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Components that support configuring JSecurity in any application.
+ * Components that support configuring Apache Ki in any application.
  */
 package org.ki.config;

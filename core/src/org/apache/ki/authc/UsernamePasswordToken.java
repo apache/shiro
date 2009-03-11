@@ -276,7 +276,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * is unknown or explicitly omitted.  It is up to the Authenticator implementation processing this token if
      * an authentication attempt without an inetAddress is valid or not.
      *
-     * <p>(JSecurity's default Authenticator
+     * <p>(Apache Ki's default Authenticator
      * allows <tt>null</tt> IPs to support localhost and proxy server environments).</p>
      *
      * @return the inetAddress from where the authentication attempt occurs, or <tt>null</tt> if it is unknown or
@@ -291,7 +291,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * Sets the inetAddress from where the authentication attempt occurs.  It is up to the Authenticator
      * implementation processing this token if an authentication attempt without an inetAddress is valid or not.
      *
-     * <p>(JSecurity's default Authenticator
+     * <p>(Apache Ki's default Authenticator
      * allows <tt>null</tt> IPs to allow localhost and proxy server environments).</p>
      *
      * @param inetAddress the inetAddress from where the authentication attempt occurs.

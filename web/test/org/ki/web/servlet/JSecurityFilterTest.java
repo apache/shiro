@@ -24,16 +24,16 @@ import javax.servlet.ServletContext;
 import static org.easymock.EasyMock.*;
 import org.junit.Test;
 
-import org.apache.ki.web.servlet.JSecurityFilter;
+import org.apache.ki.web.servlet.Apache KiFilter;
 
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public class JSecurityFilterTest {
+public class Apache KiFilterTest {
 
-    private JSecurityFilter filter;
+    private Apache KiFilter filter;
     private FilterConfig mockFilterConfig;
     private ServletContext mockServletContext;
 
@@ -42,9 +42,9 @@ public class JSecurityFilterTest {
         mockServletContext = createMock(ServletContext.class);
 
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
-        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
-        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
-        expect(mockFilterConfig.getInitParameter(JSecurityFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null).once();
+        expect(mockFilterConfig.getInitParameter(Apache KiFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
+        expect(mockFilterConfig.getInitParameter(Apache KiFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
+        expect(mockFilterConfig.getInitParameter(Apache KiFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null).once();
     }
 
     public void tearDown() throws Exception {
@@ -63,7 +63,7 @@ public class JSecurityFilterTest {
         replay(mockServletContext);
         replay(mockFilterConfig);
 
-        this.filter = new JSecurityFilter();
+        this.filter = new Apache KiFilter();
         this.filter.init(mockFilterConfig);
 
 

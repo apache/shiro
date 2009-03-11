@@ -23,10 +23,10 @@ import java.util.Set;
 /**
  * A Cache efficiently stores temporary objects primarily to improve an application's performance.
  *
- * <p>JSecurity doesn't implement a full Cache mechanism itself, since that is outside the core competency of a
+ * <p>Apache Ki doesn't implement a full Cache mechanism itself, since that is outside the core competency of a
  * Security framework.  Instead, this interface provides an abstraction (wrapper) API on top of an underlying
  * cache framework's cache instance (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
- * GigaSpaces, etc, etc), allowing a JSecurity user to configure any cache mechanism they choose.
+ * GigaSpaces, etc, etc), allowing a Apache Ki user to configure any cache mechanism they choose.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile

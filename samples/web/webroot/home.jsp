@@ -24,14 +24,14 @@
 </head>
 <body>
 
-<h1>JSecurity Quickstart</h1>
+<h1>Apache Ki Quickstart</h1>
 
 <p>Hi <jsec:guest>Guest</jsec:guest><jsec:user><jsec:principal/></jsec:user>!
     ( <jsec:user><a href="<c:url value="/logout.jsp"/>">Log out</a></jsec:user>
     <jsec:guest><a href="<c:url value="/login.jsp"/>">Log in</a> (sample accounts provided)</jsec:guest> )
 </p>
 
-<p>Welcome to the JSecurity Quickstart sample application.
+<p>Welcome to the Apache Ki Quickstart sample application.
     This page represents the home page of any web application.</p>
 
 <jsec:user><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></jsec:user>

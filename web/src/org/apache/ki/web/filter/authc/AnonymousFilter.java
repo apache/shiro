@@ -32,7 +32,7 @@ import org.apache.ki.web.filter.PathMatchingFilter;
  * For example, if you had a user-only section of a website, you might want to require that access to
  * any url in that section must be from an authenticated user.
  * <p/>
- * Here is how that would look in the JSecurityFilter configuration:
+ * Here is how that would look in the Apache KiFilter configuration:
  * <p/>
  * <code>[urls]<br/>
  * /user/** = authc</code>

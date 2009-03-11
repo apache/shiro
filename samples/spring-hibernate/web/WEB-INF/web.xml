@@ -60,19 +60,19 @@
     </filter>
 
     <filter>
-        <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.apache.ki.spring.SpringJSecurityFilter</filter-class>
+        <filter-name>Apache KiFilter</filter-name>
+        <filter-class>org.apache.ki.spring.SpringApache KiFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
 
-                # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
+                # The Apache KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
+                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/Apache KiFilter.html
 
                 # If you'd prefer to not have this configuration in web.xml, you can create a file called jsecurity.ini
-                # in the root of your classpath and JSecurity will automatically pick it up.
+                # in the root of your classpath and Apache Ki will automatically pick it up.
 
                 [filters]
                 # Override the authentication filter to pass thru so we can handle login logic in our controller
@@ -96,7 +96,7 @@
     </filter-mapping>
 
     <filter-mapping>
-        <filter-name>JSecurityFilter</filter-name>
+        <filter-name>Apache KiFilter</filter-name>
         <url-pattern>/s/*</url-pattern>
     </filter-mapping>
 

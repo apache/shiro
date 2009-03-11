@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Enables accessing objects located in JNDI that might be useful when configuring a JSecurity-enabled application.
+ * Enables accessing objects located in JNDI that might be useful when configuring a Apache Ki-enabled application.
  */
 package org.ki.jndi;

@@ -19,7 +19,7 @@
 package org.apache.ki.util;
 
 /**
- * JSecurity container-agnostic interface that indicates that this object requires a callback during destruction.
+ * Apache Ki container-agnostic interface that indicates that this object requires a callback during destruction.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile

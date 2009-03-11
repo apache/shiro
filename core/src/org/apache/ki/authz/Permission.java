@@ -27,7 +27,7 @@ package org.apache.ki.authz;
  * Granting access to an application functionality or a particular resource is done by the application's security
  * configuration, typically by assigning Permissions to users, roles and/or groups.
  *
- * <p>Most typical systems are what the JSecurity team calls <em>role-based</em> in nature, where a role represents
+ * <p>Most typical systems are what the Apache Ki team calls <em>role-based</em> in nature, where a role represents
  * common behavior for certain user types.  For example, a system might have an <em>Aministrator</em> role, a
  * <em>User</em> or <em>Guest</em> roles, etc.
  *
@@ -50,13 +50,13 @@ package org.apache.ki.authz;
  * and groups can all be created, configured and/or deleted at runtime.  This enables  an extremely powerful security
  * model.
  *
- * <p>A benefit to JSecurity is that, although it assumes most systems are based on these types of static role or
+ * <p>A benefit to Apache Ki is that, although it assumes most systems are based on these types of static role or
  * dynamic role w/ permission schemes, it does not require a system to model their security data this way - all
  * Permission checks are relegated to {@link org.apache.ki.realm.Realm} implementations, and only those implementatons
  * really determine how a user 'has' a permission or not.  The Realm could use the semantics described here, or it
  * could utilize some other mechanism entirely - it is always up to the application developer.
  *
- * <p>JSecurity provides a very powerful default implementation of this interface in the form of the
+ * <p>Apache Ki provides a very powerful default implementation of this interface in the form of the
  * {@link org.apache.ki.authz.permission.WildcardPermission WildcardPermission}.  We highly recommend that you
  * investigate this class before trying to implement your own <code>Permission</code>s.
  *

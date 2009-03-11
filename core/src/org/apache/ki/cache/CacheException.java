@@ -22,7 +22,7 @@ import org.apache.ki.KiException;
 
 
 /**
- * Root class of all JSecurity exceptions related to caching operations.
+ * Root class of all Apache Ki exceptions related to caching operations.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

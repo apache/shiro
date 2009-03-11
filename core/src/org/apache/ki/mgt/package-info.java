@@ -18,6 +18,6 @@
  */
 /**
  * Provides the master {@link org.apache.ki.mgt.SecurityManager SecurityManager} interface and a default implementation
- * hierarchy for managing all aspects of JSecurity's functionality in an application.
+ * hierarchy for managing all aspects of Apache Ki's functionality in an application.
  */
 package org.ki.mgt;

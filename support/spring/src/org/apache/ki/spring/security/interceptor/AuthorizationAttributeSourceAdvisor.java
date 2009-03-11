@@ -61,7 +61,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     /**
-     * Returns <tt>true</tt> if the method has any JSecurity annotations, false otherwise.
+     * Returns <tt>true</tt> if the method has any Apache Ki annotations, false otherwise.
      * The annotations inspected are:
      * <ul>
      * <li>{@link org.apache.ki.authz.annotation.RequiresAuthentication RequiresAuthentication}</li>
@@ -71,9 +71,9 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * <li>{@link org.apache.ki.authz.annotation.RequiresPermissions RequiresPermissions}</li>
      * </ul>
      *
-     * @param method      the method to check for a JSecurity annotation
-     * @param targetClass the class potentially declaring JSecurity annotations
-     * @return <tt>true</tt> if the method has a JSecurity annotation, false otherwise.
+     * @param method      the method to check for a Apache Ki annotation
+     * @param targetClass the class potentially declaring Apache Ki annotations
+     * @return <tt>true</tt> if the method has a Apache Ki annotation, false otherwise.
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
     public boolean matches(Method method, Class targetClass) {

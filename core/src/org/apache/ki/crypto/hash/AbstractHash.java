@@ -28,7 +28,7 @@ import org.apache.ki.codec.CodecSupport;
 import org.apache.ki.codec.Hex;
 
 /**
- * Provides a base for all JSecurity Hash algorithms with support for salts and multiple hash iterations.
+ * Provides a base for all Apache Ki Hash algorithms with support for salts and multiple hash iterations.
  *
  * <p>Read <a href="http://www.owasp.org/index.php/Hashing_Java" target="blank">http://www.owasp.org/index.php/Hashing_Java</a> for a
  * good article on the benefits of hashing, including what a 'salt' is as well as why it and multiple hash iterations

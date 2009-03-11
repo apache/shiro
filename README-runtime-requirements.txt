@@ -1,4 +1,4 @@
-JSecurity Runtime Requirements
+Apache Ki Runtime Requirements
 ------------------------------
 
 All 3rd party dependencies mentioned below are accessible in two ways:
@@ -15,6 +15,6 @@ Java 1.3 and 1.4 only: jsecurity.jar, commons-logging.jar and retroweaver.jar an
 
 Feature-based dependencies
 --------------------------
-- .ini based configuration, either for a jsecurity.ini file in the classpath or embedded .ini in the JSecurityFilter
+- .ini based configuration, either for a jsecurity.ini file in the classpath or embedded .ini in the Apache KiFilter
   in web.xml:
   . include Jakarta commons-beanutils-core.jar

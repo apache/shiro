@@ -17,9 +17,9 @@
  * under the License.
  */
 /**
- * Provides the JSecurity JSP Tag Library implementations.
+ * Provides the Apache Ki JSP Tag Library implementations.
  * <p/>
- * JSecurity JSP Tags can be used to evalute or not evaluate (show or not show) parts of a JSP page based on the
+ * Apache Ki JSP Tags can be used to evalute or not evaluate (show or not show) parts of a JSP page based on the
  * current user's authentication status and/or authorization (access control) abilities.
  */
 package org.ki.web.tags;

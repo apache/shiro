@@ -19,7 +19,7 @@
   -->
 
 <!--
-    This is the XSL HTML configuration file for the JSecurity Reference Documentation.
+    This is the XSL HTML configuration file for the Apache Ki Reference Documentation.
 -->
 <!DOCTYPE xsl:stylesheet [
   <!ENTITY db_xsl_path        "../../../lib/docbook/docbook-xsl/">
@@ -104,10 +104,10 @@
   <!--###################################################
                   Headers and Footers
  ################################################### -->
-  <!-- let's have a JSecurity and Anjin banner across the top of each page -->
+  <!-- let's have a Apache Ki and Anjin banner across the top of each page -->
   <xsl:template name="user.header.navigation">
     <div style="background-color:white;border:none;height:73px;border:1px solid black;">
-      <a style="border:none;" href="http://www.jsecurity.org/" title="JSecurity">
+      <a style="border:none;" href="http://www.jsecurity.org/" title="Apache Ki">
         <img style="border:none;" src="images/xdev-jsecurity_logo.jpg"/>
       </a>
       <!--  <a style="border:none;" href="http://www.anjinllc.com/" title="AnjinLLC">
