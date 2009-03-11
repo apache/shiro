@@ -31,7 +31,7 @@ import org.apache.ki.web.servlet.KiFilter;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class JSecurityFilterTest {
+public class KiFilterTest {
 
     private KiFilter filter;
     private FilterConfig mockFilterConfig;
