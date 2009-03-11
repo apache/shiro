@@ -16,38 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.web;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.apache.ki.util.ThreadContext;
-import org.apache.ki.web.DefaultWebSecurityManager;
+package org.apache.ki.web.tags;
 
 /**
  * @author Les Hazlewood
- * @since 0.9
+ * @since 0.1
  */
-public class DefaultWebSecurityManagerTest {
+public class LacksRoleTag extends RoleTag {
 
-    private DefaultWebSecurityManager sm;
+    //TODO - complete JavaDoc
 
-    @Before
-    public void setup() {
-        sm = new DefaultWebSecurityManager();
-        ThreadContext.clear();
+    public LacksRoleTag() {
     }
 
-    @After
-    public void tearDown() {
-        sm.destroy();
-        ThreadContext.clear();
-    }
-
-    @Test
-    public void jsecuritySessionModeInit() {
-        sm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
+    protected boolean showTagBody(String roleName) {
+        boolean hasRole = getSubject() != null && getSubject().hasRole(roleName);
+        return !hasRole;
     }
 
 }

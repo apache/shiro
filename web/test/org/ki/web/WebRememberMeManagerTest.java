@@ -18,20 +18,21 @@
  */
 package org.ki.web;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
 import org.apache.ki.authc.AuthenticationInfo;
 import org.apache.ki.authc.SimpleAuthenticationInfo;
 import org.apache.ki.authc.UsernamePasswordToken;
 import org.apache.ki.subject.PrincipalCollection;
-
 import org.apache.ki.subject.SimplePrincipalCollection;
-
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.ki.web.WebRememberMeManager;
+import org.apache.ki.web.WebUtils;
 
 /**
  * TODO - class javadoc

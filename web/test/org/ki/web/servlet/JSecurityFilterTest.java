@@ -18,11 +18,14 @@
  */
 package org.ki.web.servlet;
 
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+
 import static org.easymock.EasyMock.*;
 import org.junit.Test;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
+import org.apache.ki.web.servlet.JSecurityFilter;
+
 
 /**
  * @author Les Hazlewood

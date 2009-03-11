@@ -24,7 +24,7 @@
 
     <filter>
         <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.ki.web.servlet.JSecurityFilter</filter-class>
+        <filter-class>org.apache.ki.web.servlet.JSecurityFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>

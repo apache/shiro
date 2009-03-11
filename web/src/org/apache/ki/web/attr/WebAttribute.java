@@ -16,38 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.web;
+package org.apache.ki.web.attr;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.apache.ki.util.ThreadContext;
-import org.apache.ki.web.DefaultWebSecurityManager;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
+ * A <tt>WebAttribute</tt> is a storage mechanism for a single object accessible during a web request.
+ *
+ * <p>It is used to make objects associated with the transient request persistent beyond the request so that they can
+ * be retrieved at a later time.
+ *
  * @author Les Hazlewood
- * @since 0.9
+ * @since 0.2
  */
-public class DefaultWebSecurityManagerTest {
+public interface WebAttribute<T> {
 
-    private DefaultWebSecurityManager sm;
+    //TODO - complete JavaDoc
 
-    @Before
-    public void setup() {
-        sm = new DefaultWebSecurityManager();
-        ThreadContext.clear();
-    }
+    T retrieveValue(ServletRequest request, ServletResponse response);
 
-    @After
-    public void tearDown() {
-        sm.destroy();
-        ThreadContext.clear();
-    }
+    void storeValue(T value, ServletRequest request, ServletResponse response);
 
-    @Test
-    public void jsecuritySessionModeInit() {
-        sm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
-    }
-
+    void removeValue(ServletRequest request, ServletResponse response);
 }

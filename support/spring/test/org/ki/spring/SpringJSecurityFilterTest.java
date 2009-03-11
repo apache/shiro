@@ -25,7 +25,7 @@ import javax.servlet.ServletContext;
 
 import static org.easymock.EasyMock.*;
 import org.junit.Test;
-import org.ki.web.servlet.JSecurityFilter;
+import org.apache.ki.web.servlet.JSecurityFilter;
 import org.springframework.web.context.WebApplicationContext;
 
 import org.apache.ki.mgt.SecurityManager;
