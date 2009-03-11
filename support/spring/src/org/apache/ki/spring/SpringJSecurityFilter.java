@@ -18,7 +18,7 @@
  */
 package org.apache.ki.spring;
 
-import org.ki.web.servlet.JSecurityFilter;
+import org.apache.ki.web.servlet.JSecurityFilter;
 
 /**
  * Extension of JSecurityFilter that uses {@link SpringIniWebConfiguration} to configure JSecurity in a Spring web

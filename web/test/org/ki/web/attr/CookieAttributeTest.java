@@ -18,15 +18,18 @@
  */
 package org.ki.web.attr;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import junit.framework.TestCase;
 import static org.easymock.EasyMock.*;
 import org.easymock.IArgumentMatcher;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.ki.web.attr.CookieAttribute;
+
 
 /**
  * @author Les Hazlewood

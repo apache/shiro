@@ -16,38 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.web;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.apache.ki.util.ThreadContext;
-import org.apache.ki.web.DefaultWebSecurityManager;
+package org.apache.ki.web.tags;
 
 /**
  * @author Les Hazlewood
- * @since 0.9
+ * @author Jeremy Haile
+ * @since 0.1
  */
-public class DefaultWebSecurityManagerTest {
+public class HasPermissionTag extends PermissionTag {
 
-    private DefaultWebSecurityManager sm;
+    //TODO - complete JavaDoc
 
-    @Before
-    public void setup() {
-        sm = new DefaultWebSecurityManager();
-        ThreadContext.clear();
+    public HasPermissionTag() {
     }
 
-    @After
-    public void tearDown() {
-        sm.destroy();
-        ThreadContext.clear();
-    }
-
-    @Test
-    public void jsecuritySessionModeInit() {
-        sm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
+    protected boolean showTagBody(String p) {
+        return isPermitted(p);
     }
 
 }

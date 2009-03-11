@@ -16,38 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.web;
+package org.apache.ki.web.tags;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.apache.ki.util.ThreadContext;
-import org.apache.ki.web.DefaultWebSecurityManager;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * @author Les Hazlewood
- * @since 0.9
+ * @since 0.1
  */
-public class DefaultWebSecurityManagerTest {
+public abstract class RoleTag extends SecureTag {
 
-    private DefaultWebSecurityManager sm;
+    //TODO - complete JavaDoc
 
-    @Before
-    public void setup() {
-        sm = new DefaultWebSecurityManager();
-        ThreadContext.clear();
+    private String name = null;
+
+    public RoleTag() {
     }
 
-    @After
-    public void tearDown() {
-        sm.destroy();
-        ThreadContext.clear();
+    public String getName() {
+        return name;
     }
 
-    @Test
-    public void jsecuritySessionModeInit() {
-        sm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public int onDoStartTag() throws JspException {
+        boolean show = showTagBody(getName());
+        if (show) {
+            return TagSupport.EVAL_BODY_INCLUDE;
+        } else {
+            return TagSupport.SKIP_BODY;
+        }
+    }
+
+    protected abstract boolean showTagBody(String roleName);
 
 }

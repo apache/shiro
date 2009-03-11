@@ -16,38 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.web;
+package org.apache.ki.web.tags;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.ki.util.ThreadContext;
-import org.apache.ki.web.DefaultWebSecurityManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.subject.Subject;
 
 /**
  * @author Les Hazlewood
- * @since 0.9
+ * @since 0.1
  */
-public class DefaultWebSecurityManagerTest {
+public abstract class SecureTag extends TagSupport {
 
-    private DefaultWebSecurityManager sm;
+    //TODO - complete JavaDoc
 
-    @Before
-    public void setup() {
-        sm = new DefaultWebSecurityManager();
-        ThreadContext.clear();
+    private static final Log log = LogFactory.getLog(SecureTag.class);
+
+    public SecureTag() {
     }
 
-    @After
-    public void tearDown() {
-        sm.destroy();
-        ThreadContext.clear();
+    protected Subject getSubject() {
+        return SecurityUtils.getSubject();
     }
 
-    @Test
-    public void jsecuritySessionModeInit() {
-        sm.setSessionMode(DefaultWebSecurityManager.JSECURITY_SESSION_MODE);
+    protected void verifyAttributes() throws JspException {
     }
 
+    public int doStartTag() throws JspException {
+
+        verifyAttributes();
+
+        return onDoStartTag();
+    }
+
+    public abstract int onDoStartTag() throws JspException;
 }

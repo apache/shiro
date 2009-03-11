@@ -76,7 +76,7 @@
 
                 [filters]
                 # Override the authentication filter to pass thru so we can handle login logic in our controller
-                authc = org.ki.web.filter.authc.PassThruAuthenticationFilter
+                authc = org.apache.ki.web.filter.authc.PassThruAuthenticationFilter
                 jsecurity.loginUrl = /s/login
                 jsecurity.unauthorizedUrl = /unauthorized.jsp
                 authc.successUrl = /s/home

@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 import javax.servlet.ServletContext;
 
-import org.ki.web.config.IniWebConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -34,13 +33,14 @@ import org.apache.ki.KiException;
 import org.apache.ki.mgt.RealmSecurityManager;
 import org.apache.ki.mgt.SecurityManager;
 import org.apache.ki.realm.Realm;
+import org.apache.ki.web.config.IniWebConfiguration;
 
 
 /**
  * <p>JSecurity configuration that relies on Spring to define and initialize the JSecurity SecurityManager
  * instance (and all of its dependencies) and makes it available to the JSecurityFilter by performing a Spring bean
  * lookup.  The URL/filter definitions are still .ini based and loaded according to the behavior of the parent class
- * {@link org.ki.web.config.IniWebConfiguration}</p>
+ * {@link org.apache.ki.web.config.IniWebConfiguration}</p>
  * <p/>
  * That is, this class is offers a hybrid means of configuring JSecurity in Spring apps deployed in a web container:
  * Spring XML config for the SecurityManager and its dependencies (realms, etc), and .ini format for configuring
@@ -56,7 +56,7 @@ import org.apache.ki.realm.Realm;
  * throw an exception that says you have to set the init-param to specify the bean name.</li>
  * <li>if no beans of type {@link SecurityManager}, look for any beans of type {@link Realm}.
  * If some are found, create a default security manager by calling
- * {@link org.ki.web.config.IniWebConfiguration#createSecurityManager(java.util.Map) super.createSecurityManager(Map)}
+ * {@link org.apache.ki.web.config.IniWebConfiguration#createSecurityManager(java.util.Map) super.createSecurityManager(Map)}
  * and set the Realms on that SecurityManager instance.</li>
  * <li>If none of the above, throw an exception that explains the options.</li>
  * <ol>
