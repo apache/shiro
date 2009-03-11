@@ -20,7 +20,7 @@ package org.ki.web.attr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 import org.apache.ki.util.ClassUtils;
 
 import javax.servlet.ServletRequest;
@@ -147,7 +147,7 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T> {
                 return (T) stringValue;
             } catch (Exception e) {
                 String msg = "If the type is not String, you must specify the 'editorClass' property.";
-                throw new JSecurityException(msg, e);
+                throw new KiException(msg, e);
             }
         } else {
             PropertyEditor editor = (PropertyEditor) ClassUtils.newInstance(getEditorClass());
@@ -157,7 +157,7 @@ public abstract class AbstractWebAttribute<T> implements WebAttribute<T> {
                 return (T) value;
             } catch (ClassCastException e) {
                 String msg = "Returned value from PropertyEditor does not match the specified type.";
-                throw new JSecurityException(msg, e);
+                throw new KiException(msg, e);
             }
         }
     }

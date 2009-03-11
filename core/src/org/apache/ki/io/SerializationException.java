@@ -18,7 +18,8 @@
  */
 package org.apache.ki.io;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
+
 
 /**
  * Root exception for problems either serializing or de-serializing data.
@@ -26,7 +27,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since Apr 23, 2008 8:58:22 AM
  */
-public class SerializationException extends JSecurityException {
+public class SerializationException extends KiException {
 
     /**
      * Creates a new SerializationException.

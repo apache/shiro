@@ -18,7 +18,7 @@
  */
 package org.apache.ki.cache;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 
 /**
@@ -28,7 +28,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class CacheException extends JSecurityException {
+public class CacheException extends KiException {
 
     /**
      * Creates a new <code>CacheException</code>.

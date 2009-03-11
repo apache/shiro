@@ -18,7 +18,7 @@
  */
 package org.apache.ki.authz;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 
 /**
@@ -27,7 +27,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class AuthorizationException extends JSecurityException {
+public class AuthorizationException extends KiException {
 
     /**
      * Creates a new AuthorizationException.

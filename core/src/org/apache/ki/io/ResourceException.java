@@ -18,7 +18,8 @@
  */
 package org.apache.ki.io;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
+
 
 /**
  * Root exception when a problem occurs acquiring or processing a resource.
@@ -26,7 +27,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ResourceException extends JSecurityException {
+public class ResourceException extends KiException {
 
     /**
      * Creates a new ResourceException.

@@ -18,7 +18,7 @@
  */
 package org.apache.ki.authz.permission;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 
 /**
@@ -28,7 +28,7 @@ import org.apache.ki.JSecurityException;
  * @author Jeremy Haile
  * @since 0.9
  */
-public class InvalidPermissionStringException extends JSecurityException {
+public class InvalidPermissionStringException extends KiException {
 
     private String permissionString;
 

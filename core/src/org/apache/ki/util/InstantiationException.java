@@ -18,7 +18,8 @@
  */
 package org.apache.ki.util;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
+
 
 /**
  * Runtime exception thrown by the framework when unable to instantiate a Class via reflection.
@@ -26,7 +27,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class InstantiationException extends JSecurityException {
+public class InstantiationException extends KiException {
 
     /**
      * Creates a new InstantiationException.

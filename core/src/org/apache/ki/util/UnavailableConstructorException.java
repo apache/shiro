@@ -18,7 +18,8 @@
  */
 package org.apache.ki.util;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
+
 
 /**
  * Exception thrown when attempting to instantiate a Class via reflection, but a suitable constructor (depending
@@ -27,7 +28,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class UnavailableConstructorException extends JSecurityException {
+public class UnavailableConstructorException extends KiException {
 
     /**
      * Creates a new UnavailableConstructorException.

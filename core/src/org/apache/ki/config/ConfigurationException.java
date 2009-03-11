@@ -18,7 +18,7 @@
  */
 package org.apache.ki.config;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 /**
  * Root exception indicating there was a problem parsing or processing the JSecurity configuration.
@@ -26,7 +26,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ConfigurationException extends JSecurityException {
+public class ConfigurationException extends KiException {
 
     /**
      * Creates a new ConfigurationException.

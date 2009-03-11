@@ -18,7 +18,7 @@
  */
 package org.apache.ki.subject;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 
 /**
@@ -27,7 +27,7 @@ import org.apache.ki.JSecurityException;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class SubjectException extends JSecurityException {
+public class SubjectException extends KiException {
 
     /**
      * Creates a new SubjectException.

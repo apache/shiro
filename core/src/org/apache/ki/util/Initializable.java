@@ -18,7 +18,7 @@
  */
 package org.apache.ki.util;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 /**
  * JSecurity container-agnostic interface that indicates that this object requires initialization.
@@ -33,8 +33,8 @@ public interface Initializable {
     /**
      * Initializes this object.
      *
-     * @throws JSecurityException if an exception occurs during initialization.
+     * @throws org.apache.ki.KiException if an exception occurs during initialization.
      */
-    void init() throws JSecurityException;
+    void init() throws KiException;
 
 }

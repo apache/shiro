@@ -29,12 +29,12 @@ import java.io.Serializable;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class JSecurityException extends RuntimeException implements Serializable {
+public class KiException extends RuntimeException implements Serializable {
 
     /**
      * Creates a new JSecurityException.
      */
-    public JSecurityException() {
+    public KiException() {
         super();
     }
 
@@ -43,7 +43,7 @@ public class JSecurityException extends RuntimeException implements Serializable
      *
      * @param message the reason for the exception
      */
-    public JSecurityException(String message) {
+    public KiException(String message) {
         super(message);
     }
 
@@ -52,7 +52,7 @@ public class JSecurityException extends RuntimeException implements Serializable
      *
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
-    public JSecurityException(Throwable cause) {
+    public KiException(Throwable cause) {
         super(cause);
     }
 
@@ -62,7 +62,7 @@ public class JSecurityException extends RuntimeException implements Serializable
      * @param message the reason for the exception
      * @param cause   the underlying Throwable that caused this exception to be thrown.
      */
-    public JSecurityException(String message, Throwable cause) {
+    public KiException(String message, Throwable cause) {
         super(message, cause);
     }
 

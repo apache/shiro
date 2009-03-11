@@ -25,7 +25,7 @@ import java.util.Scanner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 import org.apache.ki.io.ResourceException;
 import org.apache.ki.mgt.SecurityManager;
 import org.apache.ki.util.Initializable;
@@ -73,7 +73,7 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
         }
     }
 
-    public void init() throws JSecurityException {
+    public void init() throws KiException {
         SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
             String config = getConfig();
