@@ -19,7 +19,7 @@
   -->
 
 <!--
-    This is the XSL HTML configuration file for the JSecurity
+    This is the XSL HTML configuration file for the Apache Ki
     Reference Documentation.
 -->
 <!DOCTYPE xsl:stylesheet [

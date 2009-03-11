@@ -28,7 +28,7 @@ package org.apache.ki.codec;
  *
  * <p>This class was borrowed from Apache Commons Codec SVN repository (rev. 618419) with modifications
  * to enable Base64 conversion without a full dependecny on Commons Codec.  We didn't want to reinvent the wheel of
- * great work they've done, but also didn't want to force every JSecurity user to depend on the commons-codec.jar</p>
+ * great work they've done, but also didn't want to force every Apache Ki user to depend on the commons-codec.jar</p>
  *
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>
@@ -223,7 +223,7 @@ public class Base64 {
     }
 
     /**
-     * Base64 encodes the specified byte array and then encodes it as a String using JSecurity's preferred character
+     * Base64 encodes the specified byte array and then encodes it as a String using Apache Ki's preferred character
      * encoding (UTF-8).
      *
      * @param bytes the byte array to Base64 encode.

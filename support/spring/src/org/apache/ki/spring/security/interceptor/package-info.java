@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Spring AOP support for enabling JSecurity annotations in Spring-configured applications. 
+ * Spring AOP support for enabling Apache Ki annotations in Spring-configured applications. 
  */
 package org.ki.spring.security.interceptor;

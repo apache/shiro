@@ -20,10 +20,10 @@ package org.apache.ki.util;
 
 /**
  * Internal helper class used to find the Java/JDK version
- * that JSecurity is operating within, to allow for automatically
+ * that Apache Ki is operating within, to allow for automatically
  * adapting to the present platform's capabilities.
  *
- * <p>Note that JSecurity does not support 1.2 or earlier JVMs - only 1.3 and later.
+ * <p>Note that Apache Ki does not support 1.2 or earlier JVMs - only 1.3 and later.
  *
  * <p><em>This class was borrowed and heavily based upon a nearly identical version found in
  * the <a href="http://www.springframework.org/">Spring Framework</a>, with minor modifications.

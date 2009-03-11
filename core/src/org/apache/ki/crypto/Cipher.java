@@ -40,9 +40,9 @@ package org.apache.ki.crypto;
  * data shared between two parties, the same Key must also be shared and may be compromised.
  *
  * <p>Note that a symmetric cipher is perfectly fine to use if you just want to encode data in a format no one else
- * can understand and you never give away the key.  JSecurity uses a symmetric cipher when using certain
+ * can understand and you never give away the key.  Apache Ki uses a symmetric cipher when using certain
  * HTTP Cookies for example - because it is often undesireable to have user's identity stored in a plain-text cookie,
- * that identity can be converted via a symmetric cipher.  Since the the same exact JSecurity application will receive
+ * that identity can be converted via a symmetric cipher.  Since the the same exact Apache Ki application will receive
  * the cookie, it can decrypt it via the same <tt>Key</tt> and there is no potential for discovery since that Key
  * is never shared with anyone.
  *

@@ -36,8 +36,8 @@ import org.apache.ki.subject.PrincipalCollection;
 
 /**
  * A <tt>ModularRealmAuthenticator</tt> delgates account lookups to a pluggable (modular) collection of
- * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in JSecurity.
- * In addition to authorization duties, a JSecurity Realm can also be thought of a PAM 'module'.
+ * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in Apache Ki.
+ * In addition to authorization duties, a Apache Ki Realm can also be thought of a PAM 'module'.
  *
  * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
  * <tt>Realm</tt>s as you see fit.  Common realms are those based on accessing
@@ -322,7 +322,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * <code>((LogoutAware)realm).onLogout(principals)</code> to allow each realm the opportunity to perform
      * logout/cleanup operations during an user-logout.
      *
-     * <p>JSecurity's Realm implementations all implement the <tt>LogoutAware</tt> interface by default and can be
+     * <p>Apache Ki's Realm implementations all implement the <tt>LogoutAware</tt> interface by default and can be
      * overridden for realm-specific logout logic.
      *
      * @param principals the application-specific Subject/user identifier.

@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * <a href="http://ehcache.sourceforge.net" target="_top">Ehcache</a>-based implementations of JSecurity's
+ * <a href="http://ehcache.sourceforge.net" target="_top">Ehcache</a>-based implementations of Apache Ki's
  * cache interfaces.
  */
 package org.ki.cache.ehcache;

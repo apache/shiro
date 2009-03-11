@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * accessed or invoked.  This is <em>less</em> restrictive than the {@link RequiresAuthentication RequiresAuthentication}
  * annotation.
  * <p/>
- * JSecurity defines a &quot;user&quot; as a Subject that is either
+ * Apache Ki defines a &quot;user&quot; as a Subject that is either
  * &quot;remembered&quot; <b><em>or</em></b> authenticated:
  * <ul>
  * <li>An <b>authenticated</b> user is a Subject that has successfully logged in (proven their identity)

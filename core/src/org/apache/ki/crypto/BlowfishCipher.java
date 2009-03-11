@@ -33,15 +33,15 @@ import org.apache.ki.codec.CodecSupport;
 
 
 /**
- * JSecurity's default symmetric block Cipher using the Blowfish algorithm.  As it is a symmetric Cipher, it uses the
+ * Apache Ki's default symmetric block Cipher using the Blowfish algorithm.  As it is a symmetric Cipher, it uses the
  * same <tt>Key</tt> to both encrypt and decrypt data.  If one is not provided via the {@link #setKey setKey} method,
  * a default one will be used, BUT NOTE:
  *
- * <p>Because JSecurity is an open-source project, if anyone knew that you were using JSecurity's default
+ * <p>Because Apache Ki is an open-source project, if anyone knew that you were using Apache Ki's default
  * <code>Key</code>, they could download/view the source, and with enough effort, reconstruct the <code>Key</code>
  * and decode encrypted data at will.
  *
- * <p>JSecurity only really uses Ciphers to encrypt user ids and session ids, so if that information is not critical
+ * <p>Apache Ki only really uses Ciphers to encrypt user ids and session ids, so if that information is not critical
  * to you and you think the default key still makes things 'sufficiently difficult', then you can ignore this issue.
  *
  * <p>However, if you do feel this constitutes sensitive information, it is recommended that you provide your own
@@ -70,7 +70,7 @@ public class BlowfishCipher implements Cipher {
     //The following KEY_BYTES String was created by running
     //System.out.println( Base64.encode( generateNewKey().getEncoded() ) ); and copying-n-pasting the output here.
     //You should run the same and set the resulting output as a property of this class instead of using
-    //JSecurity's default Key for proper security.
+    //Apache Ki's default Key for proper security.
     private static final byte[] KEY_BYTES = Base64.decode("jJ9Kg1BAevbvhSg3vBfwfQ==");
     private static final Key DEFAULT_CIPHER_KEY = new SecretKeySpec(KEY_BYTES, ALGORITHM);
 

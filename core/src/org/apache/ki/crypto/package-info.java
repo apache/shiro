@@ -21,6 +21,6 @@
  * add additional convenient behavior.
  * <p/>
  * The most important interface in this package is the {@link org.apache.ki.crypto.Cipher Cipher} interface, which
- * allows other JSecurity components to encrypt and decrypt potentially sensitive data.
+ * allows other Apache Ki components to encrypt and decrypt potentially sensitive data.
  */
 package org.ki.crypto;

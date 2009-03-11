@@ -47,29 +47,29 @@ import org.apache.ki.web.config.WebConfiguration;
 
 
 /**
- * Main ServletFilter that configures and enables all JSecurity functions within a web application.
+ * Main ServletFilter that configures and enables all Apache Ki functions within a web application.
  * <p/>
  * The following is a fully commented example that documents how to configure it:
  * <p/>
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
+ * &lt;filter-name&gt;Apache KiFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.jsecurity.web.servlet.Apache KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
  * <p/>
  * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
- * # Any commented values below are JSecurity's defaults.  If you want to change any values, you only
+ * # Any commented values below are Apache Ki's defaults.  If you want to change any values, you only
  * # need to uncomment the lines you want to change.
  * <p/>
  * [main]
- * # The 'main' section defines JSecurity-wide configuration.
+ * # The 'main' section defines Apache Ki-wide configuration.
  * #
- * # Session Mode: By default, JSecurity's Session infrastructure in a web environment will use the
+ * # Session Mode: By default, Apache Ki's Session infrastructure in a web environment will use the
  * # Servlet container's HttpSession.  However, if you need to share session state across client types
  * # (e.g. Web MVC plus Java Web Start or Flash), or are doing distributed/shared Sessions for
- * # Single Sign On, HttpSessions aren't good enough.  You'll need to use JSecurity's more powerful
+ * # Single Sign On, HttpSessions aren't good enough.  You'll need to use Apache Ki's more powerful
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
  * # and changing 'http' to 'jsecurity'
  * #
@@ -79,7 +79,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * [filters]
  * # This section defines the 'pool' of all Filters available to the url path definitions in the [urls] section below.
  * #
- * # The following commented values are already provided by JSecurity by default and are immediately usable
+ * # The following commented values are already provided by Apache Ki by default and are immediately usable
  * # in the [urls] definitions below.  If you like, you may override any values by uncommenting only the lines
  * # you need to change.
  * #
@@ -173,7 +173,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * <p/>
  * <p/>
  * &lt;filter-mapping&gt;
- * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
+ * &lt;filter-name&gt;Apache KiFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;</pre>
  *
@@ -181,7 +181,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class JSecurityFilter extends OncePerRequestFilter {
+public class Apache KiFilter extends OncePerRequestFilter {
 
     //TODO - complete JavaDoc
 
@@ -191,7 +191,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
     public static final String CONFIG_INIT_PARAM_NAME = "config";
     public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
-    private static final Log log = LogFactory.getLog(JSecurityFilter.class);
+    private static final Log log = LogFactory.getLog(Apache KiFilter.class);
 
     protected String config;
     protected String configUrl;
@@ -201,7 +201,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
     // Reference to the security manager used by this filter
     protected SecurityManager securityManager;
 
-    public JSecurityFilter() {
+    public Apache KiFilter() {
         this.configClassName = IniWebConfiguration.class.getName();
     }
 
@@ -374,7 +374,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
 
     /** @since 1.0 */
     protected ServletResponse wrapServletResponse(HttpServletResponse orig, KiHttpServletRequest request) {
-        return new JSecurityHttpServletResponse(orig, getServletContext(), request);
+        return new Apache KiHttpServletResponse(orig, getServletContext(), request);
     }
 
     /** @since 1.0 */
@@ -383,8 +383,8 @@ public class JSecurityFilter extends OncePerRequestFilter {
         ServletResponse toUse = response;
         if (isHttpSessions() && (request instanceof KiHttpServletRequest) &&
             (response instanceof HttpServletResponse)) {
-            //the JSecurityHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
-            //using JSecurity sessions (i.e. not simple HttpSession based sessions):
+            //the Apache KiHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
+            //using Apache Ki sessions (i.e. not simple HttpSession based sessions):
             toUse = wrapServletResponse((HttpServletResponse) response, (KiHttpServletRequest) request);
         }
         return toUse;

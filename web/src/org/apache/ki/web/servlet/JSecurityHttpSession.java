@@ -37,7 +37,7 @@ import org.apache.ki.web.session.WebSession;
 
 
 /**
- * Wrapper class that uses a JSecurity session under the hood for all session operations instead of the
+ * Wrapper class that uses a Apache Ki session under the hood for all session operations instead of the
  * Servlet Container's session mechanism.  This is preferred in heterogeneous client environments where the Session
  * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc).
  *
@@ -45,7 +45,7 @@ import org.apache.ki.web.session.WebSession;
  * @since 0.2
  */
 @SuppressWarnings({"deprecation"})
-public class JSecurityHttpSession implements HttpSession {
+public class Apache KiHttpSession implements HttpSession {
 
     //TODO - complete JavaDoc
 
@@ -73,9 +73,9 @@ public class JSecurityHttpSession implements HttpSession {
 
     protected ServletContext servletContext = null;
     protected HttpServletRequest currentRequest = null;
-    protected Session session = null; //'real' JSecurity Session
+    protected Session session = null; //'real' Apache Ki Session
 
-    public JSecurityHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
+    public Apache KiHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
         if (session instanceof WebSession) {
             String msg = "Session constructor argument cannot be an instance of WebSession.  This is enforced to " +
                     "prevent circular dependencies and infinite loops.";

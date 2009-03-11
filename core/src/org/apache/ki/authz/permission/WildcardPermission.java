@@ -97,8 +97,8 @@ import org.apache.ki.util.CollectionUtils;
  * <code>subject.isPermitted( &quot;newsletter:edit:13&quot; )</code>
  * <p/>
  * There is no limit to the number of tokens that can be used, so it is up to your imagination in terms of ways that
- * this could be used in your application.  However, the JSecurity team likes to standardize some common usages shown
- * above to help people get started and provide consistency in the JSecurity community.
+ * this could be used in your application.  However, the Apache Ki team likes to standardize some common usages shown
+ * above to help people get started and provide consistency in the Apache Ki community.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

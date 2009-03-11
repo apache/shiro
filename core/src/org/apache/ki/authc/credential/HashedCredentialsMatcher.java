@@ -48,7 +48,7 @@ import org.apache.ki.crypto.hash.Hash;
  * salting and multiple iterations and why you might want to use them. (Note of sections 5
  * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").
  *
- * <p>We should also note here that all of JSecurity's Hash implementations (for example,
+ * <p>We should also note here that all of Apache Ki's Hash implementations (for example,
  * {@link org.apache.ki.crypto.hash.Md5Hash Md5Hash}, {@link org.apache.ki.crypto.hash.Sha1Hash Sha1Hash}, etc)
  * support salting and multiple hash iterations via overloaded constructors.</p>
  *
@@ -91,7 +91,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * Returns <tt>true</tt> if the system's stored credential hash is Hex encoded, <tt>false</tt> if it
      * is Base64 encoded.
      *
-     * <p>Default value is <tt>true</tt> for convenience - all of JSecurity's {@link Hash Hash#toString()}
+     * <p>Default value is <tt>true</tt> for convenience - all of Apache Ki's {@link Hash Hash#toString()}
      * implementations return Hex encoded values by default, making this class's use with those implementations
      * easier.</p>
      *
@@ -108,7 +108,7 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <p>A value of <tt>true</tt> will cause this class to decode the system credential from Hex, a
      * value of <tt>false</tt> will cause this class to decode the system credential from Base64.</p>
      *
-     * <p>Unless overridden via this method, the default value is <tt>true</tt> for convenience - all of JSecurity's
+     * <p>Unless overridden via this method, the default value is <tt>true</tt> for convenience - all of Apache Ki's
      * {@link Hash Hash#toString()} implementations return Hex encoded values by default, making this class's use with
      * those implementations easier.</p>.
      *

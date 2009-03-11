@@ -96,11 +96,11 @@ public class IniConfiguration extends TextConfiguration {
             } else {
                 if (ignoreResourceNotFound) {
                     if (log.isDebugEnabled()) {
-                        log.debug("JSecurity resource [" + configUrl + "] not found.  Ignoring since " +
+                        log.debug("Apache Ki resource [" + configUrl + "] not found.  Ignoring since " +
                                 "'ignoreResourceNotFound' is set to true.");
                     }
                 } else {
-                    throw new ConfigurationException("JSecurity resource [" + configUrl + "] specified as a 'configUrl' " +
+                    throw new ConfigurationException("Apache Ki resource [" + configUrl + "] specified as a 'configUrl' " +
                             "cannot be found.  If you want to fall back on default configuration specified " +
                             "via the 'config' parameter, then set 'ignoreResourceNotFound' to true.");
                 }

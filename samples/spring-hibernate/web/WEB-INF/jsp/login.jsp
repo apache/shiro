@@ -21,12 +21,12 @@
 
 <html>
 <head>
-    <title>JSecurity Spring-Hibernate Sample Application</title>
+    <title>Apache Ki Spring-Hibernate Sample Application</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/styles/sample.css"/>"/> 
 </head>
 <body>
     <div id="box">
-        <div class="title">JSecurity Sample App - Login</div>
+        <div class="title">Apache Ki Sample App - Login</div>
 
         <div class="content">
             <form:form modelAttribute="loginCommand">

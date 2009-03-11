@@ -62,7 +62,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     /**
      * Returns the login URL used to authenticate a user.
      * <p/>
-     * Most JSecurity filters use this url
+     * Most Apache Ki filters use this url
      * as the location to redirect a user when the filter requires authentication.  Unless overridden, the
      * {@link #DEFAULT_LOGIN_URL DEFAULT_LOGIN_URL} is assumed, which can be overridden via
      * {@link #setLoginUrl(String) setLoginUrl}.
@@ -76,7 +76,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     /**
      * Sets the login URL used to authenticate a user.
      * <p/>
-     * Most JSecurity filters use this url as the location to redirect a user when the filter requires
+     * Most Apache Ki filters use this url as the location to redirect a user when the filter requires
      * authentication.  Unless overridden, the {@link #DEFAULT_LOGIN_URL DEFAULT_LOGIN_URL} is assumed.
      *
      * @param loginUrl the login URL used to authenticate a user, used when redirecting users if authentication is required.

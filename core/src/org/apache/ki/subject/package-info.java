@@ -18,9 +18,9 @@
  */
 /**
  * Components supporting the {@link org.apache.ki.subject.Subject Subject} interface, the most important concept in
- * JSecurity's API.
+ * Apache Ki's API.
  * <p/>
- * A <code>Subject</code> is <em>the</em> primary component when using JSecurity programatically for single-user
+ * A <code>Subject</code> is <em>the</em> primary component when using Apache Ki programatically for single-user
  * security operations, and it is the handle to any accessible user security data.  All single-user
  * authentication, authorization and session operations are performed via a <code>Subject</code> instance.
  */

@@ -39,8 +39,8 @@ import java.util.Collection;
  * or both depending on your preference and needs.
  * <p/>
  * Because the act of authorization (access control) is orthoganal to authentication (log-in), this interface is
- * intended to represent only the account data needed by JSecurity during an access control check
- * (role, permission, etc).  JSecurity also has a parallel
+ * intended to represent only the account data needed by Apache Ki during an access control check
+ * (role, permission, etc).  Apache Ki also has a parallel
  * {@link org.apache.ki.authc.AuthenticationInfo AuthenticationInfo} interface for use during the authentication
  * process that represents identity data such as principals and credentials.
  * <p/>
@@ -77,7 +77,7 @@ public interface AuthorizationInfo extends Serializable {
      * {@link org.apache.ki.authz.permission.PermissionResolver PermissionResolver}
      * in order to perform the actual permission check.  This is not a requirement of course, since <code>Realm</code>s
      * can perform security checks in whatever manner deemed necessary, but this explains the conversion mechanism that
-     * most JSecurity Realms execute for string-based permission checks.
+     * most Apache Ki Realms execute for string-based permission checks.
      *
      * @return all string-based permissions assigned to the corresponding Subject.
      */

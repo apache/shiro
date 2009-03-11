@@ -21,7 +21,7 @@ package org.apache.ki.cache;
 import java.util.Hashtable;
 
 /**
- * An implementation of the JSecurity {@link Cache} interface that uses a
+ * An implementation of the Apache Ki {@link Cache} interface that uses a
  * {@link Hashtable} to store cached objects.  This implementation is only suitable for
  * development/testing use as it is prone to a potential memory leak if objects are not explicitly removed
  * from the cache.

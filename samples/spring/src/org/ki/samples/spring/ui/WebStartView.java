@@ -34,7 +34,7 @@ import java.awt.event.WindowEvent;
 
 /**
  * Simple web start application that helps to demo single sign-on and
- * remoting authorization using JSecurity.  The injected <tt>SampleManager</tt>
+ * remoting authorization using Apache Ki.  The injected <tt>SampleManager</tt>
  * is hosted by the Spring sample web application and remotely invoked
  * when the buttons in this view are clicked.
  *
@@ -107,7 +107,7 @@ public class WebStartView implements ActionListener, InitializingBean {
         methodPanel.add(secureMethod2Button);
         methodPanel.add(secureMethod3Button);
 
-        frame = new JFrame("JSecurity Sample Application");
+        frame = new JFrame("Apache Ki Sample Application");
         frame.setSize(500, 200);
 
         Container panel = frame.getContentPane();

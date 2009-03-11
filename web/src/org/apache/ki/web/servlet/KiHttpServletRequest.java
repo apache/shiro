@@ -40,16 +40,16 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
 
     //TODO - complete JavaDoc
 
-    //The following 7 constants support the JSecurity's implementation of the Servlet Specification
+    //The following 7 constants support the Apache Ki's implementation of the Servlet Specification
     public static final String COOKIE_SESSION_ID_SOURCE = "cookie";
     public static final String URL_SESSION_ID_SOURCE = "url";
     public static final String REFERENCED_SESSION_ID = KiHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID";
     public static final String REFERENCED_SESSION_ID_IS_VALID = KiHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID_VALID";
     public static final String REFERENCED_SESSION_IS_NEW = KiHttpServletRequest.class.getName() + "_REFERENCED_SESSION_IS_NEW";
     public static final String REFERENCED_SESSION_ID_SOURCE = KiHttpServletRequest.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
-    public static final String SESSION_ID_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;
+    public static final String SESSION_ID_NAME = Apache KiHttpSession.DEFAULT_SESSION_ID_NAME;
     /**
-     * Key that may be used to alert that the request's  referenced JSecurity Session has expired prior to
+     * Key that may be used to alert that the request's  referenced Apache Ki Session has expired prior to
      * request processing.
      */
     public static final String EXPIRED_SESSION_KEY = KiHttpServletRequest.class.getName() + "_EXPIRED_SESSION_KEY";
@@ -161,7 +161,7 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
 
                 Session jsecSession = getSubject().getSession(create);
                 if (jsecSession != null) {
-                    this.session = new JSecurityHttpSession(jsecSession, this, this.servletContext);
+                    this.session = new Apache KiHttpSession(jsecSession, this, this.servletContext);
                     if (!existing) {
                         setAttribute(REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
                     }

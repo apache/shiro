@@ -206,7 +206,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      * authentication token.
      *
      * <p>For most datasources, this means just 'pulling' authentication data for an associated subject/user and nothing
-     * more and letting JSecurity do the rest.  But in some systems, this method could actually perform EIS specific
+     * more and letting Apache Ki do the rest.  But in some systems, this method could actually perform EIS specific
      * log-in logic in addition to just retrieving data - it is up to the Realm implementation.
      *
      * <p>A <tt>null</tt> return value means that no account could be associated with the specified token.
@@ -224,11 +224,11 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
      * Default implementation that does nothing (no-op) and exists as a convenience mechanism in case subclasses
      * wish to override it to implement realm-specific logout logic for the given user account logging out.</p>
      * <p/>
-     * In a single-realm JSecurity configuration (most applications), the <code>principals</code> method
+     * In a single-realm Apache Ki configuration (most applications), the <code>principals</code> method
      * argument will be the same as that which is contained in the <code>AuthenticationInfo</code> object returned by the
      * {@link #doGetAuthenticationInfo} method (that is, {@link AuthenticationInfo#getPrincipals info.getPrincipals()}).
      * <p/>
-     * In a multi-realm JSecurity configuration, the given <code>principals</code> method
+     * In a multi-realm Apache Ki configuration, the given <code>principals</code> method
      * argument could contain principals returned by many realms.  Therefore the subclass implementation would need
      * to know how to extract the principal(s) relevant to only itself and ignore other realms' principals.  This is
      * usually done by calling {@link org.apache.ki.subject.PrincipalCollection#fromRealm(String) principals.fromRealm(name)},

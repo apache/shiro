@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  * A set of static helper methods for managing JDBC API objects.
  * <p/>
  * <em>Note:</em> Some parts of this class were copied from the Spring Framework and then modified.
- * They were copied here to prevent Spring dependencies in the JSecurity core API.  The original license conditions
+ * They were copied here to prevent Spring dependencies in the Apache Ki core API.  The original license conditions
  * (Apache 2.0) have been maintained.
  *
  * @author Jeremy Haile

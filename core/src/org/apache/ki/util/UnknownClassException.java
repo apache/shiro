@@ -22,7 +22,7 @@ import org.apache.ki.KiException;
 
 
 /**
- * The JSecurity framework's <code>RuntimeException</code> equivalent of the JDK's
+ * The Apache Ki framework's <code>RuntimeException</code> equivalent of the JDK's
  * <code>ClassNotFoundException</code>, to maintain a RuntimeException paradigm.
  *
  * @author Les Hazlewood

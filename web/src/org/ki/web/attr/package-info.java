@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Supporting implementation of JSecurity's concept of a {@link org.apache.ki.web.attr.WebAttribute WebAttribute}, a
+ * Supporting implementation of Apache Ki's concept of a {@link org.apache.ki.web.attr.WebAttribute WebAttribute}, a
  * component that can save and recall an object beyond transient requests.
  */
 package org.ki.web.attr;

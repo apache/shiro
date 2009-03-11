@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Controller used to dynamically build a JNLP file used to launch the JSecurity
+ * Controller used to dynamically build a JNLP file used to launch the Apache Ki
  * Spring WebStart sample application.
  *
  * @author Jeremy Haile
@@ -73,7 +73,7 @@ public class JnlpController extends AbstractController {
             session = subject.getSession();
         }
         if (session == null) {
-            String msg = "Expected a non-null JSecurity session.";
+            String msg = "Expected a non-null Apache Ki session.";
             throw new IllegalArgumentException(msg);
         }
 

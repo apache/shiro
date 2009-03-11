@@ -25,7 +25,7 @@ import org.apache.ki.subject.PrincipalCollection;
  *
  * <p>As it is an SPI interface, it is really intended for SPI implementors such as those implementing Realms.
  *
- * <p>All of JSecurity's concrete Realm implementations implement this interface as a convenience for those wishing
+ * <p>All of Apache Ki's concrete Realm implementations implement this interface as a convenience for those wishing
  * to subclass them.
  *
  * @author Les Hazlewood

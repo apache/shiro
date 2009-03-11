@@ -29,32 +29,32 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
 /**
- * HttpServletResponse implementation to support URL Encoding of JSecurity Session IDs.
+ * HttpServletResponse implementation to support URL Encoding of Apache Ki Session IDs.
  *
- * It is only used when using JSecurity's native Session Management configuration (and not when using the Servlet
- * Container session configuration, which is JSecurity's default in a web environment).  Because the servlet container
- * already performs url encoding of its own session ids, instances of this class are only needed when using JSecurity
+ * It is only used when using Apache Ki's native Session Management configuration (and not when using the Servlet
+ * Container session configuration, which is Apache Ki's default in a web environment).  Because the servlet container
+ * already performs url encoding of its own session ids, instances of this class are only needed when using Apache Ki
  * native sessions.
  *
  * <p>Note that this implementation relies in part on source code from the Tomcat 6.x distribution for
- * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since JSecurity is also
+ * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since Apache Ki is also
  * Apache 2.0 license, all regular licenses and conditions have remained in tact.
  *
  * @author Les Hazlewood
  * @since 0.2
  */
 @SuppressWarnings({"deprecated", "deprecation"})
-public class JSecurityHttpServletResponse extends HttpServletResponseWrapper {
+public class Apache KiHttpServletResponse extends HttpServletResponseWrapper {
 
     //TODO - complete JavaDoc
 
-    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = JSecurityHttpSession.DEFAULT_SESSION_ID_NAME;
+    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = Apache KiHttpSession.DEFAULT_SESSION_ID_NAME;
 
     private ServletContext context = null;
     //the associated request
     private KiHttpServletRequest request = null;
 
-    public JSecurityHttpServletResponse(HttpServletResponse wrapped, ServletContext context, KiHttpServletRequest request) {
+    public Apache KiHttpServletResponse(HttpServletResponse wrapped, ServletContext context, KiHttpServletRequest request) {
         super(wrapped);
         this.context = context;
         this.request = request;

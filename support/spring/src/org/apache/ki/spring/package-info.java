@@ -18,6 +18,6 @@
  */
 /**
  * <a href="http://www.springframework.org" target="_top">Spring Application Framework</a> support for enabling
- * JSecurity in spring applications.
+ * Apache Ki in spring applications.
  */
 package org.ki.spring;

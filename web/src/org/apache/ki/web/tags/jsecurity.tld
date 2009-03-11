@@ -26,11 +26,11 @@
 
   <jsp-version>1.2</jsp-version>
 
-  <short-name>JSecurity</short-name>
+  <short-name>Apache Ki</short-name>
 
   <uri>http://www.jsecurity.org/tags</uri>
 
-  <description>JSecurity JSP Tag Library. Authors: Les Hazlewood, Jeremy Haile</description>
+  <description>Apache Ki JSP Tag Library. Authors: Les Hazlewood, Jeremy Haile</description>
 
   <tag>
     <name>hasPermission</name>

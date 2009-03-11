@@ -23,7 +23,7 @@ package org.apache.ki.io;
  * of objects to files, HTTP cookies, or other mechanism.
  * <p/>
  * A <code>Serializer</code> should only do conversion, never change the data, such as encoding/decoding or
- * encryption.  These orthoganal concerns are handled elsewhere by JSecurity, for example, via
+ * encryption.  These orthoganal concerns are handled elsewhere by Apache Ki, for example, via
  * {@link org.apache.ki.codec.CodecSupport CodecSupport} and {@link org.apache.ki.crypto.Cipher Cipher}s.
  * @author Les Hazlewood
  * @since 0.9

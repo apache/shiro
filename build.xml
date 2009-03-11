@@ -18,7 +18,7 @@
   ~ under the License.
   -->
 
-<!-- JSecurity root build file.  If you want to understand how the JSecurity build environment
+<!-- Apache Ki root build file.  If you want to understand how the Apache Ki build environment
      works (useful if you want to build from scratch or join the project as a developer),
      Read this article:
 
@@ -176,17 +176,17 @@
     </target>
 
     <target name="samples.web.deploy" depends="package"
-            description="Deploys the JSecurity quickstart .war">
+            description="Deploys the Apache Ki quickstart .war">
         <ant dir="samples/web" target="deploy"/>
     </target>
 
     <target name="samples.spring.deploy" depends="package"
-            description="Deploys the sample JSecurity/Spring .war">
+            description="Deploys the sample Apache Ki/Spring .war">
         <ant dir="samples/spring" target="deploy"/>
     </target>
 
     <target name="samples.spring-hibernate.deploy" depends="package"
-            description="Deploys the sample JSecurity Spring/Hibernate .war">
+            description="Deploys the sample Apache Ki Spring/Hibernate .war">
         <ant dir="samples/spring-hibernate" target="deploy"/>
     </target>
 
@@ -199,17 +199,17 @@
         <delete dir="${api.dir}" failonerror="false"/>
         <mkdir dir="${api.dir}"/>
 
-        <javadoc destdir="${api.dir}" windowtitle="JSecurity API ${version}"
+        <javadoc destdir="${api.dir}" windowtitle="Apache Ki API ${version}"
                  source="1.5" access="package" author="true" version="true" use="true"
                  defaultexcludes="true"
-                 header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;JSecurity&lt;/a&gt;'>
+                 header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;Apache Ki&lt;/a&gt;'>
             <sourcepath refid="javadoc.src"/>
             <arg value="-breakiterator"/>
             <arg value="-J-Xmx128m"/>
             <arg value="-J-XX:MaxPermSize=128m"/>
             <!-- <arg value="-J-Dhttp.proxyHost=${javadoc.proxyhost}"/>
           <arg value="-J-Dhttp.proxyPort=${javadoc.proxyport}"/> -->
-            <doctitle><![CDATA[<h1>JSecurity API ${version}</h1>]]></doctitle>
+            <doctitle><![CDATA[<h1>Apache Ki API ${version}</h1>]]></doctitle>
             <!-- The following <bottom> block is to enable UA tracking via Google Analytics, but it fails the
                  JavaDoc task on a Windows Sun JDK.  It works fine on Mac OS X JavaDoc.  Since we want this UA
                  tracking, we use a Mac to build the release that end-users will download, so we leave this block
@@ -217,7 +217,7 @@
                  run successfully. -->
             <bottom>
                 <![CDATA[
-                <i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">JSecurity</a>.</i>
+                <i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">Apache Ki</a>.</i>
                 <script type="text/javascript">
                     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
                     document.write(unescape("%3Cscript src=%22" + gaJsHost + "google-analytics.com/ga.js%22 type=%22text/javascript%22%3E%3C/script%3E"));
@@ -544,7 +544,7 @@ up the transform (feel free to fix this more elegantly)
     </target>
 
     <target name="release" depends="package,src.zip,makepom,javadoc,doc.all"
-            description="Create all artifacts for a JSecurity release">
+            description="Create all artifacts for a Apache Ki release">
         <property name="release.dir.name" value="${project.name}-${version}"/>
         <property name="release.zip.name" value="${release.dir.name}.zip"/>
         <property name="release.depzip.name" value="${release.dir.name}-with-dependencies.zip"/>

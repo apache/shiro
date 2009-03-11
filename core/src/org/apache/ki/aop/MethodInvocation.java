@@ -40,7 +40,7 @@ package org.apache.ki.aop;
 import java.lang.reflect.Method;
 
 /**
- * 3rd-party API independent representation of a method invocation.  This is needed so JSecurity can support other
+ * 3rd-party API independent representation of a method invocation.  This is needed so Apache Ki can support other
  * MethodInvocation instances from other AOP frameworks/APIs.
  *
  * @author Jeremy Haile

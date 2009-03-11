@@ -136,7 +136,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         } catch (Exception e) {
             if (log.isInfoEnabled()) {
                 log.info("Unable to find a ki-users.properties file at location [" + this.resourcePath + "].  " +
-                        "Defaulting to JSecurity's failsafe properties file (demo use only).");
+                        "Defaulting to Apache Ki's failsafe properties file (demo use only).");
             }
             this.resourcePath = FAILSAFE_RESOURCE_PATH;
             loadProperties();

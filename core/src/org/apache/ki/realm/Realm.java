@@ -43,13 +43,13 @@ import org.apache.ki.authz.Authorizer;
  * return <tt>false</tt>.
  *
  * <p>Because every application is different, security data such as users and roles can be
- * represented in any number of ways.  JSecurity tries to maintain a non-intrusive development philosophy whenever
+ * represented in any number of ways.  Apache Ki tries to maintain a non-intrusive development philosophy whenever
  * possible - it does not require you to implement or extend any <tt>User</tt>, <tt>Group</tt> or <tt>Role</tt>
  * interfaces or classes.
  *
- * <p>Instead, JSecurity allows applications to implement this interface to access environment-specific datasources
- * and data model objects.  The implementation can then be plugged in to the application's JSecurity configuration.
- * This modular technique abstracts away any environment/modeling details and allows JSecurity to be deployed in
+ * <p>Instead, Apache Ki allows applications to implement this interface to access environment-specific datasources
+ * and data model objects.  The implementation can then be plugged in to the application's Apache Ki configuration.
+ * This modular technique abstracts away any environment/modeling details and allows Apache Ki to be deployed in
  * practically any application environment.
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend one of the subclasses,
@@ -94,7 +94,7 @@ public interface Realm extends Authorizer {
      *
      * <p>This method effectively represents a login attempt for the corresponding user with the underlying EIS datasource.
      * Most implementations merely just need to lookup and return the account data only (as the method name implies)
-     * and let JSecurity do the rest, but implementations may of course perform eis specific login operations if so
+     * and let Apache Ki do the rest, but implementations may of course perform eis specific login operations if so
      * desired.
      *
      * @param token the application-specific representation of an account principal and credentials.

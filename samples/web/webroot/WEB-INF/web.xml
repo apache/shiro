@@ -23,16 +23,16 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <filter>
-        <filter-name>JSecurityFilter</filter-name>
-        <filter-class>org.apache.ki.web.servlet.JSecurityFilter</filter-class>
+        <filter-name>Apache KiFilter</filter-name>
+        <filter-class>org.apache.ki.web.servlet.Apache KiFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
 
-                # The JSecurityFilter configuration is very powerful and flexible, while still remaining succinct.
+                # The Apache KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/JSecurityFilter.html
+                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/Apache KiFilter.html
 
                 [main]
 
@@ -56,7 +56,7 @@
     </filter>
 
     <filter-mapping>
-        <filter-name>JSecurityFilter</filter-name>
+        <filter-name>Apache KiFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 

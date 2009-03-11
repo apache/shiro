@@ -123,7 +123,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      * <p/>
      * Side note: As you can see from the header text, the HTTP Basic specification calls
      * this the authentication 'realm', but we call this the 'applicationName' instead to avoid confusion with
-     * JSecurity's Realm constructs.
+     * Apache Ki's Realm constructs.
      *
      * @param applicationName the name to use in the ServletResponse's 'WWW-Authenticate' header.
      */

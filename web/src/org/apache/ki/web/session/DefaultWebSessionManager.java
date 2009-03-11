@@ -36,7 +36,7 @@ import org.apache.ki.web.attr.CookieAttribute;
 import org.apache.ki.web.attr.RequestParamAttribute;
 import org.apache.ki.web.attr.WebAttribute;
 import org.apache.ki.web.servlet.KiHttpServletRequest;
-import org.apache.ki.web.servlet.JSecurityHttpSession;
+import org.apache.ki.web.servlet.Apache KiHttpSession;
 
 
 /**
@@ -141,7 +141,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     protected void ensureCookieSessionIdStore() {
         CookieAttribute<Serializable> cookieStore = getSessionIdCookieAttribute();
         if (cookieStore == null) {
-            cookieStore = new CookieAttribute<Serializable>(JSecurityHttpSession.DEFAULT_SESSION_ID_NAME);
+            cookieStore = new CookieAttribute<Serializable>(Apache KiHttpSession.DEFAULT_SESSION_ID_NAME);
             cookieStore.setCheckRequestParams(false);
             setSessionIdCookieAttribute(cookieStore);
         }
@@ -150,7 +150,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     protected void ensureRequestParamSessionIdStore() {
         RequestParamAttribute<Serializable> reqParamStore = getSessionIdRequestParamAttribute();
         if (reqParamStore == null) {
-            reqParamStore = new RequestParamAttribute<Serializable>(JSecurityHttpSession.DEFAULT_SESSION_ID_NAME);
+            reqParamStore = new RequestParamAttribute<Serializable>(Apache KiHttpSession.DEFAULT_SESSION_ID_NAME);
             setSessionIdRequestParamAttribute(reqParamStore);
         }
     }
@@ -294,7 +294,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             }
         } else {
             if (log.isTraceEnabled()) {
-                log.trace("No JSecurity session id associated with the given " +
+                log.trace("No Apache Ki session id associated with the given " +
                         "HttpServletRequest.  A Session will not be returned.");
             }
         }

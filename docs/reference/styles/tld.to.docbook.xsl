@@ -55,9 +55,9 @@
       </xsl:element>
 
       <xsl:element name="para">
-        <xsl:text>One of the view technologies you can use with JSecurity
+        <xsl:text>One of the view technologies you can use with Apache Ki
           is Java Server Pages (JSPs). To help you implement views using Java Server Pages,
-          JSecurity provides you with some tags for evaluating errors, setting
+          Apache Ki provides you with some tags for evaluating errors, setting
           themes and outputting internationalized messages.
         </xsl:text>
       </xsl:element>

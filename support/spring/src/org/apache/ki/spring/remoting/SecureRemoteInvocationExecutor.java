@@ -83,7 +83,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 ThreadContext.bindSessionId(sessionId);
             } else {
                 if (log.isTraceEnabled()) {
-                    log.trace("RemoteInvocation did not contain a JSecurity Session id attribute under " +
+                    log.trace("RemoteInvocation did not contain a Apache Ki Session id attribute under " +
                             "key [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Subject based " +
                             "on an existing Session will not be available during the method invocatin.");
                 }

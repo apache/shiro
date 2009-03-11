@@ -20,17 +20,17 @@
  * Components related to managing sessions, the time-based data contexts in which a Subject
  * interacts with an application.
  * <p/>
- * Sessions in JSecurity are completely POJO-based and do not <em>require</em> an application to use Web-based
+ * Sessions in Apache Ki are completely POJO-based and do not <em>require</em> an application to use Web-based
  * or EJB-based session management infrastructure - the client and/or server technoloy is irrelevent in
- * JSecurity's architecture, allowing session management to be employed in the smallest standalone application
+ * Apache Ki's architecture, allowing session management to be employed in the smallest standalone application
  * to the largest enterprise deployments.
  * <p/>
  * This design decision opens up a new world to Java applications - most notably the ability to participate in
  * a session regardless if the client is using HTTP, custom sockets, web services, or even non-Java progamming
- * languages. Aside from JSecurity, there is currently no technology in Java today allows this heterogenous 
+ * languages. Aside from Apache Ki, there is currently no technology in Java today allows this heterogenous 
  * client-session capability.
  * <p/>
- * Also because of this freedom, JSecurity naturally supports Single Sign-On for any application as well, using
+ * Also because of this freedom, Apache Ki naturally supports Single Sign-On for any application as well, using
  * this heterogeneous session support.
  */
 package org.ki.session;
