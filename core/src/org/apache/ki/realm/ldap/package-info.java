@@ -20,4 +20,4 @@
  * Realms that acquire security data from an LDAP (Lightweight Directory Access Protocol) server
  * utilizing LDAP/Naming APIs.
  */
-package org.ki.realm.ldap;
+package org.apache.ki.realm.ldap;

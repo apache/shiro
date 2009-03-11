@@ -28,18 +28,18 @@
         <property name="username" value="sa"/>
     </bean>
     <!-- Populates the sample database with sample users and roles. -->
-    <bean id="bootstrapDataPopulator" class="org.ki.samples.spring.BootstrapDataPopulator">
+    <bean id="bootstrapDataPopulator" class="org.apache.ki.samples.spring.BootstrapDataPopulator">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <!-- Simulated business-tier "Manager", not Apache Ki related, just an example -->
-    <bean id="sampleManager" class="org.ki.samples.spring.DefaultSampleManager"/>
+    <bean id="sampleManager" class="org.apache.ki.samples.spring.DefaultSampleManager"/>
 
     <!-- =========================================================
          Apache Ki Core Components - Not Spring Specific
          ========================================================= -->
     <!-- Apache Ki's main business-tier object for web-enabled applications
-         (use org.kifaultSecurityManager instead when there is no web environment)-->
+         (use DefaultSecurityManager instead when there is no web environment)-->
     <bean id="securityManager" class="org.apache.ki.web.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
         <property name="realm" ref="jdbcRealm"/>

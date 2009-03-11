@@ -20,4 +20,4 @@
  * Base package supporting all Servlet {@link javax.servlet.Filter Filter} implementations used to control
  * access to web pages and URL resources.
  */
-package org.ki.web.filter;
+package org.apache.ki.web.filter;

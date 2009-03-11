@@ -20,4 +20,4 @@
  * Servlet {@link javax.servlet.Filter Filter} implementations specific to controlling access based on a
  * subject's authentication status, or those that can execute authentications (log-ins) directly.
  */
-package org.ki.web.filter.authc;
+package org.apache.ki.web.filter.authc;

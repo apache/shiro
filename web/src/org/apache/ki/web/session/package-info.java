@@ -19,4 +19,4 @@
 /**
  * Components supporting Session management in web-enabled applications.
  */
-package org.ki.web.session;
+package org.apache.ki.web.session;

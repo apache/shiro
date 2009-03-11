@@ -26,4 +26,4 @@
  * entry point (facade) to all other other authentication components. Other components, interfaces and
  * exceptions are here to support <tt>Authenticator</tt> implementations.
  */
-package org.ki.authc;
+package org.apache.ki.authc;

@@ -16,16 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring.web;
-
-import org.apache.ki.SecurityUtils;
-import org.apache.ki.subject.Subject;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+package org.apache.ki.samples.spring.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
+
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.subject.Subject;
 
 /**
  * Controller responsible for logging out the current user by invoking

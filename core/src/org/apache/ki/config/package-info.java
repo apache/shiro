@@ -19,4 +19,4 @@
 /**
  * Components that support configuring Apache Ki in any application.
  */
-package org.ki.config;
+package org.apache.ki.config;

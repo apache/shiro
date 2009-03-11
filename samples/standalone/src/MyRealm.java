@@ -17,10 +17,10 @@
  * under the License.
  */
 
-import org.jsecurity.authc.*;
-import org.jsecurity.authz.AuthorizationInfo;
-import org.jsecurity.realm.AuthorizingRealm;
-import org.jsecurity.subject.PrincipalCollection;
+import org.apache.ki.authc.*;
+import org.apache.ki.authz.AuthorizationInfo;
+import org.apache.ki.realm.AuthorizingRealm;
+import org.apache.ki.subject.PrincipalCollection;
 
 import java.util.Collection;
 
@@ -38,10 +38,10 @@ public class MyRealm extends AuthorizingRealm {
      * an underlying data store via an EIS API (JDBC, JPA, Hibernate, etc).
      * <p/>
      * Note that when implementing your own realm, there is no need to check against a password (or other credentials)
-     * in this method. The {@link org.jsecurity.realm.AuthenticatingRealm AuthenticatingRealm} superclass will do
+     * in this method. The {@link org.apache.ki.realm.AuthenticatingRealm AuthenticatingRealm} superclass will do
      * that automatically via the use of a configured
-     * {@link org.jsecurity.authc.credential.CredentialsMatcher CredentialsMatcher} (see this example's corresponding
-     * <code>jsecurity.ini</code> file to see a configured credentials matcher).
+     * {@link org.apache.ki.authc.credential.CredentialsMatcher CredentialsMatcher} (see this example's corresponding
+     * <code>ki.ini</code> file to see a configured credentials matcher).
      * <p/>
      * All that is required is that the account information include directly the credentials found in the EIS.
      *
@@ -79,8 +79,8 @@ public class MyRealm extends AuthorizingRealm {
         //get only the principals that this realm cares about:
         Collection thisRealmPrincipals = principals.fromRealm(getName());
 
-        //note that the return value of 'getName()' here is whatever you specify it to be in jsecurity.ini
-        //in this case, the jsecurity.ini file calls it 'myRealm'.  All realms must have a unique name.
+        //note that the return value of 'getName()' here is whatever you specify it to be in ki.ini
+        //in this case, the ki.ini file calls it 'myRealm'.  All realms must have a unique name.
 
         //Since this realm supplied these principals from the doGetAuthenticationInfo method above when the
         //user logged-in and that method in this simple example has only one principal - a username - we can safely

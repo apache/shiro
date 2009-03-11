@@ -22,4 +22,4 @@
  * Take particular note of the multiple sub-packages with existing Realm implementations supporting many
  * environments that you can use use directly or extend for custom behavior.
  */
-package org.ki.realm;
+package org.apache.ki.realm;

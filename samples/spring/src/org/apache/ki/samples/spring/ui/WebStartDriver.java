@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring.ui;
+package org.apache.ki.samples.spring.ui;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

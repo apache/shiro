@@ -16,30 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring.web;
-
-import org.apache.ki.SecurityUtils;
-import org.ki.samples.spring.SampleManager;
-import org.apache.ki.subject.Subject;
-
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+package org.apache.ki.samples.spring.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
+
+import org.apache.ki.authc.AuthenticationException;
+import org.apache.ki.authc.UsernamePasswordToken;
+import org.apache.ki.mgt.SecurityManager;
 
 /**
- * Spring MVC controller responsible for rendering the Apache Ki Spring sample
- * application index page.
+ * Spring MVC controller responsible for authenticating the user.
  *
  * @author Jeremy Haile
  * @since 0.1
  */
-public class IndexController extends SimpleFormController {
+public class LoginController extends SimpleFormController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -48,8 +44,7 @@ public class IndexController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-
-    private SampleManager sampleManager;
+    private org.apache.ki.mgt.SecurityManager securityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -59,39 +54,40 @@ public class IndexController extends SimpleFormController {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public void setSampleManager(SampleManager sampleManager) {
-        this.sampleManager = sampleManager;
+    /**
+     * Sets the security manager that should be used to login the user.
+     *
+     * @param securityManager the security manager used to perform the login.
+     */
+
+    public void setSecurityManager(SecurityManager securityManager) {
+        this.securityManager = securityManager;
     }
 
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
-    protected Object formBackingObject(HttpServletRequest request) throws Exception {
-        SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        command.setValue(sampleManager.getValue());
-        return command;
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object cmd, BindException errors) throws Exception {
+
+        LoginCommand command = (LoginCommand) cmd;
+
+        UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(), command.getPassword());
+
+        try {
+            securityManager.login(token);
+        } catch (AuthenticationException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error authenticating.", e);
+            }
+            errors.reject("error.invalidLogin", "The username or password was not correct.");
+        }
+
+        if (errors.hasErrors()) {
+            return showForm(request, response, errors);
+        } else {
+            return new ModelAndView(getSuccessView());
+        }
     }
-
-    protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        Subject subject = SecurityUtils.getSubject();
-        boolean hasRole1 = subject.hasRole("role1");
-        boolean hasRole2 = subject.hasRole("role2");
-
-        Map<String, Object> refData = new HashMap<String, Object>();
-        refData.put("hasRole1", hasRole1);
-        refData.put("hasRole2", hasRole2);
-        refData.put("subjectSession", subject.getSession());
-        return refData;
-    }
-
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
-        SessionValueCommand command = (SessionValueCommand) obj;
-
-        sampleManager.setValue(command.getValue());
-
-        return showForm(request, response, errors);
-    }
-
 }

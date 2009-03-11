@@ -20,4 +20,4 @@
  * Servlet {@link javax.servlet.Filter Filter} implementations that perform authorization (access control)
  * checks based on the Subject's abilities (for example, role or permission checks).
  */
-package org.ki.web.filter.authz;
+package org.apache.ki.web.filter.authz;

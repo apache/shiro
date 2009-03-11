@@ -20,4 +20,4 @@
  * EIS (Enterprise Information System)-tier components that can perform CRUD operations for sessions
  * using any EIS API.
  */
-package org.ki.session.mgt.eis;
+package org.apache.ki.session.mgt.eis;

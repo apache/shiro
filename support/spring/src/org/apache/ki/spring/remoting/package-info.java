@@ -20,4 +20,4 @@
  * Support to enable Spring-based remote method invocations to carry a Apache Ki session ID as part of the
  * invocation payload, allowing remote clients to perform security operations.
  */
-package org.ki.spring.remoting;
+package org.apache.ki.spring.remoting;

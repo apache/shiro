@@ -25,7 +25,7 @@ import org.apache.ki.KiException;
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @see org.ki.spring.LifecycleBeanPostProcessor
+ * @see org.apache.ki.spring.LifecycleBeanPostProcessor
  * @since 0.2
  */
 public interface Initializable {

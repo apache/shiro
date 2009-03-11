@@ -20,4 +20,4 @@
  * Your run-of-the-mill 'util' pacakge for components and logic widely used across the framework that can't
  * find their home into a proper OO hierarchy (or, most likely for things used across many hierarchies).
  */
-package org.ki.util;
+package org.apache.ki.util;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.spring;
+package org.apache.ki.spring;
 
 import java.util.HashMap;
 import java.util.Map;

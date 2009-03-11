@@ -19,4 +19,4 @@
 /**
  * Enables accessing objects located in JNDI that might be useful when configuring a Apache Ki-enabled application.
  */
-package org.ki.jndi;
+package org.apache.ki.jndi;

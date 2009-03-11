@@ -20,4 +20,4 @@
  * Support implementations that depend heavily on the <tt>javax.servlet.*</tt> API and are meant to be
  * directly used in web.xml (Servlet Filters, Servlet Context Listeners, Servlets, etc)
  */
-package org.ki.web.servlet;
+package org.apache.ki.web.servlet;

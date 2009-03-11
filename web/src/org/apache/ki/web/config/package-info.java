@@ -19,4 +19,4 @@
 /**
  * Web-specific implementation extensions to the <code>org.jsecurity.config</code> components.
  */
-package org.ki.web.config;
+package org.apache.ki.web.config;

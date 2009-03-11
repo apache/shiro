@@ -19,9 +19,9 @@
 /**
  * Support for <em>PAM</em>, or <b>P</b>luggable <b>A</b>uthentication <b>M</b>odules, which is
  * the capability to authenticate a user against multiple configurable (pluggable) <em>modules</em> (Apache Ki
- * calls these {@link org.ki.realm.Realm Realm}s).
+ * calls these {@link org.apache.ki.realm.Realm Realm}s).
  * <p/>
- * The primary class of interest here is the {@link org.ki.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}
+ * The primary class of interest here is the {@link org.apache.ki.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}
  * which is an <code>Authenticator</code> implementation that coordinates authentication attempts across
  * one or more Realm instances.
  * <p/>
@@ -29,4 +29,4 @@
  * application's needs using an injectible
  * {@link AuthenticationStrategy}.
  */
-package org.ki.authc.pam;
+package org.apache.ki.authc.pam;

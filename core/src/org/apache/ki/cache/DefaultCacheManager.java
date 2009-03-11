@@ -30,7 +30,7 @@ import org.apache.ki.util.LifecycleUtils;
  * <p/>
  * This implementation does not offer any enterprise-level features such as cache coherency, optimistic locking,
  * failover or other similar features.  It relies on memory-based {@link java.util.Map Map} caches.  For more
- * enterprise features, consider using an {@link org.ki.cache.ehcache.EhCacheManager EhCacheManager} or other
+ * enterprise features, consider using an {@link org.apache.ki.cache.ehcache.EhCacheManager EhCacheManager} or other
  * similar implementation that wraps an enterprise-grade Caching solution.
  *
  * @author Les Hazlewood

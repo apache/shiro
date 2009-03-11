@@ -46,21 +46,21 @@
     <!-- =========================================================
          Spring controllers
          ========================================================= -->
-    <bean name="loginController" class="org.ki.samples.spring.web.LoginController">
-        <property name="commandClass" value="org.ki.samples.spring.web.LoginCommand"/>
+    <bean name="loginController" class="org.apache.ki.samples.spring.web.LoginController">
+        <property name="commandClass" value="org.apache.ki.samples.spring.web.LoginCommand"/>
         <property name="formView" value="login"/>
         <property name="successView" value="redirect:/s/index"/>
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
-    <bean name="logoutController" class="org.ki.samples.spring.web.LogoutController"/>
+    <bean name="logoutController" class="org.apache.ki.samples.spring.web.LogoutController"/>
 
-    <bean id="jnlpController" class="org.ki.samples.spring.web.JnlpController">
+    <bean id="jnlpController" class="org.apache.ki.samples.spring.web.JnlpController">
         <property name="jnlpView" value="jsecurity.jnlp"/>
     </bean>
 
-    <bean id="indexController" class="org.ki.samples.spring.web.IndexController">
-        <property name="commandClass" value="org.ki.samples.spring.web.SessionValueCommand"/>
+    <bean id="indexController" class="org.apache.ki.samples.spring.web.IndexController">
+        <property name="commandClass" value="org.apache.ki.samples.spring.web.SessionValueCommand"/>
         <property name="formView" value="sampleIndex"/>
         <property name="successView" value="sampleIndex"/>
         <property name="sampleManager" ref="sampleManager"/>

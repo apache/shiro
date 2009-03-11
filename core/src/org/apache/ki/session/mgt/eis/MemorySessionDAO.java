@@ -43,7 +43,7 @@ import org.apache.ki.util.JavaEnvironment;
  *
  * <ul>
  * <li>Configure it with a production-quality CacheManager. The
- * {@link org.ki.cache.ehcache.EhCacheManager EhCacheManager} is one such implementation.  It is not used by default
+ * {@link org.apache.ki.cache.ehcache.EhCacheManager EhCacheManager} is one such implementation.  It is not used by default
  * to prevent a forced runtime dependency on ehcache.jar that may not be required in many environments)</li><br/>
  * <li>If you need session information beyond their transient start/stop lifetimes, you should subclass this one and
  * override the <tt>do*</tt> methods to perform CRUD operations using an EIS-tier API (e.g. Hibernate/JPA/JCR/etc).

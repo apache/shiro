@@ -20,4 +20,4 @@
  * Realms that acquire security data from text-based data sources such as <code>File</code>s or
  * text streams.
  */
-package org.ki.realm.text;
+package org.apache.ki.realm.text;

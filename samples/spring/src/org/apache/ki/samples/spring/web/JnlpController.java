@@ -16,36 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.samples.spring;
+package org.apache.ki.samples.spring.web;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
+
 import org.apache.ki.SecurityUtils;
 import org.apache.ki.session.Session;
 import org.apache.ki.subject.Subject;
 
-
 /**
- * Default implementation of the {@link SampleManager} interface that stores
- * and retrieves a value from the user's session.
+ * Controller used to dynamically build a JNLP file used to launch the Apache Ki
+ * Spring WebStart sample application.
  *
  * @author Jeremy Haile
  * @since 0.1
  */
-public class DefaultSampleManager implements SampleManager {
+public class JnlpController extends AbstractController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    /**
-     * Key used to store the value in the user's session.
-     */
-    private static final String VALUE_KEY = "sample_value";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Log log = LogFactory.getLog(DefaultSampleManager.class);
+    private String jnlpView;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -55,51 +56,43 @@ public class DefaultSampleManager implements SampleManager {
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
+    public void setJnlpView(String jnlpView) {
+        this.jnlpView = jnlpView;
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
 
-    public String getValue() {
-        String value = null;
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession(false);
-        if (session != null) {
-            value = (String) session.getAttribute(VALUE_KEY);
-            if (log.isDebugEnabled()) {
-                log.debug("retrieving session key [" + VALUE_KEY + "] with value [" + value + "] on session with id [" + session.getId() + "]");
-            }
+        Session session = null;
+
+        if (subject != null) {
+            session = subject.getSession();
+        }
+        if (session == null) {
+            String msg = "Expected a non-null Apache Ki session.";
+            throw new IllegalArgumentException(msg);
         }
 
-        return value;
-    }
-
-    public void setValue(String newValue) {
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-
-        if (log.isDebugEnabled()) {
-            log.debug("saving session key [" + VALUE_KEY + "] with value [" + newValue + "] on session with id [" + session.getId() + "]");
+        StringBuilder sb = new StringBuilder();
+        sb.append("http://");
+        sb.append(request.getServerName());
+        if (request.getServerPort() != 80) {
+            sb.append(":");
+            sb.append(request.getServerPort());
         }
+        sb.append(request.getContextPath());
 
-        session.setAttribute(VALUE_KEY, newValue);
-    }
+        // prevent JNLP caching by setting response headers
+        response.setHeader("cache-control", "no-cache");
+        response.setHeader("pragma", "no-cache");
 
-    public void secureMethod1() {
-        if (log.isInfoEnabled()) {
-            log.info("Secure method 1 called...");
-        }
-    }
-
-    public void secureMethod2() {
-        if (log.isInfoEnabled()) {
-            log.info("Secure method 2 called...");
-        }
-    }
-
-    public void secureMethod3() {
-        if (log.isInfoEnabled()) {
-            log.info("Secure method 3 called...");
-        }
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("codebaseUrl", sb.toString());
+        model.put("sessionId", session.getId());
+        return new ModelAndView(jnlpView, model);
     }
 }
