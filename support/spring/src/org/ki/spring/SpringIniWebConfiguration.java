@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ki.realm.Realm;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 import org.apache.ki.mgt.SecurityManager;
 
@@ -91,7 +91,7 @@ public class SpringIniWebConfiguration extends IniWebConfiguration {
     }
 
     @Override
-    public void init() throws JSecurityException {
+    public void init() throws KiException {
         String beanName = getFilterConfig().getInitParameter(SECURITY_MANAGER_BEAN_NAME_PARAM_NAME);
         if (beanName != null) {
             setSecurityManagerBeanName(beanName);

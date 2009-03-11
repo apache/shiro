@@ -30,7 +30,7 @@ import java.util.Scanner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 import org.apache.ki.io.IniResource;
 import org.apache.ki.io.ResourceUtils;
 import org.apache.ki.mgt.DefaultSecurityManager;
@@ -88,7 +88,7 @@ public class IniConfiguration extends TextConfiguration {
         this.configUrl = configUrl;
     }
 
-    public void init() throws JSecurityException {
+    public void init() throws KiException {
 
         if (configUrl != null) {
             if (ResourceUtils.resourceExists(configUrl)) {

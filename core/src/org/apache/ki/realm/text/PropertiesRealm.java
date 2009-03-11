@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 import org.apache.ki.cache.CacheManager;
 import org.apache.ki.io.ResourceUtils;
 import org.apache.ki.util.Destroyable;
@@ -261,7 +261,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
             }
 
         } catch (IOException e) {
-            throw new JSecurityException("Error reading properties path [" + resourcePath + "].  " +
+            throw new KiException("Error reading properties path [" + resourcePath + "].  " +
                     "Initializing of the realm from this file failed.", e);
         } finally {
             ResourceUtils.close(is);

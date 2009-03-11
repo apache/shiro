@@ -18,7 +18,7 @@
  */
 package org.apache.ki.util;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 
 /**
@@ -28,7 +28,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class UnknownClassException extends JSecurityException {
+public class UnknownClassException extends KiException {
 
     /**
      * Creates a new UnknownClassException.

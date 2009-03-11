@@ -23,7 +23,7 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 
 /**
@@ -35,22 +35,22 @@ public abstract class LifecycleUtils {
 
     private static final Log log = LogFactory.getLog(LifecycleUtils.class);
 
-    public static void init(Object o) throws JSecurityException {
+    public static void init(Object o) throws KiException {
         if (o instanceof Initializable) {
             init((Initializable) o);
         }
     }
 
-    public static void init(Initializable initializable) throws JSecurityException {
+    public static void init(Initializable initializable) throws KiException {
         initializable.init();
     }
 
     /**
      * @param c
-     * @throws JSecurityException
+     * @throws org.apache.ki.KiException
      * @since 0.9
      */
-    public static void init(Collection c) throws JSecurityException {
+    public static void init(Collection c) throws KiException {
         if (c == null || c.isEmpty()) {
             return;
         }

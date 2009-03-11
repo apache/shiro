@@ -20,7 +20,8 @@ package org.apache.ki.session;
 
 import java.io.Serializable;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
+
 
 /**
  * General security exception attributed to problems during interaction with the system during
@@ -29,7 +30,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class SessionException extends JSecurityException {
+public class SessionException extends KiException {
 
     private Serializable sessionId;
 

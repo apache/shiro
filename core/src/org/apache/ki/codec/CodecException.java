@@ -18,7 +18,7 @@
  */
 package org.apache.ki.codec;
 
-import org.apache.ki.JSecurityException;
+import org.apache.ki.KiException;
 
 /**
  * Root exception related to issues during encoding or decoding.
@@ -26,7 +26,7 @@ import org.apache.ki.JSecurityException;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class CodecException extends JSecurityException {
+public class CodecException extends KiException {
 
     /**
      * Creates a new <code>CodecException</code>.
