@@ -45,7 +45,7 @@ import org.apache.ki.web.session.WebSession;
  * @since 0.2
  */
 @SuppressWarnings({"deprecation"})
-public class Apache KiHttpSession implements HttpSession {
+public class KiHttpSession implements HttpSession {
 
     //TODO - complete JavaDoc
 
@@ -75,7 +75,7 @@ public class Apache KiHttpSession implements HttpSession {
     protected HttpServletRequest currentRequest = null;
     protected Session session = null; //'real' Apache Ki Session
 
-    public Apache KiHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
+    public KiHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
         if (session instanceof WebSession) {
             String msg = "Session constructor argument cannot be an instance of WebSession.  This is enforced to " +
                     "prevent circular dependencies and infinite loops.";

@@ -40,11 +40,11 @@ package org.apache.ki.util;
  * <code>com</code> directory</li>
  * <li><code>com/&#42;&#42;/test.jsp</code> - matches all <code>test.jsp</code>
  * files underneath the <code>com</code> path</li>
- * <li><code>org/jsecurity/&#42;&#42;/*.jsp</code> - matches all <code>.jsp</code>
- * files underneath the <code>org/jsecurity</code> path</li>
+ * <li><code>org/apache/ki/&#42;&#42;/*.jsp</code> - matches all <code>.jsp</code>
+ * files underneath the <code>org/apache/ki</code> path</li>
  * <li><code>org/&#42;&#42;/servlet/bla.jsp</code> - matches
- * <code>org/jsecurity/servlet/bla.jsp</code> but also
- * <code>org/jsecurity/testing/servlet/bla.jsp</code> and
+ * <code>org/apache/ki/servlet/bla.jsp</code> but also
+ * <code>org/apache/ki/testing/servlet/bla.jsp</code> and
  * <code>org/servlet/bla.jsp</code></li>
  * </ul>
  *

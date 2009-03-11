@@ -19,8 +19,8 @@
 /**
  * Components used to support the framework's AOP/interception support classes.
  * <p/>
- * As this package is a root-level package under <tt>org.jsecurity</tt>, it contains AOP support classes
+ * As this package is a root-level package under <tt>org.apache.ki</tt>, it contains AOP support classes
  * useful for any AOP environment and/or function. Feature-dependent AOP classes (e.g. authorization,
  * authentication, etc) will use these classes as their base in their respective packages.
  */
-package org.ki.aop;
+package org.apache.ki.aop;

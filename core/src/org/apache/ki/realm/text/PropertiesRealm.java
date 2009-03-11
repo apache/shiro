@@ -45,14 +45,14 @@ import org.apache.ki.util.Destroyable;
  * permission configuration.
  *
  * <p>For convenience, if the {@link #setResourcePath resourcePath} attribute is not set, this class defaults to lookup
- * the properties file definition from <tt>classpath:jsecurity-users.properties</tt> (root of the classpath).
+ * the properties file definition from <tt>classpath:ki-users.properties</tt> (root of the classpath).
  * This allows you to use this implementation by simply defining this file at the classpath root, instantiating this
  * class, and then calling {@link #init init()}.
  *
  * <p>Or, you may of course specify any other file path using the <tt>url:</tt>, <tt>file:</tt>, or <tt>classpath:</tt>
  * prefixes.</p>
  *
- * <p>If none of these are specified, and the jsecurity-users.properties is not included at the root of the classpath,
+ * <p>If none of these are specified, and the ki-users.properties is not included at the root of the classpath,
  * a default failsafe configuration will be used.  This is not recommended as it only contains a few simple users and
  * roles which are probably of little value to production applications.</p>
  *
@@ -83,7 +83,7 @@ import org.apache.ki.util.Destroyable;
  * user.abrown = <em>abrownPassword</em>,qa,employee<br/>
  * user.djones = <em>djonesPassword</em>,qa,contractor<br/>
  * <br/>
- * role.administrator = org.jsecurity.authz.support.AllPermission<br/>
+ * role.administrator = org.apache.ki.authz.support.AllPermission<br/>
  * role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute<br/>
  * role.engineer = com.domain.FilePermission,/usr/local/tomcat/bin/startup.sh,read,execute<br/>
  * role.employee = com.domain.IntranetPermission,useWiki<br/>

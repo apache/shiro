@@ -3,14 +3,14 @@
 <project name="common" default="package">
 
     <!-- Static property definitions.  These will remain the same for any module or submodule. -->
-    <property name="project.name" value="jsecurity"/>
+    <property name="project.name" value="ki"/>
 
     <property name="root.base.dir" value="${basedir}"/>
 
     <!-- Allow override of default build properties from properties file. -->
     <property file="build.properties"/>
     <property file="${root.base.dir}/build.properties"/>
-    <property file="${user.home}/.jsecurity/build.properties"/>
+    <property file="${user.home}/.ki/build.properties"/>
 
     <!-- Environment variables (e.g. to pickup CATALINA_HOME for test deployment) -->
     <property environment="env"/>

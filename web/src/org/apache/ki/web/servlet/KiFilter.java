@@ -52,8 +52,8 @@ import org.apache.ki.web.config.WebConfiguration;
  * The following is a fully commented example that documents how to configure it:
  * <p/>
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;Apache KiFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.jsecurity.web.servlet.Apache KiFilter&lt;/filter-class&gt;
+ * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
  * <p/>
  * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
@@ -173,7 +173,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * <p/>
  * <p/>
  * &lt;filter-mapping&gt;
- * &lt;filter-name&gt;Apache KiFilter&lt;/filter-name&gt;
+ * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;</pre>
  *
@@ -181,7 +181,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class Apache KiFilter extends OncePerRequestFilter {
+public class KiFilter extends OncePerRequestFilter {
 
     //TODO - complete JavaDoc
 
@@ -191,7 +191,7 @@ public class Apache KiFilter extends OncePerRequestFilter {
     public static final String CONFIG_INIT_PARAM_NAME = "config";
     public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
-    private static final Log log = LogFactory.getLog(Apache KiFilter.class);
+    private static final Log log = LogFactory.getLog(KiFilter.class);
 
     protected String config;
     protected String configUrl;
@@ -201,7 +201,7 @@ public class Apache KiFilter extends OncePerRequestFilter {
     // Reference to the security manager used by this filter
     protected SecurityManager securityManager;
 
-    public Apache KiFilter() {
+    public KiFilter() {
         this.configClassName = IniWebConfiguration.class.getName();
     }
 
@@ -374,7 +374,7 @@ public class Apache KiFilter extends OncePerRequestFilter {
 
     /** @since 1.0 */
     protected ServletResponse wrapServletResponse(HttpServletResponse orig, KiHttpServletRequest request) {
-        return new Apache KiHttpServletResponse(orig, getServletContext(), request);
+        return new KiHttpServletResponse(orig, getServletContext(), request);
     }
 
     /** @since 1.0 */
@@ -383,7 +383,7 @@ public class Apache KiFilter extends OncePerRequestFilter {
         ServletResponse toUse = response;
         if (isHttpSessions() && (request instanceof KiHttpServletRequest) &&
             (response instanceof HttpServletResponse)) {
-            //the Apache KiHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
+            //the KiHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using Apache Ki sessions (i.e. not simple HttpSession based sessions):
             toUse = wrapServletResponse((HttpServletResponse) response, (KiHttpServletRequest) request);
         }

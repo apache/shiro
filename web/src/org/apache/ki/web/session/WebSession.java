@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.ki.session.InvalidSessionException;
 import org.apache.ki.session.Session;
-import org.apache.ki.web.servlet.Apache KiHttpSession;
+import org.apache.ki.web.servlet.KiHttpSession;
 
 /**
  * TODO class JavaDoc
@@ -50,8 +50,8 @@ public class WebSession implements Session {
             String msg = "HttpSession constructor argument cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        if (httpSession instanceof Apache KiHttpSession) {
-            String msg = "HttpSession constructor argument cannot be an instance of Apache KiHttpSession.  This " +
+        if (httpSession instanceof KiHttpSession) {
+            String msg = "HttpSession constructor argument cannot be an instance of KiHttpSession.  This " +
                     "is enforced to prevent circular dependencies and infinite loops.";
             throw new IllegalArgumentException(msg);
         }

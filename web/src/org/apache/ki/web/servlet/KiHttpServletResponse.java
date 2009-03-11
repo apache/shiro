@@ -44,17 +44,17 @@ import javax.servlet.http.HttpSession;
  * @since 0.2
  */
 @SuppressWarnings({"deprecated", "deprecation"})
-public class Apache KiHttpServletResponse extends HttpServletResponseWrapper {
+public class KiHttpServletResponse extends HttpServletResponseWrapper {
 
     //TODO - complete JavaDoc
 
-    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = Apache KiHttpSession.DEFAULT_SESSION_ID_NAME;
+    private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = KiHttpSession.DEFAULT_SESSION_ID_NAME;
 
     private ServletContext context = null;
     //the associated request
     private KiHttpServletRequest request = null;
 
-    public Apache KiHttpServletResponse(HttpServletResponse wrapped, ServletContext context, KiHttpServletRequest request) {
+    public KiHttpServletResponse(HttpServletResponse wrapped, ServletContext context, KiHttpServletRequest request) {
         super(wrapped);
         this.context = context;
         this.request = request;
