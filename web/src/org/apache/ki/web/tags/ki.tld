@@ -28,9 +28,9 @@
 
   <short-name>Apache Ki</short-name>
 
-  <uri>http://www.jsecurity.org/tags</uri>
+  <uri>http://ki.apache.org/tags</uri>
 
-  <description>Apache Ki JSP Tag Library. Authors: Les Hazlewood, Jeremy Haile</description>
+  <description>Apache Ki JSP Tag Library.</description>
 
   <tag>
     <name>hasPermission</name>
