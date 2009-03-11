@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.config;
+package org.apache.ki.config;
 
 import java.io.InputStream;
 import java.io.Serializable;

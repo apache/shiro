@@ -18,7 +18,7 @@
  */
 package org.ki.web.config;
 
-import org.ki.config.Configuration;
+import org.apache.ki.config.Configuration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
