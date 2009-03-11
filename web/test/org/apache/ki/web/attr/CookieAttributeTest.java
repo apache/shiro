@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.web.attr;
+package org.apache.ki.web.attr;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
