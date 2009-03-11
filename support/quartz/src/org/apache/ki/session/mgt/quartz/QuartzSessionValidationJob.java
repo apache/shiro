@@ -18,13 +18,15 @@
  */
 package org.apache.ki.session.mgt.quartz;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.session.mgt.ValidatingSessionManager;
 
 /**
  * A quartz job that basically just calls the {@link org.apache.ki.session.mgt.ValidatingSessionManager#validateSessions()}

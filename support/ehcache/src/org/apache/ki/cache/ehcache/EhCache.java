@@ -18,16 +18,18 @@
  */
 package org.apache.ki.cache.ehcache;
 
-import net.sf.ehcache.Element;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.ki.cache.Cache;
-import org.apache.ki.cache.CacheException;
-
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import net.sf.ehcache.Element;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.cache.Cache;
+import org.apache.ki.cache.CacheException;
 
 /**
  * JSecurity {@link org.apache.ki.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.

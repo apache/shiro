@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.spring.security.interceptor;
+package org.apache.ki.spring.security.interceptor;
+
+import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.ki.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 
-import java.lang.reflect.Method;
+import org.apache.ki.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 
 /**
  * Allows JSecurity Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>

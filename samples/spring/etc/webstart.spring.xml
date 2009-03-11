@@ -37,6 +37,6 @@
   </bean>
 
   <bean id="secureRemoteInvocationFactory"
-        class="org.ki.spring.remoting.SecureRemoteInvocationFactory"/>
+        class="org.apache.ki.spring.remoting.SecureRemoteInvocationFactory"/>
 
 </beans>

@@ -16,22 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.spring.security.interceptor;
+package org.apache.ki.spring.security.interceptor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.lang.reflect.Method;
 
-import org.apache.ki.mgt.SecurityManager;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.lang.reflect.Method;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.ki.authz.annotation.RequiresAuthentication;
 import org.apache.ki.authz.annotation.RequiresGuest;
 import org.apache.ki.authz.annotation.RequiresPermissions;
 import org.apache.ki.authz.annotation.RequiresRoles;
 import org.apache.ki.authz.annotation.RequiresUser;
+import org.apache.ki.mgt.SecurityManager;
 
 
 /**
