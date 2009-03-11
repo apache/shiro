@@ -27,7 +27,7 @@
 
      Reading this will instantly make you familiar with our build.
 -->
-<project name="jsecurity" default="all" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="ki" default="all" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <import file="./common.ant.xml"/>
 
@@ -202,7 +202,7 @@
         <javadoc destdir="${api.dir}" windowtitle="Apache Ki API ${version}"
                  source="1.5" access="package" author="true" version="true" use="true"
                  defaultexcludes="true"
-                 header='&lt;a href=\"http://www.jsecurity.org/\" target=\"_top\"&gt;Apache Ki&lt;/a&gt;'>
+                 header='&lt;a href=\"http://ki.apache.org/\" target=\"_top\"&gt;Apache Ki&lt;/a&gt;'>
             <sourcepath refid="javadoc.src"/>
             <arg value="-breakiterator"/>
             <arg value="-J-Xmx128m"/>
@@ -217,7 +217,7 @@
                  run successfully. -->
             <bottom>
                 <![CDATA[
-                <i>Copyright &copy; 2004-2008 <a href="http://www.jsecurity.org/" target="_top">Apache Ki</a>.</i>
+                <i>Copyright &copy; 2004-2008 <a href="http://ki.apache.org/" target="_top">Apache Ki</a>.</i>
                 <script type="text/javascript">
                     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
                     document.write(unescape("%3Cscript src=%22" + gaJsHost + "google-analytics.com/ga.js%22 type=%22text/javascript%22%3E%3C/script%3E"));
@@ -302,7 +302,7 @@
                 </fileset>
             </classpath>
             <arg value="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-            <arg value="${dist.ref.dir}/pdf/jsecurity-reference.pdf"/>
+            <arg value="${dist.ref.dir}/pdf/ki-reference.pdf"/>
         </java>
 
         <delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>

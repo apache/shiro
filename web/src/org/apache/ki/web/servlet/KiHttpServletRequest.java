@@ -47,7 +47,7 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
     public static final String REFERENCED_SESSION_ID_IS_VALID = KiHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID_VALID";
     public static final String REFERENCED_SESSION_IS_NEW = KiHttpServletRequest.class.getName() + "_REFERENCED_SESSION_IS_NEW";
     public static final String REFERENCED_SESSION_ID_SOURCE = KiHttpServletRequest.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
-    public static final String SESSION_ID_NAME = Apache KiHttpSession.DEFAULT_SESSION_ID_NAME;
+    public static final String SESSION_ID_NAME = KiHttpSession.DEFAULT_SESSION_ID_NAME;
     /**
      * Key that may be used to alert that the request's  referenced Apache Ki Session has expired prior to
      * request processing.
@@ -161,7 +161,7 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
 
                 Session jsecSession = getSubject().getSession(create);
                 if (jsecSession != null) {
-                    this.session = new Apache KiHttpSession(jsecSession, this, this.servletContext);
+                    this.session = new KiHttpSession(jsecSession, this, this.servletContext);
                     if (!existing) {
                         setAttribute(REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
                     }

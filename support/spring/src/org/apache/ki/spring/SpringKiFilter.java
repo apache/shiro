@@ -18,19 +18,20 @@
  */
 package org.apache.ki.spring;
 
-import org.apache.ki.web.servlet.Apache KiFilter;
+import org.apache.ki.web.servlet.KiFilter;
+
 
 /**
- * Extension of Apache KiFilter that uses {@link SpringIniWebConfiguration} to configure Apache Ki in a Spring web
+ * Extension of KiFilter that uses {@link SpringIniWebConfiguration} to configure Apache Ki in a Spring web
  * environment.
  * <p/>
  * Using this class in web.xml essentially enables the following:
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;Apache KiFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.jsecurity.web.servlet.Apache KiFilter&lt;/filter-class&gt;
+ * &lt;filter-name&gt;KiFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.apache.ki.web.servlet.KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;
  *     &lt;param-name&gt;configClassName&lt;/param-name&gt;
- *     &lt;param-value&gt;org.jsecurity.spring.SpringIniWebConfiguration&lt;param-value&gt;
+ *     &lt;param-value&gt;org.apache.ki.spring.SpringIniWebConfiguration&lt;param-value&gt;
  * &lt;/init-param&gt;
  * &lt;init-param&gt;
  *     &lt;param-name&gt;config&lt;/param-name&gt;
@@ -46,7 +47,7 @@ import org.apache.ki.web.servlet.Apache KiFilter;
  * @author Jeremy Haile
  * @since 0.2
  */
-public class SpringApache KiFilter extends Apache KiFilter {
+public class SpringKiFilter extends KiFilter {
 
     //TODO - complete JavaDoc
 
@@ -54,7 +55,7 @@ public class SpringApache KiFilter extends Apache KiFilter {
      * Default constructor, merely calls
      * <code>{@link #configClassName this.configClassName} = {@link SpringIniWebConfiguration SpringIniWebConfiguration}.class.getName()}</code>.
      */
-    public SpringApache KiFilter() {
+    public SpringKiFilter() {
         this.configClassName = SpringIniWebConfiguration.class.getName();
     }
 }

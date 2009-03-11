@@ -20,11 +20,11 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-    <info organisation="org.ki" module="jsecurity" revision="0.9.0" status="snapshot"
+    <info organisation="org.ki" module="ki" revision="0.9.0" status="snapshot"
           publication="20080814234001">
         <license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.html"/>
         <ivyauthor name="Les Hazlewood" url="http://www.leshazlewood.com"/>
-        <description homepage="http://www.jsecurity.org">
+        <description homepage="http://ki.apache.org">
             Apache Ki is a powerful and flexible open-source Java security framework that cleanly handles
             authentication, authorization, enterprise session management, single sign-on and cryptography services.
 

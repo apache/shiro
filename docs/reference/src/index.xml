@@ -32,7 +32,7 @@
                 <!ENTITY web-support    SYSTEM "web-support.xml">
                 <!ENTITY web-filter         SYSTEM "web-filter.xml">
                 <!ENTITY web-taglibs        SYSTEM "web-taglibs.xml">
-                <!ENTITY jsecurity.tld      SYSTEM "jsecurity.tld.xml">
+                <!ENTITY ki.tld      SYSTEM "ki.tld.xml">
                 ]>
 <book>
     <bookinfo>
@@ -57,9 +57,9 @@
     <!-- front matter -->
     <toc/>
     &preface;
-    <part id="jsecurity-quickstart">
+    <part id="ki-quickstart">
         <title>Apache Ki Quickstart</title>
-        <partintro id="jsecurity-quickstart-intro">
+        <partintro id="ki-quickstart-intro">
             <para>
                 This initial part of the reference documentation walks through the simplest quickstart application
                 so that you may become familiarized Apache Ki's programming API and general concepts. While this
@@ -77,9 +77,9 @@
             </note>
         </partintro>
     </part>
-    <part id="jsecurity-core">
+    <part id="ki-core">
         <title>Apache Ki Core</title>
-        <partintro id="jsecurity-core-intro">
+        <partintro id="ki-core-intro">
             <para>
                 This part of the reference documentation covers
                 Apache Ki's core architectural components that support
@@ -224,5 +224,5 @@
      </partintro>
    </part> -->
     <!-- back matter -->
-    &jsecurity.tld;
+    &ki.tld;
 </book>

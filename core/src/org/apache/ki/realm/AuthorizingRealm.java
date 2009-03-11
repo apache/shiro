@@ -156,7 +156,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * the {@link #setCacheManager cacheManager} property will be checked.
      * If a <tt>cacheManager</tt> has been set, it will be used to create an authorization
      * <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
-     * <li>If neither the {@link #setAuthorizationCache (org.jsecurity.cache.Cache) cache}
+     * <li>If neither the {@link #setAuthorizationCache (org.apache.ki.cache.Cache) cache}
      * or {@link #setCacheManager(org.apache.ki.cache.CacheManager) cacheManager}
      * properties are set, caching will be disabled and authorization lookups will be delegated to
      * subclass implementations for each authorization check.</li>

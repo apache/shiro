@@ -45,7 +45,7 @@ import org.apache.ki.session.mgt.ValidatingSession;
 public abstract class CachingSessionDAO implements SessionDAO, CacheManagerAware {
 
     /**
-     * The default active sessions cache name, equal to <code>jsecurity-activeSessionCache</code>.
+     * The default active sessions cache name, equal to <code>ki-activeSessionCache</code>.
      */
     public static final String ACTIVE_SESSION_CACHE_NAME = "ki-activeSessionCache";
 
