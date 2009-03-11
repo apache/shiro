@@ -23,9 +23,9 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.ki.config.ConfigurationException;
-import org.ki.config.ReflectionBuilder;
-import org.ki.config.UnresolveableReferenceException;
+import org.apache.ki.config.ConfigurationException;
+import org.apache.ki.config.ReflectionBuilder;
+import org.apache.ki.config.UnresolveableReferenceException;
 
 /**
  * @author Les Hazlewood

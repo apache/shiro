@@ -20,14 +20,15 @@ package org.ki.web.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.config.ConfigurationException;
-import org.ki.config.IniConfiguration;
-import org.ki.config.ReflectionBuilder;
+import org.apache.ki.config.ConfigurationException;
+import org.apache.ki.config.IniConfiguration;
+import org.apache.ki.config.ReflectionBuilder;
 import org.apache.ki.mgt.RealmSecurityManager;
 import org.apache.ki.util.AntPathMatcher;
 import org.apache.ki.util.PatternMatcher;
 
 import static org.apache.ki.util.StringUtils.split;
+
 import org.ki.web.DefaultWebSecurityManager;
 import org.ki.web.WebUtils;
 import org.ki.web.filter.PathConfigProcessor;

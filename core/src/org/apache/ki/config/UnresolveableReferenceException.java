@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.config;
+package org.apache.ki.config;
 
 /**
  * Exception thrown when a reference to an object is made, but that object cannot be found.  This is most likely
