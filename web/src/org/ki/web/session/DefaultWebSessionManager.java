@@ -20,11 +20,13 @@ package org.ki.web.session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.authz.AuthorizationException;
-import org.ki.authz.HostUnauthorizedException;
-import org.ki.session.InvalidSessionException;
-import org.ki.session.Session;
-import org.ki.session.mgt.DefaultSessionManager;
+import org.apache.ki.authz.AuthorizationException;
+import org.apache.ki.authz.HostUnauthorizedException;
+import org.apache.ki.session.mgt.DefaultSessionManager;
+
+import org.apache.ki.session.InvalidSessionException;
+import org.apache.ki.session.Session;
+
 import org.ki.web.WebUtils;
 import org.ki.web.attr.CookieAttribute;
 import org.ki.web.attr.RequestParamAttribute;
@@ -36,6 +38,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.Serializable;
 import java.net.InetAddress;
+
 
 /**
  * Web-application capable <tt>SessionManager</tt> implementation.
@@ -247,13 +250,14 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * @param request  incoming servlet request
      * @param response outgoing servlet response
      * @return the Session associated with the incoming request or <tt>null</tt> if one does not exist.
-     * @throws org.ki.session.InvalidSessionException
+     * @throws org.apache.ki.session.InvalidSessionException
      *          if the associated Session has expired prior to invoking this method.
-     * @throws org.ki.authz.AuthorizationException
+     * @throws org.apache.ki.authz.AuthorizationException
      *          if the caller is not authorized to access the session associated with the request.
      */
     public final Session getSession(ServletRequest request, ServletResponse response)
-            throws InvalidSessionException, AuthorizationException {
+            throws InvalidSessionException, AuthorizationException
+    {
 
         Session session;
         try {

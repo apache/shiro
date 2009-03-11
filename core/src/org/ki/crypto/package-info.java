@@ -20,7 +20,7 @@
  * Cryptography Cipher and Hashing components that greatly simplify the JDK's cryptography concepts and
  * add additional convenient behavior.
  * <p/>
- * The most important interface in this package is the {@link org.ki.crypto.Cipher Cipher} interface, which
+ * The most important interface in this package is the {@link org.apache.ki.crypto.Cipher Cipher} interface, which
  * allows other JSecurity components to encrypt and decrypt potentially sensitive data.
  */
 package org.ki.crypto;

@@ -18,8 +18,8 @@
  */
 package org.ki.samples.spring.web;
 
-import org.ki.SecurityUtils;
-import org.ki.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.subject.Subject;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * Controller responsible for logging out the current user by invoking
- * {@link org.ki.subject.Subject#logout()}
+ * {@link org.apache.ki.subject.Subject#logout()}
  *
  * @author Jeremy Haile
  * @since 0.1

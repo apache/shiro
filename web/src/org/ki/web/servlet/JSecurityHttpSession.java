@@ -18,13 +18,14 @@
  */
 package org.ki.web.servlet;
 
-import org.ki.session.InvalidSessionException;
-import org.ki.session.Session;
+import org.apache.ki.session.InvalidSessionException;
+import org.apache.ki.session.Session;
 import org.ki.web.session.WebSession;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 import java.util.*;
+
 
 /**
  * Wrapper class that uses a JSecurity session under the hood for all session operations instead of the

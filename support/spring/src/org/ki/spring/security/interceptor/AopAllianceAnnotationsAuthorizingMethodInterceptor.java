@@ -20,7 +20,7 @@ package org.ki.spring.security.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.ki.authz.aop.AnnotationsAuthorizingMethodInterceptor;
+import org.apache.ki.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 
 import java.lang.reflect.Method;
 
@@ -43,10 +43,10 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
      * @param implSpecificMethodInvocation AOP Alliance {@link org.aopalliance.intercept.MethodInvocation MethodInvocation}
      * @return a JSecurity {@link MethodInvocation MethodInvocation} instance that wraps the AOP Alliance instance.
      */
-    protected org.ki.aop.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
+    protected org.apache.ki.aop.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
         final MethodInvocation mi = (MethodInvocation) implSpecificMethodInvocation;
 
-        return new org.ki.aop.MethodInvocation() {
+        return new org.apache.ki.aop.MethodInvocation() {
             public Method getMethod() {
                 return mi.getMethod();
             }
@@ -80,14 +80,14 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
 
     /**
      * Creates a JSecurity {@link MethodInvocation MethodInvocation} instance and then immediately calls
-     * {@link org.ki.authz.aop.AuthorizingMethodInterceptor#invoke super.invoke}.
+     * {@link org.apache.ki.authz.aop.AuthorizingMethodInterceptor#invoke super.invoke}.
      *
      * @param methodInvocation the AOP Alliance-specific <code>methodInvocation</code> instance.
      * @return the return value from invoking the method invocation.
      * @throws Throwable if the underlying AOP Alliance method invocation throws a <code>Throwable</code>.
      */
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        org.ki.aop.MethodInvocation mi = createMethodInvocation(methodInvocation);
+        org.apache.ki.aop.MethodInvocation mi = createMethodInvocation(methodInvocation);
         return super.invoke(mi);
     }
 }

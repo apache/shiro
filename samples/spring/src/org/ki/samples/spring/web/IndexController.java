@@ -18,9 +18,10 @@
  */
 package org.ki.samples.spring.web;
 
-import org.ki.SecurityUtils;
+import org.apache.ki.SecurityUtils;
 import org.ki.samples.spring.SampleManager;
-import org.ki.subject.Subject;
+import org.apache.ki.subject.Subject;
+
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;

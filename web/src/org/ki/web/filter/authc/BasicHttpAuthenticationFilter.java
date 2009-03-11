@@ -20,8 +20,9 @@ package org.ki.web.filter.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.authc.AuthenticationToken;
-import org.ki.codec.Base64;
+import org.apache.ki.authc.AuthenticationToken;
+import org.apache.ki.codec.Base64;
+
 import org.ki.web.WebUtils;
 
 import javax.servlet.ServletRequest;
@@ -29,8 +30,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 /**
- * Requires the requesting user to be {@link org.ki.subject.Subject#isAuthenticated() authenticated} for the
+ * Requires the requesting user to be {@link org.apache.ki.subject.Subject#isAuthenticated() authenticated} for the
  * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
  *
@@ -53,7 +55,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <p>The {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
  * only be called if the subject making the request is not
- * {@link org.ki.subject.Subject#isAuthenticated() authenticated} </p>
+ * {@link org.apache.ki.subject.Subject#isAuthenticated() authenticated} </p>
  *
  * @author Allan Ditzel
  * @author Les Hazlewood

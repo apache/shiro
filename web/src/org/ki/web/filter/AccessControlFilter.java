@@ -18,8 +18,9 @@
  */
 package org.ki.web.filter;
 
-import org.ki.SecurityUtils;
-import org.ki.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.subject.Subject;
+
 import org.ki.web.WebUtils;
 
 import javax.servlet.ServletRequest;
@@ -89,7 +90,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * Convenience method that acquires the Subject associated with the request.
      * <p/>
      * The default implementation simply returns
-     * {@link org.ki.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
+     * {@link org.apache.ki.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
      *
      * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>

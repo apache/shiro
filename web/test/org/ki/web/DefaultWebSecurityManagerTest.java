@@ -18,7 +18,7 @@
  */
 package org.ki.web;
 
-import org.ki.util.ThreadContext;
+import org.apache.ki.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

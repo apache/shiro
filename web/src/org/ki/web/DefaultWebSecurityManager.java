@@ -20,18 +20,21 @@ package org.ki.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.mgt.DefaultSecurityManager;
-import org.ki.realm.Realm;
-import org.ki.session.mgt.SessionManager;
-import org.ki.util.LifecycleUtils;
+import org.apache.ki.realm.Realm;
+
+import org.apache.ki.mgt.DefaultSecurityManager;
+import org.apache.ki.session.mgt.SessionManager;
+import org.apache.ki.subject.PrincipalCollection;
+import org.apache.ki.util.LifecycleUtils;
+
 import org.ki.web.session.DefaultWebSessionManager;
 import org.ki.web.session.ServletContainerSessionManager;
 import org.ki.web.session.WebSessionManager;
 import org.ki.web.servlet.JSecurityHttpServletRequest;
-import org.ki.subject.PrincipalCollection;
 
 import javax.servlet.ServletRequest;
 import java.util.Collection;
+
 
 /**
  * SecurityManager implementation that should be used in web-based applications or any application that requires

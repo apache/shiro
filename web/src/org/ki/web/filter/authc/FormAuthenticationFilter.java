@@ -20,15 +20,17 @@ package org.ki.web.filter.authc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.authc.AuthenticationException;
-import org.ki.authc.AuthenticationToken;
-import org.ki.authc.UsernamePasswordToken;
-import org.ki.subject.Subject;
+import org.apache.ki.authc.AuthenticationException;
+import org.apache.ki.authc.AuthenticationToken;
+import org.apache.ki.authc.UsernamePasswordToken;
+import org.apache.ki.subject.Subject;
+
 import org.ki.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
@@ -37,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
  * <p>This filter constructs a {@link UsernamePasswordToken UsernamePasswordToken} with the values found in
  * {@link #setUsernameParam(String) username}, {@link #setPasswordParam(String) password},
  * and {@link #setRememberMeParam(String) rememberMe} request parameters.  It then calls
- * {@link org.ki.subject.Subject#login(org.ki.authc.AuthenticationToken) Subject.login(usernamePasswordToken)},
+ * {@link org.apache.ki.subject.Subject#login(org.apache.ki.authc.AuthenticationToken) Subject.login(usernamePasswordToken)},
  * effectively automatically performing a login attempt.  Note that the login attempt will only occur when the
  * {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginSubmission(request,response)}
  * is <code>true</code>, which by default occurs when the request is for the {@link #setLoginUrl(String) loginUrl} and

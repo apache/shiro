@@ -19,7 +19,7 @@
 /**
  * Cryptographic Hashing components that greatly simplify one-way data hashing in an application.
  * <p/>
- * The {@link org.ki.crypto.hash.Hash Hash} interface and its implementations are significantly
+ * The {@link org.apache.ki.crypto.hash.Hash Hash} interface and its implementations are significantly
  * easier to understand and use compared to the JDK's <code>MessageDigest</code> mechanism.
  */
 package org.ki.crypto.hash;

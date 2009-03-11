@@ -20,10 +20,11 @@ package org.ki.web.servlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.util.Nameable;
+import org.apache.ki.util.Nameable;
 
 import javax.servlet.*;
 import java.io.IOException;
+
 
 /**
  * Filter base class that guarantees to be just executed once per request,

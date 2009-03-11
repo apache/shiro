@@ -18,10 +18,11 @@
  */
 package org.ki.config;
 
-import org.ki.mgt.SecurityManager;
-
 import java.io.InputStream;
 import java.io.Serializable;
+
+import org.apache.ki.mgt.SecurityManager;
+
 
 /**
  * //TODO - complete JavaDoc
@@ -30,7 +31,7 @@ import java.io.Serializable;
  */
 public abstract class ResourceConfiguration implements Configuration, Serializable {
 
-    protected transient SecurityManager securityManager;
+    protected transient org.apache.ki.mgt.SecurityManager securityManager;
 
     public ResourceConfiguration() {
     }

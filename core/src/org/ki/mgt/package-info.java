@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Provides the master {@link org.ki.mgt.SecurityManager SecurityManager} interface and a default implementation
+ * Provides the master {@link org.apache.ki.mgt.SecurityManager SecurityManager} interface and a default implementation
  * hierarchy for managing all aspects of JSecurity's functionality in an application.
  */
 package org.ki.mgt;

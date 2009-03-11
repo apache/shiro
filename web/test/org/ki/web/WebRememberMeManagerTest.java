@@ -19,11 +19,13 @@
 package org.ki.web;
 
 import static org.easymock.EasyMock.*;
-import org.ki.authc.AuthenticationInfo;
-import org.ki.authc.SimpleAuthenticationInfo;
-import org.ki.authc.UsernamePasswordToken;
-import org.ki.subject.PrincipalCollection;
-import org.ki.subject.SimplePrincipalCollection;
+import org.apache.ki.authc.AuthenticationInfo;
+import org.apache.ki.authc.SimpleAuthenticationInfo;
+import org.apache.ki.authc.UsernamePasswordToken;
+import org.apache.ki.subject.PrincipalCollection;
+
+import org.apache.ki.subject.SimplePrincipalCollection;
+
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 

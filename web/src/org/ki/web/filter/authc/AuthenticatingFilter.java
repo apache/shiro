@@ -18,10 +18,11 @@
  */
 package org.ki.web.filter.authc;
 
-import org.ki.authc.AuthenticationException;
-import org.ki.authc.AuthenticationToken;
-import org.ki.authc.UsernamePasswordToken;
-import org.ki.subject.Subject;
+import org.apache.ki.authc.AuthenticationException;
+import org.apache.ki.authc.AuthenticationToken;
+import org.apache.ki.authc.UsernamePasswordToken;
+
+import org.apache.ki.subject.Subject;
 import org.ki.web.WebUtils;
 
 import javax.servlet.ServletRequest;

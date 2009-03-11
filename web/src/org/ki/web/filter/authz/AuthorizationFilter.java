@@ -18,8 +18,8 @@
  */
 package org.ki.web.filter.authz;
 
-import org.ki.subject.Subject;
-import org.ki.util.StringUtils;
+import org.apache.ki.subject.Subject;
+import org.apache.ki.util.StringUtils;
 import org.ki.web.WebUtils;
 import org.ki.web.filter.AccessControlFilter;
 

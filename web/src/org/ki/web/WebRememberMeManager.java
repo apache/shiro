@@ -20,8 +20,9 @@ package org.ki.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.codec.Base64;
-import org.ki.mgt.AbstractRememberMeManager;
+import org.apache.ki.codec.Base64;
+import org.apache.ki.mgt.AbstractRememberMeManager;
+
 import org.ki.web.attr.CookieAttribute;
 import org.ki.web.attr.WebAttribute;
 import org.ki.web.servlet.JSecurityHttpServletRequest;
@@ -29,12 +30,13 @@ import org.ki.web.servlet.JSecurityHttpServletRequest;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+
 /**
  * Remembers a Subject's identity by using a {@link WebAttribute WebAttribute} instance to retain
  * the identity value between web requests.
  *
  * <p>This class's default <code>WebAttribute</code> instance is a {@link CookieAttribute CookieAttribute}, storing
- * the Subject's {@link org.ki.subject.Subject#getPrincipals principals} in a <code>Cookie</code>.  Note that
+ * the Subject's {@link org.apache.ki.subject.Subject#getPrincipals principals} in a <code>Cookie</code>.  Note that
  * because this class subclasses the <code>AbstractRememberMeManager</code> which already provides serialization and
  * encryption logic, this class utilizes both for added security before setting the cookie value.</p>
  *

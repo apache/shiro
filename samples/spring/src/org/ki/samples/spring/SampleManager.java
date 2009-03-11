@@ -18,8 +18,9 @@
  */
 package org.ki.samples.spring;
 
-import org.ki.authz.annotation.RequiresPermissions;
-import org.ki.authz.annotation.RequiresRoles;
+import org.apache.ki.authz.annotation.RequiresPermissions;
+import org.apache.ki.authz.annotation.RequiresRoles;
+
 
 /**
  * Business manager interface used for sample application.

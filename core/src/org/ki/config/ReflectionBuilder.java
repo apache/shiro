@@ -18,17 +18,19 @@
  */
 package org.ki.config;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ki.util.ClassUtils;
-import org.ki.util.Nameable;
-
 import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.util.ClassUtils;
+import org.apache.ki.util.Nameable;
+
 
 /**
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a

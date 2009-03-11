@@ -20,13 +20,14 @@ package org.ki.spring.remoting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.mgt.SecurityManager;
-import org.ki.util.ThreadContext;
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.util.ThreadContext;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+
 
 /**
  * An implementation of the Spring {@link org.springframework.remoting.support.RemoteInvocationExecutor}
@@ -65,7 +66,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public void setSecurityManager(org.ki.mgt.SecurityManager securityManager) {
+    public void setSecurityManager(org.apache.ki.mgt.SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
 

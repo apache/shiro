@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Components and sub-packages used in supporting the core {@link org.ki.realm.Realm Realm} interface.
+ * Components and sub-packages used in supporting the core {@link org.apache.ki.realm.Realm Realm} interface.
  * <p/>
  * Take particular note of the multiple sub-packages with existing Realm implementations supporting many
  * environments that you can use use directly or extend for custom behavior.

@@ -49,12 +49,12 @@
     <!-- Used by the SecurityManager to access security data (users, roles, etc).
          Many other realm implementations can be used too (PropertiesRealm,
          LdapRealm, etc. -->
-    <bean id="jdbcRealm" class="org.ki.realm.jdbc.JdbcRealm">
+    <bean id="jdbcRealm" class="org.apache.ki.realm.jdbc.JdbcRealm">
         <property name="dataSource" ref="dataSource"/>
         <property name="credentialsMatcher">
             <!-- The 'bootstrapDataPopulator' Sha256 hashes the password
                  (using the username as the salt) then base64 encodes it: -->
-            <bean class="org.ki.authc.credential.Sha256CredentialsMatcher">
+            <bean class="org.apache.ki.authc.credential.Sha256CredentialsMatcher">
                 <!-- true means hex encoded, false means base64 encoded -->
                 <property name="storedCredentialsHexEncoded" value="false"/>
                 <!-- We salt the password using the username, the most common practice: -->

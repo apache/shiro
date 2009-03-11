@@ -20,10 +20,12 @@ package org.ki.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.JSecurityException;
-import org.ki.mgt.RealmSecurityManager;
-import org.ki.mgt.SecurityManager;
-import org.ki.realm.Realm;
+import org.apache.ki.realm.Realm;
+
+import org.apache.ki.JSecurityException;
+
+import org.apache.ki.mgt.SecurityManager;
+
 import org.ki.web.config.IniWebConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
@@ -32,6 +34,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContext;
 import java.util.Collection;
 import java.util.Map;
+
+import org.apache.ki.mgt.RealmSecurityManager;
+
 
 /**
  * <p>JSecurity configuration that relies on Spring to define and initialize the JSecurity SecurityManager
@@ -112,7 +117,7 @@ public class SpringIniWebConfiguration extends IniWebConfiguration {
 
         SecurityManager securityManager = null;
         if (beanName != null) {
-            securityManager = (SecurityManager) appCtx.getBean(beanName, SecurityManager.class);
+            securityManager = (SecurityManager) appCtx.getBean(beanName, org.apache.ki.mgt.SecurityManager.class);
         }
 
         if (securityManager == null) {

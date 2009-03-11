@@ -18,7 +18,7 @@
  */
 package org.ki.web.filter.authc;
 
-import org.ki.subject.Subject;
+import org.apache.ki.subject.Subject;
 import org.ki.web.SavedRequest;
 import org.ki.web.WebUtils;
 import org.ki.web.filter.AccessControlFilter;
@@ -65,7 +65,7 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
      * <p/>
      * The default implementation {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) acquires}
      * the currently executing Subject and then returns
-     * {@link org.ki.subject.Subject#isAuthenticated() subject.isAuthenticated()};
+     * {@link org.apache.ki.subject.Subject#isAuthenticated() subject.isAuthenticated()};
      *
      * @return true if the subject is authenticated; false if the subject is unauthenticated
      */

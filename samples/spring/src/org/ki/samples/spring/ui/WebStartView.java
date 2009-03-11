@@ -18,7 +18,7 @@
  */
 package org.ki.samples.spring.ui;
 
-import org.ki.authz.AuthorizationException;
+import org.apache.ki.authz.AuthorizationException;
 import org.ki.samples.spring.DefaultSampleManager;
 import org.ki.samples.spring.SampleManager;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 
 /**
  * Simple web start application that helps to demo single sign-on and

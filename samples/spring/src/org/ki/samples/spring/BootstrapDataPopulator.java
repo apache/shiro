@@ -20,7 +20,7 @@ package org.ki.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.crypto.hash.Sha256Hash;
+import org.apache.ki.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -28,8 +28,8 @@ import javax.sql.DataSource;
 
 /**
  * A data populator that creates a set of security tables and test data that can be used by the
- * JSecurity Spring sample application to demonstrate the use of the {@link org.ki.realm.jdbc.JdbcRealm}
- * The tables created by this class follow the default table and column names that {@link org.ki.realm.jdbc.JdbcRealm} uses.
+ * JSecurity Spring sample application to demonstrate the use of the {@link org.apache.ki.realm.jdbc.JdbcRealm}
+ * The tables created by this class follow the default table and column names that {@link org.apache.ki.realm.jdbc.JdbcRealm} uses.
  *
  * @author Les Hazlewood
  */

@@ -18,7 +18,7 @@
  */
 package org.ki.web.filter.authc;
 
-import org.ki.subject.Subject;
+import org.apache.ki.subject.Subject;
 import org.ki.web.filter.AccessControlFilter;
 
 import javax.servlet.ServletRequest;
