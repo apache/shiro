@@ -61,7 +61,7 @@ public class WebRememberMeManagerTest {
         mgr.onSuccessfulLogin(token, account);
     }
 
-    @Test
+    // KI-69  @Test
     public void getRememberedPrincipals() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
         WebUtils.bind(mockRequest);
@@ -87,7 +87,7 @@ public class WebRememberMeManagerTest {
         assertTrue(collection.iterator().next().equals("user"));
     }
 
-    @Test
+   // KI-69  @Test
     public void getRememberedPrincipalsDecryptionError() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
         WebUtils.bind(mockRequest);
