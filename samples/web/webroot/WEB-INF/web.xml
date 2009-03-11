@@ -24,7 +24,7 @@
 
     <filter>
         <filter-name>Apache KiFilter</filter-name>
-        <filter-class>org.apache.ki.web.servlet.Apache KiFilter</filter-class>
+        <filter-class>org.apache.ki.web.servlet.KiFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
