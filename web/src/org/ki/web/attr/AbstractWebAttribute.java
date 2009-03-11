@@ -20,8 +20,8 @@ package org.ki.web.attr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.JSecurityException;
-import org.ki.util.ClassUtils;
+import org.apache.ki.JSecurityException;
+import org.apache.ki.util.ClassUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

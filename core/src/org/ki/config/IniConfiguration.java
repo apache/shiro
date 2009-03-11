@@ -18,21 +18,28 @@
  */
 package org.ki.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ki.JSecurityException;
-import org.ki.io.IniResource;
-import org.ki.io.ResourceUtils;
-import org.ki.mgt.DefaultSecurityManager;
-import org.ki.mgt.RealmSecurityManager;
-import org.ki.mgt.SecurityManager;
-import org.ki.realm.Realm;
-import org.ki.realm.RealmFactory;
-import org.ki.util.LifecycleUtils;
-
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.JSecurityException;
+import org.apache.ki.io.IniResource;
+import org.apache.ki.io.ResourceUtils;
+import org.apache.ki.mgt.DefaultSecurityManager;
+import org.apache.ki.mgt.RealmSecurityManager;
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.realm.Realm;
+import org.apache.ki.realm.RealmFactory;
+import org.apache.ki.util.LifecycleUtils;
+
 
 /**
  * A Configuration based on the <a href="http://en.wikipedia.org/wiki/INI_file">.ini format</a>.
@@ -167,7 +174,7 @@ public class IniConfiguration extends TextConfiguration {
         afterSecurityManagerSet(sections);
     }
 
-    protected SecurityManager createDefaultSecurityManager() {
+    protected org.apache.ki.mgt.SecurityManager createDefaultSecurityManager() {
         return newSecurityManagerInstance();
     }
 

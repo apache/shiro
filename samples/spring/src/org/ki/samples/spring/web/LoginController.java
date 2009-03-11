@@ -18,9 +18,10 @@
  */
 package org.ki.samples.spring.web;
 
-import org.ki.authc.AuthenticationException;
-import org.ki.authc.UsernamePasswordToken;
-import org.ki.mgt.SecurityManager;
+import org.apache.ki.authc.AuthenticationException;
+import org.apache.ki.authc.UsernamePasswordToken;
+import org.apache.ki.mgt.SecurityManager;
+
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -43,7 +44,7 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private SecurityManager securityManager;
+    private org.apache.ki.mgt.SecurityManager securityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |

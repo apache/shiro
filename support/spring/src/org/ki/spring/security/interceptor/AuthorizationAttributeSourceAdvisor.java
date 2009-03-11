@@ -20,12 +20,19 @@ package org.ki.spring.security.interceptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.authz.annotation.*;
-import org.ki.mgt.SecurityManager;
+
+import org.apache.ki.mgt.SecurityManager;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.lang.reflect.Method;
+
+import org.apache.ki.authz.annotation.RequiresAuthentication;
+import org.apache.ki.authz.annotation.RequiresGuest;
+import org.apache.ki.authz.annotation.RequiresPermissions;
+import org.apache.ki.authz.annotation.RequiresRoles;
+import org.apache.ki.authz.annotation.RequiresUser;
+
 
 /**
  * TODO - complete JavaDoc
@@ -49,7 +56,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
         return securityManager;
     }
 
-    public void setSecurityManager(SecurityManager securityManager) {
+    public void setSecurityManager(org.apache.ki.mgt.SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
 
@@ -57,11 +64,11 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * Returns <tt>true</tt> if the method has any JSecurity annotations, false otherwise.
      * The annotations inspected are:
      * <ul>
-     * <li>{@link org.ki.authz.annotation.RequiresAuthentication RequiresAuthentication}</li>
-     * <li>{@link org.ki.authz.annotation.RequiresUser RequiresUser}</li>
-     * <li>{@link org.ki.authz.annotation.RequiresGuest RequiresGuest}</li>
-     * <li>{@link org.ki.authz.annotation.RequiresRoles RequiresRoles}</li>
-     * <li>{@link org.ki.authz.annotation.RequiresPermissions RequiresPermissions}</li>
+     * <li>{@link org.apache.ki.authz.annotation.RequiresAuthentication RequiresAuthentication}</li>
+     * <li>{@link org.apache.ki.authz.annotation.RequiresUser RequiresUser}</li>
+     * <li>{@link org.apache.ki.authz.annotation.RequiresGuest RequiresGuest}</li>
+     * <li>{@link org.apache.ki.authz.annotation.RequiresRoles RequiresRoles}</li>
+     * <li>{@link org.apache.ki.authz.annotation.RequiresPermissions RequiresPermissions}</li>
      * </ul>
      *
      * @param method      the method to check for a JSecurity annotation

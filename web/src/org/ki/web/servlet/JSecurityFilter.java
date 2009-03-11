@@ -23,11 +23,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ki.config.Configuration;
 import org.ki.config.ConfigurationException;
-import org.ki.mgt.SecurityManager;
-import org.ki.util.ClassUtils;
-import org.ki.util.LifecycleUtils;
-import static org.ki.util.StringUtils.clean;
-import org.ki.util.ThreadContext;
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.util.ClassUtils;
+import org.apache.ki.util.LifecycleUtils;
+import org.apache.ki.util.ThreadContext;
+
+import static org.apache.ki.util.StringUtils.clean;
+
 import org.ki.web.DefaultWebSecurityManager;
 import org.ki.web.WebUtils;
 import org.ki.web.config.IniWebConfiguration;
@@ -39,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.net.InetAddress;
+
 
 /**
  * Main ServletFilter that configures and enables all JSecurity functions within a web application.
@@ -211,7 +214,7 @@ public class JSecurityFilter extends OncePerRequestFilter {
         return securityManager;
     }
 
-    protected void setSecurityManager(SecurityManager sm) {
+    protected void setSecurityManager(org.apache.ki.mgt.SecurityManager sm) {
         this.securityManager = sm;
     }
 

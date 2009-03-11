@@ -18,17 +18,19 @@
  */
 package org.ki.web;
 
-import org.ki.mgt.DefaultSubjectFactory;
-import org.ki.mgt.SecurityManager;
-import org.ki.mgt.SessionSubjectBinder;
-import org.ki.session.Session;
-import org.ki.subject.PrincipalCollection;
-import org.ki.subject.Subject;
+import org.apache.ki.mgt.*;
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.mgt.SessionSubjectBinder;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.PrincipalCollection;
+
+import org.apache.ki.subject.Subject;
 import org.ki.web.session.WebSessionManager;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.net.InetAddress;
+
 
 /**
  * @author Les Hazlewood
@@ -48,7 +50,7 @@ public class WebSubjectFactory extends DefaultSubjectFactory {
         super(securityManager);
     }
 
-    public WebSubjectFactory(SecurityManager securityManager, WebSessionManager webSessionManager) {
+    public WebSubjectFactory(org.apache.ki.mgt.SecurityManager securityManager, WebSessionManager webSessionManager) {
         super(securityManager);
         setWebSessionManager(webSessionManager);
     }

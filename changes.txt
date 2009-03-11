@@ -1,7 +1,7 @@
 [0.9 Final]
 
 * org.ki.spring.SpringWebConfiguration renamed to org.ki.spring.SpringIniWebConfiguration
-* org.ki.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
+* org.apache.ki.util.ThreadContext fixed to correctly work in child/spawned threads from a parent thread (sometimes surfaced in Tomcat environments)
 * org.ki.web.servlet.FilterChainWrapper renamed to org.ki.web.servlet.ProxiedFilterChain to maintain parallel naming conventions with ProxiedSession.
 * org.ki.web.attr.CookieAttribute#onRetrieveValue would return deleted cookies (maxAge of 0) on Tomcat.  It now only returns a value if the cookie is non null and maxAge != 0 (-1 or positive only).
 * Added *AnnotationHandler implementations and refactored the AuthorizingAnnotationMethodInterceptor implementations

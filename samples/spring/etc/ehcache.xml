@@ -89,7 +89,7 @@ even after a JVM restart.  -->
          diskPersistent="true"
          diskExpiryThreadIntervalSeconds="600"/>
 
-  <cache name="org.ki.realm.SimpleAccountRealm.authorization"
+  <cache name="org.apache.ki.realm.SimpleAccountRealm.authorization"
          maxElementsInMemory="100"
          eternal="false"
          timeToLiveSeconds="600"

@@ -18,15 +18,16 @@
  */
 package org.ki.web.servlet;
 
-import org.ki.SecurityUtils;
-import org.ki.session.Session;
-import org.ki.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.Subject;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
+
 
 /**
  * TODO class JavaDoc

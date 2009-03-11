@@ -18,7 +18,7 @@
  */
 package org.ki.config;
 
-import org.ki.JSecurityException;
+import org.apache.ki.JSecurityException;
 
 /**
  * Root exception indicating there was a problem parsing or processing the JSecurity configuration.

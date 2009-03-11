@@ -20,7 +20,7 @@ package org.ki.web.attr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.util.StringUtils;
+import org.apache.ki.util.StringUtils;
 import static org.ki.web.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;

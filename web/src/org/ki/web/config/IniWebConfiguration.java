@@ -23,10 +23,11 @@ import org.apache.commons.logging.LogFactory;
 import org.ki.config.ConfigurationException;
 import org.ki.config.IniConfiguration;
 import org.ki.config.ReflectionBuilder;
-import org.ki.mgt.RealmSecurityManager;
-import org.ki.util.AntPathMatcher;
-import org.ki.util.PatternMatcher;
-import static org.ki.util.StringUtils.split;
+import org.apache.ki.mgt.RealmSecurityManager;
+import org.apache.ki.util.AntPathMatcher;
+import org.apache.ki.util.PatternMatcher;
+
+import static org.apache.ki.util.StringUtils.split;
 import org.ki.web.DefaultWebSecurityManager;
 import org.ki.web.WebUtils;
 import org.ki.web.filter.PathConfigProcessor;
@@ -41,6 +42,7 @@ import org.ki.web.servlet.ProxiedFilterChain;
 
 import javax.servlet.*;
 import java.util.*;
+
 
 /**
  * A <code>WebConfiguration</code> that supports configuration via the
@@ -71,7 +73,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     /**
      * Returns the <code>PatternMatcher</code> used when determining if an incoming request's path
      * matches a configured filter chain path in the <code>[urls]</code> section.  Unless overridden, the
-     * default implementation is an {@link org.ki.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link org.apache.ki.util.AntPathMatcher AntPathMatcher}.
      *
      * @return the <code>PatternMatcher</code> used when determining if an incoming request's path
      *         matches a configured filter chain path in the <code>[urls]</code> section.
@@ -84,7 +86,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     /**
      * Sets the <code>PatternMatcher</code> used when determining if an incoming request's path
      * matches a configured filter chain path in the <code>[urls]</code> section.  Unless overridden, the
-     * default implementation is an {@link org.ki.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link org.apache.ki.util.AntPathMatcher AntPathMatcher}.
      *
      * @param pathMatcher the <code>PatternMatcher</code> used when determining if an incoming request's path
      *                    matches a configured filter chain path in the <code>[urls]</code> section.
@@ -182,7 +184,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
      * <code>false</code> otherwise.
      * <p/>
      * Simply delegates to
-     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.ki.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
+     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.ki.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
      * but can be overridden by subclasses for custom matching behavior.
      *
      * @param pattern the pattern to match against

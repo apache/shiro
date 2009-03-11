@@ -18,8 +18,9 @@
  */
 package org.ki.web.session;
 
-import org.ki.session.InvalidSessionException;
-import org.ki.session.Session;
+import org.apache.ki.session.InvalidSessionException;
+import org.apache.ki.session.Session;
+
 import org.ki.web.servlet.JSecurityHttpSession;
 
 import javax.servlet.http.HttpSession;

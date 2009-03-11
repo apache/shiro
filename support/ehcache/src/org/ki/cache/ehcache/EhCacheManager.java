@@ -20,13 +20,15 @@ package org.ki.cache.ehcache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.cache.Cache;
-import org.ki.cache.CacheException;
-import org.ki.cache.CacheManager;
-import org.ki.io.ResourceUtils;
-import org.ki.session.mgt.eis.CachingSessionDAO;
-import org.ki.util.Destroyable;
-import org.ki.util.Initializable;
+import org.apache.ki.cache.Cache;
+import org.apache.ki.cache.CacheException;
+import org.apache.ki.cache.CacheManager;
+
+import org.apache.ki.io.ResourceUtils;
+import org.apache.ki.session.mgt.eis.CachingSessionDAO;
+import org.apache.ki.util.Destroyable;
+
+import org.apache.ki.util.Initializable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +55,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
 
     /**
      * The default name for the active sessions cache, equal to
-     * {@link CachingSessionDAO#ACTIVE_SESSION_CACHE_NAME CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME}.
+     * {@link org.apache.ki.session.mgt.eis.CachingSessionDAO#ACTIVE_SESSION_CACHE_NAME CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME}.
      */
     public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
 
@@ -115,7 +117,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Returns the resource location of the config file used to initialize a new
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.apache.ki.io.ResourceUtils#getInputStreamForPath(String)} call.
      *
      * <p>This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.</p>
@@ -130,7 +132,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Sets the resource location of the config file used to initialize the wrapped
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link org.ki.io.ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.apache.ki.io.ResourceUtils#getInputStreamForPath(String)} call.
      *
      * <p>This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.</p>
@@ -236,7 +238,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * something not desireable for JSecurity sessions), this class manages an internal default configuration for
      * this case.</p>
      *
-     * @throws org.ki.cache.CacheException
+     * @throws org.apache.ki.cache.CacheException
      *          if there are any CacheExceptions thrown by EhCache.
      * @see net.sf.ehcache.CacheManager#create
      */

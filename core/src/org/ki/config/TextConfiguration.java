@@ -18,16 +18,18 @@
  */
 package org.ki.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.ki.JSecurityException;
-import org.ki.io.ResourceException;
-import org.ki.mgt.SecurityManager;
-import org.ki.util.Initializable;
-
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Scanner;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.ki.JSecurityException;
+import org.apache.ki.io.ResourceException;
+import org.apache.ki.mgt.SecurityManager;
+import org.apache.ki.util.Initializable;
+
 
 /**
  * //TODO - complete JavaDoc

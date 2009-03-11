@@ -17,11 +17,11 @@
  * under the License.
  */
 /**
- * Support and default implementations for JSecurity's {@link org.ki.authz.Permission Permission}
+ * Support and default implementations for JSecurity's {@link org.apache.ki.authz.Permission Permission}
  * interface.
  * <p/>
- * Also note the {@link org.ki.authz.permission.PermissionResolver PermissionResolver} interface, as
- * it plays an important part in many of JSecurity's {@link org.ki.realm.Realm Realm} implementations
+ * Also note the {@link org.apache.ki.authz.permission.PermissionResolver PermissionResolver} interface, as
+ * it plays an important part in many of JSecurity's {@link org.apache.ki.realm.Realm Realm} implementations
  * and AOP support.
  */
 package org.ki.authz.permission;

@@ -18,11 +18,12 @@
  */
 package org.ki.config;
 
-import org.ki.mgt.SecurityManagerFactory;
+import org.apache.ki.mgt.SecurityManagerFactory;
+
 
 /**
  * A <code>Configuration</code> is responsible for 'wiring' together all the JSecurity components for an
- * application, such as the {@link org.ki.mgt.SecurityManager SecurityManager}, and any of its
+ * application, such as the {@link org.apache.ki.mgt.SecurityManager SecurityManager}, and any of its
  * dependencies.
  * <p/>
  * Once the SecurityManager is built by the <code>Configuration</code> it is then consulted for all security

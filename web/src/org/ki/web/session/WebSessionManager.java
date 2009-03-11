@@ -18,11 +18,12 @@
  */
 package org.ki.web.session;
 
-import org.ki.session.Session;
-import org.ki.session.mgt.SessionManager;
+import org.apache.ki.session.Session;
+import org.apache.ki.session.mgt.SessionManager;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
 
 /**
  * A <code>WebSessionManager</code> is a <code>SessionManager</code> that has the ability to obtain

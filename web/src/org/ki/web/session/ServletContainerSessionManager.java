@@ -18,11 +18,13 @@
  */
 package org.ki.web.session;
 
-import org.ki.authz.AuthorizationException;
-import org.ki.authz.HostUnauthorizedException;
-import org.ki.session.InvalidSessionException;
-import org.ki.session.Session;
-import org.ki.session.mgt.AbstractSessionManager;
+import org.apache.ki.authz.AuthorizationException;
+import org.apache.ki.authz.HostUnauthorizedException;
+import org.apache.ki.session.mgt.AbstractSessionManager;
+import org.apache.ki.session.Session;
+
+import org.apache.ki.session.InvalidSessionException;
+
 import org.ki.web.WebUtils;
 
 import javax.servlet.ServletRequest;
@@ -31,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.net.InetAddress;
+
 
 /**
  * SessionManager implementation providing Session implementations that are merely wrappers for the

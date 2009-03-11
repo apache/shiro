@@ -19,11 +19,17 @@
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.SecurityUtils;
-import org.ki.authc.*;
-import org.ki.mgt.DefaultSecurityManager;
-import org.ki.session.Session;
-import org.ki.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.mgt.DefaultSecurityManager;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.Subject;
+
+import org.apache.ki.authc.AuthenticationException;
+import org.apache.ki.authc.IncorrectCredentialsException;
+import org.apache.ki.authc.LockedAccountException;
+import org.apache.ki.authc.UnknownAccountException;
+import org.apache.ki.authc.UsernamePasswordToken;
+
 
 /**
  * @author Les Hazlewood

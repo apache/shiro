@@ -20,18 +20,20 @@ package org.ki.session.mgt.quartz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.session.mgt.DefaultSessionManager;
-import org.ki.session.mgt.SessionValidationScheduler;
-import org.ki.session.mgt.ValidatingSessionManager;
+import org.apache.ki.session.mgt.DefaultSessionManager;
+import org.apache.ki.session.mgt.SessionValidationScheduler;
+import org.apache.ki.session.mgt.ValidatingSessionManager;
+
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
+
 /**
- * An implementation of the {@link SessionValidationScheduler SessionValidationScheduler} that uses Quartz to schedule a
- * job to call {@link org.ki.session.mgt.ValidatingSessionManager#validateSessions()} on
+ * An implementation of the {@link org.apache.ki.session.mgt.SessionValidationScheduler SessionValidationScheduler} that uses Quartz to schedule a
+ * job to call {@link org.apache.ki.session.mgt.ValidatingSessionManager#validateSessions()} on
  * a regular basis.
  *
  * @author Jeremy Haile
@@ -126,7 +128,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     /**
      * Specifies how frequently (in milliseconds) this Scheduler will call the
-     * {@link org.ki.session.mgt.ValidatingSessionManager#validateSessions() ValidatingSessionManager#validateSessions()} method.
+     * {@link org.apache.ki.session.mgt.ValidatingSessionManager#validateSessions() ValidatingSessionManager#validateSessions()} method.
      *
      * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
      *

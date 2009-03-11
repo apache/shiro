@@ -20,9 +20,10 @@ package org.ki.samples.spring;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.SecurityUtils;
-import org.ki.session.Session;
-import org.ki.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.Subject;
+
 
 /**
  * Default implementation of the {@link SampleManager} interface that stores

@@ -18,7 +18,8 @@
  */
 package org.ki.web.tags;
 
-import org.ki.subject.Subject;
+import org.apache.ki.subject.Subject;
+
 
 /**
  * Displays body content if the current user has any of the roles specified.

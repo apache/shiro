@@ -20,7 +20,7 @@ package org.ki.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.util.JavaEnvironment;
+import org.apache.ki.util.JavaEnvironment;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -18,7 +18,7 @@
  */
 /**
  * This package primarily exists as a root classpath distinction, but it does contain two core classes widely used
- * by applications, {@link org.ki.SecurityUtils SecurityUtils} and
- * {@link org.ki.JSecurityException JSecurityException}.
+ * by applications, {@link org.apache.ki.SecurityUtils SecurityUtils} and
+ * {@link org.apache.ki.JSecurityException JSecurityException}.
  */
 package org.ki;

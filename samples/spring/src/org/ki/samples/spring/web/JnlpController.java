@@ -18,9 +18,10 @@
  */
 package org.ki.samples.spring.web;
 
-import org.ki.SecurityUtils;
-import org.ki.session.Session;
-import org.ki.subject.Subject;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.Subject;
+
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 

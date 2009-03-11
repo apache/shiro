@@ -20,9 +20,9 @@ package org.ki.web.filter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.util.AntPathMatcher;
-import org.ki.util.PatternMatcher;
-import static org.ki.util.StringUtils.split;
+import org.apache.ki.util.AntPathMatcher;
+import org.apache.ki.util.PatternMatcher;
+import static org.apache.ki.util.StringUtils.split;
 import org.ki.web.WebUtils;
 import org.ki.web.servlet.AdviceFilter;
 

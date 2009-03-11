@@ -20,14 +20,14 @@ package org.ki.session.mgt.quartz;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.session.mgt.ValidatingSessionManager;
+import org.apache.ki.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * A quartz job that basically just calls the {@link org.ki.session.mgt.ValidatingSessionManager#validateSessions()}
+ * A quartz job that basically just calls the {@link org.apache.ki.session.mgt.ValidatingSessionManager#validateSessions()}
  * method on a configured session manager.  The session manager will automatically be injected by the
  * superclass if it is in the job data map or the scheduler map.
  *

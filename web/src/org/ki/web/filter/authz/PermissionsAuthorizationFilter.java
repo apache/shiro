@@ -18,7 +18,7 @@
  */
 package org.ki.web.filter.authz;
 
-import org.ki.subject.Subject;
+import org.apache.ki.subject.Subject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

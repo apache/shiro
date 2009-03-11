@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Components supporting the {@link org.ki.subject.Subject Subject} interface, the most important concept in
+ * Components supporting the {@link org.apache.ki.subject.Subject Subject} interface, the most important concept in
  * JSecurity's API.
  * <p/>
  * A <code>Subject</code> is <em>the</em> primary component when using JSecurity programatically for single-user

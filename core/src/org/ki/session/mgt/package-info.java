@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * {@link org.ki.session.mgt.SessionManager SessionManager} components supporting enterprise session management.
+ * {@link org.apache.ki.session.mgt.SessionManager SessionManager} components supporting enterprise session management.
  */
 package org.ki.session.mgt;

@@ -18,13 +18,14 @@
  */
 package org.ki.web.filter.authz;
 
-import org.ki.subject.Subject;
-import org.ki.util.CollectionUtils;
+import org.apache.ki.subject.Subject;
+import org.apache.ki.util.CollectionUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.Set;
+
 
 /**
  * Filter that allows access if the current user has the roles specified by the mapped value, or denies access

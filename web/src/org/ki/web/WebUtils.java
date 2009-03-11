@@ -20,11 +20,12 @@ package org.ki.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ki.SecurityUtils;
-import org.ki.session.Session;
-import org.ki.subject.Subject;
-import org.ki.util.StringUtils;
-import org.ki.util.ThreadContext;
+import org.apache.ki.SecurityUtils;
+import org.apache.ki.session.Session;
+import org.apache.ki.subject.Subject;
+import org.apache.ki.util.ThreadContext;
+
+import org.apache.ki.util.StringUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -67,7 +68,7 @@ public class WebUtils {
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_JSECURITY_THREAD_CONTEXT_KEY";
 
     /**
-     * {@link Session Session} key used to save a request and later restore it, for example when redirecting to a
+     * {@link org.apache.ki.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
      * requested page after login, equal to <code>jsecuritySavedRequest</code>.
      */
     public static final String SAVED_REQUEST_KEY = "jsecuritySavedRequest";
@@ -342,7 +343,7 @@ public class WebUtils {
      * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
      *
      * @return the ServletRequest bound to the thread.  Never returns null.
-     * @throws IllegalStateException if no servlet request is bound in the {@link ThreadContext ThreadContext}.
+     * @throws IllegalStateException if no servlet request is bound in the {@link org.apache.ki.util.ThreadContext ThreadContext}.
      */
     public static ServletRequest getRequiredServletRequest() throws IllegalStateException {
         ServletRequest request = getServletRequest();
