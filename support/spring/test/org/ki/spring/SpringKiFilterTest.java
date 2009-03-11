@@ -37,7 +37,7 @@ import org.apache.ki.spring.SpringKiFilter;
  * @author Les Hazlewood
  * @since Jul 28, 2008 1:34:33 PM
  */
-public class SpringJSecurityFilterTest {
+public class SpringKiFilterTest {
 
     @Test
     public void testDefaultConfig() throws Exception {
