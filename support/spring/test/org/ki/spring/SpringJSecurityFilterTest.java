@@ -25,28 +25,28 @@ import javax.servlet.ServletContext;
 
 import static org.easymock.EasyMock.*;
 import org.junit.Test;
-import org.apache.ki.web.servlet.Apache KiFilter;
+import org.apache.ki.web.servlet.KiFilter;
 import org.springframework.web.context.WebApplicationContext;
 
 import org.apache.ki.mgt.SecurityManager;
 import org.apache.ki.spring.SpringIniWebConfiguration;
-import org.apache.ki.spring.SpringApache KiFilter;
+import org.apache.ki.spring.SpringKiFilter;
 
 
 /**
  * @author Les Hazlewood
  * @since Jul 28, 2008 1:34:33 PM
  */
-public class SpringApache KiFilterTest {
+public class SpringJSecurityFilterTest {
 
     @Test
     public void testDefaultConfig() throws Exception {
-        SpringApache KiFilter filter = new SpringApache KiFilter();
+        SpringKiFilter filter = new SpringKiFilter();
 
         FilterConfig mockConfig = createMock(FilterConfig.class);
-        expect(mockConfig.getInitParameter(Apache KiFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null);
-        expect(mockConfig.getInitParameter(Apache KiFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null);
-        expect(mockConfig.getInitParameter(Apache KiFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(KiFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(KiFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(KiFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null);
         expect(mockConfig.getInitParameter(SpringIniWebConfiguration.SECURITY_MANAGER_BEAN_NAME_PARAM_NAME)).andReturn(null);
 
         ServletContext mockContext = createMock(ServletContext.class);
