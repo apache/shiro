@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.cache.ehcache;
+package org.apache.ki.cache.ehcache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ki.cache.Cache;
 import org.apache.ki.cache.CacheException;
 import org.apache.ki.cache.CacheManager;
+import org.apache.ki.cache.ehcache.EhCache;
 
 import org.apache.ki.io.ResourceUtils;
 import org.apache.ki.session.mgt.eis.CachingSessionDAO;
