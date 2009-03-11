@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.ki.cache.ehcache;
+package org.apache.ki.cache.ehcache;
 
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
