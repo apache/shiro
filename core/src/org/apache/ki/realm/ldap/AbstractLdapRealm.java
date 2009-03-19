@@ -186,6 +186,9 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
         AuthenticationInfo info = null;
         try {
             info = queryForAuthenticationInfo(token, this.ldapContextFactory);
+        } catch (javax.naming.AuthenticationException e) {
+            throw new AuthenticationException( "LDAP authentication failed.", e );
+
         } catch (NamingException e) {
             if (log.isErrorEnabled()) {
                 final String message = "LDAP naming error while attempting to authenticate user.";
