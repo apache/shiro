@@ -32,20 +32,20 @@
                 # The Apache KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/Apache KiFilter.html
+                # http://ki.apache.org/api/org/apache/ki/web/servlet/KiFilter.html
 
                 [main]
 
                 demoRealm = org.apache.ki.realm.text.PropertiesRealm
 
                 [filters]
-                jsecurity.loginUrl = /login.jsp
+                ki.loginUrl = /login.jsp
 
                 [urls]
                 # The /login.jsp is not restricted to authenticated users (otherwise no one could log in!), but
                 # the 'authc' filter must still be specified for it so it can process that url's
                 # login submissions. It is 'smart' enough to allow those requests through as specified by the
-                # jsecurity.loginUrl above.
+                # ki.loginUrl above.
                 /login.jsp = authc
 
                 /account/** = authc

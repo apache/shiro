@@ -24,7 +24,7 @@
     <information>
         <title>Apache Ki Sample Application</title>
         <vendor>Apache Ki</vendor>
-        <homepage href="http://www.jsecurity.org"/>
+        <homepage href="http://ki.apache.org"/>
         <description>Apache Ki Sample Application</description>
         <description kind="short">A webstart application used to demonstrate Apache Ki session and security
             management.
@@ -37,11 +37,11 @@
     </security>
     <resources>
         <j2se version="1.5"/>
-        <jar href="jsecurity-spring-sample.jar"/>
-        <jar href="jsecurity.jar"/>
+        <jar href="ki-spring-sample.jar"/>
+        <jar href="ki.jar"/>
         <jar href="spring.jar"/>
         <jar href="slf4j-api.jar"/>
-        <property name="jsecurity.session.id" value="${sessionId}"/>
+        <property name="ki.session.id" value="${sessionId}"/>
     </resources>
     <application-desc main-class="org.apache.ki.samples.spring.ui.WebStartDriver"/>
 </jnlp>

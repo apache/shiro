@@ -56,8 +56,8 @@
          Filters
          ================================================================== -->
     <filter>
-        <filter-name>Apache KiFilter</filter-name>
-        <filter-class>org.apache.ki.spring.SpringApache KiFilter</filter-class>
+        <filter-name>KiFilter</filter-name>
+        <filter-class>org.apache.ki.spring.SpringKiFilter</filter-class>
 
         <init-param>
             <param-name>config</param-name>
@@ -65,15 +65,15 @@
                 # The Apache KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://www.jsecurity.org/api/org/jsecurity/web/servlet/Apache KiFilter.html
+                # http://ki.apache.org/api/org/apache/ki/web/servlet/KiFilter.html
 
                 [filters]
-                jsecurity.loginUrl = /s/login
+                ki.loginUrl = /s/login
                 authc.successUrl = /s/index
 
                 [urls]
                 /s/index=authc
-                /s/jsecurity.jnlp=authc,user
+                /s/ki.jnlp=authc,user
                 /remoting/**=authc, perms[remote:invoke]
             </param-value>
         </init-param>
@@ -81,11 +81,11 @@
     </filter>
 
     <filter-mapping>
-        <filter-name>Apache KiFilter</filter-name>
+        <filter-name>KiFilter</filter-name>
         <url-pattern>/s/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>Apache KiFilter</filter-name>
+        <filter-name>KiFilter</filter-name>
         <url-pattern>/remoting/*</url-pattern>
     </filter-mapping>
 

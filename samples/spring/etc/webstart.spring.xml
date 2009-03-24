@@ -31,7 +31,7 @@
 
   <bean id="sampleManager"
         class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/jsecurity-spring/remoting/sampleManager"/>
+    <property name="serviceUrl" value="http://localhost:8080/ki-spring/remoting/sampleManager"/>
     <property name="serviceInterface" value="org.apache.ki.samples.spring.SampleManager"/>
     <property name="remoteInvocationFactory" ref="secureRemoteInvocationFactory"/>
   </bean>

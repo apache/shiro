@@ -69,7 +69,7 @@ public class WebUtils {
 
     /**
      * {@link org.apache.ki.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
-     * requested page after login, equal to <code>jsecuritySavedRequest</code>.
+     * requested page after login, equal to <code>kiSavedRequest</code>.
      */
     public static final String SAVED_REQUEST_KEY = "kiSavedRequest";
 
