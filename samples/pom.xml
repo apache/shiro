@@ -36,7 +36,7 @@
         <module>quickstart</module>
         <module>web</module>
         <module>spring</module>        
-        <module>sprhib</module>
+        <!-- <module>sprhib</module> -->
     </modules>
 
 </project>
