@@ -29,7 +29,7 @@ The following properties are translated:
 user.home - User's home directory
 user.dir - User's current working directory
 java.io.tmpdir - Default temp file path -->
-  <diskStore path="java.io.tmpdir/jsecurity-spring-sample"/>
+  <diskStore path="java.io.tmpdir/ki-spring-sample"/>
 
 
   <!--Default Cache configuration. These will applied to caches programmatically created through

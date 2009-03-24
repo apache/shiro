@@ -53,7 +53,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * <p/>
  * <pre>&lt;filter&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.jsecurity.web.servlet.JSecurityFilter&lt;/filter-class&gt;
+ * &lt;filter-class&gt;org.apache.ki.web.servlet.KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
  * <p/>
  * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
@@ -71,9 +71,9 @@ import org.apache.ki.web.config.WebConfiguration;
  * # (e.g. Web MVC plus Java Web Start or Flash), or are doing distributed/shared Sessions for
  * # Single Sign On, HttpSessions aren't good enough.  You'll need to use Apache Ki's more powerful
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
- * # and changing 'http' to 'jsecurity'
+ * # and changing 'http' to 'ki'
  * #
- * #securityManager = {@link org.apache.ki.web.DefaultWebSecurityManager org.jsecurity.web.DefaultWebSecurityManager}
+ * #securityManager = {@link org.apache.ki.web.DefaultWebSecurityManager org.apache.ki.web.DefaultWebSecurityManager}
  * #securityManager.{@link org.apache.ki.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
  * <p/>
  * [filters]

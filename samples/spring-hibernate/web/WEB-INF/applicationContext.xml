@@ -44,7 +44,7 @@
          instance.  Change to your application's settings for a real app. -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <property name="url" value="jdbc:hsqldb:mem:jsecurity-spring-hibernate"/>
+        <property name="url" value="jdbc:hsqldb:mem:ki-spring-hibernate"/>
         <property name="username" value="sa"/>
     </bean>
 

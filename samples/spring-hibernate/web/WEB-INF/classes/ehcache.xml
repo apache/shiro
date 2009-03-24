@@ -18,7 +18,7 @@
   -->
 <ehcache>
 
-    <diskStore path="java.io.tmpdir/jsecurity-spring-hibernate-ehcache"/>
+    <diskStore path="java.io.tmpdir/ki-spring-hibernate-ehcache"/>
 
 
     <defaultCache

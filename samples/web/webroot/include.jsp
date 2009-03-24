@@ -19,4 +19,4 @@
 <%@ page import="org.apache.ki.SecurityUtils" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="jsec" uri="http://www.jsecurity.org/tags" %>
+<%@ taglib prefix="jsec" uri="http://ki.apache.org/tags" %>

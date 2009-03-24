@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Web-specific implementation extensions to the <code>org.jsecurity.config</code> components.
+ * Web-specific implementation extensions to the <code>org.apache.ki.config</code> components.
  */
 package org.apache.ki.web.config;
