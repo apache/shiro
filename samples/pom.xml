@@ -34,8 +34,9 @@
 
     <modules>
         <module>quickstart</module>
-        <module>spring</module>
         <module>web</module>
+        <module>spring</module>        
+        <module>sprhib</module>
     </modules>
 
 </project>
