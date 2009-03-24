@@ -153,10 +153,10 @@ public abstract class CodecSupport {
     /**
      * Converts the specified Object into a byte array.
      *
-     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, or <tt>String</tt> it will be converted
-     * automatically and returned.</tt>
+     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, <tt>String</tt>, <tt>File</tt>, or
+     * <tt>InputStream</tt>, it will be converted automatically and returned.</tt>
      *
-     * <p>If the argument is anything other than these three types, it is passed to the
+     * <p>If the argument is anything other than these types, it is passed to the
      * {@link #objectToBytes(Object) objectToBytes} method which must be overridden by subclasses.
      *
      * @param o the Object to convert into a byte array
@@ -185,8 +185,8 @@ public abstract class CodecSupport {
     /**
      * Converts the specified Object into a String.
      *
-     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, or <tt>String</tt> it will be converted
-     * automatically and returned.</tt>
+     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, or <tt>String</tt>,
+     * it will be converted automatically and returned.</tt>
      *
      * <p>If the argument is anything other than these three types, it is passed to the
      * {@link #objectToString(Object) objectToString} method which must be overridden by subclasses.
@@ -268,11 +268,12 @@ public abstract class CodecSupport {
      */
     protected byte[] objectToBytes(Object o) {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
-                "byte[] if the source is of type byte[], char[] or String.  The instance provided as a method " +
+                "byte[] if the source is of type byte[], char[], String, File or InputStream.  The instance " +
+                "provided as a method " +
                 "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
-                "this argument type to a byte[], you can 1) convert the argument to a byte[], char[] or String " +
+                "this argument type to a byte[], you can 1) convert the argument to one of the supported types " +
                 "yourself and then use that as the method argument or 2) subclass " + getClass().getName() +
-                " and override the objectToBytes(Object o) method.";
+                "and override the objectToBytes(Object o) method.";
         throw new CodecException(msg);
     }
 
