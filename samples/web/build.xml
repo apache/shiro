@@ -57,7 +57,7 @@
          war - create distribution war (which will be used for deployment)
          =================================================================== -->
     <target name="war" description="Creates the samples webapp .war">
-        <war warfile="${dist.war}" webxml="webroot/WEB-INF/web.xml">
+        <war warfile="${dist.war}" webxml="src/main/webapp/WEB-INF/web.xml">
             <lib dir="${root.dist.dir}" includes="jsecurity-*.jar"/>
             <lib dir="${lib.dir}/samples" includes="jstl-*.jar"/>
             <lib dir="${lib.dir}/samples" includes="standard-*.jar"/>
