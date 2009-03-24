@@ -57,7 +57,7 @@
 
     <target name="war">
             <echo message="DIST DIR: ${dist.dir}"/>
-        <war warfile="${dist.war}" webxml="web/WEB-INF/web.xml">
+        <war warfile="${dist.war}" webxml="src/main/webapp/WEB-INF/web.xml">
             <lib dir="${dist.dir}" includes="*.jar"/>
             <lib dir="${dist.dir}/samples" includes="ki-samples-sprhib*.jar"/>
             <lib dir="${dist.dir}/modules" includes="*.jar"/>
