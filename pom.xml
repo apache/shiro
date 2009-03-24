@@ -45,12 +45,13 @@
 
     <issueManagement>
         <system>Jira</system>
-        <url>http://issues.apache.org/jira/browse/JSEC</url>
+        <url>http://issues.apache.org/jira/browse/KI</url>
     </issueManagement>
 
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</developerConnection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk
+        </developerConnection>
         <url>http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</url>
     </scm>
 
@@ -71,18 +72,6 @@
     </modules>
 
     <build>
-        <!-- non-standard source locations -->
-        <sourceDirectory>${basedir}/src</sourceDirectory>
-        <testSourceDirectory>${basedir}/test</testSourceDirectory>
-        <resources>
-            <resource>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-                <directory>${basedir}/src</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -104,25 +93,56 @@
     </build>
 
     <dependencies>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Intra project dependencies -->
+            <dependency>
+                <groupId>org.apache.ki</groupId>
+                <artifactId>ki-core</artifactId>
+                <version>${kiVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ki</groupId>
+                <artifactId>ki-web</artifactId>
+                <version>${kiVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ki</groupId>
+                <artifactId>ki-ehcache</artifactId>
+                <version>${kiVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ki</groupId>
+                <artifactId>ki-quartz</artifactId>
+                <version>${kiVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ki</groupId>
+                <artifactId>ki-spring</artifactId>
+                <version>${kiVersion}</version>
+            </dependency>
 
+            <!-- 3rd party dependencies -->
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.7.0</version>
+                <optional>true</optional>
             </dependency>
-
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
@@ -146,42 +166,35 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
             <dependency>
                 <groupId>hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldbVersion}</version>
+                <optional>true</optional>
             </dependency>
-
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>
                 <artifactId>jsp-api</artifactId>
                 <version>2.1</version>
+                <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
                 <version>1.2</version>
+                <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>2.5</version>
+                <scope>provided</scope>
             </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.4</version>
-                <scope>test</scope>
-            </dependency>
-
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.15</version>
+                <scope>test</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.jms</groupId>
@@ -197,81 +210,43 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>1.4.1</version>
             </dependency>
-
             <dependency>
                 <groupId>net.sourceforge.retroweaver</groupId>
                 <artifactId>retroweaver</artifactId>
                 <version>${retroweaverVersion}</version>
+                <optional>true</optional>
             </dependency>
-
             <dependency>
                 <groupId>net.sourceforge.retroweaver</groupId>
                 <artifactId>retroweaver-rt</artifactId>
                 <version>${retroweaverVersion}</version>
+                <optional>true</optional>
             </dependency>
-
-            <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-core</artifactId>
-                <version>${kiVersion}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-spring</artifactId>
-                <version>${kiVersion}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-web</artifactId>
-                <version>${kiVersion}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>2.3</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>2.3</version>
-                <scope>test</scope>
-            </dependency>
-
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring</artifactId>
                 <version>${springframeworkVersion}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
                 <version>${springframeworkVersion}</version>
             </dependency>
-
             <dependency>
                 <groupId>quartz</groupId>
                 <artifactId>quartz</artifactId>
                 <version>1.5.2</version>
             </dependency>
-
             <dependency>
                 <groupId>taglibs</groupId>
                 <artifactId>standard</artifactId>
                 <version>1.1.2</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
