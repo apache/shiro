@@ -66,7 +66,7 @@
         <jdk.version>1.5</jdk.version>
         <hsqldbVersion>1.8.0.7</hsqldbVersion>
         <jettyVersion>6.1.14</jettyVersion>
-        <kiVersion>1.0-SNAPSHOT</kiVersion>
+        <kiVersion>1.0-incubating-SNAPSHOT</kiVersion>
         <retroweaverVersion>2.0.5</retroweaverVersion>
         <springframeworkVersion>2.5.6</springframeworkVersion>
     </properties>
