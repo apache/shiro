@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.ki.samples</groupId>
         <artifactId>ki-samples</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-incubating-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
