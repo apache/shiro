@@ -76,6 +76,7 @@
         <module>web</module>
         <module>support</module>
         <module>samples</module>
+        <module>all</module>
     </modules>
 
     <build>
