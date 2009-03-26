@@ -33,7 +33,7 @@ import org.apache.ki.subject.Subject;
  *
  * <p>The interface itself primarily exists as a convenience - it extends the {@link org.apache.ki.authc.Authenticator},
  * {@link Authorizer}, and {@link SessionManager} interfaces, thereby consolidating
- * these behaviors into a single point of reference.  For most Apache Ki usages, this simplifies configuration and
+ * these behaviors into a single point of reference.  For most Ki usages, this simplifies configuration and
  * tends to be a more convenient approach than referencing <code>Authenticator</code>, <code>Authorizer</code>, and
  * <code>SessionManager</code> instances seperately;  instead one only needs to interact with a
  * single <tt>SecurityManager</tt> instance.</p>
@@ -50,7 +50,7 @@ import org.apache.ki.subject.Subject;
  *
  * <p>In that case, the application programmer can call the
  * {@link #getSubject() getSubject()} method and then use that returned instance for continued interaction with
- * Apache Ki.  If your application code does not have a direct handle to the application's
+ * Ki.  If your application code does not have a direct handle to the application's
  * <code>SecurityManager</code>, you can use {@link org.apache.ki.SecurityUtils SecurityUtils} anywhere in your code
  * to achieve the same result.
  *

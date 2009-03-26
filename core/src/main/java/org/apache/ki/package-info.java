@@ -19,6 +19,6 @@
 /**
  * This package primarily exists as a root classpath distinction, but it does contain two core classes widely used
  * by applications, {@link org.apache.ki.SecurityUtils SecurityUtils} and
- * {@link org.apache.ki.KiException Apache KiException}.
+ * {@link org.apache.ki.KiException KiException}.
  */
 package org.ki;

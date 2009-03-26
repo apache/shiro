@@ -67,8 +67,8 @@ public interface ValidatingSessionManager extends SessionManager {
      * proactive systems, this {@link #validateSessions()} method should be invoked regularaly
      * anyway to <em>guarantee</em> no orphans exist.
      *
-     * <p><b>Note:</b> Apache Ki supports automatic execution of this method at a regular interval
-     * by using {@link SessionValidationScheduler}s.  The Apache Ki default SecurityManager implementations
+     * <p><b>Note:</b> Ki supports automatic execution of this method at a regular interval
+     * by using {@link SessionValidationScheduler}s.  The Ki default SecurityManager implementations
      * needing session validation will create and use one by default if one is not provided by the
      * application configuration.
      */

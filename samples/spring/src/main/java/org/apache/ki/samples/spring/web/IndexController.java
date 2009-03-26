@@ -33,7 +33,7 @@ import org.apache.ki.samples.spring.SampleManager;
 import org.apache.ki.subject.Subject;
 
 /**
- * Spring MVC controller responsible for rendering the Apache Ki Spring sample
+ * Spring MVC controller responsible for rendering the Ki Spring sample
  * application index page.
  *
  * @author Jeremy Haile

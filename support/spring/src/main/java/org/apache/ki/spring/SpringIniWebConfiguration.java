@@ -37,18 +37,18 @@ import org.apache.ki.web.config.IniWebConfiguration;
 
 
 /**
- * <p>Apache Ki configuration that relies on Spring to define and initialize the Apache Ki SecurityManager
- * instance (and all of its dependencies) and makes it available to the Apache KiFilter by performing a Spring bean
+ * <p>Ki configuration that relies on Spring to define and initialize the Ki SecurityManager
+ * instance (and all of its dependencies) and makes it available to the KiFilter by performing a Spring bean
  * lookup.  The URL/filter definitions are still .ini based and loaded according to the behavior of the parent class
  * {@link org.apache.ki.web.config.IniWebConfiguration}</p>
  * <p/>
- * That is, this class is offers a hybrid means of configuring Apache Ki in Spring apps deployed in a web container:
+ * That is, this class is offers a hybrid means of configuring Ki in Spring apps deployed in a web container:
  * Spring XML config for the SecurityManager and its dependencies (realms, etc), and .ini format for configuring
  * the filters and the url chains in web.xml, which many people like to maintain separation of concerns:
  * the web/filter/url config stays in web.xml, whereas the SecurityManager config (really a business-tier concern)
  * stays in Spring .xml files.
  * <p/>
- * The behavior used to acquire the Apache Ki <code>SecurityManager</code> is as follows:
+ * The behavior used to acquire the Ki <code>SecurityManager</code> is as follows:
  * <ol>
  * <li>If a 'securityManagerBeanName' init-param is set, retrieve that sec manager from Spring.</li>
  * <li>If not, look for beans of type {@link SecurityManager} - if there is one instance, use that.

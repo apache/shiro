@@ -15,6 +15,6 @@ Java 1.3 and 1.4 only: ki.jar, commons-logging.jar and retroweaver.jar and its a
 
 Feature-based dependencies
 --------------------------
-- .ini based configuration, either for a ki.ini file in the classpath or embedded .ini in the Apache KiFilter
+- .ini based configuration, either for a ki.ini file in the classpath or embedded .ini in the KiFilter
   in web.xml:
   . include Jakarta commons-beanutils-core.jar

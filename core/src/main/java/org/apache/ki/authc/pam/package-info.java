@@ -18,7 +18,7 @@
  */
 /**
  * Support for <em>PAM</em>, or <b>P</b>luggable <b>A</b>uthentication <b>M</b>odules, which is
- * the capability to authenticate a user against multiple configurable (pluggable) <em>modules</em> (Apache Ki
+ * the capability to authenticate a user against multiple configurable (pluggable) <em>modules</em> (Ki
  * calls these {@link org.apache.ki.realm.Realm Realm}s).
  * <p/>
  * The primary class of interest here is the {@link org.apache.ki.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}

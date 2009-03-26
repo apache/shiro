@@ -37,7 +37,7 @@ import org.apache.ki.subject.Subject;
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
  * {@link RemoteInvocation} {@link RemoteInvocation#getAttribute(String) attribute}.
  * This factory is the client-side part of
- * the Apache Ki Spring remoting invocation.  A {@link SecureRemoteInvocationExecutor} should
+ * the Ki Spring remoting invocation.  A {@link SecureRemoteInvocationExecutor} should
  * be used to export the server-side remote services to ensure that the appropriate
  * Subject and Session are bound to the remote thread during execution.
  *

@@ -61,7 +61,7 @@ public class WebUtils {
      * Message displayed when a servlet request or response is not bound to the current thread context when expected.
      */
     private static final String NOT_BOUND_ERROR_MESSAGE =
-            "Make sure WebUtils.bind() is being called. (typically called by Apache KiFilter)  " +
+            "Make sure WebUtils.bind() is being called. (typically called by KiFilter)  " +
                     "This could also happen when running integration tests that don't properly call WebUtils.bind().";
 
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_KI_THREAD_CONTEXT_KEY";
@@ -319,7 +319,7 @@ public class WebUtils {
      * {@link #getRequiredServletRequest() getRequiredServletRequest()} method always assumes a
      * servlet-only environment.
      * <p/>
-     * <b>THIS IS NOT PART OF APACHE KI'S PUBLIC API.</b>  It exists for Apache Ki implementation requirements only.
+     * <b>THIS IS NOT PART OF APACHE KI'S PUBLIC API.</b>  It exists for Ki implementation requirements only.
      * 
      * @return the current thread-bound {@code ServletRequest} or {@code null} if there is not one bound.
      * @since 1.0
@@ -405,7 +405,7 @@ public class WebUtils {
      * {@link #getRequiredServletResponse() getRequiredServletResponse()} method always assumes a
      * servlet-only environment.
      * <p/>
-     * <b>THIS IS NOT PART OF APACHE KI'S PUBLIC API.</b>  It exists for Apache Ki implementation requirements only.
+     * <b>THIS IS NOT PART OF APACHE KI'S PUBLIC API.</b>  It exists for Ki implementation requirements only.
      *
      * @return the current thread-bound {@code ServletResponse} or {@code null} if there is not one bound.
      * @since 1.0

@@ -43,8 +43,8 @@ public class Quickstart {
     public static void main( String[] args ) {
 
         //Most applications would never instantiate a SecurityManager directly - you would instead configure
-        //Apache Ki in web.xml or a container (JEE, Spring, etc).
-        //But, since this is a quickstart, we just want you to get a feel for how the Apache Ki API looks, so this
+        //Ki in web.xml or a container (JEE, Spring, etc).
+        //But, since this is a quickstart, we just want you to get a feel for how the Ki API looks, so this
         //is sufficient to have a simple working example:
         DefaultSecurityManager securityManager = new DefaultSecurityManager();
 
@@ -55,7 +55,7 @@ public class Quickstart {
         SecurityUtils.setSecurityManager( securityManager );
 
 
-        //now that a simple Apache Ki environment is set up, let's see what you can do:
+        //now that a simple Ki environment is set up, let's see what you can do:
 
         //get the currently executing user:
         Subject currentUser = SecurityUtils.getSubject();

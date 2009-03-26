@@ -32,7 +32,7 @@ import org.apache.ki.cache.Cache;
 import org.apache.ki.cache.CacheException;
 
 /**
- * Apache Ki {@link org.apache.ki.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.
+ * Ki {@link org.apache.ki.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -52,7 +52,7 @@ public class EhCache implements Cache {
     /**
      * Constructs a new EhCache instance with the given cache.
      *
-     * @param cache - delegate EhCache instance this Apache Ki cache instance will wrap.
+     * @param cache - delegate EhCache instance this Ki cache instance will wrap.
      */
     public EhCache(net.sf.ehcache.Cache cache) {
         if (cache == null) {

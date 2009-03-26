@@ -35,7 +35,7 @@ import org.apache.ki.samples.spring.SampleManager;
 
 /**
  * Simple web start application that helps to demo single sign-on and
- * remoting authorization using Apache Ki.  The injected <tt>SampleManager</tt>
+ * remoting authorization using Ki.  The injected <tt>SampleManager</tt>
  * is hosted by the Spring sample web application and remotely invoked
  * when the buttons in this view are clicked.
  *

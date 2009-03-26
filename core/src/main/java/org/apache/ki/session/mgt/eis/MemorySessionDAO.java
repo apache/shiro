@@ -48,7 +48,7 @@ import org.apache.ki.util.JavaEnvironment;
  * <li>If you need session information beyond their transient start/stop lifetimes, you should subclass this one and
  * override the <tt>do*</tt> methods to perform CRUD operations using an EIS-tier API (e.g. Hibernate/JPA/JCR/etc).
  * This class implementation does not retain sessions after they have been stopped or expired, so you would need to
- * override these methods to ensure Sessions can be accessed beyond Apache Ki's needs.</li>
+ * override these methods to ensure Sessions can be accessed beyond Ki's needs.</li>
  * </ul>
  *
  * @author Les Hazlewood

@@ -17,11 +17,11 @@
  * under the License.
  */
 /**
- * Support and default implementations for Apache Ki's {@link org.apache.ki.authz.Permission Permission}
+ * Support and default implementations for Ki's {@link org.apache.ki.authz.Permission Permission}
  * interface.
  * <p/>
  * Also note the {@link org.apache.ki.authz.permission.PermissionResolver PermissionResolver} interface, as
- * it plays an important part in many of Apache Ki's {@link org.apache.ki.realm.Realm Realm} implementations
+ * it plays an important part in many of Ki's {@link org.apache.ki.realm.Realm Realm} implementations
  * and AOP support.
  */
 package org.apache.ki.authz.permission;

@@ -36,7 +36,7 @@
     <context:component-scan base-package="org.ki.samples.sprhib.security"/>
     <context:component-scan base-package="org.ki.samples.sprhib.service"/>
 
-    <!-- Spring AOP auto-proxy creation (required to support Apache Ki annotations) -->
+    <!-- Spring AOP auto-proxy creation (required to support Ki annotations) -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
 
@@ -82,10 +82,10 @@
 
 
     <!-- =========================================================
-         Apache Ki Components
+         Ki Components
          ========================================================= -->
 
-    <!-- Apache Ki's main business-tier object for web-enabled applications
+    <!-- Ki's main business-tier object for web-enabled applications
          (use org.kifaultSecurityManager instead when there is no web environment)-->
     <bean id="securityManager" class="org.apache.ki.web.DefaultWebSecurityManager">
         <!-- Single realm app (realm configured next, below).  If you have multiple realms, use the 'realms'

@@ -22,7 +22,7 @@ import org.apache.ki.mgt.SecurityManagerFactory;
 
 
 /**
- * A <code>Configuration</code> is responsible for 'wiring' together all the Apache Ki components for an
+ * A <code>Configuration</code> is responsible for 'wiring' together all the Ki components for an
  * application, such as the {@link org.apache.ki.mgt.SecurityManager SecurityManager}, and any of its
  * dependencies.
  * <p/>

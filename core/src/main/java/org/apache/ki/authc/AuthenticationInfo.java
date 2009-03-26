@@ -34,7 +34,7 @@ import org.apache.ki.subject.PrincipalCollection;
  * <code>AuthenticationInfo</code>).
  * <p/>
  * Because the act of authentication (log-in) is orthoganal to authorization (access control), this interface is
- * intended to represent only the account data needed by Apache Ki during an authentication attempt.  Apache Ki also
+ * intended to represent only the account data needed by Ki during an authentication attempt.  Ki also
  * has a parallel {@link org.apache.ki.authz.AuthorizationInfo AuthorizationInfo} interface for use during the
  * authorization process that references access control data such as roles and permissions.
  * <p/>
@@ -45,10 +45,10 @@ import org.apache.ki.subject.PrincipalCollection;
  * <code>Account</code> interface for a given <code>Realm</code> is entirely based on your application's needs or your
  * preferences.
  *
- * <p><b>Pleae note:</b>  Since Apache Ki sometimes logs authentication operations, please ensure your AuthenticationInfo's
+ * <p><b>Pleae note:</b>  Since Ki sometimes logs authentication operations, please ensure your AuthenticationInfo's
  * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account credentials should rarely (if ever) be printed
- * out for any reason.  If you're using Apache Ki's default implementations of this interface, they only ever print the
+ * out for any reason.  If you're using Ki's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
  *
  * @author Jeremy Haile
@@ -78,7 +78,7 @@ public interface AuthenticationInfo extends Serializable {
     /**
      * Returns the credentials associated with the corresponding Subject.  A credential verifies one or more of the
      * {@link #getPrincipals() principals} associated with the Subject, such as a password or private key.  Credentials
-     * are used by Apache Ki particularly during the authentication process to ensure that submitted credentials
+     * are used by Ki particularly during the authentication process to ensure that submitted credentials
      * during a login attempt match exactly the credentials here in the <code>AuthenticationInfo</code> instance.
      *
      * @return the credentials associated with the corresponding Subject.

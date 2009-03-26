@@ -238,7 +238,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      *
      * @param token the authentication token encapsulating the user's login information.
      * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
-     *         important to Apache Ki.
+     *         important to Ki.
      * @throws AuthenticationException if there is a problem logging in the user.
      */
     protected abstract AuthenticationInfo doAuthenticate(AuthenticationToken token)

@@ -20,7 +20,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
-  - Application context for Apache Ki WebStart sample application
+  - Application context for Ki WebStart sample application
   -->
 <beans>
 

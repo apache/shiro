@@ -34,7 +34,7 @@ import org.apache.ki.util.Nameable;
 
 /**
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
- * map of "property values".  Typically these come from the Apache Ki INI configuration and are used
+ * map of "property values".  Typically these come from the Ki INI configuration and are used
  * to construct or modify the SecurityManager, its dependencies, and web-based security filters.
  *
  * @author Les Hazlewood

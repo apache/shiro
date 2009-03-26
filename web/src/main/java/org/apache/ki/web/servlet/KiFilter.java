@@ -47,7 +47,7 @@ import org.apache.ki.web.config.WebConfiguration;
 
 
 /**
- * Main ServletFilter that configures and enables all Apache Ki functions within a web application.
+ * Main ServletFilter that configures and enables all Ki functions within a web application.
  * <p/>
  * The following is a fully commented example that documents how to configure it:
  * <p/>
@@ -60,16 +60,16 @@ import org.apache.ki.web.config.WebConfiguration;
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
- * # Any commented values below are Apache Ki's defaults.  If you want to change any values, you only
+ * # Any commented values below are Ki's defaults.  If you want to change any values, you only
  * # need to uncomment the lines you want to change.
  * <p/>
  * [main]
- * # The 'main' section defines Apache Ki-wide configuration.
+ * # The 'main' section defines Ki-wide configuration.
  * #
- * # Session Mode: By default, Apache Ki's Session infrastructure in a web environment will use the
+ * # Session Mode: By default, Ki's Session infrastructure in a web environment will use the
  * # Servlet container's HttpSession.  However, if you need to share session state across client types
  * # (e.g. Web MVC plus Java Web Start or Flash), or are doing distributed/shared Sessions for
- * # Single Sign On, HttpSessions aren't good enough.  You'll need to use Apache Ki's more powerful
+ * # Single Sign On, HttpSessions aren't good enough.  You'll need to use Ki's more powerful
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
  * # and changing 'http' to 'ki'
  * #
@@ -79,7 +79,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * [filters]
  * # This section defines the 'pool' of all Filters available to the url path definitions in the [urls] section below.
  * #
- * # The following commented values are already provided by Apache Ki by default and are immediately usable
+ * # The following commented values are already provided by Ki by default and are immediately usable
  * # in the [urls] definitions below.  If you like, you may override any values by uncommenting only the lines
  * # you need to change.
  * #
@@ -384,7 +384,7 @@ public class KiFilter extends OncePerRequestFilter {
         if (isHttpSessions() && (request instanceof KiHttpServletRequest) &&
             (response instanceof HttpServletResponse)) {
             //the KiHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
-            //using Apache Ki sessions (i.e. not simple HttpSession based sessions):
+            //using Ki sessions (i.e. not simple HttpSession based sessions):
             toUse = wrapServletResponse((HttpServletResponse) response, (KiHttpServletRequest) request);
         }
         return toUse;

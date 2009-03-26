@@ -29,7 +29,7 @@ import org.apache.ki.authc.Account;
  * implementations that want to cache authorization state when doing an account lookup so multiple authorization checks
  * do not need to access the Realm's underlying data store repeatedly.
  * <p/>
- * Of course, an <tt>AuthorizingAccount</tt> concept is only a convenience mechansim if Apache Ki account caching
+ * Of course, an <tt>AuthorizingAccount</tt> concept is only a convenience mechansim if Ki account caching
  * is enabled.  Realm implementations are free to ignore this interface entirely and implement/override any of their
  * <tt>Realm</tt>'s {@link Authorizer Authorizer} methods to execute the authorization checks as they see fit.
  * ({@link org.apache.ki.realm.Realm Realm} is a sub-interface of {@link Authorizer Authorizer} and therefore must
@@ -40,7 +40,7 @@ import org.apache.ki.authc.Account;
  * return an {@link Account} instance, or if you want fine-grained control over authorization behavior, extend
  * a subclass of {@link org.apache.ki.realm.AuthorizingRealm} and implement your own security checks in the
  * Realm itself instead of forcing this logic in your entity/domain classes where it could be error prone and
- * unnecessarily couple these objects to Apache Ki.
+ * unnecessarily couple these objects to Ki.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

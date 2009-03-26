@@ -21,10 +21,10 @@ package org.apache.ki.cache;
 /**
  * A CacheManager provides and maintains the lifecycles of {@link Cache Cache} instances.
  *
- * <p>Apache Ki doesn't implement a full Cache mechanism itself, since that is outside the core competency of a
+ * <p>Ki doesn't implement a full Cache mechanism itself, since that is outside the core competency of a
  * Security framework.  Instead, this interface provides an abstraction (wrapper) API on top of an underlying
  * cache framework's main Manager component (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
- * GigaSpaces, etc, etc), allowing a Apache Ki user to configure any cache mechanism they choose.
+ * GigaSpaces, etc, etc), allowing a Ki user to configure any cache mechanism they choose.
  *
  * @author Les Hazlewood
  * @since 0.9

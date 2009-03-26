@@ -20,15 +20,15 @@ package org.apache.ki.authc;
 
 /**
  * An Authenticator is responsible for authenticating accounts in an application.  It
- * is one of the primary entry points into the Apache Ki API.
+ * is one of the primary entry points into the Ki API.
  * <p/>
  * Although not a requirement, there is usually a single 'master' Authenticator configured for
  * an application.  Enabling Pluggable Authentication Module (PAM) behavior
  * (Two Phase Commit, etc.) is usually achieved by the single {@code Authenticator} coordinating
  * and interacting with an application-configured set of {@link org.apache.ki.realm.Realm Realm}s.
  * <p/>
- * Note that most Apache Ki users will not interact with an {@code Authenticator} instance directly.
- * Apache Ki's default architecture is based on an overall {@code SecurityManager} which typically
+ * Note that most Ki users will not interact with an {@code Authenticator} instance directly.
+ * Ki's default architecture is based on an overall {@code SecurityManager} which typically
  * wraps an {@code Authenticator} instance.
  *
  * @author Les Hazlewood
@@ -44,7 +44,7 @@ public interface Authenticator {
      * Authenticates a user based on the submitted {@code AuthenticationToken}.
      * <p/>
      * If the authentication is successful, an {@link AuthenticationInfo} instance is returned that represents the
-     * user's account data relevant to Apache Ki.  This returned object is generally used in turn to construct a
+     * user's account data relevant to Ki.  This returned object is generally used in turn to construct a
      * {@code Subject} representing a more complete security-specific 'view' of an account that also allows access to
      * a {@code Session}.
      *

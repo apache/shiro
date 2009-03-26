@@ -50,7 +50,7 @@ package org.apache.ki.util;
  *
  * <p><b>N.B.</b>: This class was borrowed (with much appreciation) from the
  * <a href="http://www.springframework.org">Spring Framework</a> with modifications.  We didn't want to reinvent the
- * wheel of great work they've done, but also didn't want to force every Apache Ki user to depend on Spring</p>
+ * wheel of great work they've done, but also didn't want to force every Ki user to depend on Spring</p>
  *
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>

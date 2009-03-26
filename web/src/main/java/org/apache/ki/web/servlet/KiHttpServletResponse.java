@@ -29,15 +29,15 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
 /**
- * HttpServletResponse implementation to support URL Encoding of Apache Ki Session IDs.
+ * HttpServletResponse implementation to support URL Encoding of Ki Session IDs.
  *
- * It is only used when using Apache Ki's native Session Management configuration (and not when using the Servlet
- * Container session configuration, which is Apache Ki's default in a web environment).  Because the servlet container
- * already performs url encoding of its own session ids, instances of this class are only needed when using Apache Ki
+ * It is only used when using Ki's native Session Management configuration (and not when using the Servlet
+ * Container session configuration, which is Ki's default in a web environment).  Because the servlet container
+ * already performs url encoding of its own session ids, instances of this class are only needed when using Ki
  * native sessions.
  *
  * <p>Note that this implementation relies in part on source code from the Tomcat 6.x distribution for
- * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since Apache Ki is also
+ * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since Ki is also
  * Apache 2.0 license, all regular licenses and conditions have remained in tact.
  *
  * @author Les Hazlewood

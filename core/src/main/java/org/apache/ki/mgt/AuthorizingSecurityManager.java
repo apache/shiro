@@ -32,7 +32,7 @@ import org.apache.ki.util.LifecycleUtils;
 
 
 /**
- * Apache Ki support of a {@link SecurityManager} class hierarchy that delegates all
+ * Ki support of a {@link SecurityManager} class hierarchy that delegates all
  * authorization (access control) operations to a wrapped {@link Authorizer Authorizer} instance.  That is,
  * this class implements all the <tt>Authorizer</tt> methods in the {@link SecurityManager SecurityManager}
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'
@@ -41,7 +41,7 @@ import org.apache.ki.util.LifecycleUtils;
  * <p>All remaining <tt>SecurityManager</tt> methods not covered by this class or its parents (mostly Session support)
  * are left to be implemented by subclasses.
  *
- * <p>In keeping with the other classes in this hierarchy and Apache Ki's desire to minimize configuration whenever
+ * <p>In keeping with the other classes in this hierarchy and Ki's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies will be created upon instantiation.
  *
  * @author Les Hazlewood

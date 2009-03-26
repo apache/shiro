@@ -19,7 +19,7 @@
 /**
  * Core interfaces and exceptions concerning Authentication (the act of logging-in).
  * <p/>
- * Apache Ki abbreviates the word 'AuthentiCation' as <tt>authc</tt> to distinguish it seperately from
+ * Ki abbreviates the word 'AuthentiCation' as <tt>authc</tt> to distinguish it seperately from
  * 'AuthoriZation', abbreviated as <tt>authz</tt>.
  * <p/>
  * The primary item of interest in this package is the <tt>Authenticator</tt> interface, which acts as the

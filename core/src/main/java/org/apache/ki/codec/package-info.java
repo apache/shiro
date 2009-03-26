@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Components for encoding and decoding of data across multiple formats, especially useful in Apache Ki's
+ * Components for encoding and decoding of data across multiple formats, especially useful in Ki's
  * cryptography and web functionality.
  */
 package org.apache.ki.codec;

@@ -26,7 +26,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.ki.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 
 /**
- * Allows Apache Ki Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>
+ * Allows Ki Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>
  * specific implementation environment (for example, Spring).
  *
  * @author Les Hazlewood
@@ -38,11 +38,11 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
     /**
      * Creates a {@link MethodInvocation MethodInvocation} that wraps an
      * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} instance,
-     * enabling Apache Ki Annotations in <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a> environments
+     * enabling Ki Annotations in <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a> environments
      * (Spring, etc).
      *
      * @param implSpecificMethodInvocation AOP Alliance {@link org.aopalliance.intercept.MethodInvocation MethodInvocation}
-     * @return a Apache Ki {@link MethodInvocation MethodInvocation} instance that wraps the AOP Alliance instance.
+     * @return a Ki {@link MethodInvocation MethodInvocation} instance that wraps the AOP Alliance instance.
      */
     protected org.apache.ki.aop.MethodInvocation createMethodInvocation(Object implSpecificMethodInvocation) {
         final MethodInvocation mi = (MethodInvocation) implSpecificMethodInvocation;
@@ -80,7 +80,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
     }
 
     /**
-     * Creates a Apache Ki {@link MethodInvocation MethodInvocation} instance and then immediately calls
+     * Creates a Ki {@link MethodInvocation MethodInvocation} instance and then immediately calls
      * {@link org.apache.ki.authz.aop.AuthorizingMethodInterceptor#invoke super.invoke}.
      *
      * @param methodInvocation the AOP Alliance-specific <code>methodInvocation</code> instance.

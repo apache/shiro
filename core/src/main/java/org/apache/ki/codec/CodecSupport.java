@@ -35,12 +35,12 @@ import java.io.UnsupportedEncodingException;
 public abstract class CodecSupport {
 
     /**
-     * Apache Ki's default preferred Character encoding, equal to <b><code>UTF-8</code></b>.
+     * Ki's default preferred Character encoding, equal to <b><code>UTF-8</code></b>.
      */
     public static final String PREFERRED_ENCODING = "UTF-8";
 
     /**
-     * Converts the specified character array to a byte array using the Apache Ki's preferred encoding (UTF-8).
+     * Converts the specified character array to a byte array using the Ki's preferred encoding (UTF-8).
      * <p/>
      * This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
      * a wrapping String and {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}, i.e.
@@ -72,11 +72,11 @@ public abstract class CodecSupport {
     }
 
     /**
-     * Converts the specified source argument to a byte array with Apache Ki's
+     * Converts the specified source argument to a byte array with Ki's
      * {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      *
      * @param source the string to convert to a byte array.
-     * @return the bytes representing the specified string under Apache Ki's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * @return the bytes representing the specified string under Ki's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      */
     public static byte[] toBytes(String source) {
         return toBytes(source, PREFERRED_ENCODING);
@@ -102,7 +102,7 @@ public abstract class CodecSupport {
     }
 
     /**
-     * Converts the specified byte array to a string using Apache Ki's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * Converts the specified byte array to a string using Ki's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      *
      * @param bytes the byte array to turn into a String.
      * @return the specified byte array as an encoded String ({@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}).
@@ -129,7 +129,7 @@ public abstract class CodecSupport {
     }
 
     /**
-     * Returns the specified byte array as a character array using Apache Ki's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * Returns the specified byte array as a character array using Ki's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      *
      * @param bytes the byte array to convert to a char array
      * @return the specified byte array encoded as a character array ({@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}).
