@@ -28,10 +28,10 @@ import org.apache.ki.authz.AuthorizationInfo;
  * This interface can be useful when an Realm implementation finds it more convenient to use a single object to
  * encapsulate both the authentication and authorization information used by both authc and authz operations.
  * <p/>
- * <b>Please Note</b>:  Since Apache Ki sometimes logs account operations, please ensure your Account's <code>toString()</code>
+ * <b>Please Note</b>:  Since Ki sometimes logs account operations, please ensure your Account's <code>toString()</code>
  * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
- * out for any reason.  If you're using Apache Ki's default implementations of this interface, they only ever print the
+ * out for any reason.  If you're using Ki's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.
  *
  * @author Jeremy Haile

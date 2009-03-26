@@ -30,13 +30,13 @@ import org.apache.ki.session.Session;
 /**
  * A <tt>Subject</tt> represents state and security operations for a <em>single</em> application user.
  * These operations include authentication (login/logout), authorization (access control), and
- * session access. It is Apache Ki's primary mechanism for single-user security functionality.
+ * session access. It is Ki's primary mechanism for single-user security functionality.
  *
  * <p>Note that there are many *Permission methods in this interface overloaded to accept String arguments instead of
  * {@link Permission Permission} instances. They are a convenience allowing the caller to use a String representation of
  * a {@link Permission Permission} if desired.  The underlying Authorization subsystem implementations will usually
  * simply convert these String values to {@link Permission Permission} instances and then just call the corresponding
- * type-safe method.  (Apache Ki's default implementations do String-to-Permission conversion for these methods using
+ * type-safe method.  (Ki's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.ki.authz.permission.PermissionResolver PermissionResolver}s.)
  *
  * <p>These overloaded *Permission methods <em>do</em> forego type-saftey for the benefit of convenience and simplicity,
@@ -55,15 +55,15 @@ public interface Subject {
      * <p>The term <em>principal</em> is just a fancy security term for any identifying attribute(s) of an application
      * user, such as a username, or user id, or public key, or anything else you might use in your application to
      * identify a user.  And although given names and family names (first/last) are technically principals as well,
-     * Apache Ki expects the object(s) returned from this method to be uniquely identifying attibute(s) for
+     * Ki expects the object(s) returned from this method to be uniquely identifying attibute(s) for
      * your application.  This implies that things like given names and family names are usually poor candidates as
      * return values since they are rarely guaranteed to be unique.</p>
      *
      * <p>Most single-Realm applications would return from this method a single unique principal as noted above
      * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large
-     * majority of Apache Ki applications.</p>
+     * majority of Ki applications.</p>
      *
-     * <p>However, in <em>multi</em>-Realm configurations, which are fully supported by Apache Ki as well, it is
+     * <p>However, in <em>multi</em>-Realm configurations, which are fully supported by Ki as well, it is
      * possible that the return value encapsulates more than one principal.  Typically multi-realm applications need to
      * retain the unique principals for <em>each</em> Realm so subsequent security checks against these Realms can
      * utilize these multiple principals.  In these cases, the object returned could be a Collection or any

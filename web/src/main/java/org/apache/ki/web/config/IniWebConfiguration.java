@@ -221,13 +221,13 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
 
     /**
      * Creates a new, uninitialized <code>SecurityManager</code> instance that will be used to build up
-     * the Apache Ki environment for the web application.
+     * the Ki environment for the web application.
      * <p/>
      * The default implementation simply returns
      * <code>new {@link org.apache.ki.web.DefaultWebSecurityManager DefaultWebSecurityManager()};</code>
      *
      * @return a new, uninitialized <code>SecurityManager</code> instance that will be used to build up
-     *         the Apache Ki environment for the web application.
+     *         the Ki environment for the web application.
      */
     protected RealmSecurityManager newSecurityManagerInstance() {
         return new DefaultWebSecurityManager();

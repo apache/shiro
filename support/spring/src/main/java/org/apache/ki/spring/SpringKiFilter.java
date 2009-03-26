@@ -22,7 +22,7 @@ import org.apache.ki.web.servlet.KiFilter;
 
 
 /**
- * Extension of KiFilter that uses {@link SpringIniWebConfiguration} to configure Apache Ki in a Spring web
+ * Extension of KiFilter that uses {@link SpringIniWebConfiguration} to configure Ki in a Spring web
  * environment.
  * <p/>
  * Using this class in web.xml essentially enables the following:

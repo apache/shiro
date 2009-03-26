@@ -62,9 +62,9 @@
         <partintro id="ki-quickstart-intro">
             <para>
                 This initial part of the reference documentation walks through the simplest quickstart application
-                so that you may become familiarized Apache Ki's programming API and general concepts. While this
-                application is probably the absolute simplest Apache Ki-enabled application that we know of,
-                it should make you comfortable understanding what Apache Ki can do, and how it can help you create
+                so that you may become familiarized Ki's programming API and general concepts. While this
+                application is probably the absolute simplest Ki-enabled application that we know of,
+                it should make you comfortable understanding what Ki can do, and how it can help you create
                 more secure applications. The rest of the documentation will serve as your guide to help you move
                 from this simple example to even the most complicated enterprise applications.
             </para>
@@ -82,7 +82,7 @@
         <partintro id="ki-core-intro">
             <para>
                 This part of the reference documentation covers
-                Apache Ki's core architectural components that support
+                Ki's core architectural components that support
                 functionality in all environments, from
                 constrained Applets and cell phones to full n-tier
                 clustered enterprise applications.
@@ -148,7 +148,7 @@
      <partintro id="ki-web-intro">
        <para>
          This part of the reference documentation covers
-                 Apache Ki's web support, specifically using Apache Ki in
+                 Ki's web support, specifically using Ki in
                  a Servlet container for web-based applications.
        </para>
        <para>
@@ -188,7 +188,7 @@
      <title>Integration</title>
      <partintro id="ki-integration-intro">
        <para>
-         This part of the reference documentation covers Apache Ki's
+         This part of the reference documentation covers Ki's
                  integration with other technologies that might be
                  useful in application deployments.
        </para>

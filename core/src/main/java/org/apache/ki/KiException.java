@@ -21,7 +21,7 @@ package org.apache.ki;
 import java.io.Serializable;
 
 /**
- * Root exception for all Apache Ki runtime exceptions.  This class is used as the root instead
+ * Root exception for all Ki runtime exceptions.  This class is used as the root instead
  * of {@link java.lang.SecurityException} to remove the potential for conflicts;  many other
  * frameworks and products (such as J2EE containers) perform special operations when
  * encountering {@link java.lang.SecurityException}.
@@ -32,14 +32,14 @@ import java.io.Serializable;
 public class KiException extends RuntimeException implements Serializable {
 
     /**
-     * Creates a new Apache KiException.
+     * Creates a new KiException.
      */
     public KiException() {
         super();
     }
 
     /**
-     * Constructs a new Apache KiException.
+     * Constructs a new KiException.
      *
      * @param message the reason for the exception
      */
@@ -48,7 +48,7 @@ public class KiException extends RuntimeException implements Serializable {
     }
 
     /**
-     * Constructs a new Apache KiException.
+     * Constructs a new KiException.
      *
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
@@ -57,7 +57,7 @@ public class KiException extends RuntimeException implements Serializable {
     }
 
     /**
-     * Constructs a new Apache KiException.
+     * Constructs a new KiException.
      *
      * @param message the reason for the exception
      * @param cause   the underlying Throwable that caused this exception to be thrown.

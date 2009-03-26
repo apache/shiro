@@ -21,7 +21,7 @@
 
 <beans>
 
-    <!-- Sample RDBMS data source that would exist in any application - not Apache Ki related. -->
+    <!-- Sample RDBMS data source that would exist in any application - not Ki related. -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <property name="url" value="jdbc:hsqldb:mem:ki-spring"/>
@@ -32,13 +32,13 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <!-- Simulated business-tier "Manager", not Apache Ki related, just an example -->
+    <!-- Simulated business-tier "Manager", not Ki related, just an example -->
     <bean id="sampleManager" class="org.apache.ki.samples.spring.DefaultSampleManager"/>
 
     <!-- =========================================================
-         Apache Ki Core Components - Not Spring Specific
+         Ki Core Components - Not Spring Specific
          ========================================================= -->
-    <!-- Apache Ki's main business-tier object for web-enabled applications
+    <!-- Ki's main business-tier object for web-enabled applications
          (use DefaultSecurityManager instead when there is no web environment)-->
     <bean id="securityManager" class="org.apache.ki.web.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
@@ -64,17 +64,17 @@
     </bean>
 
     <!-- =========================================================
-         Apache Ki Spring-specific integration
+         Ki Spring-specific integration
          ========================================================= -->
     <!-- Post processor that automatically invokes init() and destroy() methods
-         for Spring-configured Apache Ki objects so you don't have to
+         for Spring-configured Ki objects so you don't have to
          1) specify an init-method and destroy-method attributes for every bean
             definition and
-         2) even know which Apache Ki objects require these methods to be
+         2) even know which Ki objects require these methods to be
             called. -->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.ki.spring.LifecycleBeanPostProcessor"/>
 
-    <!-- Enable Apache Ki Annotations for Spring-configured beans.  Only run after
+    <!-- Enable Ki Annotations for Spring-configured beans.  Only run after
          the lifecycleBeanProcessor has run: -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
           depends-on="lifecycleBeanPostProcessor"/>

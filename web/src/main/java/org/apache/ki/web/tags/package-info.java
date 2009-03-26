@@ -17,9 +17,9 @@
  * under the License.
  */
 /**
- * Provides the Apache Ki JSP Tag Library implementations.
+ * Provides the Ki JSP Tag Library implementations.
  * <p/>
- * Apache Ki JSP Tags can be used to evalute or not evaluate (show or not show) parts of a JSP page based on the
+ * Ki JSP Tags can be used to evalute or not evaluate (show or not show) parts of a JSP page based on the
  * current user's authentication status and/or authorization (access control) abilities.
  */
 package org.apache.ki.web.tags;

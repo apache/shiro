@@ -37,7 +37,7 @@ import org.apache.ki.util.LifecycleUtils;
 
 
 /**
- * Apache Ki support of a {@link SecurityManager} class hierarchy that delegates all
+ * Ki support of a {@link SecurityManager} class hierarchy that delegates all
  * {@link org.apache.ki.session.Session session} operations to a wrapped {@link org.apache.ki.session.mgt.SessionManager SessionManager}
  * instance.  That is, this class implements the methods in the
  * {@link SessionManager SessionManager} interface, but in reality, those methods are merely passthrough calls to
@@ -46,7 +46,7 @@ import org.apache.ki.util.LifecycleUtils;
  * The remaining {@code SecurityManager} methods not implemented by this class or its parents are left to be
  * implemented by subclasses.
  * <p/>
- * In keeping with the other classes in this hierarchy and Apache Ki's desire to minimize configuration whenever
+ * In keeping with the other classes in this hierarchy and Ki's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies will be created upon instantiation.
  *
  * @author Les Hazlewood
@@ -158,7 +158,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
                     "This might occur for example if you're trying to set the validation interval or auto session " +
                     "creation in a servlet container-backed session environment ('http' session mode).  If that is " +
                     "the case however, that property is only useful when using 'ki' session mode and using " +
-                    "Apache Ki enterprise sessions which do not rely on a servlet container.";
+                    "Ki enterprise sessions which do not rely on a servlet container.";
             throw new IllegalStateException(msg);
         }
     }

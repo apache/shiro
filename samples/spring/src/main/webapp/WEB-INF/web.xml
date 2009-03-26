@@ -62,7 +62,7 @@
         <init-param>
             <param-name>config</param-name>
             <param-value>
-                # The Apache KiFilter configuration is very powerful and flexible, while still remaining succinct.
+                # The KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
                 # http://ki.apache.org/api/org/apache/ki/web/servlet/KiFilter.html

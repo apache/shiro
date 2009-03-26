@@ -42,7 +42,7 @@ import org.apache.ki.subject.Subject;
 
 
 /**
- * This class is an abstraction of AOP method interceptor behavior specific to Apache Ki that
+ * This class is an abstraction of AOP method interceptor behavior specific to Ki that
  * leaves AOP implementation specifics to be handled by subclass implementations.  This implementation primarily
  * enables a <tt>Log</tt> and makes available the currently executing {@link Subject Subject}.
  *

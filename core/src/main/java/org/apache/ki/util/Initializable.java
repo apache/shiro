@@ -21,7 +21,7 @@ package org.apache.ki.util;
 import org.apache.ki.KiException;
 
 /**
- * Apache Ki container-agnostic interface that indicates that this object requires initialization.
+ * Ki container-agnostic interface that indicates that this object requires initialization.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile

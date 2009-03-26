@@ -134,7 +134,7 @@ public class WebSession implements Session {
 
     private static String assertString(Object key) {
         if (!(key instanceof String)) {
-            String msg = "HttpSession based implementations of the Apache Ki Session interface requires attribute keys " +
+            String msg = "HttpSession based implementations of the Ki Session interface requires attribute keys " +
                     "to be String objects.  The HttpSession class does not support anything other than String keys.";
             throw new IllegalArgumentException(msg);
         }

@@ -86,14 +86,14 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * <tt>HttpRequest</tt> attempting
      * to join a session (i.e. via {@link #getSession getSession} must have the same
      * IP Address of the <tt>HttpRequest</tt> that started the session.
-     *
+     * <p/>
      * <p> If set to <tt>false</tt>, any <tt>HttpRequest</tt> with a reference to a valid
      * session id may acquire that <tt>Session</tt>.
-     *
+     * <p/>
      * <p>Although convenient, this should only be enabled in environments where the
      * system can <em>guarantee</em> that each IP address represents one and only one
      * machine accessing the system.
-     *
+     * <p/>
      * <p>Public websites are not good candidates for enabling this
      * feature since many browser clients often sit behind NAT routers (in
      * which case many machines are viewed to come from the same IP, thereby making this
@@ -101,7 +101,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * client's IP in mid-session, making subsequent requests appear to come from a different
      * location.  Again, this feature should only be enabled where IP Addresses can be guaranteed a
      * 1-to-1 relationship with a user's session.
-     *
+     * <p/>
      * <p>For the reasons specified above, this property is <tt>false</tt> by default.
      *
      * @return true if this factory will verify each HttpRequest joining a session
@@ -156,7 +156,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     }
 
     protected void validateSessionOrigin(ServletRequest request, Session session)
-            throws HostUnauthorizedException {
+        throws HostUnauthorizedException {
         InetAddress requestIp = WebUtils.getInetAddress(request);
         InetAddress originIp = session.getHostAddress();
         Serializable sessionId = session.getId();
@@ -164,25 +164,25 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if (originIp == null) {
             if (requestIp != null) {
                 String msg = "No IP Address was specified when creating session with id [" +
-                        sessionId + "].  Attempting to access session from " +
-                        "IP [" + requestIp + "].  Origin IP and request IP must match.";
+                    sessionId + "].  Attempting to access session from " +
+                    "IP [" + requestIp + "].  Origin IP and request IP must match.";
                 throw new HostUnauthorizedException(msg);
             }
         } else {
             if (requestIp != null) {
                 if (!requestIp.equals(originIp)) {
                     String msg = "Session with id [" + sessionId + "] originated from [" +
-                            originIp + "], but the current HttpServletRequest originated " +
-                            "from [" + requestIp + "].  Disallowing session access: " +
-                            "session origin and request origin must match to allow access.";
+                        originIp + "], but the current HttpServletRequest originated " +
+                        "from [" + requestIp + "].  Disallowing session access: " +
+                        "session origin and request origin must match to allow access.";
                     throw new HostUnauthorizedException(msg);
                 }
 
             } else {
                 String msg = "No IP Address associated with the current HttpServletRequest.  " +
-                        "Session with id [" + sessionId + "] originated from " +
-                        "[" + originIp + "].  Request IP must match the session's origin " +
-                        "IP in order to gain access to that session.";
+                    "Session with id [" + sessionId + "] originated from " +
+                    "[" + originIp + "].  Request IP must match the session's origin " +
+                    "IP in order to gain access to that session.";
                 throw new HostUnauthorizedException(msg);
             }
         }
@@ -206,12 +206,12 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         Serializable id = cookieSessionIdAttribute.retrieveValue(request, response);
         if (id != null) {
             request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
-                    KiHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
+                KiHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         } else {
             id = getSessionIdRequestParamAttribute().retrieveValue(request, response);
             if (id != null) {
                 request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
-                        KiHttpServletRequest.URL_SESSION_ID_SOURCE);
+                    KiHttpServletRequest.URL_SESSION_ID_SOURCE);
             }
         }
         return id;
@@ -255,8 +255,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      *          if the caller is not authorized to access the session associated with the request.
      */
     public final Session getSession(ServletRequest request, ServletResponse response)
-            throws InvalidSessionException, AuthorizationException
-    {
+        throws InvalidSessionException, AuthorizationException {
 
         Session session;
         try {
@@ -264,7 +263,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         } catch (InvalidSessionException ise) {
             if (log.isTraceEnabled()) {
                 log.trace("Request Session with id [" + ise.getSessionId() + "] is invalid, message: [" +
-                        ise.getMessage() + "].  Removing any associated session cookie...");
+                    ise.getMessage() + "].  Removing any associated session cookie...");
             }
             getSessionIdCookieAttribute().removeValue(request, response);
 
@@ -294,8 +293,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             }
         } else {
             if (log.isTraceEnabled()) {
-                log.trace("No Apache Ki session id associated with the given " +
-                        "HttpServletRequest.  A Session will not be returned.");
+                log.trace("No Ki session id associated with the given " +
+                    "HttpServletRequest.  A Session will not be returned.");
             }
         }
 

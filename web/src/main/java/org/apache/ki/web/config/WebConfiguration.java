@@ -26,7 +26,7 @@ import javax.servlet.ServletResponse;
 import org.apache.ki.config.Configuration;
 
 /**
- * A <code>WebConfiguration</code> configures Apache Ki components in a web-enabled application.
+ * A <code>WebConfiguration</code> configures Ki components in a web-enabled application.
  * <p/>
  * In addition to enabling configuration of a <code>SecurityManager</code>, as required by the parent interface,
  * it also allows configuration of arbitrary filter chains to be executed for any given request or URI/URL.
@@ -50,7 +50,7 @@ public interface WebConfiguration extends Configuration {
      *
      * @param request       the incoming ServletRequest
      * @param response      the outgoing ServletResponse
-     * @param originalChain the original <code>FilterChain</code> intercepted by the Apache KiFilter.
+     * @param originalChain the original <code>FilterChain</code> intercepted by the KiFilter.
      * @return the filter chain that should be executed for the given request, or <code>null</code> if the
      *         original chain should be used.
      */

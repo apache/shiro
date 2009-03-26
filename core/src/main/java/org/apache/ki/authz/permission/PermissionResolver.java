@@ -30,18 +30,18 @@ import org.apache.ki.authz.Permission;
  * However, any resolver may be configured if an application wishes to use different
  * {@link org.apache.ki.authz.Permission} implementations.</p>
  *
- * <p>A <tt>PermissionResolver</tt> is used by many Apache Ki components such as annotations, property file
+ * <p>A <tt>PermissionResolver</tt> is used by many Ki components such as annotations, property file
  * configuration, URL configuration, etc.  It is useful whenever a String representation of a permission is specified
  * and that String needs to be converted to a Permission instance before executing a security check.</p>
  * <p/>
- * Apache Ki chooses to support {@link WildcardPermission Wildcardpermission}s by default in almost all components and
+ * Ki chooses to support {@link WildcardPermission Wildcardpermission}s by default in almost all components and
  * we do that in the form of the {@link WildcardPermissionResolver WildcardPermissionResolver}.   One of the nice
  * things about <code>WildcardPermission</code>s being supported by default is that it makes it very easy to
  * store complex permissions in the database - and also makes it very easy to represent permissions in JSP files,
  * annotations, etc., where a simple string representation is useful.
  * <p/>
- * Although this happens to be the Apache Ki default, you are of course free to provide custom
- * String-to-Permission conversion by providing Apache Ki components any instance of this interface.
+ * Although this happens to be the Ki default, you are of course free to provide custom
+ * String-to-Permission conversion by providing Ki components any instance of this interface.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood

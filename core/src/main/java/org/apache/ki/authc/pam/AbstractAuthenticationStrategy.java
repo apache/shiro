@@ -29,7 +29,7 @@ import org.apache.ki.realm.Realm;
 
 
 /**
- * Abstract base implementation for Apache Ki's concrete <code>AuthenticationStrategy</code>
+ * Abstract base implementation for Ki's concrete <code>AuthenticationStrategy</code>
  * implementations.
  *
  * @author Jeremy Haile

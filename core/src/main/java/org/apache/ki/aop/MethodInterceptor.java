@@ -40,7 +40,7 @@ package org.apache.ki.aop;
 /**
  * A <tt>MethodInterceptor</tt> intercepts a <tt>MethodInvocation</tt> to perform before or after logic (aka 'advice').
  *
- * <p>Apache Ki's implementations of this interface mostly have to deal with ensuring a current Subject has the
+ * <p>Ki's implementations of this interface mostly have to deal with ensuring a current Subject has the
  * ability to execute the method before allowing it to continue.
  *
  * @author Les Hazlewood

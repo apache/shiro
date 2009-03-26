@@ -42,7 +42,7 @@ public abstract class SecurityUtils {
      * runtime environment.
      * <p/>
      * This method is provided as a way of obtaining a <tt>Subject</tt> without having to resort to
-     * implementation-specific methods.  It also allows the Apache Ki team to change the underlying implementation of
+     * implementation-specific methods.  It also allows the Ki team to change the underlying implementation of
      * this method in the future depending on requirements/updates without affecting your code that uses it.
      * <p/>
      * <b>Implementation Note:</b> This implementation expects a
@@ -88,13 +88,13 @@ public abstract class SecurityUtils {
      * <p><b>This method call exists mainly for framework development support.  Application developers should rarely,
      * if ever, need to call this method.</b></p>
      *
-     * <p>The Apache Ki development team prefers that SecurityManager instances are non-static application singletons
+     * <p>The Ki development team prefers that SecurityManager instances are non-static application singletons
      * and <em>not</em> VM static singletons.  Application singletons that do not use static memory require some sort
      * of application configuration framework to maintain the application-wide SecurityManager instance for you
      * (for example, Spring or EJB3 environments) such that the object reference does not need to be static.
      *
-     * <p>In these environments, Apache Ki acquires Subject data based on the currently executing Thread via its own
-     * framework integration code, and this is the preferred way to use Apache Ki.</p>
+     * <p>In these environments, Ki acquires Subject data based on the currently executing Thread via its own
+     * framework integration code, and this is the preferred way to use Ki.</p>
      *
      * <p>However in some environments, such as a standalone desktop application or Applets that do not use Spring or
      * EJB or similar config frameworks, a VM-singleton might make more sense (although the former is still preferred).</p>

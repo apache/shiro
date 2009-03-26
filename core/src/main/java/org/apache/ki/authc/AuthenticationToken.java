@@ -35,7 +35,7 @@ import java.io.Serializable;
  * <p>Because applications represent user data and credentials in different ways, implementations
  * of this interface are application-specific.  You are free to acquire a user's principals and
  * credentials however you wish (e.g. web form, Swing form, fingerprint identification, etc) and
- * then submit them to the Apache Ki framework in the form of an implementation of this
+ * then submit them to the Ki framework in the form of an implementation of this
  * interface.
  *
  * <p>If your application's authentication process is  username/password based

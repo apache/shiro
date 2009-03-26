@@ -55,9 +55,9 @@
       </xsl:element>
 
       <xsl:element name="para">
-        <xsl:text>One of the view technologies you can use with Apache Ki
+        <xsl:text>One of the view technologies you can use with Ki
           is Java Server Pages (JSPs). To help you implement views using Java Server Pages,
-          Apache Ki provides you with some tags for evaluating errors, setting
+          Ki provides you with some tags for evaluating errors, setting
           themes and outputting internationalized messages.
         </xsl:text>
       </xsl:element>

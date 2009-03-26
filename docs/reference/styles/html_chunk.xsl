@@ -104,7 +104,7 @@
   <!--###################################################
                   Headers and Footers
  ################################################### -->
-  <!-- let's have a Apache Ki and Anjin banner across the top of each page -->
+  <!-- let's have a Ki and Anjin banner across the top of each page -->
   <xsl:template name="user.header.navigation">
     <div style="background-color:white;border:none;height:73px;border:1px solid black;">
       <a style="border:none;" href="http://www.jsecurity.org/" title="Apache Ki">

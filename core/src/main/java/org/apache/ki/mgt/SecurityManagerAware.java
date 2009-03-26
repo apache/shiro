@@ -21,7 +21,7 @@ package org.apache.ki.mgt;
 /**
  * Interface providing a callback method that allows an implementation of this interface to receive a reference to
  * the {@link org.apache.ki.mgt.SecurityManager SecurityManager} if they require one.  This is mostly used by core implementation classes
- * for framework code and is rarely necessary for software developers enabling Apache Ki in their applications.
+ * for framework code and is rarely necessary for software developers enabling Ki in their applications.
  *
  * @author Les Hazlewood
  * @since 1.0

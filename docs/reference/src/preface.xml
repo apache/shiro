@@ -50,7 +50,7 @@
 
     <para>
         This document is the official refrence manual for the Apache Ki framework, and it aims to give you the
-        most complete documentation on Apache Ki and all of its features. It is
+        most complete documentation on Ki and all of its features. It is
         very much a work-in-progress, and we welcome suggestions and recommendations. If you have any,
         we'd very much appreciate your feedback on our forums at
         <ulink url="http://www.jsecurity.org/forum">http://www.jsecurity.org/forum</ulink>
@@ -75,7 +75,7 @@
 
     <para>
         So, without further adieu, let's move on to the documentation. Feel
-        free knowing you can incorporate Apache Ki's rich features quickly and easily now, or perhaps maybe
+        free knowing you can incorporate Ki's rich features quickly and easily now, or perhaps maybe
         later when you<quote>get around to it</quote>.
     </para>
 

@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>Note that this implementation is an almost exact copy of the Spring Framework's identically named class from
  * their 2.5.4 distribution - we didn't want to re-invent the wheel, but not require a full dependency on the
  * Spring framework, nor does Spring make available only its JNDI classes in a small jar, or we would have used that.
- * Since Apache Ki is also Apache 2.0 licensed, all regular licenses and conditions and authors have remained in tact.
+ * Since Ki is also Apache 2.0 licensed, all regular licenses and conditions and authors have remained in tact.
  *
  * @author Rod Johnson
  * @author Juergen Hoeller

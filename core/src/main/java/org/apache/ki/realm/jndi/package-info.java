@@ -17,5 +17,5 @@
  * under the License.
  */
 /**
- * Support for acquiring Realms from JNDI, particularly useful for configuring Apache Ki in JEE or EJB environments. */
+ * Support for acquiring Realms from JNDI, particularly useful for configuring Ki in JEE or EJB environments. */
 package org.apache.ki.realm.jndi;

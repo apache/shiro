@@ -31,7 +31,7 @@ import org.apache.ki.session.Session;
 import org.apache.ki.subject.Subject;
 
 /**
- * Controller used to dynamically build a JNLP file used to launch the Apache Ki
+ * Controller used to dynamically build a JNLP file used to launch the Ki
  * Spring WebStart sample application.
  *
  * @author Jeremy Haile
@@ -73,7 +73,7 @@ public class JnlpController extends AbstractController {
             session = subject.getSession();
         }
         if (session == null) {
-            String msg = "Expected a non-null Apache Ki session.";
+            String msg = "Expected a non-null Ki session.";
             throw new IllegalArgumentException(msg);
         }
 

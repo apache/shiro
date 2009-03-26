@@ -40,7 +40,7 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
 
     //TODO - complete JavaDoc
 
-    //The following 7 constants support the Apache Ki's implementation of the Servlet Specification
+    //The following 7 constants support the Ki's implementation of the Servlet Specification
     public static final String COOKIE_SESSION_ID_SOURCE = "cookie";
     public static final String URL_SESSION_ID_SOURCE = "url";
     public static final String REFERENCED_SESSION_ID = KiHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID";
@@ -49,7 +49,7 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
     public static final String REFERENCED_SESSION_ID_SOURCE = KiHttpServletRequest.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
     public static final String SESSION_ID_NAME = KiHttpSession.DEFAULT_SESSION_ID_NAME;
     /**
-     * Key that may be used to alert that the request's  referenced Apache Ki Session has expired prior to
+     * Key that may be used to alert that the request's  referenced Ki Session has expired prior to
      * request processing.
      */
     public static final String EXPIRED_SESSION_KEY = KiHttpServletRequest.class.getName() + "_EXPIRED_SESSION_KEY";

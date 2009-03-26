@@ -54,8 +54,8 @@ import org.apache.ki.subject.Subject;
  * end of request/thread execution, and a new one is created on the next request/method invocation as per step #1.</li>
  * </ol>
  * <p/>
- * Indeed this is exactly how Apache Ki's default behavior works in enterprise server and web-based environments.  It is
- * enabled in the <code>Apache KiFilter</code> for web-based environments as well as remote-method-invocation-based
+ * Indeed this is exactly how Ki's default behavior works in enterprise server and web-based environments.  It is
+ * enabled in the <code>KiFilter</code> for web-based environments as well as remote-method-invocation-based
  * components for non-web environments.
  *
  * @author Les Hazlewood

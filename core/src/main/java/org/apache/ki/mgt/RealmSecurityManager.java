@@ -28,7 +28,7 @@ import org.apache.ki.util.LifecycleUtils;
 
 
 /**
- * Apache Ki support of a {@link SecurityManager} class hierarchy based around a collection of
+ * Ki support of a {@link SecurityManager} class hierarchy based around a collection of
  * {@link org.apache.ki.realm.Realm}s.  All actual {@code SecurityManager} method implementations are left to
  * subclasses.
  *

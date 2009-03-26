@@ -43,7 +43,7 @@ import org.apache.ki.util.ThreadContext;
 
 
 /**
- * <p>The Apache Ki framework's default concrete implementation of the {@link SecurityManager} interface,
+ * <p>The Ki framework's default concrete implementation of the {@link SecurityManager} interface,
  * based around a collection of {@link org.apache.ki.realm.Realm}s.  This implementation delegates its
  * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
  * {@link org.apache.ki.session.mgt.SessionManager SessionManager} instances respectively via superclass
@@ -482,7 +482,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *          if the executor of this method is not allowed to acquire the owning {@code Subject}.  The reason
      *          for the exception is implementation-specific and could be for any number of reasons.  A common
      *          reason in many systems would be if one host tried to acquire a {@code Subject} based on a
-     *          {@code Session} that originated on an entirely different host (although it is not a Apache Ki
+     *          {@code Session} that originated on an entirely different host (although it is not a Ki
      *          requirement this scenario is disallowed - its just an example that <em>may</em> throw an Exception in
      *          some systems).
      * @see org.apache.ki.authz.HostUnauthorizedException

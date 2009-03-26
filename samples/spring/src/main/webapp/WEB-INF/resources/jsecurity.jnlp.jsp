@@ -19,7 +19,7 @@
 <%@ page contentType="application/x-java-jnlp-file" %>
 
 <?xml version="1.0" encoding="utf-8"?>
-<!-- JNLP File for Apache Ki Sample Application -->
+<!-- JNLP File for Ki Sample Application -->
 <jnlp spec="1.0+" codebase="${codebaseUrl}">
     <information>
         <title>Apache Ki Sample Application</title>
