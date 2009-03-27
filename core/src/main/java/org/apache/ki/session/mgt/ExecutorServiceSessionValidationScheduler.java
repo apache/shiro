@@ -22,8 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -39,7 +39,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     //TODO - complete JavaDoc
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(ExecutorServiceSessionValidationScheduler.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecutorServiceSessionValidationScheduler.class);
 
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;

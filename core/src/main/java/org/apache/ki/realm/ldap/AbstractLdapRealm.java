@@ -20,8 +20,8 @@ package org.apache.ki.realm.ldap;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationException;
 import org.apache.ki.authc.AuthenticationInfo;
@@ -60,7 +60,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     |             C O N S T A N T S             |
     ============================================*/
 
-    private static final Log log = LogFactory.getLog(AbstractLdapRealm.class);    
+    private static final Logger log = LoggerFactory.getLogger(AbstractLdapRealm.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

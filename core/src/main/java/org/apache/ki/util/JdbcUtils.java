@@ -23,8 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A set of static helper methods for managing JDBC API objects.
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 public class JdbcUtils {
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(JdbcUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(JdbcUtils.class);
 
     /**
      * Private constructor to prevent instantiation.

@@ -20,8 +20,8 @@ package org.apache.ki.web.tags;
 
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -43,7 +43,7 @@ public class UserTag extends SecureTag {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(UserTag.class);    
+    private static final Logger log = LoggerFactory.getLogger(UserTag.class);
 
     public int onDoStartTag() throws JspException {
         if (getSubject() != null && getSubject().getPrincipal() != null) {

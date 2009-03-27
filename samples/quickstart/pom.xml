@@ -37,6 +37,11 @@
             <groupId>org.apache.ki</groupId>
             <artifactId>ki-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
     </dependencies>
 

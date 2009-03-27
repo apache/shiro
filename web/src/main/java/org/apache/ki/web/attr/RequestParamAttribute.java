@@ -21,8 +21,8 @@ package org.apache.ki.web.attr;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Les Hazlewood
@@ -32,7 +32,7 @@ public class RequestParamAttribute<T> extends AbstractWebAttribute<T> {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(RequestParamAttribute.class);    
+    private static final Logger log = LoggerFactory.getLogger(RequestParamAttribute.class);
 
     public RequestParamAttribute() {
         setMutable(false);

@@ -49,6 +49,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
         </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

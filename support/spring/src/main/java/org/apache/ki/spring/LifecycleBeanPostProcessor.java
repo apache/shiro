@@ -22,8 +22,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.util.Destroyable;
 import org.apache.ki.util.Initializable;
@@ -48,7 +48,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     /**
      * Private internal class log instance.
      */
-    private static final Log log = LogFactory.getLog(LifecycleBeanPostProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(LifecycleBeanPostProcessor.class);
 
     /**
      * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.apache.ki.util.Initializable}

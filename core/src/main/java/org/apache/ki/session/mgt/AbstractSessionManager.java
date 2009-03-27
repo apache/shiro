@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authz.HostUnauthorizedException;
 import org.apache.ki.session.InvalidSessionException;
@@ -47,12 +47,10 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    /**
-     * Default main session timeout value, equal to {@code 30} minutes.
-     */
+    /** Default main session timeout value, equal to {@code 30} minutes. */
     public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
 
-    private static final Log log = LogFactory.getLog(AbstractSessionManager.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractSessionManager.class);
 
     private long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
     private Collection<SessionListener> listeners = new ArrayList<SessionListener>();
@@ -83,7 +81,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
      * Sets the system-wide default time in milliseconds that any session may remain idle before expiring. This
      * value is the main default for all sessions and may be overridden on a <em>per-session</em> basis by calling
      * {@code Subject.getSession().}{@link Session#setTimeout setTimeout(long)} if so desired.
-     *
+     * <p/>
      * <ul>
      * <li>A negative return value means sessions never expire.</li>
      * <li>A non-negative return value (0 or greater) means session timeout will occur as expected.</li>
@@ -115,9 +113,11 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
         Session session = createSession(originatingHost);
+        onStart(session);
         notifyStart(session);
         return session.getId();
     }
+
 
     /**
      * Returns the session instance to use to pass to registered <code>SessionListener</code>s for notification
@@ -192,17 +192,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         if (log.isDebugEnabled()) {
             log.debug("Stopping session with id [" + session.getId() + "]");
         }
-        notifyStop(session);
         session.stop();
         onStop(session);
-    }
-
-    protected void onStop(Session session) {
-        onChange(session);
-    }
-
-    protected void onExpiration(Session session) {
-        onChange(session);
+        notifyStop(session);
     }
 
     public Collection<Object> getAttributeKeys(Serializable sessionId) {
@@ -242,7 +234,29 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     }
 
     public boolean isValid(Serializable sessionId) {
-        return doGetSession(sessionId) != null;
+        try {
+            return getSession(sessionId) != null;
+        } catch (InvalidSessionException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Template method that allows subclasses to react to a new session being created.
+     * <p/>
+     * This method is invoked <em>before</em> any session listeners are notified.
+     *
+     * @param session the session that was just {@link #createSession created}.
+     */
+    protected void onStart(Session session) {
+    }
+
+    protected void onStop(Session session) {
+        onChange(session);
+    }
+
+    protected void onExpiration(Session session) {
+        onChange(session);
     }
 
     protected void onChange(Session s) {

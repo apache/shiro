@@ -23,8 +23,8 @@ import java.lang.reflect.Method;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authz.annotation.RequiresAuthentication;
 import org.apache.ki.authz.annotation.RequiresGuest;
@@ -42,7 +42,7 @@ import org.apache.ki.mgt.SecurityManager;
 public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor
         implements InitializingBean {
 
-    private static final Log log = LogFactory.getLog(AuthorizationAttributeSourceAdvisor.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthorizationAttributeSourceAdvisor.class);
 
     protected SecurityManager securityManager = null;
 

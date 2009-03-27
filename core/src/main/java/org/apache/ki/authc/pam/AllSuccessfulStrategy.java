@@ -18,8 +18,8 @@
  */
 package org.apache.ki.authc.pam;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationException;
 import org.apache.ki.authc.AuthenticationInfo;
@@ -42,7 +42,7 @@ import org.apache.ki.realm.Realm;
 public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     /** Private class log instance. */
-    private static final Log log = LogFactory.getLog(AllSuccessfulStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(AllSuccessfulStrategy.class);
 
     /**
      * Because all realms in this strategy must complete successfully, this implementation ensures that the given

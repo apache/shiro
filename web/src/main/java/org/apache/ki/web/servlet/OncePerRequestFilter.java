@@ -26,8 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.util.Nameable;
 
@@ -51,7 +51,7 @@ import org.apache.ki.util.Nameable;
 public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter, Nameable {
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(OncePerRequestFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(OncePerRequestFilter.class);
 
     /**
      * Suffix that gets appended to the filter name for the "already filtered" request attribute.

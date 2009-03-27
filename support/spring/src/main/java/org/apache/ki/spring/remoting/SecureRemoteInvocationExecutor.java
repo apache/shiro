@@ -24,8 +24,8 @@ import java.lang.reflect.InvocationTargetException;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.mgt.SecurityManager;
 import org.apache.ki.util.ThreadContext;
@@ -52,7 +52,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Log log = LogFactory.getLog(SecureRemoteInvocationExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(SecureRemoteInvocationExecutor.class);
 
     /**
      * The SecurityManager used to retrieve realms that should be associated with the

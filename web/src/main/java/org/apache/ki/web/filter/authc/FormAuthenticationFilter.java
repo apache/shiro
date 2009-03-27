@@ -22,8 +22,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationException;
 import org.apache.ki.authc.AuthenticationToken;
@@ -69,7 +69,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     public static final String DEFAULT_PASSWORD_PARAM = "password";
     public static final String DEFAULT_REMEMBER_ME_PARAM = "rememberMe";
 
-    private static final Log log = LogFactory.getLog(FormAuthenticationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(FormAuthenticationFilter.class);
 
     private String usernameParam = DEFAULT_USERNAME_PARAM;
     private String passwordParam = DEFAULT_PASSWORD_PARAM;

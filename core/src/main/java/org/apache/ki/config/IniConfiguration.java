@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.KiException;
 import org.apache.ki.io.IniResource;
@@ -52,7 +52,7 @@ public class IniConfiguration extends TextConfiguration {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(IniConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(IniConfiguration.class);
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:ki.ini";
 

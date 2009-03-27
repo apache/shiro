@@ -18,14 +18,6 @@
  */
 package org.apache.ki.web.session;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.ki.authz.AuthorizationException;
 import org.apache.ki.authz.HostUnauthorizedException;
 import org.apache.ki.session.InvalidSessionException;
@@ -37,6 +29,13 @@ import org.apache.ki.web.attr.RequestParamAttribute;
 import org.apache.ki.web.attr.WebAttribute;
 import org.apache.ki.web.servlet.KiHttpServletRequest;
 import org.apache.ki.web.servlet.KiHttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.io.Serializable;
+import java.net.InetAddress;
 
 
 /**
@@ -49,7 +48,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(DefaultWebSessionManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultWebSessionManager.class);
 
     /**
      * Property specifying if, after a session object is acquired from the request, if that session should be
@@ -195,13 +194,22 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         }
         //ensure that the id has been set in the idStore, or if it already has, that it is not different than the
         //'real' session value:
-        Serializable existingId = retrieveSessionId(request, response);
+        Serializable existingId = getReferencedSessionId(request, response);
         if (existingId == null || !currentId.equals(existingId)) {
             getSessionIdCookieAttribute().storeValue(currentId, request, response);
         }
     }
 
-    protected Serializable retrieveSessionId(ServletRequest request, ServletResponse response) {
+    private void markSessionIdValid(Serializable sessionId, ServletRequest request) {
+        request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+    }
+
+    private void removeSessionIdCookie(ServletRequest request, ServletResponse response) {
+        getSessionIdCookieAttribute().removeValue(request, response);
+    }
+
+
+    protected Serializable getReferencedSessionId(ServletRequest request, ServletResponse response) {
         WebAttribute<Serializable> cookieSessionIdAttribute = getSessionIdCookieAttribute();
         Serializable id = cookieSessionIdAttribute.retrieveValue(request, response);
         if (id != null) {
@@ -214,32 +222,43 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
                     KiHttpServletRequest.URL_SESSION_ID_SOURCE);
             }
         }
+        if ( id != null ) {
+            request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID, id);
+        }
         return id;
     }
 
-    public Serializable start(InetAddress hostAddress) throws HostUnauthorizedException, IllegalArgumentException {
+    /**
+     * Stores the Session's ID, usually as a Cookie, to associate with future requests.
+     *
+     * @param session the session that was just {@link #createSession created}.
+     */
+    @Override
+    protected void onStart(Session session) {
         ServletRequest request = WebUtils.getRequiredServletRequest();
         ServletResponse response = WebUtils.getRequiredServletResponse();
-        return start(request, response, hostAddress);
+        onStart(session, request, response);
     }
 
-    protected Serializable start(ServletRequest request, ServletResponse response, InetAddress inetAddress) {
-        Serializable sessionId = super.start(inetAddress);
+    protected void onStart(Session session, ServletRequest request, ServletResponse response) {
+        Serializable sessionId = session.getId();
         storeSessionId(sessionId, request, response);
+        onSessionStart(request);
+    }
+
+    protected void onSessionStart(ServletRequest request) {
         request.removeAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
         request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
-        return sessionId;
     }
 
     @Override
     protected Session retrieveSession(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        if (sessionId != null) {
-            return super.retrieveSession(sessionId);
-        } else {
+        if (sessionId == null) {
             ServletRequest request = WebUtils.getRequiredServletRequest();
             ServletResponse response = WebUtils.getRequiredServletResponse();
             return getSession(request, response);
         }
+        return retrieveSessionFromDataSource(sessionId);
     }
 
     /**
@@ -249,52 +268,38 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * @param request  incoming servlet request
      * @param response outgoing servlet response
      * @return the Session associated with the incoming request or <tt>null</tt> if one does not exist.
-     * @throws org.apache.ki.session.InvalidSessionException
-     *          if the associated Session has expired prior to invoking this method.
      * @throws org.apache.ki.authz.AuthorizationException
      *          if the caller is not authorized to access the session associated with the request.
      */
-    public final Session getSession(ServletRequest request, ServletResponse response)
+    public Session getSession(ServletRequest request, ServletResponse response)
         throws InvalidSessionException, AuthorizationException {
 
-        Session session;
-        try {
-            session = doGetSession(request, response);
-        } catch (InvalidSessionException ise) {
-            if (log.isTraceEnabled()) {
-                log.trace("Request Session with id [" + ise.getSessionId() + "] is invalid, message: [" +
-                    ise.getMessage() + "].  Removing any associated session cookie...");
-            }
-            getSessionIdCookieAttribute().removeValue(request, response);
-
-            //give subclass a chance to do something additional if necessary.  Otherwise returning null is just fine:
-            session = handleInvalidSession(request, response, ise);
-        }
-
-        return session;
-    }
-
-    protected Session doGetSession(ServletRequest request, ServletResponse response) {
-
         Session session = null;
-        Serializable sessionId = retrieveSessionId(request, response);
+        Serializable sessionId = getReferencedSessionId(request, response);
 
         if (sessionId != null) {
             request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID, sessionId);
-            session = super.retrieveSession(sessionId);
+            try {
+                session = retrieveSessionFromDataSource(sessionId);
+                markSessionIdValid(sessionId, request);
+            } catch (InvalidSessionException ise) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Request Session with id [" + ise.getSessionId() + "] is invalid, message: [" +
+                        ise.getMessage() + "].  Removing any associated session cookie...");
+                }
+                removeSessionIdCookie(request, response);
+                //give subclass a chance to do something additional if necessary.  Otherwise returning null is just fine:
+                session = handleInvalidSession(request, response, ise);
+            }
             if (isValidateRequestOrigin()) {
                 if (log.isDebugEnabled()) {
                     log.debug("Validating request origin against session origin");
                 }
                 validateSessionOrigin(request, session);
             }
-            if (session != null) {
-                request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
-            }
         } else {
             if (log.isTraceEnabled()) {
-                log.trace("No Ki session id associated with the given " +
-                    "HttpServletRequest.  A Session will not be returned.");
+                log.trace("A valid Ki session id was not associated with the current request.");
             }
         }
 
@@ -314,6 +319,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         super.onStop(session);
         ServletRequest request = WebUtils.getRequiredServletRequest();
         ServletResponse response = WebUtils.getRequiredServletResponse();
+        removeSessionIdCookie(request,response);
         getSessionIdCookieAttribute().removeValue(request, response);
     }
 }

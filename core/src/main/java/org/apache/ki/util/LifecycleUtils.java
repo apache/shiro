@@ -20,8 +20,8 @@ package org.apache.ki.util;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.KiException;
 
@@ -33,7 +33,7 @@ import org.apache.ki.KiException;
  */
 public abstract class LifecycleUtils {
 
-    private static final Log log = LogFactory.getLog(LifecycleUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(LifecycleUtils.class);
 
     public static void init(Object o) throws KiException {
         if (o instanceof Initializable) {

@@ -25,8 +25,8 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Tag used to print out the String value of a user's default principal,
@@ -54,7 +54,7 @@ public class PrincipalTag extends SecureTag {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Log log = LogFactory.getLog(PrincipalTag.class);
+    private static final Logger log = LoggerFactory.getLogger(PrincipalTag.class);
 
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.

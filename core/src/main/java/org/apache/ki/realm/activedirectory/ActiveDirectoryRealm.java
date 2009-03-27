@@ -31,8 +31,8 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationInfo;
 import org.apache.ki.authc.AuthenticationToken;
@@ -65,7 +65,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     |             C O N S T A N T S             |
     ============================================*/
 
-    private static final Log log = LogFactory.getLog(ActiveDirectoryRealm.class);    
+    private static final Logger log = LoggerFactory.getLogger(ActiveDirectoryRealm.class);
 
     private static final String ROLE_NAMES_DELIMETER = ",";
 

@@ -31,8 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.config.ConfigurationException;
 import org.apache.ki.config.IniConfiguration;
@@ -65,7 +65,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
 
     //TODO - complete JavaDoc
 
-    private static final transient Log log = LogFactory.getLog(IniWebConfiguration.class);
+    private static final transient Logger log = LoggerFactory.getLogger(IniWebConfiguration.class);
 
     public static final String FILTERS = "filters";
     public static final String URLS = "urls";

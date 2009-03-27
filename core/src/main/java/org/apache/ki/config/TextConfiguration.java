@@ -22,8 +22,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Scanner;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.KiException;
 import org.apache.ki.io.ResourceException;
@@ -38,7 +38,7 @@ import org.apache.ki.util.Initializable;
  */
 public abstract class TextConfiguration extends ResourceConfiguration implements Initializable {
 
-    private static final Log log = LogFactory.getLog(TextConfiguration.class);    
+    private static final Logger log = LoggerFactory.getLogger(TextConfiguration.class);
 
     private String config;
 

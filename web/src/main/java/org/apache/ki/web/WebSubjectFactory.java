@@ -49,7 +49,7 @@ public class WebSubjectFactory extends DefaultSubjectFactory {
         super(securityManager);
     }
 
-    public WebSubjectFactory(org.apache.ki.mgt.SecurityManager securityManager, WebSessionManager webSessionManager) {
+    public WebSubjectFactory(SecurityManager securityManager, WebSessionManager webSessionManager) {
         super(securityManager);
         setWebSessionManager(webSessionManager);
     }

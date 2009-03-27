@@ -26,8 +26,8 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.ldap.LdapContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class providing static methods to make working with LDAP
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 public class LdapUtils {
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(LdapUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     /**
      * Private constructor to prevent instantiation

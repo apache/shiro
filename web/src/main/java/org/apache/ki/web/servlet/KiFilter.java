@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.config.Configuration;
 import org.apache.ki.config.ConfigurationException;
@@ -191,7 +191,7 @@ public class KiFilter extends OncePerRequestFilter {
     public static final String CONFIG_INIT_PARAM_NAME = "config";
     public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
-    private static final Log log = LogFactory.getLog(KiFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(KiFilter.class);
 
     protected String config;
     protected String configUrl;
