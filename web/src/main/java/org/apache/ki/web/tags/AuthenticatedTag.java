@@ -21,8 +21,8 @@ package org.apache.ki.web.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -44,7 +44,7 @@ public class AuthenticatedTag extends SecureTag {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(AuthenticatedTag.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthenticatedTag.class);
 
     public int onDoStartTag() throws JspException {
         if (getSubject() != null && getSubject().isAuthenticated()) {

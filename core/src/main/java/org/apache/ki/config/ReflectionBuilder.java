@@ -25,8 +25,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.util.ClassUtils;
 import org.apache.ki.util.Nameable;
@@ -46,7 +46,7 @@ public class ReflectionBuilder {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(ReflectionBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(ReflectionBuilder.class);
 
     private static final String OBJECT_REFERENCE_BEGIN_TOKEN = "$";
     private static final String ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN = "\\$";

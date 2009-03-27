@@ -26,8 +26,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.KiException;
 import org.apache.ki.mgt.RealmSecurityManager;
@@ -73,7 +73,7 @@ public class SpringIniWebConfiguration extends IniWebConfiguration {
     public static final String SECURITY_MANAGER_BEAN_NAME_PARAM_NAME = "securityManagerBeanName";
     public static final String DEFAULT_SECURITY_MANAGER_BEAN_ID = "securityManager";
 
-    private static final Log log = LogFactory.getLog(SpringIniWebConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(SpringIniWebConfiguration.class);
 
     protected String securityManagerBeanName;
 

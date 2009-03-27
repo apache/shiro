@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.credential.CredentialsMatcher;
 import org.apache.ki.authz.AuthorizationException;
@@ -71,7 +71,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    private static final Log log = LogFactory.getLog(AuthorizingRealm.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthorizingRealm.class);
 
     /**
      * The default postfix appended to the realm name for caching AuthorizationInfos.

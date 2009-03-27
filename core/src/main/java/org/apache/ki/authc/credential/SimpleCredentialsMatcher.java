@@ -20,8 +20,8 @@ package org.apache.ki.authc.credential;
 
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationInfo;
 import org.apache.ki.authc.AuthenticationToken;
@@ -44,7 +44,7 @@ import org.apache.ki.codec.CodecSupport;
  */
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
 
-    private static final Log log = LogFactory.getLog(SimpleCredentialsMatcher.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleCredentialsMatcher.class);
 
     /**
      * Returns the <tt>token</tt>'s credentials.

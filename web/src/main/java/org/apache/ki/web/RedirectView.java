@@ -25,8 +25,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.util.JavaEnvironment;
 
@@ -78,7 +78,7 @@ public class RedirectView {
      */
     public static final String DEFAULT_ENCODING_SCHEME = "UTF-8";
 
-    private static final Log log = LogFactory.getLog(RedirectView.class);
+    private static final Logger log = LoggerFactory.getLogger(RedirectView.class);
 
     private String url;
 

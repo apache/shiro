@@ -21,8 +21,8 @@ package org.apache.ki.authc;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.subject.PrincipalCollection;
 
@@ -49,7 +49,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     |             C O N S T A N T S             |
     ============================================*/
     /** Private class log instance. */
-    private static final Log log = LogFactory.getLog(AbstractAuthenticator.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractAuthenticator.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

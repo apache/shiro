@@ -18,27 +18,25 @@
  */
 package org.apache.ki.session.mgt;
 
+import org.apache.ki.cache.CacheManager;
+import org.apache.ki.cache.CacheManagerAware;
+import org.apache.ki.session.InvalidSessionException;
+import org.apache.ki.session.Session;
+import org.apache.ki.session.mgt.eis.MemorySessionDAO;
+import org.apache.ki.session.mgt.eis.SessionDAO;
+import org.apache.ki.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.ki.cache.CacheManager;
-import org.apache.ki.cache.CacheManagerAware;
-import org.apache.ki.session.InvalidSessionException;
-import org.apache.ki.session.ReplacedSessionException;
-import org.apache.ki.session.Session;
-import org.apache.ki.session.mgt.eis.MemorySessionDAO;
-import org.apache.ki.session.mgt.eis.SessionDAO;
-import org.apache.ki.util.CollectionUtils;
-import org.apache.ki.util.ThreadContext;
-
 
 /**
- * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
+ * Default business-tier implementation of a {@link ValidatingSessionManager}.  All session CRUD operations are
+ * delegated to an internal {@link SessionDAO}.
  *
  * @author Les Hazlewood
  * @since 0.1
@@ -47,7 +45,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(DefaultSessionManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultSessionManager.class);
 
     protected SessionDAO sessionDAO;
 
@@ -91,10 +89,11 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     protected void onStop(Session session) {
         if (session instanceof SimpleSession) {
-            Date stopTs = ((SimpleSession) session).getStopTimestamp();
-            ((SimpleSession) session).setLastAccessTime(stopTs);
+            SimpleSession ss = (SimpleSession)session;
+            Date stopTs = ss.getStopTimestamp();
+            ss.setLastAccessTime(stopTs);
         }
-        super.onStop(session);
+        onChange(session);
     }
 
     protected void onExpiration(Session session) {
@@ -112,30 +111,11 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         if (log.isTraceEnabled()) {
             log.trace("Attempting to retrieve session with id [" + sessionId + "]");
         }
-        InetAddress hostAddress = null;
-        try {
-            Session s = sessionDAO.readSession(sessionId);
-            //save the host address in case the session will be invalidated.  We want to retain it for the
-            //replacement session:
-            hostAddress = s.getHostAddress();
-            validate(s);
-            return s;
-        } catch (InvalidSessionException ise) {
-            if (isAutoCreateAfterInvalidation()) {
-                if (hostAddress == null) {
-                    //try the threadContext as a last resort:
-                    hostAddress = ThreadContext.getInetAddress();
-                }
-                Serializable newId = start(hostAddress);
-                String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
-                        "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
-                        "new session id [" + newId + "] with exception so the caller may react accordingly.";
-                throw new ReplacedSessionException(msg, ise, sessionId, newId);
-            } else {
-                //propagate original exception:
-                throw ise;
-            }
-        }
+        return retrieveSessionFromDataSource(sessionId);
+    }
+
+    protected Session retrieveSessionFromDataSource(Serializable sessionId) throws InvalidSessionException {
+        return sessionDAO.readSession(sessionId);
     }
 
     protected Collection<Session> getActiveSessions() {

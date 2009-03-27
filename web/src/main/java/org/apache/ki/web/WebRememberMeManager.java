@@ -21,8 +21,8 @@ package org.apache.ki.web;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.codec.Base64;
 import org.apache.ki.mgt.AbstractRememberMeManager;
@@ -61,7 +61,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
 
     //TODO - complete JavaDoc
 
-    private static transient final Log log = LogFactory.getLog(WebRememberMeManager.class);
+    private static transient final Logger log = LoggerFactory.getLogger(WebRememberMeManager.class);
 
     /**
      * The default name of the underlying rememberMe cookie which is <code>rememberMe</code>.

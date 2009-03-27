@@ -24,8 +24,8 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationException;
 import org.apache.ki.authc.AuthenticationToken;
@@ -70,7 +70,7 @@ public class DelegatingSubject implements Subject {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(DelegatingSubject.class);
+    private static final Logger log = LoggerFactory.getLogger(DelegatingSubject.class);
 
     protected PrincipalCollection principals = new SimplePrincipalCollection();
     protected boolean authenticated = false;

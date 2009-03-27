@@ -28,8 +28,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.session.ExpiredSessionException;
 import org.apache.ki.session.InvalidSessionException;
@@ -50,7 +50,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    private transient static final Log log = LogFactory.getLog(SimpleSession.class);
+    private transient static final Logger log = LoggerFactory.getLogger(SimpleSession.class);
 
 
     private Serializable id = null;

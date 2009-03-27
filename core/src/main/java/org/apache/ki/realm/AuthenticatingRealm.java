@@ -18,8 +18,8 @@
  */
 package org.apache.ki.realm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AuthenticationException;
 import org.apache.ki.authc.AuthenticationInfo;
@@ -59,7 +59,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Logout
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(AuthenticatingRealm.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthenticatingRealm.class);
 
     /**
      * Password matcher used to determine if the provided password matches

@@ -18,11 +18,6 @@
  */
 package org.apache.ki.mgt;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.Date;
-
 import org.apache.ki.authz.HostUnauthorizedException;
 import org.apache.ki.cache.CacheManagerAware;
 import org.apache.ki.session.InvalidSessionException;
@@ -34,6 +29,11 @@ import org.apache.ki.session.mgt.AbstractValidatingSessionManager;
 import org.apache.ki.session.mgt.DefaultSessionManager;
 import org.apache.ki.session.mgt.SessionManager;
 import org.apache.ki.util.LifecycleUtils;
+
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Date;
 
 
 /**
@@ -73,11 +73,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     /**
      * Sets the underlying delegate {@link SessionManager} instance that will be used to support this implementation's
      * <tt>SessionManager</tt> method calls.
-     *
+     * <p/>
      * <p>This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
      * <tt>SessionManager</tt> interface, but instead delegates these calls to an internal
      * <tt>SessionManager</tt> instance.
-     *
+     * <p/>
      * <p>If a <tt>SessionManager</tt> instance is not set, a default one will be automatically created and
      * initialized appropriately for the the existing runtime environment.
      *
@@ -128,11 +128,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     /**
      * This is a convenience method that allows registration of SessionListeners with the underlying delegate
      * SessionManager at startup.
-     *
+     * <p/>
      * <p>This is more convenient than having to configure your own SessionManager instance, inject the listeners on
      * it, and then set that SessionManager instance as an attribute of this class.  Instead, you can just rely
      * on the <tt>SecurityManager</tt> to apply these <tt>SessionListener</tt>s on your behalf.
-     *
+     * <p/>
      * <p>One notice however: The underlying SessionManager delegate must implement the
      * {@link SessionListenerRegistrar SessionListenerRegistrar} interface in order for these listeners to
      * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
@@ -152,13 +152,13 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         }
         if (!(requiredType.isInstance(this.sessionManager))) {
             String msg = "Property configuration failed.  The target property is only configurable when the " +
-                    "underlying SessionManager instance is a part of the " +
-                    "[" + requiredType.getName() + "] class hierarchy.  " +
-                    "The current SessionManager is of type [" + this.sessionManager.getClass().getName() + "].  " +
-                    "This might occur for example if you're trying to set the validation interval or auto session " +
-                    "creation in a servlet container-backed session environment ('http' session mode).  If that is " +
-                    "the case however, that property is only useful when using 'ki' session mode and using " +
-                    "Ki enterprise sessions which do not rely on a servlet container.";
+                "underlying SessionManager instance is a part of the " +
+                "[" + requiredType.getName() + "] class hierarchy.  " +
+                "The current SessionManager is of type [" + this.sessionManager.getClass().getName() + "].  " +
+                "This might occur for example if you're trying to set the validation interval or auto session " +
+                "creation in a servlet container-backed session environment ('http' session mode).  If that is " +
+                "the case however, that property is only useful when using 'ki' session mode and using " +
+                "Ki enterprise sessions which do not rely on a servlet container.";
             throw new IllegalStateException(msg);
         }
     }
@@ -208,11 +208,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      *
      * @param autoCreate if the wrapped {@link AbstractValidatingSessionManager} should automatically create a new
      *                   session when an invalid session is referenced
-     * @see org.apache.ki.session.mgt.AbstractValidatingSessionManager#setAutoCreateAfterInvalidation(boolean)
+     * @see org.apache.ki.session.mgt.AbstractValidatingSessionManager#setAutoCreateWhenInvalid(boolean)
      */
     public void setAutoCreateSessionAfterInvalidation(boolean autoCreate) {
         assertSessionManager(AbstractValidatingSessionManager.class);
-        ((AbstractValidatingSessionManager) this.sessionManager).setAutoCreateAfterInvalidation(autoCreate);
+        ((AbstractValidatingSessionManager) this.sessionManager).setAutoCreateWhenInvalid(autoCreate);
     }
 
     /**
@@ -229,11 +229,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      *
      * @return <code>true</code> if this session manager should automatically create a new session when an invalid
      *         session is referenced, <code>false</code> otherwise.
-     * @see org.apache.ki.session.mgt.AbstractValidatingSessionManager#isAutoCreateAfterInvalidation()
+     * @see org.apache.ki.session.mgt.AbstractValidatingSessionManager#isAutoCreateWhenInvalid()
      */
     public boolean isAutoCreateSessionAfterInvalidation() {
         assertSessionManager(AbstractValidatingSessionManager.class);
-        return ((AbstractValidatingSessionManager) this.sessionManager).isAutoCreateAfterInvalidation();
+        return ((AbstractValidatingSessionManager) this.sessionManager).isAutoCreateWhenInvalid();
     }
 
     /**
@@ -247,9 +247,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     private void assertSessionListenerSupport() throws IllegalStateException {
         if (!(this.sessionManager instanceof SessionListenerRegistrar)) {
             String msg = "SessionListener registration failed:  The underlying SessionManager instance of " +
-                    "type [" + sessionManager.getClass().getName() + "] does not implement the " +
-                    SessionListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                    "session notifications.";
+                "type [" + sessionManager.getClass().getName() + "] does not implement the " +
+                SessionListenerRegistrar.class.getName() + " interface and therefore cannot support " +
+                "session notifications.";
             throw new IllegalStateException(msg);
         }
     }
@@ -277,7 +277,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      */
     public boolean remove(SessionListener listener) {
         return (this.sessionManager instanceof SessionListenerRegistrar) &&
-                ((SessionListenerRegistrar) this.sessionManager).remove(listener);
+            ((SessionListenerRegistrar) this.sessionManager).remove(listener);
     }
 
     public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
@@ -336,5 +336,4 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         LifecycleUtils.destroy(getSessionManager());
         this.sessionManager = null;
     }
-
 }

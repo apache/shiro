@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.util.ClassUtils;
 
@@ -52,7 +52,7 @@ public class ResourceUtils {
     public static final String FILE_PREFIX = "file:";
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(ResourceUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
 
 
     /**

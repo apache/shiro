@@ -21,8 +21,8 @@ package org.apache.ki.cache.ehcache;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.cache.Cache;
 import org.apache.ki.cache.CacheException;
@@ -71,7 +71,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * This class's private log instance.
      */
-    private static final Log log = LogFactory.getLog(EhCacheManager.class);
+    private static final Logger log = LoggerFactory.getLogger(EhCacheManager.class);
 
     /**
      * The EhCache cache manager used by this implementation to create caches.

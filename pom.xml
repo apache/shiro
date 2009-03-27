@@ -64,6 +64,7 @@
 
     <properties>
         <jdk.version>1.5</jdk.version>
+        <slf4j.version>1.5.6</slf4j.version>
         <hsqldbVersion>1.8.0.7</hsqldbVersion>
         <jettyVersion>6.1.14</jettyVersion>
         <kiVersion>1.0-incubating-SNAPSHOT</kiVersion>
@@ -96,6 +97,33 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <inherited>true</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-api-docs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <version>2.2</version>
+                <inherited>true</inherited>
             </plugin>
         </plugins>
     </build>
@@ -143,36 +171,34 @@
                 <artifactId>ki-spring</artifactId>
                 <version>${kiVersion}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.ki</groupId>
+                <artifactId>ki-all</artifactId>
+                <version>${kiVersion}</version>
+            </dependency>
 
             <!-- 3rd party dependencies -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.7.0</version>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>logkit</groupId>
-                        <artifactId>logkit</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>avalon-framework</groupId>
-                        <artifactId>avalon-framework</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>servlet-api</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>hsqldb</groupId>
@@ -222,6 +248,7 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>1.4.1</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.retroweaver</groupId>
@@ -239,21 +266,25 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring</artifactId>
                 <version>${springframeworkVersion}</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
                 <version>${springframeworkVersion}</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>quartz</groupId>
                 <artifactId>quartz</artifactId>
                 <version>1.5.2</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>taglibs</groupId>
                 <artifactId>standard</artifactId>
                 <version>1.1.2</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

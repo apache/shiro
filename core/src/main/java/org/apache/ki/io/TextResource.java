@@ -25,8 +25,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Scanner;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * //TODO complete JavaDoc
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class TextResource extends AbstractResource {
 
-    private static final Log log = LogFactory.getLog(TextResource.class);    
+    private static final Logger log = LoggerFactory.getLogger(TextResource.class);
 
     protected String charsetName;
 

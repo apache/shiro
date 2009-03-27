@@ -21,8 +21,8 @@ package org.apache.ki.util;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -37,7 +37,7 @@ public class ClassUtils {
     //TODO - complete JavaDoc
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(ClassUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ClassUtils.class);
 
     /**
      * Returns the specified resource by checking the current thread's

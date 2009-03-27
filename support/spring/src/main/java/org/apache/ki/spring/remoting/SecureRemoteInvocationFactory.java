@@ -25,8 +25,8 @@ import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.SecurityUtils;
 import org.apache.ki.session.Session;
@@ -47,7 +47,7 @@ import org.apache.ki.subject.Subject;
  */
 public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactory {
 
-    private static final Log log = LogFactory.getLog(SecureRemoteInvocationFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(SecureRemoteInvocationFactory.class);
 
     public static final String SESSION_ID_KEY = Session.class.getName() + "_ID_KEY";
 

@@ -21,8 +21,8 @@ package org.apache.ki.web;
 import java.util.Collection;
 import javax.servlet.ServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.mgt.DefaultSecurityManager;
 import org.apache.ki.realm.Realm;
@@ -46,7 +46,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     //TODO - complete JavaDoc
 
-    private static final Log log = LogFactory.getLog(DefaultWebSecurityManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultWebSecurityManager.class);
 
     public static final String HTTP_SESSION_MODE = "http";
     public static final String KI_SESSION_MODE = "ki";

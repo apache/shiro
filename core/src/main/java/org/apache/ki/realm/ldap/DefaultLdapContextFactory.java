@@ -25,8 +25,8 @@ import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Default implementation of {@link LdapContextFactory} that can be configured or extended to
@@ -58,7 +58,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
 
-    private static final Log log = LogFactory.getLog(DefaultLdapContextFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultLdapContextFactory.class);
 
     protected String authentication = "simple";
 

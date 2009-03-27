@@ -25,8 +25,8 @@ import java.util.Arrays;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.codec.Base64;
 import org.apache.ki.codec.CodecSupport;
@@ -77,7 +77,7 @@ public class BlowfishCipher implements Cipher {
     /**
      * Internal private log instance.
      */
-    private static final Log log = LogFactory.getLog(BlowfishCipher.class);
+    private static final Logger log = LoggerFactory.getLogger(BlowfishCipher.class);
 
     /**
      * The key to use by default, can be overridden by calling {@link #setKey(java.security.Key)}.

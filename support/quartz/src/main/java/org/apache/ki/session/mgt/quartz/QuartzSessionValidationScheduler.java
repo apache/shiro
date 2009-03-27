@@ -24,8 +24,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.session.mgt.DefaultSessionManager;
 import org.apache.ki.session.mgt.SessionValidationScheduler;
@@ -62,7 +62,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Log log = LogFactory.getLog(QuartzSessionValidationScheduler.class);
+    private static final Logger log = LoggerFactory.getLogger(QuartzSessionValidationScheduler.class);
 
     /**
      * The configured Quartz scheduler to use to schedule the Quartz job.  If no scheduler is

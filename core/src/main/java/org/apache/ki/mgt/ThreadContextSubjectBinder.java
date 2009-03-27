@@ -18,12 +18,11 @@
  */
 package org.apache.ki.mgt;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.subject.Subject;
 import org.apache.ki.util.ThreadContext;
-
 
 /**
  * Associates a {@link Subject Subject} instance to the currently executing thread via the {
@@ -36,7 +35,7 @@ import org.apache.ki.util.ThreadContext;
  */
 public class ThreadContextSubjectBinder implements SubjectBinder {
 
-    private static final Log log = LogFactory.getLog(ThreadContextSubjectBinder.class);
+    private static final Logger log = LoggerFactory.getLogger(ThreadContextSubjectBinder.class);
 
     /**
      * This implementation returns the {@link Subject Subject} from the {@link ThreadContext ThreadContext}.

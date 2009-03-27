@@ -24,8 +24,8 @@ import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.util.AntPathMatcher;
 import org.apache.ki.util.PatternMatcher;
@@ -45,7 +45,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     /**
      * Log available to this class only
      */
-    private static final Log log = LogFactory.getLog(PathMatchingFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(PathMatchingFilter.class);
 
     /**
      * PatternMatcher used in determining which paths to react to for a given request.

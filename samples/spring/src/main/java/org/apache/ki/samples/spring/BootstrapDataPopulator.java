@@ -23,8 +23,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.crypto.hash.Sha256Hash;
 
@@ -58,7 +58,7 @@ public class BootstrapDataPopulator implements InitializingBean {
             "    primary key (role_name, permission)\n" +
             ");";
 
-    private static final Log log = LogFactory.getLog(BootstrapDataPopulator.class);
+    private static final Logger log = LoggerFactory.getLogger(BootstrapDataPopulator.class);
 
     protected DataSource dataSource = null;
 

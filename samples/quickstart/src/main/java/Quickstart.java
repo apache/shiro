@@ -17,8 +17,8 @@
  * under the License.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.ki.SecurityUtils;
 import org.apache.ki.mgt.DefaultSecurityManager;
 import org.apache.ki.session.Session;
@@ -37,7 +37,7 @@ import org.apache.ki.authc.UsernamePasswordToken;
  */
 public class Quickstart {
 
-    private static final transient Log log = LogFactory.getLog(Quickstart.class);
+    private static final transient Logger log = LoggerFactory.getLogger(Quickstart.class);
 
 
     public static void main( String[] args ) {

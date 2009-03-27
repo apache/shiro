@@ -25,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.ki.util.StringUtils.clean;
 import static org.apache.ki.util.StringUtils.splitKeyValue;
@@ -39,7 +39,7 @@ import static org.apache.ki.util.StringUtils.splitKeyValue;
  */
 public class IniResource extends TextResource {
 
-    private static final Log log = LogFactory.getLog(IniResource.class);    
+    private static final Logger log = LoggerFactory.getLogger(IniResource.class);
 
     public static final String COMMENT_POUND = "#";
     public static final String COMMENT_SEMICOLON = ";";

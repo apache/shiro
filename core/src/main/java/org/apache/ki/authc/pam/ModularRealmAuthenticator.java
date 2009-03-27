@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.authc.AbstractAuthenticator;
 import org.apache.ki.authc.AuthenticationException;
@@ -74,7 +74,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    private static final Log log = LogFactory.getLog(ModularRealmAuthenticator.class);
+    private static final Logger log = LoggerFactory.getLogger(ModularRealmAuthenticator.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |

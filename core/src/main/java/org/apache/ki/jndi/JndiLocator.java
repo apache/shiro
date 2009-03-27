@@ -21,8 +21,8 @@ package org.apache.ki.jndi;
 import java.util.Properties;
 import javax.naming.NamingException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Convenient superclass for JNDI accessors, providing "jndiTemplate"
@@ -45,7 +45,7 @@ public class JndiLocator {
     /**
      * Private class log.
      */
-    private static final Log log = LogFactory.getLog(JndiLocator.class);
+    private static final Logger log = LoggerFactory.getLogger(JndiLocator.class);
 
     /**
      * JNDI prefix used in a J2EE container

@@ -23,8 +23,8 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.mgt.SecurityManager;
 import org.apache.ki.subject.Subject;
@@ -52,7 +52,7 @@ public abstract class ThreadContext {
     /**
      * Private internal log instance.
      */
-    private static final Log log = LogFactory.getLog(ThreadContext.class);
+    private static final Logger log = LoggerFactory.getLogger(ThreadContext.class);
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";

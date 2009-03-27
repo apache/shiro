@@ -25,8 +25,8 @@ import java.util.Set;
 
 import net.sf.ehcache.Element;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.cache.Cache;
 import org.apache.ki.cache.CacheException;
@@ -42,7 +42,7 @@ import org.apache.ki.cache.CacheException;
 public class EhCache implements Cache {
 
     /** Private internal log instance. */
-    private static final Log log = LogFactory.getLog(EhCache.class);
+    private static final Logger log = LoggerFactory.getLogger(EhCache.class);
 
     /**
      * The wrapped Ehcache instance.

@@ -28,8 +28,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.ki.KiException;
 import org.apache.ki.cache.CacheManager;
@@ -110,7 +110,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Log log = LogFactory.getLog(PropertiesRealm.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertiesRealm.class);
 
     protected ExecutorService scheduler = null;
     protected boolean useXmlFormat = false;
