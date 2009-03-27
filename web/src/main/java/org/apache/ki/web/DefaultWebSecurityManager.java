@@ -154,6 +154,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             LifecycleUtils.destroy(getSessionManager());
             WebSessionManager sessionManager = createSessionManager(mode);
             setSessionManager(sessionManager);
+            //the factory needs to reflect this new SessionManager:
+            setSubjectFactory(new WebSubjectFactory(this,sessionManager));
         }
     }
 
