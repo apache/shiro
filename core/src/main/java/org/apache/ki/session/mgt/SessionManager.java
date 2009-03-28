@@ -98,7 +98,6 @@ public interface SessionManager {
      */
     Date getLastAccessTime(Serializable sessionId);
 
-
     /**
      * Returns <tt>true</tt> if the session is valid (it exists and is not stopped nor expired), <tt>false</tt> otherwise.
      *
@@ -106,6 +105,18 @@ public interface SessionManager {
      * @return <tt>true</tt> if the session is valid (exists and is not stopped or expired), <tt>false</tt> otherwise.
      */
     boolean isValid(Serializable sessionId);
+
+    /**
+     * Returns quietly if the associated session is valid (it exists and is not stopped or expired) or throws
+     * an {@link InvalidSessionException} indicating that the session id is invalid.  This might be preferred to be
+     * used instead of {@link #isValid} since any exception thrown will definitively explain the reason for
+     * invalidation.
+     *
+     * @param sessionId the session id to check for validity.
+     * @throws InvalidSessionException if the session id is invalid (it does not exist or it is stopped or expired).
+     * @since 1.0
+     */
+    void checkValid(Serializable sessionId) throws InvalidSessionException;
 
     /**
      * Returns the time in milliseconds that the specified session may remain idle before expiring.
@@ -151,7 +162,6 @@ public interface SessionManager {
      * @see org.apache.ki.session.Session#touch
      */
     void touch(Serializable sessionId) throws InvalidSessionException;
-
 
     /**
      * Returns the IP address of the host where the session was started, if known.  If

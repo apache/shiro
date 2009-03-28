@@ -235,10 +235,16 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     public boolean isValid(Serializable sessionId) {
         try {
-            return getSession(sessionId) != null;
+            checkValid(sessionId);
+            return true;
         } catch (InvalidSessionException e) {
             return false;
         }
+    }
+
+    public void checkValid(Serializable sessionId) throws InvalidSessionException {
+        //just try to acquire it.  If there is a problem, an exception will be thrown:
+        getSession(sessionId);
     }
 
     /**
