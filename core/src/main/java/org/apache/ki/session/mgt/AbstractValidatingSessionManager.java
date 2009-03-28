@@ -218,7 +218,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             String msg = "The " + getClass().getName() + " implementation only supports validating " +
                 "Session implementations of the " + ValidatingSession.class.getName() + " interface.  " +
                 "Please either implement this interface in your session implementation or override the " +
-                getClass().getName() + ".validate(Session) method to perform validation.";
+                AbstractValidatingSessionManager.class.getName() + ".doValidate(Session) method to perform validation.";
             throw new IllegalStateException(msg);
         }
     }

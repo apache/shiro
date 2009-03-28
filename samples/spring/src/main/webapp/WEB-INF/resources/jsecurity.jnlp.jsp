@@ -38,7 +38,7 @@
     <resources>
         <j2se version="1.5"/>
         <jar href="ki-spring-sample.jar"/>
-        <jar href="ki.jar"/>
+        <jar href="ki-all.jar"/>
         <jar href="spring.jar"/>
         <jar href="slf4j-api.jar"/>
         <property name="ki.session.id" value="${sessionId}"/>

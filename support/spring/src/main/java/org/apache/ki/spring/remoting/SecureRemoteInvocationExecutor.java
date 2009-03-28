@@ -20,6 +20,7 @@ package org.apache.ki.spring.remoting;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
 
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
@@ -77,7 +78,13 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     ============================================*/
     @SuppressWarnings({"unchecked"})
     public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
         try {
+            InetAddress inet = (InetAddress)invocation.getAttribute(SecureRemoteInvocationFactory.INET_ADDRESS_KEY);
+            if (inet != null) {
+                ThreadContext.bind(inet);
+            }
+            
             Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);
             if (sessionId != null) {
                 ThreadContext.bindSessionId(sessionId);
@@ -88,6 +95,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                             "on an existing Session will not be available during the method invocatin.");
                 }
             }
+            
             ThreadContext.bind(securityManager);
             ThreadContext.bind(securityManager.getSubject());
 

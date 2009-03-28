@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Collections;
 
 import org.apache.ki.session.InvalidSessionException;
 import org.apache.ki.session.ReplacedSessionException;
@@ -32,10 +33,10 @@ import org.apache.ki.session.Session;
  * {@link org.apache.ki.session.Session Session}.
  * This implementation is basically a proxy to a server-side {@link SessionManager SessionManager},
  * which will return the proper results for each method call.
- *
+ * <p/>
  * <p>A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
  * only communicating with the server when necessary.
- *
+ * <p/>
  * <p>Of course, if used in-process with a SessionManager business POJO, as might be the case in a
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
@@ -54,9 +55,7 @@ public class DelegatingSession implements Session {
     private Date startTimestamp = null;
     private InetAddress hostAddress = null;
 
-    /**
-     * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
-     */
+    /** Handle to a server-side SessionManager.  See {@link #setSessionManager} for details. */
     private SessionManager sessionManager = null;
 
 
@@ -85,7 +84,7 @@ public class DelegatingSession implements Session {
      * probably be a remoting proxy which executes remote method invocations.  In a single-process
      * environment (e.g. a web  application deployed in the same JVM of the application server),
      * the <tt>SessionManager</tt> can be the actual business POJO implementation.
-     *
+     * <p/>
      * <p>You'll notice the {@link Session Session} interface and the {@link SessionManager}
      * interface are nearly identical.  This is to ensure the SessionManager can support
      * most method calls in the Session interface, via this handle/proxy technique.  The session
@@ -110,16 +109,12 @@ public class DelegatingSession implements Session {
         this.id = id;
     }
 
-    /**
-     * @see org.apache.ki.session.Session#getId()
-     */
+    /** @see org.apache.ki.session.Session#getId() */
     public Serializable getId() {
         return id;
     }
 
-    /**
-     * @see org.apache.ki.session.Session#getStartTimestamp()
-     */
+    /** @see org.apache.ki.session.Session#getStartTimestamp() */
     public Date getStartTimestamp() {
         if (startTimestamp == null) {
             try {
@@ -132,9 +127,7 @@ public class DelegatingSession implements Session {
         return startTimestamp;
     }
 
-    /**
-     * @see org.apache.ki.session.Session#getLastAccessTime()
-     */
+    /** @see org.apache.ki.session.Session#getLastAccessTime() */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
         try {
@@ -163,9 +156,7 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /**
-     * @see org.apache.ki.session.Session#getHostAddress()
-     */
+    /** @see org.apache.ki.session.Session#getHostAddress() */
     public InetAddress getHostAddress() {
         if (hostAddress == null) {
             try {
@@ -178,57 +169,51 @@ public class DelegatingSession implements Session {
         return hostAddress;
     }
 
-    /**
-     * @see org.apache.ki.session.Session#touch()
-     */
+    /** @see org.apache.ki.session.Session#touch() */
     public void touch() throws InvalidSessionException {
         try {
             sessionManager.touch(id);
         } catch (ReplacedSessionException e) {
             this.id = e.getNewSessionId();
-            sessionManager.touch(id);
+            // No need to 'hit' the session manager again - a newly created session is 'touched' at the time of creation
         }
     }
 
-    /**
-     * @see org.apache.ki.session.Session#stop()
-     */
+    /** @see org.apache.ki.session.Session#stop() */
     public void stop() throws InvalidSessionException {
         try {
             sessionManager.stop(id);
         } catch (ReplacedSessionException e) {
             this.id = e.getNewSessionId();
+            //TODO - prevent sessionManager from creating new session when 'stop' is already requested.
             sessionManager.stop(id);
         }
     }
 
-    /**
-     * @see org.apache.ki.session.Session#getAttributeKeys
-     */
+    /** @see org.apache.ki.session.Session#getAttributeKeys */
+    @SuppressWarnings({"unchecked"})
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         try {
             return sessionManager.getAttributeKeys(id);
         } catch (ReplacedSessionException e) {
             this.id = e.getNewSessionId();
-            return sessionManager.getAttributeKeys(id);
+            // No need to 'hit' the session manager again - a new session won't have any attributes:
+            return Collections.EMPTY_SET;
         }
     }
 
-    /**
-     * @see org.apache.ki.session.Session#getAttribute(Object key)
-     */
+    /** @see org.apache.ki.session.Session#getAttribute(Object key) */
     public Object getAttribute(Object key) throws InvalidSessionException {
         try {
             return sessionManager.getAttribute(id, key);
         } catch (ReplacedSessionException e) {
             this.id = e.getNewSessionId();
-            return sessionManager.getAttribute(id, key);
+            // No need to 'hit' the session manager again - a new session won't have any attributes
+            return null;
         }
     }
 
-    /**
-     * @see Session#setAttribute(Object key, Object value)
-     */
+    /** @see Session#setAttribute(Object key, Object value) */
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
         if (value == null) {
             removeAttribute(key);
@@ -242,15 +227,14 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /**
-     * @see Session#removeAttribute(Object key)
-     */
+    /** @see Session#removeAttribute(Object key) */
     public Object removeAttribute(Object key) throws InvalidSessionException {
         try {
             return sessionManager.removeAttribute(id, key);
         } catch (ReplacedSessionException e) {
             this.id = e.getNewSessionId();
-            return sessionManager.removeAttribute(id, key);
+            // No need to 'hit' the session manager again - a new session won't have any attributes:
+            return null;
         }
     }
 }
