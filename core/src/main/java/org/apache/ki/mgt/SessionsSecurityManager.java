@@ -296,6 +296,10 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         return this.sessionManager.isValid(sessionId);
     }
 
+    public void checkValid(Serializable sessionId) throws InvalidSessionException {
+        this.sessionManager.checkValid(sessionId);
+    }
+
     public long getTimeout(Serializable sessionId) throws InvalidSessionException {
         return this.sessionManager.getTimeout(sessionId);
     }
