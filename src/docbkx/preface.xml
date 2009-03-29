@@ -16,7 +16,10 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<preface>
+<preface version="5.0" xml:id="preface"
+         xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink">
+
     <title>Preface</title>
 
     <para>
@@ -31,8 +34,7 @@
         While application security is usually a necessity, it would be nice if we could implement it whenever
         we want, and without it being too difficult. Actually, it
         <emphasis>shouldn't</emphasis>
-        be difficult.
-        In fact, it
+        be difficult. In fact, it
         <emphasis>should</emphasis>
         be downright easy. It should also be as transparent and
         unintrusive as possible, so you don't have to change a lot of code to secure what you want.
@@ -53,20 +55,19 @@
         most complete documentation on Ki and all of its features. It is
         very much a work-in-progress, and we welcome suggestions and recommendations. If you have any,
         we'd very much appreciate your feedback on our forums at
-        <ulink url="http://www.jsecurity.org/forum">http://www.jsecurity.org/forum</ulink>
+        <link href="http://www.jsecurity.org/forum">http://www.jsecurity.org/forum</link>
         or
         mailing lists at
-        <ulink url="http://www.jsecurity.org/mailinglists">http://www.jsecurity.org/mailinglists</ulink>
-        .
+        <link href="http://www.jsecurity.org/mailinglists">http://www.jsecurity.org/mailinglists</link>.
     </para>
 
     <para>
         Before continuing on, we'd like to give credit where it is due for the format of this
         book. We sincerely appreciate all the work that Christian Bauer from the
-        <ulink url="http://www.hibernate.org">Hibernate</ulink>
+        <link href="http://www.hibernate.org">Hibernate</link>
         team and
         Juergen Hoeller of the
-        <ulink url="http://www.springframework.org">Spring</ulink>
+        <link href="http://www.springframework.org">Spring</link>
         team did in ensuring this
         document could be created in PDF and HTML formats. Without their efforts, it would have been an agnoizing
         task for us to do ourselves.

@@ -17,10 +17,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<chapter id="security-manager">
+<chapter version="5.0" xml:id="security-manager"
+         xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink">
+
   <title>The Security Manager</title>
 
-  <section id="security-manager-introduction">
+  <section xml:id="security-manager-introduction">
     <title>Introduction</title>
 
     <para>This chapter covers Ki's notion of a Security Manager.</para>
