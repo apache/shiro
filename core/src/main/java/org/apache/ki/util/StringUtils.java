@@ -157,6 +157,39 @@ public class StringUtils {
     }
 
     /**
+     * Returns the specified array as a comma-delimited (',') string.
+     * @param array the array whose contents will be converted to a string.
+     * @return the array's contents as a comma-delimited (',') string.
+     * @since 1.0
+     */
+    public static String toString(Object[] array) {
+        return toDelimitedString(array,",");
+    }
+
+    /**
+     * Returns the array's contents as a string, with each element delimited by the specified
+     * {@code delimiter} argument.  Useful for {@code toString()} implementations and log messages.
+     *
+     * @param array the array whose contents will be converted to a string
+     * @param delimiter the delimiter to use between each element
+     * @return a single string, delimited by the specified {@code delimiter}.
+     * @since 1.0
+     */
+    public static String toDelimitedString(Object[] array, String delimiter ) {
+        if ( array == null || array.length == 0 ) {
+            return EMPTY_STRING;
+        }
+        StringBuffer sb = new StringBuffer();
+        for( int i=0; i < array.length; i++ ) {
+            if ( i > 0 ) {
+                sb.append(delimiter);
+            }
+            sb.append(array[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
      * Tokenize the given String into a String array via a StringTokenizer.
      * Trims tokens and omits empty tokens.
      * <p>The given delimiters string is supposed to consist of any number of

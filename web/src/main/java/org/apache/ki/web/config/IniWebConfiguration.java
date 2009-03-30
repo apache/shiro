@@ -50,6 +50,8 @@ import org.apache.ki.web.filter.authc.FormAuthenticationFilter;
 import org.apache.ki.web.filter.authc.UserFilter;
 import org.apache.ki.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.ki.web.filter.authz.RolesAuthorizationFilter;
+import org.apache.ki.web.filter.authz.PortFilter;
+import org.apache.ki.web.filter.authz.SslFilter;
 import org.apache.ki.web.servlet.AdviceFilter;
 import org.apache.ki.web.servlet.ProxiedFilterChain;
 
@@ -138,7 +140,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
             if (pathMatches(path, requestURI)) {
                 if (log.isTraceEnabled()) {
                     log.trace("Matched path [" + path + "] for requestURI [" + requestURI + "].  " +
-                            "Utilizing corresponding filter chain...");
+                        "Utilizing corresponding filter chain...");
                 }
                 return getChain(path, originalChain);
             }
@@ -315,8 +317,8 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     protected void assertFilter(String name, Object o) throws ConfigurationException {
         if (!(o instanceof Filter)) {
             String msg = "[" + FILTERS + "] section specified a filter named '" + name + "', which does not " +
-                    "implement the " + Filter.class.getName() + " interface.  Only Filter implementations may be " +
-                    "defined.";
+                "implement the " + Filter.class.getName() + " interface.  Only Filter implementations may be " +
+                "defined.";
             throw new ConfigurationException(msg);
         }
     }
@@ -351,6 +353,16 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
 
         name = "perms";
         filter = new PermissionsAuthorizationFilter();
+        filter.setName(name);
+        filters.put(name, filter);
+
+        name = "port";
+        filter = new PortFilter();
+        filter.setName(name);
+        filters.put(name, filter);
+
+        name = "ssl";
+        filter = new SslFilter();
         filter.setName(name);
         filters.put(name, filter);
 
@@ -416,13 +428,13 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
                 Filter filter = filters.get(name);
                 if (filter == null) {
                     String msg = "Path [" + path + "] specified a filter named '" + name + "', but that " +
-                            "filter has not been specified in the [" + FILTERS + "] section.";
+                        "filter has not been specified in the [" + FILTERS + "] section.";
                     throw new ConfigurationException(msg);
                 }
                 if (filter instanceof PathConfigProcessor) {
                     if (log.isDebugEnabled()) {
                         log.debug("Applying path [" + path + "] to filter [" + name + "] " +
-                                "with config [" + config + "]");
+                            "with config [" + config + "]");
                     }
                     ((PathConfigProcessor) filter).processPathConfig(path, config);
                 }
