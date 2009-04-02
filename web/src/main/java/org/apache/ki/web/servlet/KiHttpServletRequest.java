@@ -95,9 +95,6 @@ public class KiHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     protected Subject getSubject() {
-        if ( isLoggedOut() ) {
-            return null;
-        }
         return SecurityUtils.getSubject();
     }
 
