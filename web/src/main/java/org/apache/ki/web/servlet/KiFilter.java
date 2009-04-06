@@ -55,14 +55,14 @@ import org.apache.ki.web.config.WebConfiguration;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;filter-class&gt;org.apache.ki.web.servlet.KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
- * <p/>
+ * #
  * #NOTE:  This config looks pretty long - but its not - its only a few lines of actual config.
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
  * # Any commented values below that _don't_ start with 'example.pkg' are Ki's defaults.  If you want to change any
  * # values on those lines, you only need to uncomment the lines you want to change.
- * <p/>
+ * #
  * [main]
  * # The 'main' section defines Ki-wide configuration.
  * #
