@@ -56,24 +56,71 @@ import org.apache.ki.web.config.WebConfiguration;
  * &lt;filter-class&gt;org.apache.ki.web.servlet.KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
  * <p/>
- * #NOTE:  This config looks pretty long - but its not - its only 5 lines of actual config.
+ * #NOTE:  This config looks pretty long - but its not - its only a few lines of actual config.
  * #       Everything else is just heavily commented to explain things in-depth. Feel free to delete any
  * #       comments that you don't want to read from your own configuration ;)
  * #
- * # Any commented values below are Ki's defaults.  If you want to change any values, you only
- * # need to uncomment the lines you want to change.
+ * # Any commented values below that _don't_ start with 'example.pkg' are Ki's defaults.  If you want to change any
+ * # values on those lines, you only need to uncomment the lines you want to change.
  * <p/>
  * [main]
  * # The 'main' section defines Ki-wide configuration.
  * #
- * # Session Mode: By default, Ki's Session infrastructure in a web environment will use the
+ * # The configuration is essentially an object graph definition in a .properties style format.  The beans defined
+ * # would be those that are used to construct the application's SecurityManager.  It is essentially 'poor man's'
+ * # dependency injection via a .properties format.
+ * #
+ * # --- Defining Realms ---
+ * #
+ * # Any Realm defined here will automatically be injected into Ki's default SecurityManager created at startup.  For
+ * # example:
+ * #
+ * # myRealm = example.pkg.security.MyRealm
+ * #
+ * # This would instantiate the some.pkg.security.MyRealm class with a default no-arg constructor and inject it into
+ * # the SecurityManager.  More than one realm can be defined if needed.  You can create graphs and reference
+ * # other beans ('$' bean reference notation) while defining Realms and other objects:
+ * #
+ * # <b>connectionFactory</b> = example.pkg.ConnectionFactory
+ * # connectionFactory.driverClassName = a.jdbc.Driver
+ * # connectionFactory.username = aUsername
+ * # connectionFactory.password = aPassword
+ * # connectionFactory.minConnections = 3
+ * # connectionFactory.maxConnections = 10
+ * # ... etc...
+ * #
+ * # myJdbcRealm = example.pkg.jdbc.MyJdbcRealm
+ * # myJdbcRealm.connectionFactory = <b>$connectionFactory</b>
+ * # ... etc ...
+ * #
+ * # --- Realm Factories ---
+ * #
+ * # If the .properties style isn't robust enough for your needs, you also have the option of implementing the
+ * # {@link org.apache.ki.realm.RealmFactory org.apache.ki.realm.RealmFactory} interface with more complex construction
+ * # logic.  Then you can declare the implementation here instead.  The realms it returns will be injected in to the
+ * # SecurityManager just as the individual Realms are.  For example:
+ * #
+ * # aRealmFactory = some.pkg.ClassThatImplementsRealmFactory
+ * #
+ * # --- SessionManager properties ---
+ * #
+ * # Except for Realms and RealmFactories, all other objects should be defined and set on the SecurityManager directly.
+ * # The default 'securityManager' bean is an instance of {@link org.apache.ki.web.DefaultWebSecurityManager}, so you
+ * # can set any of its corresponding properties as necessary:
+ * #
+ * # someObject = some.fully.qualified.ClassName
+ * # someObject.propertyN = foo
+ * # ...
+ * # securityManager.someObject = $someObject
+ * #
+ * # For example, if you wanted to change Ki's default session mechanism, you can change the 'sessionMode' property.
+ * # By default, Ki's Session infrastructure in a web environment will use the
  * # Servlet container's HttpSession.  However, if you need to share session state across client types
  * # (e.g. Web MVC plus Java Web Start or Flash), or are doing distributed/shared Sessions for
  * # Single Sign On, HttpSessions aren't good enough.  You'll need to use Ki's more powerful
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
  * # and changing 'http' to 'ki'
  * #
- * #securityManager = {@link org.apache.ki.web.DefaultWebSecurityManager org.apache.ki.web.DefaultWebSecurityManager}
  * #securityManager.{@link org.apache.ki.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
  * <p/>
  * [filters]
@@ -116,7 +163,8 @@ import org.apache.ki.web.config.WebConfiguration;
  * # applications like to use the same url specified in roles.unauthorizedUrl above.
  * #
  * #
- * # Define your own filters here.  To properly handle url path matching (see the [urls] section below), your
+ * # Define your own filters here as you would any other object as described in the '[main]' section above (properties,
+ * # $references, etc).  To properly handle url path matching (see the [urls] section below), your
  * # filter should extend the {@link org.apache.ki.web.filter.PathMatchingFilter PathMatchingFilter} abstract class.
  * <p/>
  * [urls]
