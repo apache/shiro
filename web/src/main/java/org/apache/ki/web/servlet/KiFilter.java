@@ -122,7 +122,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * # and changing 'http' to 'ki'
  * #
  * #securityManager.{@link org.apache.ki.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
- * <p/>
+ * #
  * [filters]
  * # This section defines the 'pool' of all Filters available to the url path definitions in the [urls] section below.
  * #
@@ -166,7 +166,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * # Define your own filters here as you would any other object as described in the '[main]' section above (properties,
  * # $references, etc).  To properly handle url path matching (see the [urls] section below), your
  * # filter should extend the {@link org.apache.ki.web.filter.PathMatchingFilter PathMatchingFilter} abstract class.
- * <p/>
+ * #
  * [urls]
  * # This section defines url path mappings.  Each mapping entry must be on a single line and conform to the
  * # following representation:
@@ -212,14 +212,14 @@ import org.apache.ki.web.config.WebConfiguration;
  * # the text between the brackets as two permissions: 'remote:invoke:lan' and 'wan' instead of the
  * # single desired 'remote:invoke:lan,wan' token.  So, you can use quotes wherever you need to escape internal
  * # commas.)
- * <p/>
+ * #
  * /account/** = <a href="#authcBasic">authcBasic</a>
  * /remoting/** = <a href="#authcBasic">authcBasic</a>, <a href="#roles">roles</a>[b2bClient], <a href="#perms">perms</a>[remote:invoke:"lan,wan"]
- * <p/>
+ * #
  * &lt;/param-value&gt;&lt;/init-param&gt;
  * &lt;/filter&gt;
- * <p/>
- * <p/>
+ * #
+ * #
  * &lt;filter-mapping&gt;
  * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
