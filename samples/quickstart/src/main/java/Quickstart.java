@@ -17,18 +17,14 @@
  * under the License.
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.ki.SecurityUtils;
+import org.apache.ki.authc.*;
 import org.apache.ki.mgt.DefaultSecurityManager;
+import org.apache.ki.realm.text.PropertiesRealm;
 import org.apache.ki.session.Session;
 import org.apache.ki.subject.Subject;
-
-import org.apache.ki.authc.AuthenticationException;
-import org.apache.ki.authc.IncorrectCredentialsException;
-import org.apache.ki.authc.LockedAccountException;
-import org.apache.ki.authc.UnknownAccountException;
-import org.apache.ki.authc.UsernamePasswordToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -47,6 +43,7 @@ public class Quickstart {
         //But, since this is a quickstart, we just want you to get a feel for how the Ki API looks, so this
         //is sufficient to have a simple working example:
         DefaultSecurityManager securityManager = new DefaultSecurityManager();
+        securityManager.setRealm(new PropertiesRealm());
 
         //for this simple example quickstart, make the SecurityManager accessible across the JVM.  Most
         //applications wouldn't do this and instead rely on their container configuration or web.xml for webapps.  That
