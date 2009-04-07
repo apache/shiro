@@ -161,7 +161,6 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * @throws Exception if an error occurs.
      */
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-        //mapped value is ignored - not needed for most (if not all) authc Filters.
         return isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response, mappedValue);
     }
 
