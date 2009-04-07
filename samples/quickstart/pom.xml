@@ -31,8 +31,29 @@
     <name>Apache Ki :: Samples :: Quick Start</name>
     <packaging>jar</packaging>
 
-    <dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classpathScope>test</classpathScope>
+                    <mainClass>Quickstart</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
+
+    <dependencies>
         <dependency>
             <groupId>org.apache.ki</groupId>
             <artifactId>ki-core</artifactId>
@@ -40,9 +61,8 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 </project>
