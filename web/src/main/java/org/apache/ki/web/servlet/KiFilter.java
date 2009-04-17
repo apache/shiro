@@ -52,7 +52,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * The following is a fully commented example that documents how to configure it:
  * <p/>
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
+ * &lt;filter-name&gt;KiFilter&lt;/filter-name&gt;
  * &lt;filter-class&gt;org.apache.ki.web.servlet.KiFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
  * #
@@ -221,7 +221,7 @@ import org.apache.ki.web.config.WebConfiguration;
  * #
  * #
  * &lt;filter-mapping&gt;
- * &lt;filter-name&gt;JSecurityFilter&lt;/filter-name&gt;
+ * &lt;filter-name&gt;KiFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;</pre>
  *
