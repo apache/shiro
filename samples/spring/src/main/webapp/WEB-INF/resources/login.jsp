@@ -21,7 +21,7 @@
 <html>
 
 <head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/jsecurity.css"/>"/>
+    <link type="text/css" rel="stylesheet" href="<c:url value="/ki.css"/>"/>
 </head>
 
 <body onload="document.forms[0].elements[0].focus();">

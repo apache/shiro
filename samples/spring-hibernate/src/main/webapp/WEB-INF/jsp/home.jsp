@@ -17,7 +17,7 @@
   ~ under the License.
   --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="jsec" uri="http://ki.apache.org/tags" %>
+<%@ taglib prefix="ki" uri="http://ki.apache.org/tags" %>
 
 <html>
 <head>
@@ -40,12 +40,12 @@
         </ul>
 
         <p>
-        <jsec:hasPermission name="user:manage">
+        <ki:hasPermission name="user:manage">
             Since you are logged in as the admin user, you can <a href="<c:url value="/s/manageUsers"/>">manage site users</a>.
-        </jsec:hasPermission>
-        <jsec:lacksPermission name="user:manage">
+        </ki:hasPermission>
+        <ki:lacksPermission name="user:manage">
             Since you are not logged in as the admin user, you can't manage site users.
-        </jsec:lacksPermission>
+        </ki:lacksPermission>
         </p>
     </div>
 

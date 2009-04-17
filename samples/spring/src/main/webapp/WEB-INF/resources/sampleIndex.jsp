@@ -21,7 +21,7 @@
 <html>
 
 <head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/jsecurity.css"/>"/>
+    <link type="text/css" rel="stylesheet" href="<c:url value="/ki.css"/>"/>
 </head>
 
 <body>
@@ -29,7 +29,7 @@
 <div id="contentBox">
     <img src="<c:url value="/logo.png"/>" style="margin-top:20px; border:0"/><br/>
 
-    <h2>You have successfully logged in as <jsecurity:principal/>.</h2>
+    <h2>You have successfully logged in as <ki:principal/>.</h2>
 
     Session ID: ${subjectSession.id}
 
@@ -41,17 +41,17 @@
     </ul>
 
     <p style="font-weight: bold;">
-        <jsecurity:hasRole name="role1">You have role 1.<br/></jsecurity:hasRole>
-        <jsecurity:lacksRole name="role1">You do not have role 1.<br/></jsecurity:lacksRole>
-        <jsecurity:hasRole name="role2">You have role 2.<br/></jsecurity:hasRole>
-        <jsecurity:lacksRole name="role2">You do not have role 2.<br/></jsecurity:lacksRole>
+        <ki:hasRole name="role1">You have role 1.<br/></ki:hasRole>
+        <ki:lacksRole name="role1">You do not have role 1.<br/></ki:lacksRole>
+        <ki:hasRole name="role2">You have role 2.<br/></ki:hasRole>
+        <ki:lacksRole name="role2">You do not have role 2.<br/></ki:lacksRole>
     </p>
 
     <p style="font-weight: bold;">
-        <jsecurity:hasPermission name="permission1">You have permission 1.<br/></jsecurity:hasPermission>
-        <jsecurity:lacksPermission name="permission1">You do not have permission 1.<br/></jsecurity:lacksPermission>
-        <jsecurity:hasPermission name="permission2">You have permission 2.<br/></jsecurity:hasPermission>
-        <jsecurity:lacksPermission name="permission2">You do not have permission 2.<br/></jsecurity:lacksPermission>
+        <ki:hasPermission name="permission1">You have permission 1.<br/></ki:hasPermission>
+        <ki:lacksPermission name="permission1">You do not have permission 1.<br/></ki:lacksPermission>
+        <ki:hasPermission name="permission2">You have permission 2.<br/></ki:hasPermission>
+        <ki:lacksPermission name="permission2">You do not have permission 2.<br/></ki:lacksPermission>
     </p>
 
 
@@ -63,7 +63,7 @@
 
 
     <p>
-        Click <a href="<c:url value="/s/jsecurity.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
+        Click <a href="<c:url value="/s/ki.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
         application.
     </p>
 

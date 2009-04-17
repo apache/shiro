@@ -29,7 +29,7 @@
         <property name="mappings">
             <props>
                 <prop key="index">indexController</prop>
-                <prop key="jsecurity.jnlp">jnlpController</prop>
+                <prop key="ki.jnlp">jnlpController</prop>
                 <prop key="login">loginController</prop>
                 <prop key="logout">logoutController</prop>
                 <prop key="unauthorized">loginController</prop>
@@ -56,7 +56,7 @@
     <bean name="logoutController" class="org.apache.ki.samples.spring.web.LogoutController"/>
 
     <bean id="jnlpController" class="org.apache.ki.samples.spring.web.JnlpController">
-        <property name="jnlpView" value="jsecurity.jnlp"/>
+        <property name="jnlpView" value="ki.jnlp"/>
     </bean>
 
     <bean id="indexController" class="org.apache.ki.samples.spring.web.IndexController">
