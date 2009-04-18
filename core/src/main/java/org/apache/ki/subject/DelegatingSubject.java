@@ -107,8 +107,23 @@ public class DelegatingSubject implements Subject {
             this.inetAddress = getLocalHost();
         }
         if (session != null) {
-            this.session = new StoppingAwareProxiedSession(session, this);
+            this.session = decorate(session);
         }
+    }
+
+    protected Session decorate(Session session) {
+        if (session == null) {
+            throw new IllegalArgumentException("session cannot be null");
+        }
+        return decorateSession(session.getId());
+    }
+
+    protected Session decorateSession(Serializable sessionId) {
+        if (sessionId == null) {
+            throw new IllegalArgumentException("sessionId cannot be null");
+        }
+        DelegatingSession target = new DelegatingSession(getSecurityManager(), sessionId);
+        return new StoppingAwareProxiedSession(target, this);
     }
 
     public SecurityManager getSecurityManager() {
@@ -129,9 +144,7 @@ public class DelegatingSubject implements Subject {
         return this.inetAddress;
     }
 
-    /**
-     * @see Subject#getPrincipal()
-     */
+    /** @see Subject#getPrincipal() */
     public Object getPrincipal() {
         PrincipalCollection principals = getPrincipals();
         if (principals == null || principals.isEmpty()) {
@@ -201,8 +214,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public void checkPermissions(String... permissions)
-            throws AuthorizationException
-    {
+            throws AuthorizationException {
         assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipals(), permissions);
     }
@@ -252,11 +264,7 @@ public class DelegatingSubject implements Subject {
         this.principals = principals;
         Session session = subject.getSession(false);
         if (session != null) {
-            if (session instanceof StoppingAwareProxiedSession) {
-                this.session = session;
-            } else {
-                this.session = new StoppingAwareProxiedSession(session, this);
-            }
+            this.session = decorate(session);
         } else {
             this.session = null;
         }
@@ -288,8 +296,7 @@ public class DelegatingSubject implements Subject {
                 log.trace("starting session for address [" + getInetAddress() + "]");
             }
             Serializable sessionId = this.securityManager.start(getInetAddress());
-            Session target = new DelegatingSession(this.securityManager, sessionId);
-            this.session = new StoppingAwareProxiedSession(target, this);
+            this.session = decorateSession(sessionId);
         }
         return this.session;
     }

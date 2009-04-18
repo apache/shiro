@@ -182,7 +182,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         super.beforeLogout(subjectIdentifier);
         //also ensure a request attribute is set so the Subject is not reacquired later during the request:
         removeRequestIdentity();
-
     }
 
     protected void removeRequestIdentity() {
