@@ -31,7 +31,7 @@ import org.apache.ki.realm.Realm;
 /**
  * <tt>AuthenticationStrategy</tt> implementation that requires <em>all</em> configured realms to
  * <b>successfully</b> process the submitted <tt>AuthenticationToken</tt> during the log-in attempt.
- *
+ * <p/>
  * <p>If one or more realms do not support the submitted token, or one or more are unable to acquire
  * <tt>AuthenticationInfo</tt> for the token, this implementation will immediately fail the log-in attempt for the
  * associated subject (user).
@@ -94,12 +94,10 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
             throw new UnknownAccountException(msg);
         }
 
+        log.debug("Account successfully authenticated using realm [{}]", realm);
+
         // If non-null account is returned, then the realm was able to authenticate the
         // user - so merge the account with any accumulated before:
-        if (log.isDebugEnabled()) {
-            log.debug("Account successfully authenticated using realm of type [" + realm.getClass().getName() + "]");
-        }
-
         merge(info, aggregate);
 
         return aggregate;

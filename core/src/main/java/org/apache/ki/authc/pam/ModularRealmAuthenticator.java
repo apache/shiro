@@ -244,17 +244,14 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
 
         if (log.isDebugEnabled()) {
-            log.debug("Iterating through [" + realms.size() + "] realms for PAM authentication");
+            log.debug("Iterating through {} realms for PAM authentication", realms.size());
         }
 
         for (Realm realm : realms) {
 
             if (realm.supports(token)) {
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Attempting to authenticate token [" + token + "] " +
-                            "using realm of type [" + realm + "]");
-                }
+                log.debug("Attempting to authenticate token [{}] using realm [{}]", token, realm);
 
                 AuthenticationInfo info = null;
                 Throwable t = null;
@@ -271,10 +268,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                 aggregate = strategy.afterAttempt(realm, token, info, aggregate, t);
 
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Realm of type [" + realm + "] does not support token " +
-                            "[" + token + "].  Skipping realm.");
-                }
+                log.debug("Realm [{}] does not support token {}.  Skipping realm.", realm, token);
             }
         }
 

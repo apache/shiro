@@ -70,7 +70,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         InetAddress inet = null;
         boolean sessionManagerMethodInvocation = false;
 
-        //If the calling MI is for a remoting SessionManager proxy, we need to acquire the session ID from the method
+        //If the calling MI is for a remoting SessionManager delegate, we need to acquire the session ID from the method
         //argument and NOT interact with SecurityUtils/subject.getSession to avoid a stack overflow
         if (SessionManager.class.equals(mi.getMethod().getDeclaringClass())) {
             sessionManagerMethodInvocation = true;
@@ -82,7 +82,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
             }
         }
 
-        //tried the proxy.  If sessionId is still null, only then try the Subject:
+        //tried the delegate.  If sessionId is still null, only then try the Subject:
         if (sessionId == null && !sessionManagerMethodInvocation) {
             Subject subject = SecurityUtils.getSubject();
             Session session = subject.getSession(false);

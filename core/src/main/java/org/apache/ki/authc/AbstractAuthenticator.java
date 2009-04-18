@@ -30,12 +30,12 @@ import org.apache.ki.subject.PrincipalCollection;
 /**
  * Superclass for almost all {@link Authenticator} implementations that performs the common work around authentication
  * attempts.
- *
+ * <p/>
  * <p>This class delegates the actual authentication attempt to subclasses but supports notification for
  * successful and failed logins as well as logouts. Notification is sent to one or more registered
  * {@link AuthenticationListener AuthenticationListener}s to allow for custom processing logic
  * when these conditions occur.
- *
+ * <p/>
  * <p>In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
  * is perform the actual principal/credential verification process for the submitted <tt>AuthenticationToken</tt>.
  *
@@ -96,8 +96,9 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * <code>info</code>.  This implementation merely iterates over the internal <code>listeners</code> collection and
      * calls {@link AuthenticationListener#onSuccess(AuthenticationToken, AuthenticationInfo) onSuccess}
      * for each.
+     *
      * @param token the submitted <code>AuthenticationToken</code> that resulted in a successful authentication.
-     * @param info the returned <code>AuthenticationInfo</code> resulting from the successful authentication.
+     * @param info  the returned <code>AuthenticationInfo</code> resulting from the successful authentication.
      */
     protected void notifySuccess(AuthenticationToken token, AuthenticationInfo info) {
         for (AuthenticationListener listener : this.listeners) {
@@ -112,8 +113,9 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * iterates over the internal <code>listeners</code> collection and calls
      * {@link AuthenticationListener#onFailure(AuthenticationToken, AuthenticationException) onFailure}
      * for each.
+     *
      * @param token the submitted <code>AuthenticationToken</code> that resulted in a failed authentication.
-     * @param ae the resulting <code>AuthenticationException<code> that caused the authentication to fail.
+     * @param ae    the resulting <code>AuthenticationException<code> that caused the authentication to fail.
      */
     protected void notifyFailure(AuthenticationToken token, AuthenticationException ae) {
         for (AuthenticationListener listener : this.listeners) {
@@ -127,6 +129,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * iterates over the internal <code>listeners</code> collection and calls
      * {@link AuthenticationListener#onLogout(org.apache.ki.subject.PrincipalCollection) onLogout}
      * for each.
+     *
      * @param principals the identifying principals of the <code>Subject</code>/account logging out.
      */
     protected void notifyLogout(PrincipalCollection principals) {
@@ -139,6 +142,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * This implementation merely calls
      * {@link #notifyLogout(org.apache.ki.subject.PrincipalCollection) notifyLogout} to allow any registered listeners
      * to react to the logout.
+     *
      * @param principals the identifying principals of the <code>Subject</code>/account logging out.
      */
     public void onLogout(PrincipalCollection principals) {
@@ -147,7 +151,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
 
     /**
      * Implementation of the {@link Authenticator} interface that functions in the following manner:
-     *
+     * <p/>
      * <ol>
      * <li>Calls template {@link #doAuthenticate doAuthenticate} method for subclass execution of the actual
      * authentication behavior.</li>
@@ -173,9 +177,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
             throw new IllegalArgumentException("Method argumet (authentication token) cannot be null.");
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Authentication attempt received for token [" + token + "]");
-        }
+        log.trace("Authentication attempt received for token [{}]", token);
 
         AuthenticationInfo info;
         try {
@@ -196,17 +198,14 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
                 String msg = "Authentication failed for token submission [" + token + "].  Possible unexpected " +
                         "error? (Typical or expected login exceptions should extend from AuthenticationException).";
                 ae = new AuthenticationException(msg, t);
-                if (log.isWarnEnabled()) {
-                    log.warn(msg, t);
-                }
             }
             try {
                 notifyFailure(token, ae);
             } catch (Throwable t2) {
-                String msg = "Unable to send notification for failed authentication attempt - listener error?.  " +
-                        "Please check your AuthenticationListener implementation(s).  Logging sending exception and " +
-                        "propagating original AuthenticationException instead...";
                 if (log.isWarnEnabled()) {
+                    String msg = "Unable to send notification for failed authentication attempt - listener error?.  " +
+                            "Please check your AuthenticationListener implementation(s).  Logging sending exception " +
+                            "and propagating original AuthenticationException instead...";
                     log.warn(msg, t2);
                 }
             }
@@ -214,10 +213,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
 
             throw ae;
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Authentication successful for token [" + token + "].  Returned account: [" + info + "]");
-        }
+        
+        log.debug("Authentication successful for token [{}].  Returned account [{}]", token, info );
 
         notifySuccess(token, info);
 
@@ -226,10 +223,10 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
 
     /**
      * Template design pattern hook for subclasses to implement specific authentication behavior.
-     *
+     * <p/>
      * <p>Common behavior for most authentication attempts is encapsulated in the
      * {@link #authenticate} method and that method invokes this one for custom behavior.
-     *
+     * <p/>
      * <p><b>N.B.</b> Subclasses <em>should</em> throw some kind of
      * <tt>AuthenticationException</tt> if there is a problem during
      * authentication instead of returning <tt>null</tt>.  A <tt>null</tt> return value indicates

@@ -155,9 +155,7 @@ public class JndiLocator {
                 throw ex;
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Located object with JNDI name [" + convertedName + "]");
-        }
+        log.debug("Located object with JNDI name '{}'", convertedName);
         return jndiObject;
     }
 

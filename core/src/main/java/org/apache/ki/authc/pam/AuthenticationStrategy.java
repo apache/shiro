@@ -47,8 +47,8 @@ public interface AuthenticationStrategy {
      * specified <tt>token</tt> - called before any <tt>Realm</tt> is actually invoked.
      *
      * <p>The <code>AuthenticationInfo</code> object returned from this method is essentially an empty place holder for
-     * aggregating account data across multiple realms.  It should be populated by the realms over the course of the
-     * authentication attempt across the multiple realms.  It will be passed into the
+     * aggregating account data across multiple realms.  It should be populated by the strategy implementation over the
+     * course of authentication attempts across the multiple realms.  It will be passed into the
      * {@link #beforeAttempt} calls, allowing inspection of the aggregated account data up to that point in the
      * multi-realm authentication, allowing any logic to be executed accordingly.
      *

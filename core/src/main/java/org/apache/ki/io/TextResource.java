@@ -107,10 +107,7 @@ public abstract class TextResource extends AbstractResource {
             try {
                 br.close();
             } catch (IOException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to cleanly close BufferedReader [" + br + "] after " +
-                            "the doLoad(Reader) call.");
-                }
+                log.warn("Unable to cleanly close BufferedReader [{}] after doLoad(Reader) call.", br);
             }
         }
     }

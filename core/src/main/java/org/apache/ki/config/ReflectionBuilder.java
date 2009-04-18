@@ -104,8 +104,8 @@ public class ReflectionBuilder {
 
         Object currentInstance = objects.get(name);
         if (currentInstance != null) {
-            log.info("An instance with name [" + name + "] already exists.  " +
-                    "Redefining this object as a new instance of type [" + value + "].");
+            log.info("An instance with name '{}' already exists.  " +
+                    "Redefining this object as a new instance of type []", name, value);
         }
 
         Object instance;//name with no property, assume right hand side of equals sign is the class name:
@@ -209,10 +209,7 @@ public class ReflectionBuilder {
 
         if (isReference(stringValue)) {
             String id = getId(stringValue);
-            if (log.isDebugEnabled()) {
-                log.debug("Encountered object reference [" + stringValue + "].  Looking up object " +
-                        "with id [" + id + "]");
-            }
+            log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", stringValue, id);
             value = getReferencedObject(id);
         } else {
             value = unescapeIfNecessary(stringValue);
@@ -220,7 +217,8 @@ public class ReflectionBuilder {
 
         try {
             if (log.isTraceEnabled()) {
-                log.trace("Applying property [" + propertyName + "] value [" + value + "] on object of type [" + object.getClass().getName() + "]");
+                log.trace("Applying property [{}] value [{}] on object of type [{}]",
+                        new Object[]{propertyName, value, object.getClass().getName()});
             }
             BeanUtils.setProperty(object, propertyName, value);
         } catch (Exception e) {

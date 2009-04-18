@@ -148,20 +148,13 @@ public class ResourceUtils {
     }
 
     private static InputStream loadFromUrl(String urlPath) throws IOException {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Opening url [" + urlPath + "]...");
-        }
-
+        log.debug("Opening url {}", urlPath);
         URL url = new URL(urlPath);
         return url.openStream();
     }
 
     private static InputStream loadFromClassPath(String path) {
-        if (log.isDebugEnabled()) {
-            log.debug("Opening resource from class path [" + path + "]...");
-        }
-
+        log.debug("Opening resource from class path [{}]", path);
         return ClassUtils.getResourceAsStream(path);
     }
 

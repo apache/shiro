@@ -33,6 +33,7 @@ import org.apache.ki.util.Initializable;
 
 /**
  * //TODO - complete JavaDoc
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
@@ -78,9 +79,7 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
         if (securityManager == null) {
             String config = getConfig();
             if (config != null) {
-                if (log.isInfoEnabled()) {
-                    log.info("Attempting to load Configuration based on 'config' property.");
-                }
+                log.info("Attempting to load Configuration based on 'config' property.");
                 loadTextConfig(config);
             }
         }
