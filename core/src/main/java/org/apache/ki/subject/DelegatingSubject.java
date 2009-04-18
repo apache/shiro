@@ -79,14 +79,6 @@ public class DelegatingSubject implements Subject {
 
     protected SecurityManager securityManager;
 
-    protected static InetAddress getLocalHost() {
-        try {
-            return InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            return null;
-        }
-    }
-
     public DelegatingSubject(SecurityManager securityManager) {
         this(null, false, getLocalHost(), null, securityManager);
     }
@@ -108,6 +100,14 @@ public class DelegatingSubject implements Subject {
         }
         if (session != null) {
             this.session = decorate(session);
+        }
+    }
+
+    protected static InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            return null;
         }
     }
 
@@ -213,14 +213,12 @@ public class DelegatingSubject implements Subject {
         securityManager.checkPermission(getPrincipals(), permission);
     }
 
-    public void checkPermissions(String... permissions)
-            throws AuthorizationException {
+    public void checkPermissions(String... permissions) throws AuthorizationException {
         assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipals(), permissions);
     }
 
-    public void checkPermissions(Collection<Permission> permissions)
-            throws AuthorizationException {
+    public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
         assertAuthzCheckPossible();
         securityManager.checkPermissions(getPrincipals(), permissions);
     }

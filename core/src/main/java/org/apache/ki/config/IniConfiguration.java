@@ -95,10 +95,7 @@ public class IniConfiguration extends TextConfiguration {
                 load(configUrl);
             } else {
                 if (ignoreResourceNotFound) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Ki resource [" + configUrl + "] not found.  Ignoring since " +
-                                "'ignoreResourceNotFound' is set to true.");
-                    }
+                    log.debug("Ki resource [{}] not found.  Ignoring since 'ignoreResourceNotFound' is true.", configUrl);
                 } else {
                     throw new ConfigurationException("Ki resource [" + configUrl + "] specified as a 'configUrl' " +
                             "cannot be found.  If you want to fall back on default configuration specified " +

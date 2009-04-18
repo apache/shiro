@@ -38,11 +38,11 @@ public class ProxiedSession implements Session {
     /**
      * The proxied instance
      */
-    protected final Session proxy;
+    protected final Session delegate;
 
     /**
      * Constructs an instance that proxies the specified <code>target</code>.  Subclasses may access this
-     * target via the <code>protected final 'proxy'</code> attribute, i.e. <code>this.proxy</code>.
+     * target via the <code>protected final 'delegate'</code> attribute, i.e. <code>this.delegate</code>.
      *
      * @param target the specified target <code>Session</code> to proxy.
      */
@@ -50,91 +50,91 @@ public class ProxiedSession implements Session {
         if (target == null) {
             throw new IllegalArgumentException("Target session to proxy cannot be null.");
         }
-        proxy = target;
+        delegate = target;
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public Serializable getId() {
-        return proxy.getId();
+        return delegate.getId();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public Date getStartTimestamp() {
-        return proxy.getStartTimestamp();
+        return delegate.getStartTimestamp();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public Date getLastAccessTime() {
-        return proxy.getLastAccessTime();
+        return delegate.getLastAccessTime();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public long getTimeout() throws InvalidSessionException {
-        return proxy.getTimeout();
+        return delegate.getTimeout();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
-        proxy.setTimeout(maxIdleTimeInMillis);
+        delegate.setTimeout(maxIdleTimeInMillis);
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public InetAddress getHostAddress() {
-        return proxy.getHostAddress();
+        return delegate.getHostAddress();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public void touch() throws InvalidSessionException {
-        proxy.touch();
+        delegate.touch();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public void stop() throws InvalidSessionException {
-        proxy.stop();
+        delegate.stop();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-        return proxy.getAttributeKeys();
+        return delegate.getAttributeKeys();
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public Object getAttribute(Object key) throws InvalidSessionException {
-        return proxy.getAttribute(key);
+        return delegate.getAttribute(key);
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
-        proxy.setAttribute(key, value);
+        delegate.setAttribute(key, value);
     }
 
     /**
      * Immediately delegates to the underlying proxied session.
      */
     public Object removeAttribute(Object key) throws InvalidSessionException {
-        return proxy.removeAttribute(key);
+        return delegate.removeAttribute(key);
     }
 
 }
