@@ -18,21 +18,21 @@
  */
 package org.apache.ki.authz.permission;
 
+import org.apache.ki.authz.Permission;
+import org.apache.ki.util.CollectionUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ki.authz.Permission;
-import org.apache.ki.util.CollectionUtils;
-
 /**
  * A <code>WildcardPermission</code> is a very flexible permission construct supporting multiple levels of
  * permission matching. However, most people will probably follow some standard conventions as explained below.
- *
+ * <p/>
  * <h3>Simple Usage</h3>
- *
+ * <p/>
  * In the simplest form, <code>WildcardPermission</code> can be used as a simple permission string. You could grant a
  * user an &quot;editNewsletter&quot; permission and then check to see if the user has the editNewsletter
  * permission by calling
@@ -52,9 +52,9 @@ import org.apache.ki.util.CollectionUtils;
  * using this approach there's no way to just say a user has &quot;all newsletter permissions&quot;.
  * <p/>
  * For this reason, <code>WildcardPermission</code> supports multiple <em>levels</em> of permissioning.
- *
+ * <p/>
  * <h3>Multiple Levels</h3>
- *
+ * <p/>
  * WildcardPermission</code> also supports the concept of multiple <em>levels</em>.  For example, you could
  * restructure the previous simple example by granting a user the permission <code>&quot;newsletter:edit&quot;</code>.
  * The colon in this example is a special character used by the <code>WildcardPermission</code> that delimits the
@@ -76,9 +76,9 @@ import org.apache.ki.util.CollectionUtils;
  * them <code>&quot;newsletter:*&quot;</code>. Now, any permission check for <code>&quot;newsletter:XXX&quot;</code>
  * will return <code>true</code>. It is also possible to use the wildcard token at the domain level (or both): so you
  * could grant a user the <code>&quot;view&quot;</code> action across all domains <code>&quot;*:view&quot;</code>.
- *
+ * <p/>
  * <h3>Instance-level Access Control</h3>
- *
+ * <p/>
  * Another common usage of the <code>WildcardPermission</code> is to model instance-level Access Control Lists.
  * In this scenario you use three tokens - the first is the <em>domain</em>, the second is the <em>action</em>, and
  * the third is the <em>instance</em> you are acting on.
@@ -130,6 +130,14 @@ public class WildcardPermission implements Permission, Serializable {
     }
 
     public WildcardPermission(String wildcardString, boolean caseSensitive) {
+        setParts(wildcardString, caseSensitive);
+    }
+
+    protected void setParts(String wildcardString) {
+        setParts(wildcardString, DEFAULT_CASE_SENSITIVE);
+    }
+
+    protected void setParts(String wildcardString, boolean caseSensitive) {
         if (wildcardString == null || wildcardString.trim().length() == 0) {
             throw new IllegalArgumentException("Wildcard string cannot be null or empty. Make sure permission strings are properly formatted.");
         }
