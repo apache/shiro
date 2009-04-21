@@ -125,6 +125,18 @@ public class WildcardPermission implements Permission, Serializable {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+    /**
+     * Default no-arg constructor for subclasses only - end-user developers instantiating Permission instances must
+     * provide a wildcard string at a minimum, since Permission instances are immutable once instantiated.
+     * <p/>
+     * Note that the WildcardPermission class is very robust and typically subclasses are not necessary unless you
+     * wish to create type-safe Permission objects that would be used in your application, such as perhaps a
+     * {@code UserPermission}, {@code SystemPermission}, {@code PrinterPermission}, etc.  If you want such type-safe
+     * permission usage, consider subclassing the {@link DomainPermission DomainPermission} class for your needs.
+     */
+    protected WildcardPermission() {
+    }
+
     public WildcardPermission(String wildcardString) {
         this(wildcardString, DEFAULT_CASE_SENSITIVE);
     }
@@ -149,15 +161,12 @@ public class WildcardPermission implements Permission, Serializable {
         this.parts = new ArrayList<Set<String>>();
         for (String part : parts) {
             Set<String> subparts = CollectionUtils.asSet(part.split(SUBPART_DIVIDER_TOKEN));
-
             if (!caseSensitive) {
                 subparts = lowercase(subparts);
             }
-
             if (subparts.isEmpty()) {
                 throw new IllegalArgumentException("Wildcard string cannot contain parts with only dividers. Make sure permission strings are properly formatted.");
             }
-
             this.parts.add(subparts);
         }
 
@@ -197,22 +206,17 @@ public class WildcardPermission implements Permission, Serializable {
 
         int i = 0;
         for (Set<String> otherPart : otherParts) {
-
             // If this permission has less parts than the other permission, everything after the number of parts contained
             // in this permission is automatically implied, so return true
             if (getParts().size() - 1 < i) {
                 return true;
-
             } else {
                 Set<String> part = getParts().get(i);
-
                 if (!part.contains(WILDCARD_TOKEN) && !part.containsAll(otherPart)) {
                     return false;
                 }
-
                 i++;
             }
-
         }
 
         // If this permission has more parts than the other parts, only imply it if all of the other parts are wildcards
