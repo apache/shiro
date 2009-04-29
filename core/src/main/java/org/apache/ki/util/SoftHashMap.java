@@ -20,12 +20,7 @@ package org.apache.ki.util;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 
 /**
@@ -47,14 +42,10 @@ import java.util.WeakHashMap;
  */
 public class SoftHashMap<K, V> extends AbstractMap<K, V> {
 
-    /**
-     * The default value of the HARD_SIZE attribute, equal to 100.
-     */
+    /** The default value of the HARD_SIZE attribute, equal to 100. */
     private static final int DEFAULT_HARD_SIZE = 100;
 
-    /**
-     * The internal HashMap that will hold the SoftReference.
-     */
+    /** The internal HashMap that will hold the SoftReference. */
     private final Map<K, SoftValue<V, K>> map;
 
     /**
@@ -63,36 +54,52 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
      */
     private final int HARD_SIZE;
 
-    /**
-     * The FIFO list of hard references (not to be garbage collected), order of last access.
-     */
-    private final LinkedList<V> hardCache = new LinkedList<V>();
+    /** The FIFO list of hard references (not to be garbage collected), order of last access. */
+    protected final Collection<V> hardCache;
+    private int hardCacheSize = 0;
 
-    /**
-     * Reference queue for cleared SoftReference objects.
-     */
+    /** Reference queue for cleared SoftReference objects. */
     private final ReferenceQueue<? super V> queue = new ReferenceQueue<V>();
 
     public SoftHashMap() {
         this(DEFAULT_HARD_SIZE);
     }
 
+    @SuppressWarnings({"unchecked"})
     public SoftHashMap(int hardSize) {
         super();
         HARD_SIZE = hardSize;
-        if ( JavaEnvironment.isAtLeastVersion15() ) {
+        map = createSoftReferenceMap();
+        hardCache = createHardCache();
+    }
+
+    protected Map<K, SoftValue<V, K>> createSoftReferenceMap() {
+        Map<K, SoftValue<V, K>> map;
+        if (JavaEnvironment.isAtLeastVersion15()) {
             map = new java.util.concurrent.ConcurrentHashMap<K, SoftValue<V, K>>();
         } else {
-            //TODO - Will we still support 1.3 and 1.4 JVMs?
-            //noinspection unchecked
             map = (Map) ClassUtils.newInstance("edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap");
         }
+        return map;
+    }
+
+    @SuppressWarnings({"unchecked"})
+    protected Collection<V> createHardCache() {
+        Collection<V> c;
+        if (JavaEnvironment.isAtLeastVersion15()) {
+            c = new java.util.concurrent.ConcurrentLinkedQueue<V>();
+        } else {
+            c = (Collection) ClassUtils.newInstance("edu.emory.mathcs.backport.java.util.concurrent.ConcurrentLinkedQueue");
+        }
+        return c;
+    }
+
+    protected V pollQueue(Collection<V> queue) {
+        return ((Queue<V>) queue).poll();
     }
 
     public V get(Object key) {
-
         V result = null;
-
         SoftValue<V, K> value = map.get(key);
 
         if (value != null) {
@@ -103,39 +110,46 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
                 map.remove(key);
             } else {
                 //Add this value to the beginning of the 'hard' reference queue (FIFO).
-                hardCache.addFirst(result);
-
-                //trim the hard ref queue if necessary:
-                if (hardCache.size() > HARD_SIZE) {
-                    hardCache.removeLast();
-                }
+                addToHardCache(result);
+                trimHardCacheIfNecessary();
             }
         }
         return result;
     }
 
-    /**
-     * We define our own subclass of SoftReference which contains
-     * not only the value but also the key to make it easier to find
-     * the entry in the HashMap after it's been garbage collected.
-     */
-    private static class SoftValue<V, K> extends SoftReference<V> {
+    protected void addToHardCache(V result) {
+        hardCache.add(result);
+        hardCacheSize++;
+    }
 
-        private final K key;
-
-        /**
-         * Constructs a new instance, wrapping the value, key, and queue, as
-         * required by the superclass.
-         *
-         * @param value the map value
-         * @param key   the map key
-         * @param queue the soft reference queue to poll to determine if the entry had been reaped by the GC.
-         */
-        private SoftValue(V value, K key, ReferenceQueue<? super V> queue) {
-            super(value, queue);
-            this.key = key;
+    protected void trimHardCacheIfNecessary() {
+        //trim the hard ref queue if necessary:
+        V trimmed = null;
+        if (hardCacheSize > HARD_SIZE) {
+            trimmed = pollHardCache();
+        }
+        if (trimmed != null) {
+            hardCacheSize--;
         }
     }
+
+    protected V pollHardCache() {
+        V polled = null;
+        if (JavaEnvironment.isAtLeastVersion15() && hardCache instanceof Queue) {
+            polled = ((Queue<V>) hardCache).poll();
+        } else {
+            Iterator<V> i = hardCache.iterator();
+            if (i.hasNext()) {
+                polled = i.next();
+                i.remove();
+            }
+        }
+        if (polled != null) {
+            hardCacheSize--;
+        }
+        return polled;
+    }
+
 
     /**
      * Traverses the ReferenceQueue and removes garbage-collected SoftValue objects from the backing map
@@ -148,9 +162,7 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
         }
     }
 
-    /**
-     * Creates a new entry, but wraps the value in a SoftValue instance to enable auto garbage collection.
-     */
+    /** Creates a new entry, but wraps the value in a SoftValue instance to enable auto garbage collection. */
     public V put(K key, V value) {
         processQueue(); // throw out garbage collected values first
         SoftValue<V, K> sv = new SoftValue<V, K>(value, key, queue);
@@ -182,5 +194,27 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
         return Collections.unmodifiableSet(set);
     }
 
+    /**
+     * We define our own subclass of SoftReference which contains
+     * not only the value but also the key to make it easier to find
+     * the entry in the HashMap after it's been garbage collected.
+     */
+    private static class SoftValue<V, K> extends SoftReference<V> {
 
+        private final K key;
+
+        /**
+         * Constructs a new instance, wrapping the value, key, and queue, as
+         * required by the superclass.
+         *
+         * @param value the map value
+         * @param key   the map key
+         * @param queue the soft reference queue to poll to determine if the entry had been reaped by the GC.
+         */
+        private SoftValue(V value, K key, ReferenceQueue<? super V> queue) {
+            super(value, queue);
+            this.key = key;
+        }
+
+    }
 }

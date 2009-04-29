@@ -18,22 +18,17 @@
  */
 package org.apache.ki.session.mgt;
 
+import org.apache.ki.session.ExpiredSessionException;
+import org.apache.ki.session.InvalidSessionException;
+import org.apache.ki.session.StoppedSessionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.ki.session.ExpiredSessionException;
-import org.apache.ki.session.InvalidSessionException;
-import org.apache.ki.session.StoppedSessionException;
+import java.util.*;
 
 
 /**
@@ -51,7 +46,6 @@ public class SimpleSession implements ValidatingSession, Serializable {
     protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
     private transient static final Logger log = LoggerFactory.getLogger(SimpleSession.class);
-
 
     private Serializable id = null;
     private Date startTimestamp = null;
@@ -99,7 +93,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
 
     /**
      * Returns the time the session was stopped, or <tt>null</tt> if the session is still active.
-     *
+     * <p/>
      * <p>A session may become stopped under a number of conditions:
      * <ul>
      * <li>If the user logs out of the system, their current session is terminated (released).</li>
@@ -109,7 +103,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * reflect the user's behavior, such in the case of a system crash</li>
      * </ul>
      * </p>
-     *
+     * <p/>
      * <p>Once stopped, a session may no longer be used.  It is locked from all further activity.
      *
      * @return The time the session was stopped, or <tt>null</tt> if the session is still
@@ -187,14 +181,12 @@ public class SimpleSession implements ValidatingSession, Serializable {
 
     protected void expire() {
         stop();
-        if ( !this.expired ) {
+        if (!this.expired) {
             this.expired = true;
         }
     }
 
-    /**
-     * @since 0.9
-     */
+    /** @since 0.9 */
     public boolean isValid() {
         return !isStopped() && !isExpired();
     }

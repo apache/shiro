@@ -58,7 +58,7 @@
         <system>Hudson</system>
         <url>http://hudson.zones.apache.org/hudson/view/Ki/</url>
     </ciManagement>
-    
+
     <scm>
         <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</connection>
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk
@@ -154,7 +154,7 @@
                     <xincludeSupported>true</xincludeSupported>
                     <!-- <foCustomization>src/docbkx/resources/xsl/fopdf.xsl</foCustomization>
                     <htmlCustomization>src/docbkx/resources/xsl/html_chunk.xsl</htmlCustomization>
-                    <htmlStylesheet>css/html.css</htmlStylesheet> -->                    
+                    <htmlStylesheet>css/html.css</htmlStylesheet> -->
                     <chunkedOutput>true</chunkedOutput>
                     <entities>
                         <entity>
@@ -317,6 +317,13 @@
                 <groupId>net.sourceforge.retroweaver</groupId>
                 <artifactId>retroweaver-rt</artifactId>
                 <version>${retroweaverVersion}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>backport-util-concurrent</groupId>
+                <artifactId>backport-util-concurrent</artifactId>
+                <version>3.1</version>
+                <!-- Only needed for JDK 1.4 and below: -->
                 <optional>true</optional>
             </dependency>
             <dependency>
