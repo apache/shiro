@@ -21,6 +21,8 @@ package org.apache.ki.util;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -30,75 +32,117 @@ import java.util.*;
  * want the cache to auto-resize itself based on memory constraints).
  * <p/>
  * Having the values wrapped by soft references allows the cache to automatically reduce its size based on memory
- * limitations and garbage collection.  This ensures that the cache will not cause memory leaks by holding hard
+ * limitations and garbage collection.  This ensures that the cache will not cause memory leaks by holding strong
  * references to all of its values.
  * <p/>
  * This class is a generics-enabled Map based on initial ideas from Hienz Kabutz's and Sydney Redelinghuys's
  * <a href="http://www.javaspecialists.eu/archive/Issue015.html">publicly posted version</a>, with continued
  * modifications.
+ * <p/>
+ * This implementation is thread-safe and usuable in highly concurrent environments.
  *
  * @author Les Hazlewood
  * @since 1.0
  */
-public class SoftHashMap<K, V> extends AbstractMap<K, V> {
+public class SoftHashMap<K, V> implements Map<K, V> {
 
-    /** The default value of the HARD_SIZE attribute, equal to 100. */
-    private static final int DEFAULT_HARD_SIZE = 100;
+    /** The default value of the RETENTION_SIZE attribute, equal to 100. */
+    private static final int DEFAULT_RETENTION_SIZE = 100;
 
     /** The internal HashMap that will hold the SoftReference. */
     private final Map<K, SoftValue<V, K>> map;
 
     /**
-     * The number of &quot;hard&quot; references to hold internally, that is, the number of instances to prevent
+     * The number of strong references to hold internally, that is, the number of instances to prevent
      * from being garbage collected automatically (unlike other soft references).
      */
-    private final int HARD_SIZE;
+    private final int RETENTION_SIZE;
 
-    /** The FIFO list of hard references (not to be garbage collected), order of last access. */
-    protected final Collection<V> hardCache;
-    private int hardCacheSize = 0;
+    /** The FIFO list of strong references (not to be garbage collected), order of last access. */
+    protected final Queue<V> strongReferences;
+    private int strongReferenceCount = 0;
 
     /** Reference queue for cleared SoftReference objects. */
     private final ReferenceQueue<? super V> queue = new ReferenceQueue<V>();
 
+    /**
+     * Creates a new SoftHashMap with a default retention size size of
+     * {@link #DEFAULT_RETENTION_SIZE DEFAULT_RETENTION_SIZE} (100 entries).
+     *
+     * @see #SoftHashMap(int)
+     */
     public SoftHashMap() {
-        this(DEFAULT_HARD_SIZE);
+        this(DEFAULT_RETENTION_SIZE);
     }
 
+    /**
+     * Creates a new SoftHashMap with the specified retention size.
+     * <p/>
+     * The retention size (n) is the total number of most recent entries in the map that will be strongly referenced
+     * (ie 'retained') to prevent them from being eagerly garbage collected.  That is, the point of a SoftHashMap is to
+     * allow the garbage collector to remove as many entries from this map as it desires, but there will always be (n)
+     * elements retained after a GC due to the strong references.
+     * <p/>
+     * Note that in a highly concurrent environments the exact total number of strong references may differ slightly
+     * than the actual <code>retentionSize</code> value.  This number is intended to be a best-effort retention low
+     * water mark.
+     *
+     * @param retentionSize the total number of most recent entries in the map that will be strongly referenced
+     *                      (retained), preventing them from being eagerly garbage collected by the JVM.
+     */
     @SuppressWarnings({"unchecked"})
-    public SoftHashMap(int hardSize) {
+    public SoftHashMap(int retentionSize) {
         super();
-        HARD_SIZE = hardSize;
+        RETENTION_SIZE = Math.max(0, retentionSize);
         map = createSoftReferenceMap();
-        hardCache = createHardCache();
+        strongReferences = createStrongReferenceCache();
+    }
+
+    /**
+     * Creates a {@code SoftHashMap} backed by the specified {@code source}, with a default retention
+     * size of {@link #DEFAULT_RETENTION_SIZE DEFAULT_RETENTION_SIZE} (100 entries).
+     *
+     * @param source the backing map to populate this {@code SoftHashMap}
+     * @see #SoftHashMap(Map,int)
+     */
+    public SoftHashMap(Map<K, V> source) {
+        this(DEFAULT_RETENTION_SIZE);
+        putAll(source);
+    }
+
+    /**
+     * Creates a {@code SoftHashMap} backed by the specified {@code source}, with the specified retention size.
+     * <p/>
+     * The retention size (n) is the total number of most recent entries in the map that will be strongly referenced
+     * (ie 'retained') to prevent them from being eagerly garbage collected.  That is, the point of a SoftHashMap is to
+     * allow the garbage collector to remove as many entries from this map as it desires, but there will always be (n)
+     * elements retained after a GC due to the strong references.
+     * <p/>
+     * Note that in a highly concurrent environments the exact total number of strong references may differ slightly
+     * than the actual <code>retentionSize</code> value.  This number is intended to be a best-effort retention low
+     * water mark.
+     *
+     * @param source        the backing map to populate this {@code SoftHashMap}
+     * @param retentionSize the total number of most recent entries in the map that will be strongly referenced
+     *                      (retained), preventing them from being eagerly garbage collected by the JVM.
+     */
+    public SoftHashMap(Map<K, V> source, int retentionSize) {
+        this(retentionSize);
+        putAll(source);
     }
 
     protected Map<K, SoftValue<V, K>> createSoftReferenceMap() {
-        Map<K, SoftValue<V, K>> map;
-        if (JavaEnvironment.isAtLeastVersion15()) {
-            map = new java.util.concurrent.ConcurrentHashMap<K, SoftValue<V, K>>();
-        } else {
-            map = (Map) ClassUtils.newInstance("edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap");
-        }
-        return map;
+        return new ConcurrentHashMap<K, SoftValue<V, K>>();
     }
 
     @SuppressWarnings({"unchecked"})
-    protected Collection<V> createHardCache() {
-        Collection<V> c;
-        if (JavaEnvironment.isAtLeastVersion15()) {
-            c = new java.util.concurrent.ConcurrentLinkedQueue<V>();
-        } else {
-            c = (Collection) ClassUtils.newInstance("edu.emory.mathcs.backport.java.util.concurrent.ConcurrentLinkedQueue");
-        }
-        return c;
-    }
-
-    protected V pollQueue(Collection<V> queue) {
-        return ((Queue<V>) queue).poll();
+    protected Queue<V> createStrongReferenceCache() {
+        return new ConcurrentLinkedQueue<V>();
     }
 
     public V get(Object key) {
+        processQueue();
+
         V result = null;
         SoftValue<V, K> value = map.get(key);
 
@@ -109,47 +153,33 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
                 //The wrapped value was garbage collected, so remove this entry from the backing map:
                 map.remove(key);
             } else {
-                //Add this value to the beginning of the 'hard' reference queue (FIFO).
-                addToHardCache(result);
-                trimHardCacheIfNecessary();
+                //Add this value to the beginning of the strong reference queue (FIFO).
+                addToStrongReferences(result);
+                trimStrongReferencesIfNecessary();
             }
         }
         return result;
     }
 
-    protected void addToHardCache(V result) {
-        hardCache.add(result);
-        hardCacheSize++;
+    protected void addToStrongReferences(V result) {
+        strongReferences.add(result);
+        strongReferenceCount++;
     }
 
-    protected void trimHardCacheIfNecessary() {
-        //trim the hard ref queue if necessary:
-        V trimmed = null;
-        if (hardCacheSize > HARD_SIZE) {
-            trimmed = pollHardCache();
-        }
-        if (trimmed != null) {
-            hardCacheSize--;
+    protected void trimStrongReferencesIfNecessary() {
+        //trim the strong ref queue if necessary:
+        while (strongReferenceCount > RETENTION_SIZE) {
+            pollStrongReferences();
         }
     }
 
-    protected V pollHardCache() {
-        V polled = null;
-        if (JavaEnvironment.isAtLeastVersion15() && hardCache instanceof Queue) {
-            polled = ((Queue<V>) hardCache).poll();
-        } else {
-            Iterator<V> i = hardCache.iterator();
-            if (i.hasNext()) {
-                polled = i.next();
-                i.remove();
-            }
-        }
+    protected V pollStrongReferences() {
+        V polled = strongReferences.poll();
         if (polled != null) {
-            hardCacheSize--;
+            strongReferenceCount--;
         }
         return polled;
     }
-
 
     /**
      * Traverses the ReferenceQueue and removes garbage-collected SoftValue objects from the backing map
@@ -160,6 +190,54 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
         while ((sv = (SoftValue) queue.poll()) != null) {
             map.remove(sv.key); // we can access private data!
         }
+    }
+
+    public boolean isEmpty() {
+        processQueue();
+        return map.isEmpty();
+    }
+
+    public boolean containsKey(Object key) {
+        processQueue();
+        return map.containsKey(key);
+    }
+
+    public boolean containsValue(Object value) {
+        processQueue();
+        Collection values = values();
+        return values != null && values.contains(value);
+    }
+
+    public void putAll(Map<? extends K, ? extends V> m) {
+        if (m == null || m.isEmpty()) {
+            processQueue();
+            return;
+        }
+        for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public Set<K> keySet() {
+        processQueue();
+        return map.keySet();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public Collection<V> values() {
+        processQueue();
+        if (map.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+        Collection<K> keys = map.keySet();
+        Collection<V> values = new ArrayList<V>(map.values().size());
+        for (K key : keys) {
+            V v = get(key);
+            if (v != null) {
+                values.add(v);
+            }
+        }
+        return values;
     }
 
     /** Creates a new entry, but wraps the value in a SoftValue instance to enable auto garbage collection. */
@@ -177,7 +255,7 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
     }
 
     public void clear() {
-        hardCache.clear();
+        strongReferences.clear();
         processQueue(); // throw out garbage collected values
         map.clear();
     }
@@ -190,8 +268,19 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> {
     @SuppressWarnings({"unchecked"})
     public Set<Map.Entry<K, V>> entrySet() {
         processQueue(); // throw out garbage collected values first
-        Set set = map.entrySet();
-        return Collections.unmodifiableSet(set);
+        if (map.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+
+        Map kvPairs = new HashMap(map.size());
+        Collection<K> keys = map.keySet();
+        for (K key : keys) {
+            V v = get(key);
+            if (v != null) {
+                kvPairs.put(key, v);
+            }
+        }
+        return kvPairs.entrySet();
     }
 
     /**
