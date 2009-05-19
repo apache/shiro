@@ -47,9 +47,12 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     private static final Logger log = LoggerFactory.getLogger(DefaultSessionManager.class);
 
+    private SessionFactory sessionFactory;
+
     protected SessionDAO sessionDAO;
 
     public DefaultSessionManager() {
+        this.sessionFactory = new SimpleSessionFactory();
         this.sessionDAO = new MemorySessionDAO();
     }
 
@@ -59,6 +62,28 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     public SessionDAO getSessionDAO() {
         return this.sessionDAO;
+    }
+
+    /**
+     * Returns the {@code SessionFactory} used to generate new {@link Session} instances.  The default instance
+     * is a {@link SimpleSessionFactory}.
+     *
+     * @return the {@code SessionFactory} used to generate new {@link Session} instances.
+     * @since 1.0
+     */
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    /**
+     * Sets the {@code SessionFactory} used to generate new {@link Session} instances.  The default instance
+     * is a {@link SimpleSessionFactory}.
+     *
+     * @param sessionFactory the {@code SessionFactory} used to generate new {@link Session} instances.
+     * @since 1.0
+     */
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     public void setCacheManager(CacheManager cacheManager) {
@@ -77,9 +102,31 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     }
 
     protected Session newSessionInstance(InetAddress inetAddress) {
-        return new SimpleSession(inetAddress);
+        return createSessionFromFactory(inetAddress);
     }
 
+    /**
+     * Creates a {@link Session} using the {@link #setSessionFactory(SessionFactory) configured} {@code SessionFactory}
+     * instance.
+     *
+     * @param originatingHost the originating host InetAddress of the external party
+     *                        (user, 3rd party product, etc) that is attempting to initiate the session, or
+     *                        {@code null} if not known.
+     * @return an new {@code Session} instance.
+     * @since 1.0
+     */
+    protected Session createSessionFromFactory(InetAddress originatingHost) {
+        SessionFactory factory = getSessionFactory();
+        return factory.createSession(originatingHost);
+    }
+
+    /**
+     * Persists the given session instance to an underlying EIS (Enterprise Information System).  This implementation
+     * delegates and calls
+     * <code>this.{@link SessionDAO sessionDAO}.{@link SessionDAO#create(org.apache.ki.session.Session) create}(session);<code>
+     *
+     * @param session
+     */
     protected void create(Session session) {
         if (log.isDebugEnabled()) {
             log.debug("Creating new EIS record for new session instance [" + session + "]");
@@ -89,7 +136,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     protected void onStop(Session session) {
         if (session instanceof SimpleSession) {
-            SimpleSession ss = (SimpleSession)session;
+            SimpleSession ss = (SimpleSession) session;
             Date stopTs = ss.getStopTimestamp();
             ss.setLastAccessTime(stopTs);
         }
