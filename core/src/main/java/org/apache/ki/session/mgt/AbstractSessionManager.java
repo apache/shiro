@@ -18,21 +18,16 @@
  */
 package org.apache.ki.session.mgt;
 
+import org.apache.ki.authz.HostUnauthorizedException;
+import org.apache.ki.session.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.ki.authz.HostUnauthorizedException;
-import org.apache.ki.session.InvalidSessionException;
-import org.apache.ki.session.Session;
-import org.apache.ki.session.SessionListener;
-import org.apache.ki.session.SessionListenerRegistrar;
-import org.apache.ki.session.UnknownSessionException;
 
 
 /**
@@ -54,7 +49,6 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     private long globalSessionTimeout = DEFAULT_GLOBAL_SESSION_TIMEOUT;
     private Collection<SessionListener> listeners = new ArrayList<SessionListener>();
-
 
     public AbstractSessionManager() {
     }
@@ -270,5 +264,18 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     protected abstract Session doGetSession(Serializable sessionId) throws InvalidSessionException;
 
+    /**
+     * Creates a new {@code Session Session} instance based on the specified (possibly {@code null}) originating host.
+     * Implementing classes must manage the persistent state of this session such that it could be acquired
+     * via the {@link #getSession(java.io.Serializable)} method.
+     *
+     * @param originatingHost the originating host InetAddress of the external party
+     *                        (user, 3rd party product, etc) that is attempting to initiate the session, or
+     *                        {@code null} if not known.
+     * @return a new {@code Session} instance.
+     * @throws HostUnauthorizedException if the specified host is not allowed to initiate a new session.
+     * @throws IllegalArgumentException  if the argiment is invalid, for example, if the underlying implementation
+     *                                   requires non-{@code null} values and the argument is {@code null}.
+     */
     protected abstract Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException;
 }

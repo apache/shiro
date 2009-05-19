@@ -18,16 +18,24 @@
  */
 package org.apache.ki.session.mgt.eis;
 
-import java.io.Serializable;
-import java.util.Collection;
-
 import org.apache.ki.session.Session;
 import org.apache.ki.session.UnknownSessionException;
+
+import java.io.Serializable;
+import java.util.Collection;
 
 
 /**
  * Data Access Object design pattern specification to enable {@link Session} access to an
- * EIS (Enterprise Information System).
+ * EIS (Enterprise Information System).  It provides your four typical CRUD methods:
+ * {@link #create}, {@link #readSession(java.io.Serializable)}, {@link #update(org.apache.ki.session.Session)},
+ * and {@link #delete(org.apache.ki.session.Session)}.
+ * <p/>
+ * The remaining {@link #getActiveSessions()} method exists as a support mechanism to pre-emptively orphaned sessions,
+ * typically by {@link org.apache.ki.session.mgt.ValidatingSessionManager ValidatingSessionManager}s), and should
+ * be as performant as possible, especially if there are thousands of active sessions.  Large scale/high performance
+ * implementations will often return a subset of the total active sessions and perform validation a little more
+ * frequently, rather than return a massive set and infrequently validate.
  *
  * @author Les Hazlewood
  * @since 0.1
@@ -44,8 +52,8 @@ public interface SessionDAO {
      * <p/>
      * <code>Serializable id = create( session );<br/>
      * id.equals( session.getId() ) == true</code>
-     *
-     * <p>Implementations are free to throw any exceptions that might occur due to
+     * <p/>
+     * Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.
      *
      * @param session the {@link org.apache.ki.session.Session} object to create in the EIS.
@@ -69,14 +77,15 @@ public interface SessionDAO {
      * Updates (persists) data from a previously created Session instance in the EIS identified by
      * <tt>{@link Session#getId() session.getId()}</tt>.  This effectively propagates
      * the data in the argument to the EIS record previously saved.
-     *
-     * <p>Aside from the UnknownSessionException, implementations are free to throw any other
+     * <p/>
+     * In addition to UnknownSessionException, implementations are free to throw any other
      * exceptions that might occur due to integrity violation constraints or other EIS related
      * errors.
      *
      * @param session the Session to update
-     * @throws org.apache.ki.session.UnknownSessionException if no existing EIS session record exists with the
-     *                                 identifier of {@link Session#getId() session.getSessionId()}
+     * @throws org.apache.ki.session.UnknownSessionException
+     *          if no existing EIS session record exists with the
+     *          identifier of {@link Session#getId() session.getSessionId()}
      */
     void update(Session session) throws UnknownSessionException;
 
@@ -92,9 +101,25 @@ public interface SessionDAO {
     /**
      * Returns all sessions in the EIS that are considered active, meaning all sessions that
      * haven't been stopped/expired.  This is primarily used to validate potential orphans.
-     *
-     * If there are no active sessions in the EIS, this method may return an empty collection
-     * or <tt>null</tt>.
+     * <p/>
+     * If there are no active sessions in the EIS, this method may return an empty collection or {@code null}.
+     * <h4>Performance</h4>
+     * This method should be as performant as possible, especially in larger systems where there might be
+     * thousands of active sessions, especially if there are thousands of active sessions.  Large scale/high performance
+     * implementations will often return a subset of the total active sessions and perform validation a little more
+     * frequently, rather than return a massive set and validate infrequently.  If performant and possible, it would
+     * make sense to return the oldest unstopped sessions available, ordered by
+     * {@link org.apache.ki.session.Session#getLastAccessTime() lastAccessTime}.
+     * <h4>Smart Results</h4>
+     * <em>Ideally</em> this method would only return active sessions that the EIS was certain should be invalided.
+     * Typically that is any session that is not stopped and whos lastAccessTimestamp is older than the session timeout.
+     * <p/>
+     * For example, if sessions were backed by a relational database or SQL-92 'queryable' enterprise cache, you might
+     * return something similar to the results returned by this query (assuming
+     * {@link org.apache.ki.session.mgt.SimpleSession SimpleSession}s were being stored):
+     * <pre>select * from sessions s where s.lastAccessTimestamp < ? and s.stopTimestamp is null</pre>
+     * where the <code>?</code> parameter is a date instance equal to 'now' minus the session timeout
+     * (e.g. now - 30 minutes).
      *
      * @return a Collection of <tt>Session</tt>s that are considered active, or an
      *         empty collection or <tt>null</tt> if there are no active sessions.
