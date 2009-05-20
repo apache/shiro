@@ -43,7 +43,7 @@ import java.util.Collection;
 public interface SessionDAO {
 
     /**
-     * Inserts a new Session record into the underling EIS (e.g. Relational database, file system, mainframe,
+     * Inserts a new Session record into the underling EIS (e.g. Relational database, file system, persistent cache,
      * etc, depending on the DAO implementation).
      * <p/>
      * After this method is invoked, the {@link org.apache.ki.session.Session#getId()}
@@ -105,19 +105,22 @@ public interface SessionDAO {
      * If there are no active sessions in the EIS, this method may return an empty collection or {@code null}.
      * <h4>Performance</h4>
      * This method should be as performant as possible, especially in larger systems where there might be
-     * thousands of active sessions, especially if there are thousands of active sessions.  Large scale/high performance
+     * thousands of active sessions.  Large scale/high performance
      * implementations will often return a subset of the total active sessions and perform validation a little more
      * frequently, rather than return a massive set and validate infrequently.  If performant and possible, it would
      * make sense to return the oldest unstopped sessions available, ordered by
      * {@link org.apache.ki.session.Session#getLastAccessTime() lastAccessTime}.
      * <h4>Smart Results</h4>
      * <em>Ideally</em> this method would only return active sessions that the EIS was certain should be invalided.
-     * Typically that is any session that is not stopped and whos lastAccessTimestamp is older than the session timeout.
+     * Typically that is any session that is not stopped and where its lastAccessTimestamp is older than the session
+     * timeout.
      * <p/>
      * For example, if sessions were backed by a relational database or SQL-92 'queryable' enterprise cache, you might
      * return something similar to the results returned by this query (assuming
      * {@link org.apache.ki.session.mgt.SimpleSession SimpleSession}s were being stored):
-     * <pre>select * from sessions s where s.lastAccessTimestamp < ? and s.stopTimestamp is null</pre>
+     * <pre>
+     * select * from sessions s where s.lastAccessTimestamp < ? and s.stopTimestamp is null
+     * </pre>
      * where the <code>?</code> parameter is a date instance equal to 'now' minus the session timeout
      * (e.g. now - 30 minutes).
      *
