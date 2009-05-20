@@ -18,12 +18,6 @@
  */
 package org.apache.ki.web;
 
-import java.util.Collection;
-import javax.servlet.ServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.ki.mgt.DefaultSecurityManager;
 import org.apache.ki.realm.Realm;
 import org.apache.ki.session.mgt.SessionManager;
@@ -33,6 +27,11 @@ import org.apache.ki.web.servlet.KiHttpServletRequest;
 import org.apache.ki.web.session.DefaultWebSessionManager;
 import org.apache.ki.web.session.ServletContainerSessionManager;
 import org.apache.ki.web.session.WebSessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletRequest;
+import java.util.Collection;
 
 
 /**
@@ -51,24 +50,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     public static final String HTTP_SESSION_MODE = "http";
     public static final String KI_SESSION_MODE = "ki";
 
-    /**
-     * The key that is used to store subject principals in the session.
-     */
+    /** The key that is used to store subject principals in the session. */
     public static final String PRINCIPALS_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_PRINCIPALS_SESSION_KEY";
 
-    /**
-     * The key that is used to store whether or not the user is authenticated in the session.
-     */
+    /** The key that is used to store whether or not the user is authenticated in the session. */
     public static final String AUTHENTICATED_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
     private String sessionMode = HTTP_SESSION_MODE; //default
 
     public DefaultWebSecurityManager() {
         super();
+        setRememberMeManager(new WebRememberMeManager());
         WebSessionManager sm = new ServletContainerSessionManager();
         setSessionManager(sm);
-        setRememberMeManager(new WebRememberMeManager());
-        setSubjectFactory(new WebSubjectFactory(this, sm));
     }
 
     public DefaultWebSecurityManager(Realm singleRealm) {
@@ -80,7 +74,14 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         this();
         setRealms(realms);
     }
-    
+
+    @Override
+    protected void afterSessionManagerSet() {
+        super.afterSessionManagerSet();
+        WebSessionManager sessionManager = (WebSessionManager) getSessionManager();
+        setSubjectFactory(new WebSubjectFactory(this, sessionManager));
+    }
+
     /**
      * Sets the path used to store the remember me cookie.  This determines which paths
      * are able to view the remember me cookie.
@@ -154,8 +155,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             LifecycleUtils.destroy(getSessionManager());
             WebSessionManager sessionManager = createSessionManager(mode);
             setSessionManager(sessionManager);
-            //the factory needs to reflect this new SessionManager:
-            setSubjectFactory(new WebSubjectFactory(this,sessionManager));
         }
     }
 
@@ -186,7 +185,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     protected void removeRequestIdentity() {
         ServletRequest request = WebUtils.getServletRequest();
-        if ( request != null ) {
+        if (request != null) {
             request.setAttribute(KiHttpServletRequest.IDENTITY_REMOVED_KEY, Boolean.TRUE);
         }
     }

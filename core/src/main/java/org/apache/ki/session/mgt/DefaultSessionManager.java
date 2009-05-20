@@ -41,7 +41,8 @@ import java.util.Date;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
+public class DefaultSessionManager extends AbstractValidatingSessionManager
+        implements CacheManagerAware, SessionFactoryAware {
 
     //TODO - complete JavaDoc
 
