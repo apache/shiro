@@ -24,6 +24,7 @@ import org.apache.ki.session.InvalidSessionException;
 import org.apache.ki.session.Session;
 import org.apache.ki.session.mgt.eis.MemorySessionDAO;
 import org.apache.ki.session.mgt.eis.SessionDAO;
+import org.apache.ki.session.mgt.eis.SessionDAOAware;
 import org.apache.ki.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ import java.util.Date;
  * @since 0.1
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager
-        implements CacheManagerAware, SessionFactoryAware {
+        implements CacheManagerAware, SessionFactoryAware, SessionDAOAware {
 
     //TODO - complete JavaDoc
 
@@ -126,7 +127,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
      * delegates and calls
      * <code>this.{@link SessionDAO sessionDAO}.{@link SessionDAO#create(org.apache.ki.session.Session) create}(session);<code>
      *
-     * @param session
+     * @param session the Session instance to persist to the underlying EIS.
      */
     protected void create(Session session) {
         if (log.isDebugEnabled()) {
