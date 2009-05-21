@@ -25,6 +25,8 @@ import org.apache.ki.session.Session;
 import org.apache.ki.session.SessionListener;
 import org.apache.ki.session.SessionListenerRegistrar;
 import org.apache.ki.session.mgt.*;
+import org.apache.ki.session.mgt.eis.SessionDAO;
+import org.apache.ki.session.mgt.eis.SessionDAOAware;
 import org.apache.ki.util.LifecycleUtils;
 
 import java.io.Serializable;
@@ -49,7 +51,8 @@ import java.util.Date;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class SessionsSecurityManager extends AuthorizingSecurityManager implements SessionListenerRegistrar {
+public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
+        implements SessionListenerRegistrar, SessionFactoryAware, SessionDAOAware {
 
     /**
      * The internal delegate <code>SessionManager</code> used by this security manager that manages all the
@@ -117,6 +120,18 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
             String msg = "The underlying session manager is null or does not implement the " +
                     SessionFactory.class.getName() + " interface, which is required if the underlying " +
                     "instance is to receive the sessionFactory argument.";
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    public void setSessionDAO(SessionDAO sessionDAO) {
+        SessionManager sm = getSessionManager();
+        if (sm instanceof SessionDAOAware) {
+            ((SessionDAOAware) sm).setSessionDAO(sessionDAO);
+        } else {
+            String msg = "The underlying session manager is null or does not implement the " +
+                    SessionDAO.class.getName() + " interface, which is required if the underlying " +
+                    "instance is to receive the sessionDAO argument.";
             throw new IllegalArgumentException(msg);
         }
     }
