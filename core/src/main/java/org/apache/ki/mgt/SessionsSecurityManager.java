@@ -112,6 +112,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         applyCacheManagerToSessionManager();
     }
 
+    /**
+     * @since 1.0
+     */
     public void setSessionFactory(SessionFactory sessionFactory) {
         SessionManager sm = getSessionManager();
         if (sm instanceof SessionFactoryAware) {
@@ -124,6 +127,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         }
     }
 
+    /**
+     * @since 1.0
+     */
     public void setSessionDAO(SessionDAO sessionDAO) {
         SessionManager sm = getSessionManager();
         if (sm instanceof SessionDAOAware) {
