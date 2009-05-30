@@ -18,22 +18,8 @@
  */
 package org.apache.ki.realm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.ki.authc.credential.CredentialsMatcher;
-import org.apache.ki.authz.AuthorizationException;
-import org.apache.ki.authz.AuthorizationInfo;
-import org.apache.ki.authz.AuthorizingAccount;
-import org.apache.ki.authz.Permission;
-import org.apache.ki.authz.UnauthorizedException;
+import org.apache.ki.authz.*;
 import org.apache.ki.authz.permission.PermissionResolver;
 import org.apache.ki.authz.permission.PermissionResolverAware;
 import org.apache.ki.authz.permission.WildcardPermissionResolver;
@@ -41,18 +27,22 @@ import org.apache.ki.cache.Cache;
 import org.apache.ki.cache.CacheManager;
 import org.apache.ki.subject.PrincipalCollection;
 import org.apache.ki.util.Initializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 
 /**
  * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding Authorization
  * (access control) support.
- *
- * <p>This implementation will perform all role and permission checks automatically (and subclasses do not have to
+ * <p/>
+ * This implementation will perform all role and permission checks automatically (and subclasses do not have to
  * write this logic) as long as the
  * {@link #getAuthorizationInfo(org.apache.ki.subject.PrincipalCollection)} method returns an
  * {@link AuthorizationInfo}.  Please see that method's JavaDoc for an in-depth explanation.
- *
- * <p>If you find that you do not want to utilize the {@link AuthorizationInfo AuthorizationInfo} construct,
+ * <p/>
+ * If you find that you do not want to utilize the {@link AuthorizationInfo AuthorizationInfo} construct,
  * you are of course free to subclass the {@link AuthenticatingRealm AuthenticatingRealm} directly instead and
  * implement the remaining Realm interface methods directly.  You might do this if you want have better control
  * over how the Role and Permission checks occur for your specific data source.  However, using AuthorizationInfo
@@ -144,8 +134,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     ============================================*/
     /**
      * Initializes this realm and potentially enables a cache, depending on configuration.
-     *
-     * <p>When this method is called, the following logic is executed:
+     * <p/>
+     * When this method is called, the following logic is executed:
      * <ol>
      * <li>If the {@link #setAuthorizationCache cache} property has been set, it will be
      * used to cache the AuthorizationInfo objects returned from {@link #getAuthorizationInfo}
@@ -217,35 +207,33 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * or <tt>null</tt> if no account could be found.  The resulting <code>AuthorizationInfo</code> object is used
      * by the other method implementations in this class to automatically perform access control checks for the
      * corresponding <code>Subject</code>.
-     *
-     * <p>This implementation obtains the actual <code>AuthorizationInfo</code> object from the subclass's
+     * <p/>
+     * This implementation obtains the actual <code>AuthorizationInfo</code> object from the subclass's
      * implementation of
      * {@link #doGetAuthorizationInfo(org.apache.ki.subject.PrincipalCollection) doGetAuthorizationInfo}, and then
      * caches it for efficient reuse if caching is enabled (see below).
-     *
-     * <p>Invocations of this method should be thought of as completely orthogonal to acquiring
+     * <p/>
+     * Invocations of this method should be thought of as completely orthogonal to acquiring
      * {@link #getAuthenticationInfo(org.apache.ki.authc.AuthenticationToken) authenticationInfo}, since either could
      * occur in any order.
-     *
-     * <p>For example, in &quot;Remember Me&quot; scenarios, the user identity is remembered (and
+     * <p/>
+     * For example, in &quot;Remember Me&quot; scenarios, the user identity is remembered (and
      * assumed) for their current session and an authentication attempt during that session might never occur.
      * But because their identity would be remembered, that is sufficient enough information to call this method to
      * execute any necessary authorization checks.  For this reason, authentication and authorization should be
      * loosely coupled and not depend on each other.
-     *
      * <h4>Caching</h4>
-     *
-     * <p>The <code>AuthorizationInfo</code> values returned from this method are cached for performant reuse
+     * The <code>AuthorizationInfo</code> values returned from this method are cached for performant reuse
      * if caching is enabled.  Caching is enabled automatically when a <code>CacheManager</code> has been
      * {@link #setCacheManager injected} and then the realm is {@link #init initialized}.  It can also be enabled by explictly
      * calling {@link #initAuthorizationCache() initAuthorizationCache()}.
-     *
-     * <p>If caching is enabled, the authorization cache will be checked first and if found, will return the cached
+     * <p/>
+     * If caching is enabled, the authorization cache will be checked first and if found, will return the cached
      * <code>AuthorizationInfo</code> immediately.  If caching is disabled, or there is a cache miss from the cache
      * lookup, the authorization info will be looked up from the underlying data store via the
      * {@link #doGetAuthorizationInfo(org.apache.ki.subject.PrincipalCollection)} method, which must be implemented by subclasses.
-     *
-     * <p><b>Please note:</b>  If caching is enabled and if any authorization data for an account is changed at
+     * <p/>
+     * <b>Please note:</b>  If caching is enabled and if any authorization data for an account is changed at
      * runtime, such as adding or removing roles and/or permissions, the subclass imlementation should clear the
      * cached AuthorizationInfo for that account via the
      * {@link #clearCachedAuthorizationInfo(org.apache.ki.subject.PrincipalCollection) clearCachedAuthorizationInfo}
@@ -258,7 +246,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @return the authorization information for the account associated with the specified <code>principals</code>,
      *         or <tt>null</tt> if no account could be found.
      */
-    public AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
+    protected AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
         if (principals == null) {
             return null;
@@ -322,7 +310,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
      */
     protected void clearCachedAuthorizationInfo(PrincipalCollection principals) {
-        if ( principals == null ) {
+        if (principals == null) {
             return;
         }
 
@@ -626,5 +614,43 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      */
     public void onLogout(PrincipalCollection principals) {
         clearCachedAuthorizationInfo(principals);
+    }
+
+    /**
+     * A utility method for subclasses that returns the first available principal of interest to this particular realm.
+     * The heuristic used to acquire the principal is as follows:
+     * <p/>
+     * <ul>
+     * <li>Attempt to get <em>this particular Realm's</em> 'primary' principal in the {@code PrincipalCollection} via a
+     * <code>principals.{@link PrincipalCollection#fromRealm(String) fromRealm}( {@link #getName() getName()} )</code>
+     * call.</li>
+     * <li>If the previous call does not result in any principals, attempt to get the overall 'primary' principal
+     * from the PrincipalCollection via a <code>principals.{@link PrincipalCollection#asList() asList()}.iterator().next()</code>
+     * call.</li>
+     * <li>If there are no principals from that call (or the PrincipalCollection argument was null to begin with),
+     * return {@code null}</li>
+     *
+     * @param principals the PrincipalCollection holding all principals (from all realms) assocatied with a single Subject.
+     * @return the 'primary' principal attributed to this particular realm, or the fallback 'master' principal if it
+     *         exists, or if not {@code null}.
+     * @since 1.0
+     */
+    protected Object getAvailablePrincipal(PrincipalCollection principals) {
+        if (principals == null || principals.isEmpty()) {
+            return null;
+        }
+        Object primary = null;
+        Collection thisPrincipals = principals.fromRealm(getName());
+        if (thisPrincipals != null && !thisPrincipals.isEmpty()) {
+            primary = thisPrincipals.iterator().next();
+        } else {
+            //no principals attributed to this particular realm.  Fall back to the 'master' primary, that which
+            //is returned as the first from all principals:
+            Collection allPrincipals = principals.asList();
+            if (allPrincipals != null && !allPrincipals.isEmpty()) {
+                primary = allPrincipals.iterator().next();
+            }
+        }
+        return primary;
     }
 }

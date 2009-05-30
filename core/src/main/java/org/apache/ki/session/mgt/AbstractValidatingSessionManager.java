@@ -18,21 +18,21 @@
  */
 package org.apache.ki.session.mgt;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Collection;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.ki.authz.HostUnauthorizedException;
+import org.apache.ki.authz.AuthorizationException;
 import org.apache.ki.session.ExpiredSessionException;
 import org.apache.ki.session.InvalidSessionException;
-import org.apache.ki.session.Session;
 import org.apache.ki.session.ReplacedSessionException;
+import org.apache.ki.session.Session;
 import org.apache.ki.util.Destroyable;
 import org.apache.ki.util.LifecycleUtils;
 import org.apache.ki.util.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -43,7 +43,7 @@ import org.apache.ki.util.ThreadContext;
  * @since 0.1
  */
 public abstract class AbstractValidatingSessionManager extends AbstractSessionManager
-    implements ValidatingSessionManager, Destroyable {
+        implements ValidatingSessionManager, Destroyable {
 
     //TODO - complete JavaDoc
 
@@ -56,7 +56,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = MILLIS_PER_HOUR;
 
     protected boolean sessionValidationSchedulerEnabled = true; //default
-    /** Scheduler used to validate sessions on a regular basis. */
+    /**
+     * Scheduler used to validate sessions on a regular basis.
+     */
     protected SessionValidationScheduler sessionValidationScheduler = null;
 
     protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
@@ -100,10 +102,10 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * frequently session should be validated (to check for orphans).  The default value is
      * {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
      * <p/>
-     * <p>If you override the default scheduler, it is assumed that overriding instance 'knows' how often to
+     * If you override the default scheduler, it is assumed that overriding instance 'knows' how often to
      * validate sessions, and this attribute will be ignored.
      * <p/>
-     * <p>Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
+     * Unless this method is called, the default value is {@link #DEFAULT_SESSION_VALIDATION_INTERVAL}.
      *
      * @param sessionValidationInterval the time in milliseconds between checking for valid sessions to reap orphans.
      */
@@ -144,7 +146,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * method invocations.
      *
      * @param autoCreateWhenInvalid if this session manager should automatically create a new session when an
-     *                                    invalid session is referenced
+     *                              invalid session is referenced
      */
     public void setAutoCreateWhenInvalid(boolean autoCreateWhenInvalid) {
         this.autoCreateWhenInvalid = autoCreateWhenInvalid;
@@ -172,8 +174,8 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
                 }
                 Serializable newId = start(hostAddress);
                 String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
-                    "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
-                    "new session id [" + newId + "] with exception so the caller may react accordingly.";
+                        "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
+                        "new session id [" + newId + "] with exception so the caller may react accordingly.";
                 throw new ReplacedSessionException(msg, ise, sessionId, newId);
             } else {
                 //propagate original exception:
@@ -181,8 +183,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             }
         }
     }
-
-
 
     /**
      * Looks up a session from the underlying data store based on the specified {@code sessionId}.
@@ -193,18 +193,18 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      */
     protected abstract Session retrieveSession(Serializable sessionId) throws InvalidSessionException;
 
-    protected final Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
+    protected Session createSession(Map initData) throws AuthorizationException {
         enableSessionValidationIfNecessary();
-        return doCreateSession(originatingHost);
+        return doCreateSession(initData);
     }
 
-    protected abstract Session doCreateSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException;
+    protected abstract Session doCreateSession(Map initData) throws AuthorizationException;
 
     protected void validate(Session session) throws InvalidSessionException {
         try {
             doValidate(session);
         } catch (ExpiredSessionException ese) {
-            onExpiration(session);            
+            onExpiration(session);
             notifyExpiration(session);
             //propagate to caller:
             throw ese;
@@ -216,9 +216,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             ((ValidatingSession) session).validate();
         } else {
             String msg = "The " + getClass().getName() + " implementation only supports validating " +
-                "Session implementations of the " + ValidatingSession.class.getName() + " interface.  " +
-                "Please either implement this interface in your session implementation or override the " +
-                AbstractValidatingSessionManager.class.getName() + ".doValidate(Session) method to perform validation.";
+                    "Session implementations of the " + ValidatingSession.class.getName() + " interface.  " +
+                    "Please either implement this interface in your session implementation or override the " +
+                    AbstractValidatingSessionManager.class.getName() + ".doValidate(Session) method to perform validation.";
             throw new IllegalStateException(msg);
         }
     }
@@ -293,7 +293,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         disableSessionValidation();
     }
 
-    /** @see ValidatingSessionManager#validateSessions() */
+    /**
+     * @see ValidatingSessionManager#validateSessions()
+     */
     public void validateSessions() {
         if (log.isInfoEnabled()) {
             log.info("Validating all active sessions...");
@@ -311,7 +313,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
                     if (log.isDebugEnabled()) {
                         boolean expired = (e instanceof ExpiredSessionException);
                         String msg = "Invalidated session with id [" + s.getId() + "]" +
-                            (expired ? " (expired)" : " (stopped)");
+                                (expired ? " (expired)" : " (stopped)");
                         log.debug(msg);
                     }
                     invalidCount++;

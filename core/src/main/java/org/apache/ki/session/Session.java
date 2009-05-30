@@ -24,13 +24,13 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * A <tt>Session</tt> is a stateful data context associated with a single Subject (user, 3rd party process,
+ * A {@code Session} is a stateful data context associated with a single Subject (user, 3rd party process,
  * etc) who interacts with a software system over a period of time.
- *
- * <p>A <tt>Session</tt> is intended to be managed by the business tier and accessible via other
+ * <p/>
+ * A {@code Session} is intended to be managed by the business tier and accessible via other
  * tiers without being tied to any given client technology.  This is a <em>great</em> benefit to Java
  * systems, since until now, the only viable session mechanisms were the
- * {@link javax.servlet.http.HttpSession HttpSession} or Stateful Session EJB's, which many times
+ * {@code javax.servlet.http.HttpSession} or Stateful Session EJB's, which many times
  * unnecessarily coupled applications to web or ejb technologies.
  *
  * @author Les Hazlewood
@@ -40,9 +40,9 @@ public interface Session {
 
     /**
      * Returns the unique identifier assigned by the system upon session creation.
-     *
-     * <p>All return values from this method are expected to have proper <code>toString()</code>,
-     * <code>equals()</code>, and <code>hashCode()</code> implementations. Good candiadates for such
+     * <p/>
+     * All return values from this method are expected to have proper {@code toString()},
+     * {@code equals()}, and {@code hashCode()} implementations. Good candiadates for such
      * an identifier are {@link java.util.UUID UUID}s, {@link java.lang.Integer Integer}s, and
      * {@link java.lang.String String}s.
      *
@@ -67,62 +67,64 @@ public interface Session {
 
     /**
      * Returns the time in milliseconds that the session session may remain idle before expiring.
-     *
      * <ul>
      * <li>A negative return value means the session will never expire.</li>
      * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
+     * <b>*Note:</b> if you are used to the {@code HttpSession}'s {@code getMaxInactiveInterval()} method, the scale on
+     * this method is different: Ki Sessions use millisecond values for timeout whereas
+     * {@code HttpSession.getMaxInactiveInterval} uses seconds.  Always use millisecond values with Ki sessions.
      *
      * @return the time in milliseconds the session may remain idle before expiring.
-     * @throws InvalidSessionException
-     *          if the session has been stopped or expired prior to calling this method.
+     * @throws InvalidSessionException if the session has been stopped or expired prior to calling this method.
      * @since 0.2
      */
     long getTimeout() throws InvalidSessionException;
 
     /**
      * Sets the time in milliseconds that the session may remain idle before expiring.
-     *
      * <ul>
      * <li>A negative return value means the session will never expire.</li>
      * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
+     * <p/>
+     * <b>*Note:</b> if you are used to the {@code HttpSession}'s {@code getMaxInactiveInterval()} method, the scale on
+     * this method is different: Ki Sessions use millisecond values for timeout whereas
+     * {@code HttpSession.getMaxInactiveInterval} uses seconds.  Always use millisecond values with Ki sessions.
      *
      * @param maxIdleTimeInMillis the time in milliseconds that the session may remain idle before expiring.
-     * @throws InvalidSessionException
-     *          if the session has been stopped or expired prior to calling this method.
+     * @throws InvalidSessionException if the session has been stopped or expired prior to calling this method.
      * @since 0.2
      */
     void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException;
 
-
     /**
-     * Returns the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
+     * Returns the {@code InetAddress} of the host that originated this session, or {@code null}
      * if the host address is unknown.
      *
-     * @return the <tt>InetAddress</tt> of the host that originated this session, or <tt>null</tt>
+     * @return the {@code InetAddress} of the host that originated this session, or {@code null}
      *         if the host address is unknown.
      * @see org.apache.ki.session.mgt.SessionManager#start(java.net.InetAddress)
      */
     InetAddress getHostAddress();
 
     /**
-     * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session.  This
-     * method can be used to ensure a session does not time out.
-     *
-     * <p>Most programmers won't use this method explicitly and will instead rely calling the other Session methods
+     * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session to the current time when
+     * this method is invoked.  This method can be used to ensure a session does not time out.
+     * <p/>
+     * Most programmers won't use this method explicitly and will instead rely calling the other Session methods
      * to update the time transparently, or on a framework during a remote procedure call or upon a web request.
-     *
-     * <p>This method is particularly useful however when supporting rich-client applications such as
+     * <p/>
+     * This method is particularly useful however when supporting rich-client applications such as
      * Java Web Start appp, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
      * environment that a user continuously interacts with the client-side application without a
      * server-side method call ever being invoked.  If this happens over a long enough period of
      * time, the user's server-side session could time-out.  Again, such cases are rare since most
      * rich-clients frequently require server-side method invocations.
-     *
-     * <p>In this example though, the user's session might still be considered valid because
+     * <p/>
+     * In this example though, the user's session might still be considered valid because
      * the user is actively &quot;using&quot; the application, just not communicating with the
      * server. But because no server-side method calls are invoked, there is no way for the server
      * to know if the user is sitting idle or not, so it must assume so to maintain session
@@ -130,8 +132,8 @@ public interface Session {
      * times to ensure that the next time a server-side method is invoked, the invocation will not
      * throw an {@link ExpiredSessionException ExpiredSessionException}.  In short terms, it could be used periodically
      * to ensure a session does not time out.
-     *
-     * <p>How often this rich-client &quot;maintenance&quot; might occur is entirely dependent upon
+     * <p/>
+     * How often this rich-client &quot;maintenance&quot; might occur is entirely dependent upon
      * the application and would be based on variables such as session timeout configuration,
      * usage characteristics of the client application, network utilization and application server
      * performance.
@@ -143,17 +145,17 @@ public interface Session {
 
     /**
      * Explicitly stops (invalidates) this session and releases all associated resources.
-     *
-     * <p>If this session has already been authenticated (i.e. the <code>Subject</code> that
+     * <p/>
+     * If this session has already been authenticated (i.e. the {@code Subject} that
      * owns this session has logged-in), calling this method explicitly might have undesired side effects:
      * <p/>
-     * It is common for a <code>Subject</code> implementation to retain authentication state in the
-     * <code>Session</code>.  If the session
+     * It is common for a {@code Subject} implementation to retain authentication state in the
+     * {@code Session}.  If the session
      * is explicitly stopped by application code by calling this method directly, it could clear out any
-     * authentication state that might exist, thereby effectively &quot;unauthenticating&quot; the <code>Subject</code>.
+     * authentication state that might exist, thereby effectively &quot;unauthenticating&quot; the {@code Subject}.
      * <p/>
      * As such, you might consider {@link org.apache.ki.subject.Subject#logout logging-out} the 'owning'
-     * <code>Subject</code> instead of manually calling this method, as a log out is expected to stop the
+     * {@code Subject} instead of manually calling this method, as a log out is expected to stop the
      * corresponding session automatically, and also allows framework code to execute additional cleanup logic.
      *
      * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
@@ -173,10 +175,10 @@ public interface Session {
 
     /**
      * Returns the object bound to this session identified by the specified key.  If there is no
-     * object bound under the key, <tt>null</tt> is returned.
+     * object bound under the key, {@code null} is returned.
      *
      * @param key the unique name of the object bound to this session
-     * @return the object bound under the specified <tt>key</tt> name or <tt>null</tt> if there is
+     * @return the object bound under the specified {@code key} name or {@code null} if there is
      *         no object bound under that name.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      *                                 this method.
@@ -184,14 +186,14 @@ public interface Session {
     Object getAttribute(Object key) throws InvalidSessionException;
 
     /**
-     * Binds the specified <tt>value</tt> to this session, uniquely identified by the specifed
-     * <tt>key</tt> name.  If there is already an object bound under the <tt>key</tt> name, that
-     * existing object will be replaced by the new <tt>value</tt>.
+     * Binds the specified {@code value} to this session, uniquely identified by the specifed
+     * {@code key} name.  If there is already an object bound under the {@code key} name, that
+     * existing object will be replaced by the new {@code value}.
+     * <p/>
+     * If the {@code value} parameter is null, it has the same effect as if
+     * {@link #removeAttribute(Object) removeAttribute} was called.
      *
-     * <p>If the <tt>value</tt> parameter is null, it has the same effect as if
-     * <tt>removeAttribute(key)</tt> was called.
-     *
-     * @param key   the name under which the <tt>value</tt> object will be bound in this session
+     * @param key   the name under which the {@code value} object will be bound in this session
      * @param value the object to bind in this session.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      *                                 this method.
@@ -199,11 +201,11 @@ public interface Session {
     void setAttribute(Object key, Object value) throws InvalidSessionException;
 
     /**
-     * Removes (unbinds) the object bound to this session under the specified <tt>key</tt> name.
+     * Removes (unbinds) the object bound to this session under the specified {@code key} name.
      *
      * @param key the name uniquely identifying the object to remove
-     * @return the object removed or <tt>null</tt> if there was no object bound under the name
-     *         <tt>key</tt>.
+     * @return the object removed or {@code null} if there was no object bound under the name
+     *         {@code key}.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      *                                 this method.
      */

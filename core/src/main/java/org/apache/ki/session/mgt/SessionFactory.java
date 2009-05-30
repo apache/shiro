@@ -21,11 +21,14 @@ package org.apache.ki.session.mgt;
 import org.apache.ki.session.Session;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 /**
- * A simple factory class that instantiates concrete {@link Session Session} instances.  This is mainly an
- * SPI mechanism to allow different concrete instances to be created at runtime if they need to be different the
- * defaults.  It is typically not used by end-users of the framework.
+ * A simple factory class that instantiates concrete {@link Session Session} instances.  This is mainly a
+ * mechanism to allow instances to be created at runtime if they need to be different the
+ * defaults.  It is not used by end-users of the framework, but rather those configuring Ki to work in an
+ * application, and is typically injected into the {@link org.apache.ki.mgt.SecurityManager SecurityManager} or a
+ * {@link SessionManager}.
  *
  * @author Les Hazlewood
  * @since 1.0
@@ -33,13 +36,19 @@ import java.net.InetAddress;
 public interface SessionFactory {
 
     /**
-     * Creates a new {@code Session} for the party with the given {@code originatinHost}.  The host argument may be
-     * {@code null} if unknown to the system.
-     *
-     * @param originatingHost the originating host InetAddress of the external party
-     *                        (user, 3rd party product, etc) that is attempting to initiate the session, or
-     *                        {@code null} if not known.
-     * @return an new {@code Session} instance.
+     * The key under which an originating host's {@link InetAddress InetAddress} may be found in the
+     * {@code initData} {@code Map} argument passed to the {@link #createSession(java.util.Map) createSession} method.
      */
-    Session createSession(InetAddress originatingHost);
+    public static final String ORIGINATING_HOST_KEY = SessionFactory.class.getName() + ".originatingHost";
+
+    /**
+     * Creates a new {@code Session} instance based on the specified initialization data.  The originating host's
+     * IP (InetAddress}, if available, should be accessible in the {@code Map} under the
+     * {@link #ORIGINATING_HOST_KEY} key.  If not available, no value will be returned for that key ({@code null}).
+     *
+     * @param initData the initialization data to be used during {@link Session} instantiation.
+     * @return a new {@code Session} instance.
+     * @since 1.0
+     */
+    Session createSession(Map initData);
 }

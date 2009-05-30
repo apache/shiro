@@ -30,10 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
-
+import java.util.Map;
 
 /**
  * Default business-tier implementation of a {@link ValidatingSessionManager}.  All session CRUD operations are
@@ -94,32 +93,17 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
         }
     }
 
-    protected Session doCreateSession(InetAddress originatingHost) {
+    protected Session doCreateSession(Map initData) {
+        Session s = newSessionInstance(initData);
         if (log.isTraceEnabled()) {
-            log.trace("Creating session for originating host [" + originatingHost + "]");
+            log.trace("Creating session for host {}", s.getHostAddress());
         }
-        Session s = newSessionInstance(originatingHost);
         create(s);
         return s;
     }
 
-    protected Session newSessionInstance(InetAddress inetAddress) {
-        return createSessionFromFactory(inetAddress);
-    }
-
-    /**
-     * Creates a {@link Session} using the {@link #setSessionFactory(SessionFactory) configured} {@code SessionFactory}
-     * instance.
-     *
-     * @param originatingHost the originating host InetAddress of the external party
-     *                        (user, 3rd party product, etc) that is attempting to initiate the session, or
-     *                        {@code null} if not known.
-     * @return an new {@code Session} instance.
-     * @since 1.0
-     */
-    protected Session createSessionFromFactory(InetAddress originatingHost) {
-        SessionFactory factory = getSessionFactory();
-        return factory.createSession(originatingHost);
+    protected Session newSessionInstance(Map initData) {
+        return getSessionFactory().createSession(initData);
     }
 
     /**

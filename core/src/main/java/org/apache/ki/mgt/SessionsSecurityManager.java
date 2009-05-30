@@ -18,7 +18,7 @@
  */
 package org.apache.ki.mgt;
 
-import org.apache.ki.authz.HostUnauthorizedException;
+import org.apache.ki.authz.AuthorizationException;
 import org.apache.ki.cache.CacheManagerAware;
 import org.apache.ki.session.InvalidSessionException;
 import org.apache.ki.session.Session;
@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -310,8 +311,12 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
                 ((SessionListenerRegistrar) this.sessionManager).remove(listener);
     }
 
-    public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
+    public Serializable start(InetAddress originatingHost) throws AuthorizationException {
         return this.sessionManager.start(originatingHost);
+    }
+
+    public Serializable start(Map initData) throws AuthorizationException {
+        return this.sessionManager.start(initData);
     }
 
     public Date getStartTimestamp(Serializable sessionId) {

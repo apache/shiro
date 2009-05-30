@@ -29,16 +29,13 @@ import org.apache.ki.session.Session;
  * <p/>
  * The <code>Session</code> write operations are defined as follows.  A call to any of these methods on this
  * proxy will immediately result in an {@link InvalidSessionException} being thrown:
- *
  * <ul>
- * <li>{@link org.apache.ki.session.Session#setTimeout(long) Session.setTimeout(long)}</li>
+ * <li>{@link Session#setTimeout(long) Session.setTimeout(long)}</li>
  * <li>{@link Session#touch() Session.touch()}</li>
  * <li>{@link Session#stop() Session.stop()}</li>
  * <li>{@link Session#setAttribute(Object, Object) Session.setAttribute(key,value)}</li>
- * <li>{@link org.apache.ki.session.Session#removeAttribute(Object) Session.removeAttribute(key)}</li>
+ * <li>{@link Session#removeAttribute(Object) Session.removeAttribute(key)}</li>
  * </ul>
- *
- * <p/>
  * Any other method invocation not listed above will result in a corresponding call to the underlying <code>Session</code>.
  *
  * @author Les Hazlewood
