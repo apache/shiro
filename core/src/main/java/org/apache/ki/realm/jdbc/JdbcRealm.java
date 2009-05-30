@@ -18,6 +18,17 @@
  */
 package org.apache.ki.realm.jdbc;
 
+import org.apache.ki.authc.*;
+import org.apache.ki.authz.AuthorizationException;
+import org.apache.ki.authz.AuthorizationInfo;
+import org.apache.ki.authz.SimpleAuthorizationInfo;
+import org.apache.ki.realm.AuthorizingRealm;
+import org.apache.ki.subject.PrincipalCollection;
+import org.apache.ki.util.JdbcUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,43 +36,19 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import javax.sql.DataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.ki.authc.AccountException;
-import org.apache.ki.authc.AuthenticationException;
-import org.apache.ki.authc.AuthenticationInfo;
-import org.apache.ki.authc.AuthenticationToken;
-import org.apache.ki.authc.SimpleAuthenticationInfo;
-import org.apache.ki.authc.UnknownAccountException;
-import org.apache.ki.authc.UsernamePasswordToken;
-import org.apache.ki.authz.AuthorizationException;
-import org.apache.ki.authz.AuthorizationInfo;
-import org.apache.ki.authz.SimpleAuthorizationInfo;
-import org.apache.ki.realm.AuthorizingRealm;
-import org.apache.ki.subject.PrincipalCollection;
-import org.apache.ki.util.JdbcUtils;
 
 
 /**
- * <p>
  * Realm that allows authentication and authorization via JDBC calls.  The default queries suggest a potential schema
  * for retrieving the user's password for authentication, and querying for a user's roles and permissions.  The
  * default queries can be overridden by setting the query properties of the realm.
- * </p>
- *
- * <p>
+ * <p/>
  * If the default implementation
  * of authentication and authorization cannot handle your schema, this class can be subclassed and the
  * appropriate methods overridden. (usually {@link #doGetAuthenticationInfo(org.apache.ki.authc.AuthenticationToken)},
  * {@link #getRoleNamesForUser(java.sql.Connection,String)}, and/or {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}
- * </p>
- *
- * <p>
+ * <p/>
  * This realm supports caching by extending from {@link org.apache.ki.realm.AuthorizingRealm}.
- * </p>
  *
  * @author Jeremy Haile
  * @since 0.2
@@ -149,16 +136,15 @@ public class JdbcRealm extends AuthorizingRealm {
     }
 
     /**
-     * <p>
      * Overrides the default query used to retrieve a user's permissions during authorization.  When using the default
      * implementation, this query must take a role name as the single parameter and return a row
      * per permission with three columns containing the fully qualified name of the permission class, the permission
      * name, and the permission actions (in that order).  If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthorizationInfo(org.apache.ki.subject.PrincipalCollection)} or just
      * {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}</p>
-     *
-     * <p><b>Permissions are only retrieved if you set {@link #permissionsLookupEnabled} to true.  Otherwise,
-     * this query is ignored.</b></p>
+     * <p/>
+     * <b>Permissions are only retrieved if you set {@link #permissionsLookupEnabled} to true.  Otherwise,
+     * this query is ignored.</b>
      *
      * @param permissionsQuery the query to use for retrieving permissions for a role.
      * @see #DEFAULT_PERMISSIONS_QUERY
@@ -262,7 +248,7 @@ public class JdbcRealm extends AuthorizingRealm {
      * This implementation of the interface expects the principals collection to return a String username keyed off of
      * this realm's {@link #getName() name}
      *
-     * @see AuthorizingRealm#getAuthorizationInfo(org.apache.ki.subject.PrincipalCollection)
+     * @see #getAuthorizationInfo(org.apache.ki.subject.PrincipalCollection)
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -272,7 +258,7 @@ public class JdbcRealm extends AuthorizingRealm {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
-        String username = (String) principals.fromRealm(getName()).iterator().next();
+        String username = (String) getAvailablePrincipal(principals);
 
         Connection conn = null;
         Set<String> roleNames = null;
@@ -282,7 +268,7 @@ public class JdbcRealm extends AuthorizingRealm {
 
             // Retrieve roles and permissions from database
             roleNames = getRoleNamesForUser(conn, username);
-            if( permissionsLookupEnabled ) {
+            if (permissionsLookupEnabled) {
                 permissions = getPermissions(conn, username, roleNames);
             }
 
@@ -299,7 +285,7 @@ public class JdbcRealm extends AuthorizingRealm {
         }
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roleNames);
-        info.setStringPermissions( permissions );
+        info.setStringPermissions(permissions);
         return info;
 
     }

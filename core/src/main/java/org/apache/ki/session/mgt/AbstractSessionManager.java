@@ -18,6 +18,7 @@
  */
 package org.apache.ki.session.mgt;
 
+import org.apache.ki.authz.AuthorizationException;
 import org.apache.ki.authz.HostUnauthorizedException;
 import org.apache.ki.session.*;
 import org.slf4j.Logger;
@@ -25,9 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 
 /**
@@ -42,7 +41,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    /** Default main session timeout value, equal to {@code 30} minutes. */
+    /**
+     * Default main session timeout value, equal to {@code 30} minutes.
+     */
     public static final long DEFAULT_GLOBAL_SESSION_TIMEOUT = 30 * MILLIS_PER_MINUTE;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractSessionManager.class);
@@ -90,11 +91,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     }
 
     public void setSessionListeners(Collection<SessionListener> listeners) {
-        if (listeners == null) {
-            this.listeners = new ArrayList<SessionListener>();
-        } else {
-            this.listeners = listeners;
-        }
+        this.listeners = listeners != null ? listeners : new ArrayList<SessionListener>();
     }
 
     public void add(SessionListener listener) {
@@ -105,8 +102,17 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         return this.listeners.remove(listener);
     }
 
-    public Serializable start(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
-        Session session = createSession(originatingHost);
+    public Serializable start(InetAddress originatingHost) throws AuthorizationException {
+        Map<String, InetAddress> initData = null;
+        if (originatingHost != null) {
+            initData = new HashMap<String, InetAddress>();
+            initData.put(SessionFactory.ORIGINATING_HOST_KEY, originatingHost);
+        }
+        return start(initData);
+    }
+
+    public Serializable start(Map initData) throws AuthorizationException {
+        Session session = createSession(initData);
         onStart(session);
         notifyStart(session);
         return session.getId();
@@ -265,17 +271,17 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     protected abstract Session doGetSession(Serializable sessionId) throws InvalidSessionException;
 
     /**
-     * Creates a new {@code Session Session} instance based on the specified (possibly {@code null}) originating host.
-     * Implementing classes must manage the persistent state of this session such that it could be acquired
-     * via the {@link #getSession(java.io.Serializable)} method.
+     * Creates a new {@code Session Session} instance based on the specified (possibly {@code null})
+     * initialization data.  Implementing classes must manage the persistent state of the returned session such that it
+     * could later be acquired via the {@link #getSession(java.io.Serializable)} method.
      *
-     * @param originatingHost the originating host InetAddress of the external party
-     *                        (user, 3rd party product, etc) that is attempting to initiate the session, or
-     *                        {@code null} if not known.
-     * @return a new {@code Session} instance.
-     * @throws HostUnauthorizedException if the specified host is not allowed to initiate a new session.
-     * @throws IllegalArgumentException  if the argiment is invalid, for example, if the underlying implementation
-     *                                   requires non-{@code null} values and the argument is {@code null}.
+     * @param initData the initialization data that can be used by the implementation or underlying
+     *                 {@link SessionFactory} when instantiating the internal {@code Session} instance.
+     * @return the new {@code Session} instance.
+     * @throws HostUnauthorizedException if the system access control policy restricts access based
+     *                                   on client location/IP and the specified hostAddress hasn't been enabled.
+     * @throws AuthorizationException    if the system access control policy does not allow the currently executing
+     *                                   caller to start sessions.
      */
-    protected abstract Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException;
+    protected abstract Session createSession(Map initData) throws AuthorizationException;
 }

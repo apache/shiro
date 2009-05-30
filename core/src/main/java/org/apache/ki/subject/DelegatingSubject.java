@@ -18,15 +18,6 @@
  */
 package org.apache.ki.subject;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.ki.authc.AuthenticationException;
 import org.apache.ki.authc.AuthenticationToken;
 import org.apache.ki.authc.InetAuthenticationToken;
@@ -39,6 +30,14 @@ import org.apache.ki.session.ProxiedSession;
 import org.apache.ki.session.Session;
 import org.apache.ki.session.mgt.DelegatingSession;
 import org.apache.ki.util.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Implementation of the <tt>Subject</tt> interface that delegates
@@ -144,7 +143,9 @@ public class DelegatingSubject implements Subject {
         return this.inetAddress;
     }
 
-    /** @see Subject#getPrincipal() */
+    /**
+     * @see Subject#getPrincipal()
+     */
     public Object getPrincipal() {
         PrincipalCollection principals = getPrincipals();
         if (principals == null || principals.isEmpty()) {
@@ -290,10 +291,9 @@ public class DelegatingSubject implements Subject {
         }
 
         if (this.session == null && create) {
-            if (log.isTraceEnabled()) {
-                log.trace("starting session for address [" + getInetAddress() + "]");
-            }
-            Serializable sessionId = this.securityManager.start(getInetAddress());
+            InetAddress host = getInetAddress();
+            log.trace("Starting session for host {}", host);
+            Serializable sessionId = this.securityManager.start(host);
             this.session = decorateSession(sessionId);
         }
         return this.session;

@@ -18,22 +18,6 @@
  */
 package org.apache.ki.realm.activedirectory;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-import javax.naming.ldap.LdapContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.ki.authc.AuthenticationInfo;
 import org.apache.ki.authc.AuthenticationToken;
 import org.apache.ki.authc.SimpleAuthenticationInfo;
@@ -45,13 +29,24 @@ import org.apache.ki.realm.ldap.AbstractLdapRealm;
 import org.apache.ki.realm.ldap.LdapContextFactory;
 import org.apache.ki.realm.ldap.LdapUtils;
 import org.apache.ki.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.naming.ldap.LdapContext;
+import java.util.*;
 
 
 /**
- * <p>An {@link Realm} that authenticates with an active directory LDAP
+ * A {@link Realm} that authenticates with an active directory LDAP
  * server to determine the roles for a particular user.  This implementation
  * queries for the user's groups and then maps the group names to roles using the
- * {@link #groupRolesMap}.</p>
+ * {@link #groupRolesMap}.
  *
  * @author Tim Veil
  * @author Jeremy Haile
@@ -94,11 +89,11 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
 
     /**
-     * <p>Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
+     * Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
      * specified username.  This method binds to the LDAP server using the provided username and password -
-     * which if successful, indicates that the password is correct.</p>
-     *
-     * <p>This method can be overridden by subclasses to query the LDAP server in a more complex way.</p>
+     * which if successful, indicates that the password is correct.
+     * <p/>
+     * This method can be overridden by subclasses to query the LDAP server in a more complex way.
      *
      * @param token              the authentication token provided by the user.
      * @param ldapContextFactory the factory used to build connections to the LDAP server.
@@ -126,14 +121,14 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
 
     /**
-     * <p>Builds an {@link org.apache.ki.authz.AuthorizationInfo} object by querying the active directory LDAP context for the
+     * Builds an {@link org.apache.ki.authz.AuthorizationInfo} object by querying the active directory LDAP context for the
      * groups that a user is a member of.  The groups are then translated to role names by using the
-     * configured {@link #groupRolesMap}.</p>
-     *
-     * <p>This implementation expects the <tt>principal</tt> argument to be a String username.
-     *
-     * <p>Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
-     * complex way.  Note that this default implementation does not support permissions, only roles.</p>
+     * configured {@link #groupRolesMap}.
+     * <p/>
+     * This implementation expects the <tt>principal</tt> argument to be a String username.
+     * <p/>
+     * Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
+     * complex way.  Note that this default implementation does not support permissions, only roles.
      *
      * @param principals         the principal of the Subject whose account is being retrieved.
      * @param ldapContextFactory the factory used to create LDAP connections.
@@ -142,10 +137,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      */
     protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
 
-        String username;
-
-
-        username = (String) principals.fromRealm(getName()).iterator().next();
+        String username = (String) getAvailablePrincipal(principals);
 
         // Perform context search
         LdapContext ldapContext = ldapContextFactory.getSystemLdapContext();
@@ -173,7 +165,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         String userPrincipalName = username;
-        if( principalSuffix != null ) {
+        if (principalSuffix != null) {
             userPrincipalName += principalSuffix;
         }
 
@@ -240,6 +232,5 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         }
         return roleNames;
     }
-
 
 }

@@ -21,6 +21,7 @@ package org.apache.ki.session.mgt;
 import org.apache.ki.session.Session;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 /**
  * {@code SessionFactory} implementation that generates {@link SimpleSession} instances.
@@ -41,5 +42,13 @@ public class SimpleSessionFactory implements SessionFactory {
      */
     public Session createSession(InetAddress originatingHost) {
         return new SimpleSession(originatingHost);
+    }
+
+    public Session createSession(Map initData) {
+        if (initData != null && initData.containsKey(SessionFactory.ORIGINATING_HOST_KEY)) {
+            InetAddress host = (InetAddress) initData.get(SessionFactory.ORIGINATING_HOST_KEY);
+            return new SimpleSession(host);
+        }
+        return new SimpleSession();
     }
 }

@@ -18,24 +18,17 @@
  */
 package org.apache.ki.realm;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.ki.authc.Account;
-import org.apache.ki.authc.AuthenticationException;
-import org.apache.ki.authc.AuthenticationInfo;
-import org.apache.ki.authc.AuthenticationToken;
-import org.apache.ki.authc.ExpiredCredentialsException;
-import org.apache.ki.authc.LockedAccountException;
-import org.apache.ki.authc.SimpleAccount;
-import org.apache.ki.authc.UsernamePasswordToken;
+import org.apache.ki.authc.*;
 import org.apache.ki.authz.AuthorizationInfo;
 import org.apache.ki.authz.SimpleAuthorizingAccount;
 import org.apache.ki.authz.SimpleRole;
 import org.apache.ki.subject.PrincipalCollection;
 import org.apache.ki.util.CollectionUtils;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -43,7 +36,7 @@ import org.apache.ki.util.CollectionUtils;
  * uses a set of configured user accounts and roles to support authentication and authorization.  Each account entry
  * specifies the username, password, and roles for a user.  Roles can also be mapped
  * to permissions and associated with users.</p>
- *
+ * <p/>
  * <p>User accounts and roles are stored in two {@link org.apache.ki.cache.Cache cache}s, so it is the Cache manager implementation that
  * determines if this class stores all data in memory or spools to disk or clusters it, etc based on the
  * Caches it creates.
@@ -93,7 +86,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     public void addAccount(String username, String password) {
-        addAccount(username, password, (String[])null);
+        addAccount(username, password, (String[]) null);
     }
 
     public void addAccount(String username, String password, String... roles) {
@@ -147,7 +140,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         SimpleAccount account = (SimpleAccount) getAuthorizationCache().get(upToken.getUsername());
 
-        if( account != null ) {
+        if (account != null) {
 
             if (account.isLocked()) {
                 throw new LockedAccountException("Account [" + account + "] is locked.");
@@ -156,7 +149,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
                 String msg = "The credentials for account [" + account + "] are expired";
                 throw new ExpiredCredentialsException(msg);
             }
-            
+
         }
 
         return account;
@@ -167,6 +160,6 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     protected Object getAuthorizationCacheKey(PrincipalCollection principals) {
-        return principals.fromRealm(getName()).iterator().next(); //returns the username
+        return getAvailablePrincipal(principals); //returns the username, being the only principal from this Realm
     }
 }

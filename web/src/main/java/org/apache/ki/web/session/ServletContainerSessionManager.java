@@ -18,19 +18,20 @@
  */
 package org.apache.ki.web.session;
 
-import java.io.Serializable;
-import java.net.InetAddress;
+import org.apache.ki.authz.AuthorizationException;
+import org.apache.ki.session.InvalidSessionException;
+import org.apache.ki.session.Session;
+import org.apache.ki.session.mgt.AbstractSessionManager;
+import org.apache.ki.session.mgt.SessionFactory;
+import org.apache.ki.web.WebUtils;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.ki.authz.AuthorizationException;
-import org.apache.ki.authz.HostUnauthorizedException;
-import org.apache.ki.session.InvalidSessionException;
-import org.apache.ki.session.Session;
-import org.apache.ki.session.mgt.AbstractSessionManager;
-import org.apache.ki.web.WebUtils;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Map;
 
 
 /**
@@ -44,8 +45,8 @@ import org.apache.ki.web.WebUtils;
  * Note that because this implementation relies on the {@link HttpSession HttpSession}, it is only functional in a
  * servlet container.  I.e. it is <em>NOT</em> capable of supporting Sessions any clients other than
  * {@code HttpRequest/HttpResponse} based clients.
- *
- * <p>Therefore, if you need {@code Session} access from heterogenous client mediums (e.g. web pages,
+ * <p/>
+ * Therefore, if you need {@code Session} access from heterogenous client mediums (e.g. web pages,
  * Flash applets, Java Web Start applications, etc.), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
  * instead.  The {@code DefaultWebSessionManager} supports both traditional web-based access as well as non web-based
  * clients.
@@ -79,13 +80,20 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         return session;
     }
 
-    protected Session createSession(InetAddress originatingHost) throws HostUnauthorizedException, IllegalArgumentException {
+    protected Session createSession(Map initData) throws AuthorizationException {
+
         ServletRequest request = WebUtils.getRequiredServletRequest();
         HttpSession httpSession = ((HttpServletRequest) request).getSession();
 
         //ensure that the httpSession timeout reflects what is configured:
         long timeoutMillis = getGlobalSessionTimeout();
         httpSession.setMaxInactiveInterval((int) (timeoutMillis / MILLIS_PER_SECOND));
+
+
+        InetAddress originatingHost = null;
+        if (initData != null && initData.containsKey(SessionFactory.ORIGINATING_HOST_KEY)) {
+            originatingHost = (InetAddress) initData.get(SessionFactory.ORIGINATING_HOST_KEY);
+        }
 
         return createSession(httpSession, originatingHost);
     }

@@ -22,8 +22,6 @@ import org.apache.ki.authz.AuthorizationInfo;
 import org.apache.ki.realm.AuthorizingRealm;
 import org.apache.ki.subject.PrincipalCollection;
 
-import java.util.Collection;
-
 /**
  * @author Les Hazlewood
  * @since Aug 28, 2008 5:13:06 PM
@@ -41,7 +39,7 @@ public class MyRealm extends AuthorizingRealm {
      * in this method. The {@link org.apache.ki.realm.AuthenticatingRealm AuthenticatingRealm} superclass will do
      * that automatically via the use of a configured
      * {@link org.apache.ki.authc.credential.CredentialsMatcher CredentialsMatcher} (see this example's corresponding
-     * <code>ki.ini</code> file to see a configured credentials matcher).
+     * {@code ki.ini} file to see a configured credentials matcher).
      * <p/>
      * All that is required is that the account information include directly the credentials found in the EIS.
      *
@@ -74,18 +72,8 @@ public class MyRealm extends AuthorizingRealm {
     }
 
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        //simulate a call to an underlying data store:
-
-        //get only the principals that this realm cares about:
-        Collection thisRealmPrincipals = principals.fromRealm(getName());
-
-        //note that the return value of 'getName()' here is whatever you specify it to be in ki.ini
-        //in this case, the ki.ini file calls it 'myRealm'.  All realms must have a unique name.
-
-        //Since this realm supplied these principals from the doGetAuthenticationInfo method above when the
-        //user logged-in and that method in this simple example has only one principal - a username - we can safely
-        //assume the only element in this collection is that username.
-        String username = (String) thisRealmPrincipals.iterator().next();
+        //get the principal this realm cares about:
+        String username = (String) getAvailablePrincipal(principals);
 
         //call the underlying EIS for the account data:
         return getAccount(username);
