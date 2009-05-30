@@ -31,30 +31,30 @@ import org.apache.ki.subject.Subject;
  * A <tt>SecurityManager</tt> executes all security operations for <em>all</em> Subjects (aka users) across a
  * single application.
  * <p/>
- * <p>The interface itself primarily exists as a convenience - it extends the {@link org.apache.ki.authc.Authenticator},
+ * The interface itself primarily exists as a convenience - it extends the {@link org.apache.ki.authc.Authenticator},
  * {@link Authorizer}, and {@link SessionManager} interfaces, thereby consolidating
  * these behaviors into a single point of reference.  For most Ki usages, this simplifies configuration and
  * tends to be a more convenient approach than referencing <code>Authenticator</code>, <code>Authorizer</code>, and
  * <code>SessionManager</code> instances seperately;  instead one only needs to interact with a
- * single <tt>SecurityManager</tt> instance.</p>
+ * single <tt>SecurityManager</tt> instance.
  * <p/>
- * <p>In addition to the above three interfaces, three unique methods are provided by this interface by itself,
+ * In addition to the above three interfaces, three unique methods are provided by this interface by itself,
  * {@link #login}, {@link #logout} and {@link #getSubject}.  A {@link org.apache.ki.subject.Subject Subject} executes
  * authentication, authorization, and session operations for a <em>single</em> user, and as such can only be
  * managed by <tt>A SecurityManager</tt> which is aware of all three functions.  The three parent interfaces on the
  * other hand do not 'know' about <tt>Subject</tt>s to ensure a clean separation of concerns.
  * <p/>
- * <p><b>Usage Note</b>: In actuality the large majority of application programmers won't interact with a SecurityManager
+ * <b>Usage Note</b>: In actuality the large majority of application programmers won't interact with a SecurityManager
  * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently
  * executing user.
  * <p/>
- * <p>In that case, the application programmer can call the
+ * In that case, the application programmer can call the
  * {@link #getSubject() getSubject()} method and then use that returned instance for continued interaction with
  * Ki.  If your application code does not have a direct handle to the application's
  * <code>SecurityManager</code>, you can use {@link org.apache.ki.SecurityUtils SecurityUtils} anywhere in your code
  * to achieve the same result.
  * <p/>
- * <p>Framework developers on the other hand might find working with an actual SecurityManager useful.
+ * Framework developers on the other hand might find working with an actual SecurityManager useful.
  *
  * @author Les Hazlewood
  * @see org.apache.ki.mgt.DefaultSecurityManager
@@ -68,8 +68,8 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * <p/>
      * Note that most application developers should probably not call this method directly unless they have a good
      * reason for doing so.  The preferred way to log in a Subject is to call
-     * <code>{@link org.apache.ki.subject.Subject#login Subject.login(authenticationToken)}</code> (usually after acquiring the
-     * Subject by calling {@link org.apache.ki.SecurityUtils#getSubject() SecurityUtils.getSubject()}).
+     * <code>subject.{@link org.apache.ki.subject.Subject#login login(authenticationToken)}</code> (usually after
+     * acquiring the Subject by calling {@link org.apache.ki.SecurityUtils#getSubject() SecurityUtils.getSubject()}).
      * <p/>
      * Framework developers on the other hand might find calling this method directly useful in certain cases.
      *
@@ -84,9 +84,10 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
     /**
      * Logs out the specified Subject from the system.
      * <p/>
-     * <p>Note that most application developers should not call this method unless they have a good reason for doing
-     * so.  The preferred way to logout a Subject is to call <code>{@link org.apache.ki.subject.Subject#logout Subject.logout()}</code>, not
-     * the <code>SecurityManager</code> directly.
+     * Note that most application developers should not call this method unless they have a good reason for doing
+     * so.  The preferred way to logout a Subject is to call
+     * <code>{@link org.apache.ki.subject.Subject#logout Subject.logout()}</code>, not the
+     * <code>SecurityManager</code> directly.
      * <p/>
      * Framework developers on the other hand might find calling this method directly useful in certain cases.
      *
