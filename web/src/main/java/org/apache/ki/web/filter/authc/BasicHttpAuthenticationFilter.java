@@ -18,29 +18,28 @@
  */
 package org.apache.ki.web.filter.authc;
 
+import org.apache.ki.authc.AuthenticationToken;
+import org.apache.ki.codec.Base64;
+import org.apache.ki.web.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.ki.authc.AuthenticationToken;
-import org.apache.ki.codec.Base64;
-import org.apache.ki.web.WebUtils;
 
 
 /**
  * Requires the requesting user to be {@link org.apache.ki.subject.Subject#isAuthenticated() authenticated} for the
  * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
- *
+ * <p/>
  * <p>This implementation is a 'clean room' Java implementation of Basic HTTP Authentication specification per
  * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
- *
+ * <p/>
  * <p>Basic authentication functions as follows:</p>
- *
+ * <p/>
  * <ol>
  * <li>A request comes in for a resource that requires authentication.</li>
  * <li>The server replies with a 401 response status, sets the <code>WWW-Authenticate</code> header, and the contents of a
@@ -52,7 +51,7 @@ import org.apache.ki.web.WebUtils;
  * <li>The client then sends another request for the same resource with the following header:<p/>
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
  * </ol>
- *
+ * <p/>
  * <p>The {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
  * only be called if the subject making the request is not
  * {@link org.apache.ki.subject.Subject#isAuthenticated() authenticated} </p>
@@ -316,7 +315,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      * Returns the username obtained from the
      * {@link #getAuthzHeader(javax.servlet.ServletRequest) authorizationHeader}.
      * <p/>
-     * Once the <code>authzHeader is split per the RFC (based on the space character, " "), the resulting split tokens
+     * Once the {@code authzHeader} is split per the RFC (based on the space character ' '), the resulting split tokens
      * are translated into the username/password pair by the
      * {@link #getPrincipalsAndCredentials(String, String) getPrincipalsAndCredentials(scheme,encoded)} method.
      *
