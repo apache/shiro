@@ -89,10 +89,11 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         long timeoutMillis = getGlobalSessionTimeout();
         httpSession.setMaxInactiveInterval((int) (timeoutMillis / MILLIS_PER_SECOND));
 
-
-        InetAddress originatingHost = null;
+        InetAddress originatingHost;
         if (initData != null && initData.containsKey(SessionFactory.ORIGINATING_HOST_KEY)) {
             originatingHost = (InetAddress) initData.get(SessionFactory.ORIGINATING_HOST_KEY);
+        } else {
+            originatingHost = WebUtils.getInetAddress(request);
         }
 
         return createSession(httpSession, originatingHost);

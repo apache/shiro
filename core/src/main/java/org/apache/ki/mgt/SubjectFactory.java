@@ -18,13 +18,13 @@
  */
 package org.apache.ki.mgt;
 
-import java.net.InetAddress;
-
 import org.apache.ki.authc.AuthenticationInfo;
 import org.apache.ki.authc.AuthenticationToken;
 import org.apache.ki.session.Session;
 import org.apache.ki.subject.PrincipalCollection;
 import org.apache.ki.subject.Subject;
+
+import java.net.InetAddress;
 
 /**
  * A {@code SubjectFactory} is responsible for returning {@link Subject Subject} instances as needed.
@@ -39,7 +39,7 @@ public interface SubjectFactory {
      * <p/>
      * The '{@code existing}' {@code Subject} method argument is the {@code Subject} that executed the
      * authentication attempt but still reflects an unauthenticated state.  The instance returned from this method
-     * is the {code Subject} instance to use for future application use and reflects an authenticated state.
+     * is the {@code Subject} instance to use for future application use and reflects an authenticated state.
      *
      * @param token    the {@code AuthenticationToken} submitted during the successful authentication attempt.
      * @param info     the {@code AuthenticationInfo} generated due to the successful authentication attempt.

@@ -18,21 +18,7 @@
  */
 package org.apache.ki.web.servlet;
 
-import java.beans.PropertyDescriptor;
-import java.io.IOException;
-import java.net.InetAddress;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.ki.config.Configuration;
 import org.apache.ki.config.ConfigurationException;
 import org.apache.ki.mgt.SecurityManager;
@@ -44,6 +30,15 @@ import org.apache.ki.web.DefaultWebSecurityManager;
 import org.apache.ki.web.WebUtils;
 import org.apache.ki.web.config.IniWebConfiguration;
 import org.apache.ki.web.config.WebConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.net.InetAddress;
 
 
 /**
@@ -292,7 +287,7 @@ public class KiFilter extends OncePerRequestFilter {
         if (sm == null) {
             if (log.isInfoEnabled()) {
                 log.info("Configuration instance [" + config + "] did not provide a SecurityManager.  No config " +
-                    "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
+                        "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
             }
             sm = new DefaultWebSecurityManager();
         }
@@ -309,8 +304,8 @@ public class KiFilter extends OncePerRequestFilter {
                 this.configClassName = configCN;
             } else {
                 String msg = "configClassName fully qualified class name value [" + configCN + "] is not " +
-                    "available in the classpath.  Please ensure you have typed it correctly and the " +
-                    "corresponding class or jar is in the classpath.";
+                        "available in the classpath.  Please ensure you have typed it correctly and the " +
+                        "corresponding class or jar is in the classpath.";
                 throw new ConfigurationException(msg);
             }
         }
@@ -331,7 +326,7 @@ public class KiFilter extends OncePerRequestFilter {
     protected void applyFilterConfig(WebConfiguration conf) {
         if (log.isDebugEnabled()) {
             String msg = "Attempting to inject the FilterConfig (using 'setFilterConfig' method) into the " +
-                "instantiated WebConfiguration for any wrapped Filter initialization...";
+                    "instantiated WebConfiguration for any wrapped Filter initialization...";
             log.debug(msg);
         }
         try {
@@ -355,9 +350,9 @@ public class KiFilter extends OncePerRequestFilter {
                     PropertyUtils.setProperty(conf, "config", this.config);
                 } else {
                     String msg = "The 'config' filter param was specified, but there is no " +
-                        "'setConfig(String)' method on the Configuration instance [" + conf + "].  If you do " +
-                        "not require the 'config' filter param, please comment it out, or if you do need it, " +
-                        "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
+                            "'setConfig(String)' method on the Configuration instance [" + conf + "].  If you do " +
+                            "not require the 'config' filter param, please comment it out, or if you do need it, " +
+                            "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
                     throw new ConfigurationException(msg);
                 }
             } catch (Exception e) {
@@ -376,9 +371,9 @@ public class KiFilter extends OncePerRequestFilter {
                     PropertyUtils.setProperty(conf, "configUrl", this.configUrl);
                 } else {
                     String msg = "The 'configUrl' filter param was specified, but there is no " +
-                        "'setConfigUrl(String)' method on the Configuration instance [" + conf + "].  If you do " +
-                        "not require the 'configUrl' filter param, please comment it out, or if you do need it, " +
-                        "please ensure your Configuration instance has a 'setConfigUrl(String)' method to receive it.";
+                            "'setConfigUrl(String)' method on the Configuration instance [" + conf + "].  If you do " +
+                            "not require the 'configUrl' filter param, please comment it out, or if you do need it, " +
+                            "please ensure your Configuration instance has a 'setConfigUrl(String)' method to receive it.";
                     throw new ConfigurationException(msg);
                 }
             } catch (Exception e) {
@@ -390,11 +385,7 @@ public class KiFilter extends OncePerRequestFilter {
 
     protected boolean isHttpSessions() {
         SecurityManager secMgr = getSecurityManager();
-        if (secMgr instanceof DefaultWebSecurityManager) {
-            return ((DefaultWebSecurityManager) secMgr).isHttpSessionMode();
-        } else {
-            return true;
-        }
+        return !(secMgr instanceof DefaultWebSecurityManager) || ((DefaultWebSecurityManager) secMgr).isHttpSessionMode();
     }
 
     protected InetAddress getInetAddress(ServletRequest request) {
@@ -402,16 +393,33 @@ public class KiFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Wraps the original HttpServletRequest in a {@link KiHttpServletRequest}
+     * Wraps the original HttpServletRequest in a {@link KiHttpServletRequest}, which is required for supporting
+     * Servlet Specification behavior backed by a {@link org.apache.ki.subject.Subject Subject} instance.
+     *
+     * @param orig the original Servlet Container-provided incoming {@code HttpServletRequest} instance.
+     * @return {@link KiHttpServletRequest KiHttpServletRequest} instance wrapping the original.
      * @since 1.0
      */
     protected ServletRequest wrapServletRequest(HttpServletRequest orig) {
         return new KiHttpServletRequest(orig, getServletContext(), isHttpSessions());
     }
 
-    /** @since 1.0 */
-    protected ServletRequest prepareServletRequest(ServletRequest request, ServletResponse response,
-                                                   FilterChain chain) {
+    /**
+     * 'Prepare's the {@code ServletRequest} instance that will be passed to the {@code FilterChain} for request
+     * processing.
+     * <p/>
+     * If the {@code ServletRequest} is an instance of {@link HttpServletRequest}, the value returned from this method
+     * is obtained by calling {@link #wrapServletRequest(javax.servlet.http.HttpServletRequest)} to allow Ki-specific
+     * HTTP behavior, otherwise the original {@code ServletRequest} argument is returned.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @param chain    the Servlet Container provided {@code FilterChain} that will receive the returned request.
+     * @return the {@code ServletRequest} instance that will be passed to the {@code FilterChain} for request processing.
+     * @since 1.0
+     */
+    @SuppressWarnings({"UnusedDeclaration"})
+    protected ServletRequest prepareServletRequest(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletRequest toUse = request;
         if (request instanceof HttpServletRequest) {
             HttpServletRequest http = (HttpServletRequest) request;
@@ -420,17 +428,43 @@ public class KiFilter extends OncePerRequestFilter {
         return toUse;
     }
 
-    /** @since 1.0 */
+    /**
+     * Returns a new {@link KiHttpServletResponse} instance, wrapping the {@code orig} argument, in order to provide
+     * correct URL rewriting behavior required by the Servlet Specification when using Ki-based sessions (and not
+     * Servlet Container HTTP-based sessions).
+     *
+     * @param orig    the original {@code HttpServletResponse} instance provided by the Servlet Container.
+     * @param request the {@code KiHttpServletRequest} instance wrapping the original request.
+     * @return the wrapped ServletResponse instance to use during {@link FilterChain} execution.
+     * @since 1.0
+     */
     protected ServletResponse wrapServletResponse(HttpServletResponse orig, KiHttpServletRequest request) {
         return new KiHttpServletResponse(orig, getServletContext(), request);
     }
 
-    /** @since 1.0 */
-    protected ServletResponse prepareServletResponse(ServletRequest request, ServletResponse response,
-                                                     FilterChain chain) {
+    /**
+     * 'Prepare's the {@code ServletResponse} instance that will be passed to the {@code FilterChain} for request
+     * processing.
+     * <p/>
+     * This implementation delegates to {@link #wrapServletRequest(javax.servlet.http.HttpServletRequest)}
+     * only if Ki-based sessions are enabled (that is, !{@link #isHttpSessions()}) and the request instance is a
+     * {@link KiHttpServletRequest}.  This ensures that any URL rewriting that occurs is handled correctly using the
+     * Ki-managed Session's sessionId and not a servlet container session ID.
+     * <p/>
+     * If HTTP-based sessions are enabled (the default), then this method does nothing and just returns the
+     * {@code ServletResponse} argument as-is, relying on the default Servlet Container URL rewriting logic.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @param chain    the Servlet Container provided {@code FilterChain} that will receive the returned request.
+     * @return the {@code ServletResponse} instance that will be passed to the {@code FilterChain} during request processing.
+     * @since 1.0
+     */
+    @SuppressWarnings({"UnusedDeclaration"})
+    protected ServletResponse prepareServletResponse(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletResponse toUse = response;
-        if (isHttpSessions() && (request instanceof KiHttpServletRequest) &&
-            (response instanceof HttpServletResponse)) {
+        if (!isHttpSessions() && (request instanceof KiHttpServletRequest) &&
+                (response instanceof HttpServletResponse)) {
             //the KiHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using Ki sessions (i.e. not simple HttpSession based sessions):
             toUse = wrapServletResponse((HttpServletResponse) response, (KiHttpServletRequest) request);
@@ -438,7 +472,25 @@ public class KiFilter extends OncePerRequestFilter {
         return toUse;
     }
 
-    /** @since 1.0 */
+    /**
+     * Binds the current request/response pair and additional information to a thread-local to be made available to Ki
+     * during the course of the request/response process.  This implementation binds the request/response pair to the
+     * currently executing thread via the {@link ThreadContext}, as well as the Request's
+     * {@link javax.servlet.ServletRequest#getRemoteAddr() remoteAddr} (client InetAddress), the application's
+     * configured {@link SecurityManager}, and sets up and binds the currently executing
+     * {@link org.apache.ki.subject.Subject Subject} instance to ensure the Subject is available before any request
+     * processing occurs.
+     * <p/>
+     * To guarantee properly cleaned threads in a thread-pooled Servlet Container environment, the corresponding
+     * {@link #unbind} method must be called in a {@code finally} block to ensure that the thread remains clean even
+     * in the event of an exception thrown while processing the request.  This class's
+     * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
+     * method implement does indeed perform this.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse
+     * @since 1.0
+     */
     protected void bind(ServletRequest request, ServletResponse response) {
         WebUtils.bindInetAddressToThread(request);
         WebUtils.bind(request);
@@ -447,43 +499,124 @@ public class KiFilter extends OncePerRequestFilter {
         ThreadContext.bind(getSecurityManager().getSubject());
     }
 
-    /** @since 1.0 */
+    /**
+     * Unbinds (removes out of scope) the current {@code ServletRequest} and {@link ServletResponse}.
+     * <p/>
+     * This method implementation merely calls {@code ThreadContext}.{@link ThreadContext#clear() clear()} to ensure
+     * that <em>everything</em> that might have been bound to the thread by Ki has been removed to ensure the underlying
+     * Thread may be safely re-used in a thread-pooled Servlet Container environment.
+     *
+     * @param request  the just-processed incoming servlet response - ignored
+     * @param response the just-processed outgoing servlet response - ignored
+     * @since 1.0
+     */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected void unbind(ServletRequest request, ServletResponse response) {
         //arguments ignored, just clear the thread:
-        ThreadContext.unbindSubject();
-        ThreadContext.unbindSecurityManager();
-        WebUtils.unbindServletResponse();
-        WebUtils.unbindServletRequest();
-        ThreadContext.unbindInetAddress();
+        ThreadContext.clear();
     }
 
-    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse,
-                                    FilterChain origChain) throws ServletException, IOException {
+    /**
+     * {@code doFilterInternal} implementation that sets-up, executes, and cleans-up a Ki-filtered request.  It
+     * performs the following ordered operations:
+     * <ol>
+     * <li>{@link #prepareServletRequest(ServletRequest, ServletResponse, FilterChain) Prepares}
+     * the incoming {@code ServletRequest} for use during Ki's processing</li>
+     * <li>{@link #prepareServletResponse(ServletRequest, ServletResponse, FilterChain) Prepares}
+     * the outgoing {@code ServletResponse} for use during Ki's processing</li>
+     * <li>{@link #bind(ServletRequest,ServletResponse) Binds} the request/response pair
+     * and associated data to the currently executing thread for use during processing</li>
+     * <li>{@link #executeChain(ServletRequest,ServletResponse,FilterChain) Executes}
+     * the appropriate {@code FilterChain}</li>
+     * <li>{@link #unbind(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Unbinds} the request/response
+     * pair and any other associated data from the thread.
+     * </ul>
+     * <p/>
+     * The {@link #unbind(javax.servlet.ServletRequest, javax.servlet.ServletResponse) unbind} method is called in a
+     * {@code finally} block to guarantee the thread may be cleanly re-used in a thread-pooled Servlet Container
+     * environment.
+     *
+     * @param servletRequest  the incoming {@code ServletRequest}
+     * @param servletResponse the outgoing {@code ServletResponse}
+     * @param chain           the container-provided {@code FilterChain} to execute
+     * @throws ServletException if an error occurs
+     * @throws IOException      if an IO error occurs
+     */
+    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
+            throws ServletException, IOException {
 
-        ServletRequest request = prepareServletRequest(servletRequest, servletResponse, origChain);
-        ServletResponse response = prepareServletResponse(request, servletResponse, origChain);
+        ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
+        ServletResponse response = prepareServletResponse(request, servletResponse, chain);
 
         bind(request, response);
 
-        FilterChain chain = getConfiguration().getChain(request, response, origChain);
-        if (chain == null) {
-            chain = origChain;
-            if (log.isTraceEnabled()) {
-                log.trace("No security filter chain configured for the current request.  Using default.");
-            }
-        } else {
-            if (log.isTraceEnabled()) {
-                log.trace(" Using configured filter chain for the current request.");
-            }
-        }
-
         try {
-            chain.doFilter(request, response);
+            executeChain(request, response, chain);
         } finally {
             unbind(request, response);
         }
     }
 
+    /**
+     * Returns the {@code FilterChain} to execute for the given request.
+     * <p/>
+     * The {@code origChain} argument is the
+     * original {@code FilterChain} supplied by the Servlet Container, but it may be modified to provide
+     * more behavior by appending further chains according to the Ki configuration.
+     * <p/>
+     * This implementation returns the chain that will actually be executed by acquiring the chain from a
+     * <code>{@link #getConfiguration() getConfiguration()}.{@link org.apache.ki.web.config.WebConfiguration#getChain getChain}(request,response,origChain)</code>
+     * method call.  The configuration itself determines which chain to execute, typically based on URL configuration.
+     * If no chain is returned from this method call (returns {@code null}), then the {@code origChain}
+     * will be returned by default.
+     *
+     * @param request   the incoming ServletRequest
+     * @param response  the outgoing ServletResponse
+     * @param origChain the original {@code FilterChain} provided by the Servlet Container
+     * @return the {@link FilterChain} to execute for the given request
+     * @since 1.0
+     */
+    protected FilterChain getExecutionChain(ServletRequest request, ServletResponse response, FilterChain origChain) {
+        FilterChain chain = getConfiguration().getChain(request, response, origChain);
+        if (chain == null) {
+            chain = origChain;
+            log.trace("No security filter chain configured for the current request.  Using default.");
+        } else {
+            log.trace(" Using configured filter chain for the current request.");
+        }
+        return chain;
+    }
+
+    /**
+     * Executes a {@link FilterChain} for the given request.
+     * <p/>
+     * This implementation first delegates to
+     * <code>{@link #getExecutionChain(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain) getExecutionChain}</code>
+     * to allow the application's Ki configuration to determine exactly how the chain should execute.  The resulting
+     * value from that call is then executed directly by calling the returned {@code FilterChain}'s
+     * {@link FilterChain#doFilter doFilter} method.  That is:
+     * <p/>
+     * <pre>
+     * FilterChain chain = {@link #getExecutionChain}(request, response, origChain);
+     * chain.{@link FilterChain#doFilter doFilter}(request,response);</pre>
+     *
+     * @param request   the incoming ServletRequest
+     * @param response  the outgoing ServletResponse
+     * @param origChain the Servlet Container-provided chain that may be wrapped further by an application-configured
+     *                  chain of Filters.
+     * @throws IOException      if the underlying {@code chain.doFilter} call results in an IOException
+     * @throws ServletException if the underlying {@code chain.doFilter} call results in a ServletException
+     * @since 1.0
+     */
+    protected void executeChain(ServletRequest request, ServletResponse response, FilterChain origChain)
+            throws IOException, ServletException {
+        FilterChain chain = getExecutionChain(request, response, origChain);
+        chain.doFilter(request, response);
+    }
+
+    /**
+     * Destroys this Filter by destroying the {@link #getConfiguration() configuration} object.
+     */
     public void destroy() {
         LifecycleUtils.destroy(getConfiguration());
     }
