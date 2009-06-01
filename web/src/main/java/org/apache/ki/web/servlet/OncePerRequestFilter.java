@@ -18,29 +18,23 @@
  */
 package org.apache.ki.web.servlet;
 
-import java.io.IOException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
+import org.apache.ki.util.Nameable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.ki.util.Nameable;
+import javax.servlet.*;
+import java.io.IOException;
 
 
 /**
  * Filter base class that guarantees to be just executed once per request,
  * on any servlet container. It provides a {@link #doFilterInternal}
  * method with HttpServletRequest and HttpServletResponse arguments.
- *
+ * <p/>
  * <p>The {@link #getAlreadyFilteredAttributeName} method determines how
  * to identify that a request is already filtered. The default implementation
  * is based on the configured name of the concrete filter instance.
- *
+ * <p/>
  * <p><b>NOTE</b> This class was borrowed from the Spring framework, and as such,
  * all copyright notices and author names have remained in tact.
  *
@@ -50,7 +44,9 @@ import org.apache.ki.util.Nameable;
  */
 public abstract class OncePerRequestFilter extends ServletContextSupport implements Filter, Nameable {
 
-    /** Private internal log instance. */
+    /**
+     * Private internal log instance.
+     */
     private static final Logger log = LoggerFactory.getLogger(OncePerRequestFilter.class);
 
     /**
@@ -60,10 +56,14 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      */
     public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
 
-    /** FilterConfig provided by the Servlet container at startup. */
+    /**
+     * FilterConfig provided by the Servlet container at startup.
+     */
     protected FilterConfig filterConfig;
 
-    /** The name of this filter, unique within an application. */
+    /**
+     * The name of this filter, unique within an application.
+     */
     private String name;
 
     /**
@@ -218,19 +218,22 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      * @return whether the given request should <i>not</i> be filtered
      * @throws ServletException in case of errors
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected boolean shouldNotFilter(ServletRequest request) throws ServletException {
         return false;
     }
 
 
     /**
-     * Same contract as for <code>doFilter</code>, but guaranteed to be
-     * just invoked once per request. Provides HttpServletRequest and
-     * HttpServletResponse arguments instead of the default ServletRequest
-     * and ServletResponse ones.
+     * Same contract as for <code>doFilter</code>, but guaranteed to be just invoked once per request.
+     *
+     * @param request  incoming {@code ServletRequest}
+     * @param response outgoing {@code ServletResponse}
+     * @param chain    the {@code FilterChain} to execute
+     * @throws ServletException if there is a problem processing the request
+     * @throws IOException      if there is an IO problem processing the request
      */
-    protected abstract void doFilterInternal(
-            ServletRequest request, ServletResponse response, FilterChain filterChain)
+    protected abstract void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException;
 
     /**

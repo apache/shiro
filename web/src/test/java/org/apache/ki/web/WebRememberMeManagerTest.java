@@ -18,21 +18,18 @@
  */
 package org.apache.ki.web;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
 import org.apache.ki.authc.AuthenticationInfo;
 import org.apache.ki.authc.SimpleAuthenticationInfo;
 import org.apache.ki.authc.UsernamePasswordToken;
 import org.apache.ki.subject.PrincipalCollection;
 import org.apache.ki.subject.SimplePrincipalCollection;
-import org.apache.ki.web.WebRememberMeManager;
-import org.apache.ki.web.WebUtils;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * TODO - class javadoc
@@ -84,10 +81,11 @@ public class WebRememberMeManagerTest {
         verify(mockRequest);
 
         assertTrue(collection != null);
+        //noinspection ConstantConditions
         assertTrue(collection.iterator().next().equals("user"));
     }
 
-   // KI-69  @Test
+    // KI-69  @Test
     public void getRememberedPrincipalsDecryptionError() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
         WebUtils.bind(mockRequest);
