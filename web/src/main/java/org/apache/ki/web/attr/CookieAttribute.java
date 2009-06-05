@@ -200,7 +200,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
      * Sets the Cookie's {@link Cookie#getPath() path} setting.  If the argument is <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
      * <p/>
-     * <p>The default is <code>null</code>.</p>
+     * The default is <code>null</code>.
      *
      * @param path the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
      *             cookie is created.
@@ -213,7 +213,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
      * Returns the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
      * <p/>
-     * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
+     * The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.
      *
      * @return the Cookie's {@link Cookie#setMaxAge(int) maxAge}
      */
@@ -225,7 +225,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
      * Sets the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
      * <p/>
-     * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
+     * The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.
      *
      * @param maxAge the Cookie's {@link Cookie#setMaxAge(int) maxAge}
      */
@@ -273,18 +273,15 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     public T onRetrieveValue(ServletRequest request, ServletResponse response) {
         T value = null;
 
+        String cookieName = getName();
         String stringValue;
-        Cookie cookie = getCookie(toHttp(request), getName());
+        Cookie cookie = getCookie(toHttp(request), cookieName);
         if (cookie != null && cookie.getMaxAge() != 0) {
             stringValue = cookie.getValue();
-            if (log.isDebugEnabled()) {
-                log.debug("Found string value [" + stringValue + "] from HttpServletRequest Cookie [" + getName() + "]");
-            }
+            log.debug("Found string value [{}] from Cookie [{}]", stringValue, cookieName);
             value = fromStringValue(stringValue);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("No value found in request Cookies under cookie name [" + getName() + "]");
-            }
+            log.debug("Not value found in request Cookies under cookie name [{}]", cookieName);
         }
 
         return value;
@@ -295,7 +292,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
      * <tt>request</tt>'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
      * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
      * <p/>
-     * <p>The default is <code>null</code>.</p>
+     * The default is <code>null</code>.
      *
      * @return the path to be used as the path when the cookie is created or removed.
      */
@@ -307,7 +304,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         if (calculatePath == null) {
             calculatePath = ROOT_PATH;
         }
-        log.trace("calculatePath: returning=" + calculatePath);
+        log.trace("calculated path: {}", calculatePath);
         return calculatePath;
     }
 
@@ -351,8 +348,8 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         response.addCookie(cookie);
 
         if (log.isTraceEnabled()) {
-            log.trace("Added Cookie [" + name + "] to path [" + path + "] with value [" +
-                    stringValue + "] to the HttpServletResponse.");
+            log.trace("Added Cookie [{}] to path [{}] with value [{}] to the HttpServletResponse",
+                    new Object[]{name, path, stringValue});
         }
     }
 
