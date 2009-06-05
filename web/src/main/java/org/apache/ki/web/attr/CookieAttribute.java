@@ -18,18 +18,17 @@
  */
 package org.apache.ki.web.attr;
 
-import java.beans.PropertyEditor;
+import org.apache.ki.util.StringUtils;
+import static org.apache.ki.web.WebUtils.toHttp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.ki.util.StringUtils;
-import static org.apache.ki.web.WebUtils.toHttp;
+import java.beans.PropertyEditor;
 
 /**
  * A <tt>CookieAttribute</tt> stores an object as a {@link Cookie} for access on later requests.
@@ -71,14 +70,23 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
      * <code>-1</code>, indicating the cookie should expire when the browser closes.
      */
     public static final int DEFAULT_MAX_AGE = -1;
+
+    /**
+     * <code>-1</code> indicating that no version property should be set on the cookie.
+     */
+    public static final int DEFAULT_VERSION = -1;
+
     /**
      * Default value is <code>false</code>.
      */
     public static final boolean DEFAULT_SECURE = false;
 
-    private String path = DEFAULT_PATH;
+    private String comment = null;
+    private String domain = null;
     private int maxAge = DEFAULT_MAX_AGE;
+    private String path = DEFAULT_PATH;
     private boolean secure = DEFAULT_SECURE;
+    private int version = DEFAULT_VERSION;
 
     public CookieAttribute() {
     }
@@ -97,9 +105,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Constructs a <tt>CookieAttribute</tt> using a {@link Cookie Cookie} with the specified
      * {@link Cookie#getName() name} and {@link Cookie#getPath() path}.
-     *
+     * <p/>
      * <p>A <tt>null</tt> <tt>path</tt> value means the request context's path will be used by default.
-     *
+     * <p/>
      * <p>The Cookie's {@link Cookie#getMaxAge() maxAge} will be <tt>-1</tt>, indicating the Cookie will persist until
      * browser shutdown.
      *
@@ -114,7 +122,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Constructs a <tt>CookieAttribute</tt> using a {@link Cookie Cookie} with the specified
      * {@link Cookie#getName() name} and {@link Cookie#getMaxAge() maxAge}.
-     *
+     * <p/>
      * <p>The Cookie's {@link javax.servlet.http.Cookie#getPath() path} will be the <tt>Request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}.
      *
@@ -158,11 +166,27 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         setMaxAge(maxAge);
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
     /**
      * Returns the Cookie's {@link Cookie#getPath() path} setting.  If <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
-     *
-     * <p>The default is <code>null</code>.</p>
+     * <p/>
+     * The default is <code>null</code>.
      *
      * @return the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
      *         cookie is created.
@@ -173,31 +197,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
 
     /**
-     * Returns the Cookie's calculated path setting.  If {@link Cookie#getPath() path} <tt>null</tt>, then the
-     * <tt>request</tt>'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
-     * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
-     * <p/>
-     * <p>The default is <code>null</code>.</p>
-     *
-     * @return the path to be used as the path when the cookie is created or removed.
-     */
-    public String calculatePath(HttpServletRequest request) {
-        String calculatePath = getPath() != null ? getPath() : request.getContextPath();
-
-        //fix for http://issues.apache.org/jira/browse/JSEC-34:
-        calculatePath = StringUtils.clean(calculatePath);
-        if (calculatePath == null) {
-            calculatePath = ROOT_PATH;
-        }
-        log.trace ("calculatePath: returning=" + calculatePath);
-        return calculatePath;
-    }
-
-
-    /**
      * Sets the Cookie's {@link Cookie#getPath() path} setting.  If the argument is <tt>null</tt>, the <tt>request</tt>'s
      * {@link javax.servlet.http.HttpServletRequest#getContextPath() context path} will be used.
-     *
+     * <p/>
      * <p>The default is <code>null</code>.</p>
      *
      * @param path the Cookie's path, or <tt>null</tt> if the request's context path should be used as the path when the
@@ -210,7 +212,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Returns the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
-     *
+     * <p/>
      * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
      *
      * @return the Cookie's {@link Cookie#setMaxAge(int) maxAge}
@@ -222,7 +224,7 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     /**
      * Sets the Cookie's {@link Cookie#setMaxAge(int) maxAge} setting.  Please see that JavaDoc for the semantics on
      * the repercussions of negative, zero, and positive values for the maxAge.
-     *
+     * <p/>
      * <p>The default value is <code>-1</code>, meaning the cookie will expire when the browser is closed.</p>
      *
      * @param maxAge the Cookie's {@link Cookie#setMaxAge(int) maxAge}
@@ -237,6 +239,14 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
     public void setSecure(boolean secure) {
         this.secure = secure;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     /**
@@ -280,12 +290,36 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         return value;
     }
 
+    /**
+     * Returns the Cookie's calculated path setting.  If {@link Cookie#getPath() path} <tt>null</tt>, then the
+     * <tt>request</tt>'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
+     * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
+     * <p/>
+     * <p>The default is <code>null</code>.</p>
+     *
+     * @return the path to be used as the path when the cookie is created or removed.
+     */
+    public String calculatePath(HttpServletRequest request) {
+        String calculatePath = getPath() != null ? getPath() : request.getContextPath();
+
+        //fix for http://issues.apache.org/jira/browse/JSEC-34:
+        calculatePath = StringUtils.clean(calculatePath);
+        if (calculatePath == null) {
+            calculatePath = ROOT_PATH;
+        }
+        log.trace("calculatePath: returning=" + calculatePath);
+        return calculatePath;
+    }
+
     public void onStoreValue(T value, ServletRequest servletRequest, ServletResponse servletResponse) {
 
         HttpServletRequest request = toHttp(servletRequest);
         HttpServletResponse response = toHttp(servletResponse);
 
         String name = getName();
+        String comment = getComment();
+        String domain = getDomain();
+        int version = getVersion();
         int maxAge = getMaxAge();
         String path = calculatePath(request);
 
@@ -299,12 +333,23 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
         Cookie cookie = new Cookie(name, stringValue);
         cookie.setMaxAge(maxAge);
         cookie.setPath(path);
+
+        if (comment != null) {
+            cookie.setComment(comment);
+        }
+        if (domain != null) {
+            cookie.setDomain(domain);
+        }
+        if (version > DEFAULT_VERSION) {
+            cookie.setVersion(version);
+        }
+
         if (isSecure()) {
             cookie.setSecure(true);
         }
 
         response.addCookie(cookie);
-        
+
         if (log.isTraceEnabled()) {
             log.trace("Added Cookie [" + name + "] to path [" + path + "] with value [" +
                     stringValue + "] to the HttpServletResponse.");
@@ -322,6 +367,17 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
             //retrieved cookie?)
             // my testing shows none of these browsers will remove cookie if setPath() is not invoked: FF3, Chrome, IE7, Safari windows
             cookie.setPath(calculatePath(request));
+
+            String domain = getDomain();
+            if (domain != null) {
+                cookie.setDomain(domain);
+            }
+
+            int version = getVersion();
+            if (version > DEFAULT_VERSION) {
+                cookie.setVersion(version);
+            }
+
             cookie.setSecure(isSecure());
             toHttp(response).addCookie(cookie);
             log.trace("Removed cookie[" + getName() + "] with path [" + calculatePath(request) + "] from HttpServletResponse.");

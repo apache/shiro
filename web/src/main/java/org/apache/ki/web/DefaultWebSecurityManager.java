@@ -23,6 +23,7 @@ import org.apache.ki.realm.Realm;
 import org.apache.ki.session.mgt.SessionManager;
 import org.apache.ki.subject.PrincipalCollection;
 import org.apache.ki.util.LifecycleUtils;
+import org.apache.ki.web.attr.CookieAttribute;
 import org.apache.ki.web.servlet.KiHttpServletRequest;
 import org.apache.ki.web.session.DefaultWebSessionManager;
 import org.apache.ki.web.session.ServletContainerSessionManager;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
+import java.io.Serializable;
 import java.util.Collection;
 
 
@@ -50,10 +52,14 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     public static final String HTTP_SESSION_MODE = "http";
     public static final String KI_SESSION_MODE = "ki";
 
-    /** The key that is used to store subject principals in the session. */
+    /**
+     * The key that is used to store subject principals in the session.
+     */
     public static final String PRINCIPALS_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_PRINCIPALS_SESSION_KEY";
 
-    /** The key that is used to store whether or not the user is authenticated in the session. */
+    /**
+     * The key that is used to store whether or not the user is authenticated in the session.
+     */
     public static final String AUTHENTICATED_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
     private String sessionMode = HTTP_SESSION_MODE; //default
@@ -82,6 +88,33 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         setSubjectFactory(new WebSubjectFactory(this, sessionManager));
     }
 
+    //TODO - yuck - create an interface
+    protected WebRememberMeManager getRememberMeManagerForCookieAttributes() {
+        if (!(getRememberMeManager() instanceof WebRememberMeManager)) {
+            String msg = "Currently the " + getClass().getName() + " implementation only allows setting " +
+                    "rememberMe cookie attributes directly if the underlying RememberMeManager implementation " +
+                    "is an " + WebRememberMeManager.class.getName() + " instance.";
+            throw new IllegalStateException(msg);
+        }
+        return (WebRememberMeManager) getRememberMeManager();
+    }
+
+    protected CookieAttribute<String> getRememberMeCookieAttribute() {
+        return (CookieAttribute<String>) getRememberMeManagerForCookieAttributes().getIdentityAttribute();
+    }
+
+    public void setRememberMeCookieAttribute(CookieAttribute<String> cookieAttribute) {
+        getRememberMeManagerForCookieAttributes().setIdentityAttribute(cookieAttribute);
+    }
+
+    public void setRememberMeCookieName(String name) {
+        getRememberMeCookieAttribute().setName(name);
+    }
+
+    public void setRememberMeCookieDomain(String domain) {
+        getRememberMeCookieAttribute().setDomain(domain);
+    }
+
     /**
      * Sets the path used to store the remember me cookie.  This determines which paths
      * are able to view the remember me cookie.
@@ -89,19 +122,31 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
      * @param rememberMeCookiePath the path to use for the remember me cookie.
      */
     public void setRememberMeCookiePath(String rememberMeCookiePath) {
-        ((WebRememberMeManager) getRememberMeManager()).setCookiePath(rememberMeCookiePath);
+        getRememberMeCookieAttribute().setPath(rememberMeCookiePath);
     }
 
     /**
      * Sets the maximum age allowed for the remember me cookie.  This basically sets how long
      * a user will be remembered by the "remember me" feature.  Used when calling
      * {@link javax.servlet.http.Cookie#setMaxAge(int) maxAge}.  Please see that JavaDoc for the semantics on the
-     * repercussions of negative, zero, and positive values for the maxAge.
+     * repercussions of negative, zero, and positive values for the maxAge.                           i
      *
      * @param rememberMeMaxAge the maximum age for the remember me cookie.
      */
     public void setRememberMeCookieMaxAge(Integer rememberMeMaxAge) {
-        ((WebRememberMeManager) getRememberMeManager()).setCookieMaxAge(rememberMeMaxAge);
+        getRememberMeCookieAttribute().setMaxAge(rememberMeMaxAge);
+    }
+
+    public void setRememberMeCookieVersion(int version) {
+        getRememberMeCookieAttribute().setVersion(version);
+    }
+
+    public void setRememberMeCookieSecure(boolean secure) {
+        getRememberMeCookieAttribute().setSecure(secure);
+    }
+
+    public void setRememberMeCookieComment(String comment) {
+        getRememberMeCookieAttribute().setComment(comment);
     }
 
     private DefaultWebSessionManager getSessionManagerForCookieAttributes() {
@@ -116,20 +161,40 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
         return (DefaultWebSessionManager) sessionManager;
     }
 
+    protected CookieAttribute<Serializable> getSessionIdCookieAttribute() {
+        return getSessionManagerForCookieAttributes().getSessionIdCookieAttribute();
+    }
+
+    public void setSessionIdCookieAttribute(CookieAttribute<Serializable> cookieAttribute) {
+        getSessionManagerForCookieAttributes().setSessionIdCookieAttribute(cookieAttribute);
+    }
+
     public void setSessionIdCookieName(String name) {
-        getSessionManagerForCookieAttributes().setSessionIdCookieName(name);
+        getSessionIdCookieAttribute().setName(name);
+    }
+
+    public void setSessionIdCookieDomain(String domain) {
+        getSessionIdCookieAttribute().setDomain(domain);
     }
 
     public void setSessionIdCookiePath(String path) {
-        getSessionManagerForCookieAttributes().setSessionIdCookiePath(path);
+        getSessionIdCookieAttribute().setPath(path);
     }
 
     public void setSessionIdCookieMaxAge(int maxAge) {
-        getSessionManagerForCookieAttributes().setSessionIdCookieMaxAge(maxAge);
+        getSessionIdCookieAttribute().setMaxAge(maxAge);
+    }
+
+    public void setSessionIdCookieVersion(int version) {
+        getSessionIdCookieAttribute().setVersion(version);
     }
 
     public void setSessionIdCookieSecure(boolean secure) {
-        getSessionManagerForCookieAttributes().setSessionIdCookieSecure(secure);
+        getSessionIdCookieAttribute().setSecure(secure);
+    }
+
+    public void setSessionIdCookieComment(String comment) {
+        getSessionIdCookieAttribute().setComment(comment);
     }
 
     public String getSessionMode() {
