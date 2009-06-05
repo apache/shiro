@@ -125,6 +125,10 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         getSessionIdCookieAttribute().setName(name);
     }
 
+    public void setSessionIdCookieDomain(String domain) {
+        getSessionIdCookieAttribute().setDomain(domain);
+    }
+
     public void setSessionIdCookiePath(String path) {
         getSessionIdCookieAttribute().setPath(path);
     }
@@ -133,8 +137,16 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         getSessionIdCookieAttribute().setMaxAge(maxAge);
     }
 
+    public void setSessionIdCookieVersion(int version) {
+        getSessionIdCookieAttribute().setVersion(version);
+    }
+
     public void setSessionIdCookieSecure(boolean secure) {
         getSessionIdCookieAttribute().setSecure(secure);
+    }
+
+    public void setSessionIdCookieComment(String comment) {
+        getSessionIdCookieAttribute().setComment(comment);
     }
 
     protected void ensureCookieSessionIdStore() {
@@ -155,7 +167,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     }
 
     protected void validateSessionOrigin(ServletRequest request, Session session)
-        throws HostUnauthorizedException {
+            throws HostUnauthorizedException {
         InetAddress requestIp = WebUtils.getInetAddress(request);
         InetAddress originIp = session.getHostAddress();
         Serializable sessionId = session.getId();
@@ -163,25 +175,25 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if (originIp == null) {
             if (requestIp != null) {
                 String msg = "No IP Address was specified when creating session with id [" +
-                    sessionId + "].  Attempting to access session from " +
-                    "IP [" + requestIp + "].  Origin IP and request IP must match.";
+                        sessionId + "].  Attempting to access session from " +
+                        "IP [" + requestIp + "].  Origin IP and request IP must match.";
                 throw new HostUnauthorizedException(msg);
             }
         } else {
             if (requestIp != null) {
                 if (!requestIp.equals(originIp)) {
                     String msg = "Session with id [" + sessionId + "] originated from [" +
-                        originIp + "], but the current HttpServletRequest originated " +
-                        "from [" + requestIp + "].  Disallowing session access: " +
-                        "session origin and request origin must match to allow access.";
+                            originIp + "], but the current HttpServletRequest originated " +
+                            "from [" + requestIp + "].  Disallowing session access: " +
+                            "session origin and request origin must match to allow access.";
                     throw new HostUnauthorizedException(msg);
                 }
 
             } else {
                 String msg = "No IP Address associated with the current HttpServletRequest.  " +
-                    "Session with id [" + sessionId + "] originated from " +
-                    "[" + originIp + "].  Request IP must match the session's origin " +
-                    "IP in order to gain access to that session.";
+                        "Session with id [" + sessionId + "] originated from " +
+                        "[" + originIp + "].  Request IP must match the session's origin " +
+                        "IP in order to gain access to that session.";
                 throw new HostUnauthorizedException(msg);
             }
         }
@@ -214,15 +226,15 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         Serializable id = cookieSessionIdAttribute.retrieveValue(request, response);
         if (id != null) {
             request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
-                KiHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
+                    KiHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         } else {
             id = getSessionIdRequestParamAttribute().retrieveValue(request, response);
             if (id != null) {
                 request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
-                    KiHttpServletRequest.URL_SESSION_ID_SOURCE);
+                        KiHttpServletRequest.URL_SESSION_ID_SOURCE);
             }
         }
-        if ( id != null ) {
+        if (id != null) {
             request.setAttribute(KiHttpServletRequest.REFERENCED_SESSION_ID, id);
         }
         return id;
@@ -272,7 +284,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      *          if the caller is not authorized to access the session associated with the request.
      */
     public Session getSession(ServletRequest request, ServletResponse response)
-        throws InvalidSessionException, AuthorizationException {
+            throws InvalidSessionException, AuthorizationException {
 
         Session session = null;
         Serializable sessionId = getReferencedSessionId(request, response);
@@ -285,7 +297,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             } catch (InvalidSessionException ise) {
                 if (log.isTraceEnabled()) {
                     log.trace("Request Session with id [" + ise.getSessionId() + "] is invalid, message: [" +
-                        ise.getMessage() + "].  Removing any associated session cookie...");
+                            ise.getMessage() + "].  Removing any associated session cookie...");
                 }
                 removeSessionIdCookie(request, response);
                 //give subclass a chance to do something additional if necessary.  Otherwise returning null is just fine:
@@ -319,7 +331,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         super.onStop(session);
         ServletRequest request = WebUtils.getRequiredServletRequest();
         ServletResponse response = WebUtils.getRequiredServletResponse();
-        removeSessionIdCookie(request,response);
+        removeSessionIdCookie(request, response);
         getSessionIdCookieAttribute().removeValue(request, response);
     }
 }
