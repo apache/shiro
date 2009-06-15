@@ -19,37 +19,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.apache.ki</groupId>
-        <artifactId>ki-root</artifactId>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-root</artifactId>
         <version>1.0-incubating-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>ki-all</artifactId>
-    <name>Apache Ki :: Jar Bundle</name>
-    <description>Creates a bundled Ki .jar from the module jars</description>
+    <artifactId>shiro-all</artifactId>
+    <name>Apache Shiro :: Jar Bundle</name>
+    <description>Creates a bundled Shiro .jar from the module jars</description>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-core</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-web</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-ehcache</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-ehcache</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-quartz</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-quartz</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-spring</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
         </dependency>
     </dependencies>
 
@@ -68,11 +68,11 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>${project.groupId}:ki-core</include>
-                                    <include>${project.groupId}:ki-web</include>
-                                    <include>${project.groupId}:ki-ehcache</include>
-                                    <include>${project.groupId}:ki-quartz</include>
-                                    <include>${project.groupId}:ki-spring</include>
+                                    <include>${project.groupId}:shiro-core</include>
+                                    <include>${project.groupId}:shiro-web</include>
+                                    <include>${project.groupId}:shiro-ehcache</include>
+                                    <include>${project.groupId}:shiro-quartz</include>
+                                    <include>${project.groupId}:shiro-spring</include>
                                 </includes>
                             </artifactSet>
                             <!-- <transformers>

@@ -2,14 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.apache.ki.samples</groupId>
-        <artifactId>ki-samples</artifactId>
+        <groupId>org.apache.shiro.samples</groupId>
+        <artifactId>shiro-samples</artifactId>
         <version>1.0-incubating-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>samples-web</artifactId>
-    <name>Apache Ki :: Samples :: Web</name>
+    <name>Apache Shiro :: Samples :: Web</name>
     <packaging>war</packaging>
 
     <build>
@@ -19,7 +19,7 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>${jettyVersion}</version>
                 <configuration>
-                    <contextPath>/ki</contextPath>
+                    <contextPath>/shiro</contextPath>
                     <connectors>
                         <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
                             <port>9080</port>
@@ -59,12 +59,12 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-core</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-web</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>

@@ -29,16 +29,16 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.apache.ki</groupId>
-    <artifactId>ki-root</artifactId>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
 
     <version>1.0-incubating-SNAPSHOT</version>
-    <name>Apache Ki</name>
+    <name>Apache Shiro</name>
 
-    <url>http://incubator.apache.org/ki/</url>
+    <url>http://incubator.apache.org/shiro/</url>
     <description>
-        Apache Ki is a powerful and flexible open-source Java security framework that cleanly handles
+        Apache Shiro is a powerful and flexible open-source Java security framework that cleanly handles
         authentication, authorization, enterprise session management, single sign-on and cryptography services.
     </description>
 
@@ -56,7 +56,7 @@
     </issueManagement>
     <ciManagement>
         <system>Hudson</system>
-        <url>http://hudson.zones.apache.org/hudson/view/Ki/</url>
+        <url>http://hudson.zones.apache.org/hudson/view/Shiro/</url>
     </ciManagement>
 
     <scm>
@@ -204,33 +204,33 @@
         <dependencies>
             <!-- Intra project dependencies -->
             <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-core</artifactId>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-web</artifactId>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-ehcache</artifactId>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-ehcache</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-quartz</artifactId>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-quartz</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-spring</artifactId>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ki</groupId>
-                <artifactId>ki-all</artifactId>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

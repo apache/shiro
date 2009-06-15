@@ -21,20 +21,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.apache.ki</groupId>
-        <artifactId>ki-root</artifactId>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-root</artifactId>
         <version>1.0-incubating-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>ki-ehcache</artifactId>
-    <name>Apache Ki :: Support :: EHCache</name>
+    <artifactId>shiro-ehcache</artifactId>
+    <name>Apache Shiro :: Support :: EHCache</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-core</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
