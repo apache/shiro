@@ -21,24 +21,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.apache.ki</groupId>
-        <artifactId>ki-root</artifactId>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-root</artifactId>
         <version>1.0-incubating-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>ki-spring</artifactId>
-    <name>Apache Ki :: Support :: Spring</name>
+    <artifactId>shiro-spring</artifactId>
+    <name>Apache Shiro :: Support :: Spring</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-core</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.ki</groupId>
-            <artifactId>ki-web</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
