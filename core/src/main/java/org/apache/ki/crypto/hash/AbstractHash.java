@@ -21,6 +21,7 @@ package org.apache.ki.crypto.hash;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.io.Serializable;
 
 import org.apache.ki.codec.Base64;
 import org.apache.ki.codec.CodecException;
@@ -40,15 +41,15 @@ import org.apache.ki.codec.Hex;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AbstractHash extends CodecSupport implements Hash {
+public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {
 
     /** The hashed data */
     private byte[] bytes = null;
 
     /** Cached value of the {@link #toHex() toHex()} call so multiple calls won't incur repeated overhead. */
-    private String hexEncoded = null;
+    private transient String hexEncoded = null;
     /** Cached value of the {@link #toBase64() toBase64()} call so multiple calls won't incur repeated overhead. */
-    private String base64Encoded = null;
+    private transient String base64Encoded = null;
 
     /**
      * Creates an new instance without any of its properties set (no hashing is performed).
