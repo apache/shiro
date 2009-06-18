@@ -16,30 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.web;
+package org.apache.shiro.samples.sprhib.dao;
 
-import org.jsecurity.samples.sprhib.service.UserService;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 /**
- * Web controller used when loading the home page.
+ * Convenience superclass for DAOs that contains annotations for injecting the session factory
+ * and accessing the session.
  */
-@Controller
-public class HomeController {
+public abstract class HibernateDao {
 
-    private UserService userService;
+    private SessionFactory sessionFactory;
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
-    @RequestMapping("/home")
-    public void viewHome(Model model) {
-        model.addAttribute( "users", userService.getAllUsers() );
-    }
+    public Session getSession() {
+        return SessionFactoryUtils.getSession(this.sessionFactory, true);
+    }    
 
 }

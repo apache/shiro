@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.dao;
+package org.apache.shiro.samples.sprhib.service;
 
-import org.jsecurity.samples.sprhib.model.User;
+import org.apache.shiro.samples.sprhib.model.User;
 
 import java.util.List;
 
 /**
- * Data Access Object for User related operations.
+ * A service interface for accessing and modifying user data in the system.
  */
-public interface UserDAO {
+public interface UserService {
 
-    User getUser(Long userId);
+    User getCurrentUser();
 
-    User findUser(String username);
-
-    void createUser(User user);
+    void createUser(String username, String email, String password);
 
     List<User> getAllUsers();
+
+    User getUser(Long userId);
 
     void deleteUser(Long userId);
 

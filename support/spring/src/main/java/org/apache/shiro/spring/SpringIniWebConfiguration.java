@@ -18,27 +18,25 @@
  */
 package org.apache.shiro.spring;
 
-import java.util.Collection;
-import java.util.Map;
-import javax.servlet.ServletContext;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextException;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.web.config.IniWebConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextException;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.servlet.ServletContext;
+import java.util.Collection;
+import java.util.Map;
 
 
 /**
  * <p>Shiro configuration that relies on Spring to define and initialize the Shiro SecurityManager
- * instance (and all of its dependencies) and makes it available to the KiFilter by performing a Spring bean
+ * instance (and all of its dependencies) and makes it available to the ShiroFilter by performing a Spring bean
  * lookup.  The URL/filter definitions are still .ini based and loaded according to the behavior of the parent class
  * {@link org.apache.shiro.web.config.IniWebConfiguration}</p>
  * <p/>

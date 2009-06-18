@@ -47,8 +47,8 @@ import java.net.InetAddress;
  * The following is a fully commented example that documents how to configure it:
  * <p/>
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;KiFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.apache.shiro.web.servlet.KiFilter&lt;/filter-class&gt;
+ * &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.apache.shiro.web.servlet.ShiroFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;&lt;param-name&gt;config&lt;/param-name&gt;&lt;param-value&gt;
  * #
  * #NOTE:  This config looks pretty long - but its not - its only a few lines of actual config.
@@ -216,7 +216,7 @@ import java.net.InetAddress;
  * #
  * #
  * &lt;filter-mapping&gt;
- * &lt;filter-name&gt;KiFilter&lt;/filter-name&gt;
+ * &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;</pre>
  *
@@ -397,7 +397,7 @@ public class ShiroFilter extends OncePerRequestFilter {
      * Servlet Specification behavior backed by a {@link org.apache.shiro.subject.Subject Subject} instance.
      *
      * @param orig the original Servlet Container-provided incoming {@code HttpServletRequest} instance.
-     * @return {@link ShiroHttpServletRequest KiHttpServletRequest} instance wrapping the original.
+     * @return {@link ShiroHttpServletRequest ShiroHttpServletRequest} instance wrapping the original.
      * @since 1.0
      */
     protected ServletRequest wrapServletRequest(HttpServletRequest orig) {
@@ -434,7 +434,7 @@ public class ShiroFilter extends OncePerRequestFilter {
      * Servlet Container HTTP-based sessions).
      *
      * @param orig    the original {@code HttpServletResponse} instance provided by the Servlet Container.
-     * @param request the {@code KiHttpServletRequest} instance wrapping the original request.
+     * @param request the {@code ShiroHttpServletRequest} instance wrapping the original request.
      * @return the wrapped ServletResponse instance to use during {@link FilterChain} execution.
      * @since 1.0
      */

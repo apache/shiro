@@ -22,13 +22,13 @@ import org.apache.shiro.web.servlet.ShiroFilter;
 
 
 /**
- * Extension of KiFilter that uses {@link SpringIniWebConfiguration} to configure Shiro in a Spring web
+ * Extension of ShiroFilter that uses {@link SpringIniWebConfiguration} to configure Shiro in a Spring web
  * environment.
  * <p/>
  * Using this class in web.xml essentially enables the following:
  * <pre>&lt;filter&gt;
- * &lt;filter-name&gt;KiFilter&lt;/filter-name&gt;
- * &lt;filter-class&gt;org.apache.shiro.web.servlet.KiFilter&lt;/filter-class&gt;
+ * &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
+ * &lt;filter-class&gt;org.apache.shiro.web.servlet.ShiroFilter&lt;/filter-class&gt;
  * &lt;init-param&gt;
  *     &lt;param-name&gt;configClassName&lt;/param-name&gt;
  *     &lt;param-value&gt;org.apache.shiro.spring.SpringIniWebConfiguration&lt;param-value&gt;

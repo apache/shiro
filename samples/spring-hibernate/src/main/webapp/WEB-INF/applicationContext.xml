@@ -32,9 +32,9 @@
     <context:annotation-config/>
 
     <!-- Scan sample packages for Spring annotations -->
-    <context:component-scan base-package="org.shiro.samples.sprhib.dao"/>
-    <context:component-scan base-package="org.shiro.samples.sprhib.security"/>
-    <context:component-scan base-package="org.shiro.samples.sprhib.service"/>
+    <context:component-scan base-package="org.apache.shiro.samples.sprhib.dao"/>
+    <context:component-scan base-package="org.apache.shiro.samples.sprhib.security"/>
+    <context:component-scan base-package="org.apache.shiro.samples.sprhib.service"/>
 
     <!-- Spring AOP auto-proxy creation (required to support Shiro annotations) -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>

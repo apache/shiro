@@ -16,6 +16,6 @@ Java 1.3 and 1.4 only: shiro.jar, slf4j-api.jar, an slf4j bindng, retroweaver.ja
 
 Feature-based dependencies
 --------------------------
-- .ini based configuration, either for a shiro.ini file in the classpath or embedded .ini in the KiFilter
+- .ini based configuration, either for a shiro.ini file in the classpath or embedded .ini in the ShiroFilter
   in web.xml:
   . include Jakarta commons-beanutils-core.jar

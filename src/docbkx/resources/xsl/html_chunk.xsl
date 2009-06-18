@@ -102,8 +102,8 @@
     <!-- let's have a Shiro and Anjin banner across the top of each page -->
     <xsl:template name="user.header.navigation">
         <div style="background-color:white;border:none;height:73px;border:1px solid black;">
-            <a style="border:none;" href="http://www.jsecurity.org/" title="Apache Shiro">
-                <img style="border:none;" src="images/xdev-jsecurity_logo.jpg"/>
+            <a style="border:none;" href="http://shiro.apache.org/" title="Apache Shiro">
+                <img style="border:none;" src="images/xdev-shiro_logo.jpg"/>
             </a>
             <!--  <a style="border:none;" href="http://www.anjinllc.com/" title="AnjinLLC">
                <img style="border:none;position:absolute;padding-top:5px;right:42px;" src="images/anjin-banner-rhs.png" />

@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.security;
+package org.apache.shiro.samples.sprhib.security;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.Sha256CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.jsecurity.samples.sprhib.dao.UserDAO;
-import org.jsecurity.samples.sprhib.model.Role;
-import org.jsecurity.samples.sprhib.model.User;
+import org.apache.shiro.samples.sprhib.dao.UserDAO;
+import org.apache.shiro.samples.sprhib.model.Role;
+import org.apache.shiro.samples.sprhib.model.User;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
