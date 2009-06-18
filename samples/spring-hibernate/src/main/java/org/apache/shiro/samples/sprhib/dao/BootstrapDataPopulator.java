@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.dao;
+package org.apache.shiro.samples.sprhib.dao;
 
-import org.hibernate.SessionFactory;
 import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

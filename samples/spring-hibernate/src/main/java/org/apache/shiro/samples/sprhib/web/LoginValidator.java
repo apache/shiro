@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.web;
+package org.apache.shiro.samples.sprhib.web;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

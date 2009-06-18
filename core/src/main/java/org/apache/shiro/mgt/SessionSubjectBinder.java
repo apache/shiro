@@ -55,7 +55,7 @@ import org.apache.shiro.subject.Subject;
  * </ol>
  * <p/>
  * Indeed this is exactly how Shiro's default behavior works in enterprise server and web-based environments.  It is
- * enabled in the <code>KiFilter</code> for web-based environments as well as remote-method-invocation-based
+ * enabled in the <code>ShiroFilter</code> for web-based environments as well as remote-method-invocation-based
  * components for non-web environments.
  *
  * @author Les Hazlewood

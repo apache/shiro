@@ -16,40 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.web;
+package org.apache.shiro.samples.sprhib.web;
+
+import org.apache.shiro.samples.sprhib.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Command binding object for signing up for a new account. 
+ * Web controller used when loading the home page.
  */
-public class SignupCommand {
+@Controller
+public class HomeController {
 
-    private String username;
+    private UserService userService;
 
-    private String email;
-
-    private String password;
-
-    public String getUsername() {
-        return username;
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @RequestMapping("/home")
+    public void viewHome(Model model) {
+        model.addAttribute( "users", userService.getAllUsers() );
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

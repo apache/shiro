@@ -32,14 +32,14 @@ import java.io.Serializable;
 public class ShiroException extends RuntimeException implements Serializable {
 
     /**
-     * Creates a new KiException.
+     * Creates a new ShiroException.
      */
     public ShiroException() {
         super();
     }
 
     /**
-     * Constructs a new KiException.
+     * Constructs a new ShiroException.
      *
      * @param message the reason for the exception
      */
@@ -48,7 +48,7 @@ public class ShiroException extends RuntimeException implements Serializable {
     }
 
     /**
-     * Constructs a new KiException.
+     * Constructs a new ShiroException.
      *
      * @param cause the underlying Throwable that caused this exception to be thrown.
      */
@@ -57,7 +57,7 @@ public class ShiroException extends RuntimeException implements Serializable {
     }
 
     /**
-     * Constructs a new KiException.
+     * Constructs a new ShiroException.
      *
      * @param message the reason for the exception
      * @param cause   the underlying Throwable that caused this exception to be thrown.

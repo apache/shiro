@@ -16,26 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.service;
-
-import org.jsecurity.samples.sprhib.model.User;
-
-import java.util.List;
+package org.apache.shiro.samples.sprhib.web;
 
 /**
- * A service interface for accessing and modifying user data in the system.
+ * Command binding object for logging in.
  */
-public interface UserService {
+public class LoginCommand {
 
-    User getCurrentUser();
+    private String username;
 
-    void createUser(String username, String email, String password);
+    private String password;
 
-    List<User> getAllUsers();
+    private boolean rememberMe;
 
-    User getUser(Long userId);
+    public String getUsername() {
+        return username;
+    }
 
-    void deleteUser(Long userId);
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    void updateUser(User user);
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
+    }
 }

@@ -60,10 +60,9 @@
     </ciManagement>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk
-        </developerConnection>
-        <url>http://svn.apache.org/repos/asf/incubator/jsecurity/import/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/trunk</developerConnection>
+        <url>http://svn.apache.org/repos/asf/incubator/shiro/trunk</url>
     </scm>
 
     <properties>
@@ -253,9 +252,23 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <!-- Required in the sample apps only for 3rd-party libraries that expect to call
+                     the commons logging APIs -->
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.7.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>hsqldb</groupId>
@@ -306,6 +319,81 @@
                 <artifactId>ehcache</artifactId>
                 <version>1.4.1</version>
                 <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <!-- Used for sample applications only - not required for the framework: -->
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate</artifactId>
+                <version>3.2.6.ga</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ant</groupId>
+                        <artifactId>ant</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <!--suppress MavenModelInspection -->
+                        <groupId>ant-launcher</groupId>
+                        <!--suppress MavenModelInspection -->
+                        <artifactId>ant-launcher</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>c3p0</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>cglib</groupId>
+                        <artifactId>cglib</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <!--suppress MavenModelInspection -->
+                        <groupId>javax.security</groupId>
+                        <!--suppress MavenModelInspection -->
+                        <artifactId>jacc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jboss</groupId>
+                        <!--suppress MavenModelInspection -->
+                        <artifactId>jboss-cache</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.sf.ehcache</groupId>
+                        <artifactId>ehcache</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <artifactId>asm-all</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <!--suppress MavenModelInspection -->
+                        <artifactId>asm-attrs</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-annotations</artifactId>
+                <version>3.2.1.ga</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.retroweaver</groupId>
@@ -331,18 +419,36 @@
                 <artifactId>spring</artifactId>
                 <version>${springframeworkVersion}</version>
                 <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
                 <version>${springframeworkVersion}</version>
                 <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>quartz</groupId>
                 <artifactId>quartz</artifactId>
                 <version>1.5.2</version>
                 <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>taglibs</groupId>

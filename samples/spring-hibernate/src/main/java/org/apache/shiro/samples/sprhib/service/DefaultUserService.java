@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.service;
+package org.apache.shiro.samples.sprhib.service;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.jsecurity.samples.sprhib.dao.UserDAO;
-import org.jsecurity.samples.sprhib.model.User;
+import org.apache.shiro.samples.sprhib.dao.UserDAO;
+import org.apache.shiro.samples.sprhib.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

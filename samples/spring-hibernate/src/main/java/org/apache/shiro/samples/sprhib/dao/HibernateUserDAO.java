@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.dao;
+package org.apache.shiro.samples.sprhib.dao;
 
-import org.jsecurity.samples.sprhib.model.User;
+import org.apache.shiro.samples.sprhib.model.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 

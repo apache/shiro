@@ -18,10 +18,10 @@
  */
 package org.apache.shiro.web.filter.authc;
 
+import org.apache.shiro.web.filter.PathMatchingFilter;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.apache.shiro.web.filter.PathMatchingFilter;
 
 /**
  * Filter that allows access to a path immeidately without performing security checks of any kind.
@@ -32,7 +32,7 @@ import org.apache.shiro.web.filter.PathMatchingFilter;
  * For example, if you had a user-only section of a website, you might want to require that access to
  * any url in that section must be from an authenticated user.
  * <p/>
- * Here is how that would look in the KiFilter configuration:
+ * Here is how that would look in the ShiroFilter configuration:
  * <p/>
  * <code>[urls]<br/>
  * /user/** = authc</code>

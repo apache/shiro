@@ -18,12 +18,12 @@
  */
 package org.apache.shiro.web.config;
 
+import org.apache.shiro.config.Configuration;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.apache.shiro.config.Configuration;
 
 /**
  * A <code>WebConfiguration</code> configures Shiro components in a web-enabled application.
@@ -50,7 +50,7 @@ public interface WebConfiguration extends Configuration {
      *
      * @param request       the incoming ServletRequest
      * @param response      the outgoing ServletResponse
-     * @param originalChain the original <code>FilterChain</code> intercepted by the KiFilter.
+     * @param originalChain the original <code>FilterChain</code> intercepted by the ShiroFilter.
      * @return the filter chain that should be executed for the given request, or <code>null</code> if the
      *         original chain should be used.
      */

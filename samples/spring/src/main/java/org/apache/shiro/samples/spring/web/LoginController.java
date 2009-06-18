@@ -18,16 +18,17 @@
  */
 package org.apache.shiro.samples.spring.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.SecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.mgt.SecurityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Spring MVC controller responsible for authenticating the user.
@@ -37,6 +38,8 @@ import org.apache.shiro.mgt.SecurityManager;
  */
 public class LoginController extends SimpleFormController {
 
+    private static transient final Logger log = LoggerFactory.getLogger(LoginController.class);
+
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
@@ -44,7 +47,7 @@ public class LoginController extends SimpleFormController {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private org.apache.shiro.mgt.SecurityManager securityManager;
+    private SecurityManager securityManager;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -78,9 +81,7 @@ public class LoginController extends SimpleFormController {
         try {
             securityManager.login(token);
         } catch (AuthenticationException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Error authenticating.", e);
-            }
+            log.debug("Error authenticating.", e);
             errors.reject("error.invalidLogin", "The username or password was not correct.");
         }
 

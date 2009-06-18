@@ -16,28 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.dao;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
+package org.apache.shiro.samples.sprhib.web;
 
 /**
- * Convenience superclass for DAOs that contains annotations for injecting the session factory
- * and accessing the session.
+ * Command binding object for signing up for a new account. 
  */
-public abstract class HibernateDao {
+public class SignupCommand {
 
-    private SessionFactory sessionFactory;
+    private String username;
 
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    private String email;
+
+    private String password;
+
+    public String getUsername() {
+        return username;
     }
 
-    public Session getSession() {
-        return SessionFactoryUtils.getSession(this.sessionFactory, true);
-    }    
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -16,9 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.shiro.samples.sprhib.dao;
+
+import org.apache.shiro.samples.sprhib.model.User;
+
+import java.util.List;
+
 /**
- * This package primarily exists as a root classpath distinction, but it does contain two core classes widely used
- * by applications, {@link org.apache.shiro.SecurityUtils SecurityUtils} and
- * {@link org.apache.shiro.ShiroException ShiroException}.
+ * Data Access Object for User related operations.
  */
-package org.shiro;
+public interface UserDAO {
+
+    User getUser(Long userId);
+
+    User findUser(String username);
+
+    void createUser(User user);
+
+    List<User> getAllUsers();
+
+    void deleteUser(Long userId);
+
+    void updateUser(User user);
+}

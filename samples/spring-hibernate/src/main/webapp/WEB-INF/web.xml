@@ -60,16 +60,16 @@
     </filter>
 
     <filter>
-        <filter-name>KiFilter</filter-name>
+        <filter-name>ShiroFilter</filter-name>
         <filter-class>org.apache.shiro.spring.SpringShiroFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
 
-                # The KiFilter configuration is very powerful and flexible, while still remaining succinct.
+                # The ShiroFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://shiro.apache.org/api/org/apache/shiro/web/servlet/KiFilter.html
+                # http://shiro.apache.org/api/org/apache/shiro/web/servlet/ShiroFilter.html
 
                 # If you'd prefer to not have this configuration in web.xml, you can create a file called shiro.ini
                 # in the root of your classpath and Shiro will automatically pick it up.
@@ -96,7 +96,7 @@
     </filter-mapping>
 
     <filter-mapping>
-        <filter-name>KiFilter</filter-name>
+        <filter-name>ShiroFilter</filter-name>
         <url-pattern>/s/*</url-pattern>
     </filter-mapping>
 

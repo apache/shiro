@@ -16,18 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jsecurity.samples.sprhib.web;
+package org.apache.shiro.samples.sprhib.web;
+
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.samples.sprhib.model.User;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
- * Command binding object for logging in.
+ * Command binding object for editing a user.
  */
-public class LoginCommand {
+public class EditUserCommand {
 
+    private Long userId;
     private String username;
-
+    private String email;
     private String password;
 
-    private boolean rememberMe;
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getUsername() {
         return username;
@@ -35,6 +47,14 @@ public class LoginCommand {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -45,11 +65,12 @@ public class LoginCommand {
         this.password = password;
     }
 
-    public boolean isRememberMe() {
-        return rememberMe;
-    }
-
-    public void setRememberMe(boolean rememberMe) {
-        this.rememberMe = rememberMe;
+    public void updateUser(User user) {
+        Assert.isTrue( userId.equals( user.getId() ), "User ID of command must match the user being updated." );
+        user.setUsername( getUsername() );
+        user.setEmail( getEmail() );
+        if( StringUtils.hasText(getPassword()) ) {
+            user.setPassword( new Sha256Hash(getPassword()).toHex() );
+        }
     }
 }
