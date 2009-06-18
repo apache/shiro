@@ -28,8 +28,8 @@
     <!-- DB schema will be updated if needed -->
     <property name="hbm2ddl.auto">update</property>
 
-    <mapping class="org.ki.samples.sprhib.model.Role"/>
-    <mapping class="org.ki.samples.sprhib.model.User"/>
+    <mapping class="org.shiro.samples.sprhib.model.Role"/>
+    <mapping class="org.shiro.samples.sprhib.model.User"/>
 
   </session-factory>
 </hibernate-configuration>

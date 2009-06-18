@@ -18,9 +18,9 @@
  */
 package org.jsecurity.samples.sprhib.web;
 
-import org.apache.ki.SecurityUtils;
-import org.apache.ki.authc.AuthenticationException;
-import org.apache.ki.authc.UsernamePasswordToken;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

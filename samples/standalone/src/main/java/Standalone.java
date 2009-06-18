@@ -17,9 +17,9 @@
  * under the License.
  */
 
-import org.apache.ki.SecurityUtils;
-import org.apache.ki.config.IniConfiguration;
-import org.apache.ki.subject.Subject;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.config.IniConfiguration;
+import org.apache.shiro.subject.Subject;
 
 /**
  * @author Les Hazlewood
@@ -30,7 +30,7 @@ public class Standalone {
     public static void main(String[] args) {
 
         IniConfiguration config = new IniConfiguration();
-        //the following call will automatically use ki.ini at the root of the classpath:
+        //the following call will automatically use shiro.ini at the root of the classpath:
         config.init();
 
         //This is for Standalone (single-VM) applications that don't use a configuration container (Spring, JBoss, etc)

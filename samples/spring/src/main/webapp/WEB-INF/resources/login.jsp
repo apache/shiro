@@ -21,14 +21,14 @@
 <html>
 
 <head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/ki.css"/>"/>
+    <link type="text/css" rel="stylesheet" href="<c:url value="/shiro.css"/>"/>
 </head>
 
 <body onload="document.forms[0].elements[0].focus();">
 
 <div id="contentBox">
 
-    <h1>Ki Login</h1>
+    <h1>Shiro Login</h1>
 
     <p>
         <span style="color: red;">

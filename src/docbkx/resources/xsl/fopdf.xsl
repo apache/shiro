@@ -20,7 +20,7 @@
   -->
 
 <!--
-    This is the XSL FO (PDF) stylesheet for the Apache Ki reference
+    This is the XSL FO (PDF) stylesheet for the Apache Shiro reference
     documentation.
 
     Thanks are due to Christian Bauer of the Hibernate project team
@@ -119,7 +119,7 @@
         <xsl:param name="gentext-key" select="''"/>
         <xsl:variable name="Version">
             <xsl:if test="//releaseinfo">
-                <xsl:text>Apache Ki (</xsl:text>
+                <xsl:text>Apache Shiro (</xsl:text>
                 <xsl:value-of select="//releaseinfo"/>
                 <xsl:text>)</xsl:text>
             </xsl:if>

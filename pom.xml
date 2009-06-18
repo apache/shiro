@@ -52,7 +52,7 @@
 
     <issueManagement>
         <system>Jira</system>
-        <url>http://issues.apache.org/jira/browse/KI</url>
+        <url>http://issues.apache.org/jira/browse/SHIRO</url>
     </issueManagement>
     <ciManagement>
         <system>Hudson</system>

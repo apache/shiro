@@ -18,7 +18,7 @@
  */
 package org.jsecurity.samples.sprhib.web;
 
-import org.apache.ki.crypto.hash.Sha256Hash;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.jsecurity.samples.sprhib.model.User;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;

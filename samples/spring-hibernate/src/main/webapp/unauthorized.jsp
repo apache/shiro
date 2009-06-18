@@ -19,7 +19,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Apache Ki Spring-Hibernate Sample Application</title>
+    <title>Apache Shiro Spring-Hibernate Sample Application</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/styles/sample.css"/>"/>
 </head>
 <body>

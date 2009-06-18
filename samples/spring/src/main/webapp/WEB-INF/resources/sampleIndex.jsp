@@ -21,7 +21,7 @@
 <html>
 
 <head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/ki.css"/>"/>
+    <link type="text/css" rel="stylesheet" href="<c:url value="/shiro.css"/>"/>
 </head>
 
 <body>
@@ -29,7 +29,7 @@
 <div id="contentBox">
     <img src="<c:url value="/logo.png"/>" style="margin-top:20px; border:0"/><br/>
 
-    <h2>You have successfully logged in as <ki:principal/>.</h2>
+    <h2>You have successfully logged in as <shiro:principal/>.</h2>
 
     Session ID: ${subjectSession.id}
 
@@ -41,17 +41,17 @@
     </ul>
 
     <p style="font-weight: bold;">
-        <ki:hasRole name="role1">You have role 1.<br/></ki:hasRole>
-        <ki:lacksRole name="role1">You do not have role 1.<br/></ki:lacksRole>
-        <ki:hasRole name="role2">You have role 2.<br/></ki:hasRole>
-        <ki:lacksRole name="role2">You do not have role 2.<br/></ki:lacksRole>
+        <shiro:hasRole name="role1">You have role 1.<br/></shiro:hasRole>
+        <shiro:lacksRole name="role1">You do not have role 1.<br/></shiro:lacksRole>
+        <shiro:hasRole name="role2">You have role 2.<br/></shiro:hasRole>
+        <shiro:lacksRole name="role2">You do not have role 2.<br/></shiro:lacksRole>
     </p>
 
     <p style="font-weight: bold;">
-        <ki:hasPermission name="permission1">You have permission 1.<br/></ki:hasPermission>
-        <ki:lacksPermission name="permission1">You do not have permission 1.<br/></ki:lacksPermission>
-        <ki:hasPermission name="permission2">You have permission 2.<br/></ki:hasPermission>
-        <ki:lacksPermission name="permission2">You do not have permission 2.<br/></ki:lacksPermission>
+        <shiro:hasPermission name="permission1">You have permission 1.<br/></shiro:hasPermission>
+        <shiro:lacksPermission name="permission1">You do not have permission 1.<br/></shiro:lacksPermission>
+        <shiro:hasPermission name="permission2">You have permission 2.<br/></shiro:hasPermission>
+        <shiro:lacksPermission name="permission2">You do not have permission 2.<br/></shiro:lacksPermission>
     </p>
 
 
@@ -63,7 +63,7 @@
 
 
     <p>
-        Click <a href="<c:url value="/s/ki.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
+        Click <a href="<c:url value="/s/shiro.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
         application.
     </p>
 

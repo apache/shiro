@@ -17,10 +17,10 @@
  * under the License.
  */
 
-import org.apache.ki.authc.*;
-import org.apache.ki.authz.AuthorizationInfo;
-import org.apache.ki.realm.AuthorizingRealm;
-import org.apache.ki.subject.PrincipalCollection;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
 
 /**
  * @author Les Hazlewood
@@ -36,10 +36,10 @@ public class MyRealm extends AuthorizingRealm {
      * an underlying data store via an EIS API (JDBC, JPA, Hibernate, etc).
      * <p/>
      * Note that when implementing your own realm, there is no need to check against a password (or other credentials)
-     * in this method. The {@link org.apache.ki.realm.AuthenticatingRealm AuthenticatingRealm} superclass will do
+     * in this method. The {@link org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm} superclass will do
      * that automatically via the use of a configured
-     * {@link org.apache.ki.authc.credential.CredentialsMatcher CredentialsMatcher} (see this example's corresponding
-     * {@code ki.ini} file to see a configured credentials matcher).
+     * {@link org.apache.shiro.authc.credential.CredentialsMatcher CredentialsMatcher} (see this example's corresponding
+     * {@code shiro.ini} file to see a configured credentials matcher).
      * <p/>
      * All that is required is that the account information include directly the credentials found in the EIS.
      *

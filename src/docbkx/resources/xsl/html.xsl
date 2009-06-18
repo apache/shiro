@@ -19,7 +19,7 @@
   -->
 
 <!--
-    This is the XSL HTML configuration file for the Apache Ki
+    This is the XSL HTML configuration file for the Apache Shiro
     Reference Documentation.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

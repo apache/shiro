@@ -24,7 +24,7 @@
 
     <filter>
         <filter-name>KiFilter</filter-name>
-        <filter-class>org.apache.ki.web.servlet.KiFilter</filter-class>
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
@@ -32,20 +32,20 @@
                 # The KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://ki.apache.org/api/org/apache/ki/web/servlet/KiFilter.html
+                # http://shiro.apache.org/api/org/apache/shiro/web/servlet/KiFilter.html
 
                 [main]
 
-                demoRealm = org.apache.ki.realm.text.PropertiesRealm
+                demoRealm = org.apache.shiro.realm.text.PropertiesRealm
 
                 [filters]
-                ki.loginUrl = /login.jsp
+                shiro.loginUrl = /login.jsp
 
                 [urls]
                 # The /login.jsp is not restricted to authenticated users (otherwise no one could log in!), but
                 # the 'authc' filter must still be specified for it so it can process that url's
                 # login submissions. It is 'smart' enough to allow those requests through as specified by the
-                # ki.loginUrl above.
+                # shiro.loginUrl above.
                 /login.jsp = authc
 
                 /account/** = authc

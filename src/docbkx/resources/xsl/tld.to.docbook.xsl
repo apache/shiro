@@ -55,9 +55,9 @@
       </xsl:element>
 
       <xsl:element name="para">
-        <xsl:text>One of the view technologies you can use with Ki
+        <xsl:text>One of the view technologies you can use with Shiro
           is Java Server Pages (JSPs). To help you implement views using Java Server Pages,
-          Ki provides you with some tags for evaluating errors, setting
+          Shiro provides you with some tags for evaluating errors, setting
           themes and outputting internationalized messages.
         </xsl:text>
       </xsl:element>
