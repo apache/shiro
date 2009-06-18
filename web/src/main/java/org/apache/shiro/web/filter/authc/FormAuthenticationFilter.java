@@ -63,7 +63,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
 
     //TODO - complete JavaDoc
 
-    public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "kiLoginFailure";
+    public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "shiroLoginFailure";
 
     public static final String DEFAULT_USERNAME_PARAM = "username";
     public static final String DEFAULT_PASSWORD_PARAM = "password";
