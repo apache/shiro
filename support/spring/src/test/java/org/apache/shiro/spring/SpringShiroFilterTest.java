@@ -34,7 +34,8 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since Jul 28, 2008 1:34:33 PM
  */
-public class SpringKiFilterTest {
+public class SpringShiroFilterTest
+{
 
     @Test
     public void testDefaultConfig() throws Exception {
