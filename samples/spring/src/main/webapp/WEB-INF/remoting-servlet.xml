@@ -26,7 +26,7 @@
 
     <bean name="/sampleManager" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
         <property name="service" ref="sampleManager"/>
-        <property name="serviceInterface" value="org.apache.ki.samples.spring.SampleManager"/>
+        <property name="serviceInterface" value="org.apache.shiro.samples.spring.SampleManager"/>
         <property name="remoteInvocationExecutor" ref="secureRemoteInvocationExecutor"/>
     </bean>
 

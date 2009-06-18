@@ -19,7 +19,7 @@
   -->
 
 <!--
-    This is the XSL HTML configuration file for the Apache Ki Reference Documentation.
+    This is the XSL HTML configuration file for the Apache Shiro Reference Documentation.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:fo="http://www.w3.org/1999/XSL/Format"
@@ -99,10 +99,10 @@
     <!--###################################################
                     Headers and Footers
    ################################################### -->
-    <!-- let's have a Ki and Anjin banner across the top of each page -->
+    <!-- let's have a Shiro and Anjin banner across the top of each page -->
     <xsl:template name="user.header.navigation">
         <div style="background-color:white;border:none;height:73px;border:1px solid black;">
-            <a style="border:none;" href="http://www.jsecurity.org/" title="Apache Ki">
+            <a style="border:none;" href="http://www.jsecurity.org/" title="Apache Shiro">
                 <img style="border:none;" src="images/xdev-jsecurity_logo.jpg"/>
             </a>
             <!--  <a style="border:none;" href="http://www.anjinllc.com/" title="AnjinLLC">

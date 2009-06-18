@@ -24,19 +24,19 @@
 </head>
 <body>
 
-<h1>Apache Ki Quickstart</h1>
+<h1>Apache Shiro Quickstart</h1>
 
-<p>Hi <ki:guest>Guest</ki:guest><ki:user><ki:principal/></ki:user>!
-    ( <ki:user><a href="<c:url value="/logout.jsp"/>">Log out</a></ki:user>
-    <ki:guest><a href="<c:url value="/login.jsp"/>">Log in</a> (sample accounts provided)</ki:guest> )
+<p>Hi <shiro:guest>Guest</shiro:guest><shiro:user><shiro:principal/></shiro:user>!
+    ( <shiro:user><a href="<c:url value="/logout.jsp"/>">Log out</a></shiro:user>
+    <shiro:guest><a href="<c:url value="/login.jsp"/>">Log in</a> (sample accounts provided)</shiro:guest> )
 </p>
 
-<p>Welcome to the Apache Ki Quickstart sample application.
+<p>Welcome to the Apache Shiro Quickstart sample application.
     This page represents the home page of any web application.</p>
 
-<ki:user><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></ki:user>
-<ki:guest><p>If you want to access the user-only <a href="<c:url value="/account"/>">account page</a>,
-    you will need to log-in first.</p></ki:guest>
+<shiro:user><p>Visit your <a href="<c:url value="/account"/>">account page</a>.</p></shiro:user>
+<shiro:guest><p>If you want to access the user-only <a href="<c:url value="/account"/>">account page</a>,
+    you will need to log-in first.</p></shiro:guest>
 
 <h2>Roles</h2>
 
@@ -46,21 +46,21 @@
 <h3>Roles you have</h3>
 
 <p>
-    <ki:hasRole name="root">root<br/></ki:hasRole>
-    <ki:hasRole name="president">president<br/></ki:hasRole>
-    <ki:hasRole name="darklord">darklord<br/></ki:hasRole>
-    <ki:hasRole name="goodguy">goodguy<br/></ki:hasRole>
-    <ki:hasRole name="schwartz">schwartz<br/></ki:hasRole>
+    <shiro:hasRole name="root">root<br/></shiro:hasRole>
+    <shiro:hasRole name="president">president<br/></shiro:hasRole>
+    <shiro:hasRole name="darklord">darklord<br/></shiro:hasRole>
+    <shiro:hasRole name="goodguy">goodguy<br/></shiro:hasRole>
+    <shiro:hasRole name="schwartz">schwartz<br/></shiro:hasRole>
 </p>
 
 <h3>Roles you DON'T have</h3>
 
 <p>
-    <ki:lacksRole name="root">root<br/></ki:lacksRole>
-    <ki:lacksRole name="president">president<br/></ki:lacksRole>
-    <ki:lacksRole name="darklord">darklord<br/></ki:lacksRole>
-    <ki:lacksRole name="goodguy">goodguy<br/></ki:lacksRole>
-    <ki:lacksRole name="schwartz">schwartz<br/></ki:lacksRole>
+    <shiro:lacksRole name="root">root<br/></shiro:lacksRole>
+    <shiro:lacksRole name="president">president<br/></shiro:lacksRole>
+    <shiro:lacksRole name="darklord">darklord<br/></shiro:lacksRole>
+    <shiro:lacksRole name="goodguy">goodguy<br/></shiro:lacksRole>
+    <shiro:lacksRole name="schwartz">schwartz<br/></shiro:lacksRole>
 </p>
 
 

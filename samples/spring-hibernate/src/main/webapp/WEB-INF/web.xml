@@ -38,7 +38,7 @@
     -->
     <context-param>
         <param-name>webAppRootKey</param-name>
-        <param-value>ki-spring-hibernate-sample.webapp.root</param-value>
+        <param-value>shiro-spring-hibernate-sample.webapp.root</param-value>
     </context-param>
 
     <!-- ===================================================================
@@ -61,7 +61,7 @@
 
     <filter>
         <filter-name>KiFilter</filter-name>
-        <filter-class>org.apache.ki.spring.SpringKiFilter</filter-class>
+        <filter-class>org.apache.shiro.spring.SpringShiroFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
@@ -69,16 +69,16 @@
                 # The KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://ki.apache.org/api/org/apache/ki/web/servlet/KiFilter.html
+                # http://shiro.apache.org/api/org/apache/shiro/web/servlet/KiFilter.html
 
-                # If you'd prefer to not have this configuration in web.xml, you can create a file called ki.ini
-                # in the root of your classpath and Ki will automatically pick it up.
+                # If you'd prefer to not have this configuration in web.xml, you can create a file called shiro.ini
+                # in the root of your classpath and Shiro will automatically pick it up.
 
                 [filters]
                 # Override the authentication filter to pass thru so we can handle login logic in our controller
-                authc = org.apache.ki.web.filter.authc.PassThruAuthenticationFilter
-                ki.loginUrl = /s/login
-                ki.unauthorizedUrl = /unauthorized.jsp
+                authc = org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter
+                shiro.loginUrl = /s/login
+                shiro.unauthorizedUrl = /unauthorized.jsp
                 authc.successUrl = /s/home
 
                 [urls]

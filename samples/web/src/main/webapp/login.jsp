@@ -26,7 +26,7 @@
 
 <h2>Please Log in</h2>
 
-<ki:guest>
+<shiro:guest>
     <p>Here are a few sample accounts to play with in the default text-based Realm (used for this
         demo and test installs only). Do you remember the movie these names came from? ;)</p>
 
@@ -85,7 +85,7 @@
         </tbody>
     </table>
     <br/><br/>
-</ki:guest>
+</shiro:guest>
 
 <form action="" method="post">
     <table align="left" border="0" cellspacing="0" cellpadding="3">

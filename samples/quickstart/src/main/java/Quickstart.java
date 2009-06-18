@@ -17,12 +17,12 @@
  * under the License.
  */
 
-import org.apache.ki.SecurityUtils;
-import org.apache.ki.authc.*;
-import org.apache.ki.mgt.DefaultSecurityManager;
-import org.apache.ki.realm.text.PropertiesRealm;
-import org.apache.ki.session.Session;
-import org.apache.ki.subject.Subject;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +39,8 @@ public class Quickstart {
     public static void main( String[] args ) {
 
         //Most applications would never instantiate a SecurityManager directly - you would instead configure
-        //Ki in web.xml or a container (JEE, Spring, etc).
-        //But, since this is a quickstart, we just want you to get a feel for how the Ki API looks, so this
+        //Shiro in web.xml or a container (JEE, Spring, etc).
+        //But, since this is a quickstart, we just want you to get a feel for how the Shiro API looks, so this
         //is sufficient to have a simple working example:
         DefaultSecurityManager securityManager = new DefaultSecurityManager();
         securityManager.setRealm(new PropertiesRealm());
@@ -52,7 +52,7 @@ public class Quickstart {
         SecurityUtils.setSecurityManager( securityManager );
 
 
-        //now that a simple Ki environment is set up, let's see what you can do:
+        //now that a simple Shiro environment is set up, let's see what you can do:
 
         //get the currently executing user:
         Subject currentUser = SecurityUtils.getSubject();

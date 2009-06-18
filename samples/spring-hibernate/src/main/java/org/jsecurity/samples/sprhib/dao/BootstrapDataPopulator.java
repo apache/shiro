@@ -19,7 +19,7 @@
 package org.jsecurity.samples.sprhib.dao;
 
 import org.hibernate.SessionFactory;
-import org.apache.ki.crypto.hash.Sha256Hash;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,7 +55,7 @@ public class BootstrapDataPopulator implements InitializingBean {
         jdbcTemplate.execute( "insert into roles values (1, 'user', 'The default role given to all users.')" );
         jdbcTemplate.execute( "insert into roles values (2, 'admin', 'The administrator role only given to site admins')" );
         jdbcTemplate.execute( "insert into roles_permissions values (2, 'user:*')" );
-        jdbcTemplate.execute( "insert into users(id,username,email,password) values (1, 'admin', 'sample@ki.apache.org', '" + new Sha256Hash("admin").toHex() + "')" );
+        jdbcTemplate.execute( "insert into users(id,username,email,password) values (1, 'admin', 'sample@shiro.apache.org', '" + new Sha256Hash("admin").toHex() + "')" );
         jdbcTemplate.execute( "insert into users_roles values (1, 2)" );
         
 

@@ -17,13 +17,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<book version="5.0" xml:id="apache-ki-reference-documentation"
+<book version="5.0" xml:id="apache-shiro-reference-documentation"
       xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
     <info>
-        <title>Apache Ki</title>
+        <title>Apache Shiro</title>
         <subtitle>Reference Documentation</subtitle>
         <authorgroup>
             <author>
@@ -64,14 +64,14 @@
 
     <xi:include href="preface.xml"/>
 
-    <part xml:id="ki-quickstart">
-        <title>Apache Ki Quickstart</title>
-        <partintro xml:id="ki-quickstart-intro">
+    <part xml:id="shiro-quickstart">
+        <title>Apache Shiro Quickstart</title>
+        <partintro xml:id="shiro-quickstart-intro">
             <para>
                 This initial part of the reference documentation walks through the simplest quickstart application
-                so that you may become familiarized Ki's programming API and general concepts. While this
-                application is probably the absolute simplest Ki-enabled application that we know of,
-                it should make you comfortable understanding what Ki can do, and how it can help you create
+                so that you may become familiarized Shiro's programming API and general concepts. While this
+                application is probably the absolute simplest Shiro-enabled application that we know of,
+                it should make you comfortable understanding what Shiro can do, and how it can help you create
                 more secure applications. The rest of the documentation will serve as your guide to help you move
                 from this simple example to even the most complicated enterprise applications.
             </para>
@@ -85,12 +85,12 @@
             </note>
         </partintro>
     </part>
-    <part xml:id="ki-core">
-        <title>Apache Ki Core</title>
-        <partintro xml:id="ki-core-intro">
+    <part xml:id="shiro-core">
+        <title>Apache Shiro Core</title>
+        <partintro xml:id="shiro-core-intro">
             <para>
                 This part of the reference documentation covers
-                Ki's core architectural components that support
+                Shiro's core architectural components that support
                 functionality in all environments, from
                 constrained Applets and cell phones to full n-tier
                 clustered enterprise applications.
@@ -147,12 +147,12 @@
         <xi:include href="security-manager.xml"/>
     </part>
 
-    <!-- <part xml:id="ki-web">
+    <!-- <part xml:id="shiro-web">
      <title>Web Support</title>
-     <partintro xml:id="ki-web-intro">
+     <partintro xml:id="shiro-web-intro">
        <para>
          This part of the reference documentation covers
-                 Ki's web support, specifically using Ki in
+                 Shiro's web support, specifically using Shiro in
                  a Servlet container for web-based applications.
        </para>
        <para>
@@ -188,11 +188,11 @@
      &web-integration;
      &portlet;
    </part>
-   <part id="ki-integration">
+   <part id="shiro-integration">
      <title>Integration</title>
-     <partintro id="ki-integration-intro">
+     <partintro id="shiro-integration-intro">
        <para>
-         This part of the reference documentation covers Ki's
+         This part of the reference documentation covers Shiro's
                  integration with other technologies that might be
                  useful in application deployments.
        </para>
@@ -228,5 +228,5 @@
      </partintro>
    </part> -->
     <!-- back matter -->
-    <!-- <xi:include href="ki.tld.xml"/> -->
+    <!-- <xi:include href="shiro.tld.xml"/> -->
 </book>

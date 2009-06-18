@@ -17,17 +17,17 @@
   ~ under the License.
   --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="ki" uri="http://ki.apache.org/tags" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 
 <html>
 <head>
-    <title>Apache Ki Spring-Hibernate Sample Application</title>
+    <title>Apache Shiro Spring-Hibernate Sample Application</title>
     <link rel="stylesheet" type="text/css" href="<c:url value="/styles/sample.css"/>"/>
 </head>
 <body>
 
 <div id="bigbox">
-    <div class="title clearfix"><div style="float: left">Apache Ki Sample App - Manage Users</div><div class="info" >Logged in as ${currentUser.username} (<a href="<c:url value="/s/logout"/>">Logout</a>)</div></div>
+    <div class="title clearfix"><div style="float: left">Apache Shiro Sample App - Manage Users</div><div class="info" >Logged in as ${currentUser.username} (<a href="<c:url value="/s/logout"/>">Logout</a>)</div></div>
 
 
     <div class="content">

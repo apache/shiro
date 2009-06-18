@@ -57,7 +57,7 @@
          ================================================================== -->
     <filter>
         <filter-name>KiFilter</filter-name>
-        <filter-class>org.apache.ki.spring.SpringKiFilter</filter-class>
+        <filter-class>org.apache.shiro.spring.SpringShiroFilter</filter-class>
 
         <init-param>
             <param-name>config</param-name>
@@ -65,15 +65,15 @@
                 # The KiFilter configuration is very powerful and flexible, while still remaining succinct.
                 # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
                 #
-                # http://ki.apache.org/api/org/apache/ki/web/servlet/KiFilter.html
+                # http://shiro.apache.org/api/org/apache/shiro/web/servlet/KiFilter.html
 
                 [filters]
-                ki.loginUrl = /s/login
+                shiro.loginUrl = /s/login
                 authc.successUrl = /s/index
 
                 [urls]
                 /s/index=authc
-                /s/ki.jnlp=authc,user
+                /s/shiro.jnlp=authc,user
                 /remoting/**=authc, perms[remote:invoke]
             </param-value>
         </init-param>

@@ -20,23 +20,23 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!--
-  - Application context for Ki WebStart sample application
+  - Application context for Shiro WebStart sample application
   -->
 <beans>
 
   <bean id="webStartView"
-        class="org.apache.ki.samples.spring.ui.WebStartView">
+        class="org.apache.shiro.samples.spring.ui.WebStartView">
     <property name="sampleManager" ref="sampleManager"/>
   </bean>
 
   <bean id="sampleManager"
         class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/ki-spring/remoting/sampleManager"/>
-    <property name="serviceInterface" value="org.apache.ki.samples.spring.SampleManager"/>
+    <property name="serviceUrl" value="http://localhost:8080/shiro-spring/remoting/sampleManager"/>
+    <property name="serviceInterface" value="org.apache.shiro.samples.spring.SampleManager"/>
     <property name="remoteInvocationFactory" ref="secureRemoteInvocationFactory"/>
   </bean>
 
   <bean id="secureRemoteInvocationFactory"
-        class="org.apache.ki.spring.remoting.SecureRemoteInvocationFactory"/>
+        class="org.apache.shiro.spring.remoting.SecureRemoteInvocationFactory"/>
 
 </beans>
