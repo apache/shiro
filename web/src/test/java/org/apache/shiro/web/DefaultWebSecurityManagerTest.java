@@ -46,7 +46,7 @@ public class DefaultWebSecurityManagerTest {
     }
 
     @Test
-    public void kiSessionModeInit() {
+    public void shiroSessionModeInit() {
         sm.setSessionMode(DefaultWebSecurityManager.KI_SESSION_MODE);
     }
 

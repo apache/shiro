@@ -64,14 +64,14 @@ public class WebUtils {
             "Make sure WebUtils.bind() is being called. (typically called by ShiroFilter)  " +
                     "This could also happen when running integration tests that don't properly call WebUtils.bind().";
 
-    public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_KI_THREAD_CONTEXT_KEY";
-    public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_KI_THREAD_CONTEXT_KEY";
+    public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
+    public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
 
     /**
      * {@link org.apache.shiro.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
-     * requested page after login, equal to <code>kiSavedRequest</code>.
+     * requested page after login, equal to <code>shiroSavedRequest</code>.
      */
-    public static final String SAVED_REQUEST_KEY = "kiSavedRequest";
+    public static final String SAVED_REQUEST_KEY = "shiroSavedRequest";
 
 
     /**
