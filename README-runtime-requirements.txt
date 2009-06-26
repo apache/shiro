@@ -9,9 +9,8 @@ the dependencies to a lib directory (peer to the build.xml).
 
 Minimal required dependencies
 -------------
-Java 1.5 and later: Ensure shiro-all.jar, slf4j-api.jar and one of slf4j's
-                    bindings (slf4j-simple.jar, slf4j-log4j12, etc) are in your application's classpath.
-Java 1.3 and 1.4 only: shiro.jar, slf4j-api.jar, an slf4j bindng, retroweaver.jar and its associated dependendencies
+Ensure shiro-all.jar, slf4j-api.jar and one of slf4j's bindings (slf4j-simple.jar, slf4j-log4j12, etc) are in
+your application's classpath.
 
 
 Feature-based dependencies
