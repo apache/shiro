@@ -19,37 +19,33 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc): -->
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>5</version>
+        <version>6</version>
     </parent>
-
-    <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-
     <version>1.0-incubating-SNAPSHOT</version>
-    <name>Apache Shiro</name>
 
+    <name>Apache Shiro</name>
     <url>http://incubator.apache.org/shiro/</url>
     <description>
-        Apache Shiro is a powerful and flexible open-source Java security framework that cleanly handles
+        Apache Shiro is a powerful and flexible open-source security framework that cleanly handles
         authentication, authorization, enterprise session management, single sign-on and cryptography services.
     </description>
+    <inceptionYear>2004</inceptionYear>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/trunk</developerConnection>
+        <url>http://svn.apache.org/repos/asf/incubator/shiro/trunk</url>
+    </scm>
     <issueManagement>
         <system>Jira</system>
         <url>http://issues.apache.org/jira/browse/SHIRO</url>
@@ -59,18 +55,11 @@
         <url>http://hudson.zones.apache.org/hudson/view/Shiro/</url>
     </ciManagement>
 
-    <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/trunk</developerConnection>
-        <url>http://svn.apache.org/repos/asf/incubator/shiro/trunk</url>
-    </scm>
-
     <properties>
         <jdk.version>1.5</jdk.version>
         <slf4j.version>1.5.6</slf4j.version>
         <hsqldbVersion>1.8.0.7</hsqldbVersion>
         <jettyVersion>6.1.14</jettyVersion>
-        <retroweaverVersion>2.0.5</retroweaverVersion>
         <springframeworkVersion>2.5.6</springframeworkVersion>
     </properties>
 
@@ -87,45 +76,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>true</inherited>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-api-docs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <version>2.2</version>
-                <inherited>true</inherited>
             </plugin>
             <plugin>
                 <groupId>com.agilejava.docbkx</groupId>
@@ -180,7 +135,6 @@
                     </postProcess>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
@@ -396,25 +350,6 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>net.sourceforge.retroweaver</groupId>
-                <artifactId>retroweaver</artifactId>
-                <version>${retroweaverVersion}</version>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.retroweaver</groupId>
-                <artifactId>retroweaver-rt</artifactId>
-                <version>${retroweaverVersion}</version>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>backport-util-concurrent</groupId>
-                <artifactId>backport-util-concurrent</artifactId>
-                <version>3.1</version>
-                <!-- Only needed for JDK 1.4 and below: -->
-                <optional>true</optional>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring</artifactId>
                 <version>${springframeworkVersion}</version>
@@ -459,7 +394,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <reporting>
+    <!-- <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -467,7 +402,7 @@
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>${jdk.version}</source>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <linksource>true</linksource>
                     <links>
                         <link>http://java.sun.com/javase/6/docs/api/</link>
@@ -480,6 +415,6 @@
                 </configuration>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting> -->
 
 </project>
