@@ -56,7 +56,7 @@
              DDL is auto-generated based on the *.hbm.xml mapping definitions below. -->
         <property name="schemaUpdate" value="true"/>
         <!-- Scan packages for JPA annotations -->
-        <property name="packagesToScan" value="org.shiro.samples.sprhib.model"/>
+        <property name="packagesToScan" value="org.apache.shiro.samples.sprhib.model"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>

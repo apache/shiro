@@ -228,6 +228,7 @@
                 <groupId>hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldbVersion}</version>
+                <scope>runtime</scope>
                 <optional>true</optional>
             </dependency>
             <dependency>
@@ -306,10 +307,6 @@
                         <artifactId>c3p0</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <!--suppress MavenModelInspection -->
                         <groupId>javax.security</groupId>
                         <!--suppress MavenModelInspection -->
@@ -330,18 +327,23 @@
                     </exclusion>
                     <exclusion>
                         <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm-all</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>asm</groupId>
                         <!--suppress MavenModelInspection -->
                         <artifactId>asm-attrs</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>javax.transaction</groupId>
+                        <artifactId>jta</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+            <!-- Used to support Hibernate's JTA runtime dependency in the sample application(s) only.
+                 Not required for Shiro -->
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>1.1.1</version>
+                <scope>runtime</scope>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
