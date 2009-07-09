@@ -103,14 +103,4 @@ public class SessionSubjectBinder extends ThreadContextSubjectBinder {
             }
         }
     }
-
-    @Override
-    public void unbind(Subject subject) {
-        Session session = subject.getSession(false);
-        if (session != null) {
-            session.removeAttribute(PRINCIPALS_SESSION_KEY);
-            session.removeAttribute(AUTHENTICATED_SESSION_KEY);
-        }
-        super.unbind(subject);
-    }
 }
