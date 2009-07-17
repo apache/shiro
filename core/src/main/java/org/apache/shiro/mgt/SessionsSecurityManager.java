@@ -188,7 +188,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
                     "The current SessionManager is of type [" + this.sessionManager.getClass().getName() + "].  " +
                     "This might occur for example if you're trying to set the validation interval or auto session " +
                     "creation in a servlet container-backed session environment ('http' session mode).  If that is " +
-                    "the case however, that property is only useful when using 'shiro' session mode and using " +
+                    "the case however, that property is only useful when using 'native' session mode and using " +
                     "Shiro enterprise sessions which do not rely on a servlet container.";
             throw new IllegalStateException(msg);
         }

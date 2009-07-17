@@ -18,13 +18,6 @@
  */
 package org.apache.shiro.mgt;
 
-import java.io.Serializable;
-
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -33,6 +26,12 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.Serializable;
 
 
 /**
@@ -92,7 +91,7 @@ public class DefaultSecurityManagerTest {
         String key = "foo";
         String value1 = "bar";
         session.setAttribute(key, value1);
-        assertEquals(value1, session.getAttribute(key) );
+        assertEquals(value1, session.getAttribute(key));
 
         //now test auto creation:
         session.setTimeout(100);
@@ -136,13 +135,13 @@ public class DefaultSecurityManagerTest {
         assertNull(subject.getPrincipal());
         assertNull(subject.getPrincipals());
 
-        subject.login( new UsernamePasswordToken("lonestarr", "vespa") );
+        subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
         assertTrue(subject.isAuthenticated());
         assertTrue("lonestarr".equals(subject.getPrincipal()));
-        assertTrue(subject.hasRole("goodguy") );
+        assertTrue(subject.hasRole("goodguy"));
 
-        assertNotNull( subject.getSession() );
-        assertFalse( firstSessionId.equals(subject.getSession().getId() ) );
+        assertNotNull(subject.getSession());
+        assertFalse(firstSessionId.equals(subject.getSession().getId()));
 
         subject.logout();
 

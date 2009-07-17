@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * A {@code Session} is a stateful data context associated with a single Subject (user, 3rd party process,
+ * A {@code Session} is a stateful data context associated with a single Subject (user, daemon process,
  * etc) who interacts with a software system over a period of time.
  * <p/>
  * A {@code Session} is intended to be managed by the business tier and accessible via other

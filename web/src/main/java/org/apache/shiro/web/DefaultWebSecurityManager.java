@@ -50,7 +50,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     private static final Logger log = LoggerFactory.getLogger(DefaultWebSecurityManager.class);
 
     public static final String HTTP_SESSION_MODE = "http";
-    public static final String KI_SESSION_MODE = "shiro";
+    public static final String NATIVE_SESSION_MODE = "native";
 
     /**
      * The key that is used to store subject principals in the session.
@@ -207,10 +207,10 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             throw new IllegalArgumentException("sessionMode argument cannot be null.");
         }
         mode = sessionMode.toLowerCase();
-        if (!HTTP_SESSION_MODE.equals(mode) && !KI_SESSION_MODE.equals(mode)) {
+        if (!HTTP_SESSION_MODE.equals(mode) && !NATIVE_SESSION_MODE.equals(mode)) {
             String msg = "Invalid sessionMode [" + sessionMode + "].  Allowed values are " +
                     "public static final String constants in the " + getClass().getName() + " class: '"
-                    + HTTP_SESSION_MODE + "' or '" + KI_SESSION_MODE + "', with '" +
+                    + HTTP_SESSION_MODE + "' or '" + NATIVE_SESSION_MODE + "', with '" +
                     HTTP_SESSION_MODE + "' being the default.";
             throw new IllegalArgumentException(msg);
         }
@@ -235,7 +235,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             return new ServletContainerSessionManager();
         } else {
             if (log.isInfoEnabled()) {
-                log.info(KI_SESSION_MODE + " mode - enabling DefaultWebSessionManager (HTTP + heterogeneous-client sessions)");
+                log.info(NATIVE_SESSION_MODE + " mode - enabling DefaultWebSessionManager (HTTP + heterogeneous-client sessions)");
             }
             return new DefaultWebSessionManager();
         }

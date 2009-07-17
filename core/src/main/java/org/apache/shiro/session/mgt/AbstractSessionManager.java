@@ -120,21 +120,27 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
 
     /**
-     * Returns the session instance to use to pass to registered <code>SessionListener</code>s for notification
+     * Returns the session instance to use to pass to registered {@code SessionListener}s for notification
      * that the session has been invalidated (stopped or expired).
      * <p/>
-     * The default implementation returns an
-     * {@link ImmutableProxiedSession ImmutableProxiedSession} instance to ensure
-     * that the specified <code>session</code> argument is not modified by any listeners.
+     * The default implementation returns an {@link ImmutableProxiedSession ImmutableProxiedSession} instance to ensure
+     * that the specified {@code session} argument is not modified by any listeners.
      *
-     * @param session the <code>Session</code> object being invalidated.
-     * @return the <code>Session</code> instance to use to pass to registered <code>SessionListener</code>s for
-     *         notification.
+     * @param session the {@code Session} object being invalidated.
+     * @return the {@code Session} instance to use to pass to registered {@code SessionListener}s for notification.
      */
     protected Session beforeInvalidNotification(Session session) {
         return new ImmutableProxiedSession(session);
     }
 
+    /**
+     * Notifies any interested {@link SessionListener}s that a Session has started.  This method is invoked
+     * <em>after</em> the {@link #onStart(org.apache.shiro.session.Session)} method is called.
+     *
+     * @param session the session that has just started that will be delivered to any
+     * {@link #setSessionListeners(java.util.Collection) registered} session listeners.
+     * @see SessionListener#onStart(org.apache.shiro.session.Session)
+     */
     protected void notifyStart(Session session) {
         for (SessionListener listener : this.listeners) {
             listener.onStart(session);

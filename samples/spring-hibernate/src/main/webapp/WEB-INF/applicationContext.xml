@@ -94,7 +94,7 @@
         <!-- Uncomment this next property if you want heterogenous session access or clusterable/distributable
              sessions.  The default value is 'http' which uses the Servlet container's HttpSession as the underlying
              Session implementation.
-        <property name="sessionMode" value="shiro"/> -->
+        <property name="sessionMode" value="native"/> -->
     </bean>
 
 
