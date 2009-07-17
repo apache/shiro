@@ -18,12 +18,10 @@
  */
 package org.apache.shiro.web;
 
+import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.web.DefaultWebSecurityManager;
 
 /**
  * @author Les Hazlewood
@@ -47,7 +45,7 @@ public class DefaultWebSecurityManagerTest {
 
     @Test
     public void shiroSessionModeInit() {
-        sm.setSessionMode(DefaultWebSecurityManager.KI_SESSION_MODE);
+        sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
     }
 
 }

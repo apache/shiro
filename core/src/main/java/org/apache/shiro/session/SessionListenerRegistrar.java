@@ -21,13 +21,12 @@ package org.apache.shiro.session;
 import java.util.Collection;
 
 /**
- * A <code>SessionListenerRegistrar</code> is a component that is capable of registering interested
- * {@link SessionListener SessionListener}s that wish to be notified during
- * {@link Session Session} lifecycle events.
+ * A {@code SessionListenerRegistrar} is a component that is capable of registering interested
+ * {@link SessionListener SessionListener}s that wish to be notified during {@link Session Session} lifecycle events.
  * <p/>
- * This interface only guarantees that registered listeners will be notified during a <code>Session</code>'s
- * lifecycle.  How that notification occurs is implementation specific (e.g. iteration over a collection of
- * listeners, JMS, etc.).
+ * This interface only specifies that registered listeners will be notified during a {@code Session}'s
+ * lifecycle.  How that notification occurs is implementation specific (e.g. synchronous iteration over a collection of
+ * listeners, or asynchronous JMS, etc.).
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -35,24 +34,26 @@ import java.util.Collection;
 public interface SessionListenerRegistrar {
 
     /**
-     * Sets the <code>SessionListener</code>(s) that wish to be notified during <code>Session</code> lifecycles.
+     * Sets the {@code SessionListener}(s) that wish to be notified during {@code Session} lifecycle events.
      *
-     * @param listeners one or more <code>SessionListener</code>s that should be notified during
-     * <code>Session</code> lifecycles.
+     * @param listeners one or more {@code SessionListener}s that should be notified during {@code Session} lifecycle events.
      */
     void setSessionListeners(Collection<SessionListener> listeners);
 
     /**
-     * Registeres a single <code>listener</code> that wishes to be notified during <code>Session</code> lifecycles.
-     * @param listener the single <code>listener</code> that wishes to be notified during <code>Session</code> lifecycles.
+     * Registers a single {@code listener} that wishes to be notified during {@code Session} lifecycle events.
+     *
+     * @param listener the single {@code listener} that wishes to be notified during {@code Session} lifecycle events.
      */
     void add(SessionListener listener);
 
     /**
-     * Removes a single <code>listener</code> that no longer wishes to be notified during <code>Session</code> lifecycles.
-     * @param listener the single <code>listener</code> that no longer wishes to be notified during <code>Session</code> lifecycles.
-     * @return <code>true</code> if the listener was removed (i.e. it was previously registered), or <code>false</code>
-     * if the listener was not removed (i.e. it wasn't registered yet, effectively a no-op).
+     * Removes a single {@code listener} that no longer wishes to be notified during {@code Session} lifecycle events.
+     *
+     * @param listener the single {@code listener} that no longer wishes to be notified during {@code Session} lifecycle
+     *                 events.
+     * @return {@code true} if the listener was removed (i.e. it was previously registered), or {@code false}
+     *         if the listener was not removed (i.e. it wasn't registered yet, effectively a no-op).
      */
     boolean remove(SessionListener listener);
 }

@@ -43,7 +43,7 @@
     <bean id="securityManager" class="org.apache.shiro.web.DefaultWebSecurityManager">
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
         <property name="realm" ref="jdbcRealm"/>
-        <property name="sessionMode" value="shiro"/>
+        <property name="sessionMode" value="native"/>
     </bean>
 
     <!-- Used by the SecurityManager to access security data (users, roles, etc).
