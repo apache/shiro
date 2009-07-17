@@ -113,11 +113,15 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     public Serializable start(Map initData) throws AuthorizationException {
         Session session = createSession(initData);
+        applyGlobalSessionTimeout(session);
         onStart(session);
         notifyStart(session);
         return session.getId();
     }
 
+    protected void applyGlobalSessionTimeout(Session session) {
+        session.setTimeout(getGlobalSessionTimeout());
+    }
 
     /**
      * Returns the session instance to use to pass to registered {@code SessionListener}s for notification
