@@ -58,7 +58,8 @@ public interface Session {
     Date getStartTimestamp();
 
     /**
-     * Returns the last time the user associated with the session interacted with the system.
+     * Returns the last time the application received a request or method invocation from the user associated
+     * with this session.  Application calls to this method do not affect this access time.
      *
      * @return The time the user last interacted with the system.
      * @see #touch()
@@ -114,10 +115,10 @@ public interface Session {
      * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session to the current time when
      * this method is invoked.  This method can be used to ensure a session does not time out.
      * <p/>
-     * Most programmers won't use this method explicitly and will instead rely calling the other Session methods
-     * to update the time transparently, or on a framework during a remote procedure call or upon a web request.
+     * Most programmers won't use this method directly and will instead rely on the last access time to be updated
+     * automatically as a result of an incoming web request or remote procedure call/method invocation.
      * <p/>
-     * This method is particularly useful however when supporting rich-client applications such as
+     * However, this method is particularly useful when supporting rich-client applications such as
      * Java Web Start appp, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
      * environment that a user continuously interacts with the client-side application without a
      * server-side method call ever being invoked.  If this happens over a long enough period of
@@ -128,7 +129,7 @@ public interface Session {
      * the user is actively &quot;using&quot; the application, just not communicating with the
      * server. But because no server-side method calls are invoked, there is no way for the server
      * to know if the user is sitting idle or not, so it must assume so to maintain session
-     * integrity.  The touch method could be invoked by the rich-client application code during those
+     * integrity.  This {@code touch()} method could be invoked by the rich-client application code during those
      * times to ensure that the next time a server-side method is invoked, the invocation will not
      * throw an {@link ExpiredSessionException ExpiredSessionException}.  In short terms, it could be used periodically
      * to ensure a session does not time out.
@@ -138,8 +139,7 @@ public interface Session {
      * usage characteristics of the client application, network utilization and application server
      * performance.
      *
-     * @throws InvalidSessionException if this session has stopped or expired prior to calling
-     *                                 this method.
+     * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
      */
     void touch() throws InvalidSessionException;
 

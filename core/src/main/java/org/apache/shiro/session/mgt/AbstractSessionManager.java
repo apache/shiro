@@ -121,6 +121,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
 
     protected void applyGlobalSessionTimeout(Session session) {
         session.setTimeout(getGlobalSessionTimeout());
+        onChange(session);
     }
 
     /**

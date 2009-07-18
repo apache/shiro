@@ -22,6 +22,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.config.Configuration;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.LifecycleUtils;
 import static org.apache.shiro.util.StringUtils.clean;
@@ -517,6 +519,35 @@ public class ShiroFilter extends OncePerRequestFilter {
     }
 
     /**
+     * Updates any 'native'  Session's last access time that might exist to the timestamp when this method is called.
+     * If native sessions are not enabled (that is, standard Servlet container sessions are being used) or there is no
+     * session ({@code subject.getSession(false) == null}), this method does nothing.
+     * <p/>This method implementation merely calls
+     * <code>Session.{@link org.apache.shiro.session.Session#touch() touch}()</code> on the session. 
+     *
+     * @param request  incoming request - ignored, but available to subclasses that might wish to override this method
+     * @param response outgoing response - ignored, but available to subclasses that might wish to override this method
+     * @since 1.0
+     */
+    protected void updateSessionLastAccessTime(ServletRequest request, ServletResponse response) {
+        if (!isHttpSessions()) { //'native' sessions
+            Subject subject = getSecurityManager().getSubject();
+            //Subject should never _ever_ be null, but just in case:
+            if (subject != null) {
+                Session session = subject.getSession(false);
+                if (session != null) {
+                    try {
+                        session.touch();
+                    } catch (Throwable t) {
+                        log.error("session.touch() method invocation has failed.  Unable to update" +
+                                "the corresponding session's last access time based on the incoming request.", t);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * {@code doFilterInternal} implementation that sets-up, executes, and cleans-up a Shiro-filtered request.  It
      * performs the following ordered operations:
      * <ol>
@@ -526,6 +557,9 @@ public class ShiroFilter extends OncePerRequestFilter {
      * the outgoing {@code ServletResponse} for use during Shiro's processing</li>
      * <li>{@link #bind(ServletRequest,ServletResponse) Binds} the request/response pair
      * and associated data to the currently executing thread for use during processing</li>
+     * <li>{@link #updateSessionLastAccessTime(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Updates}
+     * any associated session's {@link org.apache.shiro.session.Session#getLastAccessTime() lastAccessTime} to ensure
+     * session timeouts are honored</li>
      * <li>{@link #executeChain(ServletRequest,ServletResponse,FilterChain) Executes}
      * the appropriate {@code FilterChain}</li>
      * <li>{@link #unbind(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Unbinds} the request/response
@@ -551,6 +585,7 @@ public class ShiroFilter extends OncePerRequestFilter {
         bind(request, response);
 
         try {
+            updateSessionLastAccessTime(request, response);
             executeChain(request, response, chain);
         } finally {
             unbind(request, response);
