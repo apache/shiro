@@ -91,7 +91,7 @@ public class DefaultWebSecurityManagerTest {
         assertEquals(session.getTimeout(), globalTimeout);
         session.setTimeout(100);
         assertEquals(session.getTimeout(), 100);
-        sleep(100);
+        sleep(150);
         //now the underlying session should have been expired and a new one replaced by default.
         //so ensure the replaced session has the default session timeout:
         assertEquals(session.getTimeout(), globalTimeout);
