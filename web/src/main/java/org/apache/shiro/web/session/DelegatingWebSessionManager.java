@@ -93,6 +93,12 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
     }
 
     @Override
+    protected void applyGlobalSessionTimeout(Session session) {
+        //do nothing so we don't override the back-end's session settings.
+        //TODO - ensure front end session manager settings cannot be altered
+    }
+
+    @Override
     protected Session retrieveSessionFromDataSource(Serializable id) throws InvalidSessionException {
         assertDelegateExists();
         this.delegateSessionManager.checkValid(id);
