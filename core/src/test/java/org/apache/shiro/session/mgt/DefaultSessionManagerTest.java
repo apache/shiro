@@ -18,15 +18,20 @@
  */
 package org.apache.shiro.session.mgt;
 
+import org.apache.shiro.session.ExpiredSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.util.ThreadContext;
+import static org.easymock.EasyMock.*;
 import org.junit.After;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
@@ -62,5 +67,60 @@ public class DefaultSessionManagerTest {
         assertTrue(sm.isValid(sessionId));
         sleep(150);
         assertFalse(sm.isValid(sessionId));
+    }
+
+    @Test
+    public void testSessionDeleteOnExpiration() {
+
+        sm.setAutoCreateWhenInvalid(false);
+        sm.setGlobalSessionTimeout(100);
+
+        SessionDAO sessionDAO = createMock(SessionDAO.class);
+        sm.setSessionDAO(sessionDAO);
+
+        String sessionId1 = UUID.randomUUID().toString();
+        final SimpleSession session1 = new SimpleSession();
+        session1.setId(sessionId1);
+        System.out.println("Session id 1: " + sessionId1);
+
+        final Session[] activeSession = new SimpleSession[]{session1};
+        sm.setSessionFactory(new SessionFactory() {
+            public Session createSession(Map initData) {
+                return activeSession[0];
+            }
+        });
+
+        expect(sessionDAO.create(eq(session1))).andReturn(sessionId1);
+        sessionDAO.update(eq(session1));
+        expectLastCall().anyTimes();
+        replay(sessionDAO);
+        Serializable id = sm.start((InetAddress) null);
+        assertNotNull(id);
+        verify(sessionDAO);
+        reset(sessionDAO);
+
+        expect(sessionDAO.readSession(sessionId1)).andReturn(session1).anyTimes();
+        sessionDAO.update(eq(session1));
+        replay(sessionDAO);
+        sm.setTimeout(sessionId1, 1);
+        verify(sessionDAO);
+        reset(sessionDAO);
+
+        sleep(20);
+
+        expect(sessionDAO.readSession(sessionId1)).andReturn(session1);
+        sessionDAO.update(eq(session1)); //update's the stop timestamp
+        sessionDAO.delete(session1);
+        replay(sessionDAO);
+
+        //Try to access the same session, but it should throw an UnknownSessionException due to timeout:
+        try {
+            sm.getTimeout(sessionId1);
+            fail("Session with id [" + sessionId1 + "] should have expired due to timeout.");
+        } catch (ExpiredSessionException expected) {
+            //expected
+        }
+
+        verify(sessionDAO); //verify that the delete call was actually made on the DAO
     }
 }

@@ -50,7 +50,9 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
 
     private SessionFactory sessionFactory;
 
-    protected SessionDAO sessionDAO;
+    protected SessionDAO sessionDAO;  //todo - move SessionDAO up to AbstractValidatingSessionManager?
+
+    private boolean deleteInvalidSessions = true;
 
     public DefaultSessionManager() {
         this.sessionFactory = new SimpleSessionFactory();
@@ -85,6 +87,44 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
      */
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    /**
+     * Returns {@code true} if sessions should be automatically deleted after they are discovered to be invalid,
+     * {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.  The
+     * default is {@code true} to ensure no orphans exist in the underlying data store.
+     * <h4>Usage</h4>
+     * It is ok to set this to {@code false} <b><em>ONLY</em></b> if you have some other process that you manage yourself
+     * that periodically deletes invalid sessions from the backing data store over time, such as via a Quartz or Cron
+     * job.  If you do not do this, the invalid sessions will become 'orphans' and fill up the data store over time.
+     * <p/>
+     * This property is provided because some systems need the ability to perform querying/reporting against sessions in
+     * the data store, even after they have stopped or expired.  Setting this attribute to {@code false} will allow
+     * such querying, but with the caveat that the application developer/configurer deletes the sessions themselves by
+     * some other means (cron, quartz, etc).
+     *
+     * @return {@code true} if sessions should be automatically deleted after they are discovered to be invalid,
+     *         {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.
+     * @since 1.0
+     */
+    public boolean isDeleteInvalidSessions() {
+        return deleteInvalidSessions;
+    }
+
+    /**
+     * Sets whether or not sessions should be automatically deleted after they are discovered to be invalid.  Default
+     * value is {@code true} to ensure no orphans will exist in the underlying data store.
+     * <h4>WARNING</h4>
+     * Only set this value to {@code false} if you are manually going to delete sessions yourself by some process
+     * (quartz, cron, etc) external to Shiro's control.  See the
+     * {@link #isDeleteInvalidSessions() isDeleteInvalidSessions()} JavaDoc for more.
+     *
+     * @param deleteInvalidSessions whether or not sessions should be automatically deleted after they are discovered
+     *                              to be invalid.
+     * @since 1.0
+     */
+    public void setDeleteInvalidSessions(boolean deleteInvalidSessions) {
+        this.deleteInvalidSessions = deleteInvalidSessions;
     }
 
     public void setCacheManager(CacheManager cacheManager) {
@@ -129,11 +169,25 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
         onChange(session);
     }
 
+    @Override
+    protected void afterStopped(Session session) {
+        if (isDeleteInvalidSessions()) {
+            delete(session);
+        }
+    }
+
     protected void onExpiration(Session session) {
         if (session instanceof SimpleSession) {
             ((SimpleSession) session).setExpired(true);
         }
         onChange(session);
+    }
+
+    @Override
+    protected void afterExpired(Session session) {
+        if (isDeleteInvalidSessions()) {
+            delete(session);
+        }
     }
 
     protected void onChange(Session session) {
@@ -149,6 +203,10 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
 
     protected Session retrieveSessionFromDataSource(Serializable sessionId) throws InvalidSessionException {
         return sessionDAO.readSession(sessionId);
+    }
+
+    protected void delete(Session session) {
+        sessionDAO.delete(session);
     }
 
     protected Collection<Session> getActiveSessions() {

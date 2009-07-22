@@ -86,7 +86,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     /**
      * Returns the time the session was stopped, or <tt>null</tt> if the session is still active.
      * <p/>
-     * <p>A session may become stopped under a number of conditions:
+     * A session may become stopped under a number of conditions:
      * <ul>
      * <li>If the user logs out of the system, their current session is terminated (released).</li>
      * <li>If the session expires</li>
@@ -94,9 +94,8 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * <li>If there is an internal system error and the session state can no longer accurately
      * reflect the user's behavior, such in the case of a system crash</li>
      * </ul>
-     * </p>
      * <p/>
-     * <p>Once stopped, a session may no longer be used.  It is locked from all further activity.
+     * Once stopped, a session may no longer be used.  It is locked from all further activity.
      *
      * @return The time the session was stopped, or <tt>null</tt> if the session is still
      *         active.
@@ -303,4 +302,92 @@ public class SimpleSession implements ValidatingSession, Serializable {
         }
     }
 
+    /**
+     * Returns {@code true} if the specified argument is an {@code instanceof} {@code SimpleSession} and both
+     * {@link #getId() id}s are equal.  If the argument is a {@code SimpleSession} and either 'this' or the argument
+     * does not yet have an ID assigned, the value of {@link #onEquals(SimpleSession) onEquals} is returned, which
+     * does a necessary attribute-based comparison when IDs are not available.
+     * <p/>
+     * Do your best to ensure {@code SimpleSession} instances receive an ID very early in their lifecycle to
+     * avoid the more expensive attributes-based comparison.
+     *
+     * @param obj the object to compare with this one for equality.
+     * @return {@code true} if this object is equivalent to the specified argument, {@code false} otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof SimpleSession) {
+            SimpleSession other = (SimpleSession) obj;
+            Serializable thisId = getId();
+            Serializable otherId = other.getId();
+            if (thisId != null && otherId != null) {
+                return thisId.equals(otherId);
+            } else {
+                //fall back to an attribute based comparison:
+                return onEquals(other);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Provides an attribute-based comparison (no ID comparison) - incurred <em>only</em> when 'this' or the
+     * session object being compared for equality do not have a session id.
+     *
+     * @param ss the SimpleSession instance to compare for equality.
+     * @return true if all the attributes, except the id, are equal to this object's attributes.
+     * @since 1.0
+     */
+    protected boolean onEquals(SimpleSession ss) {
+        return (getStartTimestamp() != null ? getStartTimestamp().equals(ss.getStartTimestamp()) : ss.getStartTimestamp() == null) &&
+                (getStopTimestamp() != null ? getStopTimestamp().equals(ss.getStopTimestamp()) : ss.getStopTimestamp() == null) &&
+                (getLastAccessTime() != null ? getLastAccessTime().equals(ss.getLastAccessTime()) : ss.getLastAccessTime() == null) &&
+                (getTimeout() == ss.getTimeout()) &&
+                (isExpired() == ss.isExpired()) &&
+                (getHostAddress() != null ? getHostAddress().equals(ss.getHostAddress()) : ss.getHostAddress() == null) &&
+                (getAttributes() != null ? getAttributes().equals(ss.getAttributes()) : ss.getAttributes() == null);
+    }
+
+    /**
+     * Returns the hashCode.  If the {@link #getId() id} is not {@code null}, its hashcode is returned immediately.
+     * If it is {@code null}, an attributes-based hashCode will be calculated and returned.
+     * <p/>
+     * Do your best to ensure {@code SimpleSession} instances receive an ID very early in their lifecycle to
+     * avoid the more expensive attributes-based calculation.
+     *
+     * @return this object's hashCode
+     * @since 1.0
+     */
+    @Override
+    public int hashCode() {
+        if (getId() != null) {
+            return getId().hashCode();
+        }
+        int hashCode = getStartTimestamp() != null ? getStartTimestamp().hashCode() : 0;
+        hashCode = 31 * hashCode + (getStopTimestamp() != null ? getStopTimestamp().hashCode() : 0);
+        hashCode = 31 * hashCode + (getLastAccessTime() != null ? getLastAccessTime().hashCode() : 0);
+        hashCode = 31 * hashCode + Long.valueOf(Math.max(getTimeout(), 0)).hashCode();
+        hashCode = 31 * hashCode + Boolean.valueOf(isExpired()).hashCode();
+        hashCode = 31 * hashCode + (getHostAddress() != null ? getHostAddress().hashCode() : 0);
+        hashCode = 31 * hashCode + (getAttributes() != null ? getAttributes().hashCode() : 0);
+        return hashCode;
+    }
+
+    /**
+     * Returns the string representation of this SimpleSession, equal to
+     * <code>getClass().getName() + &quot;,id=&quot; + getId()</code>.
+     *
+     * @return the string representation of this SimpleSession, equal to
+     *         <code>getClass().getName() + &quot;,id=&quot; + getId()</code>.
+     * @since 1.0
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getName()).append(",id=").append(getId());
+        return sb.toString();
+    }
 }

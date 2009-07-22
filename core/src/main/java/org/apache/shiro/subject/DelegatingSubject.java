@@ -180,14 +180,14 @@ public class DelegatingSubject implements Subject {
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
         if (!hasPrincipals()) {
-            String msg = "Identity principals are not associated with this Subject instance - " +
+            String msg = "This subject is anonymous - it does not have any identifying principals associated, and " +
                     "authorization operations require an identity to check against.  A Subject instance will " +
                     "acquire these identifying principals automatically after a successful login is performed " +
                     "be executing " + Subject.class.getName() + ".login(AuthenticationToken) or when 'Remember Me' " +
-                    "functionality is enabled.  This exception can also occur when the current Subject has logged out, " +
-                    "which relinquishes its identity and essentially makes it anonymous again.  " +
-                    "Because an identity is currently not known due to any of these conditions, " +
-                    "authorization is denied.";
+                    "functionality is enabled by the SecurityManager.  This exception can also occur when a " +
+                    "previously logged-in Subject has logged out, which relinquishes its identity and essentially " +
+                    "makes it anonymous again.  Because an identity is currently not known due to any of these " +
+                    "conditions, authorization is denied.";
             throw new UnauthenticatedException(msg);
         }
     }
@@ -294,7 +294,7 @@ public class DelegatingSubject implements Subject {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
-            //Don't set securityManager to null here - the Subject can be continued to be
+            //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is
             //necessary if the subject would log in again or acquire a new session.  This is in response to
             //https://issues.apache.org/jira/browse/JSEC-22
