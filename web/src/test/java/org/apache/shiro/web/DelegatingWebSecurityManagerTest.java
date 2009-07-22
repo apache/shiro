@@ -1,31 +1,26 @@
 package org.apache.shiro.web;
 
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.realm.text.PropertiesRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
+import static org.easymock.EasyMock.*;
+import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lhazlewood
- * Date: Jul 18, 2009
- * Time: 7:46:22 PM
- * To change this template use File | Settings | File Templates.
+ * Unit test for the {@link org.apache.shiro.web.DelegatingWebSecurityManager} implementation.
+ *
+ * @since 1.0
  */
 public class DelegatingWebSecurityManagerTest {
 
@@ -36,7 +31,6 @@ public class DelegatingWebSecurityManagerTest {
     public void setup() {
         delegate = new DefaultSecurityManager();
         delegate.setRealm(new PropertiesRealm());
-        delegate.setGlobalSessionTimeout(-1);
         sm = new DelegatingWebSecurityManager();
         sm.setDelegateSecurityManager(delegate);
         SecurityUtils.setSecurityManager(sm);
@@ -60,7 +54,8 @@ public class DelegatingWebSecurityManagerTest {
 
     @Test
     public void testSessionTimeout() {
-        long globalTimeout = -1;
+        long globalTimeout = 100;
+        delegate.setGlobalSessionTimeout(globalTimeout);
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         WebUtils.bind(mockRequest);
@@ -75,15 +70,13 @@ public class DelegatingWebSecurityManagerTest {
         Subject subject = sm.getSubject();
         Session session = subject.getSession();
         Serializable origId = session.getId();
-        assertEquals(session.getTimeout(), globalTimeout);
-        session.setTimeout(100);
-        assertEquals(session.getTimeout(), 100);
-        sleep(150);
+        assertEquals(globalTimeout, session.getTimeout());
+        session.setTimeout(125);
+        assertEquals(125, session.getTimeout());
+        sleep(175);
         //now the underlying session should have been expired and a new one replaced by default.
         //so ensure the replaced session has the default session timeout:
-        assertEquals(session.getTimeout(), globalTimeout);
+        assertEquals(globalTimeout, session.getTimeout());
         assertFalse(origId.equals(session.getId())); //new ID would have been generated
-
-        //verify(mockRequest);
     }
 }

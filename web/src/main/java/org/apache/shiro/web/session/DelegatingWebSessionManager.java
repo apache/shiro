@@ -21,11 +21,9 @@ package org.apache.shiro.web.session;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DelegatingSession;
-import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Map;
 
 /**
@@ -45,6 +43,9 @@ import java.util.Map;
  * @since 1.0
  */
 public class DelegatingWebSessionManager extends DefaultWebSessionManager {
+
+    private static final String THREAD_CONTEXT_SESSION_KEY =
+            DelegatingWebSessionManager.class.getName() + ".THREAD_CONTEXT_SESSION_KEY";
 
     private SessionManager delegateSessionManager = null;
 
@@ -84,11 +85,7 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
     @Override
     protected Session doCreateSession(Map initData) {
         assertDelegateExists();
-        InetAddress host = null;
-        if (initData != null && initData.containsKey(SessionFactory.ORIGINATING_HOST_KEY)) {
-            host = (InetAddress) initData.get(SessionFactory.ORIGINATING_HOST_KEY);
-        }
-        Serializable sessionId = this.delegateSessionManager.start(host);
+        Serializable sessionId = this.delegateSessionManager.start(initData);
         return new DelegatingSession(this, sessionId);
     }
 
@@ -100,15 +97,36 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
 
     @Override
     protected Session retrieveSessionFromDataSource(Serializable id) throws InvalidSessionException {
+        /*Session session = (Session)ThreadContext.get(THREAD_CONTEXT_SESSION_KEY);
+        if ( session != null ) {
+            return session;
+        }*/
         assertDelegateExists();
         this.delegateSessionManager.checkValid(id);
-        //we need the DelegatingSession to reference the delegateSessionManager and not 'this' so
-        //we avoid an infinite loop:
         return new DelegatingSession(this.delegateSessionManager, id);
+        /*//we need the DelegatingSession to reference the delegateSessionManager and not 'this' so
+        //we avoid an infinite loop:
+        session = new DelegatingSession(this.delegateSessionManager, id);
+        ThreadContext.put(THREAD_CONTEXT_SESSION_KEY, session);
+        
+        return session;*/
+    }
+
+    @Override
+    protected void onChange(Session session) {
+        //do nothing - back-end will react to change as appropriate
     }
 
     @Override
     protected void doValidate(Session session) throws InvalidSessionException {
-        session.touch();
+        /*if ( session == null ) {
+            throw new InvalidSessionException("Session method argument is null!" );
+        }
+        Serializable id = session.getId();
+        if ( id == null ) {
+            throw new InvalidSessionException("Session does not have an id!" );
+        }
+        assertDelegateExists();
+        this.delegateSessionManager.checkValid(id);*/
     }
 }
