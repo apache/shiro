@@ -81,7 +81,6 @@ public class DefaultSessionManagerTest {
         String sessionId1 = UUID.randomUUID().toString();
         final SimpleSession session1 = new SimpleSession();
         session1.setId(sessionId1);
-        System.out.println("Session id 1: " + sessionId1);
 
         final Session[] activeSession = new SimpleSession[]{session1};
         sm.setSessionFactory(new SessionFactory() {

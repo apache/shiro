@@ -211,6 +211,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected void validate(Session session) throws InvalidSessionException {
         try {
             doValidate(session);
+        } catch (ExpiredSessionException ese) {
+            onExpiration(session, ese);
+            throw ese;
         } catch (InvalidSessionException ise) {
             onInvalidation(session, ise);
             throw ise;
@@ -222,8 +225,8 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             onExpiration(session, (ExpiredSessionException) ise);
             return;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Session with id [" + session.getId() + "] is invalid.");
+        if (log.isTraceEnabled()) {
+            log.trace("Session with id [{}] is invalid.", ise.getSessionId());
         }
         onStop(session);
         notifyStop(session);
@@ -231,6 +234,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     }
 
     protected void onExpiration(Session s, ExpiredSessionException ese) {
+        if (log.isTraceEnabled()) {
+            log.trace("Session with id [{}] has expired.", ese.getSessionId());
+        }
         onExpiration(s);
         notifyExpiration(s);
         afterExpired(s);
