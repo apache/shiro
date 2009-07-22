@@ -19,10 +19,7 @@
 package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.session.ExpiredSessionException;
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.ReplacedSessionException;
-import org.apache.shiro.session.Session;
+import org.apache.shiro.session.*;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
@@ -152,7 +149,22 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         this.autoCreateWhenInvalid = autoCreateWhenInvalid;
     }
 
-    protected final Session doGetSession(Serializable sessionId) throws InvalidSessionException {
+    private InetAddress getHostAddressFallback(Session s) {
+        InetAddress inet = s.getHostAddress();
+        if (inet == null) {
+            //fallback to thread local just in case:
+            inet = ThreadContext.getInetAddress();
+        }
+        return inet;
+    }
+
+    private static void assertNotNull(Session session, Serializable sessionId) throws UnknownSessionException {
+        if (session == null) {
+            throw new UnknownSessionException(sessionId);
+        }
+    }
+
+    protected final Session doGetSession(final Serializable sessionId) throws InvalidSessionException {
         enableSessionValidationIfNecessary();
 
         if (log.isTraceEnabled()) {
@@ -161,35 +173,31 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         InetAddress hostAddress = null;
         try {
             Session s = retrieveSession(sessionId);
-            //save the host address in case the session will be invalidated.  We want to retain it for the
-            //replacement session:
-            hostAddress = s.getHostAddress();
+            assertNotNull(s, sessionId);
+            // Save the host address in case the session will be invalidated.
+            // We want to retain it in case it is needed for a replacement session
+            hostAddress = getHostAddressFallback(s);
             validate(s);
             return s;
         } catch (InvalidSessionException ise) {
-            if (isAutoCreateWhenInvalid()) {
-                if (hostAddress == null) {
-                    //try the threadContext as a last resort:
-                    hostAddress = ThreadContext.getInetAddress();
-                }
-                Serializable newId = start(hostAddress);
-                String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
-                        "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
-                        "new session id [" + newId + "] with exception so the caller may react accordingly.";
-                throw new ReplacedSessionException(msg, ise, sessionId, newId);
-            } else {
-                //propagate original exception:
+            if (!isAutoCreateWhenInvalid()) {
                 throw ise;
             }
+            //otherwise auto-create a new session and indicate via a ReplacedSessionException
+            Serializable newId = start(hostAddress);
+            String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
+                    "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
+                    "new session id [" + newId + "] with exception so the caller may react accordingly.";
+            throw new ReplacedSessionException(msg, ise, sessionId, newId);
         }
     }
 
     /**
      * Looks up a session from the underlying data store based on the specified {@code sessionId}.
      *
-     * @param sessionId
-     * @return
-     * @throws InvalidSessionException
+     * @param sessionId the id of the session to retrieve from the data store
+     * @return the session identified by {@code sessionId}.
+     * @throws InvalidSessionException if there is no session identified by {@code sessionId}.
      */
     protected abstract Session retrieveSession(Serializable sessionId) throws InvalidSessionException;
 
@@ -203,12 +211,36 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected void validate(Session session) throws InvalidSessionException {
         try {
             doValidate(session);
-        } catch (ExpiredSessionException ese) {
-            onExpiration(session);
-            notifyExpiration(session);
-            //propagate to caller:
-            throw ese;
+        } catch (InvalidSessionException ise) {
+            onInvalidation(session, ise);
+            throw ise;
         }
+    }
+
+    protected void onInvalidation(Session session, InvalidSessionException ise) {
+        if (ise instanceof ExpiredSessionException) {
+            onExpiration(session, (ExpiredSessionException) ise);
+            return;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Session with id [" + session.getId() + "] is invalid.");
+        }
+        onStop(session);
+        notifyStop(session);
+        afterStopped(session);
+    }
+
+    protected void onExpiration(Session s, ExpiredSessionException ese) {
+        onExpiration(s);
+        notifyExpiration(s);
+        afterExpired(s);
+    }
+
+    protected void onExpiration(Session session) {
+        onChange(session);
+    }
+
+    protected void afterExpired(Session session) {
     }
 
     protected void doValidate(Session session) throws InvalidSessionException {

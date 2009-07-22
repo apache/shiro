@@ -143,7 +143,7 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
      * <em>after</em> the {@link #onStart(org.apache.shiro.session.Session)} method is called.
      *
      * @param session the session that has just started that will be delivered to any
-     * {@link #setSessionListeners(java.util.Collection) registered} session listeners.
+     *                {@link #setSessionListeners(java.util.Collection) registered} session listeners.
      * @see SessionListener#onStart(org.apache.shiro.session.Session)
      */
     protected void notifyStart(Session session) {
@@ -206,6 +206,10 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         session.stop();
         onStop(session);
         notifyStop(session);
+        afterStopped(session);
+    }
+
+    protected void afterStopped(Session session) {
     }
 
     public Collection<Object> getAttributeKeys(Serializable sessionId) {
@@ -236,6 +240,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     }
 
     protected Session getSession(Serializable sessionId) throws InvalidSessionException {
+        if (sessionId == null) {
+            throw new IllegalArgumentException("sessionId parameter cannot be null.");
+        }
         Session session = doGetSession(sessionId);
         if (session == null) {
             String msg = "There is no session with id [" + sessionId + "]";
@@ -269,10 +276,6 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
     }
 
     protected void onStop(Session session) {
-        onChange(session);
-    }
-
-    protected void onExpiration(Session session) {
         onChange(session);
     }
 

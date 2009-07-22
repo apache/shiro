@@ -509,7 +509,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @see org.apache.shiro.authz.HostUnauthorizedException
      * @since 1.0
      */
-    private Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
+    protected Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         Session session = getSession(sessionId);
 
         Map<String, Object> context = new HashMap<String, Object>(1);

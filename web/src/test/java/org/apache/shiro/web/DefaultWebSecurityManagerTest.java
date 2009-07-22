@@ -18,19 +18,15 @@
  */
 package org.apache.shiro.web;
 
-import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.util.ThreadContext;
+import static org.easymock.EasyMock.*;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,8 +92,6 @@ public class DefaultWebSecurityManagerTest {
         //so ensure the replaced session has the default session timeout:
         assertEquals(session.getTimeout(), globalTimeout);
         assertFalse(origId.equals(session.getId())); //new ID would have been generated
-
-        //verify(mockRequest);
     }
 
 }

@@ -71,7 +71,9 @@ public class UnknownSessionException extends InvalidSessionException {
      * @param sessionId the session id given that is unknown to the system.
      */
     public UnknownSessionException(Serializable sessionId) {
-        super(sessionId);
+        super("Unable to locate session with id [" + sessionId + "] either because it is an invalid id " +
+                "or the session has been deleted due to invalidation (stopped, logged out, or expired).",
+                sessionId);
     }
 
     /**

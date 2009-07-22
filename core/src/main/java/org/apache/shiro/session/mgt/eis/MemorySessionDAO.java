@@ -18,32 +18,31 @@
  */
 package org.apache.shiro.session.mgt.eis;
 
-import java.io.Serializable;
-import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.cache.HashtableCacheManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.util.JavaEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.Random;
 
 
 /**
  * Simple memory-based implementation of the SessionDAO that relies on its configured
  * {@link #setCacheManager CacheManager} for Session caching and in-memory persistence.
- *
+ * <p/>
  * <p><b>PLEASE NOTE</b> the default CacheManager internal to this implementation is a
  * {@link org.apache.shiro.cache.HashtableCacheManager HashtableCacheManager}, which IS NOT RECOMMENDED for production environments.
- *
+ * <p/>
  * <p>If you
  * want to use the MemorySessionDAO in production environments, such as those that require session data to be
  * recoverable in case of a server restart, you should do one of two things (or both):
- *
+ * <p/>
  * <ul>
  * <li>Configure it with a production-quality CacheManager. The
- * {@link org.apache.shiro.cache.ehcache.EhCacheManager EhCacheManager} is one such implementation.  It is not used by default
+ * {@code org.apache.shiro.cache.ehcache.EhCacheManager} is one such implementation.  It is not used by default
  * to prevent a forced runtime dependency on ehcache.jar that may not be required in many environments)</li><br/>
  * <li>If you need session information beyond their transient start/stop lifetimes, you should subclass this one and
  * override the <tt>do*</tt> methods to perform CRUD operations using an EIS-tier API (e.g. Hibernate/JPA/JCR/etc).
