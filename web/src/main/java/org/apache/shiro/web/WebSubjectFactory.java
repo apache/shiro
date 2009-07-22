@@ -18,17 +18,15 @@
  */
 package org.apache.shiro.web;
 
-import java.net.InetAddress;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.apache.shiro.mgt.DefaultSubjectFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionSubjectBinder;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.session.WebSessionManager;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.util.Map;
 
 
 /**
@@ -62,33 +60,10 @@ public class WebSubjectFactory extends DefaultSubjectFactory {
         this.webSessionManager = webSessionManager;
     }
 
-    protected PrincipalCollection getPrincipals(Session existing) {
-        PrincipalCollection principals = null;
-        if (existing != null) {
-            principals = (PrincipalCollection) existing.getAttribute(PRINCIPALS_SESSION_KEY);
-        }
-//        if (principals == null) {
-//            //check remember me:
-//            principals = getRememberedIdentity();
-//            if (principals != null && existing != null) {
-//                existing.setAttribute(PRINCIPALS_SESSION_KEY, principals);
-//            }
-//        }
-        return principals;
-    }
-
-    protected boolean isAuthenticated(Session session) {
-        Boolean value = null;
-        if (session != null) {
-            value = (Boolean) session.getAttribute(AUTHENTICATED_SESSION_KEY);
-        }
-        return value != null && value;
-    }
-
     protected Session getWebSession() {
         ServletRequest request = WebUtils.getServletRequest();
         ServletResponse response = WebUtils.getServletResponse();
-        if ( request == null || response == null ) {
+        if (request == null || response == null) {
             //no current web request - probably a remote method invocation that didn't come in via a servlet request:
             return null;
         } else {
@@ -97,31 +72,11 @@ public class WebSubjectFactory extends DefaultSubjectFactory {
     }
 
     @Override
-    public Subject createSubject(PrincipalCollection principals, Session existing, boolean authenticated, InetAddress inetAddress) {
-        Session session = existing;
+    protected Session getSession(Map context) {
+        Session session = super.getSession(context);
         if (session == null) {
             session = getWebSession();
         }
-
-        PrincipalCollection pc = principals;
-        if (pc == null) {
-            pc = getPrincipals(session);
-        }
-
-        boolean authc = authenticated;
-        if (!authc) {
-            //check session to be sure:
-            authc = isAuthenticated(session);
-        }
-
-        InetAddress inet = inetAddress;
-        if (inet == null) {
-            ServletRequest request = WebUtils.getServletRequest();
-            if ( request != null ) {
-                inet = WebUtils.getInetAddress(request);
-            }
-        }
-
-        return super.createSubject(pc, session, authc, inet);
+        return session;
     }
 }

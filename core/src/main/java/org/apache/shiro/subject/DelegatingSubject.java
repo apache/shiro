@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class DelegatingSubject implements Subject {
     protected SecurityManager securityManager;
 
     public DelegatingSubject(SecurityManager securityManager) {
-        this(null, false, getLocalHost(), null, securityManager);
+        this(null, false, null, null, securityManager);
     }
 
     public DelegatingSubject(PrincipalCollection principals, boolean authenticated, InetAddress inetAddress,
@@ -89,24 +88,13 @@ public class DelegatingSubject implements Subject {
         }
         this.securityManager = securityManager;
         this.principals = principals;
-
         this.authenticated = authenticated;
 
         if (inetAddress != null) {
             this.inetAddress = inetAddress;
-        } else {
-            this.inetAddress = getLocalHost();
         }
         if (session != null) {
             this.session = decorate(session);
-        }
-    }
-
-    protected static InetAddress getLocalHost() {
-        try {
-            return InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            return null;
         }
     }
 

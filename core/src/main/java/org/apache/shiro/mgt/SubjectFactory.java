@@ -18,13 +18,9 @@
  */
 package org.apache.shiro.mgt;
 
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
-import java.net.InetAddress;
+import java.util.Map;
 
 /**
  * A {@code SubjectFactory} is responsible for returning {@link Subject Subject} instances as needed.
@@ -34,37 +30,29 @@ import java.net.InetAddress;
  */
 public interface SubjectFactory {
 
-    /**
-     * Returns a {@code Subject} instance reflecting the state of a <em>successful</em> authentication attempt.
-     * <p/>
-     * The '{@code existing}' {@code Subject} method argument is the {@code Subject} that executed the
-     * authentication attempt but still reflects an unauthenticated state.  The instance returned from this method
-     * is the {@code Subject} instance to use for future application use and reflects an authenticated state.
-     *
-     * @param token    the {@code AuthenticationToken} submitted during the successful authentication attempt.
-     * @param info     the {@code AuthenticationInfo} generated due to the successful authentication attempt.
-     * @param existing the {@code Subject} that executed the attempt, still in an 'unauthenticated' state.
-     * @return the {@code Subject} for the application to use going forward, but in an 'authenticated' state.
-     */
-    Subject createSubject(AuthenticationToken token, AuthenticationInfo info, Subject existing);
+    public static final String AUTHENTICATION_TOKEN = SubjectFactory.class.getName() + ".AUTHENTICATION_TOKEN";
+
+    public static final String AUTHENTICATION_INFO = SubjectFactory.class.getName() + ".AUTHENTICATION_INFO";
+
+    public static final String SUBJECT = SubjectFactory.class.getName() + ".SUBJECT";
+
+    public static final String PRINCIPALS = SubjectFactory.class.getName() + ".PRINCIPALS";
+
+    public static final String SESSION = SubjectFactory.class.getName() + ".SESSION";
+
+    public static final String AUTHENTICATED = SubjectFactory.class.getName() + ".AUTHENTICATED";
+
+    public static final String INET_ADDRESS = SubjectFactory.class.getName() + ".INET_ADDRESS";
 
     /**
-     * Returns a {@code Subject} instance reflecting the specified Subject identity (aka 'principals'), any
-     * existing {@code Session} that might be in place for that identity, whether or not the Subject is to be
-     * considered already authenticated, and the originating host from where the Subject instance to be created is
-     * being acquired.
+     * Creates a new Subject instance reflecting the state of the specified contextual data.  The data would be
+     * anything required to required to construct a {@code Subject} instance and its contents can vary based on
+     * environment.
      *
-     * @param principals      the identifying attributes of the Subject instance to be created, or
-     *                        {@code null} if the Subject's identity is unknown because they haven't logged in yet and are not 'remembered'
-     *                        from {@code RememberMe} services.
-     * @param existing        any {@link org.apache.shiro.session.Session Session} that might be in place for the specified {@link org.apache.shiro.subject.Subject}, or
-     *                        {@code null} if there is no session yet created for the specified {@code Subject}.  If non-{@code null},
-     *                        it should be retained and used by the {@code Subject} instance returned from this method call.
-     * @param authenticated   whether or not the {@code Subject} instance returned should be considered already
-     *                        authenticated.
-     * @param originatingHost the host location indicating where the {@code Subject} is located.
-     * @return a {@code Subject} instance representing the aggregate state of the specified method arguments.
+     * @param context the contextual data to be used by the implementation to construct an appropriate {@code Subject}
+     *                instance.
+     * @return a {@code Subject} instance created based on the specified context.
      */
-    Subject createSubject(PrincipalCollection principals, Session existing, boolean authenticated, InetAddress originatingHost);
+    Subject createSubject(Map context);
 
 }

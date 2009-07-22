@@ -329,9 +329,17 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     protected void onStop(Session session) {
         super.onStop(session);
+        removeSessionIdCookie();
+    }
+
+    protected void onExpiration(Session session) {
+        super.onExpiration(session);
+        removeSessionIdCookie();
+    }
+
+    protected void removeSessionIdCookie() {
         ServletRequest request = WebUtils.getRequiredServletRequest();
         ServletResponse response = WebUtils.getRequiredServletResponse();
         removeSessionIdCookie(request, response);
-        getSessionIdCookieAttribute().removeValue(request, response);
     }
 }

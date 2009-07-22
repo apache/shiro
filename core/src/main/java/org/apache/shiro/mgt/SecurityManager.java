@@ -26,6 +26,8 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
+import java.util.Map;
+
 
 /**
  * A <tt>SecurityManager</tt> executes all security operations for <em>all</em> Subjects (aka users) across a
@@ -104,6 +106,27 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * @since 0.9
      */
     Subject getSubject();
+
+    /**
+     * Returns the {@code Subject} instance reflecting the specified contextual data.
+     * <p/>
+     * The context can be anything needed by this {@code SecurityManager} to construct a {@code Subject} instance.
+     * Most Shiro end-users will never call this method - it exists primarily for
+     * framework development and to support any underlying {@link SubjectFactory SubjectFactory} implementations used
+     * by the {@code SecurityManager}.
+     * <h4>Usage</h4>
+     * The difference between calling this method and {@link #getSubject() getSubject()} is that the {@code Subject}
+     * instance returned from this method is not automatically 'bound' to the application
+     * for further use.  That is, after calling this method, a call to {@code getSubject()} will not necessarily return
+     * the same instance.  Callers are expected to know that {@code Subject} instances have local scope only and any
+     * other further use beyond the calling method must be managed manually.
+     *
+     * @param context any data needed to direct how the Subject should be constructed.
+     * @return the {@code Subject} instance reflecting the specified initialization data.
+     * @see SubjectFactory#createSubject(java.util.Map)
+     * @since 1.0
+     */
+    Subject getSubject(Map context);
 
     /*Subject getSubject(Map initData);
 
