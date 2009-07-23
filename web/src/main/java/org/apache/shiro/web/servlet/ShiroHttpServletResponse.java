@@ -18,24 +18,24 @@
  */
 package org.apache.shiro.web.servlet;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * HttpServletResponse implementation to support URL Encoding of Shiro Session IDs.
- *
+ * <p/>
  * It is only used when using Shiro's native Session Management configuration (and not when using the Servlet
  * Container session configuration, which is Shiro's default in a web environment).  Because the servlet container
  * already performs url encoding of its own session ids, instances of this class are only needed when using Shiro
  * native sessions.
- *
+ * <p/>
  * <p>Note that this implementation relies in part on source code from the Tomcat 6.x distribution for
  * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since Shiro is also
  * Apache 2.0 license, all regular licenses and conditions have remained in tact.
@@ -131,6 +131,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      * </ul>
      *
      * @param location Absolute URL to be validated
+     * @return {@code true} if the specified URL should be encoded with a session identifier, {@code false} otherwise.
      */
     protected boolean isEncodeable(final String location) {
 
@@ -154,7 +155,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
     private boolean doIsEncodeable(HttpServletRequest hreq, HttpSession session, String location) {
         // Is this a valid absolute URL?
-        URL url = null;
+        URL url;
         try {
             url = new URL(location);
         } catch (MalformedURLException e) {
@@ -205,6 +206,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      * already absolute, return it unchanged.
      *
      * @param location URL to be (possibly) converted and then returned
+     * @return resource location as an absolute url
      * @throws IllegalArgumentException if a MalformedURLException is
      *                                  thrown when converting the relative URL to an absolute one
      */
@@ -254,6 +256,9 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
     /**
      * Determine if the character is allowed in the scheme of a URI.
      * See RFC 2396, Section 3.1
+     *
+     * @param c the character to check
+     * @return {@code true} if the character is allowed in a URI scheme, {@code false} otherwise.
      */
     public static boolean isSchemeChar(char c) {
         return Character.isLetterOrDigit(c) ||
@@ -262,7 +267,10 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
 
     /**
-     * Determine if a URI string has a <code>scheme</code> component.
+     * Returns {@code true} if the URI string has a {@code scheme} component, {@code false} otherwise.
+     *
+     * @param uri the URI string to check for a scheme component
+     * @return {@code true} if the URI string has a {@code scheme} component, {@code false} otherwise.
      */
     private boolean hasScheme(String uri) {
         int len = uri.length();
@@ -278,11 +286,11 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
     }
 
     /**
-     * Return the specified URL with the specified session identifier
-     * suitably encoded.
+     * Return the specified URL with the specified session identifier suitably encoded.
      *
      * @param url       URL to be encoded with the session id
      * @param sessionId Session id to be included in the encoded URL
+     * @return the url with the session identifer properly encoded.
      */
     protected String toEncoded(String url, String sessionId) {
 

@@ -77,8 +77,8 @@ public class SessionSubjectBinder extends ThreadContextSubjectBinder {
 
     @Override
     public void bind(Subject subject) {
-        bindToSession(subject);
         super.bind(subject);
+        bindToSession(subject);
     }
 
     protected void bindToSession(Subject subject) {

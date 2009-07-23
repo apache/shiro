@@ -32,8 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -79,13 +81,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     public DefaultWebSecurityManager(Collection<Realm> realms) {
         this();
         setRealms(realms);
-    }
-
-    @Override
-    protected void afterSessionManagerSet() {
-        super.afterSessionManagerSet();
-        WebSessionManager sessionManager = (WebSessionManager) getSessionManager();
-        setSubjectFactory(new WebSubjectFactory(this, sessionManager));
     }
 
     //TODO - yuck - create an interface
@@ -239,6 +234,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
             }
             return new DefaultWebSessionManager();
         }
+    }
+
+    @Override
+    protected Serializable getSessionId(Map subjectContext) {
+        Serializable sessionId = super.getSessionId(subjectContext);
+        if (sessionId == null) {
+            ServletRequest request = WebUtils.getServletRequest();
+            ServletResponse response = WebUtils.getServletResponse();
+            if (request != null && response != null) {
+                sessionId = ((WebSessionManager) getSessionManager()).getSessionId(request, response);
+            }
+        }
+        return sessionId;
     }
 
     @Override

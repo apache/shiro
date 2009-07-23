@@ -64,15 +64,13 @@ public class DelegatingWebSecurityManager extends DefaultWebSecurityManager {
      * This implementation immediately sets this instance as the
      * {@link #setAuthenticator(org.apache.shiro.authc.Authenticator) delegate authenticator} and
      * {@link #setAuthorizer(org.apache.shiro.authz.Authorizer) delegate authorizer}.  It then constructs a
-     * wrapping {@link WebSessionManager WebSubjectFactory} and {@link WebSubjectFactory WebSubjectFactory} based on
-     * the delegate {@code SecurityManager} instance and uses them as this component's
-     * {@link #setSessionManager(org.apache.shiro.session.mgt.SessionManager) sessionManager} and
-     * {@link #setSubjectFactory(org.apache.shiro.mgt.SubjectFactory) subjectFactory}, respectively.
+     * wrapping {@link WebSessionManager WebSubjectFactory} based on the delegate {@code SecurityManager} instance
+     * and uses them as this component's
+     * {@link #setSessionManager(org.apache.shiro.session.mgt.SessionManager) sessionManager} instance.
      *
      * @param delegate the {@link SecurityManager} to which all authentication, authorization, and
      *                 session management operations will be delegated.
      * @see #createWebSessionManager(org.apache.shiro.mgt.SecurityManager)
-     * @see #createWebSubjectFactory(org.apache.shiro.mgt.SecurityManager, org.apache.shiro.web.session.WebSessionManager)
      */
     public void setDelegateSecurityManager(SecurityManager delegate) {
         if (delegate == null) {
@@ -84,9 +82,6 @@ public class DelegatingWebSecurityManager extends DefaultWebSecurityManager {
 
         WebSessionManager sessionManager = createWebSessionManager(delegate);
         setSessionManager(sessionManager);
-
-        WebSubjectFactory webSubjectFactory = createWebSubjectFactory(delegate, sessionManager);
-        setSubjectFactory(webSubjectFactory);
     }
 
     /**
@@ -100,22 +95,4 @@ public class DelegatingWebSecurityManager extends DefaultWebSecurityManager {
     protected WebSessionManager createWebSessionManager(SecurityManager delegate) {
         return new DelegatingWebSessionManager(delegate);
     }
-
-    /**
-     * Creates a {@code WebSubjectFactory} to use when creating Subject instances for the application's use.
-     * <p/>
-     * The default implementation ignores the {@code SecurityManager} argument and merely returns
-     * <pre><code>new {@link org.apache.shiro.web.WebSubjectFactory#WebSubjectFactory(org.apache.shiro.mgt.SecurityManager, org.apache.shiro.web.session.WebSessionManager) WebSubjectFactory}(this, sessionManagerArgument);</code></pre>
-     *
-     * @param delegate       the delegate {@code SecurityManager} instance to delegate all security operations.
-     * @param sessionManager the webSessionManager created from {@link #createWebSessionManager(org.apache.shiro.mgt.SecurityManager) createWebSessionManager}(delegate);.
-     * @return the {@code WebSubjectFactory} for this {@code WebSecurityManager} to use when creating Subject instances
-     *         for the application's use.
-     * @see #setSubjectFactory(org.apache.shiro.mgt.SubjectFactory)
-     */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected WebSubjectFactory createWebSubjectFactory(SecurityManager delegate, WebSessionManager sessionManager) {
-        return new WebSubjectFactory(this, sessionManager);
-    }
-
 }

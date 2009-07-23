@@ -18,22 +18,16 @@
  */
 package org.apache.shiro.web.servlet;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.web.session.WebSession;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionContext;
-
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.web.session.WebSession;
+import java.util.*;
 
 
 /**
@@ -44,7 +38,6 @@ import org.apache.shiro.web.session.WebSession;
  * @author Les Hazlewood
  * @since 0.2
  */
-@SuppressWarnings({"deprecation"})
 public class ShiroHttpSession implements HttpSession {
 
     //TODO - complete JavaDoc
@@ -61,15 +54,17 @@ public class ShiroHttpSession implements HttpSession {
         }
     };
 
-    private static final HttpSessionContext HTTP_SESSION_CONTEXT = new HttpSessionContext() {
-        public HttpSession getSession(String s) {
-            return null;
-        }
+    @SuppressWarnings({"deprecation"})
+    private static final javax.servlet.http.HttpSessionContext HTTP_SESSION_CONTEXT =
+            new javax.servlet.http.HttpSessionContext() {
+                public HttpSession getSession(String s) {
+                    return null;
+                }
 
-        public Enumeration getIds() {
-            return EMPTY_ENUMERATION;
-        }
-    };
+                public Enumeration getIds() {
+                    return EMPTY_ENUMERATION;
+                }
+            };
 
     protected ServletContext servletContext = null;
     protected HttpServletRequest currentRequest = null;
@@ -126,7 +121,8 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
-    public HttpSessionContext getSessionContext() {
+    @SuppressWarnings({"deprecation"})
+    public javax.servlet.http.HttpSessionContext getSessionContext() {
         return HTTP_SESSION_CONTEXT;
     }
 

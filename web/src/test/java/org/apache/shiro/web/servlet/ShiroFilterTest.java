@@ -18,22 +18,20 @@
  */
 package org.apache.shiro.web.servlet;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-
 import static org.easymock.EasyMock.*;
 import org.junit.Test;
 
-import org.apache.shiro.web.servlet.ShiroFilter;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ShiroFilterTest
-{
+public class ShiroFilterTest {
 
+    @SuppressWarnings({"FieldCanBeLocal"})
     private ShiroFilter filter;
     private FilterConfig mockFilterConfig;
     private ServletContext mockServletContext;

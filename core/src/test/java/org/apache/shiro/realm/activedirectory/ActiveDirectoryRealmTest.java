@@ -18,23 +18,8 @@
  */
 package org.apache.shiro.realm.activedirectory;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashSet;
-import java.util.Set;
-import javax.naming.NamingException;
-
-import org.junit.After;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAccount;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -47,11 +32,21 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.junit.After;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.naming.NamingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
  * Simple test case for ActiveDirectoryRealm.
- *
+ * <p/>
  * todo:  While the original incarnation of this test case does not actually test the
  * heart of ActiveDirectoryRealm (no meaningful implemenation of queryForLdapAccount, etc) it obviously should.
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
@@ -103,8 +98,6 @@ public class ActiveDirectoryRealmTest {
 
         UserIdPrincipal userIdPrincipal = subject.getPrincipals().oneByType(UserIdPrincipal.class);
         assertTrue(userIdPrincipal.getUserId() == USER_ID);
-
-        Object principals = subject.getPrincipal();
 
         assertTrue(realm.hasRole(subject.getPrincipals(), ROLE));
 

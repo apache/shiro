@@ -18,15 +18,15 @@
  */
 package org.apache.shiro.session.mgt;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Collections;
-
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ReplacedSessionException;
 import org.apache.shiro.session.Session;
+
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 
 /**
  * A DelegatingSession is a client-tier representation of a server side
@@ -55,8 +55,10 @@ public class DelegatingSession implements Session {
     private Date startTimestamp = null;
     private InetAddress hostAddress = null;
 
-    /** Handle to a server-side SessionManager.  See {@link #setSessionManager} for details. */
-    private SessionManager sessionManager = null;
+    /**
+     * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
+     */
+    private transient SessionManager sessionManager = null;
 
 
     public DelegatingSession() {
@@ -109,12 +111,16 @@ public class DelegatingSession implements Session {
         this.id = id;
     }
 
-    /** @see org.apache.shiro.session.Session#getId() */
+    /**
+     * @see org.apache.shiro.session.Session#getId()
+     */
     public Serializable getId() {
         return id;
     }
 
-    /** @see org.apache.shiro.session.Session#getStartTimestamp() */
+    /**
+     * @see org.apache.shiro.session.Session#getStartTimestamp()
+     */
     public Date getStartTimestamp() {
         if (startTimestamp == null) {
             try {
@@ -127,7 +133,9 @@ public class DelegatingSession implements Session {
         return startTimestamp;
     }
 
-    /** @see org.apache.shiro.session.Session#getLastAccessTime() */
+    /**
+     * @see org.apache.shiro.session.Session#getLastAccessTime()
+     */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
         try {
@@ -156,7 +164,9 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /** @see org.apache.shiro.session.Session#getHostAddress() */
+    /**
+     * @see org.apache.shiro.session.Session#getHostAddress()
+     */
     public InetAddress getHostAddress() {
         if (hostAddress == null) {
             try {
@@ -169,7 +179,9 @@ public class DelegatingSession implements Session {
         return hostAddress;
     }
 
-    /** @see org.apache.shiro.session.Session#touch() */
+    /**
+     * @see org.apache.shiro.session.Session#touch()
+     */
     public void touch() throws InvalidSessionException {
         try {
             sessionManager.touch(id);
@@ -179,7 +191,9 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /** @see org.apache.shiro.session.Session#stop() */
+    /**
+     * @see org.apache.shiro.session.Session#stop()
+     */
     public void stop() throws InvalidSessionException {
         try {
             sessionManager.stop(id);
@@ -190,7 +204,9 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /** @see org.apache.shiro.session.Session#getAttributeKeys */
+    /**
+     * @see org.apache.shiro.session.Session#getAttributeKeys
+     */
     @SuppressWarnings({"unchecked"})
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         try {
@@ -202,7 +218,9 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /** @see org.apache.shiro.session.Session#getAttribute(Object key) */
+    /**
+     * @see org.apache.shiro.session.Session#getAttribute(Object key)
+     */
     public Object getAttribute(Object key) throws InvalidSessionException {
         try {
             return sessionManager.getAttribute(id, key);
@@ -213,7 +231,9 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /** @see Session#setAttribute(Object key, Object value) */
+    /**
+     * @see Session#setAttribute(Object key, Object value)
+     */
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
         if (value == null) {
             removeAttribute(key);
@@ -227,7 +247,9 @@ public class DelegatingSession implements Session {
         }
     }
 
-    /** @see Session#removeAttribute(Object key) */
+    /**
+     * @see Session#removeAttribute(Object key)
+     */
     public Object removeAttribute(Object key) throws InvalidSessionException {
         try {
             return sessionManager.removeAttribute(id, key);

@@ -158,7 +158,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return inet;
     }
 
-    private static void assertNotNull(Session session, Serializable sessionId) throws UnknownSessionException {
+    private void assertNotNull(Session session, Serializable sessionId) throws UnknownSessionException {
         if (session == null) {
             throw new UnknownSessionException(sessionId);
         }
@@ -180,6 +180,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
             validate(s);
             return s;
         } catch (InvalidSessionException ise) {
+            onInvalidSessionId(sessionId);
             if (!isAutoCreateWhenInvalid()) {
                 throw ise;
             }
@@ -190,6 +191,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
                     "new session id [" + newId + "] with exception so the caller may react accordingly.";
             throw new ReplacedSessionException(msg, ise, sessionId, newId);
         }
+    }
+
+    protected void onInvalidSessionId(Serializable id) {
     }
 
     /**
@@ -220,19 +224,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         }
     }
 
-    protected void onInvalidation(Session session, InvalidSessionException ise) {
-        if (ise instanceof ExpiredSessionException) {
-            onExpiration(session, (ExpiredSessionException) ise);
-            return;
-        }
-        if (log.isTraceEnabled()) {
-            log.trace("Session with id [{}] is invalid.", ise.getSessionId());
-        }
-        onStop(session);
-        notifyStop(session);
-        afterStopped(session);
-    }
-
     protected void onExpiration(Session s, ExpiredSessionException ese) {
         if (log.isTraceEnabled()) {
             log.trace("Session with id [{}] has expired.", ese.getSessionId());
@@ -240,6 +231,19 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         onExpiration(s);
         notifyExpiration(s);
         afterExpired(s);
+    }
+
+    protected void onInvalidation(Session s, InvalidSessionException ise) {
+        if (ise instanceof ExpiredSessionException) {
+            onExpiration(s, (ExpiredSessionException) ise);
+            return;
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("Session with id [{}] is invalid.", ise.getSessionId());
+        }
+        onStop(s);
+        notifyStop(s);
+        afterStopped(s);
     }
 
     protected void onExpiration(Session session) {

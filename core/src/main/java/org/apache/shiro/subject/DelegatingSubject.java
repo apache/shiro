@@ -75,7 +75,7 @@ public class DelegatingSubject implements Subject {
     protected InetAddress inetAddress = null;
     protected Session session = null;
 
-    protected SecurityManager securityManager;
+    protected transient SecurityManager securityManager;
 
     public DelegatingSubject(SecurityManager securityManager) {
         this(null, false, null, null, securityManager);
