@@ -195,9 +195,6 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
     }
 
     protected Session retrieveSession(Serializable sessionId) throws InvalidSessionException {
-        if (log.isTraceEnabled()) {
-            log.trace("Attempting to retrieve session with id [" + sessionId + "]");
-        }
         return retrieveSessionFromDataSource(sessionId);
     }
 

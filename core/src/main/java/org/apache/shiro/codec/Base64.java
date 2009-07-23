@@ -20,16 +20,16 @@ package org.apache.shiro.codec;
 
 /**
  * Provides Base64 encoding and decoding as defined by RFC 2045.
- *
+ * <p/>
  * <p>
  * This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite> from RFC 2045 <cite>Multipurpose
  * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
  * </p>
- *
+ * <p/>
  * <p>This class was borrowed from Apache Commons Codec SVN repository (rev. 618419) with modifications
  * to enable Base64 conversion without a full dependecny on Commons Codec.  We didn't want to reinvent the wheel of
  * great work they've done, but also didn't want to force every Shiro user to depend on the commons-codec.jar</p>
- *
+ * <p/>
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>
  *
@@ -42,7 +42,7 @@ public class Base64 {
 
     /**
      * Chunk size per RFC 2045 section 6.8.
-     *
+     * <p/>
      * <p>The character limit does not count the trailing CRLF, but counts all other characters, including any
      * equal signs.</p>
      *
@@ -100,9 +100,9 @@ public class Base64 {
     /**
      * Contains the Base64 values <code>0</code> through <code>63</code> accessed by using character encodings as
      * indices.
-     *
+     * <p/>
      * <p>For example, <code>base64Alphabet['+']</code> returns <code>62</code>.</p>
-     *
+     * <p/>
      * <p>The value of undefined encodings is <code>-1</code>.</p>
      */
     private static final byte[] base64Alphabet = new byte[BASELENGTH];
@@ -111,9 +111,9 @@ public class Base64 {
      * <p>Contains the Base64 encodings <code>A</code> through <code>Z</code>, followed by <code>a</code> through
      * <code>z</code>, followed by <code>0</code> through <code>9</code>, followed by <code>+</code>, and
      * <code>/</code>.</p>
-     *
+     * <p/>
      * <p>This array is accessed by using character values as indices.</p>
-     *
+     * <p/>
      * <p>For example, <code>lookUpBase64Alphabet[62] </code> returns <code>'+'</code>.</p>
      */
     private static final byte[] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
@@ -161,11 +161,12 @@ public class Base64 {
     private static boolean isBase64(byte octect) {
         if (octect == PAD) {
             return true;
-        } else if (octect < 0 || base64Alphabet[octect] == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        } else //noinspection RedundantIfStatement
+            if (octect < 0 || base64Alphabet[octect] == -1) {
+                return false;
+            } else {
+                return true;
+            }
     }
 
     /**
@@ -267,7 +268,7 @@ public class Base64 {
         long lengthDataBits = binaryDataLength * EIGHTBIT;
         long fewerThan24bits = lengthDataBits % TWENTYFOURBITGROUP;
         long tripletCount = lengthDataBits / TWENTYFOURBITGROUP;
-        long encodedDataLengthLong = 0;
+        long encodedDataLengthLong;
         int chunckCount = 0;
 
         if (fewerThan24bits != 0) {
@@ -295,11 +296,11 @@ public class Base64 {
         int encodedDataLength = (int) encodedDataLengthLong;
         byte encodedData[] = new byte[encodedDataLength];
 
-        byte k = 0, l = 0, b1 = 0, b2 = 0, b3 = 0;
+        byte k, l, b1, b2, b3;
 
         int encodedIndex = 0;
-        int dataIndex = 0;
-        int i = 0;
+        int dataIndex;
+        int i;
         int nextSeparatorIndex = CHUNK_SIZE;
         int chunksSoFar = 0;
 
@@ -430,13 +431,13 @@ public class Base64 {
         }
 
         int numberQuadruple = base64Data.length / FOURBYTE;
-        byte decodedData[] = null;
-        byte b1 = 0, b2 = 0, b3 = 0, b4 = 0, marker0 = 0, marker1 = 0;
+        byte decodedData[];
+        byte b1, b2, b3, b4, marker0, marker1;
 
         // Throw away anything not in base64Data
 
         int encodedIndex = 0;
-        int dataIndex = 0;
+        int dataIndex;
         {
             // this sizes the output array properly - rlw
             int lastData = base64Data.length;
@@ -468,7 +469,7 @@ public class Base64 {
             } else if (marker0 == PAD) {
                 // Two PAD e.g. 3c[Pad][Pad]
                 decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);
-            } else if (marker1 == PAD) {
+            } else {
                 // One PAD e.g. 3cQ[Pad]
                 b3 = base64Alphabet[marker0];
                 decodedData[encodedIndex] = (byte) (b1 << 2 | b2 >> 4);

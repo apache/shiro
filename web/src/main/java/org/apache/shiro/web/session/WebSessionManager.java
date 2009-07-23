@@ -18,17 +18,16 @@
  */
 package org.apache.shiro.web.session;
 
+import org.apache.shiro.session.mgt.SessionManager;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.SessionManager;
+import java.io.Serializable;
 
 
 /**
- * A <code>WebSessionManager</code> is a <code>SessionManager</code> that has the ability to obtain
- * {@link Session Session}s based on a {@link ServletRequest ServletRequest}/{@link ServletResponse ServletResponse}
- * pair.
+ * A {@code WebSessionManager} is a {@code SessionManager} that has the ability to obtain session ids based on a
+ * {@link ServletRequest ServletRequest}/{@link ServletResponse ServletResponse} pair.
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -36,14 +35,14 @@ import org.apache.shiro.session.mgt.SessionManager;
 public interface WebSessionManager extends SessionManager {
 
     /**
-     * Returns the current {@link Session Session} associated with the specified request pair, or
-     * <code>null</code> if there is no session associated with the request.
-     * 
-     * @param request the incoming <code>ServletRequest</code>
-     * @param response the outgoing <code>ServletResponse</code>
-     * @return the current {@link Session Session} associated with the specified request pair, or
-     * <code>null</code> if there is no session associated with the request. 
+     * Returns the session id associated with the specified request pair or {@code null} if there is no session
+     * associated with the request.
+     *
+     * @param request  the incoming {@code ServletRequest}
+     * @param response the outgoing {@code ServletResponse}
+     * @return the current session id associated with the specified request pair, or {@code null} if there is no
+     *         session associated with the request.
+     * @since 1.0
      */
-    Session getSession(ServletRequest request, ServletResponse response);
-
+    Serializable getSessionId(ServletRequest request, ServletResponse response);
 }

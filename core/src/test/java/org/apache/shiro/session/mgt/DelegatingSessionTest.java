@@ -63,7 +63,7 @@ public class DelegatingSessionTest {
         Serializable origId = session.getId();
         assertEquals(session.getTimeout(), AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
         session.setTimeout(100);
-        assertEquals(session.getTimeout(), 100);
+        assertEquals(100, session.getTimeout());
         sleep(150);
         //now the underlying session should have been expired and a new one replaced by default.
         //so ensure the replaced session has the default session timeout:

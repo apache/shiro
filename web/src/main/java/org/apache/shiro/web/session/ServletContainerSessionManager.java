@@ -80,6 +80,11 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         return session;
     }
 
+    public Serializable getSessionId(ServletRequest request, ServletResponse response) {
+        HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
+        return httpSession != null ? httpSession.getId() : null;
+    }
+
     protected Session createSession(Map initData) throws AuthorizationException {
 
         ServletRequest request = WebUtils.getRequiredServletRequest();

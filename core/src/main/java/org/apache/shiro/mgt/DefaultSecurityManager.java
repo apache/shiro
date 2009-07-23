@@ -39,32 +39,32 @@ import java.util.Map;
 
 
 /**
- * <p>The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
+ * The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
  * based around a collection of {@link org.apache.shiro.realm.Realm}s.  This implementation delegates its
  * authentication, authorization, and session operations to wrapped {@link Authenticator}, {@link Authorizer}, and
  * {@link org.apache.shiro.session.mgt.SessionManager SessionManager} instances respectively via superclass
- * implementation.</p>
+ * implementation.
  * <p/>
- * <p>To greatly reduce and simplify configuration, this implementation (and its superclasses) will
+ * To greatly reduce and simplify configuration, this implementation (and its superclasses) will
  * create suitable defaults for all of its required dependencies, <em>except</em> the required one or more
- * {@link Realm Realm}s.  Because <code>Realm</code> implementations usually interact with an application's data model,
+ * {@link Realm Realm}s.  Because {@code Realm} implementations usually interact with an application's data model,
  * they are almost always application specific;  you will want to specify at least one custom
- * <tt>Realm</tt> implementation that 'knows' about your application's data/security model
+ * {@code Realm} implementation that 'knows' about your application's data/security model
  * (via {@link #setRealm} or one of the overloaded constructors).  All other attributes in this class hierarchy
- * will have suitable defaults for most enterprise applications.</p>
+ * will have suitable defaults for most enterprise applications.
  * <p/>
- * <p><b>RememberMe notice</b>: This class supports the ability to configure a
+ * <b>RememberMe notice</b>: This class supports the ability to configure a
  * {@link #setRememberMeManager RememberMeManager}
- * for <tt>RememberMe</tt> identity services for login/logout, BUT, a default instance <em>will not</em> be created
+ * for {@code RememberMe} identity services for login/logout, BUT, a default instance <em>will not</em> be created
  * for this attribute at startup.
  * <p/>
- * <p>Because RememberMe services are inherently client tier-specific and
- * therefore aplication-dependent, if you want <tt>RememberMe</tt> services enabled, you will have to specify an
+ * Because RememberMe services are inherently client tier-specific and
+ * therefore aplication-dependent, if you want {@code RememberMe} services enabled, you will have to specify an
  * instance yourself via the {@link #setRememberMeManager(RememberMeManager) setRememberMeManager}
  * mutator.  However if you're reading this JavaDoc with the
  * expectation of operating in a Web environment, take a look at the
  * {@code org.apache.shiro.web.DefaultWebSecurityManager} implementation, which
- * <em>does</em> support <tt>RememberMe</tt> services by default at startup.
+ * <em>does</em> support {@code RememberMe} services by default at startup.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -193,16 +193,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected Session getSession(Serializable id) {
-        if (!isValid(id)) {
-            String msg = "Specified id [" + id + "] does not correspond to a valid Session  It either " +
-                    "does not exist or the corresponding session has been stopped or expired.";
-            throw new InvalidSessionException(msg, id);
-        }
-
+        checkValid(id);
         return new DelegatingSession(this, id);
     }
 
-    protected Subject createSubject() {
+    protected Session getCurrentSession() {
         Serializable sessionId = getCurrentSessionId();
         Session session = null;
         if (sessionId != null) {
@@ -221,31 +216,50 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 }
             }
         }
-
-        PrincipalCollection principals = getRememberedIdentity();
-        return createSubject(principals, session);
+        return session;
     }
 
+    protected Subject createSubject() {
+        Session session = getCurrentSession();
+        PrincipalCollection remembered = null;
+        //only obtain a remembered identity if the session does not have one:
+        if (session != null) {
+            if (session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY) == null) {
+                remembered = getRememberedIdentity();
+            }
+        }
+        return createSubject(remembered, session);
+    }
+
+    /**
+     * Returns a {@link Subject} instance that reflects the specified identity (principals), backed by the given
+     * {@link Session} instance.  Either argument can be null.
+     * <p/>
+     * This method is a convenience that assembles either argument into a context {@link Map Map} (if they are
+     * not null) and returns {@link #getSubject(java.util.Map)} using the Map as the parameter.
+     *
+     * @param principals the identity that the constructed {@code Subject} instance should have.
+     * @param session    the session to be associated with the constructed {@code Subject} instance.
+     * @return The Subject instance reflecting the specified identity (principals) and session.
+     * @since 1.0
+     */
     protected Subject createSubject(PrincipalCollection principals, Session session) {
         Map<String, Object> context = new HashMap<String, Object>(2);
-
         if (principals != null && !principals.isEmpty()) {
             context.put(SubjectFactory.PRINCIPALS, principals);
         }
         if (session != null) {
             context.put(SubjectFactory.SESSION, session);
         }
-
-        SubjectFactory sf = getSubjectFactory();
-        return sf.createSubject(context);
+        return getSubject(context);
     }
 
     /**
-     * Creates a <tt>Subject</tt> instance for the user represented by the given method arguments.
+     * Creates a {@code Subject} instance for the user represented by the given method arguments.
      *
-     * @param token the <tt>AuthenticationToken</tt> submitted for the successful authentication.
-     * @param info  the <tt>AuthenticationInfo</tt> of a newly authenticated user.
-     * @return the <tt>Subject</tt> instance that represents the user and session data for the newly
+     * @param token the {@code AuthenticationToken} submitted for the successful authentication.
+     * @param info  the {@code AuthenticationInfo} of a newly authenticated user.
+     * @return the {@code Subject} instance that represents the user and session data for the newly
      *         authenticated user.
      */
     protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info) {
@@ -257,29 +271,20 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         if (subject != null) {
             context.put(SubjectFactory.SUBJECT, subject);
         }
-        return getSubjectFactory().createSubject(context);
+        return getSubject(context);
     }
 
     /**
-     * Binds a <tt>Subject</tt> instance created after authentication to the application for later use.
+     * Binds a {@code Subject} instance created after authentication to the application for later use.
      * <p/>
-     * <p>The default implementation merely binds the argument to the thread local via the {@link ThreadContext}.
-     * Should be overridden by subclasses for environment-specific binding (e.g. web environment, etc).
+     * The default implementation merely binds the argument to the thread local via the {@link ThreadContext}
+     * and overridden by subclasses for environment-specific binding (e.g. standalone application).
      *
-     * @param subject the <tt>Subject</tt> instance created after authentication to be bound to the application
+     * @param subject the {@code Subject} instance created after authentication to be bound to the application
      *                for later use.
      */
     protected void bind(Subject subject) {
         getSubjectBinder().bind(subject);
-    }
-
-    private void assertCreation(Subject subject) throws IllegalStateException {
-        if (subject == null) {
-            String msg = "Programming error - please verify that you have overridden the " +
-                    getClass().getName() + ".createSubject( AuthenticationInfo info ) method to return " +
-                    "a non-null Subject instance";
-            throw new IllegalStateException(msg);
-        }
     }
 
     protected void rememberMeSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
@@ -296,8 +301,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 }
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("This " + getClass().getName() + " instance does not have a " +
+            if (log.isTraceEnabled()) {
+                log.trace("This " + getClass().getName() + " instance does not have a " +
                         "[" + RememberMeManager.class.getName() + "] instance configured.  RememberMe services " +
                         "will not be performed for account [" + info + "].");
             }
@@ -337,15 +342,15 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * First authenticates the <tt>AuthenticationToken</tt> argument, and if successful, constructs a
-     * <tt>Subject</tt> instance representing the authenticated account's identity.
+     * First authenticates the {@code AuthenticationToken} argument, and if successful, constructs a
+     * {@code Subject} instance representing the authenticated account's identity.
      * <p/>
-     * <p>Once constructed, the <tt>Subject</tt> instance is then {@link #bind bound} to the application for
+     * Once constructed, the {@code Subject} instance is then {@link #bind bound} to the application for
      * subsequent access before being returned to the caller.
      *
      * @param token the authenticationToken to process for the login attempt.
      * @return a Subject representing the authenticated user.
-     * @throws AuthenticationException if there is a problem authenticating the specified <tt>token</tt>.
+     * @throws AuthenticationException if there is a problem authenticating the specified {@code token}.
      */
     public Subject login(AuthenticationToken token) throws AuthenticationException {
         AuthenticationInfo info;
@@ -364,7 +369,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             throw ae; //propagate
         }
         Subject subject = createSubject(token, info);
-        assertCreation(subject);
         bind(subject);
         return subject;
     }
@@ -382,10 +386,88 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
+     * This implementation attempts to resolve any session ID that may exist in the context argument by first
+     * passing it to the {@link #resolveSessionIfNecessary(java.util.Map) resolveSessionIfNecessary} method.  The
+     * return value from that call is then used to create the Subject instance by calling
+     * <code>{@link #getSubjectFactory() getSubjectFactory()}.{@link SubjectFactory#createSubject(java.util.Map) createSubject}(returnValue);</code>
+     *
+     * @param context any data needed to direct how the Subject should be constructed.
+     * @return the {@code Subject} instance reflecting the specified initialization data.
+     * @see SubjectFactory#createSubject(java.util.Map)
      * @since 1.0
      */
     public Subject getSubject(Map context) {
-        return getSubjectFactory().createSubject(context);
+        //Translate a session id if it exists into a Session object before sending to the SubjectFactory
+        //The SubjectFactory should not need to know how to acquire sessions as it is often environment
+        //specific - better to shield the SF from these details:
+        Map resolved = resolveSessionIfNecessary(context);
+        return getSubjectFactory().createSubject(resolved);
+    }
+
+    /**
+     * Attempts to resolve any session id in the context to its corresponding {@link Session} and returns a
+     * context that represents this resolved {@code Session} to ensure it may be referenced if necessary by the
+     * invoked {@link SubjectFactory} that performs actual {@link Subject} construction.
+     * <p/>
+     * The session id, if it exists in the context map, should be available as a value under the
+     * <code>{@link SubjectFactory SubjectFactory}.{@link SubjectFactory#SESSION_ID SESSION_ID}</code> key constant.
+     * If a session is resolved, a copy of the original context Map is made to ensure the method argument is not
+     * changed, the resolved session is placed into the copy and the copy is returned.
+     * <p/>
+     * If there is a {@code Session} already in the context because that is what the caller wants to be used for
+     * {@code Subject} construction, or if no session is resolved, this method effectively does nothing and immediately
+     * returns the Map method argument without change.
+     *
+     * @param context the subject context data that may contain a session id that should be converted to a Session instance.
+     * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
+     * @since 1.0
+     */
+    @SuppressWarnings({"unchecked"})
+    protected Map resolveSessionIfNecessary(Map context) {
+        if (context.containsKey(SubjectFactory.SESSION)) {
+            log.debug("Context already contains a session.  Returning.");
+            return context;
+        }
+        log.trace("No session found in context.  Looking for a session id to resolve in to a session.");
+        //otherwise try to resolve a session if a session id exists:
+        Map copy = new HashMap(context);
+        Serializable sessionId = getSessionId(context);
+        if (sessionId != null) {
+            try {
+                Session session = getSession(sessionId);
+                copy.put(SubjectFactory.SESSION, session);
+            } catch (InvalidSessionException e) {
+                onInvalidSessionId(sessionId);
+                log.debug("Context referenced sessionId is invalid.  Ignoring and creating an anonymous " +
+                        "(session-less) Subject instance.", e);
+            }
+        }
+        return copy;
+    }
+
+    /**
+     * Allows subclasses to react to the fact that a provided session id was invalid.
+     *
+     * @param sessionId the session id that was discovered to be invalid (no session, expired, etc).
+     * @since 1.0
+     */
+    protected void onInvalidSessionId(Serializable sessionId) {
+    }
+
+    /**
+     * Utility method to retrieve the session id from the given subject context Map which will be used to resolve
+     * to a {@link Session} or {@code null} if there is no session id in the map.  If the session id exists, it is
+     * expected to be available in the map under the
+     * <code>{@link SubjectFactory SubjectFactory}.{@link SubjectFactory#SESSION_ID SESSION_ID}</code> constant.
+     *
+     * @param subjectContext the context map with data that will be used to construct a {@link Subject} instance via
+     *                       a {@link SubjectFactory}
+     * @return a session id to resolve to a {@link Session} instance or {@code null} if a session id could not be found.
+     * @see #getSubject(java.util.Map)
+     * @see SubjectFactory#createSubject(java.util.Map)
+     */
+    protected Serializable getSessionId(Map subjectContext) {
+        return (Serializable) subjectContext.get(SubjectFactory.SESSION_ID);
     }
 
     protected Subject getSubject(PrincipalCollection principals) {
@@ -398,6 +480,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Subject subject;
 
         if (principals != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Logging out subject with primary id {}" + principals.iterator().next());
+            }
             beforeLogout(principals);
             Authenticator authc = getAuthenticator();
             if (authc instanceof LogoutAware) {
@@ -406,6 +491,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             subject = getSubject(principals);
         } else {
             subject = getSubject(false);
+        }
+        if (subject == null) {
+            return;
         }
 
         try {
@@ -425,7 +513,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                     log.debug(msg, e);
                 }
             }
-
         }
     }
 
@@ -496,26 +583,21 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *
      * @param sessionId the id of the session that backs the desired Subject being acquired.
      * @return the {@code Subject} that owns the {@code Session Session} with the specified {@code sessionId}
-     * @throws org.apache.shiro.session.InvalidSessionException
-     *          if the session identified by <tt>sessionId</tt> has
-     *          been stopped, expired, or doesn't exist.
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if the executor of this method is not allowed to acquire the owning {@code Subject}.  The reason
-     *          for the exception is implementation-specific and could be for any number of reasons.  A common
-     *          reason in many systems would be if one host tried to acquire a {@code Subject} based on a
-     *          {@code Session} that originated on an entirely different host (although it is not a Shiro
-     *          requirement this scenario is disallowed - its just an example that <em>may</em> throw an Exception in
-     *          some systems).
+     * @throws InvalidSessionException if the session identified by {@code sessionId} has been stopped, expired, or
+     *                                 doesn't exist.
+     * @throws AuthorizationException  if the executor of this method is not allowed to acquire the owning
+     *                                 {@code Subject}.  The reason for the exception is implementation-specific and
+     *                                 could be for any number of reasons.  A common reason in many systems would be
+     *                                 if one host tried to acquire a {@code Subject} based on a {@code Session} that
+     *                                 originated on an entirely different host (although it is not a Shiro requirement
+     *                                 this scenario is disallowed - its just an example that <em>may</em> throw an
+     *                                 Exception in some systems).
      * @see org.apache.shiro.authz.HostUnauthorizedException
      * @since 1.0
      */
     protected Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        Session session = getSession(sessionId);
-
         Map<String, Object> context = new HashMap<String, Object>(1);
-        context.put(SubjectFactory.SESSION, session);
-
-        SubjectFactory sf = getSubjectFactory();
-        return sf.createSubject(context);
+        context.put(SubjectFactory.SESSION_ID, sessionId);
+        return getSubject(context);
     }
 }
