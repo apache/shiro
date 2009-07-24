@@ -54,6 +54,7 @@ public class DelegatingSession implements Session {
     //cached fields to avoid a server-side method call if out-of-process:
     private Date startTimestamp = null;
     private InetAddress hostAddress = null;
+    private boolean handleReplacedSessions = true;
 
     /**
      * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
@@ -67,6 +68,14 @@ public class DelegatingSession implements Session {
     public DelegatingSession(SessionManager sessionManager, Serializable id) {
         this.sessionManager = sessionManager;
         this.id = id;
+    }
+
+    public DelegatingSession(SessionManager sessionManager, Serializable id,
+                             InetAddress hostAddress, boolean handleReplacedSessions) {
+        this.sessionManager = sessionManager;
+        this.id = id;
+        this.hostAddress = hostAddress;
+        this.handleReplacedSessions = handleReplacedSessions;
     }
 
     /**
@@ -100,6 +109,14 @@ public class DelegatingSession implements Session {
         this.sessionManager = sessionManager;
     }
 
+    public boolean isHandleReplacedSessions() {
+        return handleReplacedSessions;
+    }
+
+    public void setHandleReplacedSessions(boolean handleReplacedSessions) {
+        this.handleReplacedSessions = handleReplacedSessions;
+    }
+
     /**
      * Sets the sessionId used by this handle for all future {@link SessionManager SessionManager}
      * method invocations.
@@ -126,6 +143,10 @@ public class DelegatingSession implements Session {
             try {
                 startTimestamp = sessionManager.getStartTimestamp(id);
             } catch (ReplacedSessionException e) {
+                if (!isHandleReplacedSessions()) {
+                    //propagate immediately
+                    throw e;
+                }
                 this.id = e.getNewSessionId();
                 startTimestamp = sessionManager.getStartTimestamp(id);
             }
@@ -141,6 +162,10 @@ public class DelegatingSession implements Session {
         try {
             return sessionManager.getLastAccessTime(id);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             return sessionManager.getLastAccessTime(id);
         }
@@ -150,6 +175,10 @@ public class DelegatingSession implements Session {
         try {
             return sessionManager.getTimeout(id);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             return sessionManager.getTimeout(id);
         }
@@ -159,6 +188,10 @@ public class DelegatingSession implements Session {
         try {
             sessionManager.setTimeout(id, maxIdleTimeInMillis);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             sessionManager.setTimeout(id, maxIdleTimeInMillis);
         }
@@ -172,6 +205,10 @@ public class DelegatingSession implements Session {
             try {
                 hostAddress = sessionManager.getHostAddress(id);
             } catch (ReplacedSessionException e) {
+                if (!isHandleReplacedSessions()) {
+                    //propagate immediately
+                    throw e;
+                }
                 this.id = e.getNewSessionId();
                 hostAddress = sessionManager.getHostAddress(id);
             }
@@ -186,6 +223,10 @@ public class DelegatingSession implements Session {
         try {
             sessionManager.touch(id);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             // No need to 'hit' the session manager again - a newly created session is 'touched' at the time of creation
         }
@@ -198,6 +239,10 @@ public class DelegatingSession implements Session {
         try {
             sessionManager.stop(id);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             //TODO - prevent sessionManager from creating new session when 'stop' is already requested.
             sessionManager.stop(id);
@@ -212,6 +257,10 @@ public class DelegatingSession implements Session {
         try {
             return sessionManager.getAttributeKeys(id);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             // No need to 'hit' the session manager again - a new session won't have any attributes:
             return Collections.EMPTY_SET;
@@ -225,6 +274,10 @@ public class DelegatingSession implements Session {
         try {
             return sessionManager.getAttribute(id, key);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             // No need to 'hit' the session manager again - a new session won't have any attributes
             return null;
@@ -241,6 +294,10 @@ public class DelegatingSession implements Session {
             try {
                 sessionManager.setAttribute(id, key, value);
             } catch (ReplacedSessionException e) {
+                if (!isHandleReplacedSessions()) {
+                    //propagate immediately
+                    throw e;
+                }
                 this.id = e.getNewSessionId();
                 sessionManager.setAttribute(id, key, value);
             }
@@ -254,6 +311,10 @@ public class DelegatingSession implements Session {
         try {
             return sessionManager.removeAttribute(id, key);
         } catch (ReplacedSessionException e) {
+            if (!isHandleReplacedSessions()) {
+                //propagate immediately
+                throw e;
+            }
             this.id = e.getNewSessionId();
             // No need to 'hit' the session manager again - a new session won't have any attributes:
             return null;

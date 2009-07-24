@@ -158,8 +158,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return inet;
     }
 
-    private void assertNotNull(Session session, Serializable sessionId) throws UnknownSessionException {
+    private void ensureNotNull(Session session, Serializable sessionId) throws UnknownSessionException {
         if (session == null) {
+            onUnknownSession(sessionId);
             throw new UnknownSessionException(sessionId);
         }
     }
@@ -173,14 +174,13 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         InetAddress hostAddress = null;
         try {
             Session s = retrieveSession(sessionId);
-            assertNotNull(s, sessionId);
+            ensureNotNull(s, sessionId);
             // Save the host address in case the session will be invalidated.
             // We want to retain it in case it is needed for a replacement session
             hostAddress = getHostAddressFallback(s);
             validate(s);
             return s;
         } catch (InvalidSessionException ise) {
-            onInvalidSessionId(sessionId);
             if (!isAutoCreateWhenInvalid()) {
                 throw ise;
             }
@@ -191,9 +191,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
                     "new session id [" + newId + "] with exception so the caller may react accordingly.";
             throw new ReplacedSessionException(msg, ise, sessionId, newId);
         }
-    }
-
-    protected void onInvalidSessionId(Serializable id) {
     }
 
     /**
@@ -244,6 +241,20 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         onStop(s);
         notifyStop(s);
         afterStopped(s);
+    }
+
+    /**
+     * Notification callback for subclasses that occurs when a client attempts to reference the session with the
+     * specified ID, but there does not exist any session with that id.
+     * <p/>
+     * A common case of this ocurring is if the client's referenced session times out and is deleted before the next
+     * time they interact with the system (such as often occurs with stale session id cookies in an web environment).
+     * The next time they send a request with the stale session id, this method would be called.
+     *
+     * @param sessionId the session id used to try and reference the non-existent session.
+     * @since 1.0
+     */
+    public void onUnknownSession(Serializable sessionId) {
     }
 
     protected void onExpiration(Session session) {
