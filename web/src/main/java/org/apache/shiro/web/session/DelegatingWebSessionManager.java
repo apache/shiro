@@ -18,12 +18,20 @@
  */
 package org.apache.shiro.web.session;
 
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.util.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -44,6 +52,8 @@ import java.util.Map;
  */
 public class DelegatingWebSessionManager extends DefaultWebSessionManager {
 
+    private static transient final Logger log = LoggerFactory.getLogger(DelegatingWebSessionManager.class);
+
     private static final String THREAD_CONTEXT_SESSION_KEY =
             DelegatingWebSessionManager.class.getName() + ".THREAD_CONTEXT_SESSION_KEY";
 
@@ -55,11 +65,11 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
 
     public DelegatingWebSessionManager(SessionManager delegateSessionManager) {
         this();
-        this.delegateSessionManager = delegateSessionManager;
+        this.delegateSessionManager = new ThreadClearingSessionManager(delegateSessionManager);
     }
 
     public void setDelegateSessionManager(SessionManager delegateSessionManager) {
-        this.delegateSessionManager = delegateSessionManager;
+        this.delegateSessionManager = new ThreadClearingSessionManager(delegateSessionManager);
     }
 
     private void assertDelegateExists() {
@@ -97,19 +107,29 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
 
     @Override
     protected Session retrieveSessionFromDataSource(Serializable id) throws InvalidSessionException {
-        /*Session session = (Session)ThreadContext.get(THREAD_CONTEXT_SESSION_KEY);
-        if ( session != null ) {
+        //use thread-local caching to eliminate repeated 'hits' on the back-end data store during
+        //the thread execution.  We do this here and not in the parent class since we can ensure the
+        //ThreadContext is being cleared at the end of each request due to the ShiroFilter being required in web
+        //environments (which automatically clears the thread).
+        Session session = (Session) ThreadContext.get(THREAD_CONTEXT_SESSION_KEY);
+        if (session != null) {
+            log.trace("Returning thread-cached session.");
             return session;
-        }*/
+        }
         assertDelegateExists();
-        this.delegateSessionManager.checkValid(id);
-        return new DelegatingSession(this.delegateSessionManager, id);
-        /*//we need the DelegatingSession to reference the delegateSessionManager and not 'this' so
-        //we avoid an infinite loop:
-        session = new DelegatingSession(this.delegateSessionManager, id);
+        //get the host address and bind it to the thread.  This call will both validate the session as well as
+        //make it accessible for futher host checks:
+        InetAddress host = this.delegateSessionManager.getHostAddress(id);
+        session = new DelegatingSession(this.delegateSessionManager, id, host, false);
+        log.trace("Cached the session retrieved from the datasource in a thread-local for continued thread access.");
         ThreadContext.put(THREAD_CONTEXT_SESSION_KEY, session);
-        
-        return session;*/
+
+        return session;
+    }
+
+    protected void removeThreadBoundSession() {
+        log.debug("Session is invalid or an invalid id was encountered.  Unbinding the thread-cached session.");
+        ThreadContext.remove(THREAD_CONTEXT_SESSION_KEY);
     }
 
     @Override
@@ -119,14 +139,157 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
 
     @Override
     protected void doValidate(Session session) throws InvalidSessionException {
-        /*if ( session == null ) {
-            throw new InvalidSessionException("Session method argument is null!" );
+        //do nothing - we rely on lazy session exceptions and recreation via the SessionManagerProxy to avoid
+        //costly validation checks on each session access.
+    }
+
+
+    private interface SessionManagerCallback {
+        Object doWithSessionManager(SessionManager sm) throws SessionException;
+    }
+
+    private class ThreadClearingSessionManager implements SessionManager {
+
+        private final SessionManager target;
+
+        private ThreadClearingSessionManager(SessionManager target) {
+            this.target = target;
         }
-        Serializable id = session.getId();
-        if ( id == null ) {
-            throw new InvalidSessionException("Session does not have an id!" );
+
+        private Object execute(SessionManagerCallback smc) throws SessionException {
+            try {
+                return smc.doWithSessionManager(target);
+            } catch (SessionException se) {
+                removeThreadBoundSession();
+                //propagate after cleanup:
+                throw se;
+            }
         }
-        assertDelegateExists();
-        this.delegateSessionManager.checkValid(id);*/
+
+        public Serializable start(final InetAddress originatingHost) throws AuthorizationException {
+            return (Serializable) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.start(originatingHost);
+                }
+            });
+        }
+
+        public Serializable start(final Map initData) throws AuthorizationException {
+            return (Serializable) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.start(initData);
+                }
+            });
+        }
+
+        public Date getStartTimestamp(final Serializable sessionId) {
+            return (Date) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.getStartTimestamp(sessionId);
+                }
+            });
+        }
+
+        public Date getLastAccessTime(final Serializable sessionId) {
+            return (Date) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.getLastAccessTime(sessionId);
+                }
+            });
+        }
+
+        public boolean isValid(final Serializable sessionId) {
+            return (Boolean) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.isValid(sessionId);
+                }
+            });
+        }
+
+        public void checkValid(final Serializable sessionId) throws InvalidSessionException {
+            execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    sm.checkValid(sessionId);
+                    return null;
+                }
+            });
+        }
+
+        public long getTimeout(final Serializable sessionId) throws InvalidSessionException {
+            return (Long) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.getTimeout(sessionId);
+                }
+            });
+        }
+
+        public void setTimeout(final Serializable sessionId, final long maxIdleTimeInMillis) throws InvalidSessionException {
+            execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    sm.setTimeout(sessionId, maxIdleTimeInMillis);
+                    return null;
+                }
+            });
+        }
+
+        public void touch(final Serializable sessionId) throws InvalidSessionException {
+            execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    sm.touch(sessionId);
+                    return null;
+                }
+            });
+        }
+
+        public InetAddress getHostAddress(final Serializable sessionId) {
+            return (InetAddress) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.getHostAddress(sessionId);
+                }
+            });
+        }
+
+        public void stop(final Serializable sessionId) throws InvalidSessionException {
+            execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    sm.stop(sessionId);
+                    return null;
+                }
+            });
+        }
+
+        @SuppressWarnings({"unchecked"})
+        public Collection<Object> getAttributeKeys(final Serializable sessionId) {
+            return (Collection<Object>) execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.getAttributeKeys(sessionId);
+                }
+            });
+        }
+
+        public Object getAttribute(final Serializable sessionId, final Object key) throws InvalidSessionException {
+            return execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.getAttribute(sessionId, key);
+                }
+            });
+        }
+
+        public void setAttribute(final Serializable sessionId, final Object key, final Object value) throws InvalidSessionException {
+            execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    sm.setAttribute(sessionId, key, value);
+                    return null;
+                }
+            });
+        }
+
+        public Object removeAttribute(final Serializable sessionId, final Object key) throws InvalidSessionException {
+            return execute(new SessionManagerCallback() {
+                public Object doWithSessionManager(SessionManager sm) throws SessionException {
+                    return sm.removeAttribute(sessionId, key);
+                }
+            });
+        }
     }
 }

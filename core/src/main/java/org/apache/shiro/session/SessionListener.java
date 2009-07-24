@@ -19,7 +19,7 @@
 package org.apache.shiro.session;
 
 /**
- * Interface to be implemented by components that wish to be notified of events that occur during a 
+ * Interface to be implemented by components that wish to be notified of events that occur during a
  * {@link Session Session}'s lifecycle.
  *
  * @author Les Hazlewood

@@ -112,6 +112,10 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
     }
 
+    private void markSessionIdInvalid(ServletRequest request) {
+        request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID);
+    }
+
     private void removeSessionIdCookie(ServletRequest request, ServletResponse response) {
         getSessionIdCookieAttribute().removeValue(request, response);
     }
@@ -131,6 +135,9 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         }
         if (id != null) {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
+            //automatically mark it valid here.  If it is invalid, the
+            //onUnknownSession method below will be invoked and we'll remove the attribute at that time.
+            markSessionIdValid(id, request);
         }
         return id;
     }
@@ -152,6 +159,12 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     public Serializable getSessionId(ServletRequest request, ServletResponse response) {
         return getReferencedSessionId(request, response);
+    }
+
+    @Override
+    public void onUnknownSession(Serializable sessionId) {
+        markSessionIdInvalid(WebUtils.getRequiredServletRequest());
+        removeSessionIdCookie();
     }
 
     protected void onStop(Session session) {
