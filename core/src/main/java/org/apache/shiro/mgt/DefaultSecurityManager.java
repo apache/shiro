@@ -25,6 +25,7 @@ import org.apache.shiro.crypto.Cipher;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
@@ -470,16 +471,15 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return (Serializable) subjectContext.get(SubjectFactory.SESSION_ID);
     }
 
-    protected Subject getSubject(PrincipalCollection principals) {
-        //Method arg is ignored at the moment - retrieve from the environment if it exists:
-        return getSubject(false);
-    }
+    public void logout(Subject subject) {
 
-    public void logout(PrincipalCollection principals) {
+        if (subject == null) {
+            throw new IllegalArgumentException("Subject method argument cannot be null.");
+        }
 
-        Subject subject;
+        PrincipalCollection principals = subject.getPrincipals();
 
-        if (principals != null) {
+        if (principals != null && !principals.isEmpty()) {
             if (log.isDebugEnabled()) {
                 log.debug("Logging out subject with primary id {}" + principals.iterator().next());
             }
@@ -488,12 +488,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             if (authc instanceof LogoutAware) {
                 ((LogoutAware) authc).onLogout(principals);
             }
-            subject = getSubject(principals);
-        } else {
-            subject = getSubject(false);
-        }
-        if (subject == null) {
-            return;
         }
 
         try {
@@ -519,14 +513,22 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     protected void stopSession(Subject subject) {
         Session s = subject.getSession(false);
         if (s != null) {
-            try {
-                s.stop();
-            } catch (InvalidSessionException ise) {
-                //ignored - we're invalidating, and have no further need of the session anyway
-                //log just in case someone wants to know:
-                if (log.isTraceEnabled()) {
-                    log.trace("Session has already been invalidated for subject [" +
-                            subject.getPrincipal() + "].  Ignoring and continuing logout ...", ise);
+            //react to the id and not the session itself - the Session instance could be a proxy/delegate Session
+            //in which case the ID might be the only thing accessible.  Better to pass off the ID to the underlying
+            //SessionManager since this will successfully handle all cases.
+            Serializable sessionId = s.getId();
+            if (sessionId != null) {
+                try {
+                    stop(sessionId);
+                } catch (SessionException e) {
+                    //ignored - we're invalidating, and have no further need of the session anyway
+                    //log just in case someone wants to know:
+                    if (log.isDebugEnabled()) {
+                        String msg = "Session for Subject [" + (subject != null ? subject.getPrincipal() : null) +
+                                "] has already been invalidated.  Logging exception since session exceptions are " +
+                                "irrelevant when the owning Subject has logged out.";
+                        log.debug(msg, e);
+                    }
                 }
             }
         }

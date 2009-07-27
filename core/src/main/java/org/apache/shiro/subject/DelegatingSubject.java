@@ -64,7 +64,7 @@ import java.util.List;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class DelegatingSubject implements Subject {
+public class DelegatingSubject implements Subject, Serializable {
 
     //TODO - complete JavaDoc
 
@@ -289,7 +289,7 @@ public class DelegatingSubject implements Subject {
 
     public void logout() {
         try {
-            this.securityManager.logout(getPrincipals());
+            this.securityManager.logout(this);
         } finally {
             this.session = null;
             this.principals = null;

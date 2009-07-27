@@ -45,7 +45,7 @@ import java.util.Date;
  * @author Jeremy Haile
  * @since 0.1
  */
-public class DelegatingSession implements Session {
+public class DelegatingSession implements Session, Serializable {
 
     //TODO - complete JavaDoc
 
