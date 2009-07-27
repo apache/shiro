@@ -32,14 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Requires the requesting user to be {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} for the
- * request to continue, and if they're not, forces the user to login via the HTTP Basic protocol-specific challenge.
+ * request to continue, and if they're not, requires the user to login via the HTTP Basic protocol-specific challenge.
  * Upon successful login, they're allowed to continue on to the requested resource/url.
  * <p/>
- * <p>This implementation is a 'clean room' Java implementation of Basic HTTP Authentication specification per
- * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.</p>
+ * This implementation is a 'clean room' Java implementation of Basic HTTP Authentication specification per
+ * <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>.
  * <p/>
- * <p>Basic authentication functions as follows:</p>
- * <p/>
+ * Basic authentication functions as follows:
  * <ol>
  * <li>A request comes in for a resource that requires authentication.</li>
  * <li>The server replies with a 401 response status, sets the <code>WWW-Authenticate</code> header, and the contents of a
@@ -48,13 +47,12 @@ import javax.servlet.http.HttpServletResponse;
  * username and a password and puts them in the following format:
  * <p><code>username:password</code></p></li>
  * <li>This token is then base 64 encoded.</li>
- * <li>The client then sends another request for the same resource with the following header:<p/>
+ * <li>The client then sends another request for the same resource with the following header:<br/>
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
  * </ol>
- * <p/>
- * <p>The {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
+ * The {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
  * only be called if the subject making the request is not
- * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} </p>
+ * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated}
  *
  * @author Allan Ditzel
  * @author Les Hazlewood
