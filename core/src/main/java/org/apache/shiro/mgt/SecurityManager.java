@@ -23,7 +23,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
 import java.util.Map;
@@ -93,11 +92,11 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * <p/>
      * Framework developers on the other hand might find calling this method directly useful in certain cases.
      *
-     * @param subjectIdentifier the identifier of the subject/user to log out.
+     * @param subject the subject to log out.
      * @see #getSubject()
-     * @since 0.9
+     * @since 1.0
      */
-    void logout(PrincipalCollection subjectIdentifier);
+    void logout(Subject subject);
 
     /**
      * Returns the <tt>Subject</tt> instance representing the currently executing user.
