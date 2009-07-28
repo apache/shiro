@@ -18,30 +18,30 @@
  */
 package org.apache.shiro.web;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.util.ThreadContext;
+import org.apache.shiro.web.filter.AccessControlFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.Map;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.util.ThreadContext;
 
 /**
  * Simple utility class for operations used across multiple class hierarchies in the web framework code.
- *
- * <p>Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
+ * <p/>
+ * Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
  * and in these cases, we have retained all license, copyright and author information.
  *
  * @author Les Hazlewood
@@ -320,7 +320,7 @@ public class WebUtils {
      * servlet-only environment.
      * <p/>
      * <b>THIS IS NOT PART OF APACHE SHIRO'S PUBLIC API.</b>  It exists for Shiro implementation requirements only.
-     * 
+     *
      * @return the current thread-bound {@code ServletRequest} or {@code null} if there is not one bound.
      * @since 1.0
      */
@@ -355,11 +355,11 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies binding a ServletRequest to the current thread (via the ThreadContext).
-     *
+     * <p/>
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the servletRequest is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     *
+     * <p/>
      * <pre>
      * if (servletRequest != null) {
      *     ThreadContext.put( SERVLET_REQUEST_KEY, servletRequest );
@@ -441,11 +441,11 @@ public class WebUtils {
 
     /**
      * Convenience method that simplifies binding a ServletResponse to the thread via the ThreadContext.
-     *
+     * <p/>
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the servletResponse is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     *
+     * <p/>
      * <pre>
      * if (servletResponse != null) {
      *     ThreadContext.put( SERVLET_RESPONSE_KEY, servletResponse );
@@ -538,7 +538,7 @@ public class WebUtils {
     /**
      * <p>Checks to see if a request param is considered true using a loose matching strategy for
      * general values that indicate that something is true or enabled, etc.</p>
-     *
+     * <p/>
      * <p>Values that are considered "true" include (case-insensitive): true, t, 1, enabled, y, yes, on.</p>
      *
      * @param request   the servlet request
@@ -597,5 +597,46 @@ public class WebUtils {
         return savedRequest;
     }
 
+    /**
+     * Redirects the to the request url from a previously
+     * {@link #saveRequest(javax.servlet.ServletRequest) saved} request, or if there is no saved request, redirects the
+     * end user to the specified {@code fallbackUrl}.  If there is no saved request or fallback url, this method
+     * throws an {@link IllegalStateException}.
+     * <p/>
+     * This method is primarily used to support a common login scenario - if an unauthenticated user accesses a
+     * page that requires authentication, it is expected that request is
+     * {@link #saveRequest(javax.servlet.ServletRequest) saved} first and then redirected to the login page. Then,
+     * after a successful login, this method can be called to redirect them back to their originally requested URL, a
+     * nice usability feature.
+     *
+     * @param request     the incoming request
+     * @param response    the outgoing response
+     * @param fallbackUrl the fallback url to redirect to if there is no saved request available.
+     * @throws IllegalStateException if there is no saved request and the {@code fallbackUrl} is {@code null}.
+     * @throws IOException           if there is an error redirecting
+     * @since 1.0
+     */
+    public static void redirectToSavedRequest(ServletRequest request, ServletResponse response, String fallbackUrl)
+            throws IOException {
+        String successUrl = null;
+        boolean contextRelative = true;
+        SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(request);
+        if (savedRequest != null && savedRequest.getMethod().equalsIgnoreCase(AccessControlFilter.GET_METHOD)) {
+            successUrl = savedRequest.getRequestUrl();
+            contextRelative = false;
+        }
+
+        if (successUrl == null) {
+            successUrl = fallbackUrl;
+        }
+
+        if (successUrl == null) {
+            throw new IllegalStateException("Success URL not available via saved request or via the " +
+                    "successUrlFallback method parameter. One of these must be non-null for " +
+                    "issueSuccessRedirect() to work.");
+        }
+
+        WebUtils.issueRedirect(request, response, successUrl, null, contextRelative);
+    }
 
 }

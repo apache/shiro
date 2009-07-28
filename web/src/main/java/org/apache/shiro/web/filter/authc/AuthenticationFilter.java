@@ -18,18 +18,17 @@
  */
 package org.apache.shiro.web.filter.authc;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.SavedRequest;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.filter.AccessControlFilter;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 /**
- * <p>Base class for all Filters that require the current user to be authenticated. This class encapsulates the
- * logic of checking whether a user is already authenticated in the system. If the user is not authenticated, we use
- * the template method pattern to delegate the processing of an unauthenticated request to sub classes.</p>
+ * Base class for all Filters that require the current user to be authenticated. This class encapsulates the
+ * logic of checking whether a user is already authenticated in the system while subclasses are required to perform
+ * specific logic for unauthenticated requests.
  *
  * @author Allan Ditzel
  * @author Jeremy Haile
@@ -40,18 +39,29 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
 
     //TODO - complete JavaDoc
 
-    public static final String DEFAULT_SUCCESS_URL = "/index.jsp";
+    public static final String DEFAULT_SUCCESS_URL = "/";
 
     private String successUrl = DEFAULT_SUCCESS_URL;
 
+    /**
+     * Returns the success url to use as the default location a user is sent after logging in.  Typically a redirect
+     * after login will redirect to the originally request URL; this property is provided mainly as a fallback in case
+     * the original request URL is not available or not specified.
+     * <p/>
+     * The default value is {@link #DEFAULT_SUCCESS_URL}.
+     *
+     * @return the success url to use as the default location a user is sent after logging in.
+     */
     protected String getSuccessUrl() {
         return successUrl;
     }
 
     /**
-     * Sets the success URL that is the default location a user is sent to after logging in when
-     * {@link #issueSuccessRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
-     * is called by subclasses of this filter.
+     * Sets the default/fallback success url to use as the default location a user is sent after logging in.  Typically
+     * a redirect after login will redirect to the originally request URL; this property is provided mainly as a
+     * fallback in case the original request URL is not available or not specified.
+     * <p/>
+     * The default value is {@link #DEFAULT_SUCCESS_URL}.
      *
      * @param successUrl the success URL to redirect the user to after a successful login.
      */
@@ -74,26 +84,17 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
         return subject.isAuthenticated();
     }
 
+    /**
+     * Redirects to user to the previously attempted URL after a successful login.  This implementation simply calls
+     * <code>{@link WebUtils WebUtils}.{@link WebUtils#redirectToSavedRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String) redirectToSavedRequest}</code>
+     * using the {@link #getSuccessUrl() successUrl} as the {@code fallbackUrl} argument to that call.
+     *
+     * @param request  the incoming request
+     * @param response the outgoing response
+     * @throws Exception if there is a problem redirecting.
+     */
     protected void issueSuccessRedirect(ServletRequest request, ServletResponse response) throws Exception {
-
-        String successUrl = null;
-        boolean contextRelative = true;
-        SavedRequest savedRequest = WebUtils.getAndClearSavedRequest(request);
-        if (savedRequest != null && savedRequest.getMethod().equalsIgnoreCase(GET_METHOD)) {
-            successUrl = savedRequest.getRequestUrl();
-            contextRelative = false;
-        }
-
-        if (successUrl == null) {
-            successUrl = getSuccessUrl();
-        }
-
-        if (successUrl == null) {
-            throw new IllegalStateException("Success URL not available via saved request or by calling " +
-                    "getSuccessUrl().  One of these must be non-null for issueSuccessRedirect() to work.");
-        }
-
-        WebUtils.issueRedirect(request, response, successUrl, null, contextRelative);
+        WebUtils.redirectToSavedRequest(request, response, getSuccessUrl());
     }
 
 }
