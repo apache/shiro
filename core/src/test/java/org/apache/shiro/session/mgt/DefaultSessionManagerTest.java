@@ -18,8 +18,7 @@
  */
 package org.apache.shiro.session.mgt;
 
-import org.apache.shiro.session.ExpiredSessionException;
-import org.apache.shiro.session.Session;
+import org.apache.shiro.session.*;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.util.ThreadContext;
 import static org.easymock.EasyMock.*;
@@ -67,6 +66,54 @@ public class DefaultSessionManagerTest {
         assertTrue(sm.isValid(sessionId));
         sleep(150);
         assertFalse(sm.isValid(sessionId));
+    }
+
+    @Test
+    public void testSessionListenerStartNotification() {
+        final boolean[] started = new boolean[1];
+        SessionListener listener = new SessionListenerAdapter() {
+            public void onStart(Session session) {
+                started[0] = true;
+            }
+        };
+        sm.add(listener);
+        sm.start((Map) null);
+        assertTrue(started[0]);
+    }
+
+    @Test
+    public void testSessionListenerStopNotification() {
+        final boolean[] stopped = new boolean[1];
+        SessionListener listener = new SessionListenerAdapter() {
+            public void onStop(Session session) {
+                stopped[0] = true;
+            }
+        };
+        sm.add(listener);
+        Serializable id = sm.start((Map) null);
+        sm.stop(id);
+        assertTrue(stopped[0]);
+    }
+
+    @Test
+    public void testSessionListenerExpiredNotification() {
+        final boolean[] expired = new boolean[1];
+        SessionListener listener = new SessionListenerAdapter() {
+            public void onExpiration(Session session) {
+                expired[0] = true;
+            }
+        };
+        sm.add(listener);
+        sm.setGlobalSessionTimeout(100);
+        Serializable id = sm.start((Map) null);
+        sleep(150);
+        try {
+            sm.checkValid(id);
+            fail("check should have thrown an exception.");
+        } catch (InvalidSessionException expected) {
+            //do nothing - expected.
+        }
+        assertTrue(expired[0]);
     }
 
     @Test
