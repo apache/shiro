@@ -120,7 +120,7 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
         //get the host address and bind it to the thread.  This call will both validate the session as well as
         //make it accessible for futher host checks:
         InetAddress host = this.delegateSessionManager.getHostAddress(id);
-        session = new DelegatingSession(this.delegateSessionManager, id, host, false);
+        session = new DelegatingSession(this.delegateSessionManager, id, host);
         log.trace("Cached the session retrieved from the datasource in a thread-local for continued thread access.");
         ThreadContext.put(THREAD_CONTEXT_SESSION_KEY, session);
 

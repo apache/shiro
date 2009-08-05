@@ -52,7 +52,6 @@ public class DelegatingSession implements Session, Serializable {
     //cached fields to avoid a server-side method call if out-of-process:
     private Date startTimestamp = null;
     private InetAddress hostAddress = null;
-    private boolean handleReplacedSessions = true;
 
     /**
      * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
@@ -64,16 +63,19 @@ public class DelegatingSession implements Session, Serializable {
     }
 
     public DelegatingSession(SessionManager sessionManager, Serializable id) {
+        if (sessionManager == null) {
+            throw new IllegalArgumentException("sessionManager argument cannot be null.");
+        }
+        if (id == null) {
+            throw new IllegalArgumentException("session id argument cannot be null.");
+        }
         this.sessionManager = sessionManager;
         this.id = id;
     }
 
-    public DelegatingSession(SessionManager sessionManager, Serializable id,
-                             InetAddress hostAddress, boolean handleReplacedSessions) {
-        this.sessionManager = sessionManager;
-        this.id = id;
+    public DelegatingSession(SessionManager sessionManager, Serializable id, InetAddress hostAddress) {
+        this(sessionManager, id);
         this.hostAddress = hostAddress;
-        this.handleReplacedSessions = handleReplacedSessions;
     }
 
     /**
@@ -105,14 +107,6 @@ public class DelegatingSession implements Session, Serializable {
      */
     public void setSessionManager(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
-    }
-
-    public boolean isHandleReplacedSessions() {
-        return handleReplacedSessions;
-    }
-
-    public void setHandleReplacedSessions(boolean handleReplacedSessions) {
-        this.handleReplacedSessions = handleReplacedSessions;
     }
 
     /**
