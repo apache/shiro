@@ -22,6 +22,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
@@ -100,12 +101,11 @@ public class DefaultSecurityManagerTest {
         } catch (InterruptedException e) {
             //ignored
         }
-        session.setTimeout(AbstractValidatingSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
-        Serializable newSessionId = session.getId();
-        assertFalse(origSessionId.equals(newSessionId));
-
-        Object aValue = session.getAttribute(key);
-        assertNull(aValue);
+        try {
+            session.setTimeout(AbstractValidatingSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
+            fail("Session should have expired.");
+        } catch (ExpiredSessionException expected) {
+        }
     }
 
     /**

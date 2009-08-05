@@ -2,7 +2,6 @@ package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.ExpiredSessionException;
-import org.apache.shiro.session.ReplacedSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
@@ -10,7 +9,7 @@ import org.apache.shiro.util.ThreadContext;
 import static org.easymock.EasyMock.*;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -77,19 +76,14 @@ public class DelegatingWebSecurityManagerTest {
         expect(delegate.start((Map) null)).andReturn(sessionId);
         expect(delegate.getHostAddress(sessionId)).andReturn(host);
         expect(delegate.getTimeout(sessionId)).andReturn(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
-        delegate.setTimeout(sessionId, 125);
+        delegate.setTimeout(sessionId, 125L);
         expectLastCall().times(1);
         expect(delegate.getTimeout(sessionId)).andReturn(125L);
         //pretend that 125ms have gone by
         Serializable replacedSessionId = UUID.randomUUID().toString();
         @SuppressWarnings({"ThrowableInstanceNeverThrown"})
-        ReplacedSessionException replaced =
-                new ReplacedSessionException("test", new ExpiredSessionException(sessionId),
-                        sessionId, replacedSessionId);
-        expect(delegate.getTimeout(sessionId)).andThrow(replaced);
-        //the DelegatingSession will re-try the call on a ReplacedSessionException
-        expect(delegate.getHostAddress(replacedSessionId)).andReturn(host);
-        expect(delegate.getTimeout(replacedSessionId)).andReturn(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
+        ExpiredSessionException expired = new ExpiredSessionException("test", sessionId);
+        expect(delegate.getTimeout(sessionId)).andThrow(expired);
 
         replay(delegate);
         replay(mockRequest);
@@ -100,13 +94,13 @@ public class DelegatingWebSecurityManagerTest {
         assertEquals(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT, session.getTimeout());
         session.setTimeout(125);
         assertEquals(125, session.getTimeout());
-        //sleep(175);
         //now the underlying session should have been expired and a new one replaced by default.
         //so ensure the replaced session has the default session timeout:
-        long timeout = session.getTimeout();
-        assertEquals(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT, timeout);
-        assertFalse(id.equals(session.getId())); //new ID would have been generated
-
+        try {
+            session.getTimeout();
+            fail("Should have thrown an ExpiredSessionException");
+        } catch (ExpiredSessionException expected) {
+        }
         verify(delegate);
         verify(mockRequest);
     }

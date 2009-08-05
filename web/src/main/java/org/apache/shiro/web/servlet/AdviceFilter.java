@@ -18,17 +18,17 @@
  */
 package org.apache.shiro.web.servlet;
 
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 /**
- * A Servlet Filter that enables AOP-style advice for a SerlvetRequest via
+ * A Servlet Filter that enables AOP-style &quot;around&quot; advice for a SerlvetRequest via
  * {@link #preHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) preHandle},
  * {@link #postHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) postHandle},
  * and {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
@@ -39,7 +39,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AdviceFilter extends OncePerRequestFilter {
 
-    /** The static logger available to this class only */
+    /**
+     * The static logger available to this class only
+     */
     private static final Logger log = LoggerFactory.getLogger(AdviceFilter.class);
 
     /**
@@ -143,7 +145,7 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             exception = e;
         } finally {
-            cleanup( request, response, exception );
+            cleanup(request, response, exception);
         }
     }
 
@@ -156,15 +158,15 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
      * as well as handles any exceptions properly.
      *
-     * @param request the incoming <code>ServletRequest</code>
+     * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>
      * @param existing any exception that might have occurred while executing the <code>FilterChain</code> or
-     * pre or post advice, or <code>null</code> if the pre/chain/post excution did not throw an <code>Exception</code>.
+     *                 pre or post advice, or <code>null</code> if the pre/chain/post excution did not throw an <code>Exception</code>.
      * @throws ServletException if any exception other than an <code>IOException</code> is thrown.
-     * @throws IOException if the pre/chain/post execution throw an <code>IOException</code>
+     * @throws IOException      if the pre/chain/post execution throw an <code>IOException</code>
      */
-    protected void cleanup( ServletRequest request, ServletResponse response, Exception existing )
-        throws ServletException, IOException {
+    protected void cleanup(ServletRequest request, ServletResponse response, Exception existing)
+            throws ServletException, IOException {
         Exception exception = existing;
         try {
             afterCompletion(request, response, exception);

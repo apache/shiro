@@ -118,8 +118,6 @@ public class DefaultSessionManagerTest {
 
     @Test
     public void testSessionDeleteOnExpiration() {
-
-        sm.setAutoCreateWhenInvalid(false);
         sm.setGlobalSessionTimeout(100);
 
         SessionDAO sessionDAO = createMock(SessionDAO.class);

@@ -18,10 +18,11 @@
  */
 package org.apache.shiro.session.mgt;
 
+import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,10 +66,11 @@ public class DelegatingSessionTest {
         session.setTimeout(100);
         assertEquals(100, session.getTimeout());
         sleep(150);
-        //now the underlying session should have been expired and a new one replaced by default.
-        //so ensure the replaced session has the default session timeout:
-        assertEquals(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT, session.getTimeout());
-        assertFalse(origId.equals(session.getId())); //new ID would have been generated
+        try {
+            session.getTimeout();
+            fail("Session should have expired.");
+        } catch (ExpiredSessionException expected) {
+        }
     }
 
 }
