@@ -227,47 +227,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     /**
-     * Passthrough configuration property to the wrapped {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager} - if it should
-     * automatically create a new session when an invalid session is referenced.  The default value unless
-     * overridden by this method is <code>true</code> for developer convenience and to match what most people are
-     * accustomed based on years of servlet container behavior.
-     * <p/>
-     * When true (the default), the wrapped {@link AbstractValidatingSessionManager} implementation throws an
-     * {@link org.apache.shiro.session.ReplacedSessionException ReplacedSessionException} to the caller whenever a new
-     * session is created so the caller can receive the new session ID and react accordingly for future
-     * {@link SessionManager SessionManager} method invocations.
-     *
-     * @param autoCreate if the wrapped {@link AbstractValidatingSessionManager} should automatically create a new
-     *                   session when an invalid session is referenced
-     * @see org.apache.shiro.session.mgt.AbstractValidatingSessionManager#setAutoCreateWhenInvalid(boolean)
-     */
-    public void setAutoCreateSessionAfterInvalidation(boolean autoCreate) {
-        assertSessionManager(AbstractValidatingSessionManager.class);
-        ((AbstractValidatingSessionManager) this.sessionManager).setAutoCreateWhenInvalid(autoCreate);
-    }
-
-    /**
-     * Passthrough configuration property that returns <code>true</code> if the wrapped
-     * {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager AbstractValidatingSessionManager} should automatically create a
-     * new session when an invalid session is referenced, <code>false</code> otherwise.  Unless overridden by the
-     * {@link #setAutoCreateSessionAfterInvalidation(boolean)} method, the default value is <code>true</code> for
-     * developer convenience and to match what most people are accustomed based on years of servlet container behavior.
-     * <p/>
-     * When true (the default), the wrapped {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager AbstractValidatingSessionManager}
-     * implementation throws an {@link org.apache.shiro.session.ReplacedSessionException ReplacedSessionException} to
-     * the caller whenever a new session is created so the caller can receive the new session ID and react accordingly
-     * for future {@link SessionManager SessionManager} method invocations.
-     *
-     * @return <code>true</code> if this session manager should automatically create a new session when an invalid
-     *         session is referenced, <code>false</code> otherwise.
-     * @see org.apache.shiro.session.mgt.AbstractValidatingSessionManager#isAutoCreateWhenInvalid()
-     */
-    public boolean isAutoCreateSessionAfterInvalidation() {
-        assertSessionManager(AbstractValidatingSessionManager.class);
-        return ((AbstractValidatingSessionManager) this.sessionManager).isAutoCreateWhenInvalid();
-    }
-
-    /**
      * Ensures the internal SessionManager instance is an <code>instanceof</code>
      * {@link org.apache.shiro.session.SessionListenerRegistrar SessionListenerRegistrar} to ensure that any
      * listeners attempting to be registered can actually do so with the internal delegate instance.

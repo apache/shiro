@@ -261,7 +261,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         Cache authzCache = getAuthorizationCache();
         if (authzCache != null) {
             if (log.isTraceEnabled()) {
-                log.trace("Attempting to retrieve the AuthorizationIfno from cache.");
+                log.trace("Attempting to retrieve the AuthorizationInfo from cache.");
             }
             Object key = getAuthorizationCacheKey(principals);
             info = (AuthorizationInfo) authzCache.get(key);

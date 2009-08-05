@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.web;
 
+import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
@@ -72,7 +73,7 @@ public class DefaultWebSecurityManagerTest {
     @Test
     public void testSessionTimeout() {
         shiroSessionModeInit();
-        long globalTimeout = 50;
+        long globalTimeout = 100;
         sm.setGlobalSessionTimeout(globalTimeout);
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
@@ -89,13 +90,14 @@ public class DefaultWebSecurityManagerTest {
         Session session = subject.getSession();
         Serializable origId = session.getId();
         assertEquals(session.getTimeout(), globalTimeout);
-        session.setTimeout(100);
-        assertEquals(session.getTimeout(), 100);
+        session.setTimeout(125);
+        assertEquals(session.getTimeout(), 125);
         sleep(150);
-        //now the underlying session should have been expired and a new one replaced by default.
-        //so ensure the replaced session has the default session timeout:
-        assertEquals(session.getTimeout(), globalTimeout);
-        assertFalse(origId.equals(session.getId())); //new ID would have been generated
+        try {
+            session.getTimeout();
+            fail("Session should have expired.");
+        } catch (ExpiredSessionException expected) {
+        }
     }
 
     public static InetAddress getLocalHost() {

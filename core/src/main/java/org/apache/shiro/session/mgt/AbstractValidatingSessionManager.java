@@ -19,7 +19,10 @@
 package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.session.*;
+import org.apache.shiro.session.ExpiredSessionException;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
@@ -114,41 +117,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return sessionValidationInterval;
     }
 
-    /**
-     * Returns <code>true</code> if this session manager should automatically create a new session when an invalid or
-     * nonexistent session is referenced, <code>false</code> otherwise.  Unless overridden by the
-     * {@link #setAutoCreateWhenInvalid(boolean)} method, the default value is <code>true</code> for developer
-     * convenience and to match what most people are accustomed based on years of servlet container behavior.
-     * <p/>
-     * When true (the default), this {@code SessionManager} implementation throws an
-     * {@link org.apache.shiro.session.ReplacedSessionException ReplacedSessionException} to the caller whenever a new session is created so
-     * the caller can receive the new session ID and react accordingly for future {@code SessionManager SessionManager}
-     * method invocations.
-     *
-     * @return <code>true</code> if this session manager should automatically create a new session when an invalid
-     *         session is referenced, <code>false</code> otherwise.
-     */
-    public boolean isAutoCreateWhenInvalid() {
-        return autoCreateWhenInvalid;
-    }
-
-    /**
-     * Sets if this session manager should automatically create a new session when an invalid
-     * session is referenced.  The default value unless overridden by this method is <code>true</code> for developer
-     * convenience and to match what most people are accustomed based on years of servlet container behavior.
-     * <p/>
-     * When true (the default), this {@code SessionManager} implementation throws an
-     * {@link org.apache.shiro.session.ReplacedSessionException ReplacedSessionException} to the caller whenever a new session is created so
-     * the caller can receive the new session ID and react accordingly for future {@code SessionManager SessionManager}
-     * method invocations.
-     *
-     * @param autoCreateWhenInvalid if this session manager should automatically create a new session when an
-     *                              invalid session is referenced
-     */
-    public void setAutoCreateWhenInvalid(boolean autoCreateWhenInvalid) {
-        this.autoCreateWhenInvalid = autoCreateWhenInvalid;
-    }
-
     private InetAddress getHostAddressFallback(Session s) {
         InetAddress inet = s.getHostAddress();
         if (inet == null) {
@@ -158,39 +126,25 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         return inet;
     }
 
-    private void ensureNotNull(Session session, Serializable sessionId) throws UnknownSessionException {
-        if (session == null) {
-            onUnknownSession(sessionId);
-            throw new UnknownSessionException(sessionId);
-        }
-    }
-
     protected final Session doGetSession(final Serializable sessionId) throws InvalidSessionException {
         enableSessionValidationIfNecessary();
 
         if (log.isTraceEnabled()) {
             log.trace("Attempting to retrieve session with id [" + sessionId + "]");
         }
-        InetAddress hostAddress = null;
+        Session s;
         try {
-            Session s = retrieveSession(sessionId);
-            ensureNotNull(s, sessionId);
-            // Save the host address in case the session will be invalidated.
-            // We want to retain it in case it is needed for a replacement session
-            hostAddress = getHostAddressFallback(s);
-            validate(s);
-            return s;
-        } catch (InvalidSessionException ise) {
-            if (!isAutoCreateWhenInvalid()) {
-                throw ise;
+            s = retrieveSession(sessionId);
+            if (s == null) {
+                throw new UnknownSessionException("The session data store did not return a session for " +
+                        "sessionId [" + sessionId + "]", sessionId);
             }
-            //otherwise auto-create a new session and indicate via a ReplacedSessionException
-            Serializable newId = start(hostAddress);
-            String msg = "Session with id [" + sessionId + "] is invalid.  The SessionManager " +
-                    "has been configured to automatically re-create sessions upon invalidation.  Returnining " +
-                    "new session id [" + newId + "] with exception so the caller may react accordingly.";
-            throw new ReplacedSessionException(msg, ise, sessionId, newId);
+        } catch (UnknownSessionException e) {
+            onUnknownSession(sessionId);
+            throw e;
         }
+        validate(s);
+        return s;
     }
 
     /**
@@ -198,9 +152,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      *
      * @param sessionId the id of the session to retrieve from the data store
      * @return the session identified by {@code sessionId}.
-     * @throws InvalidSessionException if there is no session identified by {@code sessionId}.
+     * @throws UnknownSessionException if there is no session identified by {@code sessionId}.
      */
-    protected abstract Session retrieveSession(Serializable sessionId) throws InvalidSessionException;
+    protected abstract Session retrieveSession(Serializable sessionId) throws UnknownSessionException;
 
     protected Session createSession(Map initData) throws AuthorizationException {
         enableSessionValidationIfNecessary();

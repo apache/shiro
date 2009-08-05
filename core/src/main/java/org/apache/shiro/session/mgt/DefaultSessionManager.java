@@ -20,8 +20,8 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
-import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAOAware;
@@ -194,11 +194,11 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
         sessionDAO.update(session);
     }
 
-    protected Session retrieveSession(Serializable sessionId) throws InvalidSessionException {
+    protected Session retrieveSession(Serializable sessionId) throws UnknownSessionException {
         return retrieveSessionFromDataSource(sessionId);
     }
 
-    protected Session retrieveSessionFromDataSource(Serializable sessionId) throws InvalidSessionException {
+    protected Session retrieveSessionFromDataSource(Serializable sessionId) throws UnknownSessionException {
         return sessionDAO.readSession(sessionId);
     }
 

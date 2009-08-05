@@ -19,13 +19,11 @@
 package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.ReplacedSessionException;
 import org.apache.shiro.session.Session;
 
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -140,16 +138,7 @@ public class DelegatingSession implements Session, Serializable {
      */
     public Date getStartTimestamp() {
         if (startTimestamp == null) {
-            try {
-                startTimestamp = sessionManager.getStartTimestamp(id);
-            } catch (ReplacedSessionException e) {
-                if (!isHandleReplacedSessions()) {
-                    //propagate immediately
-                    throw e;
-                }
-                this.id = e.getNewSessionId();
-                startTimestamp = sessionManager.getStartTimestamp(id);
-            }
+            startTimestamp = sessionManager.getStartTimestamp(id);
         }
         return startTimestamp;
     }
@@ -159,42 +148,15 @@ public class DelegatingSession implements Session, Serializable {
      */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
-        try {
-            return sessionManager.getLastAccessTime(id);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            return sessionManager.getLastAccessTime(id);
-        }
+        return sessionManager.getLastAccessTime(id);
     }
 
     public long getTimeout() throws InvalidSessionException {
-        try {
-            return sessionManager.getTimeout(id);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            return sessionManager.getTimeout(id);
-        }
+        return sessionManager.getTimeout(id);
     }
 
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
-        try {
-            sessionManager.setTimeout(id, maxIdleTimeInMillis);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            sessionManager.setTimeout(id, maxIdleTimeInMillis);
-        }
+        sessionManager.setTimeout(id, maxIdleTimeInMillis);
     }
 
     /**
@@ -202,16 +164,7 @@ public class DelegatingSession implements Session, Serializable {
      */
     public InetAddress getHostAddress() {
         if (hostAddress == null) {
-            try {
-                hostAddress = sessionManager.getHostAddress(id);
-            } catch (ReplacedSessionException e) {
-                if (!isHandleReplacedSessions()) {
-                    //propagate immediately
-                    throw e;
-                }
-                this.id = e.getNewSessionId();
-                hostAddress = sessionManager.getHostAddress(id);
-            }
+            hostAddress = sessionManager.getHostAddress(id);
         }
         return hostAddress;
     }
@@ -220,33 +173,14 @@ public class DelegatingSession implements Session, Serializable {
      * @see org.apache.shiro.session.Session#touch()
      */
     public void touch() throws InvalidSessionException {
-        try {
-            sessionManager.touch(id);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            // No need to 'hit' the session manager again - a newly created session is 'touched' at the time of creation
-        }
+        sessionManager.touch(id);
     }
 
     /**
      * @see org.apache.shiro.session.Session#stop()
      */
     public void stop() throws InvalidSessionException {
-        try {
-            sessionManager.stop(id);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            //TODO - prevent sessionManager from creating new session when 'stop' is already requested.
-            sessionManager.stop(id);
-        }
+        sessionManager.stop(id);
     }
 
     /**
@@ -254,34 +188,14 @@ public class DelegatingSession implements Session, Serializable {
      */
     @SuppressWarnings({"unchecked"})
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-        try {
-            return sessionManager.getAttributeKeys(id);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            // No need to 'hit' the session manager again - a new session won't have any attributes:
-            return Collections.EMPTY_SET;
-        }
+        return sessionManager.getAttributeKeys(id);
     }
 
     /**
      * @see org.apache.shiro.session.Session#getAttribute(Object key)
      */
     public Object getAttribute(Object key) throws InvalidSessionException {
-        try {
-            return sessionManager.getAttribute(id, key);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            // No need to 'hit' the session manager again - a new session won't have any attributes
-            return null;
-        }
+        return sessionManager.getAttribute(id, key);
     }
 
     /**
@@ -291,16 +205,7 @@ public class DelegatingSession implements Session, Serializable {
         if (value == null) {
             removeAttribute(key);
         } else {
-            try {
-                sessionManager.setAttribute(id, key, value);
-            } catch (ReplacedSessionException e) {
-                if (!isHandleReplacedSessions()) {
-                    //propagate immediately
-                    throw e;
-                }
-                this.id = e.getNewSessionId();
-                sessionManager.setAttribute(id, key, value);
-            }
+            sessionManager.setAttribute(id, key, value);
         }
     }
 
@@ -308,16 +213,6 @@ public class DelegatingSession implements Session, Serializable {
      * @see Session#removeAttribute(Object key)
      */
     public Object removeAttribute(Object key) throws InvalidSessionException {
-        try {
-            return sessionManager.removeAttribute(id, key);
-        } catch (ReplacedSessionException e) {
-            if (!isHandleReplacedSessions()) {
-                //propagate immediately
-                throw e;
-            }
-            this.id = e.getNewSessionId();
-            // No need to 'hit' the session manager again - a new session won't have any attributes:
-            return null;
-        }
+        return sessionManager.removeAttribute(id, key);
     }
 }
