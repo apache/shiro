@@ -90,9 +90,6 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <!-- only run this during deploy, otherwise normal 'install'
-                             during development is annoyingly slow -->
-                        <phase>deploy</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -107,9 +104,6 @@
                 <executions>
                     <execution>
                         <id>attach-api-docs</id>
-                        <!-- only run this during deploy, otherwise normal 'install'
-                             during development is annoyingly slow -->
-                        <phase>deploy</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
