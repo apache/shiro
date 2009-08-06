@@ -92,7 +92,7 @@ public class DefaultWebSecurityManagerTest {
         assertEquals(session.getTimeout(), globalTimeout);
         session.setTimeout(125);
         assertEquals(session.getTimeout(), 125);
-        sleep(150);
+        sleep(200);
         try {
             session.getTimeout();
             fail("Session should have expired.");
