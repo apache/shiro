@@ -116,7 +116,7 @@ import java.net.InetAddress;
  * # (e.g. Web MVC plus Java Web Start or Flash), or are doing distributed/shared Sessions for
  * # Single Sign On, HttpSessions aren't good enough.  You'll need to use Shiro's more powerful
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
- * # and changing 'http' to 'shiro'
+ * # and changing 'http' to 'native'
  * #
  * #securityManager.{@link org.apache.shiro.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
  * #
@@ -229,8 +229,6 @@ import java.net.InetAddress;
 public class ShiroFilter extends OncePerRequestFilter {
 
     //TODO - complete JavaDoc
-
-    public static final String SECURITY_MANAGER_CONTEXT_KEY = SecurityManager.class.getName() + "_SERVLET_CONTEXT_KEY";
 
     public static final String CONFIG_CLASS_NAME_INIT_PARAM_NAME = "configClassName";
     public static final String CONFIG_INIT_PARAM_NAME = "config";
@@ -523,12 +521,13 @@ public class ShiroFilter extends OncePerRequestFilter {
      * If native sessions are not enabled (that is, standard Servlet container sessions are being used) or there is no
      * session ({@code subject.getSession(false) == null}), this method does nothing.
      * <p/>This method implementation merely calls
-     * <code>Session.{@link org.apache.shiro.session.Session#touch() touch}()</code> on the session. 
+     * <code>Session.{@link org.apache.shiro.session.Session#touch() touch}()</code> on the session.
      *
      * @param request  incoming request - ignored, but available to subclasses that might wish to override this method
      * @param response outgoing response - ignored, but available to subclasses that might wish to override this method
      * @since 1.0
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected void updateSessionLastAccessTime(ServletRequest request, ServletResponse response) {
         if (!isHttpSessions()) { //'native' sessions
             Subject subject = getSecurityManager().getSubject();
