@@ -136,9 +136,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         if (sm instanceof SessionDAOAware) {
             ((SessionDAOAware) sm).setSessionDAO(sessionDAO);
         } else {
-            String msg = "The underlying session manager is null or does not implement the " +
-                    SessionDAO.class.getName() + " interface, which is required if the underlying " +
-                    "instance is to receive the sessionDAO argument.";
+            String msg = "The underlying SessionManager is null or does not implement the " +
+                    SessionDAOAware.class.getName() + " interface, which is required if it is " +
+                    "to receive the sessionDAO argument.";
             throw new IllegalArgumentException(msg);
         }
     }
