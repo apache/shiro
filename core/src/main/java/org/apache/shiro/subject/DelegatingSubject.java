@@ -29,6 +29,8 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.subject.support.SubjectCallable;
+import org.apache.shiro.subject.support.SubjectRunnable;
 import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Implementation of the <tt>Subject</tt> interface that delegates
@@ -324,4 +327,18 @@ public class DelegatingSubject implements Subject, Serializable {
         }
     }
 
+    public <V> Callable<V> createCallable(Callable<V> callable) {
+        return new SubjectCallable<V>(this, callable);
+    }
+
+    public Runnable createRunnable(Runnable runnable) {
+        if (runnable instanceof Thread) {
+            String msg = "This implementation does not support Thread arguments because of JDK ThreadLocal " +
+                    "inheritance mechanisms required by Shiro.  Instead, the method argument should be a non-Thread " +
+                    "Runnable and the return value from this method can then be given to an ExecutorService or " +
+                    "another Thread.";
+            throw new UnsupportedOperationException(msg);
+        }
+        return new SubjectRunnable(this, runnable);
+    }
 }

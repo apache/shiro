@@ -18,27 +18,28 @@
  */
 package org.apache.shiro.subject;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.session.Session;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 /**
  * A <tt>Subject</tt> represents state and security operations for a <em>single</em> application user.
  * These operations include authentication (login/logout), authorization (access control), and
  * session access. It is Shiro's primary mechanism for single-user security functionality.
- *
+ * <p/>
  * <p>Note that there are many *Permission methods in this interface overloaded to accept String arguments instead of
  * {@link Permission Permission} instances. They are a convenience allowing the caller to use a String representation of
  * a {@link Permission Permission} if desired.  The underlying Authorization subsystem implementations will usually
  * simply convert these String values to {@link Permission Permission} instances and then just call the corresponding
  * type-safe method.  (Shiro's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.shiro.authz.permission.PermissionResolver PermissionResolver}s.)
- *
+ * <p/>
  * <p>These overloaded *Permission methods <em>do</em> forego type-saftey for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
@@ -51,18 +52,18 @@ public interface Subject {
     /**
      * Returns this Subject's uniquely-identifying principal, or <tt>null</tt> if this
      * Subject doesn't yet have account data associated with it (for example, if they haven't logged in).
-     *
+     * <p/>
      * <p>The term <em>principal</em> is just a fancy security term for any identifying attribute(s) of an application
      * user, such as a username, or user id, or public key, or anything else you might use in your application to
      * identify a user.  And although given names and family names (first/last) are technically principals as well,
      * Shiro expects the object(s) returned from this method to be uniquely identifying attibute(s) for
      * your application.  This implies that things like given names and family names are usually poor candidates as
      * return values since they are rarely guaranteed to be unique.</p>
-     *
+     * <p/>
      * <p>Most single-Realm applications would return from this method a single unique principal as noted above
      * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large
      * majority of Shiro applications.</p>
-     *
+     * <p/>
      * <p>However, in <em>multi</em>-Realm configurations, which are fully supported by Shiro as well, it is
      * possible that the return value encapsulates more than one principal.  Typically multi-realm applications need to
      * retain the unique principals for <em>each</em> Realm so subsequent security checks against these Realms can
@@ -82,7 +83,7 @@ public interface Subject {
      * social security number, nickname, username, etc, are all examples of a principal.
      * <p/>
      * This method returns all of the principals associated with the Subject, and it is expected that at least one of
-     * the principals contained within this collection represent an absolute unique identifier for the application.  
+     * the principals contained within this collection represent an absolute unique identifier for the application.
      * User IDs, such a <code>Long</code> database primary key or UUID, or maybe a globally unique username or email
      * address are all good candidates for such a unique identifier.  Non-unique things, such as surnames and
      * given names, are often poor candidates.
@@ -101,7 +102,7 @@ public interface Subject {
     /**
      * Returns <tt>true</tt> if this Subject is permitted to perform an action or access a resource summarized by the
      * specified permission string.
-     *
+     * <p/>
      * <p>This is an overloaded method for the corresponding type-safe {@link Permission Permission} variant.
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
@@ -115,7 +116,7 @@ public interface Subject {
     /**
      * Returns <tt>true</tt> if this Subject is permitted to perform an action or access a resource summarized by the
      * specified permission.
-     *
+     * <p/>
      * <p>More specifically, this method determines if any <tt>Permission</tt>s associated
      * with the subject {@link Permission#implies(Permission) imply} the specified permission.
      *
@@ -127,7 +128,7 @@ public interface Subject {
     /**
      * Checks if this Subject implies the given permission strings and returns a boolean array indicating which
      * permissions are implied.
-     *
+     * <p/>
      * <p>This is an overloaded method for the corresponding type-safe {@link Permission Permission} variant.
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
@@ -143,11 +144,11 @@ public interface Subject {
     /**
      * Checks if this Subject implies the given Permissions and returns a boolean array indicating which permissions
      * are implied.
-     *
+     * <p/>
      * <p>More specifically, this method should determine if each <tt>Permission</tt> in
      * the array is {@link Permission#implies(Permission) implied} by permissions
      * already associated with the subject.
-     *
+     * <p/>
      * <p>This is primarily a performance-enhancing method to help reduce the number of
      * {@link #isPermitted} invocations over the wire in client/server systems.
      *
@@ -161,7 +162,7 @@ public interface Subject {
 
     /**
      * Returns <tt>true</tt> if this Subject implies all of the specified permission strings, <tt>false</tt> otherwise.
-     *
+     * <p/>
      * <p>This is an overloaded method for the corresponding type-safe {@link org.apache.shiro.authz.Permission Permission} variant.
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
@@ -174,7 +175,7 @@ public interface Subject {
 
     /**
      * Returns <tt>true</tt> if this Subject implies all of the specified permissions, <tt>false</tt> otherwise.
-     *
+     * <p/>
      * <p>More specifically, this method determines if all of the given <tt>Permission</tt>s are
      * {@link Permission#implies(Permission) implied by} permissions already associated with this Subject.
      *
@@ -185,10 +186,10 @@ public interface Subject {
 
     /**
      * Ensures this Subject implies the specified permission String.
-     *
+     * <p/>
      * <p>If this subject's existing associated permissions do not {@link Permission#implies(Permission)} imply}
      * the given permission, an {@link org.apache.shiro.authz.AuthorizationException} will be thrown.
-     *
+     * <p/>
      * <p>This is an overloaded method for the corresponding type-safe {@link Permission Permission} variant.
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
@@ -201,7 +202,7 @@ public interface Subject {
 
     /**
      * Ensures this Subject {@link Permission#implies(Permission) implies} the specified <tt>Permission</tt>.
-     *
+     * <p/>
      * <p>If this subject's exisiting associated permissions do not {@link Permission#implies(Permission) imply}
      * the given permission, an {@link org.apache.shiro.authz.AuthorizationException} will be thrown.
      *
@@ -215,11 +216,11 @@ public interface Subject {
      * Ensures this Subject
      * {@link org.apache.shiro.authz.Permission#implies(org.apache.shiro.authz.Permission) implies} all of the
      * specified permission strings.
-     *
+     * <p/>
      * If this subject's exisiting associated permissions do not
      * {@link org.apache.shiro.authz.Permission#implies(org.apache.shiro.authz.Permission) imply} all of the given permissions,
      * an {@link org.apache.shiro.authz.AuthorizationException} will be thrown.
-     *
+     * <p/>
      * <p>This is an overloaded method for the corresponding type-safe {@link Permission Permission} variant.
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
@@ -233,7 +234,7 @@ public interface Subject {
      * Ensures this Subject
      * {@link org.apache.shiro.authz.Permission#implies(org.apache.shiro.authz.Permission) implies} all of the
      * specified permission strings.
-     *
+     * <p/>
      * If this subject's exisiting associated permissions do not
      * {@link org.apache.shiro.authz.Permission#implies(org.apache.shiro.authz.Permission) imply} all of the given permissions,
      * an {@link org.apache.shiro.authz.AuthorizationException} will be thrown.
@@ -254,7 +255,7 @@ public interface Subject {
     /**
      * Checks if this Subject has the specified roles, returning a boolean array indicating
      * which roles are associated.
-     *
+     * <p/>
      * <p>This is primarily a performance-enhancing method to help reduce the number of
      * {@link #hasRole} invocations over the wire in client/server systems.
      *
@@ -298,14 +299,15 @@ public interface Subject {
      * an {@link AuthenticationException} is thrown, the subclass of which identifies why the attempt failed.
      * If successful, the account data associated with the submitted principals/credentials will be
      * associated with this <tt>Subject</tt> and the method will return quietly.
-     *
-     * <p>Upon returninq quietly, this <tt>Subject</tt> instance can be considered
+     * <p/>
+     * <p>Upon returning quietly, this <tt>Subject</tt> instance can be considered
      * authenticated and {@link #getPrincipal() getPrincipal()} will be non-null and
      * {@link #isAuthenticated() isAuthenticated()} will be <tt>true</tt>.
      *
      * @param token the token encapsulating the subject's principals and credentials to be passed to the
      *              Authentication subsystem for verification.
-     * @throws org.apache.shiro.authc.AuthenticationException if the authentication attempt fails.
+     * @throws org.apache.shiro.authc.AuthenticationException
+     *          if the authentication attempt fails.
      * @since 0.9
      */
     void login(AuthenticationToken token) throws AuthenticationException;
@@ -313,7 +315,7 @@ public interface Subject {
     /**
      * Returns <tt>true</tt> if this Subject/user has proven their identity <em>during their current session</em>
      * by providing valid credentials matching those known to the system, <tt>false</tt> otherwise.
-     *
+     * <p/>
      * <p>Note that even if this Subject's identity has been remembered via 'remember me' services, this method will
      * still return <tt>false</tt> unless the user has actually logged in with proper credentials <em>during their
      * current session</em>.  See the
@@ -339,7 +341,7 @@ public interface Subject {
     /**
      * Returns the application <tt>Session</tt> associated with this Subject.  Based on the boolean argument,
      * this method functions as follows:
-     *
+     * <p/>
      * <ul>
      * <li>If there is already an existing session associated with this <tt>Subject</tt>, it is returned and
      * the <tt>create</tt> argument is ignored.</li>
@@ -356,10 +358,45 @@ public interface Subject {
     Session getSession(boolean create);
 
     /**
-     * Logs out this Subject and invalidates and/or removes any associated entities
-     * (such as a {@link Session Session} and authorization data.  After this method is called, the Subject is
+     * Logs out this Subject and invalidates and/or removes any associated entities,
+     * such as a {@link Session Session} and authorization data.  After this method is called, the Subject is
      * considered 'anonymous' and may continue to be used for another log-in if desired.
      */
     void logout();
+
+    /**
+     * Returns a {@code Callable} instance matching the given argument while additionally ensuring that it will
+     * execute under this Subject's identity.  The returned object can be used with an
+     * {@link java.util.concurrent.ExecutorService ExecutorService} to execute as this Subject.
+     * thread.
+     *
+     * @param callable the callable to execute as this {@code Subject}
+     * @param <V>      the {@code Callable}s return value type
+     * @return a {@code Callable} that can be run as this {@code Subject}.
+     * @since 1.0
+     */
+    <V> Callable<V> createCallable(Callable<V> callable);
+
+    /**
+     * Returns a {@code Runnable} instance matching the given argument while additionally ensuring that it will
+     * execute under this Subject's identity.  The returned object can be used with an
+     * {@link java.util.concurrent.Executor Executor} or another thread to execute as this Subject.
+     * <p/>
+     * *Note that if you need a return value to be returned as a result of the runnable's execution or if you need to
+     * react to any Exceptions, it is highly recommended to use the
+     * {@link #createCallable(java.util.concurrent.Callable) createCallable} method instead of this one.
+     *
+     * @param runnable the runnable to execute as this {@code Subject}
+     * @return a {@code Runnable} that can be run as this {@code Subject} on another thread.
+     * @see #createCallable(java.util.concurrent.Callable)
+     * @since 1.0
+     */
+    Runnable createRunnable(Runnable runnable);
+
+    /*void runAs(PrincipalCollection identity);
+
+    <V> V runAs(PrincipalCollection identity, Callable<V> work);
+
+    PrincipalCollection getRunAsIdentity();*/
 
 }

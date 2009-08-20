@@ -18,25 +18,24 @@
  */
 package org.apache.shiro.util;
 
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.Subject;
-
 
 /**
  * A ThreadContext provides a means of binding and unbinding objects to the
  * current thread based on key/value pairs.
- *
+ * <p/>
  * <p>An internal {@link java.util.HashMap} is used to maintain the key/value pairs
  * for each thread.</p>
- *
+ * <p/>
  * <p>If the desired behavior is to ensure that bound data is not shared across
  * threads in a pooled or reusable threaded environment, the application (or more likely a framework) must
  * bind and remove any necessary values at the beginning and end of stack
@@ -121,10 +120,10 @@ public abstract class ThreadContext {
 
     /**
      * Binds <tt>value</tt> for the given <code>key</code> to the current thread.
-     *
+     * <p/>
      * <p>A <tt>null</tt> <tt>value</tt> has the same effect as if <tt>remove</tt> was called for the given
      * <tt>key</tt>, i.e.:
-     *
+     * <p/>
      * <pre>
      * if ( value == null ) {
      *     remove( key );
@@ -188,7 +187,7 @@ public abstract class ThreadContext {
      * Removes <em>all</em> values bound to this ThreadContext, which includes any Subject, Session, or InetAddress
      * that may be bound by these respective objects' conveninece methods, as well as all values bound by your
      * application code.
-     *
+     * <p/>
      * <p>This operation is meant as a clean-up operation that may be called at the end of
      * thread execution to prevent data corruption in a pooled thread environment.
      */
@@ -221,11 +220,11 @@ public abstract class ThreadContext {
 
     /**
      * Convenience method that simplifies binding the application's SecurityManager instance to the ThreadContext.
-     *
+     * <p/>
      * <p>The method's existence is to help reduce casting in code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the SecurityManager is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     *
+     * <p/>
      * <pre>
      * if (securityManager != null) {
      *     put( SECURITY_MANAGER_KEY, securityManager);
@@ -280,11 +279,11 @@ public abstract class ThreadContext {
 
     /**
      * Convenience method that simplifies binding a Subject to the ThreadContext.
-     *
+     * <p/>
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the Subject is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     *
+     * <p/>
      * <pre>
      * if (subject != null) {
      *     put( SUBJECT_KEY, subject );
@@ -336,11 +335,11 @@ public abstract class ThreadContext {
 
     /**
      * Convenience method that simplifies binding an InetAddress to the ThreadContext.
-     *
+     * <p/>
      * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
      * ThreadContext key names.  The implementation is simple in that, if the inetAddress is not <tt>null</tt>,
      * it binds it to the thread, i.e.:
-     *
+     * <p/>
      * <pre>
      * if (inetAddress != null) {
      *     put( INET_ADDRESS_KEY, inetAddress );
@@ -385,7 +384,7 @@ public abstract class ThreadContext {
         }
     }
 
-    public Serializable unbindSessionId() {
+    public static Serializable unbindSessionId() {
         return (Serializable) remove(SESSION_ID_KEY);
 
     }

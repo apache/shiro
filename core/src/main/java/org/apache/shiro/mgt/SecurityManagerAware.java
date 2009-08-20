@@ -20,8 +20,9 @@ package org.apache.shiro.mgt;
 
 /**
  * Interface providing a callback method that allows an implementation of this interface to receive a reference to
- * the {@link org.apache.shiro.mgt.SecurityManager SecurityManager} if they require one.  This is mostly used by core implementation classes
- * for framework code and is rarely necessary for software developers enabling Shiro in their applications.
+ * the {@link org.apache.shiro.mgt.SecurityManager SecurityManager} if they require one.  This is mostly used by core
+ * implementation classes for framework code and is rarely necessary for software developers enabling Shiro in their
+ * applications.
  *
  * @author Les Hazlewood
  * @since 1.0
@@ -29,10 +30,10 @@ package org.apache.shiro.mgt;
 public interface SecurityManagerAware {
 
     /**
-     * Callback method that allows a component to receive the {@link org.apache.shiro.mgt.SecurityManager SecurityManager} instance if it
-     * requires one.
+     * Callback method that allows a component to receive the
+     * {@link org.apache.shiro.mgt.SecurityManager SecurityManager} instance if it requires one.
      *
-     * @param securityManager the application's <code>SecurityManager</code>
+     * @param securityManager the application's {@code SecurityManager}
      */
-    void setSecurityManager(org.apache.shiro.mgt.SecurityManager securityManager);
+    void setSecurityManager(SecurityManager securityManager);
 }
