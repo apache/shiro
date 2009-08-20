@@ -18,18 +18,16 @@
  */
 package org.apache.shiro.config;
 
-import java.beans.PropertyDescriptor;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.util.Nameable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.Nameable;
+import java.beans.PropertyDescriptor;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 /**
@@ -76,8 +74,11 @@ public class ReflectionBuilder {
 
             // Separate key value pairs into object declarations and property assignment
             // so that all objects can be created up front
-            Map<String, String> instanceMap = new HashMap<String, String>();
-            Map<String, String> propertyMap = new HashMap<String, String>();
+
+            //https://issues.apache.org/jira/browse/SHIRO-85 - need to use LinkedHashMaps here:
+            Map<String, String> instanceMap = new LinkedHashMap<String, String>();
+            Map<String, String> propertyMap = new LinkedHashMap<String, String>();
+
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
                 if (entry.getKey().indexOf('.') < 0 || entry.getKey().endsWith(".class")) {
                     instanceMap.put(entry.getKey(), entry.getValue());
