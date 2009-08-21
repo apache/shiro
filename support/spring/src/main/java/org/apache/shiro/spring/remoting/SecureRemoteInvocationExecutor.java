@@ -18,18 +18,20 @@
  */
 package org.apache.shiro.spring.remoting;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.SubjectFactory;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.ThreadStateManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
 import org.springframework.remoting.support.RemoteInvocation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.util.ThreadContext;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -79,15 +81,18 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     @SuppressWarnings({"unchecked"})
     public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
+        ThreadStateManager threadStateManager = null;
+
         try {
-            InetAddress inet = (InetAddress)invocation.getAttribute(SecureRemoteInvocationFactory.INET_ADDRESS_KEY);
+            Map context = new HashMap();
+            InetAddress inet = (InetAddress) invocation.getAttribute(SecureRemoteInvocationFactory.INET_ADDRESS_KEY);
             if (inet != null) {
-                ThreadContext.bind(inet);
+                context.put(SubjectFactory.INET_ADDRESS, inet);
             }
-            
+
             Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);
             if (sessionId != null) {
-                ThreadContext.bindSessionId(sessionId);
+                context.put(SubjectFactory.SESSION_ID, sessionId);
             } else {
                 if (log.isTraceEnabled()) {
                     log.trace("RemoteInvocation did not contain a Shiro Session id attribute under " +
@@ -95,9 +100,10 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                             "on an existing Session will not be available during the method invocatin.");
                 }
             }
-            
-            ThreadContext.bind(securityManager);
-            ThreadContext.bind(securityManager.getSubject());
+
+            Subject subject = securityManager.getSubject(context);
+            threadStateManager = new ThreadStateManager(subject);
+            threadStateManager.bindThreadState();
 
             return super.invoke(invocation, targetObject);
         } catch (NoSuchMethodException nsme) {
@@ -109,7 +115,9 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
         } catch (Throwable t) {
             throw new InvocationTargetException(t);
         } finally {
-            ThreadContext.clear();
+            if (threadStateManager != null) {
+                threadStateManager.clearAllThreadState();
+            }
         }
     }
 }

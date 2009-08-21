@@ -20,10 +20,8 @@ package org.apache.shiro.authc;
 
 import org.apache.shiro.subject.PrincipalCollection;
 
-
 /**
- * An <code>AuthenticationListener</code> listens for notifications while
- * {@link org.apache.shiro.subject.Subject Subject}s authenticate with the system.
+ * An {@code AuthenticationListener} listens for notifications while {@code Subject}s authenticate with the system.
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -31,25 +29,26 @@ import org.apache.shiro.subject.PrincipalCollection;
 public interface AuthenticationListener {
 
     /**
-     * Callback triggered when an authentication attempt for a <code>Subject</code> has succeeded.
+     * Callback triggered when an authentication attempt for a {@code Subject} has succeeded.
      *
-     * @param token the authentication token submitted during the <code>Subject</code> (user)'s authentication attempt.
-     * @param info  the authentication-related account data acquired after authentication for the corresponding <code>Subject</code>.
+     * @param token the authentication token submitted during the {@code Subject} (user)'s authentication attempt.
+     * @param info  the authentication-related account data acquired after authentication for the corresponding {@code Subject}.
      */
     void onSuccess(AuthenticationToken token, AuthenticationInfo info);
 
     /**
-     * Callback triggered when an authentication attempt for a <code>Subject</code> has failed.
+     * Callback triggered when an authentication attempt for a {@code Subject} has failed.
      *
-     * @param token the authentication token submitted during the <code>Subject</code> (user)'s authentication attempt.
-     * @param ae    the <tt>AuthenticationException</tt> that occurred as a result of the attempt.
+     * @param token the authentication token submitted during the {@code Subject} (user)'s authentication attempt.
+     * @param ae    the {@code AuthenticationException} that occurred as a result of the attempt.
      */
     void onFailure(AuthenticationToken token, AuthenticationException ae);
 
     /**
-     * Callback triggered when a <code>Subject</code> logs out of the system.
+     * Callback triggered when a {@code Subject} logs out of the system.
      *
      * @param principals the identifying principals of the Subject logging out.
      */
     void onLogout(PrincipalCollection principals);
+    //TODO - should this method receive the PrincipalCollection?  Or the original AuthenticationInfo?
 }

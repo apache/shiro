@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.SecurityManager;
@@ -5,7 +23,7 @@ import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
+import org.easymock.EasyMock;
 import static org.easymock.EasyMock.*;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -13,6 +31,8 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -26,29 +46,24 @@ import java.util.UUID;
  *
  * @since 1.0
  */
-public class DelegatingWebSecurityManagerTest {
+public class DelegatingWebSecurityManagerTest extends AbstractWebSecurityManagerTest {
 
     private DelegatingWebSecurityManager sm;
 
     @Before
     public void setup() {
-        ThreadContext.clear();
+        super.setup();
         sm = new DelegatingWebSecurityManager();
-        ThreadContext.bind(sm);
     }
 
     @After
     public void tearDown() {
+        super.tearDown();
         sm.destroy();
-        ThreadContext.clear();
     }
 
-    protected void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        }
+    protected Subject newSubject(ServletRequest request, ServletResponse response) {
+        return newSubject(sm, request, response);
     }
 
     @Test
@@ -58,9 +73,7 @@ public class DelegatingWebSecurityManagerTest {
         sm.setDelegateSecurityManager(delegate);
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
 
         expect(mockRequest.getCookies()).andReturn(null);
         expect(mockRequest.getContextPath()).andReturn("/");
@@ -73,7 +86,7 @@ public class DelegatingWebSecurityManagerTest {
         }
 
         Serializable sessionId = UUID.randomUUID().toString();
-        expect(delegate.start((Map) null)).andReturn(sessionId);
+        expect(delegate.start(EasyMock.<Map>anyObject())).andReturn(sessionId);
         expect(delegate.getHostAddress(sessionId)).andReturn(host);
         expect(delegate.getTimeout(sessionId)).andReturn(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
         delegate.setTimeout(sessionId, 125L);
@@ -88,7 +101,7 @@ public class DelegatingWebSecurityManagerTest {
         replay(delegate);
         replay(mockRequest);
 
-        Subject subject = sm.getSubject();
+        Subject subject = newSubject(mockRequest, mockResponse);
         Session session = subject.getSession();
         String id = session.getId().toString();
         assertEquals(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT, session.getTimeout());

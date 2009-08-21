@@ -19,11 +19,13 @@
 package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.attr.CookieAttribute;
+import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.DefaultWebSessionManager;
 import org.apache.shiro.web.session.ServletContainerSessionManager;
@@ -68,9 +70,9 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public DefaultWebSecurityManager() {
         super();
+        setSubjectFactory(new DefaultWebSubjectFactory(this));
         setRememberMeManager(new WebRememberMeManager());
-        WebSessionManager sm = new ServletContainerSessionManager();
-        setSessionManager(sm);
+        setSessionManager(new ServletContainerSessionManager());
     }
 
     public DefaultWebSecurityManager(Realm singleRealm) {
@@ -240,8 +242,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     protected Serializable getSessionId(Map subjectContext) {
         Serializable sessionId = super.getSessionId(subjectContext);
         if (sessionId == null) {
-            ServletRequest request = WebUtils.getServletRequest();
-            ServletResponse response = WebUtils.getServletResponse();
+            ServletRequest request = (ServletRequest) subjectContext.get(SubjectFactory.SERVLET_REQUEST);
+            ServletResponse response = (ServletResponse) subjectContext.get(SubjectFactory.SERVLET_RESPONSE);
             if (request != null && response != null) {
                 sessionId = ((WebSessionManager) getSessionManager()).getSessionId(request, response);
             }

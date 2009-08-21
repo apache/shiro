@@ -25,12 +25,10 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
-import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Map;
 
@@ -62,12 +60,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
     protected SessionValidationScheduler sessionValidationScheduler = null;
 
     protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
-
-    /**
-     * Whether or not to automatically create a new session transparently when a referenced session is invalid or
-     * did not exist.  {@code true} by default, for developer convenience.
-     */
-    private boolean autoCreateWhenInvalid = true;
 
     public AbstractValidatingSessionManager() {
     }
@@ -115,15 +107,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
 
     public long getSessionValidationInterval() {
         return sessionValidationInterval;
-    }
-
-    private InetAddress getHostAddressFallback(Session s) {
-        InetAddress inet = s.getHostAddress();
-        if (inet == null) {
-            //fallback to thread local just in case:
-            inet = ThreadContext.getInetAddress();
-        }
-        return inet;
     }
 
     protected final Session doGetSession(final Serializable sessionId) throws InvalidSessionException {
@@ -201,7 +184,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      * Notification callback for subclasses that occurs when a client attempts to reference the session with the
      * specified ID, but there does not exist any session with that id.
      * <p/>
-     * A common case of this ocurring is if the client's referenced session times out and is deleted before the next
+     * A common case of this occurring is if the client's referenced session times out and is deleted before the next
      * time they interact with the system (such as often occurs with stale session id cookies in an web environment).
      * The next time they send a request with the stale session id, this method would be called.
      *

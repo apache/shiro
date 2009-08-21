@@ -21,7 +21,6 @@ package org.apache.shiro.web;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
 import static org.easymock.EasyMock.*;
 import org.junit.After;
@@ -29,32 +28,35 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
 
 /**
  * @author Les Hazlewood
  * @since 0.9
  */
-public class DefaultWebSecurityManagerTest {
+public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTest {
 
     private DefaultWebSecurityManager sm;
 
     @Before
     public void setup() {
+        super.setup();
         sm = new DefaultWebSecurityManager();
-        ThreadContext.clear();
     }
 
     @After
     public void tearDown() {
+        super.tearDown();
         sm.destroy();
-        ThreadContext.clear();
+    }
+
+    protected Subject newSubject(ServletRequest request, ServletResponse response) {
+        return newSubject(sm, request, response);
     }
 
     @Test
@@ -77,16 +79,15 @@ public class DefaultWebSecurityManagerTest {
         sm.setGlobalSessionTimeout(globalTimeout);
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
 
         expect(mockRequest.getCookies()).andReturn(null);
         expect(mockRequest.getContextPath()).andReturn("/");
 
         replay(mockRequest);
 
-        Subject subject = sm.getSubject();
+        Subject subject = newSubject(mockRequest, mockResponse);
+
         Session session = subject.getSession();
         Serializable origId = session.getId();
         assertEquals(session.getTimeout(), globalTimeout);
@@ -100,30 +101,19 @@ public class DefaultWebSecurityManagerTest {
         }
     }
 
-    public static InetAddress getLocalHost() {
-        try {
-            return InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     @Test
     public void testGetSubjectByRequestResponsePair() {
         shiroSessionModeInit();
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
 
         expect(mockRequest.getCookies()).andReturn(null);
-        //expect(mockRequest.getContextPath()).andReturn("/");
 
         replay(mockRequest);
         replay(mockResponse);
 
-        Subject subject = sm.getSubject(new HashMap());
+        Subject subject = newSubject(mockRequest, mockResponse);
 
         verify(mockRequest);
         verify(mockResponse);
@@ -140,17 +130,12 @@ public class DefaultWebSecurityManagerTest {
         shiroSessionModeInit();
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
-
-        //expect(mockRequest.getCookies()).andReturn(null);
-        //expect(mockRequest.getContextPath()).andReturn("/");
 
         replay(mockRequest);
         replay(mockResponse);
 
-        Subject subject = sm.getSubject(new HashMap());
+        Subject subject = newSubject(mockRequest, mockResponse);
 
         Session session = subject.getSession();
         Serializable sessionId = session.getId();
@@ -172,7 +157,7 @@ public class DefaultWebSecurityManagerTest {
         replay(mockRequest);
         replay(mockResponse);
 
-        subject = sm.getSubject(new HashMap());
+        subject = newSubject(mockRequest, mockResponse);
 
         session = subject.getSession(false);
         assertNotNull(session);

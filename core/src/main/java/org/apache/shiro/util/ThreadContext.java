@@ -213,7 +213,7 @@ public abstract class ThreadContext {
      * @return the Subject object bound to the thread, or <tt>null</tt> if there isn't one bound.
      * @since 0.9
      */
-    public static org.apache.shiro.mgt.SecurityManager getSecurityManager() {
+    public static SecurityManager getSecurityManager() {
         return (SecurityManager) get(SECURITY_MANAGER_KEY);
     }
 
