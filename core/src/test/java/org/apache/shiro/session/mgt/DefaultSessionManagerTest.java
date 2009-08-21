@@ -61,10 +61,10 @@ public class DefaultSessionManagerTest {
 
     @Test
     public void testGlobalTimeout() {
-        sm.setGlobalSessionTimeout(100);
+        sm.setGlobalSessionTimeout(125);
         Serializable sessionId = sm.start((InetAddress) null);
         assertTrue(sm.isValid(sessionId));
-        sleep(150);
+        sleep(225);
         assertFalse(sm.isValid(sessionId));
     }
 

@@ -73,18 +73,6 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
         return found;
     }
 
-    private void assertPrincipals(AuthenticationInfo info) {
-        PrincipalCollection principals = info.getPrincipals();
-        if (principals == null || principals.isEmpty()) {
-            String msg = "AuthenticationInfo must have non null and non empty principals.";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    protected boolean isAuthenticationContext(Map context) {
-        return context.containsKey(SubjectFactory.AUTHENTICATION_TOKEN);
-    }
-
     protected static boolean isEmpty(PrincipalCollection principals) {
         return principals == null || principals.isEmpty();
     }
@@ -179,6 +167,11 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
         PrincipalCollection principals = getPrincipals(context, session);
         boolean authenticated = isAuthenticated(context, session);
         InetAddress inet = getInetAddress(context, session);
-        return new DelegatingSubject(principals, authenticated, inet, session, getSecurityManager());
+        return newSubjectInstance(principals, authenticated, inet, session, getSecurityManager());
+    }
+
+    protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated, InetAddress inet,
+                                         Session session, SecurityManager securityManager) {
+        return new DelegatingSubject(principals, authenticated, inet, session, securityManager);
     }
 }

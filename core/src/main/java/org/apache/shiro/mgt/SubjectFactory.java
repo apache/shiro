@@ -46,6 +46,10 @@ public interface SubjectFactory {
 
     public static final String INET_ADDRESS = SubjectFactory.class.getName() + ".INET_ADDRESS";
 
+    public static final String SERVLET_REQUEST = SubjectFactory.class.getName() + ".SERVLET_REQUEST";
+
+    public static final String SERVLET_RESPONSE = SubjectFactory.class.getName() + ".SERVLET_RESPONSE";
+
     /**
      * Creates a new Subject instance reflecting the state of the specified contextual data.  The data would be
      * anything required to required to construct a {@code Subject} instance and its contents can vary based on

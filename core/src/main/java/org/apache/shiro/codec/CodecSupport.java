@@ -18,13 +18,7 @@
  */
 package org.apache.shiro.codec;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 /**
  * Base abstract class that provides useful encoding and decoding operations, especially for character data.
@@ -35,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 public abstract class CodecSupport {
 
     /**
-     * Shiro's default preferred Character encoding, equal to <b><code>UTF-8</code></b>.
+     * Shiro's default preferred character encoding, equal to <b><code>UTF-8</code></b>.
      */
     public static final String PREFERRED_ENCODING = "UTF-8";
 
@@ -76,7 +70,8 @@ public abstract class CodecSupport {
      * {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      *
      * @param source the string to convert to a byte array.
-     * @return the bytes representing the specified string under Shiro's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * @return the bytes representing the specified string under the {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * @see #toBytes(String, String)
      */
     public static byte[] toBytes(String source) {
         return toBytes(source, PREFERRED_ENCODING);
@@ -102,17 +97,21 @@ public abstract class CodecSupport {
     }
 
     /**
-     * Converts the specified byte array to a string using Shiro's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * Converts the specified byte array to a String using the {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      *
      * @param bytes the byte array to turn into a String.
      * @return the specified byte array as an encoded String ({@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}).
+     * @see #toString(byte[], String)
      */
     public static String toString(byte[] bytes) {
         return toString(bytes, PREFERRED_ENCODING);
     }
 
     /**
-     * Converts the specified byte array to a String using the specified character encoding.
+     * Converts the specified byte array to a String using the specified character encoding.  This implementation
+     * does the same thing as <code>new {@link String#String(byte[], String) String(byte[], encoding)}</code>, but will
+     * wrap any {@link UnsupportedEncodingException} with a nicer runtime {@link CodecException}, allowing you to
+     * decide whether or not you want to catch the exception or let it propagate.
      *
      * @param bytes    the byte array to convert to a String
      * @param encoding the character encoding used to encode the String.
@@ -129,10 +128,12 @@ public abstract class CodecSupport {
     }
 
     /**
-     * Returns the specified byte array as a character array using Shiro's {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
+     * Returns the specified byte array as a character array using the
+     * {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}.
      *
      * @param bytes the byte array to convert to a char array
      * @return the specified byte array encoded as a character array ({@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}).
+     * @see #toChars(byte[], String)
      */
     public static char[] toChars(byte[] bytes) {
         return toChars(bytes, PREFERRED_ENCODING);
@@ -140,6 +141,8 @@ public abstract class CodecSupport {
 
     /**
      * Converts the specified byte array to a character array using the specified character encoding.
+     * <p/>
+     * Effectively calls <code>{@link #toString(byte[], String) toString(bytes,encoding)}.{@link String#toCharArray() toCharArray()};</code>
      *
      * @param bytes    the byte array to convert to a String
      * @param encoding the character encoding used to encode the bytes.
@@ -151,12 +154,35 @@ public abstract class CodecSupport {
     }
 
     /**
+     * Returns {@code true} if the specified object can be easily converted to bytes by instances of this class,
+     * {@code false} otherwise.
+     * <p/>
+     * The default implementation returns {@code true} IFF the specified object is an instance of one of the following
+     * types:
+     * <ul>
+     * <li>{@code byte[]}</li>
+     * <li>{@code char[]}</li>
+     * <li>{@link String}</li>
+     * <li>{@link File}</li>
+     * </li>{@link InputStream}</li>
+     * </ul>
+     *
+     * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,
+     *         {@code false} otherwise.
+     * @since 1.0
+     */
+    protected boolean isByteSource(Object o) {
+        return o instanceof byte[] || o instanceof char[] || o instanceof String ||
+                o instanceof File || o instanceof InputStream;
+    }
+
+    /**
      * Converts the specified Object into a byte array.
-     *
-     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, <tt>String</tt>, <tt>File</tt>, or
-     * <tt>InputStream</tt>, it will be converted automatically and returned.</tt>
-     *
-     * <p>If the argument is anything other than these types, it is passed to the
+     * <p/>
+     * If the argument is a {@code byte[]}, {@code char[]}, {@link String}, {@link File}, or
+     * {@link InputStream}, it will be converted automatically and returned.}
+     * <p/>
+     * If the argument is anything other than these types, it is passed to the
      * {@link #objectToBytes(Object) objectToBytes} method which must be overridden by subclasses.
      *
      * @param o the Object to convert into a byte array
@@ -174,7 +200,7 @@ public abstract class CodecSupport {
         } else if (o instanceof String) {
             return toBytes((String) o);
         } else if (o instanceof File) {
-            return toBytes((File)o);
+            return toBytes((File) o);
         } else if (o instanceof InputStream) {
             return toBytes((InputStream) o);
         } else {
@@ -184,12 +210,12 @@ public abstract class CodecSupport {
 
     /**
      * Converts the specified Object into a String.
-     *
-     * <p>If the argument is a <tt>byte[]</tt>, <tt>char[]</tt>, or <tt>String</tt>,
-     * it will be converted automatically and returned.</tt>
-     *
-     * <p>If the argument is anything other than these three types, it is passed to the
-     * {@link #objectToString(Object) objectToString} method which must be overridden by subclasses.
+     * <p/>
+     * If the argument is a {@code byte[]} or {@code char[]} it will be converted to a String using the
+     * {@link #PREFERRED_ENCODING}.  If a String, it will be returned as is.
+     * <p/>
+     * If the argument is anything other than these three types, it is passed to the
+     * {@link #objectToString(Object) objectToString} method.
      *
      * @param o the Object to convert into a byte array
      * @return a byte array representation of the Object argument.

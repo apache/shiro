@@ -38,7 +38,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
  * based around a collection of {@link org.apache.shiro.realm.Realm}s.  This implementation delegates its
@@ -554,6 +553,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return null;
     }
 
+    @Deprecated
     protected Subject getSubject(boolean create) {
         Subject subject = getSubjectBinder().getSubject();
         if (subject == null && create) {
@@ -565,6 +565,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public Subject getSubject() {
         return getSubject(true);
+        /*Subject subject = getSubjectBinder().getSubject();
+        if (subject == null) {
+            subject = getSubjectFactory().createSubject(Collections.EMPTY_MAP);
+            bind(subject);
+        }
+        return subject;*/
     }
 
     /**

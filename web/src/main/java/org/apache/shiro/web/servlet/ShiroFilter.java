@@ -27,11 +27,11 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.LifecycleUtils;
 import static org.apache.shiro.util.StringUtils.clean;
-import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.DefaultWebSecurityManager;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.config.IniWebConfiguration;
 import org.apache.shiro.web.config.WebConfiguration;
+import org.apache.shiro.web.subject.WebSubjectBuilder;
+import org.apache.shiro.web.subject.support.WebThreadStateManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,14 +40,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.net.InetAddress;
-
 
 /**
  * Main ServletFilter that configures and enables all Shiro functions within a web application.
  * <p/>
  * The following is a fully commented example that documents how to configure it:
- * <p/>
  * <pre>&lt;filter&gt;
  * &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
  * &lt;filter-class&gt;org.apache.shiro.web.servlet.ShiroFilter&lt;/filter-class&gt;
@@ -69,8 +66,8 @@ import java.net.InetAddress;
  * #
  * # --- Defining Realms ---
  * #
- * # Any Realm defined here will automatically be injected into Shiro's default SecurityManager created at startup.  For
- * # example:
+ * # Any Realm defined here will automatically be injected into Shiro's default SecurityManager created at start up.
+ * # For example:
  * #
  * # myRealm = example.pkg.security.MyRealm
  * #
@@ -270,8 +267,8 @@ public class ShiroFilter extends OncePerRequestFilter {
         setConfiguration(config);
 
         // Retrieve and store a reference to the security manager
-        SecurityManager sm = ensureSecurityManager(config);
-        setSecurityManager(sm);
+        SecurityManager securityManager = ensureSecurityManager(config);
+        setSecurityManager(securityManager);
     }
 
     /**
@@ -281,18 +278,18 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @return the security manager that this filter should use.
      */
     protected SecurityManager ensureSecurityManager(Configuration config) {
-        SecurityManager sm = config.getSecurityManager();
+        SecurityManager securityManager = config.getSecurityManager();
 
         // If the config doesn't return a security manager, build one by default.
-        if (sm == null) {
+        if (securityManager == null) {
             if (log.isInfoEnabled()) {
                 log.info("Configuration instance [" + config + "] did not provide a SecurityManager.  No config " +
                         "specified?  Defaulting to a " + DefaultWebSecurityManager.class.getName() + " instance...");
             }
-            sm = new DefaultWebSecurityManager();
+            securityManager = new DefaultWebSecurityManager();
         }
 
-        return sm;
+        return securityManager;
     }
 
     protected void applyInitParams() {
@@ -388,10 +385,6 @@ public class ShiroFilter extends OncePerRequestFilter {
         return !(secMgr instanceof DefaultWebSecurityManager) || ((DefaultWebSecurityManager) secMgr).isHttpSessionMode();
     }
 
-    protected InetAddress getInetAddress(ServletRequest request) {
-        return WebUtils.getInetAddress(request);
-    }
-
     /**
      * Wraps the original HttpServletRequest in a {@link ShiroHttpServletRequest}, which is required for supporting
      * Servlet Specification behavior backed by a {@link org.apache.shiro.subject.Subject Subject} instance.
@@ -474,12 +467,9 @@ public class ShiroFilter extends OncePerRequestFilter {
 
     /**
      * Binds the current request/response pair and additional information to a thread-local to be made available to Shiro
-     * during the course of the request/response process.  This implementation binds the request/response pair to the
-     * currently executing thread via the {@link ThreadContext}, as well as the Request's
-     * {@link javax.servlet.ServletRequest#getRemoteAddr() remoteAddr} (client InetAddress), the application's
-     * configured {@link SecurityManager}, and sets up and binds the currently executing
-     * {@link org.apache.shiro.subject.Subject Subject} instance to ensure the Subject is available before any request
-     * processing occurs.
+     * during the course of the request/response process.  This implementation binds the request/response pair and
+     * any associated Subject (and its relevant thread-based data) via a {@link WebThreadStateManager}.  That
+     * threadState is returned so it can be used during thread cleanup at the end of the request.
      * <p/>
      * To guarantee properly cleaned threads in a thread-pooled Servlet Container environment, the corresponding
      * {@link #unbind} method must be called in a {@code finally} block to ensure that the thread remains clean even
@@ -489,31 +479,30 @@ public class ShiroFilter extends OncePerRequestFilter {
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
+     * @return ThreadStateManager the thread state used to bind necessary state for the request execution.
      * @since 1.0
      */
-    protected void bind(ServletRequest request, ServletResponse response) {
-        WebUtils.bindInetAddressToThread(request);
-        WebUtils.bind(request);
-        WebUtils.bind(response);
-        ThreadContext.bind(getSecurityManager());
-        ThreadContext.bind(getSecurityManager().getSubject());
+    protected WebThreadStateManager bind(ServletRequest request, ServletResponse response) {
+        Subject subject = new WebSubjectBuilder(getSecurityManager(), request, response).build();
+        WebThreadStateManager threadState = new WebThreadStateManager(subject, request, response);
+        threadState.bindThreadState();
+        return threadState;
     }
 
     /**
      * Unbinds (removes out of scope) the current {@code ServletRequest} and {@link ServletResponse}.
      * <p/>
-     * This method implementation merely calls {@code ThreadContext}.{@link ThreadContext#clear() clear()} to ensure
-     * that <em>everything</em> that might have been bound to the thread by Shiro has been removed to ensure the underlying
-     * Thread may be safely re-used in a thread-pooled Servlet Container environment.
+     * This method implementation merely clears <em>all</em> thread state by calling
+     * {@link org.apache.shiro.subject.support.ThreadStateManager#clearAllThreadState()} to guarantee
+     * that <em>everything</em> that might have been bound to the thread by Shiro has been removed to ensure the
+     * underlying Thread may be safely re-used in a thread-pooled Servlet Container environment.
      *
-     * @param request  the just-processed incoming servlet response - ignored
-     * @param response the just-processed outgoing servlet response - ignored
+     * @param threadState the web thread state created when the request and response first were initiated.
      * @since 1.0
      */
     @SuppressWarnings({"UnusedDeclaration"})
-    protected void unbind(ServletRequest request, ServletResponse response) {
-        //arguments ignored, just clear the thread:
-        ThreadContext.clear();
+    protected void unbind(WebThreadStateManager threadState) {
+        threadState.clearAllThreadState();
     }
 
     /**
@@ -561,11 +550,11 @@ public class ShiroFilter extends OncePerRequestFilter {
      * session timeouts are honored</li>
      * <li>{@link #executeChain(ServletRequest,ServletResponse,FilterChain) Executes}
      * the appropriate {@code FilterChain}</li>
-     * <li>{@link #unbind(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Unbinds} the request/response
+     * <li>{@link #unbind(org.apache.shiro.web.subject.support.WebThreadStateManager) Unbinds} the request/response
      * pair and any other associated data from the thread.
      * </ul>
      * <p/>
-     * The {@link #unbind(javax.servlet.ServletRequest, javax.servlet.ServletResponse) unbind} method is called in a
+     * The {@link #unbind(org.apache.shiro.web.subject.support.WebThreadStateManager) unbind} method is called in a
      * {@code finally} block to guarantee the thread may be cleanly re-used in a thread-pooled Servlet Container
      * environment.
      *
@@ -581,13 +570,13 @@ public class ShiroFilter extends OncePerRequestFilter {
         ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
         ServletResponse response = prepareServletResponse(request, servletResponse, chain);
 
-        bind(request, response);
+        WebThreadStateManager threadState = bind(request, response);
 
         try {
             updateSessionLastAccessTime(request, response);
             executeChain(request, response, chain);
         } finally {
-            unbind(request, response);
+            unbind(threadState);
         }
     }
 
