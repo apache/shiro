@@ -277,8 +277,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     /**
      * Binds a {@code Subject} instance created after authentication to the application for later use.
      * <p/>
-     * The default implementation merely binds the argument to the thread local via the {@link ThreadContext}
-     * and overridden by subclasses for environment-specific binding (e.g. standalone application).
+     * The default implementation simply delegates to the internal {@link #getSubjectBinder() subjectBinder}.
      *
      * @param subject the {@code Subject} instance created after authentication to be bound to the application
      *                for later use.
