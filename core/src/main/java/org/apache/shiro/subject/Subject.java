@@ -371,7 +371,7 @@ public interface Subject {
      * @return a {@code Callable} that can be run as this {@code Subject}.
      * @since 1.0
      */
-    <V> Callable<V> createCallable(Callable<V> callable);
+    <V> Callable<V> associateWith(Callable<V> callable);
 
     /**
      * Returns a {@code Runnable} instance matching the given argument while additionally ensuring that it will
@@ -380,14 +380,14 @@ public interface Subject {
      * <p/>
      * *Note that if you need a return value to be returned as a result of the runnable's execution or if you need to
      * react to any Exceptions, it is highly recommended to use the
-     * {@link #createCallable(java.util.concurrent.Callable) createCallable} method instead of this one.
+     * {@link #associateWith(java.util.concurrent.Callable) createCallable} method instead of this one.
      *
      * @param runnable the runnable to execute as this {@code Subject}
      * @return a {@code Runnable} that can be run as this {@code Subject} on another thread.
-     * @see #createCallable(java.util.concurrent.Callable)
+     * @see #associateWith (java.util.concurrent.Callable)
      * @since 1.0
      */
-    Runnable createRunnable(Runnable runnable);
+    Runnable associateWith(Runnable runnable);
 
     /*void runAs(PrincipalCollection identity);
 

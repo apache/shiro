@@ -327,11 +327,11 @@ public class DelegatingSubject implements Subject, Serializable {
         }
     }
 
-    public <V> Callable<V> createCallable(Callable<V> callable) {
+    public <V> Callable<V> associateWith(Callable<V> callable) {
         return new SubjectCallable<V>(this, callable);
     }
 
-    public Runnable createRunnable(Runnable runnable) {
+    public Runnable associateWith(Runnable runnable) {
         if (runnable instanceof Thread) {
             String msg = "This implementation does not support Thread arguments because of JDK ThreadLocal " +
                     "inheritance mechanisms required by Shiro.  Instead, the method argument should be a non-Thread " +

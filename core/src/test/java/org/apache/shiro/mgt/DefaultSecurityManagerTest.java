@@ -39,7 +39,7 @@ import java.io.Serializable;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class DefaultSecurityManagerTest {
+public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
     DefaultSecurityManager sm = null;
 
@@ -55,7 +55,7 @@ public class DefaultSecurityManagerTest {
     public void tearDown() {
         SecurityUtils.setSecurityManager(null);
         sm.destroy();
-        ThreadContext.clear();
+        super.tearDown();
     }
 
     @Test

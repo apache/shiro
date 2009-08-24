@@ -18,15 +18,16 @@
  */
 package org.apache.shiro.web.subject.support;
 
-import org.apache.shiro.subject.support.SubjectRunnable;
+import org.apache.shiro.subject.support.SubjectThreadState;
+import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.subject.WebSubject;
 
 /**
  * @since 1.0
  */
-public class WebSubjectRunnable extends SubjectRunnable {
+public class WebSubjectThreadState extends SubjectThreadState {
 
-    public WebSubjectRunnable(WebSubject subject, Runnable delegate) {
-        super(new WebSubjectThreadState(subject), delegate);
+    public WebSubjectThreadState(WebSubject subject) {
+        super(subject, WebUtils.getInetAddress(subject.getServletRequest()));
     }
 }

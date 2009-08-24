@@ -18,11 +18,9 @@
  */
 package org.apache.shiro.web.subject.support;
 
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectCallable;
+import org.apache.shiro.web.subject.WebSubject;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import java.util.concurrent.Callable;
 
 /**
@@ -30,7 +28,7 @@ import java.util.concurrent.Callable;
  */
 public class WebSubjectCallable<V> extends SubjectCallable<V> {
 
-    public WebSubjectCallable(Subject subject, Callable<V> delegate, ServletRequest request, ServletResponse response) {
-        super(new WebThreadStateManager(subject, request, response), delegate);
+    public WebSubjectCallable(WebSubject subject, Callable<V> delegate) {
+        super(new WebSubjectThreadState(subject), delegate);
     }
 }

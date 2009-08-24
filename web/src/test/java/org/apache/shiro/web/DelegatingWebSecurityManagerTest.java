@@ -52,14 +52,13 @@ public class DelegatingWebSecurityManagerTest extends AbstractWebSecurityManager
 
     @Before
     public void setup() {
-        super.setup();
         sm = new DelegatingWebSecurityManager();
     }
 
     @After
     public void tearDown() {
-        super.tearDown();
         sm.destroy();
+        super.tearDown();
     }
 
     protected Subject newSubject(ServletRequest request, ServletResponse response) {
