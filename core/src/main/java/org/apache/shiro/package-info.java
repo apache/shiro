@@ -21,4 +21,4 @@
  * by applications, {@link org.apache.shiro.SecurityUtils SecurityUtils} and
  * {@link org.apache.shiro.ShiroException ShiroException}.
  */
-package org.shiro;
+package org.apache.shiro;
