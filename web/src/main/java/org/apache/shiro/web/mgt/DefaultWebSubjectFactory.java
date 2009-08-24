@@ -18,8 +18,8 @@ import java.util.Map;
  * A {@code SubjectFactory} implementation that creates {@link WebDelegatingSubject} instances.
  * <p/>
  * {@code WebDelegatingSubject} instances are required if Request/Response objects are to be maintained across
- * threads when using the {@code Subject} {@link Subject#createCallable(java.util.concurrent.Callable) createCallable}
- * and {@link Subject#createRunnable(Runnable) createRunnable} methods.
+ * threads when using the {@code Subject} {@link Subject#associateWith(java.util.concurrent.Callable) createCallable}
+ * and {@link Subject#associateWith(Runnable) createRunnable} methods.
  *
  * @see #newSubjectInstance(org.apache.shiro.subject.PrincipalCollection, boolean, java.net.InetAddress, org.apache.shiro.session.Session, org.apache.shiro.mgt.SecurityManager)
  * @since 1.0

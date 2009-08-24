@@ -33,7 +33,7 @@ import java.util.concurrent.Callable;
 /**
  * @since 1.0
  */
-public class WebDelegatingSubject extends DelegatingSubject {
+public class WebDelegatingSubject extends DelegatingSubject implements WebSubject {
 
     private final ServletRequest servletRequest;
     private final ServletResponse servletResponse;
@@ -56,12 +56,12 @@ public class WebDelegatingSubject extends DelegatingSubject {
     }
 
     @Override
-    public <V> Callable<V> createCallable(Callable<V> callable) {
-        return new WebSubjectCallable<V>(this, callable, getServletRequest(), getServletResponse());
+    public <V> Callable<V> associateWith(Callable<V> callable) {
+        return new WebSubjectCallable<V>(this, callable);
     }
 
     @Override
-    public Runnable createRunnable(Runnable runnable) {
-        return new WebSubjectRunnable(this, runnable, getServletRequest(), getServletResponse());
+    public Runnable associateWith(Runnable runnable) {
+        return new WebSubjectRunnable(this, runnable);
     }
 }

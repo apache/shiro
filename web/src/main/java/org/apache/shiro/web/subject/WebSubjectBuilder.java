@@ -18,8 +18,10 @@
  */
 package org.apache.shiro.web.subject;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectBuilder;
 
 import javax.servlet.ServletRequest;
@@ -30,8 +32,18 @@ import javax.servlet.ServletResponse;
  */
 public class WebSubjectBuilder extends SubjectBuilder {
 
+    public WebSubjectBuilder(ServletRequest request, ServletResponse response) {
+        this(SecurityUtils.getSecurityManager(), request, response);
+    }
+
     public WebSubjectBuilder(SecurityManager securityManager, ServletRequest request, ServletResponse response) {
         super(securityManager);
+        if (request == null) {
+            throw new IllegalArgumentException("ServletRequest argument cannot be null.");
+        }
+        if (response == null) {
+            throw new IllegalArgumentException("ServletResponse argument cannot be null.");
+        }
         setRequest(request);
         setResponse(response);
     }
@@ -50,4 +62,14 @@ public class WebSubjectBuilder extends SubjectBuilder {
         return this;
     }
 
+    public WebSubject buildWebSubject() {
+        Subject subject = super.buildSubject();
+        if (!(subject instanceof WebSubject)) {
+            String msg = "Subject implementation returned from the SecurityManager was not a " +
+                    WebSubject.class.getName() + " implementation.  Please ensure a Web-enabled SecurityManager " +
+                    "has been configured and made available to this builder.";
+            throw new IllegalStateException(msg);
+        }
+        return (WebSubject) subject;
+    }
 }

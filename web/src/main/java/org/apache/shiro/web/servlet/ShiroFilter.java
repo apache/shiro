@@ -27,12 +27,14 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.LifecycleUtils;
 import static org.apache.shiro.util.StringUtils.clean;
+import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.config.IniWebConfiguration;
 import org.apache.shiro.web.config.WebConfiguration;
+import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectBuilder;
-import org.apache.shiro.web.subject.support.WebThreadStateManager;
+import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -469,7 +471,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     /**
      * Binds the current request/response pair and additional information to a thread-local to be made available to Shiro
      * during the course of the request/response process.  This implementation binds the request/response pair and
-     * any associated Subject (and its relevant thread-based data) via a {@link WebThreadStateManager}.  That
+     * any associated Subject (and its relevant thread-based data) via a {@link org.apache.shiro.web.subject.support.WebSubjectThreadState}.  That
      * threadState is returned so it can be used during thread cleanup at the end of the request.
      * <p/>
      * To guarantee properly cleaned threads in a thread-pooled Servlet Container environment, the corresponding
@@ -483,14 +485,14 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @return ThreadStateManager the thread state used to bind necessary state for the request execution.
      * @since 1.0
      */
-    protected WebThreadStateManager bind(ServletRequest request, ServletResponse response) {
-        //TODO - remove when Builder/ThreadStateManager API is complete:
+    protected ThreadState bind(ServletRequest request, ServletResponse response) {
+        //TODO - remove when Builder/SubjectThreadState API is complete:
         WebUtils.bind(request);
         WebUtils.bind(response);
 
-        Subject subject = new WebSubjectBuilder(getSecurityManager(), request, response).build();
-        WebThreadStateManager threadState = new WebThreadStateManager(subject, request, response);
-        threadState.bindThreadState();
+        WebSubject subject = new WebSubjectBuilder(getSecurityManager(), request, response).buildWebSubject();
+        ThreadState threadState = new WebSubjectThreadState(subject);
+        threadState.bind();
         return threadState;
     }
 
@@ -498,7 +500,7 @@ public class ShiroFilter extends OncePerRequestFilter {
      * Unbinds (removes out of scope) the current {@code ServletRequest} and {@link ServletResponse}.
      * <p/>
      * This method implementation merely clears <em>all</em> thread state by calling
-     * {@link org.apache.shiro.subject.support.ThreadStateManager#clearAllThreadState()} to guarantee
+     * {@link org.apache.shiro.subject.support.SubjectThreadState#clear()} to guarantee
      * that <em>everything</em> that might have been bound to the thread by Shiro has been removed to ensure the
      * underlying Thread may be safely re-used in a thread-pooled Servlet Container environment.
      *
@@ -506,8 +508,8 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     @SuppressWarnings({"UnusedDeclaration"})
-    protected void unbind(WebThreadStateManager threadState) {
-        threadState.clearAllThreadState();
+    protected void unbind(ThreadState threadState) {
+        threadState.clear();
     }
 
     /**
@@ -555,11 +557,11 @@ public class ShiroFilter extends OncePerRequestFilter {
      * session timeouts are honored</li>
      * <li>{@link #executeChain(ServletRequest,ServletResponse,FilterChain) Executes}
      * the appropriate {@code FilterChain}</li>
-     * <li>{@link #unbind(org.apache.shiro.web.subject.support.WebThreadStateManager) Unbinds} the request/response
+     * <li>{@link #unbind(org.apache.shiro.util.ThreadState) Unbinds} the request/response
      * pair and any other associated data from the thread.
      * </ul>
      * <p/>
-     * The {@link #unbind(org.apache.shiro.web.subject.support.WebThreadStateManager) unbind} method is called in a
+     * The {@link #unbind(org.apache.shiro.util.ThreadState) unbind} method is called in a
      * {@code finally} block to guarantee the thread may be cleanly re-used in a thread-pooled Servlet Container
      * environment.
      *
@@ -575,7 +577,7 @@ public class ShiroFilter extends OncePerRequestFilter {
         ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
         ServletResponse response = prepareServletResponse(request, servletResponse, chain);
 
-        WebThreadStateManager threadState = bind(request, response);
+        ThreadState threadState = bind(request, response);
 
         try {
             updateSessionLastAccessTime(request, response);

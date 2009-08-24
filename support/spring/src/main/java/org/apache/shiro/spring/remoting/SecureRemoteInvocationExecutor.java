@@ -21,7 +21,7 @@ package org.apache.shiro.spring.remoting;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.ThreadStateManager;
+import org.apache.shiro.subject.support.SubjectThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -81,7 +81,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     @SuppressWarnings({"unchecked"})
     public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
-        ThreadStateManager threadStateManager = null;
+        SubjectThreadState subjectThreadState = null;
 
         try {
             Map context = new HashMap();
@@ -102,8 +102,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
             }
 
             Subject subject = securityManager.getSubject(context);
-            threadStateManager = new ThreadStateManager(subject);
-            threadStateManager.bindThreadState();
+            subjectThreadState = new SubjectThreadState(subject);
+            subjectThreadState.bind();
 
             return super.invoke(invocation, targetObject);
         } catch (NoSuchMethodException nsme) {
@@ -115,8 +115,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
         } catch (Throwable t) {
             throw new InvocationTargetException(t);
         } finally {
-            if (threadStateManager != null) {
-                threadStateManager.clearAllThreadState();
+            if (subjectThreadState != null) {
+                subjectThreadState.clear();
             }
         }
     }

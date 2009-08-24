@@ -28,6 +28,7 @@ package org.apache.shiro.cache;
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.2
+ * @deprecated use the {@link DefaultCacheManager} instead, which works fine in both test and production environments.
  */
 public class HashtableCacheManager implements CacheManager {
 

@@ -1,5 +1,6 @@
 package org.apache.shiro.subject;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
@@ -13,12 +14,12 @@ import java.util.Map;
  * Builder design pattern implementation for acquiring {@link Subject} instances in a simplified way without having
  * to know Shiro's construction techniques.
  * <h4>Usage</h4>
- * The simplest usage of this builder is to construct an anonymous, sessionless {@code Subject} instance:
+ * The simplest usage of this builder is to construct an anonymous, session-less {@code Subject} instance:
  * <pre>
  * SecurityManager securityManager = //obtain from application configuration
- * Subject subject = new {@link #SubjectBuilder(SecurityManager) SubjectBuilder}(securityManager).{@link #build() build()};</pre>
+ * Subject subject = new {@link #SubjectBuilder(SecurityManager) SubjectBuilder}(securityManager).{@link #buildSubject() build()};</pre>
  * <p/>
- * Any of the {@code set*} methods may be called before the {@link #build() build()} call to provide context
+ * Any of the {@code set*} methods may be called before the {@link #buildSubject () build()} call to provide context
  * on how to construct the {@code Subject} instance.  For example, if you have a session id and want to acquire the
  * subject that owns that session (assuming the session exists and is not expired):
  * <pre>
@@ -44,8 +45,8 @@ public class SubjectBuilder {
 
     private final SecurityManager securityManager;
 
-    protected Map<String, Object> getSubjectContext() {
-        return this.subjectContext;
+    public SubjectBuilder() {
+        this(SecurityUtils.getSecurityManager());
     }
 
     public SubjectBuilder(SecurityManager securityManager) {
@@ -54,6 +55,10 @@ public class SubjectBuilder {
         }
         this.securityManager = securityManager;
         this.subjectContext = new HashMap<String, Object>();
+    }
+
+    protected Map<String, Object> getSubjectContext() {
+        return this.subjectContext;
     }
 
     public SubjectBuilder setSessionId(Serializable sessionId) {
@@ -85,13 +90,11 @@ public class SubjectBuilder {
     }
 
     public SubjectBuilder setAuthenticated(boolean authenticated) {
-        if (authenticated) {
-            this.subjectContext.put(SubjectFactory.AUTHENTICATED, authenticated);
-        }
+        this.subjectContext.put(SubjectFactory.AUTHENTICATED, authenticated);
         return this;
     }
 
-    public Subject build() {
+    public Subject buildSubject() {
         return this.securityManager.getSubject(this.subjectContext);
     }
 

@@ -19,6 +19,7 @@
 package org.apache.shiro.subject.support;
 
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadState;
 
 import java.util.concurrent.Callable;
 
@@ -27,18 +28,18 @@ import java.util.concurrent.Callable;
  */
 public class SubjectCallable<V> implements Callable<V> {
 
-    protected final ThreadStateManager threadStateManager;
+    protected final ThreadState threadState;
     private final Callable<V> callable;
 
     public SubjectCallable(Subject subject, Callable<V> delegate) {
-        this(new ThreadStateManager(subject), delegate);
+        this(new SubjectThreadState(subject), delegate);
     }
 
-    protected SubjectCallable(ThreadStateManager manager, Callable<V> delegate) {
-        if (manager == null) {
-            throw new IllegalArgumentException("ThreadStateManager argument cannot be null.");
+    protected SubjectCallable(ThreadState threadState, Callable<V> delegate) {
+        if (threadState == null) {
+            throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
-        this.threadStateManager = manager;
+        this.threadState = threadState;
         if (delegate == null) {
             throw new IllegalArgumentException("Callable delegate instance cannot be null.");
         }
@@ -47,10 +48,10 @@ public class SubjectCallable<V> implements Callable<V> {
 
     public V call() throws Exception {
         try {
-            threadStateManager.bindThreadState();
+            threadState.bind();
             return doCall(this.callable);
         } finally {
-            threadStateManager.restoreThreadState();
+            threadState.restore();
         }
     }
 

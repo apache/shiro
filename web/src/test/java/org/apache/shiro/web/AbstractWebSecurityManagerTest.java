@@ -20,10 +20,11 @@ package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
+import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectBuilder;
-import org.apache.shiro.web.subject.support.WebThreadStateManager;
+import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.junit.After;
-import org.junit.Before;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -33,26 +34,20 @@ import javax.servlet.ServletResponse;
  */
 public abstract class AbstractWebSecurityManagerTest {
 
-    private WebThreadStateManager threadState;
-
-    @Before
-    public void setup() {
-        if (this.threadState != null) {
-            this.threadState.clearAllThreadState();
-        }
-    }
+    private WebSubjectThreadState threadState;
 
     @After
     public void tearDown() {
-        if (this.threadState != null) {
-            this.threadState.clearAllThreadState();
-        }
+        ThreadContext.clear();
     }
 
     protected Subject newSubject(SecurityManager sm, ServletRequest request, ServletResponse response) {
-        Subject subject = new WebSubjectBuilder(sm, request, response).build();
-        this.threadState = new WebThreadStateManager(subject, request, response);
-        this.threadState.bindThreadState();
+        //TODO - remove dependency on WebUtils
+        WebUtils.bind(request);
+        WebUtils.bind(response);
+        WebSubject subject = new WebSubjectBuilder(sm, request, response).buildWebSubject();
+        this.threadState = new WebSubjectThreadState(subject);
+        this.threadState.bind();
         return subject;
     }
 

@@ -19,24 +19,25 @@
 package org.apache.shiro.subject.support;
 
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadState;
 
 /**
  * @since 1.0
  */
 public class SubjectRunnable implements Runnable {
 
-    protected final ThreadStateManager threadStateManager;
+    protected final ThreadState threadState;
     private final Runnable runnable;
 
     public SubjectRunnable(Subject subject, Runnable delegate) {
-        this(new ThreadStateManager(subject), delegate);
+        this(new SubjectThreadState(subject), delegate);
     }
 
-    protected SubjectRunnable(ThreadStateManager manager, Runnable delegate) {
-        if (manager == null) {
-            throw new IllegalArgumentException("ThreadStateManager argument cannot be null.");
+    protected SubjectRunnable(ThreadState threadState, Runnable delegate) {
+        if (threadState == null) {
+            throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
-        this.threadStateManager = manager;
+        this.threadState = threadState;
         if (delegate == null) {
             throw new IllegalArgumentException("Runnable argument cannot be null.");
         }
@@ -45,10 +46,10 @@ public class SubjectRunnable implements Runnable {
 
     public void run() {
         try {
-            threadStateManager.bindThreadState();
+            threadState.bind();
             doRun();
         } finally {
-            threadStateManager.restoreThreadState();
+            threadState.restore();
         }
     }
 
