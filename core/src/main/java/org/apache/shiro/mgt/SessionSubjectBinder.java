@@ -24,8 +24,8 @@ import org.apache.shiro.subject.Subject;
 
 
 /**
- * Binds the Subject's state to the accessible {@link Session Session} in addition to the
- * {@link org.apache.shiro.util.ThreadContext ThreadContext}
+ * Binds the Subject's state to the accessible {@link Session Session} in addition to the binding logic in the parent
+ * class.
  * <p/>
  * The very notion of this class's existence might sound backwards:  typically a {@link Session Session} is something
  * that is created <em>after</em> a {@link Subject Subject} is acquired - for example by calling
