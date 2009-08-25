@@ -50,7 +50,6 @@
         <property name="commandClass" value="org.apache.shiro.samples.spring.web.LoginCommand"/>
         <property name="formView" value="login"/>
         <property name="successView" value="redirect:/s/index"/>
-        <property name="securityManager" ref="securityManager"/>
     </bean>
 
     <bean name="logoutController" class="org.apache.shiro.samples.spring.web.LogoutController"/>

@@ -101,7 +101,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 }
             }
 
-            Subject subject = securityManager.getSubject(context);
+            Subject subject = securityManager.createSubject(context);
             subjectThreadState = new SubjectThreadState(subject);
             subjectThreadState.bind();
 

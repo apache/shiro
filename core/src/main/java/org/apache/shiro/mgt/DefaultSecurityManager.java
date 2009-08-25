@@ -236,7 +236,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * {@link Session} instance.  Either argument can be null.
      * <p/>
      * This method is a convenience that assembles either argument into a context {@link Map Map} (if they are
-     * not null) and returns {@link #getSubject(java.util.Map)} using the Map as the parameter.
+     * not null) and returns {@link #createSubject(java.util.Map)} using the Map as the parameter.
      *
      * @param principals the identity that the constructed {@code Subject} instance should have.
      * @param session    the session to be associated with the constructed {@code Subject} instance.
@@ -251,27 +251,27 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         if (session != null) {
             context.put(SubjectFactory.SESSION, session);
         }
-        return getSubject(context);
+        return createSubject(context);
     }
 
     /**
      * Creates a {@code Subject} instance for the user represented by the given method arguments.
      *
-     * @param token the {@code AuthenticationToken} submitted for the successful authentication.
-     * @param info  the {@code AuthenticationInfo} of a newly authenticated user.
-     * @return the {@code Subject} instance that represents the user and session data for the newly
-     *         authenticated user.
+     * @param token    the {@code AuthenticationToken} submitted for the successful authentication.
+     * @param info     the {@code AuthenticationInfo} of a newly authenticated user.
+     * @param existing the existing {@code Subject} instance that initiated the authentication attempt
+     * @return the {@code Subject} instance that represents the context and session data for the newly
+     *         authenticated subject.
      */
-    protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info) {
+    protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info, Subject existing) {
         Map<String, Object> context = new HashMap<String, Object>();
         context.put(SubjectFactory.AUTHENTICATED, Boolean.TRUE);
         context.put(SubjectFactory.AUTHENTICATION_TOKEN, token);
         context.put(SubjectFactory.AUTHENTICATION_INFO, info);
-        Subject subject = getSubject(false);
-        if (subject != null) {
-            context.put(SubjectFactory.SUBJECT, subject);
+        if (existing != null) {
+            context.put(SubjectFactory.SUBJECT, existing);
         }
-        return getSubject(context);
+        return createSubject(context);
     }
 
     /**
@@ -351,7 +351,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @return a Subject representing the authenticated user.
      * @throws AuthenticationException if there is a problem authenticating the specified {@code token}.
      */
-    public Subject login(AuthenticationToken token) throws AuthenticationException {
+    public Subject login(Subject subject, AuthenticationToken token) throws AuthenticationException {
         AuthenticationInfo info;
         try {
             info = authenticate(token);
@@ -367,9 +367,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             }
             throw ae; //propagate
         }
-        Subject subject = createSubject(token, info);
-        bind(subject);
-        return subject;
+        Subject replaced = createSubject(token, info, subject);
+        bind(replaced);
+        return replaced;
     }
 
     protected void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
@@ -395,7 +395,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @see SubjectFactory#createSubject(java.util.Map)
      * @since 1.0
      */
-    public Subject getSubject(Map context) {
+    public Subject createSubject(Map context) {
         //Translate a session id if it exists into a Session object before sending to the SubjectFactory
         //The SubjectFactory should not need to know how to acquire sessions as it is often environment
         //specific - better to shield the SF from these details:
@@ -462,7 +462,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @param subjectContext the context map with data that will be used to construct a {@link Subject} instance via
      *                       a {@link SubjectFactory}
      * @return a session id to resolve to a {@link Session} instance or {@code null} if a session id could not be found.
-     * @see #getSubject(java.util.Map)
+     * @see #createSubject(java.util.Map)
      * @see SubjectFactory#createSubject(java.util.Map)
      */
     protected Serializable getSessionId(Map subjectContext) {
@@ -605,6 +605,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     protected Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
         Map<String, Object> context = new HashMap<String, Object>(1);
         context.put(SubjectFactory.SESSION_ID, sessionId);
-        return getSubject(context);
+        return createSubject(context);
     }
 }

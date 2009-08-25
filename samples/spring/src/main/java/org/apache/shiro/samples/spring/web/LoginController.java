@@ -18,9 +18,10 @@
  */
 package org.apache.shiro.samples.spring.web;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -33,53 +34,22 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Spring MVC controller responsible for authenticating the user.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class LoginController extends SimpleFormController {
 
     private static transient final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-
-    /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
-    private SecurityManager securityManager;
-
-    /*--------------------------------------------
-    |         C O N S T R U C T O R S           |
-    ============================================*/
-
-    /*--------------------------------------------
-    |  A C C E S S O R S / M O D I F I E R S    |
-    ============================================*/
-
-    /**
-     * Sets the security manager that should be used to login the user.
-     *
-     * @param securityManager the security manager used to perform the login.
-     */
-
-    public void setSecurityManager(SecurityManager securityManager) {
-        this.securityManager = securityManager;
-    }
-
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
-
-
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object cmd, BindException errors) throws Exception {
 
         LoginCommand command = (LoginCommand) cmd;
 
+        Subject subject = SecurityUtils.getSubject();
+
         UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(), command.getPassword());
 
         try {
-            securityManager.login(token);
+            subject.login(token);
         } catch (AuthenticationException e) {
             log.debug("Error authenticating.", e);
             errors.reject("error.invalidLogin", "The username or password was not correct.");

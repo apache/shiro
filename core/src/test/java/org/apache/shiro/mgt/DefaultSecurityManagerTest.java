@@ -26,7 +26,6 @@ import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -45,7 +44,6 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
     @Before
     public void setup() {
-        ThreadContext.clear();
         sm = new DefaultSecurityManager();
         sm.setRealm(new PropertiesRealm());
         SecurityUtils.setSecurityManager(sm);

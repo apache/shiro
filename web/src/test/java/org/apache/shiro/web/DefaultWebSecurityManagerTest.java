@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.web;
 
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.realm.text.PropertiesRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -46,6 +48,8 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     @Before
     public void setup() {
         sm = new DefaultWebSecurityManager();
+        sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
+        sm.setRealm(new PropertiesRealm());
     }
 
     @After
@@ -69,6 +73,27 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Test
+    public void testLogin() {
+        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+
+        expect(mockRequest.getCookies()).andReturn(null);
+        expect(mockRequest.getContextPath()).andReturn("/");
+
+        replay(mockRequest);
+
+        Subject subject = newSubject(mockRequest, mockResponse);
+
+        assertFalse(subject.isAuthenticated());
+
+        subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
+
+        assertTrue(subject.isAuthenticated());
+        assertNotNull(subject.getPrincipal());
+        assertTrue(subject.getPrincipal().equals("lonestarr"));
     }
 
     @Test
@@ -145,9 +170,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         verify(mockResponse);
 
         mockRequest = createNiceMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         mockResponse = createNiceMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
         //now simulate the cookie going with the request and the Subject should be acquired based on that:
         Cookie[] cookies = new Cookie[]{new Cookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME, sessionId.toString())};
         expect(mockRequest.getCookies()).andReturn(cookies).anyTimes();

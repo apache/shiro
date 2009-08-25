@@ -242,7 +242,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {
-        Subject subject = securityManager.login(token);
+        Subject subject = securityManager.login(this, token);
         PrincipalCollection principals = subject.getPrincipals();
         if (principals == null || principals.isEmpty()) {
             String msg = "Principals returned from securityManager.login( token ) returned a null or " +

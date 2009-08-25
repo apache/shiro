@@ -18,11 +18,10 @@
  */
 package org.apache.shiro.mgt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Associates a {@link Subject Subject} instance to the currently executing thread via the {
@@ -49,7 +48,7 @@ public class ThreadContextSubjectBinder implements SubjectBinder {
     /**
      * Associates the specified subject to the currently executing thread via the {@link ThreadContext ThreadContext}.
      *
-     * @param subject the subject to accosiate to the currently executing thread.
+     * @param subject the subject to associate to the currently executing thread.
      */
     public void bind(Subject subject) {
         if (log.isTraceEnabled()) {
