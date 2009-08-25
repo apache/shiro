@@ -34,20 +34,15 @@ import javax.servlet.ServletResponse;
  */
 public abstract class AbstractWebSecurityManagerTest {
 
-    private WebSubjectThreadState threadState;
-
     @After
     public void tearDown() {
         ThreadContext.clear();
     }
 
     protected Subject newSubject(SecurityManager sm, ServletRequest request, ServletResponse response) {
-        //TODO - remove dependency on WebUtils
-        WebUtils.bind(request);
-        WebUtils.bind(response);
         WebSubject subject = new WebSubjectBuilder(sm, request, response).buildWebSubject();
-        this.threadState = new WebSubjectThreadState(subject);
-        this.threadState.bind();
+        WebSubjectThreadState threadState = new WebSubjectThreadState(subject);
+        threadState.bind();
         return subject;
     }
 

@@ -95,7 +95,7 @@ public class SubjectBuilder {
     }
 
     public Subject buildSubject() {
-        return this.securityManager.getSubject(this.subjectContext);
+        return this.securityManager.createSubject(this.subjectContext);
     }
 
 

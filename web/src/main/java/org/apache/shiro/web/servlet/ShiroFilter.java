@@ -29,7 +29,6 @@ import org.apache.shiro.util.LifecycleUtils;
 import static org.apache.shiro.util.StringUtils.clean;
 import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.config.IniWebConfiguration;
 import org.apache.shiro.web.config.WebConfiguration;
 import org.apache.shiro.web.subject.WebSubject;
@@ -486,10 +485,6 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     protected ThreadState bind(ServletRequest request, ServletResponse response) {
-        //TODO - remove when Builder/SubjectThreadState API is complete:
-        WebUtils.bind(request);
-        WebUtils.bind(response);
-
         WebSubject subject = new WebSubjectBuilder(getSecurityManager(), request, response).buildWebSubject();
         ThreadState threadState = new WebSubjectThreadState(subject);
         threadState.bind();

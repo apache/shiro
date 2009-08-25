@@ -8,6 +8,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.subject.WebDelegatingSubject;
+import org.apache.shiro.web.subject.WebSubject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -36,19 +37,49 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
 
     protected ServletRequest getServletRequest(Map context) {
         ServletRequest request = getTypedValue(context, SubjectFactory.SERVLET_REQUEST, ServletRequest.class);
+
+        //fall back on existing subject instance if it exists:
         if (request == null) {
-            throw new IllegalStateException("Subject context map must contain a " +
-                    ServletRequest.class.getName() + " instance to support Web Subject construction.");
+            Subject existing = getTypedValue(context, SubjectFactory.SUBJECT, Subject.class);
+            if (existing instanceof WebSubject) {
+                request = ((WebSubject) existing).getServletRequest();
+            }
+        }
+        //last resort - try the thread-local (TODO - remove this if possible):
+        if (request == null) {
+            request = WebUtils.getServletRequest();
+        }
+
+        if (request == null) {
+            throw new IllegalStateException("ServletRequest is not available!  A ServletRequest must be present " +
+                    "in either the Subject context map, on an existing WebSubject or via the thread context.  This " +
+                    "exception is probably indicative of an erroneous application configuration.");
         }
         return request;
     }
 
     protected ServletResponse getServletResponse(Map context) {
         ServletResponse response = getTypedValue(context, SubjectFactory.SERVLET_RESPONSE, ServletResponse.class);
+
+        //fall back on existing subject instance if it exists:
         if (response == null) {
-            throw new IllegalStateException("Subject context map must contain a " +
-                    ServletResponse.class.getName() + " instance to support Web Subject construction.");
+            Subject existing = getTypedValue(context, SubjectFactory.SUBJECT, Subject.class);
+            if (existing instanceof WebSubject) {
+                response = ((WebSubject) existing).getServletResponse();
+            }
         }
+
+        //last resort - try the thread-local (TODO - remove this if possible):
+        if (response == null) {
+            response = WebUtils.getServletResponse();
+        }
+
+        if (response == null) {
+            throw new IllegalStateException("ServletResponse is not available!  A ServletResponse must be present " +
+                    "in either the Subject context map, on an existing WebSubject or via the thread context.  This " +
+                    "exception is probably indicative of an erroneous application configuration.");
+        }
+
         return response;
     }
 

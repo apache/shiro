@@ -22,12 +22,66 @@ import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.subject.WebSubject;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 /**
  * @since 1.0
  */
 public class WebSubjectThreadState extends SubjectThreadState {
 
+    private ServletRequest originalRequest;
+    private ServletResponse originalResponse;
+
+    private final ServletRequest request;
+    private final ServletResponse response;
+
     public WebSubjectThreadState(WebSubject subject) {
         super(subject, WebUtils.getInetAddress(subject.getServletRequest()));
+
+        ServletRequest request = subject.getServletRequest();
+        if (request == null) {
+            request = WebUtils.getServletRequest();
+        }
+        this.request = request;
+
+        ServletResponse response = subject.getServletResponse();
+        if (response == null) {
+            response = WebUtils.getServletResponse();
+        }
+        this.response = response;
+    }
+
+    @Override
+    public void bind() {
+        super.bind();
+        this.originalRequest = WebUtils.getServletRequest();
+        this.originalResponse = WebUtils.getServletResponse();
+
+        if (request == null) {
+            WebUtils.unbindServletRequest();
+        } else {
+            WebUtils.bind(request);
+        }
+        if (response == null) {
+            WebUtils.unbindServletResponse();
+        } else {
+            WebUtils.bind(response);
+        }
+    }
+
+    @Override
+    public void restore() {
+        if (originalRequest == null) {
+            WebUtils.unbindServletRequest();
+        } else {
+            WebUtils.bind(originalRequest);
+        }
+        if (originalResponse == null) {
+            WebUtils.unbindServletResponse();
+        } else {
+            WebUtils.bind(originalResponse);
+        }
+        super.restore();
     }
 }
