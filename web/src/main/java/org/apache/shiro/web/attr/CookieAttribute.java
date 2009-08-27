@@ -288,11 +288,9 @@ public class CookieAttribute<T> extends AbstractWebAttribute<T> {
     }
 
     /**
-     * Returns the Cookie's calculated path setting.  If {@link Cookie#getPath() path} {@code null}, then the
+     * Returns the Cookie's calculated path setting.  If the {@link Cookie#getPath() path} is {@code null}, then the
      * {@code request}'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
      * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
-     * <p/>
-     * The default is {@code null}.
      *
      * @param request the incoming HttpServletRequest
      * @return the path to be used as the path when the cookie is created or removed
