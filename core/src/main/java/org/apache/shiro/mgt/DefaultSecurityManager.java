@@ -29,12 +29,12 @@ import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -188,70 +188,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         getRememberMeManagerForCipherAttributes().setDecryptionCipherKeyBase64(base64);
     }
 
-    protected Serializable getCurrentSessionId() {
-        return ThreadContext.getSessionId();
-    }
-
     protected Session getSession(Serializable id) {
         checkValid(id);
         return new DelegatingSession(this, id);
-    }
-
-    protected Session getCurrentSession() {
-        Serializable sessionId = getCurrentSessionId();
-        Session session = null;
-        if (sessionId != null) {
-            try {
-                session = getSession(sessionId);
-            } catch (InvalidSessionException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Session id referenced on the current thread [" + sessionId + "] is invalid.  " +
-                            "Ignoring and creating a new Subject instance to continue.  This message can be " +
-                            "safely ignored.", e);
-                }
-            } catch (AuthorizationException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Session id referenced on the current thread [" + sessionId + "] is not allowed to be " +
-                            "referenced.  Ignoring and creating a Subject instance without a session to continue.", e);
-                }
-            }
-        }
-        return session;
-    }
-
-    protected Subject createSubject() {
-        Session session = getCurrentSession();
-        PrincipalCollection remembered = null;
-        //only obtain a remembered identity if the session does not have one:
-        if (session != null) {
-            if (session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY) == null) {
-                remembered = getRememberedIdentity();
-            }
-        }
-        return createSubject(remembered, session);
-    }
-
-    /**
-     * Returns a {@link Subject} instance that reflects the specified identity (principals), backed by the given
-     * {@link Session} instance.  Either argument can be null.
-     * <p/>
-     * This method is a convenience that assembles either argument into a context {@link Map Map} (if they are
-     * not null) and returns {@link #createSubject(java.util.Map)} using the Map as the parameter.
-     *
-     * @param principals the identity that the constructed {@code Subject} instance should have.
-     * @param session    the session to be associated with the constructed {@code Subject} instance.
-     * @return The Subject instance reflecting the specified identity (principals) and session.
-     * @since 1.0
-     */
-    protected Subject createSubject(PrincipalCollection principals, Session session) {
-        Map<String, Object> context = new HashMap<String, Object>(2);
-        if (principals != null && !principals.isEmpty()) {
-            context.put(SubjectFactory.PRINCIPALS, principals);
-        }
-        if (session != null) {
-            context.put(SubjectFactory.SESSION, session);
-        }
-        return createSubject(context);
     }
 
     /**
@@ -386,9 +325,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     /**
      * This implementation attempts to resolve any session ID that may exist in the context argument by first
-     * passing it to the {@link #resolveSessionIfNecessary(java.util.Map) resolveSessionIfNecessary} method.  The
-     * return value from that call is then used to create the Subject instance by calling
-     * <code>{@link #getSubjectFactory() getSubjectFactory()}.{@link SubjectFactory#createSubject(java.util.Map) createSubject}(returnValue);</code>
+     * passing it to the {@link #resolveSession(Map)} method.  The
+     * return value from that call is then used to attempt to resolve the subject identity via the
+     * {@link #resolvePrincipals(java.util.Map)} method.  The return value from that call is then used to create
+     * the {@code Subject} instance by calling
+     * <code>{@link #getSubjectFactory() getSubjectFactory()}.{@link SubjectFactory#createSubject(java.util.Map) createSubject}(resolvedContext);</code>
      *
      * @param context any data needed to direct how the Subject should be constructed.
      * @return the {@code Subject} instance reflecting the specified initialization data.
@@ -399,7 +340,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         //Translate a session id if it exists into a Session object before sending to the SubjectFactory
         //The SubjectFactory should not need to know how to acquire sessions as it is often environment
         //specific - better to shield the SF from these details:
-        Map resolved = resolveSessionIfNecessary(context);
+        Map resolved = resolveSession(context);
+        //Similarly, the SubjectFactory should not have any concept of RememberMe - translate that here first
+        //if possible before handing off to the SubjectFactory:
+        resolved = resolvePrincipals(resolved);
         return getSubjectFactory().createSubject(resolved);
     }
 
@@ -415,14 +359,14 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * <p/>
      * If there is a {@code Session} already in the context because that is what the caller wants to be used for
      * {@code Subject} construction, or if no session is resolved, this method effectively does nothing and immediately
-     * returns the Map method argument without change.
+     * returns the Map method argument unaltered.
      *
      * @param context the subject context data that may contain a session id that should be converted to a Session instance.
      * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
     @SuppressWarnings({"unchecked"})
-    protected Map resolveSessionIfNecessary(Map context) {
+    protected Map resolveSession(Map context) {
         if (context.containsKey(SubjectFactory.SESSION)) {
             log.debug("Context already contains a session.  Returning.");
             return context;
@@ -436,7 +380,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 Session session = getSession(sessionId);
                 copy.put(SubjectFactory.SESSION, session);
             } catch (InvalidSessionException e) {
-                onInvalidSessionId(sessionId);
+                onInvalidSessionId(sessionId, e);
                 log.debug("Context referenced sessionId is invalid.  Ignoring and creating an anonymous " +
                         "(session-less) Subject instance.", e);
             }
@@ -445,12 +389,84 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * Allows subclasses to react to the fact that a provided session id was invalid.
+     * Heuristically determines if the specified subject map can resolve a Subject identity ({@link PrincipalCollection})
+     * either directly or indirectly by value association.  This implementation returns {@code true} in the following
+     * two cases, {@code false} otherwise:
+     * <ol>
+     * <li>If the context {@link Map#containsKey contains} a key {@link SubjectFactory#PRINCIPALS}, it is assumed
+     * the identity has been explicitly provided already.</li>
+     * <li>If the context has a {@link Session} under the {@link SubjectFactory#SESSION} key, it attempts to resolve
+     * any identity associated with that {@code Session} instance.  If one can be found in the {@code Session}, it is
+     * assumed that {@code Session} identity should be used/retained.</li>
+     * </ol>
      *
-     * @param sessionId the session id that was discovered to be invalid (no session, expired, etc).
+     * @param context the subject context data that may provide (directly or indirectly through one of its values) a
+     *                {@link PrincipalCollection} identity.
+     * @return {@code true} if an identity can be resolved, {@code false} otherwise.
      * @since 1.0
      */
-    protected void onInvalidSessionId(Serializable sessionId) {
+    protected boolean containsIdentity(Map context) {
+        if (context.containsKey(SubjectFactory.PRINCIPALS)) {
+            log.trace("Context already contains an explicit identity.");
+            return true;
+        }
+        if (context.containsKey(SubjectFactory.SESSION)) {
+            Session session = (Session) context.get(SubjectFactory.SESSION);
+            if (session != null) {
+                Object principals = session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY);
+                if (principals != null) {
+                    log.trace("Context already contains an implicit (session-based) identity.");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Attempts to resolve an identity (a {@link PrincipalCollection}) for the context using heuristics.  The
+     * implementation strategy:
+     * <ol>
+     * <li>Check the context to see if it already {@link #containsIdentity(java.util.Map) contains an identity}.  If
+     * so, this method does nothing and returns the method argument unaltered.</li>
+     * <li>Check for a RememberMe identity by calling {@link #getRememberedIdentity()}.  If that method returns a
+     * non-null value, create a <em>copy</em> of the method argument, and place the remembered {@link PrincipalCollection}
+     * in the copied context map under the {@link SubjectFactory#PRINCIPALS} key and return that copied context.</li>
+     * </ol>
+     *
+     * @param context the subject context data that may provide (directly or indirectly through one of its values) a
+     *                {@link PrincipalCollection} identity.
+     * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
+     * @since 1.0
+     */
+    @SuppressWarnings({"unchecked"})
+    protected Map resolvePrincipals(Map context) {
+        Map ctx = context;
+
+        if (!containsIdentity(context)) {
+            log.trace("No identity (PrincipalCollection) found in the context.  Looking for a remembered identity.");
+            PrincipalCollection principals = getRememberedIdentity();
+            if (principals != null) {
+                log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
+                        "for subject construction by the SubjectFactory.");
+                ctx = new HashMap(context);
+                ctx.put(SubjectFactory.PRINCIPALS, principals);
+            }
+        }
+
+        log.trace("No remembered identity found.  Returning original context.");
+        return ctx;
+    }
+
+    /**
+     * Allows subclasses to react to the fact that a specified/referenced session id was invalid.  Default
+     * implementation does nothing (no-op).
+     *
+     * @param sessionId the session id that was discovered to be invalid (no session, expired, etc).
+     * @param e         the exception thrown upon encountering the invalid session id
+     * @since 1.0
+     */
+    protected void onInvalidSessionId(Serializable sessionId, InvalidSessionException e) {
     }
 
     /**
@@ -552,24 +568,13 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return null;
     }
 
-    @Deprecated
-    protected Subject getSubject(boolean create) {
+    public Subject getSubject() {
         Subject subject = getSubjectBinder().getSubject();
-        if (subject == null && create) {
-            subject = createSubject();
+        if (subject == null) {
+            subject = createSubject(Collections.EMPTY_MAP);
             bind(subject);
         }
         return subject;
-    }
-
-    public Subject getSubject() {
-        return getSubject(true);
-        /*Subject subject = getSubjectBinder().getSubject();
-        if (subject == null) {
-            subject = getSubjectFactory().createSubject(Collections.EMPTY_MAP);
-            bind(subject);
-        }
-        return subject;*/
     }
 
     /**

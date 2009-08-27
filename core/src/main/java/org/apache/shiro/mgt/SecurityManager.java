@@ -128,7 +128,4 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      */
     Subject createSubject(Map context);
 
-    //Subject getSubjectBySessionId(Serializable sessionId);
-
-    //Subject getSubject(PrincipalCollection principals);
 }
