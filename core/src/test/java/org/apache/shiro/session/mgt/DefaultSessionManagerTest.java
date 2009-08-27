@@ -21,7 +21,9 @@ package org.apache.shiro.session.mgt;
 import org.apache.shiro.session.*;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.util.ThreadContext;
+import org.easymock.EasyMock;
 import static org.easymock.EasyMock.*;
+import org.easymock.IArgumentMatcher;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -61,11 +63,28 @@ public class DefaultSessionManagerTest {
 
     @Test
     public void testGlobalTimeout() {
-        sm.setGlobalSessionTimeout(200);
-        Serializable sessionId = sm.start((InetAddress) null);
-        assertTrue(sm.isValid(sessionId));
-        sleep(300);
-        assertFalse(sm.isValid(sessionId));
+
+        long timeout = 200;
+
+        //use the dao to simulate returned Sessions that are timed out:
+        SessionDAO mockDAO = createMock(SessionDAO.class);
+        Session mockSession = createNiceMock(Session.class);
+
+        Serializable mockSessionId = UUID.randomUUID().toString();
+        expect(mockSession.getId()).andReturn(mockSessionId).anyTimes();
+        expect(mockDAO.create(isA(Session.class))).andReturn(mockSessionId);
+
+        //this line verifies this test case - ensuring the DAO is called when an updated timeout:
+        mockDAO.update(eqSessionTimeout(timeout));
+
+        replay(mockDAO);
+
+        sm.setSessionDAO(mockDAO);
+
+        sm.setGlobalSessionTimeout(timeout);
+        sm.start((InetAddress) null);
+
+        verify(mockDAO);
     }
 
     @Test
@@ -166,5 +185,27 @@ public class DefaultSessionManagerTest {
         }
 
         verify(sessionDAO); //verify that the delete call was actually made on the DAO
+    }
+
+    public static <T extends Session> T eqSessionTimeout(long timeout) {
+        EasyMock.reportMatcher(new SessionTimeoutMatcher(timeout));
+        return null;
+    }
+
+    private static class SessionTimeoutMatcher implements IArgumentMatcher {
+
+        private final long timeout;
+
+        public SessionTimeoutMatcher(long timeout) {
+            this.timeout = timeout;
+        }
+
+        public void appendTo(StringBuffer buffer) {
+            buffer.append("eqSession(timeout=").append(this.timeout).append(")");
+        }
+
+        public boolean matches(Object o) {
+            return o instanceof Session && ((Session) o).getTimeout() == this.timeout;
+        }
     }
 }
