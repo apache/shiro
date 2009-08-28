@@ -18,21 +18,34 @@
  */
 package org.apache.shiro.subject;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.Permission;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
 
+import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
  * A {@code Subject} represents state and security operations for a <em>single</em> application user.
  * These operations include authentication (login/logout), authorization (access control), and
  * session access. It is Shiro's primary mechanism for single-user security functionality.
- * <p/>
+ * <h4>Acquiring a Subject</h4>
+ * To acquire the currently-executing {@code Subject}, application developers will almost always use
+ * {@code SecurityUtils}:
+ * <pre>
+ * {@link SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()}</pre>
+ * Almost all security operations should be performed with the {@code Subject} returned from this method.
+ * <h4>Permission methods</h4>
  * Note that there are many *Permission methods in this interface overloaded to accept String arguments instead of
  * {@link Permission Permission} instances. They are a convenience allowing the caller to use a String representation of
  * a {@link Permission Permission} if desired.  The underlying Authorization subsystem implementations will usually
@@ -40,7 +53,7 @@ import java.util.concurrent.Callable;
  * type-safe method.  (Shiro's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.shiro.authz.permission.PermissionResolver PermissionResolver}s.)
  * <p/>
- * These overloaded *Permission methods <em>do</em> forgo type-saftey for the benefit of convenience and simplicity,
+ * These overloaded *Permission methods forgo type-saftey for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
  * @author Les Hazlewood
@@ -394,5 +407,102 @@ public interface Subject {
     <V> V runAs(PrincipalCollection identity, Callable<V> work);
 
     PrincipalCollection getRunAsIdentity();*/
+
+    /**
+     * Builder design pattern implementation for creating {@link Subject} instances in a simplified way without
+     * requiring knowledge of Shiro's construction techniques.
+     * <p/>
+     * <b>NOTE</b>: This is provided for framework development support only and should typically never be used by
+     * application developers.  {@code Subject} instances should generally be acquired by using
+     * <code>SecurityUtils.{@link SecurityUtils#getSubject() getSubject()}</code>
+     * <h4>Usage</h4>
+     * The simplest usage of this builder is to construct an anonymous, session-less {@code Subject} instance:
+     * <pre>
+     * Subject subject = new Subject.{@link #Builder() Builder}().{@link #buildSubject() build()};</pre>
+     * The default, no-arg {@code Subject.Builder()} constructor shown above will use the application's
+     * currently accessible {@code SecurityManager} via
+     * <code>SecurityUtils.{@link SecurityUtils#getSecurityManager() getSecurityManager()}</code>.  You may also
+     * specify the exact {@code SecurityManager} instance to be used by the additional
+     * <code>Subject.{@link #Builder(org.apache.shiro.mgt.SecurityManager) Builder(securityManager)}</code>
+     * constructor if desired.
+     * <p/>
+     * All other methods may be called before {@link #buildSubject() buildSubject()} call to
+     * provide context on how to construct the {@code Subject} instance.  For example, if you have a session id and
+     * want to acquire the {@code Subject} that 'owns' that session (assuming the session exists and is not expired):
+     * <pre>
+     * Subject subject = new Subject.Builder().sessionId(sessionId).buildSubject();</pre>
+     * <p/>
+     * Similarly, if you want a {@code Subject} instance reflecting a certain identity:
+     * <pre>
+     * PrincipalCollection principals = new SimplePrincipalCollection("username", <em>yourRealmName</em>);
+     * Subject subject = new Subject.Builder().principals(principals).build();</pre>
+     * <p/>
+     * Note that the returned {@code Subject} instance is <b>not</b> automatically bound to the application (thread)
+     * for further use.  That is,
+     * {@link org.apache.shiro.SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()}
+     * will not automatically return the same instance as what is returned by the builder.  It is up to the framework
+     * developer to bind the built {@code Subject} for continued use if desired.
+     *
+     * @since 1.0
+     */
+    public static class Builder {
+
+        private final Map<String, Object> subjectContext;
+
+        private final org.apache.shiro.mgt.SecurityManager securityManager;
+
+        public Builder() {
+            this(SecurityUtils.getSecurityManager());
+        }
+
+        public Builder(SecurityManager securityManager) {
+            if (securityManager == null) {
+                throw new NullPointerException("SecurityManager method argument cannot be null.");
+            }
+            this.securityManager = securityManager;
+            this.subjectContext = new HashMap<String, Object>();
+        }
+
+        protected Map<String, Object> getSubjectContext() {
+            return this.subjectContext;
+        }
+
+        public Builder sessionId(Serializable sessionId) {
+            if (sessionId != null) {
+                this.subjectContext.put(SubjectFactory.SESSION_ID, sessionId);
+            }
+            return this;
+        }
+
+        public Builder inetAddress(InetAddress originatingHost) {
+            if (originatingHost != null) {
+                this.subjectContext.put(SubjectFactory.INET_ADDRESS, originatingHost);
+            }
+            return this;
+        }
+
+        public Builder session(Session session) {
+            if (session != null) {
+                this.subjectContext.put(SubjectFactory.SESSION, session);
+            }
+            return this;
+        }
+
+        public Builder principals(PrincipalCollection principals) {
+            if (principals != null && !principals.isEmpty()) {
+                this.subjectContext.put(SubjectFactory.PRINCIPALS, principals);
+            }
+            return this;
+        }
+
+        public Builder authenticated(boolean authenticated) {
+            this.subjectContext.put(SubjectFactory.AUTHENTICATED, authenticated);
+            return this;
+        }
+
+        public Subject buildSubject() {
+            return this.securityManager.createSubject(this.subjectContext);
+        }
+    }
 
 }
