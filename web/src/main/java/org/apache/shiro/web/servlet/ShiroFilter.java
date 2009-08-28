@@ -27,12 +27,13 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.LifecycleUtils;
 import static org.apache.shiro.util.StringUtils.clean;
+import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
+import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.config.IniWebConfiguration;
 import org.apache.shiro.web.config.WebConfiguration;
 import org.apache.shiro.web.subject.WebSubject;
-import org.apache.shiro.web.subject.WebSubjectBuilder;
 import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -485,7 +486,12 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     protected ThreadState bind(ServletRequest request, ServletResponse response) {
-        WebSubject subject = new WebSubjectBuilder(getSecurityManager(), request, response).buildWebSubject();
+        ThreadContext.bind(getSecurityManager());
+        //currently the WebRememberMeManager needs the request/response bound in order to create the subject instance:
+        WebUtils.bind(request);
+        WebUtils.bind(response);
+
+        WebSubject subject = new WebSubject.Builder().buildWebSubject();
         ThreadState threadState = new WebSubjectThreadState(subject);
         threadState.bind();
         return threadState;

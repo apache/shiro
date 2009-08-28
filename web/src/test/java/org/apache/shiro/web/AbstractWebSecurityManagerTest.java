@@ -22,7 +22,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.subject.WebSubject;
-import org.apache.shiro.web.subject.WebSubjectBuilder;
 import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.junit.After;
 
@@ -40,7 +39,9 @@ public abstract class AbstractWebSecurityManagerTest {
     }
 
     protected Subject newSubject(SecurityManager sm, ServletRequest request, ServletResponse response) {
-        WebSubject subject = new WebSubjectBuilder(sm, request, response).buildWebSubject();
+        WebUtils.bind(request);
+        WebUtils.bind(response);
+        WebSubject subject = new WebSubject.Builder(sm, request, response).buildWebSubject();
         WebSubjectThreadState threadState = new WebSubjectThreadState(subject);
         threadState.bind();
         return subject;
