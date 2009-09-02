@@ -272,6 +272,11 @@ public class DelegatingSubject implements Subject, Serializable {
         return authenticated;
     }
 
+    public boolean isRemembered() {
+        PrincipalCollection principals = getPrincipals();
+        return principals != null && !principals.isEmpty() && !isAuthenticated();
+    }
+
     public Session getSession() {
         return getSession(true);
     }

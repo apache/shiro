@@ -21,6 +21,7 @@
 <html>
 <head>
     <link type="text/css" rel="stylesheet" href="<c:url value="/style.css"/>"/>
+    <title>Apache Shiro Quickstart</title>
 </head>
 <body>
 

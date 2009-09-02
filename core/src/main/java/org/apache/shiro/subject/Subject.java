@@ -102,8 +102,8 @@ public interface Subject {
      * <p/>
      * For convenience's sake, it is convention that the first principal in this collection be the application's
      * &quot;primary&quot; principal.  That is, {@code getPrincipals().iterator().next();} would return this
-     * primary uniquely-identifying principal.
-     * In fact, this logic is often the implementation of the {@link #getPrincipal() getPrincipal()} method.
+     * primary uniquely-identifying principal.  Most {@link #getPrincipal() getPrincipal()} implementations will use
+     * this logic.
      *
      * @return all of this Subject's principals (identifying attributes).
      * @see #getPrincipal()
@@ -329,15 +329,62 @@ public interface Subject {
      * <p/>
      * Note that even if this Subject's identity has been remembered via 'remember me' services, this method will
      * still return {@code false} unless the user has actually logged in with proper credentials <em>during their
-     * current session</em>.  See the
-     * {@link org.apache.shiro.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} class JavaDoc for why
-     * this would occur.
+     * current session</em>.  See the {@link #isRemembered() isRemembered()} method JavaDoc for more.
      *
      * @return {@code true} if this Subject proved their identity during their current session
      *         by providing valid credentials matching those known to the system, {@code false} otherwise.
      * @since 0.9
      */
     boolean isAuthenticated();
+
+
+    /**
+     * Returns {@code true} if this {@code Subject} has an identity (it is not anonymous) and the identity
+     * (aka {@link #getPrincipals() principals}) is remembered from a successful authentication during a previous
+     * session.
+     * <p/>
+     * Although the underlying implementation determines exactly how this method functions, most implementations have
+     * this method act as the logical equivalent to this code:
+     * <pre>
+     * {@link #getPrincipal() getPrincipal()} != null && !{@link #isAuthenticated() isAuthenticated()}</pre>
+     * <p/>
+     * Note as indicated by the above code example, if a {@code Subject} is remembered, they are
+     * <em>NOT</em> considered authenticated.  A check against {@link #isAuthenticated() isAuthenticated()} is a more
+     * strict check than that reflected by this method.  For example, a check to see if a subject can access financial
+     * information should probably depend on {@link #isAuthenticated() isAuthenticated()} to <em>guarantee</em> a
+     * proven identity, and not this method.
+     * <p/>
+     * Once the subject is authenticated, they are no longer considered remembered because identity would have been
+     * proven during the current session.
+     * <h4>Remembered vs Authenticated</h4>
+     * Authentication is the process of <em>proving</em> you are who you say you are.  When a user is only remembered,
+     * the remenbered identity gives the system an idea who that user probably is, but in reality, has no way of
+     * absolutely <em>guaranteeing</em> if the remembered {@code Subject} represents the user currently
+     * using the application.
+     * <p/>
+     * So although many parts of the application can still perform user-specific logic based on the remembered
+     * {@link #getPrincipals() principals}, such as customized views, it should never perform highly-sensitive
+     * operations until the user has legitimately proven their identity by executing a successful authentication attempt.
+     * <p/>
+     * We see this paradigm all over the web, and we'll use <a href="http://www.amazon.com">Amazon.com</a> as an example:
+     * <p/>
+     * When you visit Amazon.com and perform a login and ask it to 'remember me', it will set a cookie with your
+     * identity.  If you don't log out and your session expires, and you come back, say the next day, Amazon still knows
+     * who you <em>probably</em> are: you still see all of your book and movie recommendations and similar user-specific
+     * features since these are based on your (remembered) user id.
+     * <p/>
+     * BUT, if you try to do something sensitive, such as access your account's billing data, Amazon forces you
+     * to do an actual log-in, requiring your username and password.
+     * <p/>
+     * This is because although amazon.com assumed your identity from 'remember me', it recognized that you were not
+     * actually authenticated.  The only way to really guarantee you are who you say you are, and therefore allow you
+     * access to sensitive account data, is to force you to perform an actual successful authentication.
+     *
+     * @return {@code true} if this {@code Subject}'s identity (aka {@link #getPrincipals() principals}) is
+     *         remembered from a successful authentication during a previous session, {@code false} otherwise.
+     * @since 1.0
+     */
+    boolean isRemembered();
 
     /**
      * Returns the application {@code Session} associated with this Subject.  If no session exists when this
@@ -447,10 +494,21 @@ public interface Subject {
      */
     public static class Builder {
 
+        /**
+         * Will hold all contextual data via the Builder instance's method invocations to be sent to the
+         * {@code SecurityManager} during the {@link #buildSubject} call.
+         */
         private final Map<String, Object> subjectContext;
 
+        /**
+         * The SecurityManager to invoke during the {@link #buildSubject} call.
+         */
         private final org.apache.shiro.mgt.SecurityManager securityManager;
 
+        /**
+         * Constructs a new {@link Subject.Builder} instance, using the
+         * {@link org.apache.shiro.SecurityUtils#getSecurityManager()}
+         */
         public Builder() {
             this(SecurityUtils.getSecurityManager());
         }
