@@ -451,10 +451,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                         "for subject construction by the SubjectFactory.");
                 ctx = new HashMap(context);
                 ctx.put(SubjectFactory.PRINCIPALS, principals);
+            } else {
+                log.trace("No remembered identity found.  Returning original context.");
             }
         }
 
-        log.trace("No remembered identity found.  Returning original context.");
         return ctx;
     }
 
