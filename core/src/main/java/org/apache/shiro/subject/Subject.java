@@ -465,7 +465,7 @@ public interface Subject {
      * <h4>Usage</h4>
      * The simplest usage of this builder is to construct an anonymous, session-less {@code Subject} instance:
      * <pre>
-     * Subject subject = new Subject.{@link #Builder() Builder}().{@link #buildSubject() build()};</pre>
+     * Subject subject = new Subject.{@link #Builder() Builder}().{@link #buildSubject() buildSubject()};</pre>
      * The default, no-arg {@code Subject.Builder()} constructor shown above will use the application's
      * currently accessible {@code SecurityManager} via
      * <code>SecurityUtils.{@link SecurityUtils#getSecurityManager() getSecurityManager()}</code>.  You may also
@@ -495,7 +495,7 @@ public interface Subject {
     public static class Builder {
 
         /**
-         * Will hold all contextual data via the Builder instance's method invocations to be sent to the
+         * Hold all contextual data via the Builder instance's method invocations to be sent to the
          * {@code SecurityManager} during the {@link #buildSubject} call.
          */
         private final Map<String, Object> subjectContext;
@@ -506,13 +506,20 @@ public interface Subject {
         private final org.apache.shiro.mgt.SecurityManager securityManager;
 
         /**
-         * Constructs a new {@link Subject.Builder} instance, using the
-         * {@link org.apache.shiro.SecurityUtils#getSecurityManager()}
+         * Constructs a new {@link Subject.Builder} instance, using the {@code SecurityManager} instance available
+         * to the calling code as determined by a call to {@link org.apache.shiro.SecurityUtils#getSecurityManager()}
+         * to build the {@code Subject} instance.
          */
         public Builder() {
             this(SecurityUtils.getSecurityManager());
         }
 
+        /**
+         * Constructs a new {@link Subject.Builder} instance which will use the specified {@code SecurityManager} when
+         * building the {@code Subject} instance.
+         *
+         * @param securityManager the {@code SecurityManager} to use when building the {@code Subject} instance.
+         */
         public Builder(SecurityManager securityManager) {
             if (securityManager == null) {
                 throw new NullPointerException("SecurityManager method argument cannot be null.");
@@ -521,10 +528,43 @@ public interface Subject {
             this.subjectContext = new HashMap<String, Object>();
         }
 
+        /**
+         * Returns the backing context used to build the {@code Subject} instance, available to subclasses
+         * since the {@code context} class attribute is marked as {@code private}.
+         *
+         * @return the backing context used to build the {@code Subject} instance, available to subclasses.
+         */
         protected Map<String, Object> getSubjectContext() {
             return this.subjectContext;
         }
 
+        /**
+         * Enables building a {@link Subject Subject} instance that owns the {@link Session Session} with the
+         * specified {@code sessionId}.
+         * <p/>
+         * Usually when specifying a {@code sessionId}, no other {@code Builder} methods would be specified because
+         * everything else (principals, inet address, etc) can usually be reconstructed based on the referenced
+         * session alone.  In other words, this is almost always sufficient:
+         * <pre>
+         * new Subject.Builder().sessionId(sessionId).buildSubject();</pre>
+         * <p/>
+         * <b>Although simple in concept, this method provides very powerful functionality previously absent in almost
+         * all Java environments:</b>
+         * <p/>
+         * The ability to reference a {@code Subject} and their server-side session
+         * <em>across clients of different mediums</em> such as web applications, Java applets,
+         * standalone C# clients over XMLRPC and/or SOAP, and many others. This is a <em>huge</em>
+         * benefit in heterogeneous enterprise applications.
+         * <p/>
+         * To maintain session integrity across client mediums, the {@code sessionId} <b>must</b> be transmitted
+         * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
+         * is nothing new - all web applications are susceptible to the same problem when transmitting
+         * {@code Cookie}s or when using URL rewriting.  As long as the
+         * {@code sessionId} is transmitted securely, session integrity can be maintained.
+         *
+         * @param sessionId the id of the session that backs the desired Subject being acquired.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder sessionId(Serializable sessionId) {
             if (sessionId != null) {
                 this.subjectContext.put(SubjectFactory.SESSION_ID, sessionId);
@@ -532,6 +572,12 @@ public interface Subject {
             return this;
         }
 
+        /**
+         * Ensures the {@code Subject} being built will reflect the specified host address as its originating address.
+         *
+         * @param originatingHost the host address to use as the {@code Subject}'s originating address.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder inetAddress(InetAddress originatingHost) {
             if (originatingHost != null) {
                 this.subjectContext.put(SubjectFactory.INET_ADDRESS, originatingHost);
@@ -539,6 +585,12 @@ public interface Subject {
             return this;
         }
 
+        /**
+         * Ensures the {@code Subject} being built will use the specified {@link Session} instance.
+         *
+         * @param session the session to use as the {@code Subject}'s {@link Session}
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder session(Session session) {
             if (session != null) {
                 this.subjectContext.put(SubjectFactory.SESSION, session);
@@ -546,6 +598,29 @@ public interface Subject {
             return this;
         }
 
+        /**
+         * Ensures the {@code Subject} being built will reflect the specified principals (aka identity).
+         * <p/>
+         * For example, if your application's unique identifier for users is a {@code String} username, and you wanted
+         * to create a {@code Subject} instance that reflected a user whose username is
+         * 'jsmith', and you knew the Realm that could acquire {@code jsmith}'s principals based on the username was
+         * named &quot;{@code myRealm}&quot;, you might create the '{@code jsmith} {@code Subject} instance this way:
+         * <pre>
+         * PrincipalCollection identity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
+         * Subject jsmith = new Subject.Builder().principals(identity).buildSubject();</pre>
+         * <p/>
+         * Similarly, if your application's unique identifier for users is a {@code long} value (such as might be used
+         * as a primary key in a relational database, a highly recommended approach) and you were using a
+         * {@code JDBC} {@code Realm} named, (unimaginatively) &quot;jdbcRealm&quot;, you might create the Subject
+         * instance this way:
+         * <pre>
+         * long userId = //get user ID from somewhere
+         * PrincipalCollection userIdentity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(<em>userId</em>, &quot;jdbcRealm&quot;);
+         * Subject user = new Subject.Builder().principals(identity).buildSubject();</pre>
+         *
+         * @param principals the principals to use as the {@code Subject}'s identity.
+         * @return this {@code Builder} instance for method chaining.
+         */
         public Builder principals(PrincipalCollection principals) {
             if (principals != null && !principals.isEmpty()) {
                 this.subjectContext.put(SubjectFactory.PRINCIPALS, principals);
@@ -553,11 +628,40 @@ public interface Subject {
             return this;
         }
 
+        /**
+         * Ensures the {@code Subject} being built will be considered
+         * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated}.  Per the
+         * {@link org.apache.shiro.subject.Subject#isAuthenticated() isAuthenticated()} JavaDoc, be extremely wary
+         * when specifying {@code true} - you should know what you're doing and have a good reason for ignoring Shiro's
+         * default authentication state mechanisms.
+         *
+         * @param authenticated whether or not the built {@code Subject} will be considered authenticated.
+         * @return this {@code Builder} instance for method chaining.
+         * @see org.apache.shiro.subject.Subject#isAuthenticated()
+         */
         public Builder authenticated(boolean authenticated) {
             this.subjectContext.put(SubjectFactory.AUTHENTICATED, authenticated);
             return this;
         }
 
+        /**
+         * Creates and returns a new {@code Subject} instance reflecting the cumulative state acquired by the
+         * other methods in this class.
+         * <p/>
+         * This {@code Builder} instance will still retain the underlying state after this method is called - it
+         * will not clear it; repeated calls to this method will return multiple {@link Subject} instances, all
+         * reflecting the exact same state.  If a new (different) {@code Subject} is to be constructed, a new
+         * {@code Builder} instance must be created.
+         * <p/>
+         * <b>Note</b> that the returned {@code Subject} instance is <b>not</b> automatically bound to the application
+         * (thread) for further use.  That is,
+         * {@link org.apache.shiro.SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()}
+         * will not automatically return the same instance as what is returned by the builder.  It is up to the
+         * framework developer to bind the returned {@code Subject} for continued use if desired.
+         *
+         * @return a new {@code Subject} instance reflecting the cumulative state acquired by the
+         *         other methods in this class.
+         */
         public Subject buildSubject() {
             return this.securityManager.createSubject(this.subjectContext);
         }
