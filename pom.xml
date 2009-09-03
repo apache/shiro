@@ -84,87 +84,6 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.0.4</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>true</inherited>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-api-docs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>true</inherited>
-            </plugin>
-            <!-- <plugin>
-                <groupId>com.agilejava.docbkx</groupId>
-                <artifactId>docbkx-maven-plugin</artifactId>
-                <!- - <version>2.0.7</version> - ->
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate-html</goal>
-                            <goal>generate-pdf</goal>
-                        </goals>
-                        <phase>pre-site</phase>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.docbook</groupId>
-                        <artifactId>docbook-xml</artifactId>
-                        <version>4.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <includes>index.xml</includes>
-                    <xincludeSupported>true</xincludeSupported>
-                    <!- - <foCustomization>src/docbkx/resources/xsl/fopdf.xsl</foCustomization>
-                    <htmlCustomization>src/docbkx/resources/xsl/html_chunk.xsl</htmlCustomization>
-                    <htmlStylesheet>css/html.css</htmlStylesheet> - ->
-                    <chunkedOutput>true</chunkedOutput>
-                    <entities>
-                        <entity>
-                            <name>version</name>
-                            <value>${pom.version}</value>
-                        </entity>
-                    </entities>
-                    <postProcess>
-                        <copy todir="target/site/reference">
-                            <fileset dir="target/docbkx">
-                                <include name="**/*.html"/>
-                                <include name="**/*.pdf"/>
-                            </fileset>
-                        </copy>
-                        <copy todir="target/site/reference/html">
-                            <fileset dir="src/docbkx/resources">
-                                <include name="**/*.css"/>
-                                <include name="**/*.png"/>
-                                <include name="**/*.gif"/>
-                                <include name="**/*.jpg"/>
-                                <include name="**/*.tif"/>
-                            </fileset>
-                        </copy>
-                    </postProcess>
-                </configuration>
-            </plugin> -->
         </plugins>
     </build>
 
@@ -448,4 +367,41 @@
         </plugins>
     </reporting> -->
 
+    <profiles>
+        <profile>
+            <id>docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.2</version>
+                        <executions>
+                            <execution>
+                                <id>attach-api-docs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <inherited>true</inherited>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.0.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <inherited>true</inherited>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
