@@ -1,16 +1,27 @@
 Apache Shiro
-Copyright 2008 The Apache Software Foundation
+Copyright 2008-2009 The Apache Software Foundation
 
 This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
-This product includes a org.apache.shiro.util.SoftHashMap
-implementation based on initial ideas from Dr. Hienz Kabutz's
-public posted version found here:
-    http://www.javaspecialists.eu/archive/Issue015.html)
-with continued modifications.  Per Heinz Kabutz: "you have my
-express permission to publish it in Apache Shiro - please
-leave a link in the source code pointing to my website:
+=======================================================================
+== NOTICE accounting for Aoache Shiro's use of initial ideas from    ==
+== Dr. Heinz Kabut's SoftHashMap implementation.                     ==
+=======================================================================
+This product includes an org.apache.shiro.util.SoftHashMap
+implementation based on initial ideas from Dr. Hienz Kabutz's publicly
+posted version found here:
+    http://www.javaspecialists.eu/archive/Issue015.html
+with continued modifications.  Per Heinz Kabutz: "you have my express
+permission to publish it in Apache Shiro - please leave a link in the
+source code pointing to my website":
+
     http://www.javaspecialists.eu
 
-
+=======================================================================
+== NOTICE from the Spring Framework's 2.5.6 distribution accounting  ==
+== for Shiro's use of certain parts of their source code for         ==
+== simplicity/re-use (e.g. StringUtils, et. al.)                     ==
+=======================================================================
+This product includes software developed by the Spring Framework
+Project (http://www.springframework.org).
