@@ -18,18 +18,6 @@
  */
 package org.apache.shiro.config;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.io.IniResource;
 import org.apache.shiro.io.ResourceUtils;
@@ -39,6 +27,12 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.RealmFactory;
 import org.apache.shiro.util.LifecycleUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.*;
 
 
 /**
@@ -88,8 +82,7 @@ public class IniConfiguration extends TextConfiguration {
         this.configUrl = configUrl;
     }
 
-    public void init() throws ShiroException
-    {
+    public void init() throws ShiroException {
 
         if (configUrl != null) {
             if (ResourceUtils.resourceExists(configUrl)) {
@@ -192,8 +185,7 @@ public class IniConfiguration extends TextConfiguration {
 
         RealmSecurityManager securityManager = newSecurityManagerInstance();
         defaults.put("securityManager", securityManager);
-        //convenient alias:
-        defaults.put("sm", securityManager);
+
         ReflectionBuilder builder = new ReflectionBuilder(defaults);
         Map<String, Object> objects = builder.buildObjects(mainSection);
 
