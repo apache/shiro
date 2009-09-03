@@ -5,8 +5,8 @@ This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
 
 =======================================================================
-== NOTICE accounting for Aoache Shiro's use of initial ideas from    ==
-== Dr. Heinz Kabut's SoftHashMap implementation.                     ==
+== NOTICE accounting for Apache Shiro's use of initial ideas from    ==
+== Dr. Heinz Kabutz's SoftHashMap implementation.                     ==
 =======================================================================
 This product includes an org.apache.shiro.util.SoftHashMap
 implementation based on initial ideas from Dr. Hienz Kabutz's publicly
