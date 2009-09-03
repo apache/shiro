@@ -10,7 +10,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * A {@code WebSubject} represents a Subject instance that was acquired upon receiving a {@link ServletRequest}.
+ * A {@code WebSubject} represents a Subject instance that was acquired as a result of an incoming
+ * {@link ServletRequest}.
  *
  * @since 1.0
  */
