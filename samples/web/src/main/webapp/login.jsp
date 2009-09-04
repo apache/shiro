@@ -37,7 +37,7 @@
             border-style: outset;
             border-color: blue;
             border-collapse: separate;
-            background-color: rgb( 255, 255, 240 );
+            background-color: rgb(255, 255, 240);
         }
 
         table.sample th {
@@ -45,7 +45,7 @@
             padding: 1px;
             border-style: none;
             border-color: blue;
-            background-color: rgb( 255, 255, 240 );
+            background-color: rgb(255, 255, 240);
         }
 
         table.sample td {
@@ -53,41 +53,41 @@
             padding: 1px;
             border-style: none;
             border-color: blue;
-            background-color: rgb( 255, 255, 240 );
+            background-color: rgb(255, 255, 240);
         }
     </style>
 
 
     <table class="sample">
         <thead>
-            <tr>
-                <th>Username</th>
-                <th>Password</th>
-            </tr>
+        <tr>
+            <th>Username</th>
+            <th>Password</th>
+        </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>root</td>
-                <td>secret</td>
-            </tr>
-            <tr>
-                <td>presidentskroob</td>
-                <td>12345</td>
-            </tr>
-            <tr>
-                <td>darkhelmet</td>
-                <td>ludicrousspeed</td>
-            </tr>
-            <tr>
-                <td>lonestarr</td>
-                <td>vespa</td>
-            </tr>
+        <tr>
+            <td>root</td>
+            <td>secret</td>
+        </tr>
+        <tr>
+            <td>presidentskroob</td>
+            <td>12345</td>
+        </tr>
+        <tr>
+            <td>darkhelmet</td>
+            <td>ludicrousspeed</td>
+        </tr>
+        <tr>
+            <td>lonestarr</td>
+            <td>vespa</td>
+        </tr>
         </tbody>
     </table>
     <br/><br/>
 </shiro:guest>
 
-<form action="" method="post">
+<form name="loginform" action="" method="post">
     <table align="left" border="0" cellspacing="0" cellpadding="3">
         <tr>
             <td>Username:</td>

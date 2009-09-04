@@ -19,7 +19,6 @@
 package org.apache.shiro.test;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,16 +54,7 @@ public abstract class AbstractContainerTest {
             server.setHandler(handlers);
             server.start();
             assertTrue(server.isStarted());
-
         }
-    }
-
-    @AfterClass
-    public static void stopContainer() throws Exception {
-        // Don't stop the server here, because it causes issues with already initialized
-        // statics - for example with file upload
-        // server.stop();
-        // server = null;
     }
 
     @Before
