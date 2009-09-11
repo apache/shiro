@@ -18,12 +18,7 @@
  */
 package org.apache.shiro.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Static helper class for use dealing with Arrays.
@@ -57,6 +52,24 @@ public class CollectionUtils {
         LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
         return set;
+    }
+
+    /**
+     * @param c
+     * @return
+     * @since 1.0
+     */
+    public static boolean isEmpty(Collection c) {
+        return c == null || c.isEmpty();
+    }
+
+    /**
+     * @param m
+     * @return
+     * @since 1.0
+     */
+    public static boolean isEmpty(Map m) {
+        return m == null || m.isEmpty();
     }
 
     @SuppressWarnings({"unchecked"})

@@ -19,40 +19,16 @@
 package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Configuration;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import org.apache.shiro.web.filter.FilterChainResolver;
 
 /**
- * A <code>WebConfiguration</code> configures Shiro components in a web-enabled application.
+ * A {@code WebConfiguration} configures Shiro components in a web-enabled application.
  * <p/>
- * In addition to enabling configuration of a <code>SecurityManager</code>, as required by the parent interface,
- * it also allows configuration of arbitrary filter chains to be executed for any given request or URI/URL.
- * <p/>
- * This is incredibly powerful and <em>much</em> more flexible than normal servlet filter definitions or Servlet
- * security: it allows arbitrary filter chains to be defined per URL in a much more concise and easy to read manner,
- * and even allows filter chains to be dynamically resolved or construtected at runtime if the underlying implementation
- * supports it.
+ * In addition to enabling configuration of a <code>SecurityManager</code>, as required by the parent
+ * {@link Configuration} interface, it also allows configuration of arbitrary filter chains to be executed for any
+ * given request or URI/URL by sub-interfacing the {@link FilterChainResolver} interface.
  *
- * @author Les Hazlewood
- * @since Jun 1, 2008 11:13:32 PM
+ * @since 0.9
  */
-public interface WebConfiguration extends Configuration {
-
-    /**
-     * Returns the filter chain that should be executed for the given request, or <code>null</code> if the
-     * original chain should be used.
-     *
-     * <p>This method allows a Configuration implementation to define arbitrary security {@link Filter Filter}
-     * chains for any given request or URL pattern.
-     *
-     * @param request       the incoming ServletRequest
-     * @param response      the outgoing ServletResponse
-     * @param originalChain the original <code>FilterChain</code> intercepted by the ShiroFilter.
-     * @return the filter chain that should be executed for the given request, or <code>null</code> if the
-     *         original chain should be used.
-     */
-    FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain);
+public interface WebConfiguration extends Configuration, FilterChainResolver {
 }

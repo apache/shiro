@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.mgt;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.util.LifecycleUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -110,7 +110,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
     protected void applyCacheManagerToRealms() {
         CacheManager cacheManager = getCacheManager();
         Collection<Realm> realms = getRealms();
-        if (realms != null && !realms.isEmpty()) {
+        if (cacheManager != null && realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
                 if (realm instanceof CacheManagerAware) {
                     ((CacheManagerAware) realm).setCacheManager(cacheManager);
