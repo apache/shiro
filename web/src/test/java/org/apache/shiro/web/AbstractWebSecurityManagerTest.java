@@ -39,6 +39,7 @@ public abstract class AbstractWebSecurityManagerTest {
     }
 
     protected Subject newSubject(SecurityManager sm, ServletRequest request, ServletResponse response) {
+        ThreadContext.bind(sm);
         WebUtils.bind(request);
         WebUtils.bind(response);
         WebSubject subject = new WebSubject.Builder(sm, request, response).buildWebSubject();

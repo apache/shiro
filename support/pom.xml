@@ -33,6 +33,7 @@
 
     <modules>
         <module>ehcache</module>
+        <module>groovy</module>
         <module>quartz</module>
         <module>spring</module>
     </modules>

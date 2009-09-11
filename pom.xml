@@ -59,9 +59,10 @@
     <properties>
         <jdk.version>1.5</jdk.version>
         <slf4j.version>1.5.6</slf4j.version>
-        <hsqldbVersion>1.8.0.7</hsqldbVersion>
-        <jettyVersion>6.1.20</jettyVersion>
-        <springframeworkVersion>2.5.6</springframeworkVersion>
+        <hsqldb.version>1.8.0.7</hsqldb.version>
+        <jetty.version>6.1.20</jetty.version>
+        <spring.version>2.5.6</spring.version>
+        <groovy.version>1.6.2</groovy.version>
     </properties>
 
     <modules>
@@ -176,7 +177,7 @@
             <dependency>
                 <groupId>hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>${hsqldbVersion}</version>
+                <version>${hsqldb.version}</version>
                 <scope>runtime</scope>
                 <optional>true</optional>
             </dependency>
@@ -216,6 +217,11 @@
                         <artifactId>jmxri</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>${groovy.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
@@ -302,7 +308,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring</artifactId>
-                <version>${springframeworkVersion}</version>
+                <version>${spring.version}</version>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
@@ -314,7 +320,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>${springframeworkVersion}</version>
+                <version>${spring.version}</version>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
