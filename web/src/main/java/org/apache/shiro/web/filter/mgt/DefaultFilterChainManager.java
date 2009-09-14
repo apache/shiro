@@ -50,9 +50,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
     private FilterConfig filterConfig;
 
-    private Map<String, Filter> filters; //pool of filters available for creating filters
+    private Map<String, Filter> filters; //pool of filters available for creating chains
 
-    private Map<String, NamedFilterList> filterChains; //name to filter chain mapping
+    private Map<String, NamedFilterList> filterChains; //key: chain name, value: chain
 
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
