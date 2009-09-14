@@ -29,20 +29,44 @@ import java.io.IOException;
 
 /**
  * A Filter that requires the request to be on a specific port, and if not, redirects to the same URL on that port.
+ * <p/>
+ * Example config:
+ * <pre>
+ * [filters]
+ * port.port = 80
+ * <p/>
+ * [urls]
+ * /some/path/** = port
+ * # override for just this path:
+ * /another/path/** = port[8080]
+ * </pre>
  *
  * @author Les Hazlewood
  * @since 1.0
  */
 public class PortFilter extends AuthorizationFilter {
 
+    public static final int DEFAULT_HTTP_PORT = 80;
+    public static final String HTTP_SCHEME = "http";
+
+    private int port = DEFAULT_HTTP_PORT;
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     protected int toPort(Object mappedValue) {
         String[] ports = (String[]) mappedValue;
         if (ports == null || ports.length == 0) {
-            throw new ConfigurationException("PortFilter defined, but no port was specified!");
+            return getPort();
         }
         if (ports.length > 1) {
             throw new ConfigurationException("PortFilter can only be configured with a single port.  You have " +
-                "configured " + ports.length + ": " + StringUtils.toString(ports));
+                    "configured " + ports.length + ": " + StringUtils.toString(ports));
         }
         return Integer.parseInt(ports[0]);
     }
@@ -51,6 +75,16 @@ public class PortFilter extends AuthorizationFilter {
         int requiredPort = toPort(mappedValue);
         int requestPort = request.getServerPort();
         return requiredPort == requestPort;
+    }
+
+    protected String getScheme(String requestScheme, int port) {
+        if (port == DEFAULT_HTTP_PORT) {
+            return HTTP_SCHEME;
+        } else if (port == SslFilter.DEFAULT_HTTPS_PORT) {
+            return SslFilter.HTTPS_SCHEME;
+        } else {
+            return requestScheme;
+        }
     }
 
     /**
@@ -67,14 +101,9 @@ public class PortFilter extends AuthorizationFilter {
         //just redirect to the specified port:
         int port = toPort(mappedValue);
 
-        StringBuffer sb = new StringBuffer();
+        String scheme = getScheme(request.getScheme(), port);
 
-        String scheme = request.getScheme();
-        if (port == 80) {
-            scheme = "http";
-        } else if (port == 443) {
-            scheme = "https";
-        }
+        StringBuffer sb = new StringBuffer();
         sb.append(scheme).append("://");
         sb.append(request.getServerName());
         if (port != 80 && port != 443) {
@@ -84,7 +113,7 @@ public class PortFilter extends AuthorizationFilter {
         if (request instanceof HttpServletRequest) {
             sb.append(WebUtils.toHttp(request).getRequestURI());
             String query = WebUtils.toHttp(request).getQueryString();
-            if ( query != null ) {
+            if (query != null) {
                 sb.append("?").append(query);
             }
         }

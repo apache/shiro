@@ -40,7 +40,7 @@ public class ShiroFilterTest {
         mockFilterConfig = createMock(FilterConfig.class);
         mockServletContext = createMock(ServletContext.class);
 
-        expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext);
+        expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
         expect(mockFilterConfig.getInitParameter(ShiroFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
         expect(mockFilterConfig.getInitParameter(ShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
         expect(mockFilterConfig.getInitParameter(ShiroFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null).once();

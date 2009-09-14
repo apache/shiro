@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.filter;
+package org.apache.shiro.web.filter.mgt;
 
-import org.apache.shiro.ShiroException;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Initializable;
-import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
+import static org.apache.shiro.util.StringUtils.split;
+import org.apache.shiro.web.filter.PathConfigProcessor;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
@@ -45,7 +44,7 @@ import java.util.*;
 /**
  * @since 1.0
  */
-public class DefaultFilterChainManager implements FilterChainManager, Initializable {
+public class DefaultFilterChainManager implements FilterChainManager {
 
     private static transient final Logger log = LoggerFactory.getLogger(DefaultFilterChainManager.class);
 
@@ -58,11 +57,14 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
         this.filterChains = new LinkedHashMap<String, NamedFilterList>();
+        addDefaultFilters(false);
     }
 
     public DefaultFilterChainManager(FilterConfig filterConfig) {
-        this();
-        init(filterConfig);
+        this.filters = new LinkedHashMap<String, Filter>();
+        this.filterChains = new LinkedHashMap<String, NamedFilterList>();
+        setFilterConfig(filterConfig);
+        addDefaultFilters(true);
     }
 
     /**
@@ -87,6 +89,7 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
         return filters;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setFilters(Map<String, Filter> filters) {
         this.filters = filters;
     }
@@ -95,20 +98,9 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
         return filterChains;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setFilterChains(Map<String, NamedFilterList> filterChains) {
         this.filterChains = filterChains;
-    }
-
-    public void init() throws ShiroException {
-        if (this.filterConfig == null) {
-            throw new IllegalStateException("filterConfig attribute must be set.");
-        }
-        addDefaultFilters();
-    }
-
-    public void init(FilterConfig filterConfig) throws ShiroException {
-        setFilterConfig(filterConfig);
-        init();
     }
 
     public Filter getFilter(String name) {
@@ -121,6 +113,48 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
 
     public void addFilter(String name, Filter filter, boolean init) {
         addFilter(name, filter, init, true);
+    }
+
+    public void createChain(String chainName, String chainDefinition) {
+        if (!StringUtils.hasText(chainName)) {
+            throw new NullPointerException("chainName cannot be null or empty.");
+        }
+        if (!StringUtils.hasText(chainDefinition)) {
+            throw new NullPointerException("chainDefinition cannot be null or empty.");
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Creating chain [" + chainName + "] from String definition [" + chainDefinition + "]");
+        }
+
+        //parse the value by tokenizing it to get the resulting filter-specific config entries
+        //
+        //e.g. for a value of
+        //
+        //     "authc, roles[admin,user], perms[file:edit]"
+        //
+        // the resulting token array would equal
+        //
+        //     { "authc", "roles[admin,user]", "perms[file:edit]" }
+        //
+        String[] filterTokens = split(chainDefinition, ',', '[', ']', true, true);
+
+        //each token is specific to each filter.
+        //strip the name and extract any filter-specific config between brackets [ ]
+        for (String token : filterTokens) {
+            String[] nameAndConfig = token.split("\\[", 2);
+            String name = nameAndConfig[0];
+            String config = null;
+
+            if (nameAndConfig.length == 2) {
+                config = nameAndConfig[1];
+                //if there was an open bracket, there was a close bracket, so strip it too:
+                config = config.substring(0, config.length() - 1);
+            }
+
+            //now we have the filter name, path and (possibly null) path-specific config.  Let's apply them:
+            addToChain(chainName, name, config);
+        }
     }
 
     protected void addFilter(String name, Filter filter, boolean init, boolean overwrite) {
@@ -137,7 +171,26 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
         addToChain(chainName, filterName, null);
     }
 
+    public void addToChain(String chainName, String filterName, String chainSpecificFilterConfig) {
+        Filter filter = getFilter(filterName);
+        if (filter == null) {
+            throw new IllegalArgumentException("There is no filter with name '" + filterName +
+                    "' to apply to chain [" + chainName + "] in the pool of available Filters.  Ensure a " +
+                    "filter with that name/path has first been registered with the addFilter method(s).");
+        }
+        if (StringUtils.hasText(chainSpecificFilterConfig)) {
+            applyChainConfig(chainName, filter, chainSpecificFilterConfig);
+        }
+
+        NamedFilterList chain = ensureChain(chainName);
+        chain.add(filter);
+    }
+
     protected void applyChainConfig(String chainName, Filter filter, String chainSpecificFilterConfig) {
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to apply path [" + chainName + "] to filter [" + filter + "] " +
+                    "with config [" + chainSpecificFilterConfig + "]");
+        }
         if (filter instanceof PathConfigProcessor) {
             ((PathConfigProcessor) filter).processPathConfig(chainName, chainSpecificFilterConfig);
         } else {
@@ -145,7 +198,7 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
                     "Filter instance is not an 'instanceof' " +
                     PathConfigProcessor.class.getName() + ".  This is required if the filter is to accept " +
                     "chain-specific configuration.";
-            throw new IllegalArgumentException(msg);
+            throw new ConfigurationException(msg);
         }
     }
 
@@ -156,20 +209,6 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
             this.filterChains.put(chainName, chain);
         }
         return chain;
-    }
-
-    public void addToChain(String chainName, String filterName, String chainSpecificFilterConfig) {
-        Filter filter = getFilter(filterName);
-        if (filter == null) {
-            throw new IllegalArgumentException("There is no filter with name '" + filterName +
-                    "' to apply to chain [" + chainName + "]");
-        }
-        if (StringUtils.hasText(chainSpecificFilterConfig)) {
-            applyChainConfig(chainName, filter, chainSpecificFilterConfig);
-        }
-
-        NamedFilterList chain = ensureChain(chainName);
-        chain.add(filter);
     }
 
     public NamedFilterList getChain(String chainName) {
@@ -239,7 +278,7 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
     /**
      * Initializes the filter by calling <code>filter.init( {@link #getFilterConfig() getFilterConfig()} );</code>.
      *
-     * @param filter the filter to initialize with the <code>FilterConfig</code>.
+     * @param filter the filter to initialize with the {@code FilterConfig}.
      */
     protected void initFilter(Filter filter) {
         FilterConfig filterConfig = getFilterConfig();
@@ -254,28 +293,14 @@ public class DefaultFilterChainManager implements FilterChainManager, Initializa
         }
     }
 
-    protected void createFilters() {
-        addDefaultFilters();
-    }
-
-    protected void addFilterIfNecessary(String name, Filter filter) {
-        if (getFilter(name) == null) {
-            //has not been added yet, so add it now:
-            if (filter instanceof Nameable) {
-                ((Nameable) filter).setName(name);
-            }
-            addFilter(name, filter);
-        }
-    }
-
-    protected void addDefaultFilters() {
-        addFilter("anon", new AnonymousFilter(), true, false);
-        addFilter("user", new UserFilter(), true, false);
-        addFilter("authc", new FormAuthenticationFilter(), true, false);
-        addFilter("authcBasic", new BasicHttpAuthenticationFilter(), true, false);
-        addFilter("roles", new RolesAuthorizationFilter(), true, false);
-        addFilter("perms", new PermissionsAuthorizationFilter(), true, false);
-        addFilter("port", new PortFilter(), true, false);
-        addFilter("ssl", new SslFilter(), true, false);
+    protected void addDefaultFilters(boolean init) {
+        addFilter("anon", new AnonymousFilter(), init, false);
+        addFilter("user", new UserFilter(), init, false);
+        addFilter("authc", new FormAuthenticationFilter(), init, false);
+        addFilter("authcBasic", new BasicHttpAuthenticationFilter(), init, false);
+        addFilter("roles", new RolesAuthorizationFilter(), init, false);
+        addFilter("perms", new PermissionsAuthorizationFilter(), init, false);
+        addFilter("port", new PortFilter(), init, false);
+        addFilter("ssl", new SslFilter(), init, false);
     }
 }

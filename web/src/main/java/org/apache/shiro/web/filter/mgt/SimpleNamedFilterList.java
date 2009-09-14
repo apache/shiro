@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.filter;
+package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.ProxiedFilterChain;
@@ -26,6 +26,10 @@ import javax.servlet.FilterChain;
 import java.util.*;
 
 /**
+ * Simple {@code NamedFilterList} implementation that is supported by a backing {@link List} instance and a simple
+ * {@link #getName() name} property. All {@link List} method implementations are immediately delegated to the
+ * wrapped backing list.
+ *
  * @since 1.0
  */
 public class SimpleNamedFilterList implements NamedFilterList {
@@ -33,14 +37,36 @@ public class SimpleNamedFilterList implements NamedFilterList {
     private String name;
     private List<Filter> backingList;
 
+    /**
+     * Creates a new {@code SimpleNamedFilterList} instance with the specified {@code name}, defaulting to a new
+     * {@link ArrayList ArrayList} instance as the backing list.
+     *
+     * @param name the name to assign to this instance.
+     * @throws IllegalArgumentException if {@code name} is null or empty.
+     */
     public SimpleNamedFilterList(String name) {
-        this.backingList = new ArrayList<Filter>();
+        this(name, new ArrayList<Filter>());
+    }
+
+    /**
+     * Creates a new {@code SimpleNamedFilterList} instance with the specified {@code name} and {@code backingList}.
+     *
+     * @param name        the name to assign to this instance.
+     * @param backingList the list instance used to back all of this class's {@link List} method implementations.
+     * @throws IllegalArgumentException if {@code name} is null or empty.
+     * @throws NullPointerException     if the backing list is {@code null}.
+     */
+    public SimpleNamedFilterList(String name, List<Filter> backingList) {
+        if (backingList == null) {
+            throw new NullPointerException("backingList constructor argument cannot be null.");
+        }
+        this.backingList = backingList;
         setName(name);
     }
 
     protected void setName(String name) {
         if (!StringUtils.hasText(name)) {
-            throw new IllegalArgumentException("Cannot specify an empty name.");
+            throw new IllegalArgumentException("Cannot specify a null or empty name.");
         }
         this.name = name;
     }

@@ -19,7 +19,7 @@
 package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Configuration;
-import org.apache.shiro.web.filter.FilterChainResolver;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 
 /**
  * A {@code WebConfiguration} configures Shiro components in a web-enabled application.

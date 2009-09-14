@@ -18,24 +18,23 @@
  */
 package org.apache.shiro.web.filter.authc;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
  * to login via by redirecting them to the {@link #setLoginUrl(String) loginUrl} you configure.
- *
+ * <p/>
  * <p>This filter constructs a {@link UsernamePasswordToken UsernamePasswordToken} with the values found in
  * {@link #setUsernameParam(String) username}, {@link #setPasswordParam(String) password},
  * and {@link #setRememberMeParam(String) rememberMe} request parameters.  It then calls
@@ -44,12 +43,12 @@ import org.apache.shiro.web.WebUtils;
  * {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginSubmission(request,response)}
  * is <code>true</code>, which by default occurs when the request is for the {@link #setLoginUrl(String) loginUrl} and
  * is a POST request.
- *
+ * <p/>
  * <p>If the login attempt fails, the resulting <code>AuthenticationException</code> fully qualified class name will
  * be set as a request attribute under the {@link #setFailureKeyAttribute(String) failureKeyAttribute} key.  This
  * FQCN can be used as an i18n key or lookup mechanism to explain to the user why their login attempt failed
  * (e.g. no account, incorrect password, etc).
- *
+ * <p/>
  * <p>If you would prefer to handle the authentication validation and login in your own code, consider using the
  * {@link PassThruAuthenticationFilter} instead, which allows requests to the
  * {@link #loginUrl} to pass through to your application's code directly.
@@ -79,6 +78,19 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
 
     public FormAuthenticationFilter() {
         setLoginUrl(DEFAULT_LOGIN_URL);
+    }
+
+    @Override
+    public void setLoginUrl(String loginUrl) {
+        String previous = getLoginUrl();
+        if (previous != null) {
+            this.appliedPaths.remove(previous);
+        }
+        super.setLoginUrl(loginUrl);
+        if (log.isTraceEnabled()) {
+            log.trace("Adding login url to applied paths.");
+        }
+        this.appliedPaths.put(getLoginUrl(), null);
     }
 
     public String getUsernameParam() {
@@ -135,14 +147,6 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
         this.failureKeyAttribute = failureKeyAttribute;
     }
 
-    @Override
-    protected void onFilterConfigSet() throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Adding default login url to applied paths.");
-        }
-        this.appliedPaths.put(getLoginUrl(), null);
-    }
-
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {
             if (isLoginSubmission(request, response)) {
@@ -176,6 +180,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
      * @param response the outgoing ServletResponse.
      * @return <code>true</code> if the request is an HTTP <code>POST</code>, <code>false</code> otherwise.
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected boolean isLoginSubmission(ServletRequest request, ServletResponse response) {
         return (request instanceof HttpServletRequest) && WebUtils.toHttp(request).getMethod().equalsIgnoreCase(POST_METHOD);
     }

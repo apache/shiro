@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.filter;
+package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
@@ -30,6 +30,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
+ * A {@code FilterChainResolver} that resolves {@link FilterChain}s based on url path
+ * matching, as determined by a configurable {@link #setPathMatcher(org.apache.shiro.util.PatternMatcher) PathMatcher}.
+ * <p/>
+ * This implementation functions by consulting a {@link org.apache.shiro.web.filter.mgt.FilterChainManager} for all configured filter chains (keyed
+ * by configured path pattern).  If an incoming Request path matches one of the configured path patterns (via
+ * the {@code PathMatcher}, the corresponding configured {@code FilterChain} is returned.
+ *
  * @since 1.0
  */
 public class PathMatchingFilterChainResolver implements FilterChainResolver {
@@ -38,14 +45,15 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
     private FilterChainManager filterChainManager;
 
-    protected PatternMatcher pathMatcher;
+    private PatternMatcher pathMatcher;
 
     public PathMatchingFilterChainResolver() {
         this.pathMatcher = new AntPathMatcher();
+        this.filterChainManager = new DefaultFilterChainManager();
     }
 
     public PathMatchingFilterChainResolver(FilterConfig filterConfig) {
-        this();
+        this.pathMatcher = new AntPathMatcher();
         this.filterChainManager = new DefaultFilterChainManager(filterConfig);
     }
 
@@ -77,6 +85,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
         return filterChainManager;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setFilterChainManager(FilterChainManager filterChainManager) {
         this.filterChainManager = filterChainManager;
     }
@@ -107,13 +116,14 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     }
 
     /**
-     * Returns {@code true} if an incoming request's path (the {@code path} argument)
-     * matches a configured filter chain path in the {@code [urls]} section (the {@code pattern} argument),
-     * {@code false} otherwise.
+     * Returns {@code true} if an incoming request path (the {@code path} argument)
+     * matches a configured filter chain path (the {@code pattern} argument), {@code false} otherwise.
      * <p/>
      * Simply delegates to
-     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>,
-     * but can be overridden by subclasses for custom matching behavior.
+     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
+     * Subclass implementors should think carefully before overriding this method, as typically a custom
+     * {@code PathMatcher} should be configured for custom path matching behavior instead.  Favor OO composition
+     * rather than inheritance to limit your exposure to Shiro implementation details which may change over time.
      *
      * @param pattern the pattern to match against
      * @param path    the value to match with the specified {@code pattern}

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.filter;
+package org.apache.shiro.web.filter.mgt;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
@@ -37,16 +37,16 @@ import javax.servlet.ServletResponse;
 public interface FilterChainResolver {
 
     /**
-     * Returns the filter chain that should be executed for the given request, or <code>null</code> if the
+     * Returns the filter chain that should be executed for the given request, or {@code null} if the
      * original chain should be used.
      * <p/>
-     * <p>This method allows a implementation to define arbitrary security {@link javax.servlet.Filter Filter}
+     * This method allows a implementation to define arbitrary security {@link javax.servlet.Filter Filter}
      * chains for any given request or URL pattern.
      *
      * @param request       the incoming ServletRequest
      * @param response      the outgoing ServletResponse
-     * @param originalChain the original <code>FilterChain</code> intercepted by the ShiroFilter.
-     * @return the filter chain that should be executed for the given request, or <code>null</code> if the
+     * @param originalChain the original {@code FilterChain} intercepted by the ShiroFilter.
+     * @return the filter chain that should be executed for the given request, or {@code null} if the
      *         original chain should be used.
      */
     FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain);
