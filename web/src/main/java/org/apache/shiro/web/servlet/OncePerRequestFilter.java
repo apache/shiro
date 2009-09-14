@@ -241,4 +241,34 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
      */
     public void destroy() {
     }
+
+    /**
+     * It is highly recommended not to override this method directly, and instead override the
+     * {@link #toStringBuilder() toStringBuilder()} method, a better-performing alternative.
+     *
+     * @return the String representation of this instance.
+     */
+    @Override
+    public String toString() {
+        return toStringBuilder().toString();
+    }
+
+    /**
+     * Same concept as {@link #toString() toString()}, but returns a {@link StringBuilder} instance instead.
+     * Overriding subclasses would usually call <code>super.toStringBuilder()</code> and use the returned instance
+     * to append to instead of creating a new StringBuilder.
+     *
+     * @return a StringBuilder instance to use for appending String data that will eventually be returned from a
+     *         {@code toString()} invocation.
+     */
+    protected StringBuilder toStringBuilder() {
+        StringBuilder sb = new StringBuilder();
+        String name = getName();
+        if (name == null) {
+            sb.append(super.toString());
+        } else {
+            sb.append(name);
+        }
+        return sb;
+    }
 }

@@ -18,16 +18,12 @@
  */
 package org.apache.shiro.web.servlet;
 
-import java.io.IOException;
-import java.util.List;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Les Hazlewood
@@ -44,6 +40,9 @@ public class ProxiedFilterChain implements FilterChain {
     private int index = 0;
 
     public ProxiedFilterChain(FilterChain orig, List<Filter> filters) {
+        if (orig == null) {
+            throw new NullPointerException("original FilterChain cannot be null.");
+        }
         this.orig = orig;
         this.filters = filters;
         this.index = 0;

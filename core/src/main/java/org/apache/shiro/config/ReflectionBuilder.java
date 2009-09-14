@@ -61,6 +61,7 @@ public class ReflectionBuilder {
         setObjects(defaults);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public Map getObjects() {
         return objects;
     }
@@ -191,7 +192,7 @@ public class ReflectionBuilder {
         if (o == null) {
             String msg = "The object with id [" + id + "] has not yet been defined and therefore cannot be " +
                     "referenced.  Please ensure objects are defined in the order in which they should be " +
-                    "created and made avaialable for future reference.";
+                    "created and made available for future reference.";
             throw new UnresolveableReferenceException(msg);
         }
         return o;

@@ -19,12 +19,15 @@
 package org.apache.shiro.web.filter.authz;
 
 /**
- * Convenience filter which requires a request to be over SSL.  This filter has the same effect as of using the
- * {@link PortFilter} with configuration defaulting to port {@code 443}.  That is, these two configs are the same:
- *
+ * Filter which requires a request to be over SSL.
+ * <p/> This filter has the same effect as of using the
+ * The {@link #getPort() port} property defaults to {@code 443} and also additionally guarantees that the
+ * request scheme is always 'https' (except for port 80, which retains the 'http' scheme).
+ * <p/>
+ * Example config:
  * <pre>
- * /some/path/** = port[443]
- * /some/path/** = ssl
+ * [urls]
+ * /secure/path/** = ssl
  * </pre>
  *
  * @author Les Hazlewood
@@ -32,14 +35,19 @@ package org.apache.shiro.web.filter.authz;
  */
 public class SslFilter extends PortFilter {
 
-    public static final int DEFAULT_SSL_PORT = 443;
+    public static final int DEFAULT_HTTPS_PORT = 443;
+    public static final String HTTPS_SCHEME = "https";
+
+    public SslFilter() {
+        setPort(DEFAULT_HTTPS_PORT);
+    }
 
     @Override
-    protected int toPort(Object mappedValue) {
-        String[] ports = (String[]) mappedValue;
-        if (ports == null || ports.length == 0) {
-            return DEFAULT_SSL_PORT;
+    protected String getScheme(String requestScheme, int port) {
+        if (port == DEFAULT_HTTP_PORT) {
+            return PortFilter.HTTP_SCHEME;
+        } else {
+            return HTTPS_SCHEME;
         }
-        return super.toPort(mappedValue);
     }
 }

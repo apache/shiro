@@ -75,6 +75,9 @@ public class SpringIniWebConfiguration extends IniWebConfiguration {
 
     protected String securityManagerBeanName;
 
+    public SpringIniWebConfiguration() {
+    }
+
     public String getSecurityManagerBeanName() {
         return securityManagerBeanName;
     }
@@ -83,12 +86,8 @@ public class SpringIniWebConfiguration extends IniWebConfiguration {
         this.securityManagerBeanName = securityManagerBeanName;
     }
 
-    public SpringIniWebConfiguration() {
-    }
-
     @Override
-    public void init() throws ShiroException
-    {
+    public void init() throws ShiroException {
         String beanName = getFilterConfig().getInitParameter(SECURITY_MANAGER_BEAN_NAME_PARAM_NAME);
         if (beanName != null) {
             setSecurityManagerBeanName(beanName);

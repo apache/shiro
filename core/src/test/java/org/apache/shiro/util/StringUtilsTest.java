@@ -98,6 +98,18 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void splitTestWithQuotedCommas() {
+        String line = "authc, test[blah], test[\"1,2,3\"], test[]";
+        String[] split = StringUtils.split(line);
+        assertNotNull(split);
+        assertTrue(split.length == 4);
+        assertEquals("authc", split[0]);
+        assertEquals("test[blah]", split[1]);
+        assertEquals("test[1,2,3]", split[2]);
+        assertEquals("test[]", split[3]);
+    }
+
+    @Test
     public void splitWithQuotedCommasAndSpacesAndEscapedQuotes() {
         String line = "shall, \"\"\"we, play\", a, \"\"\"game?";
         String[] split = StringUtils.split(line);

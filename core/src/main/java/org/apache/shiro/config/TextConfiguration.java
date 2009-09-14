@@ -18,17 +18,16 @@
  */
 package org.apache.shiro.config;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.Scanner;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.io.ResourceException;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.Initializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Scanner;
 
 
 /**
@@ -50,6 +49,7 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
         return config;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setConfig(String config) {
         this.config = config;
     }
@@ -74,8 +74,7 @@ public abstract class TextConfiguration extends ResourceConfiguration implements
         }
     }
 
-    public void init() throws ShiroException
-    {
+    public void init() throws ShiroException {
         SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
             String config = getConfig();
