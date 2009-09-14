@@ -20,6 +20,7 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
 import static org.apache.shiro.util.StringUtils.split;
 import org.apache.shiro.web.filter.PathConfigProcessor;
@@ -160,6 +161,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
     protected void addFilter(String name, Filter filter, boolean init, boolean overwrite) {
         Filter existing = getFilter(name);
         if (existing == null || overwrite) {
+            if (filter instanceof Nameable) {
+                ((Nameable) filter).setName(name);
+            }
             if (init) {
                 initFilter(filter);
             }
