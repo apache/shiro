@@ -18,22 +18,21 @@
  */
 package org.apache.shiro.spring.remoting;
 
-import java.io.Serializable;
-import java.net.InetAddress;
-
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.subject.Subject;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.Map;
 
 
 /**
@@ -75,9 +74,9 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         if (SessionManager.class.equals(mi.getMethod().getDeclaringClass())) {
             sessionManagerMethodInvocation = true;
             //for SessionManager calls, all method calls require the session id as the first argument, with
-            //the exception of 'start' that takes in an InetAddress.  So, ignore that one case:
+            //the exception of 'start' that takes in an InetAddress or a Map.  So, ignore those two cases:
             Object firstArg = mi.getArguments()[0];
-            if (!(firstArg instanceof InetAddress)) {
+            if (!(firstArg instanceof InetAddress || firstArg instanceof Map)) {
                 sessionId = (Serializable) firstArg;
             }
         }
@@ -87,7 +86,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
             Subject subject = SecurityUtils.getSubject();
             Session session = subject.getSession(false);
             if (session != null) {
-                inet = session.getHostAddress();                
+                inet = session.getHostAddress();
                 sessionId = session.getId();
             }
         }
@@ -97,16 +96,16 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         if (sessionId == null) {
             if (log.isTraceEnabled()) {
                 log.trace("No Session found for the currently executing subject via subject.getSession(false).  " +
-                    "Attempting to revert back to the 'shiro.session.id' system property...");
+                        "Attempting to revert back to the 'shiro.session.id' system property...");
             }
             sessionId = System.getProperty(SESSION_ID_SYSTEM_PROPERTY_NAME);
             if (sessionId == null && log.isTraceEnabled()) {
                 log.trace("No 'shiro.session.id' system property found.  Heuristics have been exhausted; " +
-                    "RemoteInvocation will not contain a sessionId.");
+                        "RemoteInvocation will not contain a sessionId.");
             }
         }
 
-        if ( inet == null ) {
+        if (inet == null) {
             //try thread context:
             inet = ThreadContext.getInetAddress();
         }
@@ -115,7 +114,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         if (sessionId != null) {
             ri.addAttribute(SESSION_ID_KEY, sessionId);
         }
-        if ( inet != null ) {
+        if (inet != null) {
             ri.addAttribute(INET_ADDRESS_KEY, inet);
         }
 

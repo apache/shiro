@@ -42,24 +42,24 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * Implementation of the <tt>Subject</tt> interface that delegates
+ * Implementation of the {@code Subject} interface that delegates
  * method calls to an underlying {@link org.apache.shiro.mgt.SecurityManager SecurityManager} instance for security checks.
- * It is essentially a <tt>SecurityManager</tt> proxy.
+ * It is essentially a {@code SecurityManager} proxy.
  * <p/>
- * This implementation does not maintain state such as roles and permissions (only <code>Subject</code>
+ * This implementation does not maintain state such as roles and permissions (only {@code Subject}
  * {@link #getPrincipals() principals}, such as usernames or user primary keys) for better performance in a stateless
- * architecture.  It instead asks the underlying <tt>SecurityManager</tt> every time to perform
+ * architecture.  It instead asks the underlying {@code SecurityManager} every time to perform
  * the authorization check.
  * <p/>
  * A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
- * up to the implementation of the underlying <tt>SecurityManager</tt> instance.  If caching of authorization
+ * up to the implementation of the underlying {@code SecurityManager} instance.  If caching of authorization
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
- * much more elegant to let the underlying <tt>SecurityManager</tt> implementation or its delegate components
- * manage caching, not this class.  A <tt>SecurityManager</tt> is considered a business-tier component,
+ * much more elegant to let the underlying {@code SecurityManager} implementation or its delegate components
+ * manage caching, not this class.  A {@code SecurityManager} is considered a business-tier component,
  * where caching strategies are better suited.
  * <p/>
- * Applications from large and clustered to simple and vm local all benefit from
+ * Applications from large and clustered to simple and JVM-local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.
  *
@@ -121,8 +121,8 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     protected boolean hasPrincipals() {
-        PrincipalCollection pc = getPrincipals();
-        return pc != null && !pc.isEmpty();
+        PrincipalCollection principals = getPrincipals();
+        return principals != null && !principals.isEmpty();
     }
 
     /**
@@ -183,7 +183,7 @@ public class DelegatingSubject implements Subject, Serializable {
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
         if (!hasPrincipals()) {
-            String msg = "This subject is anonymous - it does not have any identifying principals associated, and " +
+            String msg = "This subject is anonymous - it does not have any identifying principals and " +
                     "authorization operations require an identity to check against.  A Subject instance will " +
                     "acquire these identifying principals automatically after a successful login is performed " +
                     "be executing " + Subject.class.getName() + ".login(AuthenticationToken) or when 'Remember Me' " +
@@ -260,9 +260,9 @@ public class DelegatingSubject implements Subject, Serializable {
         }
         this.authenticated = true;
         if (token instanceof InetAuthenticationToken) {
-            InetAddress addy = ((InetAuthenticationToken) token).getInetAddress();
-            if (addy != null) {
-                this.inetAddress = addy;
+            InetAddress inetAddress = ((InetAuthenticationToken) token).getInetAddress();
+            if (inetAddress != null) {
+                this.inetAddress = inetAddress;
             }
         }
         ThreadContext.bind(this);
@@ -302,14 +302,12 @@ public class DelegatingSubject implements Subject, Serializable {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
+            this.inetAddress = null;
             //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is
             //necessary if the subject would log in again or acquire a new session.  This is in response to
             //https://issues.apache.org/jira/browse/JSEC-22
             //this.securityManager = null;
-
-            //also keep the inetAddress to retain their location:
-            //this.inetAddress = null;
         }
     }
 
@@ -330,6 +328,20 @@ public class DelegatingSubject implements Subject, Serializable {
             super.stop();
             owner.sessionStopped();
         }
+    }
+
+    public <V> V execute(Callable<V> callable) throws ExecutionException {
+        Callable<V> associated = associateWith(callable);
+        try {
+            return associated.call();
+        } catch (Throwable t) {
+            throw new ExecutionException(t);
+        }
+    }
+
+    public void execute(Runnable runnable) {
+        Runnable associated = associateWith(runnable);
+        associated.run();
     }
 
     public <V> Callable<V> associateWith(Callable<V> callable) {

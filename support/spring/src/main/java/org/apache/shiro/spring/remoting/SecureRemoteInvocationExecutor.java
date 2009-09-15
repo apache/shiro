@@ -18,10 +18,10 @@
  */
 package org.apache.shiro.spring.remoting;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.mgt.SubjectFactory;
+import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.SubjectThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -30,8 +30,7 @@ import org.springframework.remoting.support.RemoteInvocation;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.Callable;
 
 
 /**
@@ -79,20 +78,23 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     |               M E T H O D S               |
     ============================================*/
     @SuppressWarnings({"unchecked"})
-    public Object invoke(RemoteInvocation invocation, Object targetObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
-        SubjectThreadState subjectThreadState = null;
+    public Object invoke(final RemoteInvocation invocation, final Object targetObject)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         try {
-            Map context = new HashMap();
+            SecurityManager securityManager =
+                    this.securityManager != null ? this.securityManager : SecurityUtils.getSecurityManager();
+
+            Subject.Builder builder = new Subject.Builder(securityManager);
+
             InetAddress inet = (InetAddress) invocation.getAttribute(SecureRemoteInvocationFactory.INET_ADDRESS_KEY);
             if (inet != null) {
-                context.put(SubjectFactory.INET_ADDRESS, inet);
+                builder.inetAddress(inet);
             }
 
             Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);
             if (sessionId != null) {
-                context.put(SubjectFactory.SESSION_ID, sessionId);
+                builder.sessionId(sessionId);
             } else {
                 if (log.isTraceEnabled()) {
                     log.trace("RemoteInvocation did not contain a Shiro Session id attribute under " +
@@ -101,23 +103,25 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 }
             }
 
-            Subject subject = securityManager.createSubject(context);
-            subjectThreadState = new SubjectThreadState(subject);
-            subjectThreadState.bind();
-
-            return super.invoke(invocation, targetObject);
-        } catch (NoSuchMethodException nsme) {
-            throw nsme;
-        } catch (IllegalAccessException iae) {
-            throw iae;
-        } catch (InvocationTargetException ite) {
-            throw ite;
+            Subject subject = builder.buildSubject();
+            return subject.execute(new Callable() {
+                public Object call() throws Exception {
+                    return SecureRemoteInvocationExecutor.super.invoke(invocation, targetObject);
+                }
+            });
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof NoSuchMethodException) {
+                throw (NoSuchMethodException) cause;
+            } else if (cause instanceof IllegalAccessException) {
+                throw (IllegalAccessException) cause;
+            } else if (cause instanceof InvocationTargetException) {
+                throw (InvocationTargetException) cause;
+            } else {
+                throw new InvocationTargetException(cause);
+            }
         } catch (Throwable t) {
             throw new InvocationTargetException(t);
-        } finally {
-            if (subjectThreadState != null) {
-                subjectThreadState.clear();
-            }
         }
     }
 }

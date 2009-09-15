@@ -352,21 +352,23 @@ public interface Subject {
      * <em>NOT</em> considered authenticated.  A check against {@link #isAuthenticated() isAuthenticated()} is a more
      * strict check than that reflected by this method.  For example, a check to see if a subject can access financial
      * information should probably depend on {@link #isAuthenticated() isAuthenticated()} to <em>guarantee</em> a
-     * proven identity, and not this method.
+     * verified identity, and not this method.
      * <p/>
-     * Once the subject is authenticated, they are no longer considered remembered because identity would have been
-     * proven during the current session.
+     * Once the subject is authenticated, they are no longer considered remembered because their identity would have
+     * been verified during the current session.
      * <h4>Remembered vs Authenticated</h4>
      * Authentication is the process of <em>proving</em> you are who you say you are.  When a user is only remembered,
-     * the remenbered identity gives the system an idea who that user probably is, but in reality, has no way of
+     * the remembered identity gives the system an idea who that user probably is, but in reality, has no way of
      * absolutely <em>guaranteeing</em> if the remembered {@code Subject} represents the user currently
      * using the application.
      * <p/>
      * So although many parts of the application can still perform user-specific logic based on the remembered
      * {@link #getPrincipals() principals}, such as customized views, it should never perform highly-sensitive
-     * operations until the user has legitimately proven their identity by executing a successful authentication attempt.
+     * operations until the user has legitimately verified their identity by executing a successful authentication
+     * attempt.
      * <p/>
-     * We see this paradigm all over the web, and we'll use <a href="http://www.amazon.com">Amazon.com</a> as an example:
+     * We see this paradigm all over the web, and we will use <a href="http://www.amazon.com">Amazon.com</a> as an
+     * example:
      * <p/>
      * When you visit Amazon.com and perform a login and ask it to 'remember me', it will set a cookie with your
      * identity.  If you don't log out and your session expires, and you come back, say the next day, Amazon still knows
@@ -420,6 +422,33 @@ public interface Subject {
      * considered 'anonymous' and may continue to be used for another log-in if desired.
      */
     void logout();
+
+    /**
+     * Associates the specified {@code Runnable} with this {@code Subject} instance and then executes it on the
+     * currently running thread.  If you want to execute the {@code Callable} on a different thread, it is better to
+     * use the {@link #associateWith(Callable)} method instead.
+     *
+     * @param callable the Callable to associate with this subject and then execute.
+     * @param <V>      the type of return value the {@code Callable} will return
+     * @return the resulting object returned by the {@code Callable}'s execution.
+     * @throws ExecutionException if the {@code Callable}'s {@link Callable#call call} method throws an exception.
+     * @since 1.0
+     */
+    <V> V execute(Callable<V> callable) throws ExecutionException;
+
+    /**
+     * Associates the specified {@code Runnable} with this {@code Subject} instance and then executes it on the
+     * currently running thread.  If you want to execute the {@code Runnable} on a different thread, it is better to
+     * use the {@link #associateWith(Runnable)} method instead.
+     * <p/>
+     * <b>Note</b>: This method is primarily provided to execute existing/legacy Runnable implementations.  It is better
+     * for new code to use {@link #execute(Callable)} since that supports the ability to return values and catch
+     * exceptions.
+     *
+     * @param runnable the {@code Runnable} to associate with this {@code Subject} and then execute.
+     * @since 1.0
+     */
+    void execute(Runnable runnable);
 
     /**
      * Returns a {@code Callable} instance matching the given argument while additionally ensuring that it will
@@ -553,7 +582,7 @@ public interface Subject {
          * <p/>
          * The ability to reference a {@code Subject} and their server-side session
          * <em>across clients of different mediums</em> such as web applications, Java applets,
-         * standalone C# clients over XMLRPC and/or SOAP, and many others. This is a <em>huge</em>
+         * standalone C# clients over XML-RPC and/or SOAP, and many others. This is a <em>huge</em>
          * benefit in heterogeneous enterprise applications.
          * <p/>
          * To maintain session integrity across client mediums, the {@code sessionId} <b>must</b> be transmitted
@@ -603,8 +632,9 @@ public interface Subject {
          * <p/>
          * For example, if your application's unique identifier for users is a {@code String} username, and you wanted
          * to create a {@code Subject} instance that reflected a user whose username is
-         * 'jsmith', and you knew the Realm that could acquire {@code jsmith}'s principals based on the username was
-         * named &quot;{@code myRealm}&quot;, you might create the '{@code jsmith} {@code Subject} instance this way:
+         * '{@code jsmith}', and you knew the Realm that could acquire {@code jsmith}'s principals based on the username
+         * was named &quot;{@code myRealm}&quot;, you might create the '{@code jsmith} {@code Subject} instance this
+         * way:
          * <pre>
          * PrincipalCollection identity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
          * Subject jsmith = new Subject.Builder().principals(identity).buildSubject();</pre>
@@ -631,8 +661,8 @@ public interface Subject {
         /**
          * Ensures the {@code Subject} being built will be considered
          * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated}.  Per the
-         * {@link org.apache.shiro.subject.Subject#isAuthenticated() isAuthenticated()} JavaDoc, be extremely wary
-         * when specifying {@code true} - you should know what you're doing and have a good reason for ignoring Shiro's
+         * {@link org.apache.shiro.subject.Subject#isAuthenticated() isAuthenticated()} JavaDoc, be careful
+         * when specifying {@code true} - you should know what you are doing and have a good reason for ignoring Shiro's
          * default authentication state mechanisms.
          *
          * @param authenticated whether or not the built {@code Subject} will be considered authenticated.
