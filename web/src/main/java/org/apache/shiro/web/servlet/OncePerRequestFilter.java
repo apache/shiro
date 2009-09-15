@@ -176,16 +176,12 @@ public abstract class OncePerRequestFilter extends ServletContextSupport impleme
 
         String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
         if (request.getAttribute(alreadyFilteredAttributeName) != null || shouldNotFilter(request)) {
-            if (log.isTraceEnabled()) {
-                log.trace("Filter already executed.  Proceeding without invoking this filter.");
-            }
+            log.trace("Filter '{}' already executed.  Proceeding without invoking this filter.", getName());
             // Proceed without invoking this filter...
             filterChain.doFilter(request, response);
         } else {
             // Do invoke this filter...
-            if (log.isTraceEnabled()) {
-                log.trace("Filter not yet executed.  Executing now.");
-            }
+            log.trace("Filter '{}' not yet executed.  Executing now.", getName());
             request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);
             doFilterInternal(request, response, filterChain);
         }
