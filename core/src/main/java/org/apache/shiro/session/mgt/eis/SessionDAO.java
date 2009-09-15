@@ -33,7 +33,7 @@ import java.util.Collection;
  * <p/>
  * The remaining {@link #getActiveSessions()} method exists as a support mechanism to pre-emptively orphaned sessions,
  * typically by {@link org.apache.shiro.session.mgt.ValidatingSessionManager ValidatingSessionManager}s), and should
- * be as performant as possible, especially if there are thousands of active sessions.  Large scale/high performance
+ * be as efficient as possible, especially if there are thousands of active sessions.  Large scale/high performance
  * implementations will often return a subset of the total active sessions and perform validation a little more
  * frequently, rather than return a massive set and infrequently validate.
  *
@@ -49,33 +49,33 @@ public interface SessionDAO {
      * After this method is invoked, the {@link org.apache.shiro.session.Session#getId()}
      * method executed on the argument must return a valid session identifier.  That is, the following should
      * always be true:
-     * <p/>
-     * <code>Serializable id = create( session );<br/>
-     * id.equals( session.getId() ) == true</code>
+     * <pre>
+     * Serializable id = create( session );
+     * id.equals( session.getId() ) == true</pre>
      * <p/>
      * Implementations are free to throw any exceptions that might occur due to
      * integrity violation constraints or other EIS related errors.
      *
      * @param session the {@link org.apache.shiro.session.Session} object to create in the EIS.
-     * @return the EIS id (e.g. primary key) of the created <tt>Session</tt> object.
+     * @return the EIS id (e.g. primary key) of the created {@code Session} object.
      */
     Serializable create(Session session);
 
     /**
      * Retrieves the session from the EIS uniquely identified by the specified
-     * <tt>sessionId</tt>.
+     * {@code sessionId}.
      *
      * @param sessionId the system-wide unique identifier of the Session object to retrieve from
      *                  the EIS.
-     * @return the persisted session in the EIS identified by <tt>sessionId</tt>.
+     * @return the persisted session in the EIS identified by {@code sessionId}.
      * @throws UnknownSessionException if there is no EIS record for any session with the
-     *                                 specified <tt>sessionId</tt>
+     *                                 specified {@code sessionId}
      */
     Session readSession(Serializable sessionId) throws UnknownSessionException;
 
     /**
      * Updates (persists) data from a previously created Session instance in the EIS identified by
-     * <tt>{@link Session#getId() session.getId()}</tt>.  This effectively propagates
+     * {@code {@link Session#getId() session.getId()}}.  This effectively propagates
      * the data in the argument to the EIS record previously saved.
      * <p/>
      * In addition to UnknownSessionException, implementations are free to throw any other
@@ -90,7 +90,7 @@ public interface SessionDAO {
     void update(Session session) throws UnknownSessionException;
 
     /**
-     * Deletes the associated EIS record of the specified <tt>session</tt>.  If there never
+     * Deletes the associated EIS record of the specified {@code session}.  If there never
      * existed a session EIS record with the identifier of
      * {@link Session#getId() session.getId()}, then this method does nothing.
      *
@@ -104,10 +104,10 @@ public interface SessionDAO {
      * <p/>
      * If there are no active sessions in the EIS, this method may return an empty collection or {@code null}.
      * <h4>Performance</h4>
-     * This method should be as performant as possible, especially in larger systems where there might be
+     * This method should be as efficient as possible, especially in larger systems where there might be
      * thousands of active sessions.  Large scale/high performance
      * implementations will often return a subset of the total active sessions and perform validation a little more
-     * frequently, rather than return a massive set and validate infrequently.  If performant and possible, it would
+     * frequently, rather than return a massive set and validate infrequently.  If efficient and possible, it would
      * make sense to return the oldest unstopped sessions available, ordered by
      * {@link org.apache.shiro.session.Session#getLastAccessTime() lastAccessTime}.
      * <h4>Smart Results</h4>
@@ -115,17 +115,17 @@ public interface SessionDAO {
      * Typically that is any session that is not stopped and where its lastAccessTimestamp is older than the session
      * timeout.
      * <p/>
-     * For example, if sessions were backed by a relational database or SQL-92 'queryable' enterprise cache, you might
+     * For example, if sessions were backed by a relational database or SQL-92 'query-able' enterprise cache, you might
      * return something similar to the results returned by this query (assuming
      * {@link org.apache.shiro.session.mgt.SimpleSession SimpleSession}s were being stored):
      * <pre>
      * select * from sessions s where s.lastAccessTimestamp < ? and s.stopTimestamp is null
      * </pre>
-     * where the <code>?</code> parameter is a date instance equal to 'now' minus the session timeout
+     * where the {@code ?} parameter is a date instance equal to 'now' minus the session timeout
      * (e.g. now - 30 minutes).
      *
-     * @return a Collection of <tt>Session</tt>s that are considered active, or an
-     *         empty collection or <tt>null</tt> if there are no active sessions.
+     * @return a Collection of {@code Session}s that are considered active, or an
+     *         empty collection or {@code null} if there are no active sessions.
      */
     Collection<Session> getActiveSessions();
 }
