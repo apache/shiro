@@ -34,7 +34,7 @@ import java.util.*;
 
 
 /**
- * An <tt>AuthorizingRealm</tt> extends the <tt>AuthenticatingRealm</tt>'s capabilities by adding Authorization
+ * An {@code AuthorizingRealm} extends the {@code AuthenticatingRealm}'s capabilities by adding Authorization
  * (access control) support.
  * <p/>
  * This implementation will perform all role and permission checks automatically (and subclasses do not have to
@@ -64,9 +64,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     private static final Logger log = LoggerFactory.getLogger(AuthorizingRealm.class);
 
     /**
-     * The default postfix appended to the realm name for caching AuthorizationInfos.
+     * The default suffix appended to the realm name for caching AuthorizationInfo instances.
      */
-    private static final String DEFAULT_AUTHORIZATION_CACHE_POSTFIX = "-authorization";
+    private static final String DEFAULT_AUTHORIZATION_CACHE_SUFFIX = "-authorization";
 
     private static int INSTANCE_COUNT = 0;
 
@@ -74,7 +74,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
-     * The cache used by this realm to store AuthorizationInfos associated with individual Subject principals.
+     * The cache used by this realm to store AuthorizationInfo instances associated with individual Subject principals.
      */
     private Cache authorizationCache = null;
     private String authorizationCacheName = null;
@@ -140,15 +140,15 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * <li>If the {@link #setAuthorizationCache cache} property has been set, it will be
      * used to cache the AuthorizationInfo objects returned from {@link #getAuthorizationInfo}
      * method invocations.
-     * All future calls to <tt>getAuthorizationInfo</tt> will attempt to use this cache first
+     * All future calls to {@code getAuthorizationInfo} will attempt to use this cache first
      * to alleviate any potentially unnecessary calls to an underlying data store.</li>
      * <li>If the {@link #setAuthorizationCache cache} property has <b>not</b> been set,
      * the {@link #setCacheManager cacheManager} property will be checked.
-     * If a <tt>cacheManager</tt> has been set, it will be used to create an authorization
-     * <tt>cache</tt>, and this newly created cache which will be used as specified in #1.</li>
+     * If a {@code cacheManager} has been set, it will be used to create an authorization
+     * {@code cache}, and this newly created cache which will be used as specified in #1.</li>
      * <li>If neither the {@link #setAuthorizationCache (org.apache.shiro.cache.Cache) cache}
      * or {@link #setCacheManager(org.apache.shiro.cache.CacheManager) cacheManager}
-     * properties are set, caching will be disabled and authorization lookups will be delegated to
+     * properties are set, caching will be disabled and authorization look-ups will be delegated to
      * subclass implementations for each authorization check.</li>
      * </ol>
      */
@@ -183,7 +183,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 String cacheName = getAuthorizationCacheName();
                 if (cacheName == null) {
                     //Simple default in case they didn't provide one:
-                    cacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_AUTHORIZATION_CACHE_POSTFIX;
+                    cacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
                     setAuthorizationCacheName(cacheName);
                 }
                 if (log.isDebugEnabled()) {
@@ -203,12 +203,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
 
     /**
-     * Returns an account's authorization-specific information for the specified <code>principals</code>,
-     * or <tt>null</tt> if no account could be found.  The resulting <code>AuthorizationInfo</code> object is used
+     * Returns an account's authorization-specific information for the specified {@code principals},
+     * or {@code null} if no account could be found.  The resulting {@code AuthorizationInfo} object is used
      * by the other method implementations in this class to automatically perform access control checks for the
-     * corresponding <code>Subject</code>.
+     * corresponding {@code Subject}.
      * <p/>
-     * This implementation obtains the actual <code>AuthorizationInfo</code> object from the subclass's
+     * This implementation obtains the actual {@code AuthorizationInfo} object from the subclass's
      * implementation of
      * {@link #doGetAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection) doGetAuthorizationInfo}, and then
      * caches it for efficient reuse if caching is enabled (see below).
@@ -222,29 +222,30 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * But because their identity would be remembered, that is sufficient enough information to call this method to
      * execute any necessary authorization checks.  For this reason, authentication and authorization should be
      * loosely coupled and not depend on each other.
-     * <h4>Caching</h4>
-     * The <code>AuthorizationInfo</code> values returned from this method are cached for performant reuse
-     * if caching is enabled.  Caching is enabled automatically when a <code>CacheManager</code> has been
-     * {@link #setCacheManager injected} and then the realm is {@link #init initialized}.  It can also be enabled by explictly
-     * calling {@link #initAuthorizationCache() initAuthorizationCache()}.
+     * <h3>Caching</h3>
+     * The {@code AuthorizationInfo} values returned from this method are cached for efficient reuse
+     * if caching is enabled.  Caching is enabled automatically when a {@code CacheManager} has been
+     * {@link #setCacheManager injected} and then the realm is {@link #init initialized}.  It can also be enabled by
+     * explicitly calling {@link #initAuthorizationCache() initAuthorizationCache()}.
      * <p/>
      * If caching is enabled, the authorization cache will be checked first and if found, will return the cached
-     * <code>AuthorizationInfo</code> immediately.  If caching is disabled, or there is a cache miss from the cache
-     * lookup, the authorization info will be looked up from the underlying data store via the
-     * {@link #doGetAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection)} method, which must be implemented by subclasses.
-     * <p/>
-     * <b>Please note:</b>  If caching is enabled and if any authorization data for an account is changed at
-     * runtime, such as adding or removing roles and/or permissions, the subclass imlementation should clear the
+     * {@code AuthorizationInfo} immediately.  If caching is disabled, or there is a cache miss, the authorization
+     * info will be looked up from the underlying data store via the
+     * {@link #doGetAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection)} method, which must be implemented
+     * by subclasses.
+     * <h4>Changed Data</h4>
+     * If caching is enabled and if any authorization data for an account is changed at
+     * runtime, such as adding or removing roles and/or permissions, the subclass implementation should clear the
      * cached AuthorizationInfo for that account via the
      * {@link #clearCachedAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection) clearCachedAuthorizationInfo}
-     * method.  This ensures that the next call to <code>getAuthorizationInfo(PrincipalCollection)</code> will
+     * method.  This ensures that the next call to {@code getAuthorizationInfo(PrincipalCollection)} will
      * acquire the account's fresh authorization data, where it will then be cached for efficient reuse.  This
      * ensures that stale authorization data will not be reused.
      *
      * @param principals the corresponding Subject's identifying principals with which to look up the Subject's
-     *                   <code>AuthorizationInfo</code>.
-     * @return the authorization information for the account associated with the specified <code>principals</code>,
-     *         or <tt>null</tt> if no account could be found.
+     *                   {@code AuthorizationInfo}.
+     * @return the authorization information for the account associated with the specified {@code principals},
+     *         or {@code null} if no account could be found.
      */
     protected AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
@@ -258,13 +259,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
             log.trace("Retrieving AuthorizationInfo for principals [" + principals + "]");
         }
 
-        Cache authzCache = getAuthorizationCache();
-        if (authzCache != null) {
+        Cache cache = getAuthorizationCache();
+        if (cache != null) {
             if (log.isTraceEnabled()) {
                 log.trace("Attempting to retrieve the AuthorizationInfo from cache.");
             }
             Object key = getAuthorizationCacheKey(principals);
-            info = (AuthorizationInfo) authzCache.get(key);
+            info = (AuthorizationInfo) cache.get(key);
             if (log.isTraceEnabled()) {
                 if (info == null) {
                     log.trace("No AuthorizationInfo found in cache for principals [" + principals + "]");
@@ -276,15 +277,15 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
 
         if (info == null) {
-            // Call template method if tbe info was not found in a cache
+            // Call template method if the info was not found in a cache
             info = doGetAuthorizationInfo(principals);
             // If the info is not null and the cache has been created, then cache the authorization info.
-            if (info != null && authzCache != null) {
+            if (info != null && cache != null) {
                 if (log.isTraceEnabled()) {
                     log.trace("Caching authorization info for principals: [" + principals + "].");
                 }
                 Object key = getAuthorizationCacheKey(principals);
-                authzCache.put(key, info);
+                cache.put(key, info);
             }
         }
 
@@ -369,7 +370,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     private boolean isPermitted(Permission permission, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             return ((AuthorizingAccount) info).isPermitted(permission);
         }
@@ -400,7 +401,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected boolean[] isPermitted(List<Permission> permissions, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             return ((AuthorizingAccount) info).isPermitted(permissions);
         }
@@ -437,7 +438,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected boolean isPermittedAll(Collection<Permission> permissions, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             return ((AuthorizingAccount) info).isPermittedAll(permissions);
         }
@@ -464,7 +465,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected void checkPermission(Permission permission, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             ((AuthorizingAccount) info).checkPermission(permission);
         } else {
@@ -490,7 +491,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected void checkPermissions(Collection<Permission> permissions, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             ((AuthorizingAccount) info).checkPermissions(permissions);
         } else {
@@ -509,7 +510,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected boolean hasRole(String roleIdentifier, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             return ((AuthorizingAccount) info).hasRole(roleIdentifier);
         }
@@ -527,7 +528,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected boolean[] hasRoles(List<String> roleIdentifiers, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             return ((AuthorizingAccount) info).hasRoles(roleIdentifiers);
         }
@@ -553,7 +554,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     private boolean hasAllRoles(Collection<String> roleIdentifiers, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             return ((AuthorizingAccount) info).hasAllRoles(roleIdentifiers);
         }
@@ -575,7 +576,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected void checkRole(String role, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             ((AuthorizingAccount) info).checkRole(role);
         } else {
@@ -593,7 +594,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     @SuppressWarnings("deprecation")
     protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {
-        //todo Remove this once AuthorizingAccount class is deleted
+        //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {
             ((AuthorizingAccount) info).checkRoles(roles);
         } else {
@@ -607,7 +608,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     /**
      * If authorization caching is enabled, this will remove the AuthorizationInfo from the cache.
-     * Subclasses are free to override for additional behavior, but be sure to call <tt>super.onLogout</tt>
+     * Subclasses are free to override for additional behavior, but be sure to call {@code super.onLogout}
      * to ensure cache cleanup.
      *
      * @param principals the application-specific Subject/user identifier.
@@ -619,18 +620,18 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /**
      * A utility method for subclasses that returns the first available principal of interest to this particular realm.
      * The heuristic used to acquire the principal is as follows:
-     * <p/>
      * <ul>
      * <li>Attempt to get <em>this particular Realm's</em> 'primary' principal in the {@code PrincipalCollection} via a
-     * <code>principals.{@link PrincipalCollection#fromRealm(String) fromRealm}( {@link #getName() getName()} )</code>
+     * <code>principals.{@link PrincipalCollection#fromRealm(String) fromRealm}({@link #getName() getName()})</code>
      * call.</li>
      * <li>If the previous call does not result in any principals, attempt to get the overall 'primary' principal
      * from the PrincipalCollection via a <code>principals.{@link PrincipalCollection#asList() asList()}.iterator().next()</code>
      * call.</li>
      * <li>If there are no principals from that call (or the PrincipalCollection argument was null to begin with),
      * return {@code null}</li>
+     * </ul>
      *
-     * @param principals the PrincipalCollection holding all principals (from all realms) assocatied with a single Subject.
+     * @param principals the PrincipalCollection holding all principals (from all realms) associated with a single Subject.
      * @return the 'primary' principal attributed to this particular realm, or the fallback 'master' principal if it
      *         exists, or if not {@code null}.
      * @since 1.0
