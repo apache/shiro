@@ -116,7 +116,7 @@ public interface FilterChainManager {
      * The {@code chainDefinition} method argument is expected to conform to the following format:
      * <pre>
      * filter1[optional_config1], filter2[optional_config2], ..., filterN[optional_configN]</pre>
-     * Where
+     * where
      * <ol>
      * <li>{@code filterN} is the name of a filter previously
      * {@link #addFilter(String, javax.servlet.Filter) registered} with the manager, and</li>
@@ -131,7 +131,7 @@ public interface FilterChainManager {
      * <h3>Examples</h3>
      * <pre>/account/** = authcBasic</pre>
      * This example says &quot;Create a filter named '{@code /account/**}' consisting of only the '{@code authcBasic}'
-     * filter.&quot;.  Also because the {@code authcBasic} filter does not need any path-specific
+     * filter&quot;.  Also because the {@code authcBasic} filter does not need any path-specific
      * config, it doesn't have any config brackets {@code []}.
      * <p/>
      * <pre>/remoting/** = authcBasic, roles[b2bClient], perms[&quot;remote:invoke:wan,lan&quot;]</pre>

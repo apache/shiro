@@ -28,7 +28,7 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
- * A Servlet Filter that enables AOP-style &quot;around&quot; advice for a SerlvetRequest via
+ * A Servlet Filter that enables AOP-style &quot;around&quot; advice for a ServletRequest via
  * {@link #preHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) preHandle},
  * {@link #postHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) postHandle},
  * and {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
@@ -45,14 +45,14 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(AdviceFilter.class);
 
     /**
-     * Returns <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.
+     * Returns {@code true} if the filter chain should be allowed to continue, {@code false} otherwise.
      * It is called before the chain is actually consulted/executed.
      * <p/>
-     * The default implementation returns <code>true</code> always and exists as a template method for subclasses.
+     * The default implementation returns {@code true} always and exists as a template method for subclasses.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
-     * @return <code>true</code> if the filter chain should be allowed to continue, <code>false</code> otherwise.
+     * @return {@code true} if the filter chain should be allowed to continue, {@code false} otherwise.
      * @throws Exception if there is any error.
      */
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
@@ -73,12 +73,13 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * @param response the outgoing ServletResponse
      * @throws Exception if an error occurs.
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected void postHandle(ServletRequest request, ServletResponse response) throws Exception {
     }
 
     /**
-     * Called in all cases in a <code>finally</code> block even if {@link #preHandle preHandle} returns
-     * <code>false</code> or if an exception is thrown during filter chain processing.  Can be used for resource
+     * Called in all cases in a {@code finally} block even if {@link #preHandle preHandle} returns
+     * {@code false} or if an exception is thrown during filter chain processing.  Can be used for resource
      * cleanup if so desired.
      * <p/>
      * The default implementation does nothing (no-op) and exists as a template method for subclasses.
@@ -86,10 +87,11 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * @param request   the incoming ServletRequest
      * @param response  the outgoing ServletResponse
      * @param exception any exception thrown during {@link #preHandle preHandle}, {@link #executeChain executeChain},
-     *                  or {@link #postHandle postHandle} execution, or <code>null</code> if no exception was thrown
+     *                  or {@link #postHandle postHandle} execution, or {@code null} if no exception was thrown
      *                  (i.e. the chain processed successfully).
      * @throws Exception if an error occurs.
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     public void afterCompletion(ServletRequest request, ServletResponse response, Exception exception) throws Exception {
     }
 
@@ -120,7 +122,6 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * @throws ServletException if a servlet-related error occurs
      * @throws IOException      if an IO error occurs
      */
-    @SuppressWarnings({"ThrowFromFinallyBlock"})
     public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
@@ -130,7 +131,7 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
 
             boolean continueChain = preHandle(request, response);
             if (log.isTraceEnabled()) {
-                log.trace("Invked preHandle method.  Continuing chain?: [" + continueChain + "]");
+                log.trace("Invoked preHandle method.  Continuing chain?: [" + continueChain + "]");
             }
 
             if (continueChain) {
@@ -150,7 +151,7 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Executes cleanup logic in the <code>finally</code> code block in the
+     * Executes cleanup logic in the {@code finally} code block in the
      * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain) doFilterInternal}
      * implementation.
      * <p/>
@@ -158,12 +159,12 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
      * as well as handles any exceptions properly.
      *
-     * @param request  the incoming <code>ServletRequest</code>
-     * @param response the outgoing <code>ServletResponse</code>
-     * @param existing any exception that might have occurred while executing the <code>FilterChain</code> or
-     *                 pre or post advice, or <code>null</code> if the pre/chain/post excution did not throw an <code>Exception</code>.
-     * @throws ServletException if any exception other than an <code>IOException</code> is thrown.
-     * @throws IOException      if the pre/chain/post execution throw an <code>IOException</code>
+     * @param request  the incoming {@code ServletRequest}
+     * @param response the outgoing {@code ServletResponse}
+     * @param existing any exception that might have occurred while executing the {@code FilterChain} or
+     *                 pre or post advice, or {@code null} if the pre/chain/post execution did not throw an {@code Exception}.
+     * @throws ServletException if any exception other than an {@code IOException} is thrown.
+     * @throws IOException      if the pre/chain/post execution throw an {@code IOException}
      */
     protected void cleanup(ServletRequest request, ServletResponse response, Exception existing)
             throws ServletException, IOException {
@@ -176,6 +177,9 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             if (exception == null) {
                 exception = e;
+            } else {
+                log.debug("afterCompletion implementation threw an exception.  This will be ignored to " +
+                        "allow the original source exception to be propagated.", e);
             }
         }
         if (exception != null) {
@@ -184,10 +188,13 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
             } else if (exception instanceof IOException) {
                 throw (IOException) exception;
             } else {
-                String msg = "Filter execution resulted in an unexpected Exception " +
-                        "(not IOException or ServletException as the Filter api recommends).  " +
-                        "Wrapping in ServletException and propagating.";
-                throw new ServletException(msg, exception);
+                if (log.isDebugEnabled()) {
+                    String msg = "Filter execution resulted in an unexpected Exception " +
+                            "(not IOException or ServletException as the Filter API recommends).  " +
+                            "Wrapping in ServletException and propagating.";
+                    log.debug(msg);
+                }
+                throw new ServletException(exception);
             }
         }
     }

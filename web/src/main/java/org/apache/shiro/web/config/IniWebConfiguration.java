@@ -24,6 +24,7 @@ import org.apache.shiro.config.ReflectionBuilder;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.DefaultWebSecurityManager;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     private PathMatchingFilterChainResolver resolver;
 
     public IniWebConfiguration() {
+        this.resolver = new PathMatchingFilterChainResolver();
     }
 
     /**
@@ -82,6 +84,10 @@ public class IniWebConfiguration extends IniConfiguration implements WebConfigur
     //TODO - JAVADOC
     public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
         return resolver.getChain(request, response, originalChain);
+    }
+
+    public FilterChainResolver getFilterChainResolver() {
+        return resolver;
     }
 
     /**
