@@ -19,6 +19,7 @@
 package org.apache.shiro.web.servlet;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.config.Configuration;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.mgt.SecurityManager;
@@ -26,19 +27,22 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.LifecycleUtils;
-import static org.apache.shiro.util.StringUtils.clean;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.config.IniWebConfiguration;
 import org.apache.shiro.web.config.WebConfiguration;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyDescriptor;
@@ -244,6 +248,9 @@ public class ShiroFilter extends OncePerRequestFilter {
     // Reference to the security manager used by this filter
     protected SecurityManager securityManager;
 
+    // Used to determine which chain should handle an incoming request/response
+    private FilterChainResolver filterChainResolver;
+
     public ShiroFilter() {
         this.configClassName = IniWebConfiguration.class.getName();
     }
@@ -260,28 +267,38 @@ public class ShiroFilter extends OncePerRequestFilter {
         return securityManager;
     }
 
-    protected void setSecurityManager(org.apache.shiro.mgt.SecurityManager sm) {
+    protected void setSecurityManager(SecurityManager sm) {
         this.securityManager = sm;
+    }
+
+    public FilterChainResolver getFilterChainResolver() {
+        return filterChainResolver;
+    }
+
+    public void setFilterChainResolver(FilterChainResolver filterChainResolver) {
+        this.filterChainResolver = filterChainResolver;
     }
 
     protected void onFilterConfigSet() throws Exception {
         applyInitParams();
         WebConfiguration config = configure();
         setConfiguration(config);
-
-        // Retrieve and store a reference to the security manager
-        SecurityManager securityManager = ensureSecurityManager(config);
-        setSecurityManager(securityManager);
+        ensureSecurityManager(config);
+        applyFilterChainResolver(config);
     }
 
     /**
-     * Retrieves the security manager for the given configuration.
+     * Ensures a SecurityManager exists, and if not, creates one automatically and ensures it is available for
+     * use during requests.
      *
      * @param config the configuration for this filter.
-     * @return the security manager that this filter should use.
      */
-    protected SecurityManager ensureSecurityManager(Configuration config) {
-        SecurityManager securityManager = config.getSecurityManager();
+    protected void ensureSecurityManager(Configuration config) {
+        SecurityManager securityManager = getSecurityManager();
+        boolean existing = securityManager != null;
+        if (!existing && config != null) {
+            securityManager = config.getSecurityManager();
+        }
 
         // If the config doesn't return a security manager, build one by default.
         if (securityManager == null) {
@@ -292,13 +309,24 @@ public class ShiroFilter extends OncePerRequestFilter {
             securityManager = new DefaultWebSecurityManager();
         }
 
-        return securityManager;
+        if (!existing) {
+            setSecurityManager(securityManager);
+        }
+    }
+
+    protected void applyFilterChainResolver(WebConfiguration config) {
+        FilterChainResolver resolver = getFilterChainResolver();
+        if (resolver == null && config != null) {
+            resolver = config.getFilterChainResolver();
+            if (resolver != null) {
+                setFilterChainResolver(resolver);
+            }
+        }
     }
 
     protected void applyInitParams() {
-        FilterConfig config = getFilterConfig();
 
-        String configCN = clean(config.getInitParameter(CONFIG_CLASS_NAME_INIT_PARAM_NAME));
+        String configCN = getInitParam(CONFIG_CLASS_NAME_INIT_PARAM_NAME);
         if (configCN != null) {
             if (ClassUtils.isAvailable(configCN)) {
                 this.configClassName = configCN;
@@ -310,17 +338,17 @@ public class ShiroFilter extends OncePerRequestFilter {
             }
         }
 
-        this.config = clean(config.getInitParameter(CONFIG_INIT_PARAM_NAME));
-        this.configUrl = clean(config.getInitParameter(CONFIG_URL_INIT_PARAM_NAME));
+        this.config = getInitParam(CONFIG_INIT_PARAM_NAME);
+        this.configUrl = getInitParam(CONFIG_URL_INIT_PARAM_NAME);
     }
 
     protected WebConfiguration configure() {
-        WebConfiguration conf = (WebConfiguration) ClassUtils.newInstance(this.configClassName);
-        applyFilterConfig(conf);
-        applyUrlConfig(conf);
-        applyEmbeddedConfig(conf);
-        LifecycleUtils.init(conf);
-        return conf;
+        WebConfiguration webConfiguration = (WebConfiguration) ClassUtils.newInstance(this.configClassName);
+        applyFilterConfig(webConfiguration);
+        applyUrlConfig(webConfiguration);
+        applyEmbeddedConfig(webConfiguration);
+        LifecycleUtils.init(webConfiguration);
+        return webConfiguration;
     }
 
     protected void applyFilterConfig(WebConfiguration conf) {
@@ -352,7 +380,7 @@ public class ShiroFilter extends OncePerRequestFilter {
                     String msg = "The 'config' filter param was specified, but there is no " +
                             "'setConfig(String)' method on the Configuration instance [" + conf + "].  If you do " +
                             "not require the 'config' filter param, please comment it out, or if you do need it, " +
-                            "please ensure your Configuration instance has a 'setConfig(String)' method to receive it.";
+                            "please ensure your Configuration class has a 'setConfig(String)' method to receive it.";
                     throw new ConfigurationException(msg);
                 }
             } catch (Exception e) {
@@ -373,7 +401,7 @@ public class ShiroFilter extends OncePerRequestFilter {
                     String msg = "The 'configUrl' filter param was specified, but there is no " +
                             "'setConfigUrl(String)' method on the Configuration instance [" + conf + "].  If you do " +
                             "not require the 'configUrl' filter param, please comment it out, or if you do need it, " +
-                            "please ensure your Configuration instance has a 'setConfigUrl(String)' method to receive it.";
+                            "please ensure your Configuration class has a 'setConfigUrl(String)' method to receive it.";
                     throw new ConfigurationException(msg);
                 }
             } catch (Exception e) {
@@ -401,7 +429,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 'Prepare's the {@code ServletRequest} instance that will be passed to the {@code FilterChain} for request
+     * Prepares the {@code ServletRequest} instance that will be passed to the {@code FilterChain} for request
      * processing.
      * <p/>
      * If the {@code ServletRequest} is an instance of {@link HttpServletRequest}, the value returned from this method
@@ -439,7 +467,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 'Prepare's the {@code ServletResponse} instance that will be passed to the {@code FilterChain} for request
+     * Prepares the {@code ServletResponse} instance that will be passed to the {@code FilterChain} for request
      * processing.
      * <p/>
      * This implementation delegates to {@link #wrapServletRequest(javax.servlet.http.HttpServletRequest)}
@@ -478,7 +506,7 @@ public class ShiroFilter extends OncePerRequestFilter {
      * {@link #unbind} method must be called in a {@code finally} block to ensure that the thread remains clean even
      * in the event of an exception thrown while processing the request.  This class's
      * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
-     * method implement does indeed perform this.
+     * method implementation does indeed function this way.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
@@ -527,7 +555,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     @SuppressWarnings({"UnusedDeclaration"})
     protected void updateSessionLastAccessTime(ServletRequest request, ServletResponse response) {
         if (!isHttpSessions()) { //'native' sessions
-            Subject subject = getSecurityManager().getSubject();
+            Subject subject = SecurityUtils.getSubject();
             //Subject should never _ever_ be null, but just in case:
             if (subject != null) {
                 Session session = subject.getSession(false);
@@ -593,13 +621,12 @@ public class ShiroFilter extends OncePerRequestFilter {
      * <p/>
      * The {@code origChain} argument is the
      * original {@code FilterChain} supplied by the Servlet Container, but it may be modified to provide
-     * more behavior by appending further chains according to the Shiro configuration.
+     * more behavior by pre-pending further chains according to the Shiro configuration.
      * <p/>
      * This implementation returns the chain that will actually be executed by acquiring the chain from a
-     * <code>{@link #getConfiguration() getConfiguration()}.{@link org.apache.shiro.web.config.WebConfiguration#getChain getChain}(request,response,origChain)</code>
-     * method call.  The configuration itself determines which chain to execute, typically based on URL configuration.
-     * If no chain is returned from this method call (returns {@code null}), then the {@code origChain}
-     * will be returned by default.
+     * {@link #getFilterChainResolver() filterChainResolver}.  The resolver determines exactly which chain to
+     * execute, typically based on URL configuration.  If no chain is returned from the resolver call
+     * (returns {@code null}), then the {@code origChain} will be returned by default.
      *
      * @param request   the incoming ServletRequest
      * @param response  the outgoing ServletResponse
@@ -608,13 +635,26 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     protected FilterChain getExecutionChain(ServletRequest request, ServletResponse response, FilterChain origChain) {
-        FilterChain chain = getConfiguration().getChain(request, response, origChain);
-        if (chain == null) {
-            chain = origChain;
-            log.trace("No security filter chain configured for the current request.  Using default.");
+        FilterChain chain = origChain;
+        FilterChain resolved = null;
+        FilterChainResolver resolver = getFilterChainResolver();
+        if (resolver != null) {
+            resolved = resolver.getChain(request, response, origChain);
         } else {
-            log.trace(" Using configured filter chain for the current request.");
+            log.trace("No FilterChainResolver configured.  Attempting (deprecated) WebConfiguration resolution.");
+            WebConfiguration config = getConfiguration();
+            if (config != null) {
+                //noinspection deprecation
+                resolved = config.getChain(request, response, origChain);
+            }
         }
+        if (resolved != null) {
+            log.trace("Resolved a configured FilterChain for the current request.");
+            chain = resolved;
+        } else {
+            log.trace("No FilterChain configured for the current request.  Using the default.");
+        }
+
         return chain;
     }
 
@@ -626,7 +666,6 @@ public class ShiroFilter extends OncePerRequestFilter {
      * to allow the application's Shiro configuration to determine exactly how the chain should execute.  The resulting
      * value from that call is then executed directly by calling the returned {@code FilterChain}'s
      * {@link FilterChain#doFilter doFilter} method.  That is:
-     * <p/>
      * <pre>
      * FilterChain chain = {@link #getExecutionChain}(request, response, origChain);
      * chain.{@link FilterChain#doFilter doFilter}(request,response);</pre>

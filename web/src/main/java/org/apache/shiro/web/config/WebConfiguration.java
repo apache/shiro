@@ -21,6 +21,10 @@ package org.apache.shiro.web.config;
 import org.apache.shiro.config.Configuration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 /**
  * A {@code WebConfiguration} configures Shiro components in a web-enabled application.
  * <p/>
@@ -30,5 +34,25 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
  *
  * @since 0.9
  */
-public interface WebConfiguration extends Configuration, FilterChainResolver {
+public interface WebConfiguration extends Configuration {
+
+    /**
+     * Returns the filter chain that should be executed for the given request, or {@code null} if the
+     * original chain should be used.
+     * <p/>
+     * This method allows a implementation to define arbitrary security {@link javax.servlet.Filter Filter}
+     * chains for any given request or URL pattern.
+     *
+     * @param request       the incoming ServletRequest
+     * @param response      the outgoing ServletResponse
+     * @param originalChain the original {@code FilterChain} intercepted by the ShiroFilter.
+     * @return the filter chain that should be executed for the given request, or {@code null} if the
+     *         original chain should be used.
+     * @deprecated The WebConfiguration instance should return an instance of a FilterChainResolver via the
+     *             {@link #getFilterChainResolver()} method instead.
+     */
+    @Deprecated
+    FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain);
+
+    FilterChainResolver getFilterChainResolver();
 }
