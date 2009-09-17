@@ -182,9 +182,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
                     "' to apply to chain [" + chainName + "] in the pool of available Filters.  Ensure a " +
                     "filter with that name/path has first been registered with the addFilter method(s).");
         }
-        if (StringUtils.hasText(chainSpecificFilterConfig)) {
-            applyChainConfig(chainName, filter, chainSpecificFilterConfig);
-        }
+
+        applyChainConfig(chainName, filter, chainSpecificFilterConfig);
 
         NamedFilterList chain = ensureChain(chainName);
         chain.add(filter);
@@ -198,11 +197,15 @@ public class DefaultFilterChainManager implements FilterChainManager {
         if (filter instanceof PathConfigProcessor) {
             ((PathConfigProcessor) filter).processPathConfig(chainName, chainSpecificFilterConfig);
         } else {
-            String msg = "chainSpecificFilterConfig was specified as a method argument, but the underlying " +
-                    "Filter instance is not an 'instanceof' " +
-                    PathConfigProcessor.class.getName() + ".  This is required if the filter is to accept " +
-                    "chain-specific configuration.";
-            throw new ConfigurationException(msg);
+            if (StringUtils.hasText(chainSpecificFilterConfig)) {
+                //they specified a filter configuration, but the Filter doesn't implement PathConfigProcessor
+                //this is an erroneous config:
+                String msg = "chainSpecificFilterConfig was specified, but the underlying " +
+                        "Filter instance is not an 'instanceof' " +
+                        PathConfigProcessor.class.getName() + ".  This is required if the filter is to accept " +
+                        "chain-specific configuration.";
+                throw new ConfigurationException(msg);
+            }
         }
     }
 
