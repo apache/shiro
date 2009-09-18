@@ -107,7 +107,7 @@ public class CollectionUtils {
         return list;
     }
 
-    public static <E> Deque<E> asDeque(E... elements) {
+    /*public static <E> Deque<E> asDeque(E... elements) {
         if (elements == null || elements.length == 0) {
             return new ArrayDeque<E>();
         }
@@ -116,7 +116,7 @@ public class CollectionUtils {
         ArrayDeque<E> deque = new ArrayDeque<E>(capacity);
         Collections.addAll(deque, elements);
         return deque;
-    }
+    }*/
 
     static int computeListCapacity(int arraySize) {
         return (int) Math.min(5L + arraySize + (arraySize / 10), Integer.MAX_VALUE);
