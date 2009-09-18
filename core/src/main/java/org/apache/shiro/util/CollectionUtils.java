@@ -18,10 +18,12 @@
  */
 package org.apache.shiro.util;
 
+import org.apache.shiro.subject.PrincipalCollection;
+
 import java.util.*;
 
 /**
- * Static helper class for use dealing with Arrays.
+ * Static helper class for use dealing with Collections.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -32,14 +34,14 @@ public class CollectionUtils {
     //TODO - complete JavaDoc
 
     /**
-     * Simple method that just returns <code>Collections.EMPTY_SET</code>.
+     * Simple method that just returns {@link Collections#EMPTY_SET}.
      * This exists to enable type-safe empty collections so other locations in Shiro code
      * do not need to worry about suppressing warnings.
      *
      * @param clazz the class of the collection type to return
      * @return an empty collection
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "UnusedDeclaration"})
     public static <E> Collection<E> emptyCollection(Class<E> clazz) {
         return Collections.EMPTY_SET;
     }
@@ -55,8 +57,12 @@ public class CollectionUtils {
     }
 
     /**
-     * @param c
-     * @return
+     * Returns {@code true} if the specified {@code Collection} is {@code null} or {@link Collection#isEmpty empty},
+     * {@code false} otherwise.
+     *
+     * @param c the collection to check
+     * @return {@code true} if the specified {@code Collection} is {@code null} or {@link Collection#isEmpty empty},
+     *         {@code false} otherwise.
      * @since 1.0
      */
     public static boolean isEmpty(Collection c) {
@@ -64,12 +70,29 @@ public class CollectionUtils {
     }
 
     /**
-     * @param m
-     * @return
+     * Returns {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty empty},
+     * {@code false} otherwise.
+     *
+     * @param m the {@code Map} to check
+     * @return {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty empty},
+     *         {@code false} otherwise.
      * @since 1.0
      */
     public static boolean isEmpty(Map m) {
         return m == null || m.isEmpty();
+    }
+
+    /**
+     * Returns {@code true} if the specified {@code PrincipalCollection} is {@code null} or
+     * {@link PrincipalCollection#isEmpty empty}, {@code false} otherwise.
+     *
+     * @param principals the principals to check.
+     * @return {@code true} if the specified {@code PrincipalCollection} is {@code null} or
+     *         {@link PrincipalCollection#isEmpty empty}, {@code false} otherwise.
+     * @since 1.0
+     */
+    public static boolean isEmpty(PrincipalCollection principals) {
+        return principals == null || principals.isEmpty();
     }
 
     @SuppressWarnings({"unchecked"})
@@ -82,6 +105,17 @@ public class CollectionUtils {
         ArrayList<E> list = new ArrayList<E>(capacity);
         Collections.addAll(list, elements);
         return list;
+    }
+
+    public static <E> Deque<E> asDeque(E... elements) {
+        if (elements == null || elements.length == 0) {
+            return new ArrayDeque<E>();
+        }
+        // Avoid integer overflow when a large array is passed in
+        int capacity = computeListCapacity(elements.length);
+        ArrayDeque<E> deque = new ArrayDeque<E>(capacity);
+        Collections.addAll(deque, elements);
+        return deque;
     }
 
     static int computeListCapacity(int arraySize) {

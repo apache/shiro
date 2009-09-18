@@ -18,19 +18,19 @@
  */
 package org.apache.shiro.authc.pam;
 
-import java.util.Collection;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.util.CollectionUtils;
+
+import java.util.Collection;
 
 /**
  * {@link AuthenticationStrategy} implementation that only accepts the account data from
  * the first successfully consulted Realm and ignores all subsequent realms.  This is slightly
- * different behavior than
- * {@link AtLeastOneSuccessfulStrategy AtLeastOneSuccessfulAuthenticationStrategy},
- * so please review both to see which one meets your needs better.
+ * different behavior than {@link AtLeastOneSuccessfulStrategy}, so please review both to see
+ * which one meets your needs better.
  *
  * @author Les Hazlewood
  * @see AtLeastOneSuccessfulStrategy AtLeastOneSuccessfulAuthenticationStrategy
@@ -39,22 +39,22 @@ import org.apache.shiro.realm.Realm;
 public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     /**
-     * Returns <code>null</code> immediately, relying on this class's {@link #merge merge} implementation to return
-     * only the first <code>info</code> object it encounters, ignoring all subsequent ones.
+     * Returns {@code null} immediately, relying on this class's {@link #merge merge} implementation to return
+     * only the first {@code info} object it encounters, ignoring all subsequent ones.
      */
     public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
         return null;
     }
 
     /**
-     * Returns the specified <code>aggregate</code> instance if is non null and valid (that is, has principals and they are
-     * not empty) immediately, or, if it is null or not valid, the <code>info</code> argument is returned instead.
+     * Returns the specified {@code aggregate} instance if is non null and valid (that is, has principals and they are
+     * not empty) immediately, or, if it is null or not valid, the {@code info} argument is returned instead.
      * <p/>
      * This logic ensures that the first valid info encountered is the one retained and all subsequent ones are ignored,
      * since this strategy mandates that only the info from the first successfully authenticated realm be used.
      */
     protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
-        if (aggregate != null && aggregate.getPrincipals() != null && !aggregate.getPrincipals().isEmpty()) {
+        if (aggregate != null && !CollectionUtils.isEmpty(aggregate.getPrincipals())) {
             return aggregate;
         }
         return info != null ? info : aggregate;
