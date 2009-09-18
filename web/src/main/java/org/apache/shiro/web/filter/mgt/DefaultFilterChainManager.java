@@ -19,6 +19,7 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.config.ConfigurationException;
+import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
@@ -32,7 +33,6 @@ import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.PortFilter;
 import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.SslFilter;
-import org.apache.shiro.web.servlet.ProxiedFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,10 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @since 1.0
@@ -138,7 +141,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
         //
         //     { "authc", "roles[admin,user]", "perms[file:edit]" }
         //
-        String[] filterTokens = split(chainDefinition, ',', '[', ']', true, true);
+        String[] filterTokens = split(chainDefinition);
 
         //each token is specific to each filter.
         //strip the name and extract any filter-specific config between brackets [ ]
@@ -176,6 +179,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     public void addToChain(String chainName, String filterName, String chainSpecificFilterConfig) {
+        if (!StringUtils.hasText(chainName)) {
+            throw new IllegalArgumentException("chainName cannot be null or empty.");
+        }
         Filter filter = getFilter(filterName);
         if (filter == null) {
             throw new IllegalArgumentException("There is no filter with name '" + filterName +
@@ -241,48 +247,6 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     /**
-     * Returns the {@code FilterChain} to use for the specified application path, or {@code null} if there
-     * was not a configured chain for the specified path.
-     * <p/>
-     * The default implementation simply calls <code>this.chains.get(chainUrl)</code> to acquire the configured
-     * {@code List&lt;Filter&gt;} filter chain.  If that configured chain is non-null and not empty, it is
-     * returned, otherwise {@code null} is returned to indicate that the {@code originalChain} should be
-     * used instead.
-     *
-     * @param chainUrl      the configured filter chain url
-     * @param originalChain the original FilterChain given by the Servlet container.
-     * @return the {@code FilterChain} to use for the specified application path, or {@code null} if the
-     *         original {@code FilterChain} should be used.
-     */
-    public FilterChain getChain(String chainUrl, FilterChain originalChain) {
-        Map<String, NamedFilterList> filterChains = getFilterChains();
-        List<Filter> pathFilters = filterChains != null ? filterChains.get(chainUrl) : null;
-        if (!CollectionUtils.isEmpty(pathFilters)) {
-            return createChain(pathFilters, originalChain);
-        }
-        return null;
-    }
-
-    /**
-     * Creates a new FilterChain based on the specified configured url filter chain and original chain.
-     * <p/>
-     * The input arguments are expected be be non-null and non-empty, since these conditions are accounted for in the
-     * {@link #getChain(String, javax.servlet.FilterChain) getChain(chainUrl,originalChain)} implementation that
-     * calls this method.
-     * <p/>
-     * The default implementation merely returns
-     * <code>new {@link org.apache.shiro.web.servlet.ProxiedFilterChain FilterChainWrapper(filters, originalChain)}</code>,
-     * and can be overridden by subclasses for custom creation.
-     *
-     * @param filters       the configured filter chain for the incoming request application path
-     * @param originalChain the original FilterChain given by the Servlet container.
-     * @return a new FilterChain based on the specified configured url filter chain and original chain.
-     */
-    protected FilterChain createChain(List<Filter> filters, FilterChain originalChain) {
-        return new ProxiedFilterChain(originalChain, filters);
-    }
-
-    /**
      * Initializes the filter by calling <code>filter.init( {@link #getFilterConfig() getFilterConfig()} );</code>.
      *
      * @param filter the filter to initialize with the {@code FilterConfig}.
@@ -301,13 +265,33 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     protected void addDefaultFilters(boolean init) {
-        addFilter("anon", new AnonymousFilter(), init, false);
-        addFilter("user", new UserFilter(), init, false);
-        addFilter("authc", new FormAuthenticationFilter(), init, false);
-        addFilter("authcBasic", new BasicHttpAuthenticationFilter(), init, false);
-        addFilter("roles", new RolesAuthorizationFilter(), init, false);
-        addFilter("perms", new PermissionsAuthorizationFilter(), init, false);
-        addFilter("port", new PortFilter(), init, false);
-        addFilter("ssl", new SslFilter(), init, false);
+        for (DefaultFilter defaultFilter : DefaultFilter.values()) {
+            addFilter(defaultFilter.name(), defaultFilter.newInstance(), init, false);
+        }
+    }
+
+    protected static enum DefaultFilter {
+        anon(AnonymousFilter.class),
+        user(UserFilter.class),
+        authc(FormAuthenticationFilter.class),
+        authcBasic(BasicHttpAuthenticationFilter.class),
+        roles(RolesAuthorizationFilter.class),
+        perms(PermissionsAuthorizationFilter.class),
+        port(PortFilter.class),
+        ssl(SslFilter.class);
+
+        private final Class<? extends Filter> filterClass;
+
+        private DefaultFilter(Class<? extends Filter> filterClass) {
+            this.filterClass = filterClass;
+        }
+
+        public Filter newInstance() {
+            return (Filter) ClassUtils.newInstance(this.filterClass);
+        }
+
+        public Class<? extends Filter> getFilterClass() {
+            return this.filterClass;
+        }
     }
 }
