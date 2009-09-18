@@ -31,12 +31,14 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.subject.support.SubjectCallable;
 import org.apache.shiro.subject.support.SubjectRunnable;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -73,10 +75,13 @@ public class DelegatingSubject implements Subject, Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(DelegatingSubject.class);
 
-    protected PrincipalCollection principals = new SimplePrincipalCollection();
-    protected boolean authenticated = false;
-    protected InetAddress inetAddress = null;
-    protected Session session = null;
+    private static final String IDENTITIES_SESSION_KEY = DelegatingSubject.class.getName() + ".IDENTITIES_SESSION_KEY";
+
+    protected PrincipalCollection principals;
+    protected boolean authenticated;
+    protected InetAddress inetAddress;
+    protected Session session;
+    private List<PrincipalCollection> assumedIdentities; //supports assumed identities (aka 'run as')
 
     protected transient SecurityManager securityManager;
 
@@ -92,12 +97,10 @@ public class DelegatingSubject implements Subject, Serializable {
         this.securityManager = securityManager;
         this.principals = principals;
         this.authenticated = authenticated;
-
-        if (inetAddress != null) {
-            this.inetAddress = inetAddress;
-        }
+        this.inetAddress = inetAddress;
         if (session != null) {
             this.session = decorate(session);
+            this.assumedIdentities = getAssumedIdentities(this.session);
         }
     }
 
@@ -105,7 +108,7 @@ public class DelegatingSubject implements Subject, Serializable {
         if (session == null) {
             throw new IllegalArgumentException("session cannot be null");
         }
-        return decorateSession(session.getId());
+        return new StoppingAwareProxiedSession(session, this);
     }
 
     protected Session decorateSession(Serializable sessionId) {
@@ -113,7 +116,7 @@ public class DelegatingSubject implements Subject, Serializable {
             throw new IllegalArgumentException("sessionId cannot be null");
         }
         DelegatingSession target = new DelegatingSession(getSecurityManager(), sessionId);
-        return new StoppingAwareProxiedSession(target, this);
+        return decorate(target);
     }
 
     public SecurityManager getSecurityManager() {
@@ -121,8 +124,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     protected boolean hasPrincipals() {
-        PrincipalCollection principals = getPrincipals();
-        return principals != null && !principals.isEmpty();
+        return !CollectionUtils.isEmpty(getPrincipals());
     }
 
     /**
@@ -134,19 +136,22 @@ public class DelegatingSubject implements Subject, Serializable {
         return this.inetAddress;
     }
 
+    protected Object getPrimaryPrincipal(PrincipalCollection principals) {
+        if (!CollectionUtils.isEmpty(principals)) {
+            return principals.iterator().next();
+        }
+        return null;
+    }
+
     /**
      * @see Subject#getPrincipal()
      */
     public Object getPrincipal() {
-        PrincipalCollection principals = getPrincipals();
-        if (principals == null || principals.isEmpty()) {
-            return null;
-        }
-        return principals.asSet().iterator().next();
+        return getPrimaryPrincipal(getPrincipals());
     }
 
     public PrincipalCollection getPrincipals() {
-        return this.principals;
+        return CollectionUtils.isEmpty(this.assumedIdentities) ? this.principals : this.assumedIdentities.get(0);
     }
 
     public boolean isPermitted(String permission) {
@@ -243,27 +248,39 @@ public class DelegatingSubject implements Subject, Serializable {
 
     public void login(AuthenticationToken token) throws AuthenticationException {
         Subject subject = securityManager.login(this, token);
-        PrincipalCollection principals = subject.getPrincipals();
+
+        PrincipalCollection principals;
+
+        InetAddress inetAddress = null;
+
+        if (subject instanceof DelegatingSubject) {
+            DelegatingSubject delegating = (DelegatingSubject) subject;
+            //we have to do this in case there are assumed identities - we don't want to lose the 'real' principals:
+            principals = delegating.principals;
+            inetAddress = delegating.inetAddress;
+        } else {
+            principals = subject.getPrincipals();
+        }
+
         if (principals == null || principals.isEmpty()) {
             String msg = "Principals returned from securityManager.login( token ) returned a null or " +
-                    "empty value.  This value must be non null and populated with one or more elements.  " +
-                    "Please check the SecurityManager implementation to ensure this happens after a " +
-                    "successful login attempt.";
+                    "empty value.  This value must be non null and populated with one or more elements.";
             throw new IllegalStateException(msg);
         }
         this.principals = principals;
+        this.authenticated = true;
+        if (token instanceof InetAuthenticationToken) {
+            inetAddress = ((InetAuthenticationToken) token).getInetAddress();
+        }
+        if (inetAddress != null) {
+            this.inetAddress = inetAddress;
+        }
         Session session = subject.getSession(false);
         if (session != null) {
             this.session = decorate(session);
+            this.assumedIdentities = getAssumedIdentities(this.session);
         } else {
             this.session = null;
-        }
-        this.authenticated = true;
-        if (token instanceof InetAuthenticationToken) {
-            InetAddress inetAddress = ((InetAuthenticationToken) token).getInetAddress();
-            if (inetAddress != null) {
-                this.inetAddress = inetAddress;
-            }
         }
         ThreadContext.bind(this);
     }
@@ -303,6 +320,7 @@ public class DelegatingSubject implements Subject, Serializable {
             this.principals = null;
             this.authenticated = false;
             this.inetAddress = null;
+            this.assumedIdentities = null;
             //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is
             //necessary if the subject would log in again or acquire a new session.  This is in response to
@@ -313,21 +331,6 @@ public class DelegatingSubject implements Subject, Serializable {
 
     private void sessionStopped() {
         this.session = null;
-    }
-
-    private class StoppingAwareProxiedSession extends ProxiedSession {
-
-        private final DelegatingSubject owner;
-
-        private StoppingAwareProxiedSession(Session target, DelegatingSubject owningSubject) {
-            super(target);
-            owner = owningSubject;
-        }
-
-        public void stop() throws InvalidSessionException {
-            super.stop();
-            owner.sessionStopped();
-        }
     }
 
     public <V> V execute(Callable<V> callable) throws ExecutionException {
@@ -358,4 +361,96 @@ public class DelegatingSubject implements Subject, Serializable {
         }
         return new SubjectRunnable(this, runnable);
     }
+
+    private class StoppingAwareProxiedSession extends ProxiedSession {
+
+        private final DelegatingSubject owner;
+
+        private StoppingAwareProxiedSession(Session target, DelegatingSubject owningSubject) {
+            super(target);
+            owner = owningSubject;
+        }
+
+        public void stop() throws InvalidSessionException {
+            super.stop();
+            owner.sessionStopped();
+        }
+    }
+
+    // ======================================
+    // 'Run As' support implementations
+    // ======================================
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    public void assumeIdentity(Subject subject) {
+        if (subject == null) {
+            throw new NullPointerException("Subject argument cannot be null.");
+        }
+        PrincipalCollection principals = subject.getPrincipals();
+        if (principals == null || principals.isEmpty()) {
+            throw new IllegalArgumentException("Subject argument does not have any principals.");
+        }
+        pushIdentity(principals);
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    public boolean isAssumedIdentity() {
+        return !CollectionUtils.isEmpty(this.assumedIdentities);
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    public Object getOriginalPrincipal() {
+        return getPrimaryPrincipal(this.principals);
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    public PrincipalCollection getOriginalPrincipals() {
+        return this.principals;
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    public void releaseAssumedIdentity() {
+        popIdentity();
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    protected List<PrincipalCollection> getAssumedIdentities(Session session) {
+        if (session != null) {
+            //noinspection unchecked
+            return (List<PrincipalCollection>) session.getAttribute(IDENTITIES_SESSION_KEY);
+        }
+        return null;
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    protected void pushIdentity(PrincipalCollection principals) {
+        if (this.assumedIdentities == null) {
+            this.assumedIdentities = new ArrayList<PrincipalCollection>();
+        }
+        this.assumedIdentities.add(0, principals);
+        Session session = getSession();
+        session.setAttribute(IDENTITIES_SESSION_KEY, this.assumedIdentities);
+    }
+
+    //TODO - WORK IN PROGRESS - DO NOT USE
+    protected PrincipalCollection popIdentity() {
+        PrincipalCollection popped = null;
+        if (!CollectionUtils.isEmpty(this.assumedIdentities)) {
+            popped = this.assumedIdentities.remove(0);
+            Session session;
+            if (!CollectionUtils.isEmpty(this.assumedIdentities)) {
+                //persist the changed deque to the session
+                session = getSession();
+                session.setAttribute(IDENTITIES_SESSION_KEY, this.assumedIdentities);
+            } else {
+                //deque is empty, remove it from the session:
+                session = getSession(false);
+                if (session != null) {
+                    session.removeAttribute(IDENTITIES_SESSION_KEY);
+                }
+            }
+        }
+
+        return popped;
+    }
+
 }

@@ -478,11 +478,15 @@ public interface Subject {
      */
     Runnable associateWith(Runnable runnable);
 
-    /*void runAs(PrincipalCollection identity);
+    /*void assumeIdentity(PrincipalCollection identity);
 
     <V> V runAs(PrincipalCollection identity, Callable<V> work);
 
-    PrincipalCollection getRunAsIdentity();*/
+    PrincipalCollection getOriginalIdentity();
+
+    PrincipalCollection releaseAssumedIdentity();
+
+    */
 
     /**
      * Builder design pattern implementation for creating {@link Subject} instances in a simplified way without
