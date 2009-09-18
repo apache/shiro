@@ -56,16 +56,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
     public static final String HTTP_SESSION_MODE = "http";
     public static final String NATIVE_SESSION_MODE = "native";
 
-    /**
-     * The key that is used to store subject principals in the session.
-     */
-    public static final String PRINCIPALS_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_PRINCIPALS_SESSION_KEY";
-
-    /**
-     * The key that is used to store whether or not the user is authenticated in the session.
-     */
-    public static final String AUTHENTICATED_SESSION_KEY = DefaultWebSecurityManager.class.getName() + "_AUTHENTICATED_SESSION_KEY";
-
     private String sessionMode = HTTP_SESSION_MODE; //default
 
     public DefaultWebSecurityManager() {
