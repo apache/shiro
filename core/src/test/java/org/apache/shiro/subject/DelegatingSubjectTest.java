@@ -18,16 +18,19 @@
  */
 package org.apache.shiro.subject;
 
-import java.io.Serializable;
-
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.util.ThreadContext;
+import static org.easymock.EasyMock.*;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.util.ThreadContext;
+import java.io.Serializable;
+import java.util.concurrent.Callable;
 
 
 /**
@@ -72,5 +75,61 @@ public class DelegatingSubjectTest {
         subject.logout();
 
         sm.destroy();
+    }
+
+    @Test
+    public void testExecuteCallable() {
+
+        String username = "jsmith";
+
+        SecurityManager securityManager = createNiceMock(SecurityManager.class);
+        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
+
+        assertNull(ThreadContext.getSubject());
+        assertNull(ThreadContext.getSecurityManager());
+
+        Callable<String> callable = new Callable<String>() {
+            public String call() throws Exception {
+                Subject callingSubject = SecurityUtils.getSubject();
+                assertNotNull(callingSubject);
+                assertNotNull(SecurityUtils.getSecurityManager());
+                assertEquals(callingSubject, sourceSubject);
+                return "Hello " + callingSubject.getPrincipal();
+            }
+        };
+        String response = sourceSubject.execute(callable);
+
+        assertNotNull(response);
+        assertEquals("Hello " + username, response);
+
+        assertNull(ThreadContext.getSubject());
+        assertNull(ThreadContext.getSecurityManager());
+    }
+
+    @Test
+    public void testExecuteRunnable() {
+
+        String username = "jsmith";
+
+        SecurityManager securityManager = createNiceMock(SecurityManager.class);
+        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
+
+        assertNull(ThreadContext.getSubject());
+        assertNull(ThreadContext.getSecurityManager());
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+                Subject callingSubject = SecurityUtils.getSubject();
+                assertNotNull(callingSubject);
+                assertNotNull(SecurityUtils.getSecurityManager());
+                assertEquals(callingSubject, sourceSubject);
+            }
+        };
+        sourceSubject.execute(runnable);
+
+        assertNull(ThreadContext.getSubject());
+        assertNull(ThreadContext.getSecurityManager());
     }
 }
