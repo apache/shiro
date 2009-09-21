@@ -25,7 +25,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
@@ -70,9 +70,15 @@ public class WebRememberMeManagerTest {
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
-        //The following base64 string was determined from the log output of the above test.
-        //This may have to change if the VM changes - not sure. L.H.
-        final String userPCBlowfishBase64 = "UwP13UzjVUceLBNWh+sYM01JWOSbBOwc1ZLySIws0IdnkcWeD/yWeH0eIycwHaI8MRKPyenBr76TL6F3P3FpTceMcJ+xDfwSqOgU/ZQLdvIOxlZxmT9RlUvKT6zopnQrSpdsCNaruG/Op/XEoJcdNLI9rJCCyMKN3em5wl8GrWTIzKS4hzHombGBEW4EPS9jv40HV4mIS2sUFXm5MlOptr99e1A6eKYxlLrldk2/yqw29nWohE0sIjO7tRF9mOAZUeC/Fem6K4S82LbXAJ6p0oNg3MP7dbFSkeeDF2CwFJvvi5xVrGyF0RnTzjwKZdTcvg4bx9ifQpKyPayQgsjCjd3pucJfBq1kuw/IyiPdSREnzWAEXOQi9o9II4jNvOJik+VI3QkwWdBBekzEKCACn8uvjlLKSiR8tCs9vbycs5N0FrODxMQ5FDvhV+rZLHtP/KP1puAwmeo=";
+        //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
+        //This will have to change any time the PrincipalCollection implementation changes:
+        final String userPCBlowfishBase64 = "UwP13UzjVUceLBNWh+sYM01JWOSbBOwc1ZLySIws0Idnkc" +
+                "WeD/yWeH0eIycwHaI8MRKPyenBr76EoLkEZnXSz4i27cTTUps5qOgU/ZQLdvIOxlZxmT9RlUvK" +
+                "T6zopnQrSpdsCNaruG/Op/XEoJcdNLI9rJCCyMKN3em5wl8GrWTIzKS4hzHombGBEW4EPS9jv4" +
+                "0HV4mIS2sUFXm5MlOptr99e1A6eKYxlLrldk2/yqw29nWohE0sIjO7tRF9mOAZUeC/Fem6K4S8" +
+                "2LbXAJ6p0oNg3MP7dbFSkeeDF2CwFJvvi5xVrGyF0RnTzjwKZdTcvg4bx9ifQpKyPayQgsjCjd" +
+                "3pucJfBq1kuw/IyiPdSREnzWAEXOQi9o9II4jNvOJik+VI3QkwWdBBekzEKCACn8uvjlLKSiR8" +
+                "tCs9vbycs5N0FrODxMQ5FDvhV+rZLHtP/KP1puAwmeo=";
         Cookie[] cookies = new Cookie[]{
                 new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCBlowfishBase64)
         };

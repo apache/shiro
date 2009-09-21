@@ -86,7 +86,7 @@ public class AuthorizingRealmTest {
         assertNotNull(info);
         assertTrue(realm.hasRole(info.getPrincipals(), ROLE));
 
-        Object principal = info.getPrincipals().iterator().next();
+        Object principal = info.getPrincipals().getPrimaryPrincipal();
         assertTrue(principal instanceof UserIdPrincipal);
 
         UsernamePrincipal usernamePrincipal = info.getPrincipals().oneByType(UsernamePrincipal.class);
@@ -114,7 +114,7 @@ public class AuthorizingRealmTest {
         AuthenticationInfo info = realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertNotNull(info);
         assertTrue(realm.hasRole(info.getPrincipals(), ROLE));
-        Object principal = info.getPrincipals().iterator().next();
+        Object principal = info.getPrincipals().getPrimaryPrincipal();
         assertTrue(principal instanceof UsernamePrincipal);
         assertEquals(USERNAME, ((UsernamePrincipal) principal).getUsername());
 

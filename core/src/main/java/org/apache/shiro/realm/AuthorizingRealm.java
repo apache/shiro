@@ -625,8 +625,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * <code>principals.{@link PrincipalCollection#fromRealm(String) fromRealm}({@link #getName() getName()})</code>
      * call.</li>
      * <li>If the previous call does not result in any principals, attempt to get the overall 'primary' principal
-     * from the PrincipalCollection via a <code>principals.{@link PrincipalCollection#asList() asList()}.iterator().next()</code>
-     * call.</li>
+     * from the PrincipalCollection via {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()}.</li>
      * <li>If there are no principals from that call (or the PrincipalCollection argument was null to begin with),
      * return {@code null}</li>
      * </ul>
@@ -640,17 +639,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         if (principals == null || principals.isEmpty()) {
             return null;
         }
-        Object primary = null;
+        Object primary;
         Collection thisPrincipals = principals.fromRealm(getName());
         if (thisPrincipals != null && !thisPrincipals.isEmpty()) {
             primary = thisPrincipals.iterator().next();
         } else {
-            //no principals attributed to this particular realm.  Fall back to the 'master' primary, that which
-            //is returned as the first from all principals:
-            Collection allPrincipals = principals.asList();
-            if (allPrincipals != null && !allPrincipals.isEmpty()) {
-                primary = allPrincipals.iterator().next();
-            }
+            //no principals attributed to this particular realm.  Fall back to the 'master' primary:
+            primary = principals.getPrimaryPrincipal();
         }
         return primary;
     }

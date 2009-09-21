@@ -73,17 +73,11 @@ public interface Subject {
      * your application.  This implies that things like given names and family names are usually poor candidates as
      * return values since they are rarely guaranteed to be unique.
      * <p/>
-     * Most single-Realm applications would return from this method a single unique principal as noted above
-     * (for example a String username or Long user id, etc, etc).  Single-realm applications represent the large
-     * majority of Shiro applications.
-     * <p/>
-     * However, in <em>multi</em>-Realm configurations, which are fully supported by Shiro as well, it is
-     * possible that the return value encapsulates more than one principal.  Typically multi-realm applications need to
-     * retain the unique principals for <em>each</em> Realm so subsequent security checks against these Realms can
-     * utilize these multiple principals.  In these cases, the object returned could be a Collection or any
-     * application-specific instance that encapsulates the principals.
+     * Most implementations will simply return
+     * <code>{@link #getPrincipals()}.{@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal() getPrimaryPrincipal()}</code>
      *
-     * @return this Subject's application-specific identity.
+     * @return this Subject's application-specific unique identity.
+     * @see org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()
      */
     Object getPrincipal();
 
@@ -93,20 +87,10 @@ public interface Subject {
      * The word &quot;principals&quot; is nothing more than a fancy security term for identifying attributes associated
      * with a Subject, aka, application user.  For example, user id, a surname (family/last name), given (first) name,
      * social security number, nickname, username, etc, are all examples of a principal.
-     * <p/>
-     * This method returns all of the principals associated with the Subject, and it is expected that at least one of
-     * the principals contained within this collection represent an absolute unique identifier for the application.
-     * User IDs, such a {@code Long} database primary key or UUID, or maybe a globally unique username or email
-     * address are all good candidates for such a unique identifier.  Non-unique things, such as surnames and
-     * given names, are often poor candidates.
-     * <p/>
-     * For convenience's sake, it is convention that the first principal in this collection be the application's
-     * &quot;primary&quot; principal.  That is, {@code getPrincipals().iterator().next();} would return this
-     * primary uniquely-identifying principal.  Most {@link #getPrincipal() getPrincipal()} implementations will use
-     * this logic.
      *
      * @return all of this Subject's principals (identifying attributes).
      * @see #getPrincipal()
+     * @see org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()
      */
     PrincipalCollection getPrincipals();
 
