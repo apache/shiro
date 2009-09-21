@@ -18,20 +18,13 @@
  */
 package org.apache.shiro.test;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
-public class ContainerIntegrationTest extends AbstractContainerTest {
+public class ContainerIntegrationTest {
 
     @Test
-    public void noTest(){}
+    public void noTest() {
+    }
 
     /*
     @Before
