@@ -18,15 +18,7 @@
  */
 package org.apache.shiro.subject;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -72,6 +64,22 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
             realmPrincipals.put(realmName, principals);
         }
         return principals;
+    }
+
+    /**
+     * Returns the first available principal from any of the {@code Realm} principals, or {@code null} if there are
+     * no principals yet.
+     * <p/>
+     * The 'first available principal' is interpreted as the principal that would be returned by
+     * <code>{@link #iterator() iterator()}.{@link java.util.Iterator#next() next()}.</code>
+     *
+     * @inheritDoc
+     */
+    public Object getPrimaryPrincipal() {
+        if (isEmpty()) {
+            return null;
+        }
+        return iterator().next();
     }
 
     public void add(Object principal, String realmName) {

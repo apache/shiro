@@ -18,14 +18,14 @@
  */
 package org.apache.shiro.authc;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Set;
-
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Set;
 
 
 /**
@@ -76,9 +76,9 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Constructs a SimpleAccount instance for the specified realm with the given principals and credentials.
      *
-     * @param principal the 'primary' identifying attribute of the account, for example, a user id or username.
+     * @param principal   the 'primary' identifying attribute of the account, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
-     * @param realmName the name of the realm that accesses this account data
+     * @param realmName   the name of the realm that accesses this account data
      */
     public SimpleAccount(Object principal, Object credentials, String realmName) {
         this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
@@ -86,10 +86,11 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Constructs a SimpleAccount instance for the specified realm with the given principals and credentials.
-     * @param principals the identifying attributes of the account, at least one of which should be considered the
-     * account's 'primary' identifying attribute, for example, a user id or username.
+     *
+     * @param principals  the identifying attributes of the account, at least one of which should be considered the
+     *                    account's 'primary' identifying attribute, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
-     * @param realmName the name of the realm that accesses this account data
+     * @param realmName   the name of the realm that accesses this account data
      */
     public SimpleAccount(Collection principals, Object credentials, String realmName) {
         this(new SimplePrincipalCollection(principals, realmName), credentials);
@@ -97,8 +98,9 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Constructs a SimpleAccount instance for the specified principals and credentials.
-     * @param principals the identifying attributes of the account, at least one of which should be considered the
-     * account's 'primary' identifying attribute, for example, a user id or username.
+     *
+     * @param principals  the identifying attributes of the account, at least one of which should be considered the
+     *                    account's 'primary' identifying attribute, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
      */
     public SimpleAccount(PrincipalCollection principals, Object credentials) {
@@ -109,10 +111,10 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Constructs a SimpleAccount instance for the specified principals and credentials, with the assigned roles.
      *
-     * @param principals the identifying attributes of the account, at least one of which should be considered the
-     * account's 'primary' identifying attribute, for example, a user id or username.
+     * @param principals  the identifying attributes of the account, at least one of which should be considered the
+     *                    account's 'primary' identifying attribute, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
-     * @param roles the names of the roles assigned to this account.
+     * @param roles       the names of the roles assigned to this account.
      */
     public SimpleAccount(PrincipalCollection principals, Object credentials, Set<String> roles) {
         this.authcInfo = new SimpleAuthenticationInfo(principals, credentials);
@@ -123,10 +125,10 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      * Constructs a SimpleAccount instance for the specified realm with the given principal and credentials, with the
      * the assigned roles and permissions.
      *
-     * @param principal the 'primary' identifying attributes of the account, for example, a user id or username.
+     * @param principal   the 'primary' identifying attributes of the account, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
-     * @param realmName the name of the realm that accesses this account data
-     * @param roleNames the names of the roles assigned to this account.
+     * @param realmName   the name of the realm that accesses this account data
+     * @param roleNames   the names of the roles assigned to this account.
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
     public SimpleAccount(Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
@@ -139,11 +141,11 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      * Constructs a SimpleAccount instance for the specified realm with the given principals and credentials, with the
      * the assigned roles and permissions.
      *
-     * @param principals the identifying attributes of the account, at least one of which should be considered the
-     * account's 'primary' identifying attribute, for example, a user id or username.
+     * @param principals  the identifying attributes of the account, at least one of which should be considered the
+     *                    account's 'primary' identifying attribute, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
-     * @param realmName the name of the realm that accesses this account data
-     * @param roleNames the names of the roles assigned to this account.
+     * @param realmName   the name of the realm that accesses this account data
+     * @param roleNames   the names of the roles assigned to this account.
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
     public SimpleAccount(Collection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
@@ -156,10 +158,10 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      * Constructs a SimpleAccount instance from the given principals and credentials, with the
      * the assigned roles and permissions.
      *
-     * @param principals the identifying attributes of the account, at least one of which should be considered the
-     * account's 'primary' identifying attribute, for example, a user id or username.
+     * @param principals  the identifying attributes of the account, at least one of which should be considered the
+     *                    account's 'primary' identifying attribute, for example, a user id or username.
      * @param credentials the credentials that verify identity for the account
-     * @param roleNames the names of the roles assigned to this account.
+     * @param roleNames   the names of the roles assigned to this account.
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
     public SimpleAccount(PrincipalCollection principals, Object credentials, Set<String> roleNames, Set<Permission> permissions) {
@@ -175,10 +177,6 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Returns the principals, aka the identifying attributes (username, user id, first name, last name, etc) of this
      * Account.
-     * <p/>
-     * At least one of these attributes should be the account's 'primary' identifier, such as a username or unique
-     * user id.  By convention, usually  the first principal (that is, <code>principals.iterator().next()</code>) is the
-     * 'primary' one.
      *
      * @return all the principals, aka the identifying attributes, of this Account.
      */
@@ -189,10 +187,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Sets the principals, aka the identifying attributes (username, user id, first name, last name, etc) of this
      * Account.
-     * <p/>
-     * At least one of these attributes should be the account's 'primary' identifier, such as a username or unique
-     * user id.  By convention, usually the first principal (that is, <code>principals.iterator().next()</code>) is the
-     * 'primary' one.
+     *
      * @param principals all the principals, aka the identifying attributes, of this Account.
      * @see Account#getPrincipals()
      */
@@ -224,6 +219,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Returns <code>this.authzInfo.getRoles();</code>
+     *
      * @return the Account's assigned roles.
      */
     public Collection<String> getRoles() {
@@ -263,6 +259,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Returns all String-based permissions assigned to this Account.  Simply delegates to
      * <code>this.authzInfo.getStringPermissions()</code>.
+     *
      * @return all String-based permissions assigned to this Account.
      */
     public Collection<String> getStringPermissions() {
@@ -272,6 +269,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Sets the String-based permissions assigned to this Account.  Simply delegates to
      * <code>this.authzInfo.setStringPermissions(permissions)</code>.
+     *
      * @param permissions all String-based permissions assigned to this Account.
      * @see org.apache.shiro.authc.Account#getStringPermissions()
      */
@@ -280,7 +278,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     }
 
     /**
-     * Assigns a String-based permission directly to this Account (not to any of its realms).  
+     * Assigns a String-based permission directly to this Account (not to any of its realms).
+     *
      * @param permission the String-based permission to assign.
      */
     public void addStringPermission(String permission) {
@@ -289,6 +288,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Assigns one or more string-based permissions directly to this Account (not to any of its realms).
+     *
      * @param permissions one or more String-based permissions to assign.
      */
     public void addStringPermissions(Collection<String> permissions) {
@@ -297,6 +297,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Returns all object-based permissions assigned directly to this Account (not any of its realms).
+     *
      * @return all object-based permissions assigned directly to this Account (not any of its realms).
      */
     public Collection<Permission> getObjectPermissions() {
@@ -305,6 +306,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Sets all object-based permissions assigned directly to this Account (not any of its realms).
+     *
      * @param permissions the object-based permissions to assign directly to this Account.
      */
     public void setObjectPermissions(Set<Permission> permissions) {
@@ -313,6 +315,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Assigns an object-based permission directly to this Account (not any of its realms).
+     *
      * @param permission the object-based permission to assign directly to this Account (not any of its realms).
      */
     public void addObjectPermission(Permission permission) {
@@ -321,6 +324,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Assigns one or more object-based permissions directly to this Account (not any of its realms).
+     *
      * @param permissions one or more object-based permissions to assign directly to this Account (not any of its realms).
      */
     public void addObjectPermissions(Collection<Permission> permissions) {
@@ -329,6 +333,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Returns <code>true</code> if this Account is locked and thus cannot be used to login, <code>false</code> otherwise.
+     *
      * @return <code>true</code> if this Account is locked and thus cannot be used to login, <code>false</code> otherwise.
      */
     public boolean isLocked() {
@@ -337,6 +342,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
 
     /**
      * Sets whether or not the account is locked and can be used to login.
+     *
      * @param locked <code>true</code> if this Account is locked and thus cannot be used to login, <code>false</code> otherwise.
      */
     public void setLocked(boolean locked) {
@@ -346,7 +352,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Returns whether or not the Account's credentials are expired.  This usually indicates that the Subject or an application
      * administrator would need to change the credentials before the account could be used.
-     * @return whether or not the Account's credentials are expired.  
+     *
+     * @return whether or not the Account's credentials are expired.
      */
     public boolean isCredentialsExpired() {
         return credentialsExpired;
@@ -355,8 +362,9 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Sets whether or not the Account's credentials are expired.  A <code>true</code> value indicates that the Subject
      * or application administrator would need to change their credentials before the account could be used.
+     *
      * @param credentialsExpired <code>true</code> if this Account's credentials are expired and need to be changed,
-     * <code>false</code> otherwise.
+     *                           <code>false</code> otherwise.
      */
     public void setCredentialsExpired(boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
@@ -368,7 +376,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      * <p/>
      * If the specified argument is also an instance of {@link SimpleAccount SimpleAccount}, the
      * {@link #isLocked()} and {@link #isCredentialsExpired()} attributes are merged (set on this instance) as well
-     * (only if their values are <code>true</code>). 
+     * (only if their values are <code>true</code>).
      *
      * @param info the <code>AuthenticationInfo</code> to merge into this account.
      */
@@ -391,6 +399,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * If the {@link #getPrincipals() principals} are not null, returns <code>principals.hashCode()</code>, otherwise
      * returns 0 (zero).
+     *
      * @return <code>principals.hashCode()</code> if they are not null, 0 (zero) otherwise.
      */
     public int hashCode() {
@@ -400,9 +409,10 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Returns <code>true</code> if the specified object is also a {@link SimpleAccount SimpleAccount} and its
      * {@link #getPrincipals() principals} are equal to this object's <code>principals</code>, <code>false</code> otherwise.
+     *
      * @param o the object to test for equality.
      * @return <code>true</code> if the specified object is also a {@link SimpleAccount SimpleAccount} and its
-     * {@link #getPrincipals() principals} are equal to this object's <code>principals</code>, <code>false</code> otherwise.
+     *         {@link #getPrincipals() principals} are equal to this object's <code>principals</code>, <code>false</code> otherwise.
      */
     public boolean equals(Object o) {
         if (o == this) {
@@ -419,6 +429,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /**
      * Returns {@link #getPrincipals() principals}.toString() if they are not null, otherwise prints out the string
      * &quot;empty&quot;
+     *
      * @return the String representation of this Account object.
      */
     public String toString() {

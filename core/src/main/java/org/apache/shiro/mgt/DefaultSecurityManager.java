@@ -496,7 +496,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
         if (principals != null && !principals.isEmpty()) {
             if (log.isDebugEnabled()) {
-                log.debug("Logging out subject with primary id {}" + principals.iterator().next());
+                log.debug("Logging out subject with primary principal {}" + principals.getPrimaryPrincipal());
             }
             beforeLogout(principals);
             Authenticator authc = getAuthenticator();

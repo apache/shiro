@@ -28,16 +28,12 @@ import java.util.Set;
  * just a security term for an identifying attribute, such as a username or user id or social security number or
  * anything else that can be considered an 'identifying' attribute for a {@code Subject}.
  * <p/>
- * Note that by convention however, the 'first' principal returned from this collection is considered to be the
- * Subject's <em>primary</em> principal used by the application, usually a user ID or username, based on the
- * {@code Realm} implementation.  The 'first' principal is that which is returned by
- * {@link #asList() asList()}{@code .iterator().next()}.
- * <p/>
  * A PrincipalCollection organizes its internal principals based on the {@code Realm} where they came from when the
  * Subject was first created.  To obtain the principal(s) for a specific Realm, see the {@link #fromRealm} method.  You
  * can also see which realms contributed to this collection via the {@link #getRealmNames() getRealmNames()} method.
  *
  * @author Les Hazlewood
+ * @see #getPrimaryPrincipal()
  * @see #fromRealm(String realmName)
  * @see #getRealmNames()
  * @since 0.9
@@ -45,8 +41,45 @@ import java.util.Set;
 public interface PrincipalCollection extends Iterable, Serializable {
 
     /**
-     * Returns a single principal assignable from the specified type, or {@code null} if there are none of the
-     * specified type.
+     * Returns the primary principal used to uniquely identify the owning account/Subject.
+     * <p/>
+     * The value is usually always a uniquely identifying attribute specific to the data source that retrieved the
+     * account data.  Some examples:
+     * <ul>
+     * <li>a {@link java.util.UUID UUID}</li>
+     * <li>a {@code long} value such as a surrogate primary key in a relational database</li>
+     * <li>an LDAP UUID or static DN</li>
+     * <li>a String username unique across all user accounts</li>
+     * </ul>
+     * <h3>Multi-Realm Applications</h3>
+     * In a single-{@code Realm} application, typically there is only ever one unique principal to retain and that
+     * is the value returned from this method.  However, in a multi-{@code Realm} application, where the
+     * {@code PrincipalCollection} might retain principals across more than one realm, the value returned from this
+     * method should be the single principal that uniquely identifies the subject for the entire application.
+     * <p/>
+     * That value is of course application specific, but most applications will typically choose one of the primary
+     * principals from one of the {@code Realm}s.
+     * <p/>
+     * Shiro's default implementations of this interface make this
+     * assumption by usually simply returning {@link #iterator()}.{@link java.util.Iterator#next() next()}, which just
+     * returns the first returned principal obtained from the first consulted/configured {@code Realm} during the
+     * authentication attempt.  This means in a multi-{@code Realm} application, {@code Realm} configuraiton order
+     * matters if you want to retain this default heuristic.
+     * <p/>
+     * If this heuristic is not sufficient, most Shiro end-users will need to implement a custom
+     * {@link org.apache.shiro.authc.pam.AuthenticationStrategy}.  An {@code AuthenticationStrategy} has exact control
+     * over the {@link PrincipalCollection} returned at the end of an authentication attempt via the
+     * <code>AuthenticationStrategy#{@link org.apache.shiro.authc.pam.AuthenticationStrategy#afterAllAttempts(org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo) afterAllAttempts}</code>
+     * implementation.
+     *
+     * @return the primary principal used to uniquely identify the owning account/Subject
+     * @since 1.0
+     */
+    Object getPrimaryPrincipal();
+
+    /**
+     * Returns the first discovered principal assignable from the specified type, or {@code null} if there are none
+     * of the specified type.
      * <p/>
      * Note that this will return {@code null} if the 'owning' subject has not yet logged in.
      *

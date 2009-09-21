@@ -138,7 +138,7 @@ public class DelegatingSubject implements Subject, Serializable {
 
     protected Object getPrimaryPrincipal(PrincipalCollection principals) {
         if (!CollectionUtils.isEmpty(principals)) {
-            return principals.iterator().next();
+            return principals.getPrimaryPrincipal();
         }
         return null;
     }
