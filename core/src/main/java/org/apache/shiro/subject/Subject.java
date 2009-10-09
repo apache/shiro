@@ -63,7 +63,7 @@ import java.util.concurrent.Callable;
 public interface Subject {
 
     /**
-     * Returns this Subject's uniquely-identifying principal, or {@code null} if this
+     * Returns this Subject's application-wide uniquely identifying principal, or {@code null} if this
      * Subject doesn't yet have account data associated with it (for example, if they haven't logged in).
      * <p/>
      * The term <em>principal</em> is just a fancy security term for any identifying attribute(s) of an application
@@ -490,7 +490,7 @@ public interface Subject {
      * <code>Subject.{@link #Builder(org.apache.shiro.mgt.SecurityManager) Builder(securityManager)}</code>
      * constructor if desired.
      * <p/>
-     * All other methods may be called before {@link #buildSubject() buildSubject()} call to
+     * All other methods may be called before the {@link #buildSubject() buildSubject()} method to
      * provide context on how to construct the {@code Subject} instance.  For example, if you have a session id and
      * want to acquire the {@code Subject} that 'owns' that session (assuming the session exists and is not expired):
      * <pre>
@@ -520,7 +520,7 @@ public interface Subject {
         /**
          * The SecurityManager to invoke during the {@link #buildSubject} call.
          */
-        private final org.apache.shiro.mgt.SecurityManager securityManager;
+        private final SecurityManager securityManager;
 
         /**
          * Constructs a new {@link Subject.Builder} instance, using the {@code SecurityManager} instance available
