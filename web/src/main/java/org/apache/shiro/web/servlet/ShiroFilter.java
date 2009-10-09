@@ -228,11 +228,10 @@ import java.io.IOException;
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @--deprecated use the {@link org.apache.shiro.web.servlet.IniShiroFilter} instead.
  * @see IniShiroFilter
  * @since 0.1
- * @deprecated use the {@link org.apache.shiro.web.servlet.IniShiroFilter} instead.
  */
-@Deprecated
 public class ShiroFilter extends OncePerRequestFilter {
 
     //TODO - complete JavaDoc
