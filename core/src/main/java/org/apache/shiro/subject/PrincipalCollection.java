@@ -41,7 +41,7 @@ import java.util.Set;
 public interface PrincipalCollection extends Iterable, Serializable {
 
     /**
-     * Returns the primary principal used to uniquely identify the owning account/Subject.
+     * Returns the primary principal used application-wide to uniquely identify the owning account/Subject.
      * <p/>
      * The value is usually always a uniquely identifying attribute specific to the data source that retrieved the
      * account data.  Some examples:
