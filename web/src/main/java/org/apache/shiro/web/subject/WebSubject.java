@@ -52,7 +52,13 @@ public interface WebSubject extends Subject {
     public static class Builder extends Subject.Builder {
 
         public Builder() {
-            this(WebUtils.getRequiredServletRequest(), WebUtils.getRequiredServletResponse());
+            this(SecurityUtils.getSecurityManager(),
+                    WebUtils.getRequiredServletRequest(),
+                    WebUtils.getRequiredServletResponse());
+        }
+
+        public Builder(SecurityManager securityManager) {
+            this(securityManager, WebUtils.getRequiredServletRequest(), WebUtils.getRequiredServletResponse());
         }
 
         public Builder(ServletRequest request, ServletResponse response) {
