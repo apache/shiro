@@ -228,8 +228,11 @@ import java.io.IOException;
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @see IniShiroFilter
  * @since 0.1
+ * @deprecated use the {@link org.apache.shiro.web.servlet.IniShiroFilter} instead.
  */
+@Deprecated
 public class ShiroFilter extends OncePerRequestFilter {
 
     //TODO - complete JavaDoc
@@ -238,6 +241,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     public static final String CONFIG_INIT_PARAM_NAME = "config";
     public static final String CONFIG_URL_INIT_PARAM_NAME = "configUrl";
 
+    @SuppressWarnings({"deprecation"})
     private static final Logger log = LoggerFactory.getLogger(ShiroFilter.class);
 
     protected String config;
