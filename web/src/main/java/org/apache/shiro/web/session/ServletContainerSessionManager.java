@@ -71,7 +71,7 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         return getSession(request, response);
     }
 
-    public Session getSession(ServletRequest request, ServletResponse response) throws AuthorizationException {
+    protected Session getSession(ServletRequest request, ServletResponse response) throws AuthorizationException {
         Session session = null;
         HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
         if (httpSession != null) {
