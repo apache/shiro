@@ -18,13 +18,7 @@
  */
 package org.apache.shiro.cache;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.shiro.util.Destroyable;
+import java.util.*;
 
 /**
  * A <code>MapCache</code> is a {@link Cache Cache} implementation that uses a backing {@link Map} instance to store
@@ -33,7 +27,7 @@ import org.apache.shiro.util.Destroyable;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class MapCache implements Cache, Destroyable {
+public class MapCache implements Cache {
 
     /**
      * Backing instance.
@@ -79,11 +73,11 @@ public class MapCache implements Cache, Destroyable {
 
     @SuppressWarnings({"unchecked"})
     public Set keys() {
-        if (!map.isEmpty()) {
-            return Collections.unmodifiableSet(map.keySet());
-        } else {
-            return Collections.EMPTY_SET;
+        Set keys = map.keySet();
+        if (!keys.isEmpty()) {
+            return Collections.unmodifiableSet(keys);
         }
+        return Collections.EMPTY_SET;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -102,9 +96,5 @@ public class MapCache implements Cache, Destroyable {
 
     public String toString() {
         return getClass().getName() + " : [" + name + "]";
-    }
-
-    public void destroy() throws Exception {
-        clear();
     }
 }
