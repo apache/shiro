@@ -404,6 +404,17 @@ public interface Subject {
      * Logs out this Subject and invalidates and/or removes any associated entities,
      * such as a {@link Session Session} and authorization data.  After this method is called, the Subject is
      * considered 'anonymous' and may continue to be used for another log-in if desired.
+     * <h3>Web Environment Caveat</h3>
+     * Calling this method in web environments will usually remove any associated session cookie as part of
+     * session invalidation.  Because cookies are part of the HTTP header, and headers can only be set before the
+     * response body (html, image, etc) is sent, this method in web environments must be called before <em>any</em>
+     * content has been rendered.
+     * <p/>
+     * The typical approach most applications use in this scenario is to redirect the user to a different
+     * location (e.g. home page) immediately after calling this method.  This is an effect of the HTTP protocol
+     * itself and not a reflection of Shiro's implementation.
+     * <p/>
+     * Non-HTTP environments may of course use a logged-out subject for login again if desired.
      */
     void logout();
 
@@ -438,6 +449,10 @@ public interface Subject {
      * Returns a {@code Callable} instance matching the given argument while additionally ensuring that it will
      * retain and execute under this Subject's identity.  The returned object can be used with an
      * {@link java.util.concurrent.ExecutorService ExecutorService} to execute as this Subject.
+     * <p/>
+     * This will effectively ensure that any calls to
+     * {@code SecurityUtils}.{@link SecurityUtils#getSubject() getSubject()} and related functionality will continue
+     * to function properly on any thread that executes the returned {@code Callable} instance.
      *
      * @param callable the callable to execute as this {@code Subject}
      * @param <V>      the {@code Callable}s return value type
@@ -450,6 +465,10 @@ public interface Subject {
      * Returns a {@code Runnable} instance matching the given argument while additionally ensuring that it will
      * retain and execute under this Subject's identity.  The returned object can be used with an
      * {@link java.util.concurrent.Executor Executor} or another thread to execute as this Subject.
+     * <p/>
+     * This will effectively ensure that any calls to
+     * {@code SecurityUtils}.{@link SecurityUtils#getSubject() getSubject()} and related functionality will continue
+     * to function properly on any thread that executes the returned {@code Runnable} instance.
      * <p/>
      * *Note that if you need a return value to be returned as a result of the runnable's execution or if you need to
      * react to any Exceptions, it is highly recommended to use the
@@ -501,7 +520,7 @@ public interface Subject {
      * PrincipalCollection principals = new SimplePrincipalCollection("username", <em>yourRealmName</em>);
      * Subject subject = new Subject.Builder().principals(principals).build();</pre>
      * <p/>
-     * Note that the returned {@code Subject} instance is <b>not</b> automatically bound to the application (thread)
+     * <b>Note*</b> that the returned {@code Subject} instance is <b>not</b> automatically bound to the application (thread)
      * for further use.  That is,
      * {@link org.apache.shiro.SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()}
      * will not automatically return the same instance as what is returned by the builder.  It is up to the framework
