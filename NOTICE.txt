@@ -9,7 +9,7 @@ The Apache Software Foundation (http://www.apache.org/).
 == Dr. Heinz Kabutz's SoftHashMap implementation.                     ==
 =======================================================================
 This product includes an org.apache.shiro.util.SoftHashMap
-implementation based on initial ideas from Dr. Hienz Kabutz's publicly
+implementation based on initial ideas from Dr. Heinz Kabutz's publicly
 posted version found here:
     http://www.javaspecialists.eu/archive/Issue015.html
 with continued modifications.  Per Heinz Kabutz: "you have my express
