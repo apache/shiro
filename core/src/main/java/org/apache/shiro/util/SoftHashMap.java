@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * limitations and garbage collection.  This ensures that the cache will not cause memory leaks by holding strong
  * references to all of its values.
  * <p/>
- * This class is a generics-enabled Map based on initial ideas from Hienz Kabutz's and Sydney Redelinghuys's
+ * This class is a generics-enabled Map based on initial ideas from Heinz Kabutz's and Sydney Redelinghuys's
  * <a href="http://www.javaspecialists.eu/archive/Issue015.html">publicly posted version</a>, with continued
  * modifications.
  * <p/>
