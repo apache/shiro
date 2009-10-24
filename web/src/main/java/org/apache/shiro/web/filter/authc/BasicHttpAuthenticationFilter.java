@@ -291,7 +291,9 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         String authorizationHeader = getAuthzHeader(request);
         if (authorizationHeader == null || authorizationHeader.length() == 0) {
-            return null;
+            // Create an empty authentication token since there is no
+        	// Authorization header.
+            return createToken("", "", request, response);
         }
 
         if (log.isDebugEnabled()) {
@@ -300,7 +302,10 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
 
         String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
         if (prinCred == null || prinCred.length < 2) {
-            return null;
+            // Create an authentication token with an empty password,
+        	// since one hasn't been provided in the request.
+            String username = prinCred == null || prinCred.length == 0 ? "" : prinCred[0];
+            return createToken(username, "", request, response);
         }
 
         String username = prinCred[0];
