@@ -249,6 +249,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         processQueue(); // throw out garbage collected values first
         SoftValue<V, K> sv = new SoftValue<V, K>(value, key, queue);
         SoftValue<V, K> previous = map.put(key, sv);
+        addToStrongReferences(value);
         return previous != null ? previous.get() : null;
     }
 
