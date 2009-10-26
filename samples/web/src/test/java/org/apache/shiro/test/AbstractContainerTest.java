@@ -23,17 +23,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.DefaultHandler;
-import org.mortbay.jetty.handler.HandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 public abstract class AbstractContainerTest {
     protected static PauseableServer server;
 
-    protected static final int port = 8180;
+    protected static final int port = 9180;
 
     protected static final String BASEURI = "http://localhost:" + port + "/";
 
@@ -46,12 +43,7 @@ public abstract class AbstractContainerTest {
             Connector connector = new SelectChannelConnector();
             connector.setPort(port);
             server.setConnectors(new Connector[]{connector});
-
-            WebAppContext context = new WebAppContext("src/main/webapp", "/");
-
-            HandlerCollection handlers = new HandlerCollection();
-            handlers.setHandlers(new Handler[]{context, new DefaultHandler()});
-            server.setHandler(handlers);
+            server.setHandler(new WebAppContext("src/main/webapp", "/"));
             server.start();
             assertTrue(server.isStarted());
         }

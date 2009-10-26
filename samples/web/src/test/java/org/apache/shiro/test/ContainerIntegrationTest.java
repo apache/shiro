@@ -18,15 +18,21 @@
  */
 package org.apache.shiro.test;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.junit.Before;
 import org.junit.Test;
 
-public class ContainerIntegrationTest {
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebAssert;
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-    @Test
-    public void noTest() {
-    }
+public class ContainerIntegrationTest extends AbstractContainerTest {
 
-    /*
     @Before
     public void logOut() throws IOException {
         // Make sure we are logged out
@@ -51,7 +57,7 @@ public class ContainerIntegrationTest {
         page.getAnchorByHref("/logout.jsp");
     }
 
-    /*@Test
+    @Test
     public void logInAndRememberMe() throws Exception {
         HtmlPage page = webClient.getPage(BASEURI + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
@@ -68,6 +74,6 @@ public class ContainerIntegrationTest {
         page = page.getAnchorByHref("/account").click();
         // login page should be shown again - user remembered but not authenticated
         WebAssert.assertFormPresent(page, "loginform");
-    }*/
+    }
 
 }
