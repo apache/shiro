@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebAssert;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class ContainerIntegrationTest extends AbstractContainerTest {
@@ -50,9 +51,9 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
 
         HtmlPage page = webClient.getPage(BASEURI + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
-        form.getInputByName("username").setValueAttribute("root");
-        form.getInputByName("password").setValueAttribute("secret");
-        page = form.getInputByName("submit").click();
+        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
+        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
+        page = form.<HtmlInput>getInputByName("submit").click();
         // This'll throw an expection if not logged in
         page.getAnchorByHref("/logout.jsp");
     }
@@ -61,11 +62,11 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
     public void logInAndRememberMe() throws Exception {
         HtmlPage page = webClient.getPage(BASEURI + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
-        form.getInputByName("username").setValueAttribute("root");
-        form.getInputByName("password").setValueAttribute("secret");
+        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
+        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
         HtmlCheckBoxInput checkbox = form.getInputByName("rememberMe");
         checkbox.setChecked(true);
-        page = form.getInputByName("submit").click();
+        page = form.<HtmlInput>getInputByName("submit").click();
         server.stop();
         server.start();
         page = webClient.getPage(BASEURI);
