@@ -60,7 +60,7 @@
         <jdk.version>1.5</jdk.version>
         <slf4j.version>1.5.6</slf4j.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
-        <jetty.version>6.1.20</jetty.version>
+        <jetty.version>6.1.21</jetty.version>
         <spring.version>2.5.6</spring.version>
         <groovy.version>1.6.2</groovy.version>
     </properties>
