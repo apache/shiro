@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.mgt;
+package org.apache.shiro.web.filter.authc;
+
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 /**
- * Allows implementations to create and return an application's SecurityManager instance in any manner necessary.
+ * Test for {@link org.apache.shiro.web.filter.authc.AnonymousFilter}.
  *
- * @since 0.9
- * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
- *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ * @since 1.0
  */
-@Deprecated
-public interface SecurityManagerFactory {
+public class AnonymousFilterTest {
 
-    /**
-     * Returns a fully configured and initialized <code>SecurityManager</code>.
-     *
-     * @return a fully configured and initialized <code>SecurityManager</code>.
-     */
-    SecurityManager getSecurityManager();
+    @Test
+    public void test() {
+        AnonymousFilter filter = new AnonymousFilter();
+        boolean allow = filter.onPreHandle(null, null, null);
+        assertTrue(allow);
+    }
+
 }

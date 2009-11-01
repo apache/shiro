@@ -31,9 +31,16 @@ import javax.servlet.ServletResponse;
  * In addition to enabling configuration of a <code>SecurityManager</code>, as required by the parent
  * {@link Configuration} interface, it also allows configuration of arbitrary filter chains to be executed for any
  * given request or URI/URL by sub-interfacing the {@link FilterChainResolver} interface.
+ * <p/>
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
  *
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public interface WebConfiguration extends Configuration {
 
     /**

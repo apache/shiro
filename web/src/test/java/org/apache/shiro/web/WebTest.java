@@ -16,22 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.mgt;
+package org.apache.shiro.web;
+
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 
 /**
- * Allows implementations to create and return an application's SecurityManager instance in any manner necessary.
- *
- * @since 0.9
- * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
- *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ * @since 1.0
  */
-@Deprecated
-public interface SecurityManagerFactory {
+public abstract class WebTest {
 
-    /**
-     * Returns a fully configured and initialized <code>SecurityManager</code>.
-     *
-     * @return a fully configured and initialized <code>SecurityManager</code>.
-     */
-    SecurityManager getSecurityManager();
+    protected FilterConfig createNiceMockFilterConfig() {
+        FilterConfig mock = createNiceMock(FilterConfig.class);
+        ServletContext mockServletContext = createNiceMock(ServletContext.class);
+        expect(mock.getServletContext()).andReturn(mockServletContext);
+        return mock;
+    }
+
+
 }

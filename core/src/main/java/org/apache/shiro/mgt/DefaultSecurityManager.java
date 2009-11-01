@@ -307,6 +307,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             throw ae; //propagate
         }
         Subject replaced = createSubject(token, info, subject);
+        //TODO - is binding necessary anymore?  Shouldn't the Builders or Builder callers do this now?
         bind(replaced);
         return replaced;
     }

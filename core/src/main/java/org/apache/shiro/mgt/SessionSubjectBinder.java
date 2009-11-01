@@ -53,10 +53,6 @@ import org.apache.shiro.subject.Subject;
  * <li>The <code>Subject</code> instance wold be 'unbound' from the application/thread and garbage collected at the
  * end of request/thread execution, and a new one is created on the next request/method invocation as per step #1.</li>
  * </ol>
- * <p/>
- * Indeed this is exactly how Shiro's default behavior works in enterprise server and web-based environments.  It is
- * enabled in the <code>ShiroFilter</code> for web-based environments as well as remote-method-invocation-based
- * components for non-web environments.
  *
  * @author Les Hazlewood
  * @since 1.0

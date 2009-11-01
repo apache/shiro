@@ -20,7 +20,7 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.web.filter.authz.SslFilter;
-import org.apache.shiro.web.servlet.ShiroFilter;
+import org.apache.shiro.web.servlet.IniShiroFilter;
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -185,7 +185,7 @@ public class DefaultFilterChainManagerTest {
         replay(mockFilterConfig);
         this.manager = new DefaultFilterChainManager(mockFilterConfig);
 
-        manager.addFilter("nonPathProcessor", new ShiroFilter());
+        manager.addFilter("nonPathProcessor", new IniShiroFilter());
         manager.createChain("test", "nonPathProcessor");
 
         try {

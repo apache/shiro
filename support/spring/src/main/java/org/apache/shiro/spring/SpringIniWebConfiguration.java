@@ -59,11 +59,17 @@ import java.util.Map;
  * <li>If none of the above, throw an exception that explains the options.</li>
  * <ol>
  * </p>
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
  *
  * @author Jeremy Haile
  * @see IniWebConfiguration
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public class SpringIniWebConfiguration extends IniWebConfiguration {
 
     //TODO - complete JavaDoc

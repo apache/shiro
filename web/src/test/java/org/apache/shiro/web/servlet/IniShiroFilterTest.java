@@ -26,13 +26,15 @@ import javax.servlet.ServletContext;
 
 
 /**
+ * Tests for {@link IniShiroFilter}.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
-public class ShiroFilterTest {
+public class IniShiroFilterTest {
 
     @SuppressWarnings({"FieldCanBeLocal"})
-    private ShiroFilter filter;
+    private IniShiroFilter filter;
     private FilterConfig mockFilterConfig;
     private ServletContext mockServletContext;
 
@@ -41,9 +43,17 @@ public class ShiroFilterTest {
         mockServletContext = createMock(ServletContext.class);
 
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
-        expect(mockFilterConfig.getInitParameter(ShiroFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null).once();
-        expect(mockFilterConfig.getInitParameter(ShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
-        expect(mockFilterConfig.getInitParameter(ShiroFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null).once();
+        expect(mockFilterConfig.getInitParameter(IniShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn(config).once();
+        expect(mockFilterConfig.getInitParameter(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME)).andReturn(null).once();
+    }
+
+    protected void setUpWithPathConfig(String path) {
+        mockFilterConfig = createMock(FilterConfig.class);
+        mockServletContext = createMock(ServletContext.class);
+
+        expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
+        expect(mockFilterConfig.getInitParameter(IniShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null).anyTimes();
+        expect(mockFilterConfig.getInitParameter(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME)).andReturn(path).anyTimes();
     }
 
     public void tearDown() throws Exception {
@@ -52,7 +62,7 @@ public class ShiroFilterTest {
 
         replay(mockServletContext);
 
-        //this.filter.destroy();
+        this.filter.destroy();
 
         verify(mockServletContext);
         verify(mockFilterConfig);
@@ -62,7 +72,7 @@ public class ShiroFilterTest {
         replay(mockServletContext);
         replay(mockFilterConfig);
 
-        this.filter = new ShiroFilter();
+        this.filter = new IniShiroFilter();
         this.filter.init(mockFilterConfig);
 
         verify(mockFilterConfig);
@@ -79,6 +89,12 @@ public class ShiroFilterTest {
     @Test
     public void testSimpleConfig() throws Exception {
         setUp("[filters]\nauthc.successUrl = /index.jsp");
+        replayAndVerify();
+    }
+
+    @Test
+    public void testSimplePathConfig() throws Exception {
+        setUpWithPathConfig("classpath:IniShiroFilterTest.ini");
         replayAndVerify();
     }
 }

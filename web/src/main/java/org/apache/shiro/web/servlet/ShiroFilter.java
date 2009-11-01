@@ -225,13 +225,18 @@ import java.io.IOException;
  * &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
  * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;</pre>
+ * <p/>
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @--deprecated use the {@link org.apache.shiro.web.servlet.IniShiroFilter} instead.
  * @see IniShiroFilter
  * @since 0.1
+ * @deprecated use {@link org.apache.shiro.web.servlet.IniShiroFilter} instead.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public class ShiroFilter extends OncePerRequestFilter {
 
     //TODO - complete JavaDoc

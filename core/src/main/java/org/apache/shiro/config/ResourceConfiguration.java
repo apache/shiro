@@ -18,17 +18,23 @@
  */
 package org.apache.shiro.config;
 
+import org.apache.shiro.mgt.SecurityManager;
+
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.shiro.mgt.SecurityManager;
-
 
 /**
- * //TODO - complete JavaDoc
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
+ *
  * @author Les Hazlewood
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public abstract class ResourceConfiguration implements Configuration, Serializable {
 
     protected transient org.apache.shiro.mgt.SecurityManager securityManager;

@@ -19,17 +19,14 @@
 package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.io.IniResource;
-import org.apache.shiro.io.ResourceUtils;
+import org.apache.shiro.config.IniFactorySupport;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.util.Factory;
+import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Main Servlet Filter that configures and enables all Shiro functions within a web application by using the
@@ -213,7 +210,7 @@ import java.io.InputStream;
 public class IniShiroFilter extends AbstractShiroFilter {
 
     public static final String CONFIG_INIT_PARAM_NAME = "config";
-    public static final String CONFIG_URL_INIT_PARAM_NAME = "configPath";
+    public static final String CONFIG_PATH_INIT_PARAM_NAME = "configPath";
 
     private static final Logger log = LoggerFactory.getLogger(IniShiroFilter.class);
 
@@ -296,30 +293,79 @@ public class IniShiroFilter extends AbstractShiroFilter {
         if (config != null) {
             setConfig(config);
         }
-        String configPath = getInitParam(CONFIG_URL_INIT_PARAM_NAME);
+        String configPath = getInitParam(CONFIG_PATH_INIT_PARAM_NAME);
         if (configPath != null) {
             setConfigPath(configPath);
         }
-        setConfigPath(configPath);
     }
 
     protected void configure() throws Exception {
+        Ini ini = loadIniFromConfig();
+
+        if (ini == null || ini.isEmpty()) {
+            log.info("Null or empty configuration specified via 'config' init-param.  " +
+                    "Checking path-based configuration.");
+            ini = loadIniFromPath();
+        }
+        if (ini == null || ini.isEmpty()) {
+            log.info("Null or empty configuration specified via '" + CONFIG_INIT_PARAM_NAME + "' or '" +
+                    CONFIG_PATH_INIT_PARAM_NAME + "' filter parameters.  Trying the default " +
+                    IniFactorySupport.DEFAULT_INI_RESOURCE_PATH + " file.");
+            ini = IniFactorySupport.loadDefaultClassPathIni();
+        }
+
+        applySecurityManager(ini);
+        applyFilterChainResolver(ini);
+    }
+
+    protected Ini loadIniFromConfig() {
         Ini ini = null;
         String config = getConfig();
         if (config != null) {
             ini = convertConfigToIni(config);
         }
-        if (ini == null) {
-            log.debug("No configuration specified via 'config' init-param.  Checking path-based configuration.");
-            String path = getConfigPath();
-            if (path != null) {
-                ini = convertPathToIni(path);
-            }
-        }
+        return ini;
+    }
 
-        IniSecurityManagerFactory factory = new WebIniSecurityManagerFactory(ini);
+    protected Ini loadIniFromPath() {
+        Ini ini = null;
+        String path = getConfigPath();
+        if (path != null) {
+            ini = convertPathToIni(path);
+        }
+        return ini;
+    }
+
+    protected void applySecurityManager(Ini ini) {
+        Factory<SecurityManager> factory;
+        if (ini == null || ini.isEmpty()) {
+            factory = new WebIniSecurityManagerFactory();
+        } else {
+            factory = new WebIniSecurityManagerFactory(ini);
+        }
         SecurityManager securityManager = factory.createInstance();
         setSecurityManager(securityManager);
+    }
+
+    protected void applyFilterChainResolver(Ini ini) {
+        if (ini == null || ini.isEmpty()) {
+            //nothing to use to create the resolver, just return
+            //(the AbstractShiroFilter allows a null resolver, in which case the original FilterChain is
+            // always used).
+            return;
+        }
+
+        //only create a resolver if the 'filters' or 'urls' sections are defined:
+        Ini.Section urls = ini.getSection(IniFilterChainResolverFactory.URLS);
+        Ini.Section filters = ini.getSection(IniFilterChainResolverFactory.FILTERS);
+        if ((urls != null && !urls.isEmpty()) || (filters != null && !filters.isEmpty())) {
+            //either the urls section or the filters section was defined.  Go ahead and create the resolver
+            //and set it:
+            IniFilterChainResolverFactory filterChainResolverFactory = new IniFilterChainResolverFactory(ini);
+            filterChainResolverFactory.setFilterConfig(getFilterConfig());
+            FilterChainResolver resolver = filterChainResolverFactory.createInstance();
+            setFilterChainResolver(resolver);
+        }
     }
 
     protected Ini convertConfigToIni(String config) {
@@ -332,10 +378,5 @@ public class IniShiroFilter extends AbstractShiroFilter {
         Ini ini = new Ini();
         ini.loadFromPath(path);
         return ini;
-    }
-
-    private void configureByUrl(String configUrl) throws IOException {
-        InputStream is = ResourceUtils.getInputStreamForPath(configUrl);
-        IniResource ini = new IniResource(is);
     }
 }

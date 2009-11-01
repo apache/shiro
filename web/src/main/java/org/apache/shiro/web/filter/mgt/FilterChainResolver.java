@@ -45,7 +45,7 @@ public interface FilterChainResolver {
      *
      * @param request       the incoming ServletRequest
      * @param response      the outgoing ServletResponse
-     * @param originalChain the original {@code FilterChain} intercepted by the ShiroFilter.
+     * @param originalChain the original {@code FilterChain} intercepted by the ShiroFilter implementation.
      * @return the filter chain that should be executed for the given request, or {@code null} if the
      *         original chain should be used.
      */

@@ -15,5 +15,5 @@ your application's classpath.
 
 Feature-based dependencies
 --------------------------
-* .ini based configuration, either for a shiro.ini file in the classpath or embedded .ini in the ShiroFilter in web.xml:
+* .ini based configuration, either for a shiro.ini file in the classpath or embedded .ini in the IniShiroFilter in web.xml:
   - include Jakarta commons-beanutils-core.jar

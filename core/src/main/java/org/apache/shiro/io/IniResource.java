@@ -18,6 +18,11 @@
  */
 package org.apache.shiro.io;
 
+import static org.apache.shiro.util.StringUtils.clean;
+import static org.apache.shiro.util.StringUtils.splitKeyValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.text.ParseException;
@@ -25,18 +30,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.shiro.util.StringUtils.clean;
-import static org.apache.shiro.util.StringUtils.splitKeyValue;
-
 /**
- * //TODO - complete JavaDoc
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
  *
  * @author Les Hazlewood
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public class IniResource extends TextResource {
 
     private static final Logger log = LoggerFactory.getLogger(IniResource.class);

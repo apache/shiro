@@ -39,10 +39,17 @@ import java.util.Set;
 /**
  * A <code>WebConfiguration</code> that supports configuration via the
  * <a href="http://en.wikipedia.org/wiki/INI_file">.ini format</a>.
+ * <p/>
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
  *
  * @author Les Hazlewood
  * @since Jun 1, 2008 11:02:44 PM
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public class IniWebConfiguration extends IniConfiguration implements WebConfiguration {
 
     //TODO - complete JavaDoc

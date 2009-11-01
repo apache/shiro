@@ -49,6 +49,9 @@ public class Ini {
 
     public Ini(Ini defaults) {
         this();
+        if (defaults == null) {
+            throw new NullPointerException("Defaults cannot be null.");
+        }
         for (Section section : defaults.getSections()) {
             Section copy = new Section(section);
             this.sections.put(section.getName(), copy);
