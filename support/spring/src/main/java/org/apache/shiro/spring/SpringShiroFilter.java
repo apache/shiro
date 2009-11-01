@@ -39,16 +39,17 @@ import org.apache.shiro.web.servlet.ShiroFilter;
  *     ... normal .ini config ...
  *     &lt;param-value&gt;
  * &lt;/init-param&gt;
-&lt;filter&gt;</pre>
+ * &lt;filter&gt;</pre>
  * <p/>
  * That is, you don't have to specify the additional <code>configClassName</code> <code>init-param</code>.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.2
+ * @deprecated Will be removed before 1.0 final!
  */
-public class SpringShiroFilter extends ShiroFilter
-{
+@Deprecated
+public class SpringShiroFilter extends ShiroFilter {
 
     //TODO - complete JavaDoc
 

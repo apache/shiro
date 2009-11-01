@@ -32,7 +32,7 @@ import javax.servlet.ServletResponse;
  * For example, if you had a user-only section of a website, you might want to require that access to
  * any url in that section must be from an authenticated user.
  * <p/>
- * Here is how that would look in the ShiroFilter configuration:
+ * Here is how that would look in the IniShiroFilter configuration:
  * <p/>
  * <code>[urls]<br/>
  * /user/** = authc</code>
@@ -59,7 +59,7 @@ public class AnonymousFilter extends PathMatchingFilter {
      * @return <code>true</code> always, allowing unchecked access to the underlying path or resource.
      */
     @Override
-    public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) {
+    protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) {
         // Always return true since we allow access to anyone
         return true;
     }

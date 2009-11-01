@@ -28,9 +28,15 @@ import org.apache.shiro.mgt.SecurityManagerFactory;
  * <p/>
  * Once the SecurityManager is built by the <code>Configuration</code> it is then consulted for all security
  * operations during the application's lifetime.
- * 
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
+ *
  * @author Les Hazlewood
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public interface Configuration extends SecurityManagerFactory {
 }

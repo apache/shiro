@@ -20,13 +20,14 @@ package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.web.DefaultWebSecurityManager;
 
 /**
- * Differs from the parent class only in the {@link #newSecurityManagerInstance()} method, to
+ * Differs from the parent class only in the {@link #createDefaultInstance()} method, to
  * ensure a web-capable {@code SecurityManager} instance is created by default.
  *
+ * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class WebIniSecurityManagerFactory extends IniSecurityManagerFactory {
@@ -57,7 +58,7 @@ public class WebIniSecurityManagerFactory extends IniSecurityManagerFactory {
      * @return a new web-capable {@code SecurityManager} instance.
      */
     @Override
-    protected RealmSecurityManager newSecurityManagerInstance() {
+    protected SecurityManager createDefaultInstance() {
         return new DefaultWebSecurityManager();
     }
 }

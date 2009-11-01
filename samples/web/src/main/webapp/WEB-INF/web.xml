@@ -24,18 +24,16 @@
 
     <filter>
         <filter-name>ShiroFilter</filter-name>
-        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+        <filter-class>org.apache.shiro.web.servlet.IniShiroFilter</filter-class>
         <init-param>
             <param-name>config</param-name>
             <param-value>
 
-                # The ShiroFilter configuration is very powerful and flexible, while still remaining succinct.
-                # Please read the comprehensive example, with full comments and explanations, in the JavaDoc:
-                #
-                # http://shiro.apache.org/api/org/apache/shiro/web/servlet/ShiroFilter.html
+                # The IniShiroFilter configuration is very powerful and flexible, while still remaining succinct.
+                # Please read the comprehensive example, with full comments and explanations, in the
+                # org.apache.shiro.web.servlet.IniShiroFilter JavaDoc
 
                 [main]
-
                 demoRealm = org.apache.shiro.realm.text.PropertiesRealm
 
                 [filters]

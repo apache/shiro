@@ -18,21 +18,23 @@
  */
 package org.apache.shiro.io;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Scanner;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
+import java.util.Scanner;
+
 /**
- * //TODO complete JavaDoc
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
+ *
  * @author Les Hazlewood
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public abstract class TextResource extends AbstractResource {
 
     private static final Logger log = LoggerFactory.getLogger(TextResource.class);
@@ -78,7 +80,7 @@ public abstract class TextResource extends AbstractResource {
         try {
             super.load(resourcePath);
         } catch (Exception e) {
-            String msg = "Unable to load text resource from the resource path [" + resourcePath +"]";
+            String msg = "Unable to load text resource from the resource path [" + resourcePath + "]";
             throw new ResourceException(msg, e);
         }
     }

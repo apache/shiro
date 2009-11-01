@@ -61,7 +61,7 @@ public class WebUtils {
      * Message displayed when a servlet request or response is not bound to the current thread context when expected.
      */
     private static final String NOT_BOUND_ERROR_MESSAGE =
-            "Make sure WebUtils.bind() is being called. (typically called by ShiroFilter)  " +
+            "Make sure WebUtils.bind() is being called. (typically called by AbstractShiroFilter)  " +
                     "This could also happen when running integration tests that don't properly call WebUtils.bind().";
 
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";

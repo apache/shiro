@@ -37,11 +37,18 @@ import java.util.*;
 
 /**
  * A Configuration based on the <a href="http://en.wikipedia.org/wiki/INI_file">.ini format</a>.
+ * <p/>
+ * <p/>
+ * <b>Do not use this! It will be removed prior to 1.0 final!</b>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.9
+ * @deprecated use {@link org.apache.shiro.util.Factory} implementations to generate the Shiro
+ *             components. See {@link org.apache.shiro.config.IniSecurityManagerFactory} as an example.
+ *             <b>Will be removed prior to 1.0 final!</b>
  */
+@Deprecated
 public class IniConfiguration extends TextConfiguration {
 
     //TODO - complete JavaDoc

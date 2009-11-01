@@ -18,6 +18,9 @@
  */
 package org.apache.shiro.subject;
 
+import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.StringUtils;
+
 import java.util.*;
 
 
@@ -34,6 +37,8 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     //TODO - complete JavaDoc
 
     private Map<String, Set> realmPrincipals;
+
+    private String cachedToString; //cached toString() result, as this can be printed many times in logging
 
     public SimplePrincipalCollection() {
     }
@@ -89,6 +94,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         if (principal == null) {
             throw new IllegalArgumentException("principal argument cannot be null.");
         }
+        this.cachedToString = null;
         getPrincipalsLazy(realmName).add(principal);
     }
 
@@ -102,6 +108,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         if (principals.isEmpty()) {
             throw new IllegalArgumentException("principals argument cannot be an empty collection.");
         }
+        this.cachedToString = null;
         getPrincipalsLazy(realmName).addAll(principals);
     }
 
@@ -196,6 +203,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public void clear() {
+        this.cachedToString = null;
         if (realmPrincipals != null) {
             realmPrincipals.clear();
             realmPrincipals = null;
@@ -222,5 +230,23 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
             return realmPrincipals.hashCode();
         }
         return super.hashCode();
+    }
+
+    /**
+     * Returns a simple string representation suitable for printing.
+     *
+     * @return a simple string representation suitable for printing.
+     * @since 1.0
+     */
+    public String toString() {
+        if (this.cachedToString == null) {
+            Set<Object> principals = asSet();
+            if (!CollectionUtils.isEmpty(principals)) {
+                this.cachedToString = StringUtils.toString(principals.toArray());
+            } else {
+                this.cachedToString = "empty";
+            }
+        }
+        return this.cachedToString;
     }
 }

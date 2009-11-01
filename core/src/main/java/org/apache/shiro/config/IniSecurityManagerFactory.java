@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.config;
 
-import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -33,87 +32,30 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * A {@link Factory} that creates {@link SecurityManager} instances based on
- * {@link Ini} configuration.
+ * A {@link Factory} that creates {@link SecurityManager} instances based on {@link Ini} configuration.
  *
+ * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
-public class IniSecurityManagerFactory implements Factory<SecurityManager> {
-
-    public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:shiro.ini";
+public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager> {
 
     public static final String MAIN_SECTION_NAME = "main";
 
     private static transient final Logger log = LoggerFactory.getLogger(IniSecurityManagerFactory.class);
-
-    private Ini ini;
 
     /**
      * Creates a new instance.  See the {@link #createInstance()} JavaDoc for detailed explaination of how an INI
      * source will be resolved to use to build the instance.
      */
     public IniSecurityManagerFactory() {
+        super();
     }
 
     public IniSecurityManagerFactory(Ini config) {
-        this.ini = config;
+        super(config);
     }
 
-    public Ini getIni() {
-        return ini;
-    }
-
-    public void setIni(Ini ini) {
-        this.ini = ini;
-    }
-
-    private static boolean isEmpty(Ini ini) {
-        return ini == null || ini.isEmpty();
-    }
-
-    /**
-     * Creates a new {@code SecurityManager} instance by using a configured INI source.  This implementation
-     * functions as follows:
-     * <ol>
-     * <li>The {@code Ini} instance available via the {@link #getIni()} method will be used if available.</li>
-     * <li>If {@link #getIni()} is {@code null} empty, this implementation will attempt to find and load a
-     * {@code shiro.ini} file at the root of the classpath (i.e. {@code classpath:shiro.ini}) and use the resulting
-     * {@link Ini} instance constructed based on that file.</li>
-     * <li>If neither of the above two mechanisms result in an {@code Ini} instance, a simple default
-     * {@code SecurityManager} instance is returned via the
-     * {@link #createDefaultSecurityManager()} method.</li>
-     * </ol>
-     *
-     * @return a new {@code SecurityManager} instance by using a configured INI source.
-     */
-    public SecurityManager createInstance() {
-        Ini ini = getIni();
-        if (isEmpty(ini)) {
-            log.debug("Null or empty Ini.  Falling back to classpath:/shiro.ini");
-            if (ResourceUtils.resourceExists(DEFAULT_INI_RESOURCE_PATH)) {
-                log.debug("Found shiro.ini at the root of the classpath.");
-                ini = new Ini();
-                ini.loadFromPath(DEFAULT_INI_RESOURCE_PATH);
-                if (isEmpty(ini)) {
-                    log.warn("shiro.ini found at the root of the classpath, but it did not contain any data.");
-                }
-            }
-        }
-
-        SecurityManager securityManager;
-
-        if (!isEmpty(ini)) {
-            log.debug("Creating SecurityManager from Ini instance.");
-            securityManager = createSecurityManager(ini);
-        } else {
-            log.debug("No populated Ini instance available.  Creating a default SecurityManager instance.");
-            securityManager = createDefaultSecurityManager();
-        }
-
-        return securityManager;
-    }
-
-    protected final SecurityManager createSecurityManager(Ini ini) {
+    protected SecurityManager createInstance(Ini ini) {
         if (isEmpty(ini)) {
             throw new NullPointerException("Ini argument cannot be null or empty.");
         }
@@ -125,11 +67,7 @@ public class IniSecurityManagerFactory implements Factory<SecurityManager> {
         return securityManager;
     }
 
-    protected SecurityManager createDefaultSecurityManager() {
-        return newSecurityManagerInstance();
-    }
-
-    protected RealmSecurityManager newSecurityManagerInstance() {
+    protected SecurityManager createDefaultInstance() {
         return new DefaultSecurityManager();
     }
 
@@ -145,7 +83,7 @@ public class IniSecurityManagerFactory implements Factory<SecurityManager> {
                 log.info("No main/default section was found in INI resource [" + ini + "].  A simple default " +
                         "SecurityManager instance will be created automatically.");
             }
-            securityManager = createDefaultSecurityManager();
+            securityManager = createDefaultInstance();
         } else {
             securityManager = createSecurityManager(mainSection);
         }
@@ -157,7 +95,7 @@ public class IniSecurityManagerFactory implements Factory<SecurityManager> {
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 
-        SecurityManager securityManager = createDefaultSecurityManager();
+        SecurityManager securityManager = createDefaultInstance();
         defaults.put("securityManager", securityManager);
 
         ReflectionBuilder builder = new ReflectionBuilder(defaults);
@@ -188,6 +126,7 @@ public class IniSecurityManagerFactory implements Factory<SecurityManager> {
                     try {
                         builder.applyProperty(realm, "name", name);
                     } catch (Exception ignored) {
+                        log.debug("Unable to apply 'name' property value {} to realm {}.", name, realm);
                     }
                 }
                 realms.add(realm);

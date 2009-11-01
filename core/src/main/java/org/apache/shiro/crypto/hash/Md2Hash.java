@@ -25,8 +25,8 @@ import org.apache.shiro.codec.Hex;
 /**
  * Generates an MD2 Hash (RFC 1319) from a given input <tt>source</tt> with an optional <tt>salt</tt> and
  * hash iterations.
- *
- * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
+ * <p/>
+ * See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
  * techniques and how the overloaded constructors function.
  *
  * @author Les Hazlewood
