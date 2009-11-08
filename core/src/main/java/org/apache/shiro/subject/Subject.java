@@ -39,13 +39,13 @@ import java.util.concurrent.Callable;
  * A {@code Subject} represents state and security operations for a <em>single</em> application user.
  * These operations include authentication (login/logout), authorization (access control), and
  * session access. It is Shiro's primary mechanism for single-user security functionality.
- * <h4>Acquiring a Subject</h4>
+ * <h3>Acquiring a Subject</h3>
  * To acquire the currently-executing {@code Subject}, application developers will almost always use
  * {@code SecurityUtils}:
  * <pre>
  * {@link SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()}</pre>
  * Almost all security operations should be performed with the {@code Subject} returned from this method.
- * <h4>Permission methods</h4>
+ * <h3>Permission methods</h3>
  * Note that there are many *Permission methods in this interface overloaded to accept String arguments instead of
  * {@link Permission Permission} instances. They are a convenience allowing the caller to use a String representation of
  * a {@link Permission Permission} if desired.  The underlying Authorization subsystem implementations will usually
@@ -64,14 +64,26 @@ public interface Subject {
 
     /**
      * Returns this Subject's application-wide uniquely identifying principal, or {@code null} if this
-     * Subject doesn't yet have account data associated with it (for example, if they haven't logged in).
+     * Subject is anonymous because it doesn't yet have any associated account data (for example,
+     * if they haven't logged in).
      * <p/>
      * The term <em>principal</em> is just a fancy security term for any identifying attribute(s) of an application
      * user, such as a username, or user id, or public key, or anything else you might use in your application to
-     * identify a user.  And although given names and family names (first/last) are technically principals as well,
-     * Shiro expects the object(s) returned from this method to be uniquely identifying attribute(s) for
-     * your application.  This implies that things like given names and family names are usually poor candidates as
-     * return values since they are rarely guaranteed to be unique.
+     * identify a user.
+     * <h4>Uniqueness</h4>
+     * Although given names and family names (first/last) are technically considered principals as well,
+     * Shiro expects the object returned from this method to be an identifying attribute unique across
+     * your entire application.
+     * <p/>
+     * This implies that things like given names and family names are usually poor
+     * candidates as return values since they are rarely guaranteed to be unique;  Things often used for this value:
+     * <ul>
+     * <li>A {@code long} RDBMS surrogate primary key</li>
+     * <li>An application-unique username</li>
+     * <li>A {@link java.util.UUID UUID}</li>
+     * <li>An LDAP Unique ID</li>
+     * </ul>
+     * or any other similar suitable unique mechanism valuable to your application.
      * <p/>
      * Most implementations will simply return
      * <code>{@link #getPrincipals()}.{@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal() getPrimaryPrincipal()}</code>
@@ -82,7 +94,9 @@ public interface Subject {
     Object getPrincipal();
 
     /**
-     * Returns all of this Subject's principals (identifying attributes) in the form of a {@code PrincipalCollection}.
+     * Returns this Subject's principals (identifying attributes) in the form of a {@code PrincipalCollection} or
+     * {@code null} if this Subject is anonymous because it doesn't yet have any associated account data (for example,
+     * if they haven't logged in).
      * <p/>
      * The word &quot;principals&quot; is nothing more than a fancy security term for identifying attributes associated
      * with a Subject, aka, application user.  For example, user id, a surname (family/last name), given (first) name,
@@ -335,11 +349,11 @@ public interface Subject {
      * Note as indicated by the above code example, if a {@code Subject} is remembered, they are
      * <em>NOT</em> considered authenticated.  A check against {@link #isAuthenticated() isAuthenticated()} is a more
      * strict check than that reflected by this method.  For example, a check to see if a subject can access financial
-     * information should probably depend on {@link #isAuthenticated() isAuthenticated()} to <em>guarantee</em> a
+     * information should almost always depend on {@link #isAuthenticated() isAuthenticated()} to <em>guarantee</em> a
      * verified identity, and not this method.
      * <p/>
-     * Once the subject is authenticated, they are no longer considered remembered because their identity would have
-     * been verified during the current session.
+     * Once the subject is authenticated, they are no longer considered only remembered because their identity would
+     * have been verified during the current session.
      * <h4>Remembered vs Authenticated</h4>
      * Authentication is the process of <em>proving</em> you are who you say you are.  When a user is only remembered,
      * the remembered identity gives the system an idea who that user probably is, but in reality, has no way of
@@ -364,7 +378,8 @@ public interface Subject {
      * <p/>
      * This is because although amazon.com assumed your identity from 'remember me', it recognized that you were not
      * actually authenticated.  The only way to really guarantee you are who you say you are, and therefore allow you
-     * access to sensitive account data, is to force you to perform an actual successful authentication.
+     * access to sensitive account data, is to force you to perform an actual successful authentication.  You can
+     * check this guarantee via the {@link #isAuthenticated() isAuthenticated()} method and not via this method.
      *
      * @return {@code true} if this {@code Subject}'s identity (aka {@link #getPrincipals() principals}) is
      *         remembered from a successful authentication during a previous session, {@code false} otherwise.
@@ -404,7 +419,7 @@ public interface Subject {
      * Logs out this Subject and invalidates and/or removes any associated entities,
      * such as a {@link Session Session} and authorization data.  After this method is called, the Subject is
      * considered 'anonymous' and may continue to be used for another log-in if desired.
-     * <h3>Web Environment Caveat</h3>
+     * <h3>Web Environment Warning</h3>
      * Calling this method in web environments will usually remove any associated session cookie as part of
      * session invalidation.  Because cookies are part of the HTTP header, and headers can only be set before the
      * response body (html, image, etc) is sent, this method in web environments must be called before <em>any</em>
@@ -647,8 +662,8 @@ public interface Subject {
          * Subject jsmith = new Subject.Builder().principals(identity).buildSubject();</pre>
          * <p/>
          * Similarly, if your application's unique identifier for users is a {@code long} value (such as might be used
-         * as a primary key in a relational database, a highly recommended approach) and you were using a
-         * {@code JDBC} {@code Realm} named, (unimaginatively) &quot;jdbcRealm&quot;, you might create the Subject
+         * as a primary key in a relational database) and you were using a {@code JDBC}
+         * {@code Realm} named, (unimaginatively) &quot;jdbcRealm&quot;, you might create the Subject
          * instance this way:
          * <pre>
          * long userId = //get user ID from somewhere
