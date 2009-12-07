@@ -169,9 +169,11 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             userPrincipalName += principalSuffix;
         }
 
-        String searchFilter = "(&(objectClass=*)(userPrincipalName=" + userPrincipalName + "))";
+        //SHIRO-115 - prevent potential code injection:
+        String searchFilter = "(&(objectClass=*)(userPrincipalName={0}))";
+        Object[] searchArguments = new Object[]{userPrincipalName};
 
-        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchCtls);
+        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchCtls);
 
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
