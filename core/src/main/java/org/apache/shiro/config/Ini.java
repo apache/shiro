@@ -44,7 +44,7 @@ public class Ini {
     private final Map<String, Section> sections;
 
     public Ini() {
-        this.sections = new HashMap<String, Section>();
+        this.sections = new LinkedHashMap<String, Section>();
     }
 
     public Ini(Ini defaults) {
