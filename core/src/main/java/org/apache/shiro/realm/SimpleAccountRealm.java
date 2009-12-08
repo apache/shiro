@@ -20,26 +20,23 @@ package org.apache.shiro.realm;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.SimpleAuthorizingAccount;
 import org.apache.shiro.authz.SimpleRole;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
- * <p>A simple implementation of the {@link Realm Realm} interface that
+ * A simple implementation of the {@link Realm Realm} interface that
  * uses a set of configured user accounts and roles to support authentication and authorization.  Each account entry
  * specifies the username, password, and roles for a user.  Roles can also be mapped
- * to permissions and associated with users.</p>
+ * to permissions and associated with users.
  * <p/>
- * <p>User accounts and roles are stored in two {@link org.apache.shiro.cache.Cache cache}s, so it is the Cache manager implementation that
- * determines if this class stores all data in memory or spools to disk or clusters it, etc based on the
- * Caches it creates.
+ * User accounts and roles are stored in two {@code Map}s in memory, so it is expected that the total number of either
+ * is not sufficiently large.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
@@ -49,36 +46,21 @@ public class SimpleAccountRealm extends AuthorizingRealm {
 
     //TODO - complete JavaDoc
 
-    protected Map<String, SimpleRole> roles = null;
+    protected final Map<String, SimpleAccount> users; //username-to-SimpleAccount
+    protected final Map<String, SimpleRole> roles; //roleName-to-SimpleRole
 
     public SimpleAccountRealm() {
-        init();
+        this.users = new LinkedHashMap<String, SimpleAccount>();
+        this.roles = new LinkedHashMap<String, SimpleRole>();
     }
 
     public SimpleAccountRealm(String name) {
+        this();
         setName(name);
-        init();
-    }
-
-    public void afterAuthorizationCacheSet() {
-        initRoleCache();
-        afterRoleCacheSet();
-    }
-
-    public void afterRoleCacheSet() {
-    }
-
-    protected void initRoleCache() {
-        if (getAuthorizationCache() == null) {
-            initAuthorizationCache();
-        }
-
-        this.roles = new HashMap<String, SimpleRole>();
-        accountAndRoleCachesCreated();
     }
 
     protected SimpleAccount getUser(String username) {
-        return (SimpleAccount) getAuthorizationCache().get(username);
+        return this.users.get(username);
     }
 
     public boolean accountExists(String username) {
@@ -91,13 +73,21 @@ public class SimpleAccountRealm extends AuthorizingRealm {
 
     public void addAccount(String username, String password, String... roles) {
         Set<String> roleNames = CollectionUtils.asSet(roles);
-        SimpleAccount account = new SimpleAuthorizingAccount(username, password, getName(), roleNames, null);
+        SimpleAccount account = new SimpleAccount(username, password, getName(), roleNames, null);
         add(account);
     }
 
+    protected String getUsername(SimpleAccount account) {
+        return getUsername(account.getPrincipals());
+    }
+
+    protected String getUsername(PrincipalCollection principals) {
+        return getAvailablePrincipal(principals).toString();
+    }
+
     protected void add(SimpleAccount account) {
-        Object key = getAuthorizationCacheKey(account.getPrincipals());
-        getAuthorizationCache().put(key, account);
+        String username = getUsername(account);
+        this.users.put(username, account);
     }
 
     protected SimpleRole getRole(String rolename) {
@@ -133,12 +123,9 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         return values;
     }
 
-    protected void accountAndRoleCachesCreated() {
-    }
-
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-        SimpleAccount account = (SimpleAccount) getAuthorizationCache().get(upToken.getUsername());
+        SimpleAccount account = getUser(upToken.getUsername());
 
         if (account != null) {
 
@@ -156,7 +143,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return (Account) getAuthorizationCache().get(getAuthorizationCacheKey(principals));
+        return this.users.get(getUsername(principals));
     }
 
     protected Object getAuthorizationCacheKey(PrincipalCollection principals) {

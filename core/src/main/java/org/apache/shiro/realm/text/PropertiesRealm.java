@@ -18,6 +18,13 @@
  */
 package org.apache.shiro.realm.text;
 
+import org.apache.shiro.ShiroException;
+import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.io.ResourceUtils;
+import org.apache.shiro.util.Destroyable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,67 +35,59 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.shiro.ShiroException;
-import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.Destroyable;
-
 
 /**
- * A subclass of <tt>SimpleAccountRealm</tt> that defers all logic to the parent class, but just enables
+ * A {@link TextConfigurationRealm} that defers all logic to the parent class, but just enables
  * {@link java.util.Properties Properties} based configuration in addition to the parent class's String configuration.
- *
- * <p>This class allows processing of a single .properties file for user, role, and
+ * <p/>
+ * This class allows processing of a single .properties file for user, role, and
  * permission configuration.
- *
- * <p>For convenience, if the {@link #setResourcePath resourcePath} attribute is not set, this class defaults to lookup
- * the properties file definition from <tt>classpath:shiro-users.properties</tt> (root of the classpath).
+ * <p/>
+ * For convenience, if the {@link #setResourcePath resourcePath} attribute is not set, this class defaults to lookup
+ * the properties file definition from {@code classpath:shiro-users.properties} (root of the classpath).
  * This allows you to use this implementation by simply defining this file at the classpath root, instantiating this
  * class, and then calling {@link #init init()}.
- *
- * <p>Or, you may of course specify any other file path using the <tt>url:</tt>, <tt>file:</tt>, or <tt>classpath:</tt>
- * prefixes.</p>
- *
- * <p>If none of these are specified, and the shiro-users.properties is not included at the root of the classpath,
+ * <p/>
+ * Or, you may of course specify any other file path using the {@code url:}, {@code file:}, or {@code classpath:}
+ * prefixes.
+ * <p/>
+ * If none of these are specified, and the shiro-users.properties is not included at the root of the classpath,
  * a default failsafe configuration will be used.  This is not recommended as it only contains a few simple users and
- * roles which are probably of little value to production applications.</p>
- *
- * <p>The Properties format understood by this implementation must be written as follows:
- *
- * <p>Each line's key/value pair represents either a user-to-role(s) mapping <em>or</em> a role-to-permission(s)
+ * roles which are probably of little value to production applications.
+ * <p/>
+ * The Properties format understood by this implementation must be written as follows:
+ * <p/>
+ * Each line's key/value pair represents either a user-to-role(s) mapping <em>or</em> a role-to-permission(s)
  * mapping.
- *
- * <p>The user-to-role(s) lines have this format:</p>
- *
- * <p><code><b>user.</b><em>username</em> = <em>password</em>,role1,role2,...</code></p>
- *
- * <p>Note that each key is prefixed with the token <tt><b>user.</b></tt>  Each value must adhere to the
- * the {@link #setUserDefinitions(String) setUserDefinitions(String)} JavaDoc.</p>
- *
- * <p>The role-to-permission(s) lines have this format:</p>
- *
- * <p><code><b>role.</b><em>rolename</em> = <em>permissionDefinition1</em>, <em>permissionDefinition2</em>, ...</code></p>
- *
- * <p>where each key is prefixed with the token <tt><b>role.</b></tt> and the value adheres to the format specified in
+ * <p/>
+ * The user-to-role(s) lines have this format:</p>
+ * <p/>
+ * <code><b>user.</b><em>username</em> = <em>password</em>,role1,role2,...</code></p>
+ * <p/>
+ * Note that each key is prefixed with the token <b>{@code user.}</b>  Each value must adhere to the
+ * the {@link #setUserDefinitions(String) setUserDefinitions(String)} JavaDoc.
+ * <p/>
+ * The role-to-permission(s) lines have this format:</p>
+ * <p/>
+ * <code><b>role.</b><em>rolename</em> = <em>permissionDefinition1</em>, <em>permissionDefinition2</em>, ...</code>
+ * <p/>
+ * where each key is prefixed with the token <b>{@code role.}</b> and the value adheres to the format specified in
  * the {@link #setRoleDefinitions(String) setRoleDefinitions(String)} JavaDoc.
- *
- * <p>Here is an example of a very simple properties definition that conforms to the above format rules and corresponding
+ * <p/>
+ * Here is an example of a very simple properties definition that conforms to the above format rules and corresponding
  * method JavaDocs:
- *
+ * <p/>
  * <code>user.root = <em>rootPassword</em>,administrator<br/>
  * user.jsmith = <em>jsmithPassword</em>,manager,engineer,employee<br/>
  * user.abrown = <em>abrownPassword</em>,qa,employee<br/>
  * user.djones = <em>djonesPassword</em>,qa,contractor<br/>
  * <br/>
- * role.administrator = org.apache.shiro.authz.support.AllPermission<br/>
- * role.manager = com.domain.UserPermission,*,read,write;com.domain.FilePermission,/usr/local/emailManagers.sh,execute<br/>
- * role.engineer = com.domain.FilePermission,/usr/local/tomcat/bin/startup.sh,read,execute<br/>
- * role.employee = com.domain.IntranetPermission,useWiki<br/>
- * role.qa = com.domain.QAServerPermission,*,view,start,shutdown,restart;com.domain.ProductionServerPermission,*,view<br/>
- * role.contractor = com.domain.IntranetPermission,useTimesheet</code>
+ * role.administrator = *<br/>
+ * role.manager = &quot;user:read,write&quot;, file:execute:/usr/local/emailManagers.sh<br/>
+ * role.engineer = &quot;file:read,execute:/usr/local/tomcat/bin/startup.sh&quot;<br/>
+ * role.employee = application:use:wiki<br/>
+ * role.qa = &quot;server:view,start,shutdown,restart:someQaServer&quot;, server:view:someProductionServer<br/>
+ * role.contractor = application:use:timesheet</code>
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -98,7 +97,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
 
     //TODO - complete JavaDoc
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
     private static final int DEFAULT_RELOAD_INTERVAL_SECONDS = 10;
@@ -107,7 +106,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     private static final String DEFAULT_RESOURCE_PATH = "classpath:shiro-users.properties";
     private static final String FAILSAFE_RESOURCE_PATH = "classpath:org/apache/shiro/realm/text/default-shiro-users.properties";
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     private static final Logger log = LoggerFactory.getLogger(PropertiesRealm.class);
@@ -119,18 +118,74 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     protected int reloadIntervalSeconds = DEFAULT_RELOAD_INTERVAL_SECONDS;
 
     public PropertiesRealm() {
-        init();
+        super();
+        onInit();
     }
 
-    public PropertiesRealm( CacheManager cacheManager ) {
-        if ( cacheManager == null ) {
-            throw new IllegalArgumentException( "cacheManager argument cannot be null." );
-        }
-        setCacheManager(cacheManager);
-        init();
+    /**
+     * Method argument is always ignored.  This method will be removed prior to 1.0 final.
+     *
+     * @param cacheManager ignored
+     * @deprecated PropertiesRealm is an all-in-memory realm - Caching is not necessary or desired since you
+     *             never want entries to be expunged.  This constructor will be removed prior to 1.0 final.
+     */
+    @Deprecated
+    public PropertiesRealm(CacheManager cacheManager) {
+        this();
     }
 
-    public void afterRoleCacheSet() {
+    /*--------------------------------------------
+    |  A C C E S S O R S / M O D I F I E R S    |
+    ============================================*/
+
+    /**
+     * Determines whether or not the properties XML format should be used.  For more information, see
+     * {@link Properties#loadFromXML(java.io.InputStream)}
+     *
+     * @param useXmlFormat true to use XML or false to use the normal format.  Defaults to false.
+     */
+    public void setUseXmlFormat(boolean useXmlFormat) {
+        this.useXmlFormat = useXmlFormat;
+    }
+
+    /**
+     * Sets the path of the properties file to load user, role, and permission information from.  The properties
+     * file will be loaded using {@link ResourceUtils#getInputStreamForPath(String)} so any convention recongized
+     * by that method is accepted here.  For example, to load a file from the classpath use
+     * {@code classpath:myfile.properties}; to load a file from disk simply specify the full path; to load
+     * a file from a URL use {@code url:www.mysite.com/myfile.properties}.
+     *
+     * @param resourcePath the path to load the properties file from.  This is a required property.
+     */
+    public void setResourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
+
+    /**
+     * TODO: RELOADING IS CURRENTLY DISABLED
+     * <p/>
+     * Sets the interval in seconds at which the property file will be checked for changes and reloaded.  If this is
+     * set to zero or less, property file reloading will be disabled.  If it is set to 1 or greater, then a
+     * separate thread will be created to monitor the propery file for changes and reload the file if it is updated.
+     *
+     * @param reloadIntervalSeconds the interval in seconds at which the property file should be examined for changes.
+     *                              If set to zero or less, reloading is disabled.
+     */
+    public void setReloadIntervalSeconds(int reloadIntervalSeconds) {
+        this.reloadIntervalSeconds = reloadIntervalSeconds;
+    }
+
+    /*--------------------------------------------
+    |               M E T H O D S               |
+    ============================================*/
+
+    @Override
+    public void onInit() {
+        //TODO - cleanup - this method shouldn't be necessary
+        afterRoleCacheSet();
+    }
+
+    protected void afterRoleCacheSet() {
         try {
             loadProperties();
         } catch (Exception e) {
@@ -177,48 +232,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         }
     }
 
-    /*--------------------------------------------
-    |  A C C E S S O R S / M O D I F I E R S    |
-    ============================================*/
-
-    /**
-     * Determines whether or not the properties XML format should be used.  For more information, see
-     * {@link Properties#loadFromXML(java.io.InputStream)}
-     *
-     * @param useXmlFormat true to use XML or false to use the normal format.  Defaults to false.
-     */
-    public void setUseXmlFormat(boolean useXmlFormat) {
-        this.useXmlFormat = useXmlFormat;
-    }
-
-    /**
-     * Sets the path of the properties file to load user, role, and permission information from.  The properties
-     * file will be loaded using {@link ResourceUtils#getInputStreamForPath(String)} so any convention recongized
-     * by that method is accepted here.  For example, to load a file from the classpath use
-     * <tt>classpath:myfile.properties</tt>; to load a file from disk simply specify the full path; to load
-     * a file from a URL use <tt>url:www.mysite.com/myfile.properties</tt>.
-     *
-     * @param resourcePath the path to load the properties file from.  This is a required property.
-     */
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
-    }
-
-    /**
-     * Sets the interval in seconds at which the property file will be checked for changes and reloaded.  If this is
-     * set to zero or less, property file reloading will be disabled.  If it is set to 1 or greater, then a
-     * separate thread will be created to monitor the propery file for changes and reload the file if it is updated.
-     *
-     * @param reloadIntervalSeconds the interval in seconds at which the property file should be examined for changes.
-     *                              If set to zero or less, reloading is disabled.
-     */
-    public void setReloadIntervalSeconds(int reloadIntervalSeconds) {
-        this.reloadIntervalSeconds = reloadIntervalSeconds;
-    }
-
-    /*--------------------------------------------
-    |               M E T H O D S               |
-    ============================================*/
     private void loadProperties() {
         if (resourcePath == null || resourcePath.length() == 0) {
             throw new IllegalStateException("The resourcePath property is not set.  " +

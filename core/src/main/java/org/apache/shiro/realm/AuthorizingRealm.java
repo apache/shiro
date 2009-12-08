@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -68,7 +69,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      */
     private static final String DEFAULT_AUTHORIZATION_CACHE_SUFFIX = "-authorization";
 
-    private static int INSTANCE_COUNT = 0;
+    private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -154,6 +155,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      */
     public final void init() {
         initAuthorizationCache();
+        onInit();
+    }
+
+    protected void onInit() {
     }
 
     protected void afterCacheManagerSet() {
@@ -162,6 +167,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     protected void afterAuthorizationCacheSet() {
+    }
+
+    protected final String generateAuthorizationCacheName() {
+        //Simple default in case they didn't provide one:
+        return getClass().getName() + "-" + INSTANCE_COUNT.getAndIncrement() + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
     }
 
     public void initAuthorizationCache() {
@@ -183,7 +193,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 String cacheName = getAuthorizationCacheName();
                 if (cacheName == null) {
                     //Simple default in case they didn't provide one:
-                    cacheName = getClass().getName() + "-" + INSTANCE_COUNT++ + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
+                    cacheName = generateAuthorizationCacheName();
                     setAuthorizationCacheName(cacheName);
                 }
                 if (log.isDebugEnabled()) {

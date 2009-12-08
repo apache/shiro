@@ -19,6 +19,7 @@
 package org.apache.shiro.config;
 
 import org.apache.shiro.io.ResourceUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,6 @@ public abstract class IniFactorySupport<T> implements Factory<T> {
         this.ini = ini;
     }
 
-    protected static boolean isEmpty(Ini ini) {
-        return ini == null || ini.isEmpty();
-    }
-
     /**
      * Returns a new Ini instance created from the default {@code classpath:shiro.ini} file, or {@code null} if
      * the file does not exist.
@@ -70,7 +67,7 @@ public abstract class IniFactorySupport<T> implements Factory<T> {
             log.debug("Found shiro.ini at the root of the classpath.");
             ini = new Ini();
             ini.loadFromPath(DEFAULT_INI_RESOURCE_PATH);
-            if (isEmpty(ini)) {
+            if (CollectionUtils.isEmpty(ini)) {
                 log.warn("shiro.ini found at the root of the classpath, but it did not contain any data.");
             }
         }
@@ -90,7 +87,7 @@ public abstract class IniFactorySupport<T> implements Factory<T> {
      */
     protected Ini resolveIni() {
         Ini ini = getIni();
-        if (isEmpty(ini)) {
+        if (CollectionUtils.isEmpty(ini)) {
             log.debug("Null or empty Ini instance.  Falling back to the default {} file.", DEFAULT_INI_RESOURCE_PATH);
             ini = loadDefaultClassPathIni();
         }
@@ -112,7 +109,7 @@ public abstract class IniFactorySupport<T> implements Factory<T> {
 
         T instance;
 
-        if (!isEmpty(ini)) {
+        if (!CollectionUtils.isEmpty(ini)) {
             log.debug("Creating instance from Ini [" + ini + "]");
             instance = createInstance(ini);
             if (instance == null) {
