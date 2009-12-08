@@ -104,7 +104,7 @@ public abstract class IniFactorySupport<T> implements Factory<T> {
      *
      * @return a new {@code SecurityManager} instance by using a configured INI source.
      */
-    public T createInstance() {
+    public T getInstance() {
         Ini ini = resolveIni();
 
         T instance;

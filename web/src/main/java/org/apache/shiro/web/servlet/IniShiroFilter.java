@@ -343,7 +343,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
         } else {
             factory = new WebIniSecurityManagerFactory(ini);
         }
-        SecurityManager securityManager = factory.createInstance();
+        SecurityManager securityManager = factory.getInstance();
         setSecurityManager(securityManager);
     }
 
@@ -363,7 +363,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
             //and set it:
             IniFilterChainResolverFactory filterChainResolverFactory = new IniFilterChainResolverFactory(ini);
             filterChainResolverFactory.setFilterConfig(getFilterConfig());
-            FilterChainResolver resolver = filterChainResolverFactory.createInstance();
+            FilterChainResolver resolver = filterChainResolverFactory.getInstance();
             setFilterChainResolver(resolver);
         }
     }
