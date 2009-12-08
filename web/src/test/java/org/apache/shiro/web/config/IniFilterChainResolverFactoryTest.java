@@ -56,8 +56,8 @@ public class IniFilterChainResolverFactoryTest extends WebTest {
     }
 
     @Test
-    public void testCreateInstanceNoIni() {
-        FilterChainResolver resolver = factory.createInstance();
+    public void testGetInstanceNoIni() {
+        FilterChainResolver resolver = factory.getInstance();
         assertNotNull(resolver);
     }
 
@@ -69,7 +69,7 @@ public class IniFilterChainResolverFactoryTest extends WebTest {
                         "/index.html = anon";
         ini.load(config);
         factory = new IniFilterChainResolverFactory(ini);
-        FilterChainResolver resolver = factory.createInstance();
+        FilterChainResolver resolver = factory.getInstance();
         assertNotNull(resolver);
     }
 
@@ -95,7 +95,7 @@ public class IniFilterChainResolverFactoryTest extends WebTest {
                         "/index.html = anon";
         ini.load(config);
         factory = new IniFilterChainResolverFactory(ini);
-        factory.createInstance();
+        factory.getInstance();
     }
 
     @Test
@@ -109,7 +109,7 @@ public class IniFilterChainResolverFactoryTest extends WebTest {
         FilterConfig config = createNiceMockFilterConfig();
         factory.setFilterConfig(config);
         replay(config);
-        FilterChainResolver resolver = factory.createInstance();
+        FilterChainResolver resolver = factory.getInstance();
         assertNotNull(resolver);
         verify(config);
     }

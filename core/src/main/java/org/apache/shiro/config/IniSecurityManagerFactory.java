@@ -44,7 +44,7 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     private static transient final Logger log = LoggerFactory.getLogger(IniSecurityManagerFactory.class);
 
     /**
-     * Creates a new instance.  See the {@link #createInstance()} JavaDoc for detailed explaination of how an INI
+     * Creates a new instance.  See the {@link #getInstance()} JavaDoc for detailed explaination of how an INI
      * source will be resolved to use to build the instance.
      */
     public IniSecurityManagerFactory() {
