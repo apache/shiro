@@ -27,9 +27,15 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * A class representing the <a href="http://en.wikipedia.org/wiki/INI_file">INI</a> text configuration format.
+ * <p/>
+ * An Ini instance is a map of {@link Ini.Section Section}s, keyed by section name.  Each
+ * {@code Section} is itself a map of {@code String} name/value pairs.
+ *
+ * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
-public class Ini {
+public class Ini implements Map<String, Ini.Section> {
 
     private static transient final Logger log = LoggerFactory.getLogger(Ini.class);
 
@@ -131,6 +137,15 @@ public class Ini {
     public String getSectionProperty(String sectionName, String propertyName, String defaultValue) {
         String value = getSectionProperty(sectionName, propertyName);
         return value != null ? value : defaultValue;
+    }
+
+    public static Ini fromResourcePath(String resourcePath) throws ConfigurationException {
+        if (!StringUtils.hasLength(resourcePath)) {
+            throw new IllegalArgumentException("Resource Path argument cannot be null or empty.");
+        }
+        Ini ini = new Ini();
+        ini.loadFromPath(resourcePath);
+        return ini;
     }
 
     public void loadFromPath(String resourcePath) throws ConfigurationException {
@@ -269,6 +284,50 @@ public class Ini {
     @Override
     public int hashCode() {
         return this.sections.hashCode();
+    }
+
+    public int size() {
+        return this.sections.size();
+    }
+
+    public boolean containsKey(Object key) {
+        return this.sections.containsKey(key);
+    }
+
+    public boolean containsValue(Object value) {
+        return this.sections.containsValue(value);
+    }
+
+    public Section get(Object key) {
+        return this.sections.get(key);
+    }
+
+    public Section put(String key, Section value) {
+        return this.sections.put(key, value);
+    }
+
+    public Section remove(Object key) {
+        return this.sections.remove(key);
+    }
+
+    public void putAll(Map<? extends String, ? extends Section> m) {
+        this.sections.putAll(m);
+    }
+
+    public void clear() {
+        this.sections.clear();
+    }
+
+    public Set<String> keySet() {
+        return Collections.unmodifiableSet(this.sections.keySet());
+    }
+
+    public Collection<Section> values() {
+        return Collections.unmodifiableCollection(this.sections.values());
+    }
+
+    public Set<Entry<String, Section>> entrySet() {
+        return Collections.unmodifiableSet(this.sections.entrySet());
     }
 
     public class Section implements Map<String, String> {

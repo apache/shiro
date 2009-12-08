@@ -18,32 +18,27 @@
  */
 package org.apache.shiro.realm.text;
 
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-
 import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleRole;
+import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.SimpleAccountRealm;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.PermissionUtils;
 import org.apache.shiro.util.StringUtils;
 
+import java.text.ParseException;
+import java.util.*;
+
 
 /**
- * <p>a SimpleAccountRealm that enables text-based configuration of the initial User, Role, and Permission objects
+ * A SimpleAccountRealm that enables text-based configuration of the initial User, Role, and Permission objects
  * created at startup.
- *
- * <p>Each User account definition specifies the username, password, and roles for a user.  Each Role definition
+ * <p/>
+ * Each User account definition specifies the username, password, and roles for a user.  Each Role definition
  * specifies a name and an optional collection of assigned Permissions.  Users can be assigned Roles, and Roles can be
- * assigned Permissions.  By transitive association, each User 'has' all of their Role's Permissions.</p>
- *
- * <p>User and user-to-role definitinos are specified via the {@link #setUserDefinitions} method and
+ * assigned Permissions.  By transitive association, each User 'has' all of their Role's Permissions.
+ * <p/>
+ * User and user-to-role definitinos are specified via the {@link #setUserDefinitions} method and
  * Role-to-permission definitions are specified via the {@link #setRoleDefinitions} method.
  *
  * @author Les Hazlewood
@@ -57,6 +52,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     private String roleDefinitions;
 
     public TextConfigurationRealm() {
+        super();
     }
 
     public String getUserDefinitions() {
@@ -66,11 +62,11 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     /**
      * <p>Sets a newline (\n) delimited String that defines user-to-password-and-role(s) key/value pairs according
      * to the following format:
-     *
+     * <p/>
      * <p><code><em>username</em> = <em>password</em>, role1, role2,...</code></p>
-     *
+     * <p/>
      * <p>Here are some examples of what these lines might look like:</p>
-     *
+     * <p/>
      * <p><code>root = <em>reallyHardToGuessPassword</em>, administrator<br/>
      * jsmith = <em>jsmithsPassword</em>, manager, engineer, employee<br/>
      * abrown = <em>abrownsPassword</em>, qa, employee<br/>
@@ -89,19 +85,19 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
     /**
      * Sets a newline (\n) delimited String that defines role-to-permission definitions.
-     *
+     * <p/>
      * <p>Each line within the string must define a role-to-permission(s) key/value mapping with the
      * equals character signifies the key/value separation, like so:</p>
-     *
+     * <p/>
      * <p><code><em>rolename</em> = <em>permissionDefinition1</em>, <em>permissionDefinition2</em>, ...</code></p>
-     *
+     * <p/>
      * <p>where <em>permissionDefinition</em> is an arbitrary String, but must people will want to use
      * Strings that conform to the {@link org.apache.shiro.authz.permission.WildcardPermission WildcardPermission}
      * format for ease of use and flexibility.  Note that if an individual <em>permissionDefnition</em> needs to
      * be internally comma-delimited (e.g. <code>printer:5thFloor:print,info</code>), you will need to surround that
      * definition with double quotes (&quot;) to avoid parsing errors (e.g.
      * <code>&quot;printer:5thFloor:print,info&quot;</code>).
-     *
+     * <p/>
      * <p><b>NOTE:</b> if you have roles that don't require permission associations, don't include them in this
      * definition - just defining the role name in the {@link #setUserDefinitions(String) userDefinitions} is
      * enough to create the role if it does not yet exist.  This property is really only for configuring realms that
@@ -113,17 +109,13 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         this.roleDefinitions = roleDefinitions;
     }
 
-    protected void accountAndRoleCachesCreated() {
-        processDefinitions();
-    }
-
     protected void processDefinitions() {
         try {
             processRoleDefinitions();
             processUserDefinitions();
         } catch (ParseException e) {
             String msg = "Unable to parse user and/or role definitions.";
-            throw new IllegalStateException(msg, e);
+            throw new ConfigurationException(msg, e);
         }
     }
 
@@ -133,6 +125,10 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
             return;
         }
         Map<String, String> roleDefs = toMap(toLines(roleDefinitions));
+        processRoleDefinitions(roleDefs);
+    }
+
+    protected void processRoleDefinitions(Map<String, String> roleDefs) {
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
         }
@@ -159,6 +155,11 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         }
 
         Map<String, String> userDefs = toMap(toLines(userDefinitions));
+
+        processUserDefinitions(userDefs);
+    }
+
+    protected void processUserDefinitions(Map<String, String> userDefs) {
         if (userDefs == null || userDefs.isEmpty()) {
             return;
         }
@@ -211,17 +212,11 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         Map<String, String> pairs = new HashMap<String, String>();
         for (String pairString : keyValuePairs) {
             String[] pair = StringUtils.splitKeyValue(pairString);
-            if( pair != null ) {
+            if (pair != null) {
                 pairs.put(pair[0].trim(), pair[1].trim());
             }
         }
 
         return pairs;
-    }
-
-    public void onLogout(PrincipalCollection accountPrincipal) {
-        //override parent method of removing user from cache
-        //we don't want that to happen on cache-only realm since that would permanently
-        //remove the user from the realm.
     }
 }

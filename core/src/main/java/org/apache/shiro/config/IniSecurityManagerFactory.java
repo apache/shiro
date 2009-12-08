@@ -56,10 +56,10 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     }
 
     protected SecurityManager createInstance(Ini ini) {
-        if (isEmpty(ini)) {
+        if (CollectionUtils.isEmpty(ini)) {
             throw new NullPointerException("Ini argument cannot be null or empty.");
         }
-        SecurityManager securityManager = doCreateSecurityManager(ini);
+        SecurityManager securityManager = createSecurityManager(ini);
         if (securityManager == null) {
             String msg = SecurityManager.class + " instance cannot be null.";
             throw new ConfigurationException(msg);
@@ -71,7 +71,7 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         return new DefaultSecurityManager();
     }
 
-    protected SecurityManager doCreateSecurityManager(Ini ini) {
+    protected SecurityManager createSecurityManager(Ini ini) {
         Ini.Section mainSection = ini.getSection(MAIN_SECTION_NAME);
         if (CollectionUtils.isEmpty(mainSection)) {
             //try the default:
@@ -85,13 +85,13 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
             }
             securityManager = createDefaultInstance();
         } else {
-            securityManager = createSecurityManager(mainSection);
+            securityManager = doCreateSecurityManager(mainSection);
         }
         return securityManager;
     }
 
     @SuppressWarnings({"unchecked"})
-    protected SecurityManager createSecurityManager(Ini.Section mainSection) {
+    protected SecurityManager doCreateSecurityManager(Ini.Section mainSection) {
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
 
