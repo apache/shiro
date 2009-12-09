@@ -52,6 +52,9 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     public SimpleAccountRealm() {
         this.users = new LinkedHashMap<String, SimpleAccount>();
         this.roles = new LinkedHashMap<String, SimpleRole>();
+        //SimpleAccountRealms are memory-only realms - no need for an additional cache mechanism since we're
+        //already as memory-efficient as we can be:
+        setCachingEnabled(false);
     }
 
     public SimpleAccountRealm(String name) {
@@ -144,9 +147,5 @@ public class SimpleAccountRealm extends AuthorizingRealm {
 
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         return this.users.get(getUsername(principals));
-    }
-
-    protected Object getAuthorizationCacheKey(PrincipalCollection principals) {
-        return getAvailablePrincipal(principals); //returns the username, being the only principal from this Realm
     }
 }

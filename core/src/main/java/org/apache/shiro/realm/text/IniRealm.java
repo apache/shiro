@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
  * ...
  * [roles]
  * # One or more {@link org.apache.shiro.realm.text.TextConfigurationRealm#setRoleDefinitions(String) role definitions}</pre>
+ * <p/>
+ * This class also supports setting the {@link #setResourcePath(String) resourcePath} property to create account
+ * data from an .ini resource.  This will only be used if there isn't already account data in the Realm.
  */
 public class IniRealm extends TextConfigurationRealm {
 
@@ -65,13 +68,25 @@ public class IniRealm extends TextConfigurationRealm {
 
     @Override
     public void onInit() {
+        // We override init() instead of onInit() because we _don't_ want any caches to be created
+        // (see the superclass init() code).
+        // This is an in-memory realm only - no need for an additional cache when we're already
+        // as memory-efficient as we can be.
         String resourcePath = getResourcePath();
-        if (StringUtils.hasText(resourcePath)) {
-            log.debug("Resource path {} defined.  Creating INI instance.", resourcePath);
-            Ini ini = Ini.fromResourcePath(resourcePath);
-            processDefinitions(ini);
+
+        if (CollectionUtils.isEmpty(this.users) && CollectionUtils.isEmpty(this.roles)) {
+            //no account data manually populated - try the resource path:
+            if (StringUtils.hasText(resourcePath)) {
+                log.debug("Resource path {} defined.  Creating INI instance.", resourcePath);
+                Ini ini = Ini.fromResourcePath(resourcePath);
+                processDefinitions(ini);
+            } else {
+                throw new IllegalStateException("No resource path was specified.  Cannot load account data.");
+            }
         } else {
-            throw new IllegalStateException("No resource path was specified.  Cannot load account data.");
+            if (StringUtils.hasText(resourcePath)) {
+                log.warn("Users or Roles are already populated.  Resource path property will be ignored.");
+            }
         }
     }
 

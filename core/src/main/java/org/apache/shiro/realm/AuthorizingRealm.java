@@ -77,6 +77,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     /**
      * The cache used by this realm to store AuthorizationInfo instances associated with individual Subject principals.
      */
+    private boolean authorizationCachingEnabled = true;
     private Cache authorizationCache = null;
     private String authorizationCacheName = null;
 
@@ -122,6 +123,33 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
         this.authorizationCacheName = authorizationCacheName;
     }
 
+    /**
+     * Returns {@code true} if authorization caching should be utilized if a {@link CacheManager} has been
+     * {@link #setCacheManager(org.apache.shiro.cache.CacheManager) configured}, {@code false} otherwise.
+     * <p/>
+     * The default value is {@code true}.
+     *
+     * @return {@code true} if authorization caching should be utilized, {@code false} otherwise.
+     */
+    public boolean isAuthorizationCachingEnabled() {
+        return isCachingEnabled() && authorizationCachingEnabled;
+    }
+
+    /**
+     * Sets whether or not authorization caching should be utilized if a {@link CacheManager} has been
+     * {@link #setCacheManager(org.apache.shiro.cache.CacheManager) configured}, {@code false} otherwise.
+     * <p/>
+     * The default value is {@code true}.
+     *
+     * @param authorizationCachingEnabled the value to set
+     */
+    public void setAuthorizationCachingEnabled(boolean authorizationCachingEnabled) {
+        this.authorizationCachingEnabled = authorizationCachingEnabled;
+        if (authorizationCachingEnabled) {
+            setCachingEnabled(true);
+        }
+    }
+
     public PermissionResolver getPermissionResolver() {
         return permissionResolver;
     }
@@ -154,7 +182,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
      * </ol>
      */
     public final void init() {
-        initAuthorizationCache();
+        if (isAuthorizationCachingEnabled()) {
+            initAuthorizationCache();
+        }
         onInit();
     }
 
@@ -163,7 +193,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
 
     protected void afterCacheManagerSet() {
         this.authorizationCache = null;
-        initAuthorizationCache();
+        if (isAuthorizationCachingEnabled()) {
+            initAuthorizationCache();
+        }
     }
 
     protected void afterAuthorizationCacheSet() {
@@ -175,6 +207,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     }
 
     public void initAuthorizationCache() {
+        if (!isAuthorizationCachingEnabled()) {
+            log.debug("Authorization caching is disabled.  Returning immediately.");
+            return;
+        }
+
         if (log.isTraceEnabled()) {
             log.trace("Initializing authorization cache.");
         }
