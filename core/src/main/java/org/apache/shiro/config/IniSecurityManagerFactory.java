@@ -59,6 +59,10 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         super(config);
     }
 
+    public IniSecurityManagerFactory(String iniResourcePath) {
+        super(Ini.fromResourcePath(iniResourcePath));
+    }
+
     protected SecurityManager createInstance(Ini ini) {
         if (CollectionUtils.isEmpty(ini)) {
             throw new NullPointerException("Ini argument cannot be null or empty.");
