@@ -58,6 +58,13 @@ public class IniRealm extends TextConfigurationRealm {
         processDefinitions(ini);
     }
 
+    public IniRealm(String resourcePath) {
+        this();
+        Ini ini = Ini.fromResourcePath(resourcePath);
+        this.resourcePath = resourcePath;
+        processDefinitions(ini);
+    }
+
     public String getResourcePath() {
         return resourcePath;
     }
@@ -67,7 +74,7 @@ public class IniRealm extends TextConfigurationRealm {
     }
 
     @Override
-    public void onInit() {
+    protected void onInit() {
         // We override init() instead of onInit() because we _don't_ want any caches to be created
         // (see the superclass init() code).
         // This is an in-memory realm only - no need for an additional cache when we're already

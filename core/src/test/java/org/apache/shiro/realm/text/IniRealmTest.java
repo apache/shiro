@@ -35,7 +35,7 @@ public class IniRealmTest {
 
     @Test
     public void testNullIni() {
-        IniRealm realm = new IniRealm(null);
+        IniRealm realm = new IniRealm((Ini) null);
     }
 
     @Test

@@ -19,6 +19,7 @@
 package org.apache.shiro.config;
 
 import org.apache.shiro.io.ResourceUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,6 +285,23 @@ public class Ini implements Map<String, Ini.Section> {
     @Override
     public int hashCode() {
         return this.sections.hashCode();
+    }
+
+    public String toString() {
+        if (CollectionUtils.isEmpty(this.sections)) {
+            return "<empty INI>";
+        } else {
+            StringBuilder sb = new StringBuilder("sections=");
+            int i = 0;
+            for (Ini.Section section : this.sections.values()) {
+                if (i > 0) {
+                    sb.append(",");
+                }
+                sb.append(section.toString());
+                i++;
+            }
+            return sb.toString();
+        }
     }
 
     public int size() {

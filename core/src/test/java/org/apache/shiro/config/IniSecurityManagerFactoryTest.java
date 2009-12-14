@@ -47,6 +47,15 @@ public class IniSecurityManagerFactoryTest {
     }
 
     @Test
+    public void testGetInstanceWithResourcePath() {
+        String path = "classpath:org/apache/shiro/config/IniSecurityManagerFactoryTest.ini";
+        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(path);
+        SecurityManager sm = factory.getInstance();
+        assertNotNull(sm);
+        assertTrue(sm instanceof DefaultSecurityManager);
+    }
+
+    @Test
     public void testGetInstanceWithEmptyIni() {
         Ini ini = new Ini();
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
