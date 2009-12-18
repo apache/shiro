@@ -30,6 +30,8 @@ import java.util.Map;
  */
 public interface SubjectFactory {
 
+    public static final String SECURITY_MANAGER = SubjectFactory.class.getName() + ".SECURITY_MANAGER";
+
     public static final String SESSION_ID = SubjectFactory.class.getName() + ".SESSION_ID";
 
     public static final String AUTHENTICATION_TOKEN = SubjectFactory.class.getName() + ".AUTHENTICATION_TOKEN";

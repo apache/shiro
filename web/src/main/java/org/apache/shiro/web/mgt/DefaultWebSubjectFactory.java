@@ -48,10 +48,6 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
         super();
     }
 
-    public DefaultWebSubjectFactory(SecurityManager securityManager) {
-        super(securityManager);
-    }
-
     protected ServletRequest getServletRequest(Map context) {
         ServletRequest request = getTypedValue(context, SubjectFactory.SERVLET_REQUEST, ServletRequest.class);
 
@@ -111,13 +107,14 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
     }
 
     public Subject createSubject(Map context) {
+        SecurityManager securityManager = getSecurityManager(context);
         Session session = getSession(context);
         PrincipalCollection principals = getPrincipals(context, session);
         boolean authenticated = isAuthenticated(context, session);
         String host = getHost(context, session);
         ServletRequest request = getServletRequest(context);
         ServletResponse response = getServletResponse(context);
-        return newSubjectInstance(principals, authenticated, host, session, request, response, getSecurityManager());
+        return newSubjectInstance(principals, authenticated, host, session, request, response, securityManager);
     }
 
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated,

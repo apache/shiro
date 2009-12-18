@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.mgt;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.HostAuthenticationToken;
@@ -25,6 +26,9 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.DelegatingSubject;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -36,23 +40,11 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAware {
+public class DefaultSubjectFactory implements SubjectFactory {
 
-    private SecurityManager securityManager;
+    private static transient final Logger log = LoggerFactory.getLogger(DefaultSubjectFactory.class);
 
     public DefaultSubjectFactory() {
-    }
-
-    public DefaultSubjectFactory(SecurityManager securityManager) {
-        this.securityManager = securityManager;
-    }
-
-    public SecurityManager getSecurityManager() {
-        return securityManager;
-    }
-
-    public void setSecurityManager(SecurityManager securityManager) {
-        this.securityManager = securityManager;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -71,14 +63,29 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
         return found;
     }
 
-    protected static boolean isEmpty(PrincipalCollection principals) {
-        return principals == null || principals.isEmpty();
+    protected SecurityManager getSecurityManager(Map context) {
+        SecurityManager securityManager = getTypedValue(context, SubjectFactory.SECURITY_MANAGER, SecurityManager.class);
+        if (securityManager == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No SecurityManager available in subject context map.  " +
+                        "Falling back to SecurityUtils.getSecurityManager() lookup.");
+            }
+            securityManager = SecurityUtils.getSecurityManager();
+        }
+        if (securityManager == null) {
+            String msg = "No " + SecurityManager.class.getName() + " instance was available in the subject context " +
+                    "via the " + SubjectFactory.SECURITY_MANAGER + " key.  " +
+                    "This is required for this " + SubjectFactory.class.getSimpleName() + " implementation to " +
+                    "function.";
+            throw new IllegalStateException(msg);
+        }
+        return securityManager;
     }
 
     protected PrincipalCollection getPrincipals(Map context, Session session) {
         PrincipalCollection principals = getTypedValue(context, SubjectFactory.PRINCIPALS, PrincipalCollection.class);
 
-        if (isEmpty(principals)) {
+        if (CollectionUtils.isEmpty(principals)) {
             //check to see if they were just authenticated:
             AuthenticationInfo info = getTypedValue(context, SubjectFactory.AUTHENTICATION_INFO, AuthenticationInfo.class);
             if (info != null) {
@@ -86,14 +93,14 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
             }
         }
 
-        if (isEmpty(principals)) {
+        if (CollectionUtils.isEmpty(principals)) {
             Subject subject = getTypedValue(context, SubjectFactory.SUBJECT, Subject.class);
             if (subject != null) {
                 principals = subject.getPrincipals();
             }
         }
 
-        if (isEmpty(principals)) {
+        if (CollectionUtils.isEmpty(principals)) {
             //try the session:
             if (session != null) {
                 principals = (PrincipalCollection) session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY);
@@ -156,11 +163,12 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
     }
 
     public Subject createSubject(Map context) {
+        SecurityManager securityManager = getSecurityManager(context);
         Session session = getSession(context);
         PrincipalCollection principals = getPrincipals(context, session);
         boolean authenticated = isAuthenticated(context, session);
         String host = getHost(context, session);
-        return newSubjectInstance(principals, authenticated, host, session, getSecurityManager());
+        return newSubjectInstance(principals, authenticated, host, session, securityManager);
     }
 
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated, String host,

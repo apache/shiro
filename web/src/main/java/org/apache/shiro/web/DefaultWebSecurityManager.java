@@ -60,7 +60,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager {
 
     public DefaultWebSecurityManager() {
         super();
-        setSubjectFactory(new DefaultWebSubjectFactory(this));
+        setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new WebRememberMeManager());
         setSessionManager(new ServletContainerSessionManager());
     }
