@@ -20,14 +20,12 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.InetAuthenticationToken;
+import org.apache.shiro.authc.HostAuthenticationToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.DelegatingSubject;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 
-import java.net.InetAddress;
 import java.util.Map;
 
 
@@ -119,29 +117,24 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
         return session;
     }
 
-    protected InetAddress getInetAddress(Map context, Session session) {
-        InetAddress inet = getTypedValue(context, SubjectFactory.INET_ADDRESS, InetAddress.class);
+    protected String getHost(Map context, Session session) {
+        String host = getTypedValue(context, SubjectFactory.HOST, String.class);
 
-        if (inet == null) {
+        if (host == null) {
             //check to see if there is an AuthenticationToken from which to retrieve it:
             AuthenticationToken token = getTypedValue(context, SubjectFactory.AUTHENTICATION_TOKEN, AuthenticationToken.class);
-            if (token instanceof InetAuthenticationToken) {
-                inet = ((InetAuthenticationToken) token).getInetAddress();
+            if (token instanceof HostAuthenticationToken) {
+                host = ((HostAuthenticationToken) token).getHost();
             }
         }
 
-        if (inet == null) {
+        if (host == null) {
             if (session != null) {
-                inet = session.getHostAddress();
+                host = session.getHost();
             }
         }
 
-        if (inet == null) {
-            //fall back to the thread local if it exists:
-            inet = ThreadContext.getInetAddress();
-        }
-
-        return inet;
+        return host;
     }
 
     protected boolean isAuthenticated(Map context, Session session) {
@@ -166,12 +159,12 @@ public class DefaultSubjectFactory implements SubjectFactory, SecurityManagerAwa
         Session session = getSession(context);
         PrincipalCollection principals = getPrincipals(context, session);
         boolean authenticated = isAuthenticated(context, session);
-        InetAddress inet = getInetAddress(context, session);
-        return newSubjectInstance(principals, authenticated, inet, session, getSecurityManager());
+        String host = getHost(context, session);
+        return newSubjectInstance(principals, authenticated, host, session, getSecurityManager());
     }
 
-    protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated, InetAddress inet,
+    protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated, String host,
                                          Session session, SecurityManager securityManager) {
-        return new DelegatingSubject(principals, authenticated, inet, session, securityManager);
+        return new DelegatingSubject(principals, authenticated, host, session, securityManager);
     }
 }

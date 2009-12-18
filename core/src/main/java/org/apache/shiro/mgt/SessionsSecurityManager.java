@@ -30,7 +30,6 @@ import org.apache.shiro.session.mgt.eis.SessionDAOAware;
 import org.apache.shiro.util.LifecycleUtils;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -75,11 +74,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * Sets the underlying delegate {@link SessionManager} instance that will be used to support this implementation's
      * <tt>SessionManager</tt> method calls.
      * <p/>
-     * <p>This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
+     * This <tt>SecurityManager</tt> implementation does not provide logic to support the inherited
      * <tt>SessionManager</tt> interface, but instead delegates these calls to an internal
      * <tt>SessionManager</tt> instance.
      * <p/>
-     * <p>If a <tt>SessionManager</tt> instance is not set, a default one will be automatically created and
+     * If a <tt>SessionManager</tt> instance is not set, a default one will be automatically created and
      * initialized appropriately for the the existing runtime environment.
      *
      * @param sessionManager delegate instance to use to support this manager's <tt>SessionManager</tt> method calls.
@@ -160,11 +159,11 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * This is a convenience method that allows registration of SessionListeners with the underlying delegate
      * SessionManager at startup.
      * <p/>
-     * <p>This is more convenient than having to configure your own SessionManager instance, inject the listeners on
+     * This is more convenient than having to configure your own SessionManager instance, inject the listeners on
      * it, and then set that SessionManager instance as an attribute of this class.  Instead, you can just rely
      * on the <tt>SecurityManager</tt> to apply these <tt>SessionListener</tt>s on your behalf.
      * <p/>
-     * <p>One notice however: The underlying SessionManager delegate must implement the
+     * One notice however: The underlying SessionManager delegate must implement the
      * {@link SessionListenerRegistrar SessionListenerRegistrar} interface in order for these listeners to
      * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
      * will be thrown.
@@ -270,8 +269,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
                 ((SessionListenerRegistrar) this.sessionManager).remove(listener);
     }
 
-    public Serializable start(InetAddress originatingHost) throws AuthorizationException {
-        return this.sessionManager.start(originatingHost);
+    public Serializable start(String host) throws AuthorizationException {
+        return this.sessionManager.start(host);
     }
 
     public Serializable start(Map initData) throws AuthorizationException {
@@ -306,8 +305,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         this.sessionManager.touch(sessionId);
     }
 
-    public InetAddress getHostAddress(Serializable sessionId) {
-        return this.sessionManager.getHostAddress(sessionId);
+    public String getHost(Serializable sessionId) {
+        return this.sessionManager.getHost(sessionId);
     }
 
     public void stop(Serializable sessionId) throws InvalidSessionException {

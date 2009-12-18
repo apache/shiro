@@ -18,20 +18,18 @@
  */
 package org.apache.shiro.authz;
 
-import java.net.InetAddress;
-
 /**
  * Thrown when a particular client (that is, host address) has not been enabled to access the system
  * or if the client has been enabled access but is not permitted to perform a particluar operation
  * or access a particular resource.
  *
  * @author Les Hazlewood
- * @see org.apache.shiro.session.mgt.SessionManager#start(java.net.InetAddress)
+ * @see org.apache.shiro.session.mgt.SessionManager#start(String)
  * @since 0.1
  */
 public class HostUnauthorizedException extends UnauthorizedException {
 
-    private InetAddress hostAddress;
+    private String host;
 
     /**
      * Creates a new HostUnauthorizedException.
@@ -69,31 +67,20 @@ public class HostUnauthorizedException extends UnauthorizedException {
     }
 
     /**
-     * Constructs a new HostUnauthorizedException associated with the given host address.
+     * Returns the host associated with this exception.
      *
-     * @param hostAddress the address of the host unauthorized to perform a particular action or
-     *                    access a particular resource.
+     * @return the host associated with this exception.
      */
-    public HostUnauthorizedException(InetAddress hostAddress) {
-        this("The system is not cofigured to allow access for host [" +
-                hostAddress.getHostAddress() + "]");
+    public String getHost() {
+        return this.host;
     }
 
     /**
-     * Returns the host address associated with this exception.
+     * Sets the host associated with this exception.
      *
-     * @return the host address associated with this exception.
+     * @param host the host associated with this exception.
      */
-    public InetAddress getHostAddress() {
-        return this.hostAddress;
-    }
-
-    /**
-     * Sets the host address associated with this exception.
-     *
-     * @param hostAddress the host address associated with this exception.
-     */
-    public void setHostAddress(InetAddress hostAddress) {
-        this.hostAddress = hostAddress;
+    public void setHostAddress(String host) {
+        this.host = host;
     }
 }

@@ -30,7 +30,6 @@ import org.apache.shiro.web.subject.WebSubject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.net.InetAddress;
 import java.util.Map;
 
 /**
@@ -40,7 +39,7 @@ import java.util.Map;
  * threads when using the {@code Subject} {@link Subject#associateWith(java.util.concurrent.Callable) createCallable}
  * and {@link Subject#associateWith(Runnable) createRunnable} methods.
  *
- * @see #newSubjectInstance(org.apache.shiro.subject.PrincipalCollection, boolean, java.net.InetAddress, org.apache.shiro.session.Session, org.apache.shiro.mgt.SecurityManager)
+ * @see #newSubjectInstance(org.apache.shiro.subject.PrincipalCollection, boolean, String, org.apache.shiro.session.Session, org.apache.shiro.mgt.SecurityManager)
  * @since 1.0
  */
 public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
@@ -102,29 +101,29 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
     }
 
     @Override
-    protected InetAddress getInetAddress(Map context, Session session) {
-        InetAddress inet = super.getInetAddress(context, session);
-        if (inet == null) {
+    protected String getHost(Map context, Session session) {
+        String host = super.getHost(context, session);
+        if (host == null) {
             ServletRequest request = getServletRequest(context);
-            inet = WebUtils.getInetAddress(request);
+            host = request.getRemoteHost();
         }
-        return inet;
+        return host;
     }
 
     public Subject createSubject(Map context) {
         Session session = getSession(context);
         PrincipalCollection principals = getPrincipals(context, session);
         boolean authenticated = isAuthenticated(context, session);
-        InetAddress inet = getInetAddress(context, session);
+        String host = getHost(context, session);
         ServletRequest request = getServletRequest(context);
         ServletResponse response = getServletResponse(context);
-        return newSubjectInstance(principals, authenticated, inet, session, request, response, getSecurityManager());
+        return newSubjectInstance(principals, authenticated, host, session, request, response, getSecurityManager());
     }
 
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated,
-                                         InetAddress inet, Session session,
+                                         String host, Session session,
                                          ServletRequest request, ServletResponse response,
                                          SecurityManager securityManager) {
-        return new WebDelegatingSubject(principals, authenticated, inet, session, request, response, securityManager);
+        return new WebDelegatingSubject(principals, authenticated, host, session, request, response, securityManager);
     }
 }

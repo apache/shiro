@@ -26,9 +26,9 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.util.StringUtils;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -624,14 +624,15 @@ public interface Subject {
         }
 
         /**
-         * Ensures the {@code Subject} being built will reflect the specified host address as its originating address.
+         * Ensures the {@code Subject} being built will reflect the specified host name or IP as its originating
+         * location.
          *
-         * @param originatingHost the host address to use as the {@code Subject}'s originating address.
+         * @param host the host name or IP address to use as the {@code Subject}'s originating location.
          * @return this {@code Builder} instance for method chaining.
          */
-        public Builder inetAddress(InetAddress originatingHost) {
-            if (originatingHost != null) {
-                this.subjectContext.put(SubjectFactory.INET_ADDRESS, originatingHost);
+        public Builder host(String host) {
+            if (StringUtils.hasText(host)) {
+                this.subjectContext.put(SubjectFactory.HOST, host);
             }
             return this;
         }

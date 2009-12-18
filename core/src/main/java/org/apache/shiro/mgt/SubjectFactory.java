@@ -44,6 +44,8 @@ public interface SubjectFactory {
 
     public static final String AUTHENTICATED = SubjectFactory.class.getName() + ".AUTHENTICATED";
 
+    public static final String HOST = SubjectFactory.class.getName() + ".HOST";
+
     public static final String INET_ADDRESS = SubjectFactory.class.getName() + ".INET_ADDRESS";
 
     public static final String SERVLET_REQUEST = SubjectFactory.class.getName() + ".SERVLET_REQUEST";

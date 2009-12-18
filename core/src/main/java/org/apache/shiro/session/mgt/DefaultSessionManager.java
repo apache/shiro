@@ -136,7 +136,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
     protected Session doCreateSession(Map initData) {
         Session s = newSessionInstance(initData);
         if (log.isTraceEnabled()) {
-            log.trace("Creating session for host {}", s.getHostAddress());
+            log.trace("Creating session for host {}", s.getHost());
         }
         create(s);
         return s;

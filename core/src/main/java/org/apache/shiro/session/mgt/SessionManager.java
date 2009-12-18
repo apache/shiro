@@ -23,7 +23,6 @@ import org.apache.shiro.authz.HostUnauthorizedException;
 import org.apache.shiro.session.InvalidSessionException;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -38,44 +37,45 @@ import java.util.Map;
 public interface SessionManager {
 
     /**
-     * Starts a new session within the system for the host with the specified originating IP address.
+     * Starts a new session within the system for the host with the specified originating host or IP address string.
      * <p/>
      * An implementation of this interface may be configured to allow a {@code null} argument,
-     * thereby indicating the originating IP is either unknown or has been
+     * thereby indicating the originating host or IP is either unknown or has been
      * explicitly omitted by the caller.  However, if the implementation is configured to require
-     * a valid {@code hostAddress} and the argument is {@code null}, an
+     * a valid {@code host} and the argument is {@code null}, an
      * {@link IllegalArgumentException IllegalArgumentException} will be thrown.
      * <p/>
-     * In web-based systems, this InetAddress can be inferred from the incoming request, e.g.
-     * {@code javax.servlet.ServletRequest#getRemoteAddr()}
-     * method, or in socket-based systems, it can be obtained via inspecting the socket
+     * In web-based systems, this host can be inferred from the incoming request, e.g.
+     * {@code javax.servlet.ServletRequest#getRemoteAddr()} or {@code javax.servlet.ServletRequest#getRemoteHost()}
+     * methods, or in socket-based systems, it can be obtained via inspecting the socket
      * initiator's host IP.
      * <p/>
      * Most secure environments <em>should</em> require that a valid, non-{@code null}
-     * {@code hostAddress} be specified, since knowing the {@code hostAddress} allows for more
-     * flexibility when securing a system: by requiring an InetAddress, access control policies
+     * {@code host} be specified, since knowing the {@code host} allows for more
+     * flexibility when securing a system: by requiring an host, access control policies
      * can also ensure access is restricted to specific client <em>locations</em> in
      * addition to user principals, if so desired.
      * <p/>
      * <b>Caveat</b> - if clients to your system are on a
      * public network (as would be the case for a public web site), odds are high the clients can be
      * behind a NAT (Network Address Translation) router or HTTP proxy server.  If so, all clients
-     * accessing your system behind that router or proxy will have the same originating IP address.
-     * If your system is configured to allow only one session per IP, then the next request from a
+     * accessing your system behind that router or proxy will have the same originating host.
+     * If your system is configured to allow only one session per host, then the next request from a
      * different NAT or proxy client will fail and access will be deny for that client.  Just be
-     * aware that ip-based security policies are best utilized in LAN or private WAN environments
+     * aware that host-based security policies are best utilized in LAN or private WAN environments
      * when you can be ensure clients will not share IPs or be behind such NAT routers or
      * proxy servers.
      *
-     * @param originatingHost the originating host InetAddress of the external party
-     *                        (user, 3rd party product, etc) that is attempting to interact with the system.
+     * @param host the originating host or IP of the external party
+     *             (user, 3rd party product, etc) that is attempting to interact with the system.
      * @return a handle to the newly created session.
      * @throws HostUnauthorizedException if the system access control policy restricts access based
      *                                   on client location/IP and the specified hostAddress hasn't been enabled.
      * @throws AuthorizationException    if the system access control policy does not allow the currently executing
      *                                   caller to start sessions.
+     * @since 1.0
      */
-    Serializable start(InetAddress originatingHost) throws AuthorizationException;
+    Serializable start(String host) throws AuthorizationException;
 
     /**
      * Starts a new session based on the specified initialization data, which can be used by the underlying
@@ -87,8 +87,8 @@ public interface SessionManager {
      * logic by simply injecting a {@code SessionFactory} into the {@code SecurityManager or SessionManager} instance.
      * <p/>
      * For example, Shiro's default implementation of the
-     * {@link #start(InetAddress) start(InetAddress)} method merely adds the InetAddress to a Map instance and passes
-     * that Map into this method for delegation to an underlying {@link SessionFactory}.
+     * {@link #start(String) start(String)} method merely adds the client host name or IP string to a Map instance
+     * and passes that Map into this method for delegation to an underlying {@link SessionFactory}.
      *
      * @param initData the initialization data that can be used by the implementation or underlying
      *                 {@link SessionFactory} when instantiating the internal {@code Session} instance.
@@ -187,15 +187,16 @@ public interface SessionManager {
     void touch(Serializable sessionId) throws InvalidSessionException;
 
     /**
-     * Returns the IP address of the host where the session was started, if known.  If
-     * no IP was specified when starting the session, this method returns {@code null}
+     * Returns the host name or IP string of the host where the session was started, if known.  If
+     * no host name or IP was specified when starting the session, this method returns {@code null}
      *
      * @param sessionId the id of the session to query.
-     * @return the ip address of the host where the session originated, if known.  If unknown,
+     * @return the host name or ip address of the host where the session originated, if known.  If unknown,
      *         this method returns {@code null}.
-     * @see #start(InetAddress originatingHost) init( InetAddress originatingHost )
+     * @see #start(String host) init( String host )
+     * @since 1.0
      */
-    InetAddress getHostAddress(Serializable sessionId);
+    String getHost(Serializable sessionId);
 
     /**
      * Explicitly stops the session identified by {@code sessionId}, thereby releasing all

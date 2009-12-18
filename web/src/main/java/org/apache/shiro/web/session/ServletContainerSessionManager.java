@@ -30,7 +30,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Map;
 
 
@@ -75,7 +74,7 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         Session session = null;
         HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
         if (httpSession != null) {
-            session = createSession(httpSession, WebUtils.getInetAddress(request));
+            session = createSession(httpSession, request.getRemoteHost());
         }
         return session;
     }
@@ -94,18 +93,18 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         long timeoutMillis = getGlobalSessionTimeout();
         httpSession.setMaxInactiveInterval((int) (timeoutMillis / MILLIS_PER_SECOND));
 
-        InetAddress originatingHost;
-        if (initData != null && initData.containsKey(SessionFactory.ORIGINATING_HOST_KEY)) {
-            originatingHost = (InetAddress) initData.get(SessionFactory.ORIGINATING_HOST_KEY);
+        String originatingHost;
+        if (initData != null && initData.containsKey(SessionFactory.HOST_KEY)) {
+            originatingHost = (String) initData.get(SessionFactory.HOST_KEY);
         } else {
-            originatingHost = WebUtils.getInetAddress(request);
+            originatingHost = request.getRemoteHost();
         }
 
         return createSession(httpSession, originatingHost);
     }
 
-    protected Session createSession(HttpSession httpSession, InetAddress inet) {
-        return new WebSession(httpSession, inet);
+    protected Session createSession(HttpSession httpSession, String host) {
+        return new WebSession(httpSession, host);
     }
 
 }

@@ -27,7 +27,6 @@ import org.apache.shiro.web.subject.support.WebSubjectRunnable;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.net.InetAddress;
 import java.util.concurrent.Callable;
 
 /**
@@ -39,10 +38,10 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
     private final ServletResponse servletResponse;
 
     public WebDelegatingSubject(PrincipalCollection principals, boolean authenticated,
-                                InetAddress inetAddress, Session session,
+                                String host, Session session,
                                 ServletRequest request, ServletResponse response,
                                 SecurityManager securityManager) {
-        super(principals, authenticated, inetAddress, session, securityManager);
+        super(principals, authenticated, host, session, securityManager);
         this.servletRequest = request;
         this.servletResponse = response;
     }

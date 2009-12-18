@@ -6,13 +6,13 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import static org.easymock.EasyMock.*;
 import org.junit.After;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.remoting.support.RemoteInvocation;
 
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.util.UUID;
 
 /**
@@ -28,7 +28,7 @@ public class SecureRemoteInvocationFactoryTest {
         ThreadContext.clear();
     }
 
-    protected void bind( Subject subject ) {
+    protected void bind(Subject subject) {
         ThreadContext.bind(subject);
     }
 
@@ -39,12 +39,12 @@ public class SecureRemoteInvocationFactoryTest {
 
     protected Method getMethod(String name, Class clazz) {
         Method[] methods = clazz.getMethods();
-        for( Method method : methods ) {
-            if ( method.getName().equals(name) ) {
+        for (Method method : methods) {
+            if (method.getName().equals(name)) {
                 return method;
             }
         }
-        throw new IllegalStateException( "'" + name + "' method should exist." );
+        throw new IllegalStateException("'" + name + "' method should exist.");
     }
 
     @Test
@@ -55,8 +55,8 @@ public class SecureRemoteInvocationFactoryTest {
         MethodInvocation mi = createMock(MethodInvocation.class);
         Method startMethod = getMethod("start", SessionManager.class);
         expect(mi.getMethod()).andReturn(startMethod).anyTimes();
-        
-        Object[] args = {InetAddress.getLocalHost()};
+
+        Object[] args = {"localhost"};
         expect(mi.getArguments()).andReturn(args).anyTimes();
 
         replay(mi);

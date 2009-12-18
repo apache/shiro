@@ -32,8 +32,6 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.*;
 
@@ -51,15 +49,7 @@ public class AuthorizingRealmTest {
     private static final String PASSWORD = "password";
     private static final int USER_ID = 12345;
     private static final String ROLE = "admin";
-    private InetAddress localhost;
-
-    {
-        try {
-            localhost = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            fail("Error creating localhost");
-        }
-    }
+    private String localhost = "localhost";
 
     @Before
     public void setup() {
@@ -74,13 +64,6 @@ public class AuthorizingRealmTest {
 
     @Test
     public void testDefaultConfig() {
-        InetAddress localhost = null;
-        try {
-            localhost = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
         AuthenticationInfo info = realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
 
         assertNotNull(info);

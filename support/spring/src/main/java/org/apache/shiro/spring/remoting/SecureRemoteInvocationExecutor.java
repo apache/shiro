@@ -29,7 +29,6 @@ import org.springframework.remoting.support.RemoteInvocation;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
 import java.util.concurrent.Callable;
 
 
@@ -87,9 +86,9 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
             Subject.Builder builder = new Subject.Builder(securityManager);
 
-            InetAddress inet = (InetAddress) invocation.getAttribute(SecureRemoteInvocationFactory.INET_ADDRESS_KEY);
-            if (inet != null) {
-                builder.inetAddress(inet);
+            String host = (String) invocation.getAttribute(SecureRemoteInvocationFactory.HOST_KEY);
+            if (host != null) {
+                builder.host(host);
             }
 
             Serializable sessionId = invocation.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY);

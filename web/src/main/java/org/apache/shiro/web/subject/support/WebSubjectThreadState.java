@@ -37,7 +37,7 @@ public class WebSubjectThreadState extends SubjectThreadState {
     private final ServletResponse response;
 
     public WebSubjectThreadState(WebSubject subject) {
-        super(subject, WebUtils.getInetAddress(subject.getServletRequest()));
+        super(subject);
 
         ServletRequest request = subject.getServletRequest();
         if (request == null) {

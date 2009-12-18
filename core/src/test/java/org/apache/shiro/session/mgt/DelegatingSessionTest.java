@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 
 /**
  * Unit test for the {@link DelegatingSession} class.
@@ -41,7 +40,7 @@ public class DelegatingSessionTest {
     public void setup() {
         ThreadContext.clear();
         sm = new DefaultSessionManager();
-        Serializable sessionId = sm.start((InetAddress) null);
+        Serializable sessionId = sm.start((String) null);
         this.session = new DelegatingSession(sm, sessionId);
     }
 

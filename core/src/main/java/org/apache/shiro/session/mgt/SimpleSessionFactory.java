@@ -20,7 +20,6 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.session.Session;
 
-import java.net.InetAddress;
 import java.util.Map;
 
 /**
@@ -33,20 +32,20 @@ public class SimpleSessionFactory implements SessionFactory {
 
     /**
      * This default implementation merely returns
-     * <pre>new {@link SimpleSession#SimpleSession(java.net.InetAddress) SimpleSession}({@link InetAddress originatingHost});</pre>
+     * <pre>new {@link SimpleSession#SimpleSession(String) SimpleSession(host)};</pre>
      *
-     * @param originatingHost the originating host InetAddress of the external party
-     *                        (user, 3rd party product, etc) that is attempting to initiate the session, or
-     *                        {@code null} if not known.
+     * @param host the originating host name or IP string of the external party
+     *             (user, 3rd party product, etc) that is attempting to initiate the session, or
+     *             {@code null} if not known.
      * @return a new session instance.
      */
-    public Session createSession(InetAddress originatingHost) {
-        return new SimpleSession(originatingHost);
+    public Session createSession(String host) {
+        return new SimpleSession(host);
     }
 
     public Session createSession(Map initData) {
-        if (initData != null && initData.containsKey(SessionFactory.ORIGINATING_HOST_KEY)) {
-            InetAddress host = (InetAddress) initData.get(SessionFactory.ORIGINATING_HOST_KEY);
+        if (initData != null && initData.containsKey(SessionFactory.HOST_KEY)) {
+            String host = (String) initData.get(SessionFactory.HOST_KEY);
             return new SimpleSession(host);
         }
         return new SimpleSession();
