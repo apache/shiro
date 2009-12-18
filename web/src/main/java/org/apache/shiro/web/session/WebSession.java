@@ -18,17 +18,17 @@
  */
 package org.apache.shiro.web.session;
 
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.web.servlet.ShiroHttpSession;
+
+import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import javax.servlet.http.HttpSession;
-
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.web.servlet.ShiroHttpSession;
 
 
 /**
@@ -41,12 +41,12 @@ public class WebSession implements Session {
 
     //TODO - complete JavaDoc
 
-    private static final String INET_ADDRESS_SESSION_KEY = WebSession.class.getName() + "_INET_ADDRESS_SESSION_KEY";
-    private static final String TOUCH_OBJECT_SESSION_KEY = WebSession.class.getName() + "_TOUCH_OBJECT_SESSION_KEY";
+    private static final String HOST_SESSION_KEY = WebSession.class.getName() + ".HOST_SESSION_KEY";
+    private static final String TOUCH_OBJECT_SESSION_KEY = WebSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
 
     private HttpSession httpSession = null;
 
-    public WebSession(HttpSession httpSession, InetAddress inetAddress) {
+    public WebSession(HttpSession httpSession, String host) {
         if (httpSession == null) {
             String msg = "HttpSession constructor argument cannot be null.";
             throw new IllegalArgumentException(msg);
@@ -57,8 +57,8 @@ public class WebSession implements Session {
             throw new IllegalArgumentException(msg);
         }
         this.httpSession = httpSession;
-        if (inetAddress != null) {
-            setHostAddress(inetAddress);
+        if (StringUtils.hasText(host)) {
+            setHost(host);
         }
     }
 
@@ -91,12 +91,12 @@ public class WebSession implements Session {
         }
     }
 
-    protected void setHostAddress(InetAddress hostAddress) {
-        setAttribute(INET_ADDRESS_SESSION_KEY, hostAddress);
+    protected void setHost(String host) {
+        setAttribute(HOST_SESSION_KEY, host);
     }
 
-    public InetAddress getHostAddress() {
-        return (InetAddress) getAttribute(INET_ADDRESS_SESSION_KEY);
+    public String getHost() {
+        return (String) getAttribute(HOST_SESSION_KEY);
     }
 
     public void touch() throws InvalidSessionException {

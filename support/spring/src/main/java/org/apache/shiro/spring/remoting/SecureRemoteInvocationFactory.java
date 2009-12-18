@@ -23,7 +23,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationFactory;
@@ -31,9 +30,6 @@ import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Map;
-
 
 /**
  * A {@link RemoteInvocationFactory} that passes the session ID to the server via a
@@ -51,8 +47,8 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
 
     private static final Logger log = LoggerFactory.getLogger(SecureRemoteInvocationFactory.class);
 
-    public static final String SESSION_ID_KEY = Session.class.getName() + "_ID_KEY";
-    public static final String INET_ADDRESS_KEY = InetAddress.class.getName() + "_KEY";
+    public static final String SESSION_ID_KEY = SecureRemoteInvocationFactory.class.getName() + ".SESSION_ID_KEY";
+    public static final String HOST_KEY = SecureRemoteInvocationFactory.class.getName() + ".HOST_KEY";
 
     private static final String SESSION_ID_SYSTEM_PROPERTY_NAME = "shiro.session.id";
 
@@ -66,18 +62,17 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
     public RemoteInvocation createRemoteInvocation(MethodInvocation mi) {
 
         Serializable sessionId = null;
-        InetAddress inet = null;
+        String host = null;
         boolean sessionManagerMethodInvocation = false;
 
         //If the calling MI is for a remoting SessionManager delegate, we need to acquire the session ID from the method
         //argument and NOT interact with SecurityUtils/subject.getSession to avoid a stack overflow
         if (SessionManager.class.equals(mi.getMethod().getDeclaringClass())) {
             sessionManagerMethodInvocation = true;
-            //for SessionManager calls, all method calls require the session id as the first argument, with
-            //the exception of 'start' that takes in an InetAddress or a Map.  So, ignore those two cases:
-            Object firstArg = mi.getArguments()[0];
-            if (!(firstArg instanceof InetAddress || firstArg instanceof Map)) {
-                sessionId = (Serializable) firstArg;
+            //for SessionManager calls, all method calls except the 'start' methods require the session id
+            // as the first argument, so just get it from there:
+            if (!mi.getMethod().getName().equals("start")) {
+                sessionId = (Serializable) mi.getArguments()[0];
             }
         }
 
@@ -86,8 +81,8 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
             Subject subject = SecurityUtils.getSubject();
             Session session = subject.getSession(false);
             if (session != null) {
-                inet = session.getHostAddress();
                 sessionId = session.getId();
+                host = session.getHost();
             }
         }
 
@@ -105,17 +100,12 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
             }
         }
 
-        if (inet == null) {
-            //try thread context:
-            inet = ThreadContext.getInetAddress();
-        }
-
         RemoteInvocation ri = new RemoteInvocation(mi);
         if (sessionId != null) {
             ri.addAttribute(SESSION_ID_KEY, sessionId);
         }
-        if (inet != null) {
-            ri.addAttribute(INET_ADDRESS_KEY, inet);
+        if (host != null) {
+            ri.addAttribute(HOST_KEY, host);
         }
 
         return ri;

@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +55,7 @@ public abstract class ThreadContext {
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
     public static final String SESSION_ID_KEY = ThreadContext.class.getName() + "_SESSION_ID_KEY";
-    public static final String INET_ADDRESS_KEY = ThreadContext.class.getName() + "_INET_ADDRESS_KEY";
+    public static final String HOST_KEY = ThreadContext.class.getName() + "_INET_ADDRESS_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources =
             new InheritableThreadLocal<Map<Object, Object>>() {
@@ -314,62 +313,6 @@ public abstract class ThreadContext {
      */
     public static Subject unbindSubject() {
         return (Subject) remove(SUBJECT_KEY);
-    }
-
-    /**
-     * Convenience method that simplifies retrieval of a thread-bound InetAddress.  If there is no
-     * InetAddress bound to the thread, this method returns <tt>null</tt>.  It is merely a convenient wrapper
-     * for the following:
-     * <p/>
-     * <code>return (InetAddress)get( INET_ADDRESS_KEY );</code>
-     * <p/>
-     * This method only returns the bound value if it exists - it does not remove it
-     * from the thread.  To remove it, one must call {@link #unbindInetAddress() unbindInetAddress} instead.
-     *
-     * @return the InetAddress object bound to the thread, or <tt>null</tt> if there isn't one bound.
-     * @since 0.2
-     */
-    public static InetAddress getInetAddress() {
-        return (InetAddress) get(INET_ADDRESS_KEY);
-    }
-
-    /**
-     * Convenience method that simplifies binding an InetAddress to the ThreadContext.
-     * <p/>
-     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
-     * ThreadContext key names.  The implementation is simple in that, if the inetAddress is not <tt>null</tt>,
-     * it binds it to the thread, i.e.:
-     * <p/>
-     * <pre>
-     * if (inetAddress != null) {
-     *     put( INET_ADDRESS_KEY, inetAddress );
-     * }</pre>
-     *
-     * @param inetAddress the InetAddress to bind to the thread.  If the argument is null, nothing will be done.
-     * @since 0.2
-     */
-    public static void bind(InetAddress inetAddress) {
-        if (inetAddress != null) {
-            put(INET_ADDRESS_KEY, inetAddress);
-        }
-    }
-
-    /**
-     * Convenience method that simplifies removal of a thread-local InetAddress from the thread.
-     * <p/>
-     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
-     * <p/>
-     * <code>return (InetAddress)remove( INET_ADDRESS_KEY );</code>
-     * <p/>
-     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
-     * thread execution), you should use the {@link #getInetAddress() getInetAddress()} method for that purpose.
-     *
-     * @return the InetAddress object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     * @since 0.2
-     */
-    public static InetAddress unbindInetAddress() {
-        return (InetAddress) remove(INET_ADDRESS_KEY);
     }
 
     //TODO - complete JavaDoc

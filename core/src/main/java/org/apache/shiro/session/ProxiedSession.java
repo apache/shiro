@@ -19,7 +19,6 @@
 package org.apache.shiro.session;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 
@@ -91,8 +90,8 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
-    public InetAddress getHostAddress() {
-        return delegate.getHostAddress();
+    public String getHost() {
+        return delegate.getHost();
     }
 
     /**

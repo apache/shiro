@@ -22,7 +22,6 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 
@@ -51,7 +50,7 @@ public class DelegatingSession implements Session, Serializable {
 
     //cached fields to avoid a server-side method call if out-of-process:
     private Date startTimestamp = null;
-    private InetAddress hostAddress = null;
+    private String host = null;
 
     /**
      * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
@@ -73,9 +72,9 @@ public class DelegatingSession implements Session, Serializable {
         this.id = id;
     }
 
-    public DelegatingSession(SessionManager sessionManager, Serializable id, InetAddress hostAddress) {
+    public DelegatingSession(SessionManager sessionManager, Serializable id, String host) {
         this(sessionManager, id);
-        this.hostAddress = hostAddress;
+        this.host = host;
     }
 
     /**
@@ -153,14 +152,11 @@ public class DelegatingSession implements Session, Serializable {
         sessionManager.setTimeout(id, maxIdleTimeInMillis);
     }
 
-    /**
-     * @see org.apache.shiro.session.Session#getHostAddress()
-     */
-    public InetAddress getHostAddress() {
-        if (hostAddress == null) {
-            hostAddress = sessionManager.getHostAddress(id);
+    public String getHost() {
+        if (host == null) {
+            host = sessionManager.getHost(id);
         }
-        return hostAddress;
+        return host;
     }
 
     /**

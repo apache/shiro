@@ -20,7 +20,7 @@ package org.apache.shiro.subject;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.InetAuthenticationToken;
+import org.apache.shiro.authc.HostAuthenticationToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -79,7 +78,7 @@ public class DelegatingSubject implements Subject, Serializable {
 
     protected PrincipalCollection principals;
     protected boolean authenticated;
-    protected InetAddress inetAddress;
+    protected String host;
     protected Session session;
     private List<PrincipalCollection> assumedIdentities; //supports assumed identities (aka 'run as')
 
@@ -89,7 +88,7 @@ public class DelegatingSubject implements Subject, Serializable {
         this(null, false, null, null, securityManager);
     }
 
-    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, InetAddress inetAddress,
+    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
                              Session session, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
@@ -97,7 +96,7 @@ public class DelegatingSubject implements Subject, Serializable {
         this.securityManager = securityManager;
         this.principals = principals;
         this.authenticated = authenticated;
-        this.inetAddress = inetAddress;
+        this.host = host;
         if (session != null) {
             this.session = decorate(session);
             this.assumedIdentities = getAssumedIdentities(this.session);
@@ -128,12 +127,12 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     /**
-     * Returns the InetAddress associated with the client who created/is interacting with this Subject.
+     * Returns the host name or IP associated with the client who created/is interacting with this Subject.
      *
-     * @return the InetAddress associated with the client who created/is interacting with this Subject.
+     * @return the host name or IP associated with the client who created/is interacting with this Subject.
      */
-    public InetAddress getInetAddress() {
-        return this.inetAddress;
+    public String getHost() {
+        return this.host;
     }
 
     protected Object getPrimaryPrincipal(PrincipalCollection principals) {
@@ -251,13 +250,13 @@ public class DelegatingSubject implements Subject, Serializable {
 
         PrincipalCollection principals;
 
-        InetAddress inetAddress = null;
+        String host = null;
 
         if (subject instanceof DelegatingSubject) {
             DelegatingSubject delegating = (DelegatingSubject) subject;
             //we have to do this in case there are assumed identities - we don't want to lose the 'real' principals:
             principals = delegating.principals;
-            inetAddress = delegating.inetAddress;
+            host = delegating.host;
         } else {
             principals = subject.getPrincipals();
         }
@@ -269,11 +268,11 @@ public class DelegatingSubject implements Subject, Serializable {
         }
         this.principals = principals;
         this.authenticated = true;
-        if (token instanceof InetAuthenticationToken) {
-            inetAddress = ((InetAuthenticationToken) token).getInetAddress();
+        if (token instanceof HostAuthenticationToken) {
+            host = ((HostAuthenticationToken) token).getHost();
         }
-        if (inetAddress != null) {
-            this.inetAddress = inetAddress;
+        if (host != null) {
+            this.host = host;
         }
         Session session = subject.getSession(false);
         if (session != null) {
@@ -304,7 +303,7 @@ public class DelegatingSubject implements Subject, Serializable {
         }
 
         if (this.session == null && create) {
-            InetAddress host = getInetAddress();
+            String host = getHost();
             log.trace("Starting session for host {}", host);
             Serializable sessionId = this.securityManager.start(host);
             this.session = decorateSession(sessionId);
@@ -319,7 +318,6 @@ public class DelegatingSubject implements Subject, Serializable {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
-            this.inetAddress = null;
             this.assumedIdentities = null;
             //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is

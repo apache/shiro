@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.text.DateFormat;
 import java.util.*;
 
@@ -53,7 +52,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private Date lastAccessTime = null;
     private long timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
     private boolean expired = false;
-    private InetAddress hostAddress = null;
+    private String host = null;
 
     private Map<Object, Object> attributes = null;
 
@@ -62,9 +61,9 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.lastAccessTime = this.startTimestamp;
     }
 
-    public SimpleSession(InetAddress hostAddress) {
+    public SimpleSession(String host) {
         this();
-        this.hostAddress = hostAddress;
+        this.host = host;
     }
 
     public Serializable getId() {
@@ -138,12 +137,12 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.timeout = timeout;
     }
 
-    public InetAddress getHostAddress() {
-        return hostAddress;
+    public String getHost() {
+        return host;
     }
 
-    public void setHostAddress(InetAddress hostAddress) {
-        this.hostAddress = hostAddress;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public Map<Object, Object> getAttributes() {
@@ -347,7 +346,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
                 (getLastAccessTime() != null ? getLastAccessTime().equals(ss.getLastAccessTime()) : ss.getLastAccessTime() == null) &&
                 (getTimeout() == ss.getTimeout()) &&
                 (isExpired() == ss.isExpired()) &&
-                (getHostAddress() != null ? getHostAddress().equals(ss.getHostAddress()) : ss.getHostAddress() == null) &&
+                (getHost() != null ? getHost().equals(ss.getHost()) : ss.getHost() == null) &&
                 (getAttributes() != null ? getAttributes().equals(ss.getAttributes()) : ss.getAttributes() == null);
     }
 
@@ -371,7 +370,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         hashCode = 31 * hashCode + (getLastAccessTime() != null ? getLastAccessTime().hashCode() : 0);
         hashCode = 31 * hashCode + Long.valueOf(Math.max(getTimeout(), 0)).hashCode();
         hashCode = 31 * hashCode + Boolean.valueOf(isExpired()).hashCode();
-        hashCode = 31 * hashCode + (getHostAddress() != null ? getHostAddress().hashCode() : 0);
+        hashCode = 31 * hashCode + (getHost() != null ? getHost().hashCode() : 0);
         hashCode = 31 * hashCode + (getAttributes() != null ? getAttributes().hashCode() : 0);
         return hashCode;
     }

@@ -38,8 +38,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.naming.NamingException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,12 +79,7 @@ public class ActiveDirectoryRealmTest {
 
     @Test
     public void testDefaultConfig() {
-        InetAddress localhost = null;
-        try {
-            localhost = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        String localhost = "localhost";
         Subject subject = SecurityUtils.getSubject();
         subject.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
         assertTrue(subject.isAuthenticated());

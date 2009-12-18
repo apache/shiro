@@ -19,7 +19,6 @@
 package org.apache.shiro.session;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 
@@ -102,14 +101,14 @@ public interface Session {
     void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException;
 
     /**
-     * Returns the {@code InetAddress} of the host that originated this session, or {@code null}
-     * if the host address is unknown.
+     * Returns the host name or IP string of the host that originated this session, or {@code null}
+     * if the host is unknown.
      *
-     * @return the {@code InetAddress} of the host that originated this session, or {@code null}
+     * @return the host name or IP string of the host that originated this session, or {@code null}
      *         if the host address is unknown.
-     * @see org.apache.shiro.session.mgt.SessionManager#start(java.net.InetAddress)
+     * @see org.apache.shiro.session.mgt.SessionManager#start(String)
      */
-    InetAddress getHostAddress();
+    String getHost();
 
     /**
      * Explicitly updates the {@link #getLastAccessTime() lastAccessTime} of this session to the current time when

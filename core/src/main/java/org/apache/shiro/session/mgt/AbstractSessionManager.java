@@ -21,11 +21,11 @@ package org.apache.shiro.session.mgt;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.HostUnauthorizedException;
 import org.apache.shiro.session.*;
+import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.*;
 
 
@@ -102,11 +102,11 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         return this.listeners.remove(listener);
     }
 
-    public Serializable start(InetAddress originatingHost) throws AuthorizationException {
-        Map<String, InetAddress> initData = null;
-        if (originatingHost != null) {
-            initData = new HashMap<String, InetAddress>();
-            initData.put(SessionFactory.ORIGINATING_HOST_KEY, originatingHost);
+    public Serializable start(String host) throws AuthorizationException {
+        Map<String, String> initData = null;
+        if (StringUtils.hasText(host)) {
+            initData = new HashMap<String, String>();
+            initData.put(SessionFactory.HOST_KEY, host);
         }
         return start(initData);
     }
@@ -190,8 +190,8 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         onChange(s);
     }
 
-    public InetAddress getHostAddress(Serializable sessionId) {
-        return getSession(sessionId).getHostAddress();
+    public String getHost(Serializable sessionId) {
+        return getSession(sessionId).getHost();
     }
 
     public void stop(Serializable sessionId) throws InvalidSessionException {

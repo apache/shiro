@@ -33,9 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.URLDecoder;
-import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
@@ -234,35 +232,6 @@ public class WebUtils {
     }
 
     /**
-     * Returns the <code>InetAddress</code> associated with the current request, or <code>null</code> if the
-     * address cannot be resolved/determined.
-     * <p/>
-     * This implementation returns the InetAddress resolved from the request's
-     * {@link javax.servlet.ServletRequest#getRemoteHost() remoteHost} value.  The returned <code>String</code>
-     * is resolved to an InetAddress by calling
-     * {@link InetAddress#getByName(String) InetAddress.getByName(remoteHost)}. If the remote host is <code>null</code>
-     * or <code>getByName(remoteHost)</code> throws an exception, <code>null</code> is returned.
-     *
-     * @param request the incoming ServletRequest
-     * @return the <code>InetAddress</code> associated with the current request, or <code>null</code> if the
-     *         address cannot be resolved/determined.
-     */
-    public static InetAddress getInetAddress(ServletRequest request) {
-        InetAddress clientAddress = null;
-        //get the Host/IP the client is coming from:
-        String addrString = request.getRemoteHost();
-        try {
-            clientAddress = InetAddress.getByName(addrString);
-        } catch (UnknownHostException e) {
-            if (log.isInfoEnabled()) {
-                log.info("Unable to acquire InetAddress from ServletRequest", e);
-            }
-        }
-
-        return clientAddress;
-    }
-
-    /**
      * A convenience method that merely casts the incoming <code>ServletRequest</code> to an
      * <code>HttpServletRequest</code>:
      * <p/>
@@ -292,17 +261,6 @@ public class WebUtils {
      */
     public static HttpServletResponse toHttp(ServletResponse response) {
         return (HttpServletResponse) response;
-    }
-
-    public static void bindInetAddressToThread(ServletRequest request) {
-        InetAddress ip = getInetAddress(request);
-        if (ip != null) {
-            ThreadContext.bind(ip);
-        }
-    }
-
-    public static void unbindInetAddressFromThread() {
-        ThreadContext.unbindInetAddress();
     }
 
     /**

@@ -36,8 +36,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -77,16 +75,11 @@ public class DelegatingWebSecurityManagerTest extends AbstractWebSecurityManager
         expect(mockRequest.getCookies()).andReturn(null);
         expect(mockRequest.getContextPath()).andReturn("/");
 
-        InetAddress host;
-        try {
-            host = InetAddress.getByName("192.168.1.1");
-        } catch (UnknownHostException e) {
-            throw new IllegalStateException(e);
-        }
+        String host = "192.168.1.1";
 
         Serializable sessionId = UUID.randomUUID().toString();
         expect(delegate.start(EasyMock.<Map>anyObject())).andReturn(sessionId);
-        expect(delegate.getHostAddress(sessionId)).andReturn(host);
+        expect(delegate.getHost(sessionId)).andReturn(host);
         expect(delegate.getTimeout(sessionId)).andReturn(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
         delegate.setTimeout(sessionId, 125L);
         expectLastCall().times(1);

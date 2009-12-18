@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -119,7 +118,7 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
         assertDelegateExists();
         //get the host address and bind it to the thread.  This call will both validate the session as well as
         //make it accessible for futher host checks:
-        InetAddress host = this.delegateSessionManager.getHostAddress(id);
+        String host = this.delegateSessionManager.getHost(id);
         session = new DelegatingSession(this.delegateSessionManager, id, host);
         log.trace("Cached the session retrieved from the datasource in a thread-local for continued thread access.");
         ThreadContext.put(THREAD_CONTEXT_SESSION_KEY, session);
@@ -166,10 +165,10 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
             }
         }
 
-        public Serializable start(final InetAddress originatingHost) throws AuthorizationException {
+        public Serializable start(final String host) throws AuthorizationException {
             return (Serializable) execute(new SessionManagerCallback() {
                 public Object doWithSessionManager(SessionManager sm) throws SessionException {
-                    return sm.start(originatingHost);
+                    return sm.start(host);
                 }
             });
         }
@@ -241,10 +240,10 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
             });
         }
 
-        public InetAddress getHostAddress(final Serializable sessionId) {
-            return (InetAddress) execute(new SessionManagerCallback() {
+        public String getHost(final Serializable sessionId) {
+            return (String) execute(new SessionManagerCallback() {
                 public Object doWithSessionManager(SessionManager sm) throws SessionException {
-                    return sm.getHostAddress(sessionId);
+                    return sm.getHost(sessionId);
                 }
             });
         }

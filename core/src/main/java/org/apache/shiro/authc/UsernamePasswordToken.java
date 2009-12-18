@@ -18,28 +18,25 @@
  */
 package org.apache.shiro.authc;
 
-import java.net.InetAddress;
-
-
 /**
  * <p>A simple username/password authentication token to support the most widely-used authentication mechanism.  This
  * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} interface to support
  * &quot;Remember Me&quot; services across user sessions as well as the
- * {@link org.apache.shiro.authc.InetAuthenticationToken InetAuthenticationToken} interface to retain the IP address location from where the
- * authentication attempt is occuring.</p>
- *
+ * {@link org.apache.shiro.authc.HostAuthenticationToken HostAuthenticationToken} interface to retain the host name
+ * or IP address location from where the authentication attempt is occuring.</p>
+ * <p/>
  * <p>&quot;Remember Me&quot; authentications are disabled by default, but if the application developer wishes to allow
  * it for a login attempt, all that is necessary is to call {@link #setRememberMe setRememberMe(true)}.  If the underlying
  * <tt>SecurityManager</tt> implementation also supports <tt>RememberMe</tt> services, the user's identity will be
  * remembered across sessions.
- *
+ * <p/>
  * <p>Note that this class stores a password as a char[] instead of a String
  * (which may seem more logical).  This is because Strings are immutable and their
  * internal value cannot be overwritten - meaning even a nulled String instance might be accessible in memory at a later
  * time (e.g. memory dump).  This is not good for sensitive information such as passwords. For more information, see the
  * <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jce/JCERefGuide.html#PBEEx">
  * Java Cryptography Extension Reference Guide</a>.</p>
- *
+ * <p/>
  * <p>To avoid this possibility of later memory access, the application developer should always call
  * {@link #clear() clear()} after using the token to perform a login attempt.</p>
  *
@@ -47,7 +44,7 @@ import java.net.InetAddress;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class UsernamePasswordToken implements InetAuthenticationToken, RememberMeAuthenticationToken {
+public class UsernamePasswordToken implements HostAuthenticationToken, RememberMeAuthenticationToken {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -56,22 +53,27 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /** The username */
+    /**
+     * The username
+     */
     private String username;
 
-    /** The password, in char[] format */
+    /**
+     * The password, in char[] format
+     */
     private char[] password;
 
     /**
      * Whether or not 'rememberMe' should be enabled for the corresponding login attempt;
-     * default is <code>false</code> */
+     * default is <code>false</code>
+     */
     private boolean rememberMe = false;
 
     /**
      * The location from where the login attempt occurs, or <code>null</code> if not known or explicitly
      * omitted.
      */
-    private InetAddress inetAddress;
+    private String host;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -85,7 +87,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
 
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted
-     * during an authentication attempt, with a <tt>null</tt> {@link #getInetAddress() inetAddress} and a
+     * during an authentication attempt, with a <tt>null</tt> {@link #getHost() host} and a
      * <tt>rememberMe</tt> default of <tt>false</tt>.
      *
      * @param username the username submitted for authentication
@@ -97,9 +99,9 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
 
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted
-     * during an authentication attempt, with a <tt>null</tt> {@link #getInetAddress() inetAddress} and
+     * during an authentication attempt, with a <tt>null</tt> {@link #getHost() host} and
      * a <tt>rememberMe</tt> default of <tt>false</tt>
-     *
+     * <p/>
      * <p>This is a convience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
@@ -115,30 +117,30 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, the
      * inetAddress from where the attempt is occurring, and a default <tt>rememberMe</tt> value of <tt>false</tt>
      *
-     * @param username    the username submitted for authentication
-     * @param password    the password string submitted for authentication
-     * @param inetAddress the inetAddress from where the attempt is occuring
+     * @param username the username submitted for authentication
+     * @param password the password string submitted for authentication
+     * @param host     the host name or IP string from where the attempt is occuring
      * @since 0.2
      */
-    public UsernamePasswordToken(final String username, final char[] password, final InetAddress inetAddress) {
-        this(username, password, false, inetAddress);
+    public UsernamePasswordToken(final String username, final char[] password, final String host) {
+        this(username, password, false, host);
     }
 
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, the
      * inetAddress from where the attempt is occurring, and a default <tt>rememberMe</tt> value of <tt>false</tt>
-     *
+     * <p/>
      * <p>This is a convience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
-     * @param username    the username submitted for authentication
-     * @param password    the password string submitted for authentication
-     * @param inetAddress the inetAddress from where the attempt is occuring
-     * @since 0.2
+     * @param username the username submitted for authentication
+     * @param password the password string submitted for authentication
+     * @param host     the host name or IP string from where the attempt is occuring
+     * @since 1.0
      */
-    public UsernamePasswordToken(final String username, final String password, final InetAddress inetAddress) {
-        this(username, password != null ? password.toCharArray() : null, false, inetAddress);
+    public UsernamePasswordToken(final String username, final String password, final String host) {
+        this(username, password != null ? password.toCharArray() : null, false, host);
     }
 
     /**
@@ -157,7 +159,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, as well as if the user
      * wishes their identity to be remembered across sessions.
-     *
+     * <p/>
      * <p>This is a convience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
@@ -175,39 +177,39 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, if the user
      * wishes their identity to be remembered across sessions, and the inetAddress from where the attempt is ocurring.
      *
-     * @param username    the username submitted for authentication
-     * @param password    the password character array submitted for authentication
-     * @param rememberMe  if the user wishes their identity to be remembered across sessions
-     * @param inetAddress the inetAddress from where the attempt is occuring
-     * @since 0.9
+     * @param username   the username submitted for authentication
+     * @param password   the password character array submitted for authentication
+     * @param rememberMe if the user wishes their identity to be remembered across sessions
+     * @param host       the host name or IP string from where the attempt is occuring
+     * @since 1.0
      */
     public UsernamePasswordToken(final String username, final char[] password,
-                                 final boolean rememberMe, final InetAddress inetAddress) {
+                                 final boolean rememberMe, final String host) {
 
         this.username = username;
         this.password = password;
         this.rememberMe = rememberMe;
-        this.inetAddress = inetAddress;
+        this.host = host;
     }
 
 
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, if the user
      * wishes their identity to be remembered across sessions, and the inetAddress from where the attempt is ocurring.
-     *
+     * <p/>
      * <p>This is a convience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
-     * @param username    the username submitted for authentication
-     * @param password    the password string submitted for authentication
-     * @param rememberMe  if the user wishes their identity to be remembered across sessions
-     * @param inetAddress the inetAddress from where the attempt is occuring
-     * @since 0.9
+     * @param username   the username submitted for authentication
+     * @param password   the password string submitted for authentication
+     * @param rememberMe if the user wishes their identity to be remembered across sessions
+     * @param host       the host name or IP string from where the attempt is occuring
+     * @since 1.0
      */
     public UsernamePasswordToken(final String username, final String password,
-                                 final boolean rememberMe, final InetAddress inetAddress) {
-        this(username, password != null ? password.toCharArray() : null, rememberMe, inetAddress);
+                                 final boolean rememberMe, final String host) {
+        this(username, password != null ? password.toCharArray() : null, rememberMe, host);
     }
 
     /*--------------------------------------------
@@ -272,33 +274,32 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
     }
 
     /**
-     * Returns the inetAddress from where the authentication attempt occurs.  May be <tt>null</tt> if the inetAddress
-     * is unknown or explicitly omitted.  It is up to the Authenticator implementation processing this token if
-     * an authentication attempt without an inetAddress is valid or not.
+     * Returns the host name or IP string from where the authentication attempt occurs.  May be <tt>null</tt> if the
+     * host name/IP is unknown or explicitly omitted.  It is up to the Authenticator implementation processing this
+     * token if an authentication attempt without a host is valid or not.
+     * <p/>
+     * <p>(Shiro's default Authenticator allows <tt>null</tt> hosts to support localhost and proxy server environments).</p>
      *
-     * <p>(Shiro's default Authenticator
-     * allows <tt>null</tt> IPs to support localhost and proxy server environments).</p>
-     *
-     * @return the inetAddress from where the authentication attempt occurs, or <tt>null</tt> if it is unknown or
+     * @return the host from where the authentication attempt occurs, or <tt>null</tt> if it is unknown or
      *         explicitly omitted.
-     * @since 0.2
+     * @since 1.0
      */
-    public InetAddress getInetAddress() {
-        return inetAddress;
+    public String getHost() {
+        return host;
     }
 
     /**
-     * Sets the inetAddress from where the authentication attempt occurs.  It is up to the Authenticator
-     * implementation processing this token if an authentication attempt without an inetAddress is valid or not.
-     *
+     * Sets the host name or IP string from where the authentication attempt occurs.  It is up to the Authenticator
+     * implementation processing this token if an authentication attempt without a host is valid or not.
+     * <p/>
      * <p>(Shiro's default Authenticator
-     * allows <tt>null</tt> IPs to allow localhost and proxy server environments).</p>
+     * allows <tt>null</tt> hosts to allow localhost and proxy server environments).</p>
      *
-     * @param inetAddress the inetAddress from where the authentication attempt occurs.
-     * @since 0.2
+     * @param host the host name or IP string from where the attempt is occuring
+     * @since 1.0
      */
-    public void setInetAddress(InetAddress inetAddress) {
-        this.inetAddress = inetAddress;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     /**
@@ -335,7 +336,7 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
      */
     public void clear() {
         this.username = null;
-        this.inetAddress = null;
+        this.host = null;
         this.rememberMe = false;
 
         if (this.password != null) {
@@ -361,8 +362,8 @@ public class UsernamePasswordToken implements InetAuthenticationToken, RememberM
         sb.append(" - ");
         sb.append(username);
         sb.append(", rememberMe=").append(rememberMe);
-        if (inetAddress != null) {
-            sb.append(" (").append(inetAddress).append(")");
+        if (host != null) {
+            sb.append(" (").append(host).append(")");
         }
         return sb.toString();
     }

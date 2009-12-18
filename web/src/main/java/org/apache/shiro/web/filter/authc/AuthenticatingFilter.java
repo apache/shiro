@@ -18,15 +18,13 @@
  */
 package org.apache.shiro.web.filter.authc;
 
-import java.net.InetAddress;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.WebUtils;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * An <code>AuthenticationFilter</code> that is capable of automatically performing an authentication attempt
@@ -60,13 +58,13 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
     protected AuthenticationToken createToken(String username, String password,
                                               ServletRequest request, ServletResponse response) {
         boolean rememberMe = isRememberMe(request);
-        InetAddress inet = getInetAddress(request);
-        return createToken(username, password, rememberMe, inet);
+        String host = getHost(request);
+        return createToken(username, password, rememberMe, host);
     }
 
     protected AuthenticationToken createToken(String username, String password,
-                                              boolean rememberMe, InetAddress inet) {
-        return new UsernamePasswordToken(username, password, rememberMe, inet);
+                                              boolean rememberMe, String host) {
+        return new UsernamePasswordToken(username, password, rememberMe, host);
     }
 
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject,
@@ -80,17 +78,16 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
     }
 
     /**
-     * Returns the InetAddress associated with the current subject.  This method is primarily provided for use
+     * Returns the host name or IP associated with the current subject.  This method is primarily provided for use
      * during construction of an <code>AuthenticationToken</code>.
      * <p/>
-     * The default implementation merely returns
-     * {@link org.apache.shiro.web.WebUtils#getInetAddress(javax.servlet.ServletRequest) WebUtils.getInetAddress(request)}.
+     * The default implementation merely returns {@link ServletRequest#getRemoteHost()}.
      *
      * @param request the incoming ServletRequest
      * @return the <code>InetAddress</code> to associate with the login attempt.
      */
-    protected InetAddress getInetAddress(ServletRequest request) {
-        return WebUtils.getInetAddress(request);
+    protected String getHost(ServletRequest request) {
+        return request.getRemoteHost();
     }
 
     /**

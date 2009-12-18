@@ -26,7 +26,6 @@ import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 
 /**
  * @since 1.0
@@ -34,20 +33,14 @@ import java.net.InetAddress;
 public class SubjectThreadState implements ThreadState {
 
     private Subject originalSubject;
-    private InetAddress originalInetAddress;
     private Serializable originalSessionId;
     private transient SecurityManager originalSecurityManager;
 
-    private final InetAddress inetAddress;
     private final Serializable sessionId;
     private final Subject subject;
     private final transient SecurityManager securityManager;
 
     public SubjectThreadState(Subject subject) {
-        this(subject, ThreadContext.getInetAddress());
-    }
-
-    protected SubjectThreadState(Subject subject, InetAddress inetAddressFallback) {
         if (subject == null) {
             throw new IllegalArgumentException("Subject argument cannot be null.");
         }
@@ -63,16 +56,7 @@ public class SubjectThreadState implements ThreadState {
             this.securityManager = this.originalSecurityManager;
         }
 
-        this.originalInetAddress = ThreadContext.getInetAddress();
         Session session = this.subject.getSession(false);
-        InetAddress inet = null;
-        if (session != null) {
-            inet = session.getHostAddress();
-        }
-        if (inet == null) {
-            inet = inetAddressFallback;
-        }
-        this.inetAddress = inet;
 
         this.originalSessionId = ThreadContext.getSessionId();
         if (session != null) {
@@ -87,16 +71,10 @@ public class SubjectThreadState implements ThreadState {
     }
 
     public void bind() {
-        this.originalInetAddress = ThreadContext.getInetAddress();
         this.originalSessionId = ThreadContext.getSessionId();
         this.originalSubject = ThreadContext.getSubject();
         this.originalSecurityManager = ThreadContext.getSecurityManager();
 
-        if (inetAddress == null) {
-            ThreadContext.unbindInetAddress();
-        } else {
-            ThreadContext.bind(inetAddress);
-        }
         if (sessionId == null) {
             ThreadContext.unbindSessionId();
         } else {
@@ -111,11 +89,6 @@ public class SubjectThreadState implements ThreadState {
     }
 
     public void restore() {
-        if (originalInetAddress == null) {
-            ThreadContext.unbindInetAddress();
-        } else {
-            ThreadContext.bind(originalInetAddress);
-        }
         if (originalSessionId == null) {
             ThreadContext.unbindSessionId();
         } else {

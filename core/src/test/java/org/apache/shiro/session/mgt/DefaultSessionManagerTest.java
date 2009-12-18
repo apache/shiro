@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.UUID;
 
@@ -82,7 +81,7 @@ public class DefaultSessionManagerTest {
         sm.setSessionDAO(mockDAO);
 
         sm.setGlobalSessionTimeout(timeout);
-        sm.start((InetAddress) null);
+        sm.start((String) null);
 
         verify(mockDAO);
     }
@@ -157,7 +156,7 @@ public class DefaultSessionManagerTest {
         sessionDAO.update(eq(session1));
         expectLastCall().anyTimes();
         replay(sessionDAO);
-        Serializable id = sm.start((InetAddress) null);
+        Serializable id = sm.start((String) null);
         assertNotNull(id);
         verify(sessionDAO);
         reset(sessionDAO);
