@@ -46,7 +46,11 @@ public interface SubjectFactory {
 
     public static final String HOST = SubjectFactory.class.getName() + ".HOST";
 
-    public static final String INET_ADDRESS = SubjectFactory.class.getName() + ".INET_ADDRESS";
+    /**
+     * @deprecated use the {@link #HOST HOST} key instead.  This will be removed prior to 1.0.
+     */
+    @Deprecated
+    public static final String INET_ADDRESS = HOST;
 
     public static final String SERVLET_REQUEST = SubjectFactory.class.getName() + ".SERVLET_REQUEST";
 
