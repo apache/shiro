@@ -19,7 +19,6 @@
 package org.apache.shiro.mgt;
 
 import org.apache.shiro.authc.*;
-import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.crypto.Cipher;
 import org.apache.shiro.realm.Realm;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,7 +85,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      */
     public DefaultSecurityManager() {
         super();
-        this.subjectFactory = new DefaultSubjectFactory(this);
+        this.subjectFactory = new DefaultSubjectFactory();
         this.subjectBinder = new SessionSubjectBinder();
     }
 
@@ -117,9 +115,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void setSubjectFactory(SubjectFactory subjectFactory) {
         this.subjectFactory = subjectFactory;
-        if (this.subjectFactory instanceof SecurityManagerAware) {
-            ((SecurityManagerAware) this.subjectFactory).setSecurityManager(this);
-        }
     }
 
     public SubjectBinder getSubjectBinder() {
@@ -325,7 +320,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * This implementation attempts to resolve any session ID that may exist in the context argument by first
+     * This implementation attempts to resolve any session ID that may exist in the context argument by
      * passing it to the {@link #resolveSession(Map)} method.  The
      * return value from that call is then used to attempt to resolve the subject identity via the
      * {@link #resolvePrincipals(java.util.Map)} method.  The return value from that call is then used to create
@@ -338,14 +333,43 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @since 1.0
      */
     public Subject createSubject(Map context) {
+        if (context == null) {
+            context = new HashMap();
+        }
+
+        //ensure that the context map has a SecurityManager instance, and if not, add one:
+        Map resolved = ensureSecurityManager(context);
+
         //Translate a session id if it exists into a Session object before sending to the SubjectFactory
         //The SubjectFactory should not need to know how to acquire sessions as it is often environment
         //specific - better to shield the SF from these details:
-        Map resolved = resolveSession(context);
+        resolved = resolveSession(resolved);
+
         //Similarly, the SubjectFactory should not have any concept of RememberMe - translate that here first
         //if possible before handing off to the SubjectFactory:
         resolved = resolvePrincipals(resolved);
+
         return getSubjectFactory().createSubject(resolved);
+    }
+
+    /**
+     * Determines if there is a {@code SecurityManager} instance in the context map under the
+     * {@link SubjectFactory#SECURITY_MANAGER} key, and if not, adds 'this' to the map under that key.  This ensures
+     * the SubjectFactory instance will have access to a SecurityManager during Subject construction if necessary.
+     *
+     * @param context the subject context data that may contain a SecurityManager instance.
+     * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
+     * @since 1.0
+     */
+    @SuppressWarnings({"unchecked"})
+    protected Map ensureSecurityManager(Map context) {
+        if (context.containsKey(SubjectFactory.SECURITY_MANAGER)) {
+            log.debug("Context already contains a SecurityManager instance.  Returning.");
+            return context;
+        }
+        log.trace("No SecurityManager found in context.  Adding self reference.");
+        context.put(SubjectFactory.SECURITY_MANAGER, this);
+        return context;
     }
 
     /**
@@ -374,19 +398,18 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
         log.trace("No session found in context.  Looking for a session id to resolve in to a session.");
         //otherwise try to resolve a session if a session id exists:
-        Map copy = new HashMap(context);
         Serializable sessionId = getSessionId(context);
         if (sessionId != null) {
             try {
                 Session session = getSession(sessionId);
-                copy.put(SubjectFactory.SESSION, session);
+                context.put(SubjectFactory.SESSION, session);
             } catch (InvalidSessionException e) {
                 onInvalidSessionId(sessionId, e);
                 log.debug("Context referenced sessionId is invalid.  Ignoring and creating an anonymous " +
                         "(session-less) Subject instance.", e);
             }
         }
-        return copy;
+        return context;
     }
 
     /**
@@ -442,22 +465,19 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      */
     @SuppressWarnings({"unchecked"})
     protected Map resolvePrincipals(Map context) {
-        Map ctx = context;
-
         if (!containsIdentity(context)) {
             log.trace("No identity (PrincipalCollection) found in the context.  Looking for a remembered identity.");
             PrincipalCollection principals = getRememberedIdentity();
             if (principals != null) {
                 log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
                         "for subject construction by the SubjectFactory.");
-                ctx = new HashMap(context);
-                ctx.put(SubjectFactory.PRINCIPALS, principals);
+                context.put(SubjectFactory.PRINCIPALS, principals);
             } else {
                 log.trace("No remembered identity found.  Returning original context.");
             }
         }
 
-        return ctx;
+        return context;
     }
 
     /**
@@ -573,45 +593,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     public Subject getSubject() {
         Subject subject = getSubjectBinder().getSubject();
         if (subject == null) {
-            subject = createSubject(Collections.EMPTY_MAP);
+            subject = createSubject(new HashMap());
             bind(subject);
         }
         return subject;
-    }
-
-    /**
-     * Acquires the {@link Subject Subject} that owns the {@link Session Session} with the specified {@code sessionId}.
-     * <p/>
-     * <b>Although simple in concept, this method provides incredibly powerful functionality:</b>
-     * <p/>
-     * The ability to reference a {@code Subject} and their server-side session
-     * <em>across clients of different mediums</em> such as web applications, Java applets,
-     * standalone C# clients over XMLRPC and/or SOAP, and many others. This is a <em>huge</em>
-     * benefit in heterogeneous enterprise applications.
-     * <p/>
-     * To maintain session integrity across client mediums, the {@code sessionId} <b>must</b> be transmitted
-     * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
-     * is nothing new - all web applications are susceptible to the same problem when transmitting
-     * {@code Cookie}s or when using URL rewriting.  As long as the
-     * {@code sessionId} is transmitted securely, session integrity can be maintained.
-     *
-     * @param sessionId the id of the session that backs the desired Subject being acquired.
-     * @return the {@code Subject} that owns the {@code Session Session} with the specified {@code sessionId}
-     * @throws InvalidSessionException if the session identified by {@code sessionId} has been stopped, expired, or
-     *                                 doesn't exist.
-     * @throws AuthorizationException  if the executor of this method is not allowed to acquire the owning
-     *                                 {@code Subject}.  The reason for the exception is implementation-specific and
-     *                                 could be for any number of reasons.  A common reason in many systems would be
-     *                                 if one host tried to acquire a {@code Subject} based on a {@code Session} that
-     *                                 originated on an entirely different host (although it is not a Shiro requirement
-     *                                 this scenario is disallowed - its just an example that <em>may</em> throw an
-     *                                 Exception in some systems).
-     * @see org.apache.shiro.authz.HostUnauthorizedException
-     * @since 1.0
-     */
-    protected Subject getSubjectBySessionId(Serializable sessionId) throws InvalidSessionException, AuthorizationException {
-        Map<String, Object> context = new HashMap<String, Object>(1);
-        context.put(SubjectFactory.SESSION_ID, sessionId);
-        return createSubject(context);
     }
 }
