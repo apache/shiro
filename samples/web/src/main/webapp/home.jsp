@@ -47,7 +47,7 @@
 <h3>Roles you have</h3>
 
 <p>
-    <shiro:hasRole name="root">root<br/></shiro:hasRole>
+    <shiro:hasRole name="admin">admin<br/></shiro:hasRole>
     <shiro:hasRole name="president">president<br/></shiro:hasRole>
     <shiro:hasRole name="darklord">darklord<br/></shiro:hasRole>
     <shiro:hasRole name="goodguy">goodguy<br/></shiro:hasRole>
@@ -57,7 +57,7 @@
 <h3>Roles you DON'T have</h3>
 
 <p>
-    <shiro:lacksRole name="root">root<br/></shiro:lacksRole>
+    <shiro:lacksRole name="admin">admin<br/></shiro:lacksRole>
     <shiro:lacksRole name="president">president<br/></shiro:lacksRole>
     <shiro:lacksRole name="darklord">darklord<br/></shiro:lacksRole>
     <shiro:lacksRole name="goodguy">goodguy<br/></shiro:lacksRole>
