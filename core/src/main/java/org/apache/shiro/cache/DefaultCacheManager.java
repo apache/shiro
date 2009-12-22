@@ -18,20 +18,21 @@
  */
 package org.apache.shiro.cache;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 /**
  * Default memory-only based {@link CacheManager CacheManager} implementation usable in production environments.
  * <p/>
  * This implementation does not offer any enterprise-level features such as cache coherency, optimistic locking,
- * failover or other similar features.  It relies on memory-based {@link java.util.Map Map} caches.  For more
- * enterprise features, consider using an {@link org.apache.shiro.cache.ehcache.EhCacheManager EhCacheManager} or other
- * similar implementation that wraps an enterprise-grade Caching solution.
+ * failover or other similar features.  It relies on memory-based {@link SoftHashMapCache} instances to ensure there
+ * are no memory leaks.  For more enterprise features, consider using an
+ * {@code org.apache.shiro.cache.ehcache.EhCacheManager} or other similar implementation that wraps an enterprise-grade
+ * Caching solution.
  *
  * @author Les Hazlewood
  * @since 1.0
@@ -41,7 +42,7 @@ public class DefaultCacheManager implements CacheManager, Destroyable {
     /**
      * Retains all Cache objects maintained by this cache manager.
      */
-    private final Map<String, Cache> caches = new HashMap<String, Cache>();
+    private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>();
 
     public Cache getCache(String name) throws CacheException {
         if (name == null) {
@@ -50,11 +51,12 @@ public class DefaultCacheManager implements CacheManager, Destroyable {
 
         Cache cache;
 
-        synchronized (caches) {
-            cache = caches.get(name);
-            if (cache == null) {
-                cache = new SoftHashMapCache(name);
-                caches.put(name, cache);
+        cache = caches.get(name);
+        if (cache == null) {
+            cache = new SoftHashMapCache(name);
+            Cache existing = caches.putIfAbsent(name, cache);
+            if (existing != null) {
+                cache = existing;
             }
         }
 

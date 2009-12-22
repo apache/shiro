@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.cache;
 
+import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.SoftHashMap;
 
 /**
@@ -29,7 +30,7 @@ import org.apache.shiro.util.SoftHashMap;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class SoftHashMapCache extends MapCache {
+public class SoftHashMapCache extends MapCache implements Destroyable {
 
     /**
      * Creates a new <code>SoftHashMapCache</code> instance with the specified name.
@@ -40,5 +41,12 @@ public class SoftHashMapCache extends MapCache {
      */
     public SoftHashMapCache(String name) {
         super(name, new SoftHashMap());
+    }
+
+    /**
+     * Calls {@link #clear} to remove all entries.
+     */
+    public void destroy() {
+        clear();
     }
 }
