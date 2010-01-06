@@ -19,13 +19,10 @@
 package org.apache.shiro.subject.support;
 
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.DelegatingSubject;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
-
-import java.io.Serializable;
 
 /**
  * @since 1.0
@@ -33,10 +30,8 @@ import java.io.Serializable;
 public class SubjectThreadState implements ThreadState {
 
     private Subject originalSubject;
-    private Serializable originalSessionId;
     private transient SecurityManager originalSecurityManager;
 
-    private final Serializable sessionId;
     private final Subject subject;
     private final transient SecurityManager securityManager;
 
@@ -55,15 +50,6 @@ public class SubjectThreadState implements ThreadState {
         } else {
             this.securityManager = this.originalSecurityManager;
         }
-
-        Session session = this.subject.getSession(false);
-
-        this.originalSessionId = ThreadContext.getSessionId();
-        if (session != null) {
-            this.sessionId = session.getId();
-        } else {
-            this.sessionId = this.originalSessionId;
-        }
     }
 
     protected Subject getSubject() {
@@ -71,15 +57,9 @@ public class SubjectThreadState implements ThreadState {
     }
 
     public void bind() {
-        this.originalSessionId = ThreadContext.getSessionId();
         this.originalSubject = ThreadContext.getSubject();
         this.originalSecurityManager = ThreadContext.getSecurityManager();
 
-        if (sessionId == null) {
-            ThreadContext.unbindSessionId();
-        } else {
-            ThreadContext.bindSessionId(sessionId);
-        }
         ThreadContext.bind(subject);
         if (securityManager == null) {
             ThreadContext.unbindSecurityManager();
@@ -89,11 +69,6 @@ public class SubjectThreadState implements ThreadState {
     }
 
     public void restore() {
-        if (originalSessionId == null) {
-            ThreadContext.unbindSessionId();
-        } else {
-            ThreadContext.bindSessionId(originalSessionId);
-        }
         if (originalSubject == null) {
             ThreadContext.unbindSubject();
         } else {

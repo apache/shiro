@@ -54,6 +54,10 @@ public abstract class ThreadContext {
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
+    /**
+     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
+     */
+    @Deprecated
     public static final String SESSION_ID_KEY = ThreadContext.class.getName() + "_SESSION_ID_KEY";
 
     /**
@@ -322,16 +326,28 @@ public abstract class ThreadContext {
 
     //TODO - complete JavaDoc
 
+    /**
+     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
+     */
+    @Deprecated
     public static Serializable getSessionId() {
         return (Serializable) get(SESSION_ID_KEY);
     }
 
+    /**
+     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
+     */
+    @Deprecated
     public static void bindSessionId(Serializable sessionId) {
         if (sessionId != null) {
             put(SESSION_ID_KEY, sessionId);
         }
     }
 
+    /**
+     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
+     */
+    @Deprecated
     public static Serializable unbindSessionId() {
         return (Serializable) remove(SESSION_ID_KEY);
 
