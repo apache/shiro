@@ -698,6 +698,38 @@ public interface Subject {
         }
 
         /**
+         * Allows custom attributes to be added to the underlying context {@code Map} used to construct the
+         * {@link Subject} instance.
+         * <p/>
+         * A {@code null} key throws an {@link IllegalArgumentException}. A {@code null} value effectively removes
+         * any previously stored attribute under the given key from the context map.
+         * <p/>
+         * <b>*NOTE*:</b> This method is only useful when configuring Shiro with a custom {@link SubjectFactory}
+         * implementation.  This method allows end-users to append additional data to the context map which the
+         * {@code SubjectFactory} implementation can use when building custom Subject instances. As such, this method
+         * is only useful when a custom {@code SubjectFactory} implementation has been configured.
+         *
+         * @see SubjectFactory#createSubject(java.util.Map)
+         *
+         * @param attributeKey the key under which the corresponding value will be stored in the context {@code Map}.
+         * @param attributeValue the value to store in the context map under the specified {@code attributeKey}.
+         * @return this {@code Builder} instance for method chaining.
+         * @throws IllegalArgumentException if the {@code attributeKey} is {@code null}.
+         */
+        public Builder contextAttribute(String attributeKey, Object attributeValue) {
+            if (attributeKey == null) {
+                String msg = "Subject context map key cannot be null.";
+                throw new IllegalArgumentException(msg);
+            }
+            if (attributeValue == null ) {
+                this.subjectContext.remove(attributeKey);
+            } else {
+                this.subjectContext.put(attributeKey, attributeValue);
+            }
+            return this;
+        }
+
+        /**
          * Creates and returns a new {@code Subject} instance reflecting the cumulative state acquired by the
          * other methods in this class.
          * <p/>
