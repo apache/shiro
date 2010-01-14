@@ -18,17 +18,17 @@
  */
 package org.apache.shiro.realm.ldap;
 
-import javax.naming.NamingException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.naming.NamingException;
 
 /**
  * <p>A {@link org.apache.shiro.realm.Realm} that authenticates with an LDAP
@@ -183,17 +183,14 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
 
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        AuthenticationInfo info = null;
+        AuthenticationInfo info;
         try {
             info = queryForAuthenticationInfo(token, this.ldapContextFactory);
         } catch (javax.naming.AuthenticationException e) {
             throw new AuthenticationException( "LDAP authentication failed.", e );
-
         } catch (NamingException e) {
-            if (log.isErrorEnabled()) {
-                final String message = "LDAP naming error while attempting to authenticate user.";
-                log.error(message, e);
-            }
+            String msg = "LDAP naming error while attempting to authenticate user.";
+            throw new AuthenticationException(msg, e);
         }
 
         return info;
@@ -201,14 +198,12 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
 
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        AuthorizationInfo info = null;
+        AuthorizationInfo info;
         try {
             info = queryForAuthorizationInfo(principals, this.ldapContextFactory);
         } catch (NamingException e) {
-            if (log.isErrorEnabled()) {
-                final String message = "LDAP naming error while attempting to retrieve authorization for user [" + principals + "].";
-                log.error(message, e);
-            }
+            String msg = "LDAP naming error while attempting to retrieve authorization for user [" + principals + "].";
+            throw new AuthorizationException(msg, e);
         }
 
         return info;
