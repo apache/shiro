@@ -41,15 +41,13 @@ public class CollectionUtils {
      * @param clazz the class of the collection type to return
      * @return an empty collection
      */
-    @SuppressWarnings({"unchecked", "UnusedDeclaration"})
     public static <E> Collection<E> emptyCollection(Class<E> clazz) {
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
-    @SuppressWarnings({"unchecked"})
     public static <E> Set<E> asSet(E... elements) {
         if (elements == null || elements.length == 0) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
@@ -95,10 +93,9 @@ public class CollectionUtils {
         return principals == null || principals.isEmpty();
     }
 
-    @SuppressWarnings({"unchecked"})
     public static <E> List<E> asList(E... elements) {
         if (elements == null || elements.length == 0) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         // Avoid integer overflow when a large array is passed in
         int capacity = computeListCapacity(elements.length);
