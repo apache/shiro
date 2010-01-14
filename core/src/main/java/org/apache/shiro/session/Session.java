@@ -41,7 +41,7 @@ public interface Session {
      * Returns the unique identifier assigned by the system upon session creation.
      * <p/>
      * All return values from this method are expected to have proper {@code toString()},
-     * {@code equals()}, and {@code hashCode()} implementations. Good candiadates for such
+     * {@code equals()}, and {@code hashCode()} implementations. Good candidates for such
      * an identifier are {@link java.util.UUID UUID}s, {@link java.lang.Integer Integer}s, and
      * {@link java.lang.String String}s.
      *
