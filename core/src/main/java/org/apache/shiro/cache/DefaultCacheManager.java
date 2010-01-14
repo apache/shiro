@@ -64,7 +64,7 @@ public class DefaultCacheManager implements CacheManager, Destroyable {
     }
 
     public void destroy() throws Exception {
-        synchronized (caches) {
+        while( !caches.isEmpty() ) {
             for (Cache cache : caches.values()) {
                 LifecycleUtils.destroy(cache);
             }
