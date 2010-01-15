@@ -18,15 +18,20 @@
  */
 package org.apache.shiro.config;
 
-import static junit.framework.Assert.*;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 
 import java.util.Collection;
+
+import static junit.framework.Assert.*;
 
 /**
  * Unit tests for the {@link IniSecurityManagerFactory} implementation.
@@ -108,5 +113,42 @@ public class IniSecurityManagerFactoryTest {
         assertTrue(((IniRealm) realm).accountExists("admin"));
     }
 
+    /**
+     * Test for issue <a href="https://issues.apache.org/jira/browse/SHIRO-125">SHIRO-125</a>.
+     */
+    @Test
+    public void testImplicitIniRealmWithAdditionalRealmConfiguration() {
 
+        Ini ini = new Ini();
+
+        //The users section below should create an implicit 'iniRealm' instance in the
+        //main configuration.  So we should be able to set properties on it immediately
+        //such as the Sha256 credentials matcher:
+        Ini.Section main = ini.addSection("main");
+        main.put("credentialsMatcher", "org.apache.shiro.authc.credential.Sha256CredentialsMatcher");
+        main.put("iniRealm.credentialsMatcher", "$credentialsMatcher");
+
+        //create a users section - user 'admin', with a Sha256-hashed 'admin' password (hex encoded):
+        Ini.Section users = ini.addSection(IniRealm.USERS_SECTION_NAME);
+        users.put("admin", new Sha256Hash("secret").toString());
+
+        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
+        SecurityManager sm = factory.getInstance();
+
+        //go ahead and try to log in with the admin user, ensuring the 
+        //iniRealm has a Sha256CredentialsMatcher enabled:
+
+        //try to log-in:
+        Subject subject = new Subject.Builder(sm).buildSubject();
+        //ensure thread clean-up after the login method returns.  Test cases only:
+        subject.execute(new Runnable() {
+            public void run() {
+                //the plain-text 'secret' should be converted to an Sha256 hash first
+                //by the CredentialsMatcher.  This should return quietly if
+                //this test case is valid:
+                SecurityUtils.getSubject().login(new UsernamePasswordToken("admin", "secret"));
+            }
+        });
+        assertTrue(subject.getPrincipal().equals("admin"));
+    }
 }
