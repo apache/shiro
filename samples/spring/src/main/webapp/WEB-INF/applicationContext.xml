@@ -88,4 +88,22 @@
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
+    <!-- Define the Shiro Filter here instead of directly in web.xml (web.xml will use the
+         DelegatingFilterProxy to reference this bean).  This allows us to wire things with more
+         control as well utilize nice Spring things such as PropertiesPlaceholderConfigurer and
+         anything else we might need: -->
+    <bean id="shiroFilter" class="org.apache.shiro.web.servlet.IniShiroFilter">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="filterChainResolver">
+            <bean class="org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver">
+                <property name="filterChainManager">
+                    <bean class="org.apache.shiro.web.filter.mgt.DefaultFilterChainManager">
+
+                    </bean>
+                </property>
+
+            </bean>
+        </property>
+    </bean>
+
 </beans>
