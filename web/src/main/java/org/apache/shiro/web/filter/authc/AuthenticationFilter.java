@@ -52,7 +52,7 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
      *
      * @return the success url to use as the default location a user is sent after logging in.
      */
-    protected String getSuccessUrl() {
+    public String getSuccessUrl() {
         return successUrl;
     }
 

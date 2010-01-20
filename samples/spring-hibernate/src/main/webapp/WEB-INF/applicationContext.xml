@@ -23,10 +23,12 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- Enable annotation configuration -->
     <context:annotation-config/>
@@ -97,8 +99,35 @@
         <property name="sessionMode" value="native"/> -->
     </bean>
 
-
     <!-- Post processor that automatically invokes init() and destroy() methods -->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- Define the Shiro Filter here (as a FactoryBean) instead of directly in web.xml -
+         web.xml uses the DelegatingFilterProxy to access this bean.  This allows us
+         to wire things with more control as well utilize nice Spring things such as
+         PropertiesPlaceholderConfigurer and abstract beans or anything else we might need: -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/s/login"/>
+        <property name="successUrl" value="/s/home"/>
+        <property name="unauthorizedUrl" value="/unauthorized"/>
+        <!-- The 'filters' property is usually not necessary unless performing an override, which we
+             want to do here (make authc point to a PassthruAuthenticationFilter instead of the
+             default FormAuthenticationFilter: -->
+        <property name="filters">
+            <util:map>
+                <entry key="authc">
+                    <bean class="org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter"/>
+                </entry>
+            </util:map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /s/signup = anon
+                /s/manageUsers = perms[user:manage]
+                /s/** = authc
+            </value>
+        </property>
+    </bean>
 
 </beans>

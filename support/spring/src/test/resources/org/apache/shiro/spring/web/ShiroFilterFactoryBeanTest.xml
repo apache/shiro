@@ -44,13 +44,6 @@
 
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <!-- This property is not necessary since declared filters will be automatically acquired, but
-             you can perform overrides here if you like: -->
-        <!-- <property name="filters">
-            <util:map>
-                <entry key="testFilter" value-ref="testFilter"/>
-            </util:map>
-        </property> -->
         <property name="filterChainDefinitions">
             <value>
                 /test = testFilter, authc
