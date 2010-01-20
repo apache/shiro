@@ -59,7 +59,7 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
      * @return the URL to which users should be redirected if they are denied access to an underlying path or resource,
      *         or {@code null} if a raw {@link HttpServletResponse#SC_UNAUTHORIZED} response should be issued (401 Unauthorized).
      */
-    protected String getUnauthorizedUrl() {
+    public String getUnauthorizedUrl() {
         return unauthorizedUrl;
     }
 

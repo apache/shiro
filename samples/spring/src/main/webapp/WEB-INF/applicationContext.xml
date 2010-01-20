@@ -17,9 +17,12 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
     <!-- Sample RDBMS data source that would exist in any application - not Shiro related. -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -88,21 +91,30 @@
         <property name="securityManager" ref="securityManager"/>
     </bean>
 
-    <!-- Define the Shiro Filter here instead of directly in web.xml (web.xml will use the
-         DelegatingFilterProxy to reference this bean).  This allows us to wire things with more
-         control as well utilize nice Spring things such as PropertiesPlaceholderConfigurer and
-         anything else we might need: -->
-    <bean id="shiroFilter" class="org.apache.shiro.web.servlet.IniShiroFilter">
+    <!-- Define the Shiro Filter here (as a FactoryBean) instead of directly in web.xml -
+         web.xml uses the DelegatingFilterProxy to access this bean.  This allows us
+         to wire things with more control as well utilize nice Spring things such as
+         PropertiesPlaceholderConfigurer and abstract beans or anything else we might need: -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <property name="filterChainResolver">
-            <bean class="org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver">
-                <property name="filterChainManager">
-                    <bean class="org.apache.shiro.web.filter.mgt.DefaultFilterChainManager">
-
-                    </bean>
-                </property>
-
-            </bean>
+        <property name="loginUrl" value="/s/login"/>
+        <property name="successUrl" value="/s/index"/>
+        <property name="unauthorizedUrl" value="/s/unauthorized"/>
+        <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean
+             defined will be automatically acquired and available via its beanName in chain
+             definitions, but you can perform overrides or parent/child consolidated configuration
+             here if you like: -->
+        <!-- <property name="filters">
+            <util:map>
+                <entry key="aName" value-ref="someFilterPojo"/>
+            </util:map>
+        </property> -->
+        <property name="filterChainDefinitions">
+            <value>
+                /s/index = authc
+                /s/shiro.jnlp = authc, user
+                /remoting/** = authc, perms[remote:invoke]
+            </value>
         </property>
     </bean>
 

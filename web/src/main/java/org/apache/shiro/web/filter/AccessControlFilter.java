@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.web.filter;
 
-import java.io.IOException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.WebUtils;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.io.IOException;
 
 /**
  * Superclass for any filter that controls access to a resource and may redirect the user to the login page
@@ -69,7 +69,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      *
      * @return the login URL used to authenticate a user, used when redirecting users if authentication is required.
      */
-    protected String getLoginUrl() {
+    public String getLoginUrl() {
         return loginUrl;
     }
 
