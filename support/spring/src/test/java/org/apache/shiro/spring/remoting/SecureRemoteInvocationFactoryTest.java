@@ -4,10 +4,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import static org.easymock.EasyMock.*;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.remoting.support.RemoteInvocation;
@@ -15,11 +12,14 @@ import org.springframework.remoting.support.RemoteInvocation;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 /**
  * //TODO - Class JavaDoc!
  *
  * @author Les Hazlewood
- * @since Mar 28, 2009 4:14:01 PM
  */
 public class SecureRemoteInvocationFactoryTest {
 

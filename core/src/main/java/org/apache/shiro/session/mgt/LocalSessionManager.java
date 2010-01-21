@@ -25,7 +25,6 @@ import org.apache.shiro.session.Session;
  * in remoting scenarios.
  *
  * @author Les Hazlewood
- * @since Mar 26, 2009 2:34:44 PM
  */
 public interface LocalSessionManager extends SessionManager {
 

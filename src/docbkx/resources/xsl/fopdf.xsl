@@ -68,7 +68,7 @@
                     <fo:table-row>
                         <fo:table-cell text-align="center">
                             <fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-                                <xsl:text>Copyright &#xA9; 2008-2009 Apache Software Foundation, </xsl:text>
+                                <xsl:text>Copyright &#xA9; 2008-2010 Apache Software Foundation, </xsl:text>
                                 <xsl:for-each select="bookinfo/authorgroup/author">
                                     <xsl:if test="position() > 1">
                                         <xsl:text>, </xsl:text>
