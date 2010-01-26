@@ -1,0 +1,10 @@
+<aspectj>
+   <aspects>
+    <aspect name="org.apache.shiro.aspectj.ShiroAnnotationAuthorizingAspect"/>
+  </aspects>
+
+  <weaver options="-verbose">
+    <include within="org.apache.shiro.aspectj.*"/>
+  </weaver>
+
+</aspectj>
