@@ -32,7 +32,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>aspectj</module>
         <module>ehcache</module>
         <module>groovy</module>
         <module>quartz</module>
