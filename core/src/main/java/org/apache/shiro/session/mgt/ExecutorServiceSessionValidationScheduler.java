@@ -20,6 +20,7 @@ package org.apache.shiro.session.mgt;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -74,9 +75,19 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         return this.enabled;
     }
 
+    /**
+     * Creates a single thread {@link ScheduledExecutorService} to validate sessions at fixed intervals 
+     * and enables this scheduler. The executor is created as a daemon thread to allow JVM to shut down
+     */
     public void enableSessionValidation() {
         if (this.interval > 0l) {
-            this.service = Executors.newSingleThreadScheduledExecutor();
+            this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {  
+	        public Thread newThread(Runnable r) {  
+	            Thread thread = new Thread(r);  
+	            thread.setDaemon(true);  
+	            return thread;  
+                }  
+            });                  
             this.service.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
             this.enabled = true;
         }
