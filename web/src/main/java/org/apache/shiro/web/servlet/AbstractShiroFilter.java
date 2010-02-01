@@ -19,12 +19,12 @@
 package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
+import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.subject.WebSubject;
@@ -57,7 +57,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(AbstractShiroFilter.class);
 
     // Reference to the security manager used by this filter
-    private SecurityManager securityManager;
+    private WebSecurityManager securityManager;
 
     // Used to determine which chain should handle an incoming request/response
     private FilterChainResolver filterChainResolver;
@@ -65,11 +65,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     protected AbstractShiroFilter() {
     }
 
-    public SecurityManager getSecurityManager() {
+    public WebSecurityManager getSecurityManager() {
         return securityManager;
     }
 
-    public void setSecurityManager(SecurityManager sm) {
+    public void setSecurityManager(WebSecurityManager sm) {
         this.securityManager = sm;
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * creates one automatically.
      */
     private void ensureSecurityManager() {
-        SecurityManager securityManager = getSecurityManager();
+        WebSecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
             log.info("No SecurityManager configured.  Creating default.");
             securityManager = createDefaultSecurityManager();
@@ -103,13 +103,12 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         }
     }
 
-    protected SecurityManager createDefaultSecurityManager() {
+    protected WebSecurityManager createDefaultSecurityManager() {
         return new DefaultWebSecurityManager();
     }
 
     protected boolean isHttpSessions() {
-        SecurityManager secMgr = getSecurityManager();
-        return !(secMgr instanceof DefaultWebSecurityManager) || ((DefaultWebSecurityManager) secMgr).isHttpSessionMode();
+        return getSecurityManager().isHttpSessionMode();
     }
 
     /**

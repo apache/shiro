@@ -23,6 +23,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.filter.authc.AuthenticationFilter;
@@ -423,6 +424,11 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
             String msg = "SecurityManager property must be set.";
             throw new BeanInitializationException(msg);
         }
+        
+        if (!(securityManager instanceof WebSecurityManager)) {
+            String msg = "The security manager does not implement the WebSecurityManager interface.";
+            throw new BeanInitializationException(msg);
+        }
 
         FilterChainManager manager = createFilterChainManager();
 
@@ -437,7 +443,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         //here - we're just using it because it is a concrete ShiroFilter instance that accepts
         //injection of the SecurityManager and FilterChainResolver:
         IniShiroFilter shiroFilter = new IniShiroFilter();
-        shiroFilter.setSecurityManager(securityManager);
+        shiroFilter.setSecurityManager((WebSecurityManager) securityManager);
         shiroFilter.setFilterChainResolver(chainResolver);
 
         return shiroFilter;

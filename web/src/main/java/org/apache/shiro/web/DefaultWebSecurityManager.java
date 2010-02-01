@@ -47,7 +47,7 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class DefaultWebSecurityManager extends DefaultSecurityManager {
+public class DefaultWebSecurityManager extends DefaultSecurityManager implements WebSecurityManager {
 
     //TODO - complete JavaDoc
 
