@@ -18,10 +18,12 @@
  */
 package org.apache.shiro.web.servlet;
 
+import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniFactorySupport;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.Factory;
+import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -343,8 +345,17 @@ public class IniShiroFilter extends AbstractShiroFilter {
         } else {
             factory = new WebIniSecurityManagerFactory(ini);
         }
+        
+        // Create the security manager and check that it implements WebSecurityManager.
+        // Otherwise, it can't be used with the filter.
         SecurityManager securityManager = factory.getInstance();
-        setSecurityManager(securityManager);
+        if (!(securityManager instanceof WebSecurityManager)) {
+            String msg = "The configured security manager is not an instance of WebSecurityManager, so " +
+                    "it can not be used with the Shiro servlet filter.";
+            throw new ConfigurationException(msg);
+        }
+        
+        setSecurityManager((WebSecurityManager) securityManager);
     }
 
     protected void applyFilterChainResolver(Ini ini) {

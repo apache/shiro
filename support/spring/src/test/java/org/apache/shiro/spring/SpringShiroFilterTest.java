@@ -18,14 +18,22 @@
  */
 package org.apache.shiro.spring;
 
+import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.servlet.ShiroFilter;
+
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +47,35 @@ public class SpringShiroFilterTest
 
     @Test
     public void testDefaultConfig() throws Exception {
+        SpringShiroFilter filter = new SpringShiroFilter();
+
+        FilterConfig mockConfig = createMock(FilterConfig.class);
+        expect(mockConfig.getInitParameter(ShiroFilter.CONFIG_CLASS_NAME_INIT_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(ShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(ShiroFilter.CONFIG_URL_INIT_PARAM_NAME)).andReturn(null);
+        expect(mockConfig.getInitParameter(SpringIniWebConfiguration.SECURITY_MANAGER_BEAN_NAME_PARAM_NAME)).andReturn(null);
+
+        ServletContext mockContext = createMock(ServletContext.class);
+        WebApplicationContext appCtx = createMock(WebApplicationContext.class);
+        SecurityManager secMgr = createMock(WebSecurityManager.class);
+        Map<String, org.apache.shiro.mgt.SecurityManager> beansOfType = new HashMap<String, SecurityManager>(1);
+        beansOfType.put("securityManager", secMgr);
+
+        expect(mockContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)).andReturn(appCtx);
+        expect(appCtx.getBeansOfType(SecurityManager.class)).andReturn(beansOfType);
+
+        expect(mockConfig.getServletContext()).andReturn(mockContext).anyTimes();
+
+
+        replay(mockContext);
+        replay(appCtx);
+        replay(mockConfig);
+
+        filter.init(mockConfig);
+    }
+    
+    @Test
+    public void testDefaultConfigWithNonWebSecurityManager() throws Exception {
         SpringShiroFilter filter = new SpringShiroFilter();
 
         FilterConfig mockConfig = createMock(FilterConfig.class);
@@ -63,6 +100,16 @@ public class SpringShiroFilterTest
         replay(appCtx);
         replay(mockConfig);
 
-        filter.init(mockConfig);
+        try {
+            filter.init(mockConfig);
+            fail("ServletException (wrapping a ConfigurationException) expected because the security manager " +
+                    "does not implement WebSecurityManager.");
+        }
+        catch (ServletException ex) {
+            // The cause should be a ConfigurationException.
+            assertTrue(
+                    "Original cause is not a ConfigurationException as expected",
+                    ex.getCause() instanceof ConfigurationException);
+        }
     }
 }

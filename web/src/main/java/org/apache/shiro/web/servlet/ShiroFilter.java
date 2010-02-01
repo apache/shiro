@@ -30,6 +30,7 @@ import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
+import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.config.IniWebConfiguration;
 import org.apache.shiro.web.config.WebConfiguration;
@@ -254,7 +255,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     protected WebConfiguration configuration;
 
     // Reference to the security manager used by this filter
-    protected SecurityManager securityManager;
+    protected WebSecurityManager securityManager;
 
     // Used to determine which chain should handle an incoming request/response
     private FilterChainResolver filterChainResolver;
@@ -271,11 +272,11 @@ public class ShiroFilter extends OncePerRequestFilter {
         this.configuration = configuration;
     }
 
-    public SecurityManager getSecurityManager() {
+    public WebSecurityManager getSecurityManager() {
         return securityManager;
     }
 
-    protected void setSecurityManager(SecurityManager sm) {
+    protected void setSecurityManager(WebSecurityManager sm) {
         this.securityManager = sm;
     }
 
@@ -302,10 +303,18 @@ public class ShiroFilter extends OncePerRequestFilter {
      * @param config the configuration for this filter.
      */
     protected void ensureSecurityManager(Configuration config) {
-        SecurityManager securityManager = getSecurityManager();
+        WebSecurityManager securityManager = getSecurityManager();
         boolean existing = securityManager != null;
         if (!existing && config != null) {
-            securityManager = config.getSecurityManager();
+            // Get the configured security manager. If it isn't an implementation of
+            // WebSecurityManager, then we raise an error.
+            SecurityManager sm = config.getSecurityManager();
+            if (!(sm instanceof WebSecurityManager)) {
+                String msg = "The configured security manager is not an instance of WebSecurityManager, so " +
+                        "it can not be used with the Shiro servlet filter.";
+                throw new ConfigurationException(msg);
+            }
+            securityManager = (WebSecurityManager) sm;
         }
 
         // If the config doesn't return a security manager, build one by default.
@@ -420,8 +429,7 @@ public class ShiroFilter extends OncePerRequestFilter {
     }
 
     protected boolean isHttpSessions() {
-        SecurityManager secMgr = getSecurityManager();
-        return !(secMgr instanceof DefaultWebSecurityManager) || ((DefaultWebSecurityManager) secMgr).isHttpSessionMode();
+        return getSecurityManager().isHttpSessionMode();
     }
 
     /**
