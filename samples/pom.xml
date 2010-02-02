@@ -33,6 +33,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>aspectj</module>
         <module>quickstart</module>
         <module>web</module>
         <module>spring</module>        
