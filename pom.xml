@@ -133,6 +133,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-aspectj</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
