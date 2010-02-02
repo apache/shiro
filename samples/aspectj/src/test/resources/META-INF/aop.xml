@@ -1,0 +1,14 @@
+<aspectj>
+
+    <aspects>
+        <!-- declare shiro aspects to the weaver -->
+        <aspect name="org.apache.shiro.aspectj.ShiroAnnotationAuthorizingAspect"/>
+    </aspects>
+
+    <weaver options="-verbose -showWeaveInfo">
+        <!-- Weave types that are within the org.apache.shiro.sample package
+             and all sub-packages. This limits the scope of the weaver and
+             reduces the overhead -->
+        <include within="org.apache.shiro.sample..*"/>
+    </weaver>
+</aspectj>
