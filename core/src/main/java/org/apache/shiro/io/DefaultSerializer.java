@@ -18,13 +18,7 @@
  */
 package org.apache.shiro.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 /**
  * Serializer implementation that uses the default JVM serialization mechanism (Object Input/Output Streams).
@@ -32,9 +26,9 @@ import java.io.ObjectOutputStream;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class DefaultSerializer implements Serializer {
+public class DefaultSerializer<T> implements Serializer<T> {
 
-    public byte[] serialize(Object o) throws SerializationException {
+    public byte[] serialize(T o) throws SerializationException {
         if (o == null) {
             String msg = "argument cannot be null.";
             throw new IllegalArgumentException(msg);
@@ -55,7 +49,7 @@ public class DefaultSerializer implements Serializer {
         }
     }
 
-    public Object deserialize(byte[] serialized) throws SerializationException {
+    public T deserialize(byte[] serialized) throws SerializationException {
         if (serialized == null) {
             String msg = "argument cannot be null.";
             throw new IllegalArgumentException(msg);
@@ -64,7 +58,8 @@ public class DefaultSerializer implements Serializer {
         BufferedInputStream bis = new BufferedInputStream(bais);
         try {
             ObjectInputStream ois = new ObjectInputStream(bis);
-            Object deserialized = ois.readObject();
+            @SuppressWarnings({"unchecked"})
+            T deserialized = (T)ois.readObject();
             ois.close();
             return deserialized;
         } catch (Exception e) {
