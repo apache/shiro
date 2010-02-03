@@ -18,9 +18,6 @@
  */
 package org.apache.shiro.mgt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -33,6 +30,8 @@ import org.apache.shiro.io.DefaultSerializer;
 import org.apache.shiro.io.SerializationException;
 import org.apache.shiro.io.Serializer;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -55,7 +54,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      */
     private static final Logger log = LoggerFactory.getLogger(AbstractRememberMeManager.class);
 
-    private Serializer serializer = new DefaultSerializer();
+    private Serializer<PrincipalCollection> serializer = new DefaultSerializer<PrincipalCollection>();
     private Cipher cipher = new BlowfishCipher();
     private byte[] encryptionCipherKey = null;
     private byte[] decryptionCipherKey = null;
@@ -63,11 +62,11 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     public AbstractRememberMeManager() {
     }
 
-    public Serializer getSerializer() {
+    public Serializer<PrincipalCollection> getSerializer() {
         return serializer;
     }
 
-    public void setSerializer(Serializer serializer) {
+    public void setSerializer(Serializer<PrincipalCollection> serializer) {
         this.serializer = serializer;
     }
 
@@ -261,7 +260,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
-        return (PrincipalCollection) getSerializer().deserialize(serializedIdentity);
+        return getSerializer().deserialize(serializedIdentity);
     }
 
     public void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {

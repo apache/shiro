@@ -25,10 +25,11 @@ package org.apache.shiro.io;
  * A <code>Serializer</code> should only do conversion, never change the data, such as encoding/decoding or
  * encryption.  These orthoganal concerns are handled elsewhere by Shiro, for example, via
  * {@link org.apache.shiro.codec.CodecSupport CodecSupport} and {@link org.apache.shiro.crypto.Cipher Cipher}s.
+ * @param <T> The type of the object being serialized and deserialized.
  * @author Les Hazlewood
  * @since 0.9
  */
-public interface Serializer {
+public interface Serializer<T> {
 
     /**
      * Converts the specified Object into a byte[] array.  This byte[] array must be able to be reconstructed
@@ -37,7 +38,7 @@ public interface Serializer {
      * @return a byte[] array representing the Object's state that can be restored later.
      * @throws SerializationException if an error occurrs converting the Object into a byte[] array.
      */
-    byte[] serialize(Object o) throws SerializationException;
+    byte[] serialize(T o) throws SerializationException;
 
     /**
      * Converts the specified raw byte[] array back into an original Object form.  This byte[] array is expected to
@@ -47,5 +48,5 @@ public interface Serializer {
      * @return the Object that was previously serialized into the raw byte[] array.
      * @throws SerializationException if an error occurrs converting the raw byte[] array back into an Object.
      */
-    Object deserialize(byte[] serialized) throws SerializationException;
+    T deserialize(byte[] serialized) throws SerializationException;
 }
