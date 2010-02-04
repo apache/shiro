@@ -405,8 +405,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 context.put(SubjectFactory.SESSION, session);
             } catch (InvalidSessionException e) {
                 onInvalidSessionId(sessionId, e);
-                log.debug("Context referenced sessionId is invalid.  Ignoring and creating an anonymous " +
-                        "(session-less) Subject instance.", e);
+                log.debug("Context referenced sessionId {} is invalid.  Ignoring and creating an anonymous " +
+                        "(session-less) Subject instance.", sessionId);
+                if (log.isTraceEnabled()) {
+                    log.trace("Exception resulting from referenced invalid sessionId " + sessionId, e);
+                }
             }
         }
         return context;
