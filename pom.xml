@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -55,6 +55,14 @@
         <system>Hudson</system>
         <url>http://hudson.zones.apache.org/hudson/view/Shiro/</url>
     </ciManagement>
+
+    <distributionManagement>
+        <site>
+            <id>incubator.website</id>
+            <name>Apache Incubator Site</name>
+            <url>scp://people.apache.org/www/incubator.apache.org/shiro/site</url>
+        </site>
+    </distributionManagement>
 
     <properties>
         <jdk.version>1.5</jdk.version>
