@@ -378,12 +378,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!-- <reporting>
+    
+    <!-- Note that reporting may fail with lower settings than something like: MAVEN_OPTS="-X512m -XX:MaxPermSize=128m" -->
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.6.1</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>${jdk.version}</source>
@@ -397,10 +399,20 @@
                         <link>http://junit.org/junit/javadoc/4.4/</link>
                         <link>http://easymock.org/api/easymock/2.4/</link>
                     </links>
+                    <reportSets>
+                        <reportSet>
+                            <id>aggregate</id>
+                            <configuration>
+                            </configuration>
+                            <reports>
+                                <report>aggregate</report>
+                            </reports>
+                        </reportSet>
+                    </reportSets>
                 </configuration>
             </plugin>
         </plugins>
-    </reporting> -->
+    </reporting>
 
     <profiles>
         <profile>
