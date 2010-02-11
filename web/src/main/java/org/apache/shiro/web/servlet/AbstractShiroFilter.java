@@ -47,7 +47,7 @@ import java.io.IOException;
  * Subclasses should perform configuration and construction logic in an overridden
  * {@link #init()} method implementation.  That implementation should make available any constructed
  * {@code SecurityManager} and {@code FilterChainResolver} by calling
- * {@link #setSecurityManager(org.apache.shiro.mgt.SecurityManager)} and
+ * {@link #setSecurityManager(org.apache.shiro.web.WebSecurityManager)} and
  * {@link #setFilterChainResolver(org.apache.shiro.web.filter.mgt.FilterChainResolver)} methods respectively.
  *
  * @since 1.0
@@ -210,11 +210,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      */
     protected ThreadState bind(ServletRequest request, ServletResponse response) {
         ThreadContext.bind(getSecurityManager());
-        //currently the WebRememberMeManager needs the request/response bound in order to create the subject instance:
-        //TODO - remove this requirement before 1.0 final
         WebUtils.bind(request);
         WebUtils.bind(response);
-
         WebSubject subject = new WebSubject.Builder(getSecurityManager(), request, response).buildWebSubject();
         ThreadState threadState = new WebSubjectThreadState(subject);
         threadState.bind();

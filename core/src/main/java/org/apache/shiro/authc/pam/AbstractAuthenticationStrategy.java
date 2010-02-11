@@ -18,14 +18,10 @@
  */
 package org.apache.shiro.authc.pam;
 
-import java.util.Collection;
-
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.MergableAuthenticationInfo;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.Realm;
+
+import java.util.Collection;
 
 
 /**
@@ -88,7 +84,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
             ((MergableAuthenticationInfo)aggregate).merge(info);
             return aggregate;
         } else {
-            throw new IllegalArgumentException( "Attempt to merge authentication info from multiple realms, but aggreagate " +
+            throw new IllegalArgumentException( "Attempt to merge authentication info from multiple realms, but aggregate " +
                       "AuthenticationInfo is not of type MergableAuthenticationInfo." );
         }
     }
