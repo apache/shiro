@@ -21,16 +21,23 @@ package org.apache.shiro.web;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.io.SerializationException;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertTrue;
+import org.apache.shiro.web.subject.WebSubject;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TODO - class javadoc
@@ -42,10 +49,12 @@ public class WebRememberMeManagerTest {
 
     @Test
     public void onSuccessfulLogin() {
+
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
+        WebSubject mockSubject = createNiceMock(WebSubject.class);
+        expect(mockSubject.getServletRequest()).andReturn(mockRequest).anyTimes();
+        expect(mockSubject.getServletResponse()).andReturn(mockResponse).anyTimes();
 
         WebRememberMeManager mgr = new WebRememberMeManager();
         UsernamePasswordToken token = new UsernamePasswordToken("user", "secret");
@@ -55,18 +64,21 @@ public class WebRememberMeManagerTest {
         expect(mockRequest.getCookies()).andReturn(null);
         expect(mockRequest.getContextPath()).andReturn("/");
 
+        replay(mockSubject);
         replay(mockRequest);
-        mgr.onSuccessfulLogin(token, account);
+        mgr.onSuccessfulLogin(mockSubject, token, account);
         verify(mockRequest);
+        verify(mockSubject);
     }
 
     // SHIRO-69
     @Test
     public void getRememberedPrincipals() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
+        Map<String,Object> context = new HashMap<String,Object>();
+        context.put(SubjectFactory.SERVLET_REQUEST, mockRequest);
+        context.put(SubjectFactory.SERVLET_RESPONSE, mockResponse);
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
@@ -89,7 +101,7 @@ public class WebRememberMeManagerTest {
         replay(mockRequest);
 
         WebRememberMeManager mgr = new WebRememberMeManager();
-        PrincipalCollection collection = mgr.getRememberedPrincipals();
+        PrincipalCollection collection = mgr.getRememberedPrincipals(context);
 
         verify(mockRequest);
 
@@ -101,10 +113,12 @@ public class WebRememberMeManagerTest {
     // SHIRO-69
     @Test
     public void getRememberedPrincipalsDecryptionError() {
-        HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
-        HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
+        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+
+        Map<String,Object> context = new HashMap<String,Object>();
+        context.put(SubjectFactory.SERVLET_REQUEST, mockRequest);
+        context.put(SubjectFactory.SERVLET_RESPONSE, mockResponse);
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
@@ -114,11 +128,19 @@ public class WebRememberMeManagerTest {
                 new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCBlowfishBase64)
         };
 
-        expect(mockRequest.getCookies()).andReturn(cookies);
+        expect(mockRequest.getCookies()).andReturn(cookies).anyTimes();
         replay(mockRequest);
 
         WebRememberMeManager mgr = new WebRememberMeManager();
-        PrincipalCollection collection = mgr.getRememberedPrincipals();
+        PrincipalCollection collection = null;
+
+        SerializationException se = null;
+        try {
+            collection = mgr.getRememberedPrincipals(context);
+        } catch (SerializationException expected) {
+            se = expected;
+        }
+        assertNotNull(se);
 
         verify(mockRequest);
 
@@ -129,9 +151,10 @@ public class WebRememberMeManagerTest {
     @Test
     public void onLogout() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
-        WebUtils.bind(mockRequest);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        WebUtils.bind(mockResponse);
+        WebSubject mockSubject = createNiceMock(WebSubject.class);
+        expect(mockSubject.getServletRequest()).andReturn(mockRequest).anyTimes();
+        expect(mockSubject.getServletResponse()).andReturn(mockResponse).anyTimes();
 
         Cookie cookie = new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, "");
         cookie.setMaxAge(0);
@@ -143,11 +166,13 @@ public class WebRememberMeManagerTest {
 
         replay(mockRequest);
         replay(mockResponse);
+        replay(mockSubject);
 
         PrincipalCollection pc = new SimplePrincipalCollection("user", "test");
         WebRememberMeManager mgr = new WebRememberMeManager();
-        mgr.onLogout(pc);
+        mgr.onLogout(mockSubject);
 
+        verify(mockSubject);
         verify(mockRequest);
         verify(mockResponse);
     }

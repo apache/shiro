@@ -220,11 +220,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         getSubjectBinder().bind(subject);
     }
 
-    protected void rememberMeSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
+    protected void rememberMeSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info, Subject subject) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
-                rmm.onSuccessfulLogin(token, info);
+                rmm.onSuccessfulLogin(subject, token, info);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
@@ -242,11 +242,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    protected void rememberMeFailedLogin(AuthenticationToken token, AuthenticationException ex) {
+    protected void rememberMeFailedLogin(AuthenticationToken token, AuthenticationException ex, Subject subject) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
-                rmm.onFailedLogin(token, ex);
+                rmm.onFailedLogin(subject, token, ex);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
@@ -258,16 +258,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    protected void rememberMeLogout(PrincipalCollection subjectPrincipals) {
+    protected void rememberMeLogout(Subject subject) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
-                rmm.onLogout(subjectPrincipals);
+                rmm.onLogout(subject);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
                             "] threw an exception during onLogout for subject with principals [" +
-                            subjectPrincipals + "]";
+                            (subject != null ? subject.getPrincipals() : null) + "]";
                     log.warn(msg, e);
                 }
             }
@@ -289,10 +289,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         AuthenticationInfo info;
         try {
             info = authenticate(token);
-            onSuccessfulLogin(token, info);
         } catch (AuthenticationException ae) {
             try {
-                onFailedLogin(token, ae);
+                onFailedLogin(token, ae, subject);
             } catch (Exception e) {
                 if (log.isInfoEnabled()) {
                     log.info("onFailedLogin(AuthenticationToken,AuthenticationException) method threw an " +
@@ -301,22 +300,25 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             }
             throw ae; //propagate
         }
-        Subject replaced = createSubject(token, info, subject);
+
+        Subject loggedIn = createSubject(token, info, subject);
         //TODO - is binding necessary anymore?  Shouldn't the Builders or Builder callers do this now?
-        bind(replaced);
-        return replaced;
+        bind(loggedIn);
+
+        onSuccessfulLogin(token, info, loggedIn);
+        return loggedIn;
     }
 
-    protected void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info) {
-        rememberMeSuccessfulLogin(token, info);
+    protected void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info, Subject subject) {
+        rememberMeSuccessfulLogin(token, info, subject);
     }
 
-    protected void onFailedLogin(AuthenticationToken token, AuthenticationException ae) {
-        rememberMeFailedLogin(token, ae);
+    protected void onFailedLogin(AuthenticationToken token, AuthenticationException ae, Subject subject) {
+        rememberMeFailedLogin(token, ae, subject);
     }
 
-    protected void beforeLogout(PrincipalCollection subjectIdentifier) {
-        rememberMeLogout(subjectIdentifier);
+    protected void beforeLogout(Subject subject) {
+        rememberMeLogout(subject);
     }
 
     /**
@@ -405,10 +407,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 context.put(SubjectFactory.SESSION, session);
             } catch (InvalidSessionException e) {
                 onInvalidSessionId(sessionId, e);
-                log.debug("Context referenced sessionId {} is invalid.  Ignoring and creating an anonymous " +
+                log.debug("Referenced sessionId {} is invalid.  Ignoring and creating an anonymous " +
                         "(session-less) Subject instance.", sessionId);
                 if (log.isTraceEnabled()) {
-                    log.trace("Exception resulting from referenced invalid sessionId " + sessionId, e);
+                    log.trace("Exception resulting from invalid referenced sessionId " + sessionId, e);
                 }
             }
         }
@@ -456,7 +458,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * <ol>
      * <li>Check the context to see if it already {@link #containsIdentity(java.util.Map) contains an identity}.  If
      * so, this method does nothing and returns the method argument unaltered.</li>
-     * <li>Check for a RememberMe identity by calling {@link #getRememberedIdentity()}.  If that method returns a
+     * <li>Check for a RememberMe identity by calling {@link #getRememberedIdentity}.  If that method returns a
      * non-null value, create a <em>copy</em> of the method argument, and place the remembered {@link PrincipalCollection}
      * in the copied context map under the {@link SubjectFactory#PRINCIPALS} key and return that copied context.</li>
      * </ol>
@@ -470,7 +472,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     protected Map resolvePrincipals(Map context) {
         if (!containsIdentity(context)) {
             log.trace("No identity (PrincipalCollection) found in the context.  Looking for a remembered identity.");
-            PrincipalCollection principals = getRememberedIdentity();
+            PrincipalCollection principals = getRememberedIdentity(context);
             if (principals != null) {
                 log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
                         "for subject construction by the SubjectFactory.");
@@ -516,13 +518,13 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             throw new IllegalArgumentException("Subject method argument cannot be null.");
         }
 
-        PrincipalCollection principals = subject.getPrincipals();
+        beforeLogout(subject);
 
+        PrincipalCollection principals = subject.getPrincipals();
         if (principals != null && !principals.isEmpty()) {
             if (log.isDebugEnabled()) {
                 log.debug("Logging out subject with primary principal {}" + principals.getPrimaryPrincipal());
             }
-            beforeLogout(principals);
             Authenticator authc = getAuthenticator();
             if (authc instanceof LogoutAware) {
                 ((LogoutAware) authc).onLogout(principals);
@@ -577,11 +579,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         getSubjectBinder().unbind(subject);
     }
 
-    protected PrincipalCollection getRememberedIdentity() {
+    protected PrincipalCollection getRememberedIdentity(Map subjectContext) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {
-                return rmm.getRememberedPrincipals();
+                return rmm.getRememberedPrincipals(subjectContext);
             } catch (Exception e) {
                 if (log.isWarnEnabled()) {
                     String msg = "Delegate RememberMeManager instance of type [" + rmm.getClass().getName() +
