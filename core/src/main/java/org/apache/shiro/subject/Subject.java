@@ -434,7 +434,7 @@ public interface Subject {
     void logout();
 
     /**
-     * Associates the specified {@code Runnable} with this {@code Subject} instance and then executes it on the
+     * Associates the specified {@code Callable} with this {@code Subject} instance and then executes it on the
      * currently running thread.  If you want to execute the {@code Callable} on a different thread, it is better to
      * use the {@link #associateWith(Callable)} method instead.
      *

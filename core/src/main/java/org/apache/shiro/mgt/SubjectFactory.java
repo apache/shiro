@@ -61,7 +61,8 @@ public interface SubjectFactory {
     /**
      * Creates a new Subject instance reflecting the state of the specified contextual data.  The data would be
      * anything required to required to construct a {@code Subject} instance and its contents can vary based on
-     * environment.
+     * environment.  Any data supported by Shiro core will be keyed by one of the static String constants
+     * in this class.
      *
      * @param context the contextual data to be used by the implementation to construct an appropriate {@code Subject}
      *                instance.

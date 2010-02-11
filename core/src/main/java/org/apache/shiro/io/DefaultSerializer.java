@@ -28,6 +28,14 @@ import java.io.*;
  */
 public class DefaultSerializer<T> implements Serializer<T> {
 
+    /**
+     * This implementation serializes the Object by using an {@link ObjectOutputStream} backed by a
+     * {@link ByteArrayOutputStream}.  The {@code ByteArrayOutputStream}'s backing byte array is returned.
+     *
+     * @param o the Object to convert into a byte[] array.
+     * @return the bytes representing the serialized object using standard JVM serialization.
+     * @throws SerializationException wrapping a {@link IOException} if something goes wrong with the streams.
+     */
     public byte[] serialize(T o) throws SerializationException {
         if (o == null) {
             String msg = "argument cannot be null.";
@@ -49,6 +57,14 @@ public class DefaultSerializer<T> implements Serializer<T> {
         }
     }
 
+    /**
+     * This implementation deserializes the byte array using a {@link ObjectInputStream} using a source
+     * {@link ByteArrayInputStream} constructed with the argument byte array.
+     *
+     * @param serialized the raw data resulting from a previous {@link #serialize(Object) serialize} call.
+     * @return the deserialized/reconstituted object based on the given byte array
+     * @throws SerializationException if anything goes wrong using the streams.
+     */
     public T deserialize(byte[] serialized) throws SerializationException {
         if (serialized == null) {
             String msg = "argument cannot be null.";
@@ -59,7 +75,7 @@ public class DefaultSerializer<T> implements Serializer<T> {
         try {
             ObjectInputStream ois = new ObjectInputStream(bis);
             @SuppressWarnings({"unchecked"})
-            T deserialized = (T)ois.readObject();
+            T deserialized = (T) ois.readObject();
             ois.close();
             return deserialized;
         } catch (Exception e) {

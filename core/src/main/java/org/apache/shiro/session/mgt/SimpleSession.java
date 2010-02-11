@@ -89,7 +89,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * <ul>
      * <li>If the user logs out of the system, their current session is terminated (released).</li>
      * <li>If the session expires</li>
-     * <li>The application explicitly calls {@link #stop() destroy()}</li>
+     * <li>The application explicitly calls {@link #stop()}</li>
      * <li>If there is an internal system error and the session state can no longer accurately
      * reflect the user's behavior, such in the case of a system crash</li>
      * </ul>

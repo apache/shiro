@@ -219,8 +219,8 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      * <p>This implementation's reconstruction effort functions as follows:
      *
      * <ol>
-     * <li>Convert <code>account.getCredentials()</code> to a byte array via the {@link #toBytes toBytes} method.
-     * <li>If <code>account.getCredentials()</code> was originally a String or char[] before <tt>toBytes</tt> was
+     * <li>Convert <code>account.getCredentials()</code> to a byte array via the {@link #toBytes convertPrincipalsToBytes} method.
+     * <li>If <code>account.getCredentials()</code> was originally a String or char[] before <tt>convertPrincipalsToBytes</tt> was
      * called, check for encoding:
      * <li>If {@link #storedCredentialsHexEncoded storedCredentialsHexEncoded}, Hex decode that byte array, otherwise
      * Base64 decode the byte array</li>
