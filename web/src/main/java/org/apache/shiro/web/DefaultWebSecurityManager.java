@@ -22,7 +22,7 @@ import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.attr.CookieAttribute;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
@@ -30,6 +30,7 @@ import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.DefaultWebSessionManager;
 import org.apache.shiro.web.session.ServletContainerSessionManager;
 import org.apache.shiro.web.session.WebSessionManager;
+import org.apache.shiro.web.subject.WebSubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,14 +243,14 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @Override
-    protected void beforeLogout(PrincipalCollection subjectIdentifier) {
-        super.beforeLogout(subjectIdentifier);
-        //also ensure a request attribute is set so the Subject is not reacquired later during the request:
-        removeRequestIdentity();
+    protected void beforeLogout(Subject subject) {
+        super.beforeLogout(subject);
+        removeRequestIdentity(subject);
     }
 
-    protected void removeRequestIdentity() {
-        ServletRequest request = WebUtils.getServletRequest();
+    protected void removeRequestIdentity(Subject subject) {
+        WebSubject webSubject = (WebSubject) subject;
+        ServletRequest request = webSubject.getServletRequest();
         if (request != null) {
             request.setAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY, Boolean.TRUE);
         }
