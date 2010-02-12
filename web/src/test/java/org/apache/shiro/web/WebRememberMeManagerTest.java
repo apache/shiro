@@ -85,13 +85,12 @@ public class WebRememberMeManagerTest {
         //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
         //This will have to change any time the PrincipalCollection implementation changes:
         final String userPCBlowfishBase64 = "UwP13UzjVUceLBNWh+sYM01JWOSbBOwc1ZLySIws0Idnkc" +
-                "WeD/yWeH0eIycwHaI8MRKPyenBr77dBdt3S7KTKzzt47bdseNbEI7TbTKPY5VfnJLqGVglQr+O" +
-                "mTgH1vpCQ/PAw3XnrQ4FWSXe9/KkfcAfteY5iw7qea1zZJq5jC4dOU3HLlhL7+BtlFMOrSzP2i" +
-                "ijwEZGFoNASMTpLxTpiiTHhVmB9Hf4s7N2rTthK18+uTyJwC1KoK3Fw82Wxl7BZb5aFoc5BoJb" +
-                "lWyZVHV3hEIIIS9/2smrjrCdu0NRC31c/+IelggTG3jTMA1wQ0oq2jTZSjctlcknV90jxNJfbf" +
-                "/Uzk679TmgyrHJgRrQ+kqJ+94rafqFWEcaG82yT3LkQEjE6S8U6Yokx4VZgfR3+Nnhgfb36EfU" +
-                "BXytFPop+38q1ssgLNxj3TPPOMj/QfGHVX6lM6loW8zA3VIEtDyqXN0LAQzqnbC8zqb1CJhXaJ" +
-                "owmdO9LV7XzouBN+l/ER8I";
+                "WeD/yWeH0eIycwHaI8MRKPyenBr77dBdt3S7KTK/6qKqKiW5oLqOgU/ZQLdvIOxlZxmT9RlUvK" +
+                "T6zopnQrSpdsCNaruG/Op/XEoJcdNLI9rJCCyMKN3em5wl8GrWTIzKS4hzHombGBEW4EPS9jv4" +
+                "0HV4mIS2sUFXm5MlOptr99e1A6eKYxlLrldk2/yqw29nWohE0sIjO7tRF9mOAZUeC/Fem6K4S8" +
+                "2LbXAJ6p0oNg3MP7dbFSkeeDF2CwFJvvi5xVrGyF0RnTzjwKZdTcvg4bx9ifQpKyPayQgsjCjd" +
+                "3pucJfBq1kuw/IyiPdSREnzWAEXOQi9o9II4jNvOJik+VI3QkwWdBBekzEKCACn8uvjlLKSiR8" +
+                "tCs9vbycs5N0FrODxMQ5FDvhV+rZLHtPkishP5cm/QEL01IUqqC4RA==";
 
         Cookie[] cookies = new Cookie[]{
                 new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCBlowfishBase64)
