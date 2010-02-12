@@ -18,8 +18,6 @@
  */
 package org.apache.shiro;
 
-import java.io.Serializable;
-
 /**
  * Root exception for all Shiro runtime exceptions.  This class is used as the root instead
  * of {@link java.lang.SecurityException} to remove the potential for conflicts;  many other
@@ -29,7 +27,7 @@ import java.io.Serializable;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class ShiroException extends RuntimeException implements Serializable {
+public class ShiroException extends RuntimeException {
 
     /**
      * Creates a new ShiroException.
