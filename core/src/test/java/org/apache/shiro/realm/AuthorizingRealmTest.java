@@ -24,6 +24,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -182,6 +183,35 @@ public class AuthorizingRealmTest {
         assertArrayEquals(new boolean[]{false, false}, realm.isPermitted(pCollection, permList));
         assertFalse(realm.isPermittedAll(pCollection, "perm1", "perm2"));
         assertFalse(realm.isPermittedAll(pCollection, permList));
+    }
+    
+    @Test
+    public void testRealmWithRolePermissionResolver()
+    {   
+        Principal principal = new UsernamePrincipal("rolePermResolver");
+        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
+        
+        AuthorizingRealm realm = new AllowAllRealm();
+        realm.setRolePermissionResolver( new RolePermissionResolver()
+        { 
+            public Collection<Permission> resolvePermissionsInRole( String roleString )
+            {
+                Collection<Permission> permissions = new HashSet<Permission>();
+                if( roleString.equals( ROLE ))
+                {
+                    permissions.add( new WildcardPermission( ROLE + ":perm1" ) );
+                    permissions.add( new WildcardPermission( ROLE + ":perm2" ) );
+                    permissions.add( new WildcardPermission( "other:*:foo" ) );
+                }
+                return permissions;
+            }
+        });
+        
+        assertTrue( realm.hasRole( pCollection, ROLE ) );
+        assertTrue( realm.isPermitted( pCollection, ROLE + ":perm1" ) );
+        assertTrue( realm.isPermitted( pCollection, ROLE + ":perm2" ) );
+        assertFalse( realm.isPermitted( pCollection, ROLE + ":perm3" ) );
+        assertTrue( realm.isPermitted( pCollection, "other:bar:foo" ) );
     }
 
     private void assertArrayEquals(boolean[] expected, boolean[] actual) {

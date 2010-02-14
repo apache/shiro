@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
+import org.apache.shiro.authz.permission.RolePermissionResolver;
+import org.apache.shiro.authz.permission.RolePermissionResolverAware;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -34,7 +36,7 @@ import org.apache.shiro.subject.PrincipalCollection;
  * @author Les Hazlewood
  * @since 0.2
  */
-public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAware {
+public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAware, RolePermissionResolverAware {
 
     /**
      * The realms to consult during any authorization check.
@@ -46,6 +48,12 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
      * to configure different resolvers for different realms.
      */
     protected PermissionResolver permissionResolver;
+    
+    /**
+     * A RolePermissionResolver to be used by <em>all</em> configured realms.  Leave <code>null</code> if you wish
+     * to configure different resolvers for different realms.
+     */
+    protected RolePermissionResolver rolePermissionResolver;
 
     /**
      * Default no-argument constructor, does nothing.
@@ -109,7 +117,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         this.permissionResolver = permissionResolver;
         applyPermissionResolverToRealms();
     }
-
+    
     /**
      * Sets the internal {@link #getPermissionResolver} on any internal configured
      * {@link #getRealms Realms} that implement the {@link org.apache.shiro.authz.permission.PermissionResolverAware PermissionResolverAware} interface.
@@ -129,6 +137,59 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
             for (Realm realm : realms) {
                 if (realm instanceof PermissionResolverAware) {
                     ((PermissionResolverAware) realm).setPermissionResolver(resolver);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Returns the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
+     * if all realm instances will each configure their own permission resolver.
+     *
+     * @return the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
+     *         if realm instances will each configure their own role permission resolver.
+     * @since 1.0
+     */
+    public RolePermissionResolver getRolePermissionResolver() {
+        return this.rolePermissionResolver;
+    }
+    
+    /**
+     * Sets the specified {@link RolePermissionResolver RolePermissionResolver} on <em>all</em> of the wrapped realms that
+     * implement the {@link org.apache.shiro.authz.permission.RolePermissionResolverAware PermissionResolverAware} interface.
+     * <p/>
+     * Only call this method if you want the permission resolver to be passed to all realms that implement the
+     * <code>RolePermissionResolver</code> interface.  If you do not want this to occur, the realms must
+     * configure themselves individually (or be configured individually).
+     *
+     * @param rolePermissionResolver the rolePermissionResolver to set on all of the wrapped realms that implement the
+     *                           {@link org.apache.shiro.authz.permission.RolePermissionResolverAware RolePermissionResolverAware} interface.
+     */
+    public void setRolePermissionResolver( RolePermissionResolver rolePermissionResolver ) {
+        this.rolePermissionResolver = rolePermissionResolver;
+        applyRolePermissionResolverToRealms();
+    }
+
+    
+    /**
+     * Sets the internal {@link #getRolePermissionResolver} on any internal configured
+     * {@link #getRealms Realms} that implement the {@link org.apache.shiro.authz.permission.RolePermissionResolverAware RolePermissionResolverAware} interface.
+     * <p/>
+     * This method is called after setting a rolePermissionResolver on this ModularRealmAuthorizer via the
+     * {@link #setRolePermissionResolver(org.apache.shiro.authz.permission.RolePermissionResolver) setRolePermissionResolver} method.
+     * <p/>
+     * It is also called after setting one or more realms via the {@link #setRealms setRealms} method to allow these
+     * newly available realms to be given the <code>RolePermissionResolver</code> already in use.
+     *
+     * @since 1.0
+     */
+    protected void applyRolePermissionResolverToRealms() {
+        RolePermissionResolver resolver = getRolePermissionResolver();
+        Collection<Realm> realms = getRealms();
+        if (resolver != null && realms != null && !realms.isEmpty()) {
+            for (Realm realm : realms) {
+                if (realm instanceof RolePermissionResolverAware) {
+                    ((RolePermissionResolverAware) realm).setRolePermissionResolver(resolver);
                 }
             }
         }
@@ -369,5 +430,4 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
             }
         }
     }
-
 }
