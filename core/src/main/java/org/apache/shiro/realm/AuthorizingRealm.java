@@ -18,10 +18,24 @@
  */
 package org.apache.shiro.realm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.authz.*;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.AuthorizingAccount;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
+import org.apache.shiro.authz.permission.RolePermissionResolver;
+import org.apache.shiro.authz.permission.RolePermissionResolverAware;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
@@ -29,9 +43,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -55,7 +66,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see org.apache.shiro.authz.SimpleAuthorizationInfo
  * @since 0.2
  */
-public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, PermissionResolverAware {
+public abstract class AuthorizingRealm extends AuthenticatingRealm implements Initializable, PermissionResolverAware, RolePermissionResolverAware {
 
     //TODO - complete JavaDoc
 
@@ -82,6 +93,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     private String authorizationCacheName = null;
 
     private PermissionResolver permissionResolver = new WildcardPermissionResolver();
+    
+    private RolePermissionResolver permissionRoleResolver = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -157,7 +170,15 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
     public void setPermissionResolver(PermissionResolver permissionResolver) {
         this.permissionResolver = permissionResolver;
     }
+    
+    public RolePermissionResolver getRolePermissionResolver() {
+        return permissionRoleResolver;
+    }
 
+    public void setRolePermissionResolver(RolePermissionResolver permissionRoleResolver) {
+        this.permissionRoleResolver = permissionRoleResolver;
+    }
+    
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -394,6 +415,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm implements In
                 for (String strPermission : info.getStringPermissions()) {
                     Permission permission = getPermissionResolver().resolvePermission(strPermission);
                     permissions.add(permission);
+                }
+            }
+            if(info.getRoles() != null &&  getRolePermissionResolver() != null ) {
+                for (String role : info.getRoles()) {
+                    Collection<Permission> rolesPermissions = getRolePermissionResolver().resolvePermissionsInRole( role );
+                    permissions.addAll( rolesPermissions );
                 }
             }
         }
