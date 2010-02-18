@@ -477,12 +477,18 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the remembered principals or {@code null} if none could be acquired.
      */
     public PrincipalCollection getRememberedPrincipals(Map subjectContext) {
+        PrincipalCollection principals = null;
         try {
             byte[] bytes = getRememberedSerializedIdentity(subjectContext);
-            return convertBytesToPrincipals(bytes, subjectContext);
+            //SHIRO-138 - only call convertBytesToPrincipals if bytes exist:
+            if ( bytes != null && bytes.length > 0 ) {
+                principals = convertBytesToPrincipals(bytes, subjectContext);
+            }
         } catch (RuntimeException re) {
-            return onRememberedPrincipalFailure(re, subjectContext);
+            principals = onRememberedPrincipalFailure(re, subjectContext);
         }
+
+        return principals;
     }
 
     /**
