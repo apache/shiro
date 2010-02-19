@@ -47,6 +47,17 @@ public interface SubjectFactory {
     public static final String AUTHENTICATED = SubjectFactory.class.getName() + ".AUTHENTICATED";
 
     public static final String HOST = SubjectFactory.class.getName() + ".HOST";
+    
+    /**
+     * The session key that is used to store subject principals.
+     */
+    public static final String PRINCIPALS_SESSION_KEY = SubjectFactory.class.getName() + "_PRINCIPALS_SESSION_KEY";
+
+    /**
+     * The session key that is used to store whether or not the user is authenticated.
+     */
+    public static final String AUTHENTICATED_SESSION_KEY = SubjectFactory.class.getName() + "_AUTHENTICATED_SESSION_KEY";
+    
 
     /**
      * @deprecated use the {@link #HOST HOST} key instead.  This will be removed prior to 1.0.

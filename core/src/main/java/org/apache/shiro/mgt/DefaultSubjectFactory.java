@@ -103,7 +103,7 @@ public class DefaultSubjectFactory implements SubjectFactory {
         if (CollectionUtils.isEmpty(principals)) {
             //try the session:
             if (session != null) {
-                principals = (PrincipalCollection) session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY);
+                principals = (PrincipalCollection) session.getAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY);
             }
         }
 
@@ -155,7 +155,7 @@ public class DefaultSubjectFactory implements SubjectFactory {
         if (!authc) {
             //fall back to a session check:
             if (session != null) {
-                Boolean sessionAuthc = (Boolean) session.getAttribute(SessionSubjectBinder.AUTHENTICATED_SESSION_KEY);
+                Boolean sessionAuthc = (Boolean) session.getAttribute(SubjectFactory.AUTHENTICATED_SESSION_KEY);
                 authc = sessionAuthc != null && sessionAuthc;
             }
         }
