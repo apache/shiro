@@ -49,7 +49,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
-        <!-- Test dependencies -->
+        <!-- Test dependencies - scope set appropriately already in the parent pom-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
