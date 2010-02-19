@@ -28,7 +28,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-support</artifactId>
-    <name>Apache Shiro :: Suport</name>
+    <name>Apache Shiro :: Support</name>
     <packaging>pom</packaging>
 
     <modules>
