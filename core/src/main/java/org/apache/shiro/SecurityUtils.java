@@ -53,7 +53,10 @@ public abstract class SecurityUtils {
      */
     public static Subject getSubject() {
         Subject subject = ThreadContext.getSubject();
-        if (subject == null) subject = (new Subject.Builder()).buildSubject();
+        if (subject == null) {
+            subject = (new Subject.Builder()).buildSubject();
+            ThreadContext.bind(subject);
+        }
         return subject;
     }
 
