@@ -28,6 +28,7 @@ import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,15 +79,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     protected SubjectFactory subjectFactory;
 
-    protected SubjectBinder subjectBinder;
-
     /**
      * Default no-arg constructor.
      */
     public DefaultSecurityManager() {
         super();
         this.subjectFactory = new DefaultSubjectFactory();
-        this.subjectBinder = new SessionSubjectBinder();
     }
 
     /**
@@ -115,14 +113,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void setSubjectFactory(SubjectFactory subjectFactory) {
         this.subjectFactory = subjectFactory;
-    }
-
-    public SubjectBinder getSubjectBinder() {
-        return subjectBinder;
-    }
-
-    public void setSubjectBinder(SubjectBinder subjectBinder) {
-        this.subjectBinder = subjectBinder;
     }
 
     public RememberMeManager getRememberMeManager() {
@@ -217,7 +207,28 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *                for later use.
      */
     protected void bind(Subject subject) {
-        getSubjectBinder().bind(subject);
+	// TODO consider refactoring to use Subject.Binder.
+	// This implementation was copied from SessionSubjectBinder that was removed
+        PrincipalCollection principals = subject.getPrincipals();
+        if (principals != null && !principals.isEmpty()) {
+            Session session = subject.getSession();
+            session.setAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY, principals);
+        } else {
+            Session session = subject.getSession(false);
+            if (session != null) {
+                session.removeAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY);
+            }
+        }
+        
+        if (subject.isAuthenticated()) {
+            Session session = subject.getSession();
+            session.setAttribute(SubjectFactory.AUTHENTICATED_SESSION_KEY, subject.isAuthenticated());
+        } else {
+            Session session = subject.getSession(false);
+            if (session != null) {
+                session.removeAttribute(SubjectFactory.AUTHENTICATED_SESSION_KEY);
+            }
+        }
     }
 
     protected void rememberMeSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info, Subject subject) {
@@ -442,7 +453,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         if (context.containsKey(SubjectFactory.SESSION)) {
             Session session = (Session) context.get(SubjectFactory.SESSION);
             if (session != null) {
-                Object principals = session.getAttribute(SessionSubjectBinder.PRINCIPALS_SESSION_KEY);
+                Object principals = session.getAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY);
                 if (principals != null) {
                     log.trace("Context already contains an implicit (session-based) identity.");
                     return true;
@@ -576,7 +587,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected void unbind(Subject subject) {
-        getSubjectBinder().unbind(subject);
+        // TODO Consider refactoring. Compare to bind() - this is not symmetric
+        ThreadContext.unbindSubject();
     }
 
     protected PrincipalCollection getRememberedIdentity(Map subjectContext) {
@@ -593,14 +605,5 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             }
         }
         return null;
-    }
-
-    public Subject getSubject() {
-        Subject subject = getSubjectBinder().getSubject();
-        if (subject == null) {
-            subject = createSubject(new HashMap());
-            bind(subject);
-        }
-        return subject;
     }
 }

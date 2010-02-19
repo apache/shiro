@@ -62,7 +62,6 @@ import java.util.Map;
  * @since 0.2
  */
 public interface SecurityManager extends Authenticator, Authorizer, SessionManager {
-
     /**
      * Logs in the specified Subject using the given {@code authenticationToken}, returning an updated Subject
      * instance reflecting the authenticated state if successful or throwing {@code AuthenticationException} if it is
@@ -98,14 +97,6 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * @since 1.0
      */
     void logout(Subject subject);
-
-    /**
-     * Returns the {@code Subject} instance representing the currently executing user.
-     *
-     * @return the {@code Subject} instance representing the currently executing user.
-     * @since 0.9
-     */
-    Subject getSubject();
 
     /**
      * Creates a {@code Subject} instance reflecting the specified contextual data.
