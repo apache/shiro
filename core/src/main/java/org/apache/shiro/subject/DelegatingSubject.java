@@ -375,10 +375,12 @@ public class DelegatingSubject implements Subject, Serializable {
         }
     }
 
+
     // ======================================
     // 'Run As' support implementations
     // ======================================
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     public void assumeIdentity(Subject subject) {
         if (subject == null) {
             throw new NullPointerException("Subject argument cannot be null.");
@@ -391,26 +393,31 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     public boolean isAssumedIdentity() {
         return !CollectionUtils.isEmpty(this.assumedIdentities);
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     public Object getOriginalPrincipal() {
         return getPrimaryPrincipal(this.principals);
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     public PrincipalCollection getOriginalPrincipals() {
         return this.principals;
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     public void releaseAssumedIdentity() {
         popIdentity();
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     protected List<PrincipalCollection> getAssumedIdentities(Session session) {
         if (session != null) {
             //noinspection unchecked
@@ -420,6 +427,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     protected void pushIdentity(PrincipalCollection principals) {
         if (this.assumedIdentities == null) {
             this.assumedIdentities = new ArrayList<PrincipalCollection>();
@@ -430,6 +438,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     //TODO - WORK IN PROGRESS - DO NOT USE
+
     protected PrincipalCollection popIdentity() {
         PrincipalCollection popped = null;
         if (!CollectionUtils.isEmpty(this.assumedIdentities)) {
