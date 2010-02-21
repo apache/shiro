@@ -63,6 +63,10 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
             public Object proceed() throws Throwable {
                 return mi.proceed();
             }
+
+	    public Object getThis() {
+		return mi.getThis();
+	    }
         };
     }
 
