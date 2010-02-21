@@ -15,12 +15,13 @@ import org.aspectj.lang.reflect.MethodSignature;
  */
 public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
 
+  private Object _object;
   private Method _method;
   private Object[] _arguments;
 
   /**
    * Factory method that creates a new {@link BeforeAdviceMethodInvocationAdapter} instance
-   * using the AspectJ {@link JoinPoint} provided. The the joint point passed in is not
+   * using the AspectJ {@link JoinPoint} provided. If the joint point passed in is not
    * a method joint point, this method throws an {@link IllegalArgumentException}.
    * 
    * @param aJoinPoint The AspectJ {@link JoinPoint} to use to adapt the advice.
@@ -29,12 +30,12 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
    */
   public static BeforeAdviceMethodInvocationAdapter createFrom(JoinPoint aJoinPoint) {
     if (aJoinPoint.getSignature() instanceof MethodSignature) {
-      return new BeforeAdviceMethodInvocationAdapter(
+      return new BeforeAdviceMethodInvocationAdapter(aJoinPoint.getThis(),
               ((MethodSignature) aJoinPoint.getSignature()).getMethod(),
               aJoinPoint.getArgs());
       
     } else if (aJoinPoint.getSignature() instanceof AdviceSignature) {
-      return new BeforeAdviceMethodInvocationAdapter(
+      return new BeforeAdviceMethodInvocationAdapter(aJoinPoint.getThis(),
               ((AdviceSignature) aJoinPoint.getSignature()).getAdvice(),
               aJoinPoint.getArgs());
       
@@ -49,7 +50,8 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
    * @param aMethod The method to invoke.
    * @param someArguments The arguments of the method invocation.
    */
-  public BeforeAdviceMethodInvocationAdapter(Method aMethod, Object[] someArguments) {
+  public BeforeAdviceMethodInvocationAdapter(Object anObject, Method aMethod, Object[] someArguments) {
+    _object = anObject;
     _method = aMethod;
     _arguments = someArguments;
   }
@@ -74,5 +76,9 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
   public Object proceed() throws Throwable {
     // Do nothing since this adapts a before advice
     return null;
+  }
+
+  public Object getThis() {
+    return _object;
   }
 }
