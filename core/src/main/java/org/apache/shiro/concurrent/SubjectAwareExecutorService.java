@@ -56,7 +56,7 @@ import java.util.concurrent.*;
  *
  * @since 1.0
  */
-public class SubjectAwareExecutorService extends SubjectAwareExecutor implements ExecutorService {
+public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor implements ExecutorService {
 
     private ExecutorService targetExecutorService;
 
