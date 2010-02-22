@@ -115,11 +115,13 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
         } else {
             // If subject is known but not authorized, redirect to the unauthorized URL if there is one
             // If no unauthorized URL is specified, just return an unauthorized HTTP status code
-            WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            if (StringUtils.hasText(getUnauthorizedUrl())) {
-                WebUtils.issueRedirect(request, response, getUnauthorizedUrl());
+            String unauthorizedUrl = getUnauthorizedUrl();
+            //SHIRO-142 - ensure that redirect _or_ error code occurs - both cannot happen due to response commit:
+            if ( StringUtils.hasText(unauthorizedUrl) ) {
+                WebUtils.issueRedirect(request, response, unauthorizedUrl);
+            } else {
+                WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
-
         }
         return false;
     }
