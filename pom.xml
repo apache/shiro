@@ -150,6 +150,15 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Intra project test dependencies: -->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+
             <!-- 3rd party dependencies -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -379,7 +388,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <!-- Note that reporting may fail with lower settings than something like: MAVEN_OPTS="-X512m -XX:MaxPermSize=128m" -->
     <reporting>
         <plugins>
