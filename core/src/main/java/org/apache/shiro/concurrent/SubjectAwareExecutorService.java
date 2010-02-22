@@ -63,7 +63,8 @@ public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor i
 
     private ExecutorService targetExecutorService;
 
-    public SubjectAwareExecutorService(){}
+    public SubjectAwareExecutorService() {
+    }
 
     public SubjectAwareExecutorService(ExecutorService target) {
         setTargetExecutorService(target);
@@ -127,7 +128,7 @@ public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor i
         return workItems;
     }
 
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+    /*public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAll(workItems);
     }
@@ -138,7 +139,7 @@ public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor i
         return this.targetExecutorService.invokeAll(workItems, timeout, unit);
     }
 
-    /*public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAny(workItems);
     }
