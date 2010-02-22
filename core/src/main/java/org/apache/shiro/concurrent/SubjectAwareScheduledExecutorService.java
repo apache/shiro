@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * Same concept as the {@link SubjectAwareExecutorService} but additionally supports the
  * {@link ScheduledExecutorService} interface.
  */
-public class SubjectAwareScheduledExecutorService extends SubjectAwareExecutorService implements ScheduledExecutorService {
+public abstract class SubjectAwareScheduledExecutorService extends SubjectAwareExecutorService implements ScheduledExecutorService {
 
     private ScheduledExecutorService targetScheduledExecutorService;
 
