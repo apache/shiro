@@ -78,7 +78,14 @@ public abstract class OncePerRequestFilter extends NameableFilter {
             // Do invoke this filter...
             log.trace("Filter '{}' not yet executed.  Executing now.", getName());
             request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);
-            doFilterInternal(request, response, filterChain);
+
+            try {
+                doFilterInternal(request, response, filterChain);
+            } finally {
+                // Once the request has finished, we're done and we don't
+                // need to mark as 'already filtered' any more.
+                request.removeAttribute(alreadyFilteredAttributeName);
+            }
         }
     }
 
