@@ -23,10 +23,7 @@ import org.apache.shiro.subject.Subject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * {@code ExecutorService} implementation that will automatically first associate any argument
@@ -59,7 +56,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @since 1.0
  */
-public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor implements ExecutorService {
+public class SubjectAwareExecutorService extends SubjectAwareExecutor implements ExecutorService {
 
     private ExecutorService targetExecutorService;
 
@@ -128,7 +125,7 @@ public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor i
         return workItems;
     }
 
-    /*public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAll(workItems);
     }
@@ -148,5 +145,5 @@ public abstract class SubjectAwareExecutorService extends SubjectAwareExecutor i
             throws InterruptedException, ExecutionException, TimeoutException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAny(workItems, timeout, unit);
-    }*/
+    }
 }
