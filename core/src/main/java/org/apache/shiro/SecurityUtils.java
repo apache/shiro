@@ -100,10 +100,11 @@ public abstract class SecurityUtils {
      * Returns the SecurityManager accessible to the calling code.
      *
      * @return the SecurityManager accessible to the calling code.
-     * @throws IllegalStateException if there is no {@code SecurityManager} instance available to the calling code,
-     *                               which indicates an invalid application configuration.
+     * @throws UnavailableSecurityManagerException
+     *          if there is no {@code SecurityManager} instance available to the
+     *          calling code, which typically indicates an invalid application configuration.
      */
-    public static SecurityManager getSecurityManager() throws IllegalStateException {
+    public static SecurityManager getSecurityManager() throws UnavailableSecurityManagerException {
         SecurityManager securityManager = ThreadContext.getSecurityManager();
         if (securityManager == null) {
             securityManager = SecurityUtils.securityManager;
@@ -112,7 +113,7 @@ public abstract class SecurityUtils {
             String msg = "No SecurityManager accessible to the calling code, either bound to the " +
                     ThreadContext.class.getName() + " or as a vm static singleton.  This is an invalid application " +
                     "configuration.";
-            throw new IllegalStateException(msg);
+            throw new UnavailableSecurityManagerException(msg);
         }
         return securityManager;
     }
