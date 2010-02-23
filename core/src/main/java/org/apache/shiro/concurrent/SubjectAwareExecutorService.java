@@ -72,8 +72,18 @@ public class SubjectAwareExecutorService extends SubjectAwareExecutor implements
     }
 
     public void setTargetExecutorService(ExecutorService targetExecutorService) {
-        setTargetExecutor(targetExecutorService);
+        super.setTargetExecutor(targetExecutorService);
         this.targetExecutorService = targetExecutorService;
+    }
+
+    @Override
+    public void setTargetExecutor(Executor targetExecutor) {
+        if (!(targetExecutor instanceof ExecutorService)) {
+            String msg = "The " + getClass().getName() + " implementation only accepts " +
+                    ExecutorService.class.getName() + " target instances.";
+            throw new IllegalArgumentException(msg);
+        }
+        super.setTargetExecutor(targetExecutor);
     }
 
     public void shutdown() {

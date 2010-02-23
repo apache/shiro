@@ -18,10 +18,7 @@
  */
 package org.apache.shiro.concurrent;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Same concept as the {@link SubjectAwareExecutorService} but additionally supports the
@@ -43,8 +40,28 @@ public class SubjectAwareScheduledExecutorService extends SubjectAwareExecutorSe
     }
 
     public void setTargetScheduledExecutorService(ScheduledExecutorService targetScheduledExecutorService) {
+        super.setTargetExecutorService(targetScheduledExecutorService);
         this.targetScheduledExecutorService = targetScheduledExecutorService;
-        setTargetExecutorService(targetScheduledExecutorService);
+    }
+
+    @Override
+    public void setTargetExecutor(Executor targetExecutor) {
+        if (!(targetExecutor instanceof ScheduledExecutorService)) {
+            String msg = "The " + getClass().getName() + " implementation only accepts " +
+                    ScheduledExecutorService.class.getName() + " target instances.";
+            throw new IllegalArgumentException(msg);
+        }
+        super.setTargetExecutorService((ScheduledExecutorService) targetExecutor);
+    }
+
+    @Override
+    public void setTargetExecutorService(ExecutorService targetExecutorService) {
+        if (!(targetExecutorService instanceof ScheduledExecutorService)) {
+            String msg = "The " + getClass().getName() + " implementation only accepts " +
+                    ScheduledExecutorService.class.getName() + " target instances.";
+            throw new IllegalArgumentException(msg);
+        }
+        super.setTargetExecutorService(targetExecutorService);
     }
 
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
