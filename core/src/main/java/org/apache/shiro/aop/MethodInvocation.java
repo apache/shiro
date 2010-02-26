@@ -70,12 +70,13 @@ public interface MethodInvocation {
      * @return the (possibly null) arguments to be supplied to the method invocation.
      */
     Object[] getArguments();
-    
+
     /**
      * Returns the object that holds the current joinpoint's static part.
      * For instance, the target object for an invocation.
-     *      
+     *
      * @return the object that holds the current joinpoint's static part.
+     * @since 1.0
      */
     Object getThis();
 

@@ -18,12 +18,11 @@
  */
 package org.apache.shiro.spring.security.interceptor;
 
-import java.lang.reflect.Method;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-
 import org.apache.shiro.authz.aop.AnnotationsAuthorizingMethodInterceptor;
+
+import java.lang.reflect.Method;
 
 /**
  * Allows Shiro Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>
@@ -64,9 +63,9 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
                 return mi.proceed();
             }
 
-	    public Object getThis() {
-		return mi.getThis();
-	    }
+            public Object getThis() {
+                return mi.getThis();
+            }
         };
     }
 
@@ -74,6 +73,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
      * Simply casts the method argument to an
      * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} and then
      * calls <code>methodInvocation.{@link org.aopalliance.intercept.MethodInvocation#proceed proceed}()</code>
+     *
      * @param aopAllianceMethodInvocation the {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation}
      * @return the {@link org.aopalliance.intercept.MethodInvocation#proceed() org.aopalliance.intercept.MethodInvocation.proceed()} method call result.
      * @throws Throwable if the underlying AOP Alliance <code>proceed()</code> call throws a <code>Throwable</code>.
