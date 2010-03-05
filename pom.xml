@@ -149,6 +149,11 @@
                 <artifactId>shiro-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.samples</groupId>
+                <artifactId>samples-spring-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Intra project test dependencies: -->
             <dependency>
