@@ -29,7 +29,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
 
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.samples.spring.DefaultSampleManager;
 import org.apache.shiro.samples.spring.SampleManager;
 
 
@@ -157,12 +156,4 @@ public class WebStartView implements ActionListener, InitializingBean {
             JOptionPane.showMessageDialog(frame, "Unauthorized to perform action: " + ae.getMessage(), "Unauthorized", JOptionPane.WARNING_MESSAGE);
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        WebStartView test = new WebStartView();
-        test.setSampleManager(new DefaultSampleManager());
-        test.afterPropertiesSet();
-    }
-
-
 }
