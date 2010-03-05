@@ -30,13 +30,28 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>samples-spring-client</artifactId>
     <name>Apache Shiro :: Samples :: Spring Client</name>
-    <description>Spring Client used by Spring Sample webapplication</description>
+    <description>A webstart application used to demonstrate Apache Shiro session and security management.</description>
     <packaging>jar</packaging>
+    
+    <properties>
+	    <shiro.session.id>${sessionId}</shiro.session.id>
+    </properties>
 
     <dependencies>
+				<dependency>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+					<scope>compile</scope>
+				</dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
+						<exclusions>
+							<exclusion>
+								<groupId>commons-beanutils</groupId>
+								<artifactId>commons-beanutils</artifactId>
+							</exclusion>
+						</exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -48,8 +63,91 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-aop</artifactId>
+            <version>2.5.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>2.5.6</version>
+						<exclusions>
+							<exclusion>
+								<groupId>commons-logging</groupId>
+								<artifactId>commons-logging</artifactId>
+							</exclusion>
+						</exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>2.5.6</version>
+						<exclusions>
+							<exclusion>
+								<groupId>commons-logging</groupId>
+								<artifactId>commons-logging</artifactId>
+							</exclusion>
+						</exclusions>
+        </dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<version>1.5.6</version>
+					<scope>compile</scope>
+				</dependency> 		
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+					<version>1.5.6</version>
+					<scope>compile</scope>
+				</dependency> 		
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+					<version>1.5.6</version>
+					<scope>compile</scope>
+				</dependency> 		
     </dependencies>
+    
+    <build>
+    	<plugins>
+	      <plugin>
+	        <groupId>org.codehaus.mojo.webstart</groupId>
+	        <artifactId>webstart-maven-plugin</artifactId>
+	        <version>1.0-alpha-2</version>
+	        <executions>
+	           <execution>
+	           		<phase>package</phase>
+	              <goals>
+	                 <goal>jnlp-inline</goal>
+	              </goals>
+	           </execution>
+	        </executions>
+	        <configuration>
+	           <!-- JNLP generation -->
+	           <jnlp>
+	             <!-- default values -->
+	             <!--inputTemplateResourcePath>${project.basedir}</inputTemplateResourcePath-->
+	             <!--inputTemplate>src/main/jnlp/template.vm</inputTemplate--> <!-- relative to inputTemplateResourcePath -->
+	             <outputFile>shiro.jnlp.jsp</outputFile> <!-- defaults to launch.jnlp -->
+	
+	             <mainClass>org.apache.shiro.samples.spring.ui.WebStartDriver</mainClass>
+	           </jnlp>
+	
+	
+	           <sign>
+	             <keystore>jsecurity-sample.jks</keystore>
+	             <storepass>jsecurity</storepass> 
+	             <alias>jsecurity</alias>
+	             <verify>false</verify>
+	           </sign>
+	
+	           <!-- BUILDING PROCESS -->
+	           <pack200>true</pack200>
+	           <verbose>false</verbose>
+	
+	        </configuration>
+	      </plugin>
+    	</plugins>
+    </build>
 
 </project>
