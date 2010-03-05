@@ -67,6 +67,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.shiro.samples</groupId>
+            <artifactId>samples-spring-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
         </dependency>
