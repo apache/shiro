@@ -31,7 +31,7 @@
 
   <bean id="sampleManager"
         class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
-    <property name="serviceUrl" value="http://localhost:8080/shiro-spring/remoting/sampleManager"/>
+    <property name="serviceUrl" value="http://localhost:9080/shiro/remoting/sampleManager"/>
     <property name="serviceInterface" value="org.apache.shiro.samples.spring.SampleManager"/>
     <property name="remoteInvocationFactory" ref="secureRemoteInvocationFactory"/>
   </bean>
