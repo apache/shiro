@@ -29,8 +29,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>samples-spring-client</artifactId>
-	<name>Apache Shiro ::	Samples	:: Spring	Client</name>
-	<description>A webstart	application	used to	demonstrate	Apache Shiro session and security	management.</description>
+	<name>Apache Shiro :: Samples :: Spring	Client</name>
+	<description>A webstart application used to demonstrate Apache Shiro session and security management.</description>
 	<packaging>jar</packaging>
 	
 	<properties>
