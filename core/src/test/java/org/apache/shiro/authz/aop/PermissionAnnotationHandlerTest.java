@@ -30,6 +30,8 @@ import java.lang.annotation.Annotation;
  */
 public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport {
 
+    //Added to satisfy SHIRO-146
+
     @Test(expected = UnauthenticatedException.class)
     public void testGuestSinglePermissionAssertion() throws Throwable {
         PermissionAnnotationHandler handler = new PermissionAnnotationHandler();
@@ -46,6 +48,8 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
 
         handler.assertAuthorized(requiresPermissionAnnotation);
     }
+
+    //Added to satisfy SHIRO-146
 
     @Test(expected = UnauthenticatedException.class)
     public void testGuestMultiplePermissionAssertion() throws Throwable {
