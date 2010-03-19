@@ -40,7 +40,7 @@ import org.junit.Before;
  */
 public class SecurityManagerTestSupport {
 
-    protected SecurityManager createTestSecurityManager() {
+    protected static SecurityManager createTestSecurityManager() {
         Ini ini = new Ini();
         ini.setSectionProperty("users", "test", "test");
         return new DefaultSecurityManager(new IniRealm(ini));

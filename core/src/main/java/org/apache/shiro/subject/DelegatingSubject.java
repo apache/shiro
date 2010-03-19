@@ -192,7 +192,7 @@ public class DelegatingSubject implements Subject, Serializable {
                     "acquire these identifying principals automatically after a successful login is performed " +
                     "be executing " + Subject.class.getName() + ".login(AuthenticationToken) or when 'Remember Me' " +
                     "functionality is enabled by the SecurityManager.  This exception can also occur when a " +
-                    "previously logged-in Subject has logged out, which relinquishes its identity and essentially " +
+                    "previously logged-in Subject has logged out which " +
                     "makes it anonymous again.  Because an identity is currently not known due to any of these " +
                     "conditions, authorization is denied.";
             throw new UnauthenticatedException(msg);

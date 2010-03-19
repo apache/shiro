@@ -18,14 +18,13 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 
 
 /**
@@ -50,32 +49,25 @@ public class RoleAnnotationHandler extends AuthorizingAnnotationHandler {
      * <code>AuthorizingException</code> indicating that access is denied.
      *
      * @param a the RequiresRoles annotation to use to check for one or more roles
-     * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> does not have the role(s) necessary to
-     * proceed.
+     * @throws org.apache.shiro.authz.AuthorizationException
+     *          if the calling <code>Subject</code> does not have the role(s) necessary to
+     *          proceed.
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if ( !(a instanceof RequiresRoles ) ) {
+        if (!(a instanceof RequiresRoles)) {
             return;
         }
-        RequiresRoles rrAnnotation = (RequiresRoles)a;
+        RequiresRoles rrAnnotation = (RequiresRoles) a;
 
         String roleId = rrAnnotation.value();
 
         String[] roles = roleId.split(",");
 
         if (roles.length == 1) {
-            if (!getSubject().hasRole(roles[0])) {
-                String msg = "Calling Subject does not have required role [" + roleId + "].  " +
-                        "MethodInvocation denied.";
-                throw new UnauthorizedException(msg);
-            }
+            getSubject().checkRole(roles[0]);
         } else {
             Set<String> rolesSet = new LinkedHashSet<String>(Arrays.asList(roles));
-            if (!getSubject().hasAllRoles(rolesSet)) {
-                String msg = "Calling Subject does not have required roles [" + roleId + "].  " +
-                        "MethodInvocation denied.";
-                throw new UnauthorizedException(msg);
-            }
+            getSubject().checkRoles(rolesSet);
         }
     }
 

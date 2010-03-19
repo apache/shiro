@@ -18,14 +18,13 @@
  */
 package org.apache.shiro.authz.aop;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.PermissionUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 
 /**
@@ -53,7 +52,7 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      * @return the annotation's <code>value</code>, from which the Permission will be constructed.
      */
     protected String getAnnotationValue(Annotation a) {
-        RequiresPermissions rpAnnotation = (RequiresPermissions)a;
+        RequiresPermissions rpAnnotation = (RequiresPermissions) a;
         return rpAnnotation.value();
     }
 
@@ -62,11 +61,12 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      * <code>AuthorizingException</code> indicating access is denied.
      *
      * @param a the RequiresPermission annotation being inspected to check for one or more permissions
-     * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> does not have the permission(s) necessary to
-     * continue access or execution.
+     * @throws org.apache.shiro.authz.AuthorizationException
+     *          if the calling <code>Subject</code> does not have the permission(s) necessary to
+     *          continue access or execution.
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if ( !(a instanceof RequiresPermissions) ) {
+        if (!(a instanceof RequiresPermissions)) {
             return;
         }
         String p = getAnnotationValue(a);
@@ -75,20 +75,11 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
         Subject subject = getSubject();
 
         if (perms.size() == 1) {
-            if (!subject.isPermitted(perms.iterator().next())) {
-                String msg = "Calling Subject does not have required permission [" + p + "].  " +
-                        "Method invocation denied.";
-                throw new UnauthorizedException(msg);
-            }
+            subject.checkPermission(perms.iterator().next());
         } else {
             String[] permStrings = new String[perms.size()];
             permStrings = perms.toArray(permStrings);
-            if (!subject.isPermittedAll(permStrings)) {
-                String msg = "Calling Subject does not have required permissions [" + p + "].  " +
-                        "Method invocation denied.";
-                throw new UnauthorizedException(msg);
-            }
-
+            subject.checkPermissions(permStrings);
         }
     }
 }
