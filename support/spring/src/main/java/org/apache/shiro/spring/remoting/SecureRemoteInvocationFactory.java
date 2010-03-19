@@ -77,13 +77,20 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         }
 
         //tried the delegate.  If sessionId is still null, only then try the Subject:
-        if (sessionId == null && !sessionManagerMethodInvocation) {
-            Subject subject = SecurityUtils.getSubject();
-            Session session = subject.getSession(false);
-            if (session != null) {
-                sessionId = session.getId();
-                host = session.getHost();
+        try {
+            // HACK Check if can get the securityManager - this'll cause an exception if it's not set 
+            SecurityUtils.getSecurityManager();
+            if (sessionId == null && !sessionManagerMethodInvocation) {
+                Subject subject = SecurityUtils.getSubject();
+                Session session = subject.getSession(false);
+                if (session != null) {
+                    sessionId = session.getId();
+                    host = session.getHost();
+                }
             }
+        }
+        catch (Exception e) {
+            log.trace("No security manager set. Trying next to get session id from system property");
         }
 
         //No call to the sessionManager, and the Subject doesn't have a session.  Try a system property
