@@ -27,6 +27,8 @@ import java.lang.annotation.Annotation;
  */
 public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
 
+    //Added to satisfy SHIRO-146
+
     @Test(expected = UnauthenticatedException.class)
     public void testGuestSingleRoleAssertion() throws Throwable {
         RoleAnnotationHandler handler = new RoleAnnotationHandler();
@@ -43,6 +45,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
 
         handler.assertAuthorized(requiresRolesAnnotation);
     }
+
+    //Added to satisfy SHIRO-146
 
     @Test(expected = UnauthenticatedException.class)
     public void testGuestMultipleRolesAssertion() throws Throwable {
