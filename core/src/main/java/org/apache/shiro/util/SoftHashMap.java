@@ -37,10 +37,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * references to all of its values.
  * <p/>
  * This class is a generics-enabled Map based on initial ideas from Heinz Kabutz's and Sydney Redelinghuys's
- * <a href="http://www.javaspecialists.eu/archive/Issue015.html">publicly posted version</a>, with continued
- * modifications.
+ * <a href="http://www.javaspecialists.eu/archive/Issue015.html">publicly posted version (with their approval)</a>, with
+ * continued modifications.
  * <p/>
- * This implementation is thread-safe and usuable in highly concurrent environments.
+ * This implementation is thread-safe and usable in concurrent environments.
  *
  * @author Les Hazlewood
  * @since 1.0
@@ -175,6 +175,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
     }
 
     //Guarded by the strongReferencesLock in the addToStrongReferences method
+
     private void trimStrongReferencesIfNecessary() {
         //trim the strong ref queue if necessary:
         while (strongReferences.size() > RETENTION_SIZE) {
