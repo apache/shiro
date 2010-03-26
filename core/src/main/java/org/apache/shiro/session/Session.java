@@ -85,8 +85,8 @@ public interface Session {
     /**
      * Sets the time in milliseconds that the session may remain idle before expiring.
      * <ul>
-     * <li>A negative return value means the session will never expire.</li>
-     * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
+     * <li>A negative value means the session will never expire.</li>
+     * <li>A non-negative value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
      * <p/>
