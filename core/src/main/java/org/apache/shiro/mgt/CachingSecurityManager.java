@@ -20,7 +20,7 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
-import org.apache.shiro.cache.DefaultCacheManager;
+import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
 
@@ -48,7 +48,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * Default no-arg constructor that will automatically attempt to initialize a default cacheManager
      */
     public CachingSecurityManager() {
-        this.cacheManager = new DefaultCacheManager();
+        this.cacheManager = new MemoryConstrainedCacheManager();
     }
 
     /**
@@ -91,4 +91,5 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
         LifecycleUtils.destroy(getCacheManager());
         this.cacheManager = null;
     }
+
 }
