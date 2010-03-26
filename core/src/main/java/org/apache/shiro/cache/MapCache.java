@@ -95,6 +95,10 @@ public class MapCache implements Cache {
     }
 
     public String toString() {
-        return getClass().getName() + " : [" + name + "]";
+        return new StringBuilder("MapCache '")
+                .append(name).append("' (")
+                .append(map.size())
+                .append(" entries)")
+                .toString();
     }
 }

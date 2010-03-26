@@ -18,104 +18,90 @@
  */
 package org.apache.shiro.session.mgt.eis;
 
-import org.apache.shiro.cache.HashtableCacheManager;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.SimpleSession;
-import org.apache.shiro.util.JavaEnvironment;
+import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.Random;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 /**
- * Simple memory-based implementation of the SessionDAO that relies on its configured
- * {@link #setCacheManager CacheManager} for Session caching and in-memory persistence.
+ * Simple memory-based implementation of the SessionDAO that stores all of its sessions in an in-memory
+ * {@link ConcurrentMap}.  <b>This implementation does not page to disk and is therefore unsuitable for applications
+ * that could experience a large amount of sessions</b> and would therefore cause {@code OutOfMemoryException}s.  It is
+ * <em>not</em> recommended for production use in most environments.
+ * <h2>Memory Restrictions</h2>
+ * If your application is expected to host many sessions beyond what can be stored in the
+ * memory available to the JVM, it is highly recommended to use a different {@code SessionDAO} implementation which
+ * uses a more expansive or permanent backing data store.
  * <p/>
- * <p><b>PLEASE NOTE</b> the default CacheManager internal to this implementation is a
- * {@link org.apache.shiro.cache.HashtableCacheManager HashtableCacheManager}, which IS NOT RECOMMENDED for production environments.
- * <p/>
- * <p>If you
- * want to use the MemorySessionDAO in production environments, such as those that require session data to be
- * recoverable in case of a server restart, you should do one of two things (or both):
- * <p/>
- * <ul>
- * <li>Configure it with a production-quality CacheManager. The
- * {@code org.apache.shiro.cache.ehcache.EhCacheManager} is one such implementation.  It is not used by default
- * to prevent a forced runtime dependency on ehcache.jar that may not be required in many environments)</li><br/>
- * <li>If you need session information beyond their transient start/stop lifetimes, you should subclass this one and
- * override the <tt>do*</tt> methods to perform CRUD operations using an EIS-tier API (e.g. Hibernate/JPA/JCR/etc).
- * This class implementation does not retain sessions after they have been stopped or expired, so you would need to
- * override these methods to ensure Sessions can be accessed beyond Shiro's needs.</li>
- * </ul>
+ * In this case, it is recommended to instead use a custom
+ * {@link CachingSessionDAO} implementation that communicates with a higher-capacity data store of your choice
+ * (file system, database, etc).
+ * <h2>Changes in 1.0</h2>
+ * This implementation prior to 1.0 used to subclass the {@link CachingSessionDAO}, but this caused problems with many
+ * cache implementations that would expunge entries due to TTL settings, resulting in Sessions that would be randomly
+ * (and permanently) lost.  The Shiro 1.0 release refactored this implementation to be 100% memory-based (without
+ * {@code Cache} usage to avoid this problem.
  *
- * @author Les Hazlewood
+ * @see CachingSessionDAO
  * @since 0.1
  */
-public class MemorySessionDAO extends CachingSessionDAO {
-
-    //TODO - complete JavaDoc
+public class MemorySessionDAO extends AbstractSessionDAO {
 
     private static final Logger log = LoggerFactory.getLogger(MemorySessionDAO.class);
 
-    private static final String RANDOM_NUM_GENERATOR_ALGORITHM_NAME = "SHA1PRNG";
-    private Random randomNumberGenerator = null;
+    private ConcurrentMap<Serializable, Session> sessions;
 
     public MemorySessionDAO() {
-        setCacheManager(new HashtableCacheManager());
-    }
-
-    private Random getRandomNumberGenerator() {
-        if (randomNumberGenerator == null) {
-            if (log.isInfoEnabled()) {
-                String msg = "On Java 1.4 platforms and below, there is no built-in UUID class (Java 1.5 and above " +
-                        "only) to use for Session ID generation - reverting to SecureRandom number generator.  " +
-                        "Although this is probably sufficient for all but high user volume applications, if you " +
-                        "see ID collision, you will want to upgrade to JDK 1.5 or better as soon as possible, or " +
-                        "subclass the " + getClass().getName() + " class and override the #generateNewSessionId() " +
-                        "method to use a better algorithm.";
-                log.info(msg);
-            }
-
-            try {
-                randomNumberGenerator = java.security.SecureRandom.getInstance(RANDOM_NUM_GENERATOR_ALGORITHM_NAME);
-            } catch (java.security.NoSuchAlgorithmException e) {
-                randomNumberGenerator = new java.security.SecureRandom();
-            }
-        }
-        return randomNumberGenerator;
-    }
-
-    protected Serializable generateNewSessionId() {
-        if (JavaEnvironment.isAtLeastVersion15()) {
-            return java.util.UUID.randomUUID().toString();
-        } else {
-            return Long.toString(getRandomNumberGenerator().nextLong());
-        }
+        this.sessions = new ConcurrentHashMap<Serializable, Session>();
     }
 
     protected Serializable doCreate(Session session) {
-        Serializable sessionId = generateNewSessionId();
+        Serializable sessionId = generateSessionId(session);
         assignSessionId(session, sessionId);
+        storeSession(sessionId, session);
         return sessionId;
     }
 
-    protected void assignSessionId(Session session, Serializable sessionId) {
-        ((SimpleSession) session).setId(sessionId);
+    protected Session storeSession(Serializable id, Session session) {
+        if (id == null) {
+            throw new NullPointerException("id argument cannot be null.");
+        }
+        return sessions.putIfAbsent(id, session);
     }
 
     protected Session doReadSession(Serializable sessionId) {
-        return null; //should never execute because this implementation relies on parent class to access cache, which
-        //is where all sessions reside - it is the cache implementation that determines if the
-        //cache is memory only or disk-persistent, etc.
+        return sessions.get(sessionId);
     }
 
-    protected void doUpdate(Session session) {
-        //does nothing - parent class persists to cache.
+    public void update(Session session) throws UnknownSessionException {
+        storeSession(session.getId(), session);
     }
 
-    protected void doDelete(Session session) {
-        //does nothing - parent class removes from cache.
+    public void delete(Session session) {
+        if (session == null) {
+            throw new NullPointerException("session argument cannot be null.");
+        }
+        Serializable id = session.getId();
+        if (id != null) {
+            sessions.remove(id);
+        }
     }
+
+    public Collection<Session> getActiveSessions() {
+        Collection<Session> values = sessions.values();
+        if (CollectionUtils.isEmpty(values)) {
+            return Collections.emptySet();
+        } else {
+            return Collections.unmodifiableCollection(values);
+        }
+    }
+
 }
