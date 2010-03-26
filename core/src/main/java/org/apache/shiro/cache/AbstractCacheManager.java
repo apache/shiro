@@ -108,6 +108,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
                 sb.append(", ");
             }
             sb.append(cache.toString());
+            i++;
         }
         sb.append("]");
         return sb.toString();
