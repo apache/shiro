@@ -21,9 +21,13 @@ package org.apache.shiro.session.mgt;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.StoppedSessionException;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.*;
@@ -38,25 +42,43 @@ import java.util.*;
  */
 public class SimpleSession implements ValidatingSession, Serializable {
 
+    // Serialization reminder:
+    // You _MUST_ change this number if you introduce a change to this class
+    // that is NOT serialization backwards compatible.  Serialization-compatible
+    // changes do not require a change to this number.  If you need to generate
+    // a new number in this case, use the JDK's 'serialver' program to generate it.
+    private static final long serialVersionUID = -7125642695178165650L;
+
     //TODO - complete JavaDoc
+    private transient static final Logger log = LoggerFactory.getLogger(SimpleSession.class);
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
     protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
 
-    private transient static final Logger log = LoggerFactory.getLogger(SimpleSession.class);
+    //serialization bitmask fields. DO NOT CHANGE THE ORDER THEY ARE DECLARED!
+    static int bitIndexCounter = 0;
+    private static final int ID_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int START_TIMESTAMP_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int STOP_TIMESTAMP_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int LAST_ACCESS_TIME_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int TIMEOUT_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int EXPIRED_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int HOST_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int ATTRIBUTES_BIT_MASK = 1 << bitIndexCounter++;
 
-    private Serializable id = null;
-    private Date startTimestamp = null;
-    private Date stopTimestamp = null;
-    private Date lastAccessTime = null;
-    private long timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
-    private boolean expired = false;
-    private String host = null;
+    private Serializable id;
+    private Date startTimestamp;
+    private Date stopTimestamp;
+    private Date lastAccessTime;
+    private long timeout;
+    private boolean expired;
+    private String host;
 
-    private Map<Object, Object> attributes = null;
+    private Map<Object, Object> attributes;
 
     public SimpleSession() {
+        this.timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT; //TODO - remove concrete reference to DefaultSessionManager
         this.startTimestamp = new Date();
         this.lastAccessTime = this.startTimestamp;
     }
@@ -169,9 +191,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
 
     protected void expire() {
         stop();
-        if (!this.expired) {
-            this.expired = true;
-        }
+        this.expired = true;
     }
 
     /**
@@ -270,8 +290,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
-            //noinspection unchecked
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return attributes.keySet();
     }
@@ -362,8 +381,9 @@ public class SimpleSession implements ValidatingSession, Serializable {
      */
     @Override
     public int hashCode() {
-        if (getId() != null) {
-            return getId().hashCode();
+        Serializable id = getId();
+        if (id != null) {
+            return id.hashCode();
         }
         int hashCode = getStartTimestamp() != null ? getStartTimestamp().hashCode() : 0;
         hashCode = 31 * hashCode + (getStopTimestamp() != null ? getStopTimestamp().hashCode() : 0);
@@ -389,4 +409,118 @@ public class SimpleSession implements ValidatingSession, Serializable {
         sb.append(getClass().getName()).append(",id=").append(getId());
         return sb.toString();
     }
+
+    /**
+     * Serializes this object to the specified output stream for JDK Serialization.
+     *
+     * @param out output stream used for Object serialization.
+     * @throws IOException if any of this object's fields cannot be written to the stream.
+     * @since 1.0
+     */
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        short alteredFieldsBitMask = getAlteredFieldsBitMask();
+        out.writeShort(alteredFieldsBitMask);
+        if (id != null) {
+            out.writeObject(id);
+        }
+        if (startTimestamp != null) {
+            out.writeObject(startTimestamp);
+        }
+        if (stopTimestamp != null) {
+            out.writeObject(stopTimestamp);
+        }
+        if (lastAccessTime != null) {
+            out.writeObject(lastAccessTime);
+        }
+        if (timeout != 0l) {
+            out.writeLong(timeout);
+        }
+        if (expired) {
+            out.writeBoolean(expired);
+        }
+        if (host != null) {
+            out.writeUTF(host);
+        }
+        if (!CollectionUtils.isEmpty(attributes)) {
+            out.writeObject(attributes);
+        }
+    }
+
+    /**
+     * Reconstitutes this object based on the specified InputStream for JDK Serialization.
+     *
+     * @param in the input stream to use for reading data to populate this object.
+     * @throws IOException            if the input stream cannot be used.
+     * @throws ClassNotFoundException if a required class needed for instantiation is not available in the present JVM
+     * @since 1.0
+     */
+    @SuppressWarnings({"unchecked"})
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        short bitMask = in.readShort();
+
+        if (isFieldPresent(bitMask, ID_BIT_MASK)) {
+            this.id = (Serializable) in.readObject();
+        }
+        if (isFieldPresent(bitMask, START_TIMESTAMP_BIT_MASK)) {
+            this.startTimestamp = (Date) in.readObject();
+        }
+        if (isFieldPresent(bitMask, STOP_TIMESTAMP_BIT_MASK)) {
+            this.stopTimestamp = (Date) in.readObject();
+        }
+        if (isFieldPresent(bitMask, LAST_ACCESS_TIME_BIT_MASK)) {
+            this.lastAccessTime = (Date) in.readObject();
+        }
+        if (isFieldPresent(bitMask, TIMEOUT_BIT_MASK)) {
+            this.timeout = in.readLong();
+        }
+        if (isFieldPresent(bitMask, EXPIRED_BIT_MASK)) {
+            this.expired = in.readBoolean();
+        }
+        if (isFieldPresent(bitMask, HOST_BIT_MASK)) {
+            this.host = in.readUTF();
+        }
+        if (isFieldPresent(bitMask, ATTRIBUTES_BIT_MASK)) {
+            this.attributes = (Map<Object, Object>) in.readObject();
+        }
+    }
+
+    /**
+     * Returns a bit mask used during serialization indicating which fields have been serialized. Fields that have been
+     * altered (not null and/or not retaining the class defaults) will be serialized and have 1 in their respective
+     * index, fields that are null and/or retain class default values have 0.
+     *
+     * @return a bit mask used during serialization indicating which fields have been serialized.
+     * @since 1.0
+     */
+    private short getAlteredFieldsBitMask() {
+        int bitMask = 0;
+        bitMask = id != null ? bitMask | ID_BIT_MASK : bitMask;
+        bitMask = startTimestamp != null ? bitMask | START_TIMESTAMP_BIT_MASK : bitMask;
+        bitMask = stopTimestamp != null ? bitMask | STOP_TIMESTAMP_BIT_MASK : bitMask;
+        bitMask = lastAccessTime != null ? bitMask | LAST_ACCESS_TIME_BIT_MASK : bitMask;
+        bitMask = timeout != 0l ? bitMask | TIMEOUT_BIT_MASK : bitMask;
+        bitMask = !expired ? bitMask | EXPIRED_BIT_MASK : bitMask;
+        bitMask = host != null ? bitMask | HOST_BIT_MASK : bitMask;
+        bitMask = !CollectionUtils.isEmpty(attributes) ? bitMask | ATTRIBUTES_BIT_MASK : bitMask;
+        return (short) bitMask;
+    }
+
+    /**
+     * Returns {@code true} if the given {@code bitMask} argument indicates that the specified field has been
+     * serialized and therefore should be read during deserialization, {@code false} otherwise.
+     *
+     * @param bitMask      the aggregate bitmask for all fields that have been serialized.  Individual bits represent
+     *                     the fields that have been serialized.  A bit set to 1 means that corresponding field has
+     *                     been serialized, 0 means it hasn't been serialized.
+     * @param fieldBitMask the field bit mask constant identifying which bit to inspect (corresponds to a class attribute).
+     * @return {@code true} if the given {@code bitMask} argument indicates that the specified field has been
+     *         serialized and therefore should be read during deserialization, {@code false} otherwise.
+     * @since 1.0
+     */
+    private static boolean isFieldPresent(short bitMask, int fieldBitMask) {
+        return (bitMask & fieldBitMask) != 0;
+    }
+
 }
