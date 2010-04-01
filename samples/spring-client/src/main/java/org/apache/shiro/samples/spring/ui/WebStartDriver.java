@@ -29,8 +29,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @since 0.1
  */
 public class WebStartDriver {
+    public static String LAUNCH_SESSION_ID;
 
     public static void main(String[] args) {
+        // Store the session id given as argument to a static property to make it available for Spring context 
+        if (args.length > 0) LAUNCH_SESSION_ID = args[0];
         new ClassPathXmlApplicationContext("webstart.spring.xml");
     }
 }
