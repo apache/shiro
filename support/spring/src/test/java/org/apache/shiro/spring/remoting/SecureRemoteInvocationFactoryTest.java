@@ -87,7 +87,7 @@ public class SecureRemoteInvocationFactoryTest {
 
         verify(mi);
 
-        assertEquals(ri.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY), dummySessionId);
+        assertEquals(dummySessionId, ri.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY));
     }
 
     /*@Test

@@ -52,6 +52,15 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
 
     private static final String SESSION_ID_SYSTEM_PROPERTY_NAME = "shiro.session.id";
 
+    private String sessionId;
+    
+    public SecureRemoteInvocationFactory(String sessionId) {
+        this();
+        this.sessionId = sessionId;
+    }
+    
+    public SecureRemoteInvocationFactory() {}
+
     /**
      * Creates a {@link RemoteInvocation} with the current session ID as an
      * {@link RemoteInvocation#getAttribute(String) attribute}.
@@ -76,23 +85,27 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
             }
         }
 
-        //tried the delegate.  If sessionId is still null, only then try the Subject:
-        try {
-            // HACK Check if can get the securityManager - this'll cause an exception if it's not set 
-            SecurityUtils.getSecurityManager();
-            if (sessionId == null && !sessionManagerMethodInvocation) {
-                Subject subject = SecurityUtils.getSubject();
-                Session session = subject.getSession(false);
-                if (session != null) {
-                    sessionId = session.getId();
-                    host = session.getHost();
+        //tried the delegate. Use the injected session id if given
+        if (sessionId == null) sessionId = this.sessionId;
+        
+        // If sessionId is null, only then try the Subject:
+        if (sessionId == null) {
+            try {
+                // HACK Check if can get the securityManager - this'll cause an exception if it's not set 
+                SecurityUtils.getSecurityManager();
+                if (sessionId == null && !sessionManagerMethodInvocation) {
+                    Subject subject = SecurityUtils.getSubject();
+                    Session session = subject.getSession(false);
+                    if (session != null) {
+                        sessionId = session.getId();
+                        host = session.getHost();
+                    }
                 }
             }
+            catch (Exception e) {
+                log.trace("No security manager set. Trying next to get session id from system property");
+            }
         }
-        catch (Exception e) {
-            log.trace("No security manager set. Trying next to get session id from system property");
-        }
-
         //No call to the sessionManager, and the Subject doesn't have a session.  Try a system property
         //as a last result:
         if (sessionId == null) {
