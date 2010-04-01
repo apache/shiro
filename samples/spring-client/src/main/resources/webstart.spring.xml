@@ -17,12 +17,15 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
 <!--
   - Application context for Shiro WebStart sample application
   -->
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
   <bean id="webStartView"
         class="org.apache.shiro.samples.spring.ui.WebStartView">
@@ -37,6 +40,10 @@
   </bean>
 
   <bean id="secureRemoteInvocationFactory"
-        class="org.apache.shiro.spring.remoting.SecureRemoteInvocationFactory"/>
+    class="org.apache.shiro.spring.remoting.SecureRemoteInvocationFactory">
+    <constructor-arg index="0">
+      <util:constant static-field="org.apache.shiro.samples.spring.ui.WebStartDriver.LAUNCH_SESSION_ID"/>
+    </constructor-arg>
+  </bean>
 
 </beans>

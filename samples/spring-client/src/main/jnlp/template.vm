@@ -41,8 +41,13 @@
 	  
 	<resources>
 	<j2se version="$j2seVersion"/>
-	     $dependencies
-	  <property name="shiro.session.id" value="${sessionId}"/>
+			$dependencies
+		<%-- reading custom system properties requires more permissions than available in sandbox mode,
+		thus we need to sign the jars (although we are using an argument instead of a property to set this)
+		<property name="shiro.session.id" value="${sessionId}"/>
+		--%>
 	</resources>
-	<application-desc main-class="$mainClass"/>
+	<application-desc main-class="$mainClass">
+		<argument>${sessionId}</argument>
+	</application-desc> 	
 </jnlp>
