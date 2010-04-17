@@ -20,7 +20,7 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.Authorizer;
-import org.apache.shiro.crypto.Cipher;
+import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
@@ -132,8 +132,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return (AbstractRememberMeManager) this.rememberMeManager;
     }
 
-    public void setRememberMeCipher(Cipher cipher) {
-        getRememberMeManagerForCipherAttributes().setCipher(cipher);
+    public void setRememberMeCipherService(CipherService cipherService) {
+        getRememberMeManagerForCipherAttributes().setCipherService(cipherService);
     }
 
     public void setRememberMeCipherKey(byte[] bytes) {

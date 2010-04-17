@@ -1,4 +1,3 @@
-<%@ page import="org.apache.shiro.SecurityUtils" %>
 <%--
 ~ Licensed to the Apache Software Foundation (ASF) under one
 ~ or more contributor license agreements.  See the NOTICE file
@@ -30,7 +29,7 @@
 
       When a user logs out, any 'rememberMe' identity
       should always be cleared.  In a web application,
-      Shiro uses a Cipher-encrypted Cookie to
+      Shiro uses a cipher-encrypted Cookie to
       remember a user's identity by default, and it will
       automatically delete the Cookie upon a logout.
 

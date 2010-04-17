@@ -23,10 +23,11 @@ package org.apache.shiro.io;
  * of objects to files, HTTP cookies, or other mechanism.
  * <p/>
  * A <code>Serializer</code> should only do conversion, never change the data, such as encoding/decoding or
- * encryption.  These orthoganal concerns are handled elsewhere by Shiro, for example, via
- * {@link org.apache.shiro.codec.CodecSupport CodecSupport} and {@link org.apache.shiro.crypto.Cipher Cipher}s.
- * @param <T> The type of the object being serialized and deserialized.
+ * encryption.  These orthogonal concerns are handled elsewhere by Shiro, for example, via
+ * {@link org.apache.shiro.codec.CodecSupport CodecSupport} and {@link org.apache.shiro.crypto.CipherService CipherService}s.
+ *
  * @author Les Hazlewood
+ * @param <T> The type of the object being serialized and deserialized.
  * @since 0.9
  */
 public interface Serializer<T> {
@@ -34,6 +35,7 @@ public interface Serializer<T> {
     /**
      * Converts the specified Object into a byte[] array.  This byte[] array must be able to be reconstructed
      * back into the original Object form via the {@link #deserialize(byte[]) deserialize} method.
+     *
      * @param o the Object to convert into a byte[] array.
      * @return a byte[] array representing the Object's state that can be restored later.
      * @throws SerializationException if an error occurrs converting the Object into a byte[] array.
@@ -44,7 +46,7 @@ public interface Serializer<T> {
      * Converts the specified raw byte[] array back into an original Object form.  This byte[] array is expected to
      * be the output of a previous {@link #serialize(Object) serialize} method call.
      *
-     * @param serialized the raw data resulting from a previous {@link #serialize(Object) serialize} call. 
+     * @param serialized the raw data resulting from a previous {@link #serialize(Object) serialize} call.
      * @return the Object that was previously serialized into the raw byte[] array.
      * @throws SerializationException if an error occurrs converting the raw byte[] array back into an Object.
      */

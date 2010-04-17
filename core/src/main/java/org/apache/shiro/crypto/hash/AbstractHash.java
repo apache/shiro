@@ -110,7 +110,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      * {@code hashIterations} times.
      * <p/>
      * By default, this class only supports Object method arguments of
-     * type {@code byte[]}, {@code char[]} and {@code String}.  If either argument is anything other than these
+     * type {@code byte[]}, {@code char[]}, {@link String}, {@link java.io.File File}, or
+     * {@link java.io.InputStream InputStream}.  If either argument is anything other than these
      * types a {@link org.apache.shiro.codec.CodecException CodecException} will be thrown.
      * <p/>
      * If you want to be able to hash other object types, or use other salt types, you need to override the
