@@ -19,8 +19,8 @@
 package org.apache.shiro.crypto.hash;
 
 /**
- * A Cryptoraphic <tt>Hash</tt> represents a one-way conversion algorithm that transforms an input source to an underlying
- * byte array.
+ * A Cryptographic {@code Hash} represents a one-way conversion algorithm that transforms an input source to an
+ * underlying byte array.
  *
  * @author Les Hazlewood
  * @see AbstractHash

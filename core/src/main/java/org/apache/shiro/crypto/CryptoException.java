@@ -16,11 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Cryptography Cipher and Hashing components that greatly simplify the JDK's cryptography concepts and
- * add additional convenient behavior.
- * <p/>
- * The most important interface in this package is the {@link org.apache.shiro.crypto.CipherService CipherService}
- * interface, which allows one to encrypt and decrypt sensitive data.
- */
 package org.apache.shiro.crypto;
+
+import org.apache.shiro.ShiroException;
+
+/**
+ * Base Shiro exception for problems encountered during cryptographic operations.
+ *
+ * @author Les Hazlewood
+ * @since 1.0
+ */
+public class CryptoException extends ShiroException {
+
+    public CryptoException(String message) {
+        super(message);
+    }
+
+    public CryptoException(Throwable cause) {
+        super(cause);
+    }
+
+    public CryptoException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

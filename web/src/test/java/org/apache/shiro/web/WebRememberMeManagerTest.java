@@ -21,7 +21,7 @@ package org.apache.shiro.web;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.io.SerializationException;
+import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -72,11 +72,12 @@ public class WebRememberMeManagerTest {
     }
 
     // SHIRO-69
+
     @Test
     public void getRememberedPrincipals() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        Map<String,Object> context = new HashMap<String,Object>();
+        Map<String, Object> context = new HashMap<String, Object>();
         context.put(SubjectFactory.SERVLET_REQUEST, mockRequest);
         context.put(SubjectFactory.SERVLET_RESPONSE, mockResponse);
 
@@ -84,16 +85,16 @@ public class WebRememberMeManagerTest {
 
         //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
         //This will have to change any time the PrincipalCollection implementation changes:
-        final String userPCBlowfishBase64 = "UwP13UzjVUceLBNWh+sYM01JWOSbBOwc1ZLySIws0Idnkc" +
-                "WeD/yWeH0eIycwHaI8MRKPyenBr77dBdt3S7KTK/6qKqKiW5oLqOgU/ZQLdvIOxlZxmT9RlUvK" +
-                "T6zopnQrSpdsCNaruG/Op/XEoJcdNLI9rJCCyMKN3em5wl8GrWTIzKS4hzHombGBEW4EPS9jv4" +
-                "0HV4mIS2sUFXm5MlOptr99e1A6eKYxlLrldk2/yqw29nWohE0sIjO7tRF9mOAZUeC/Fem6K4S8" +
-                "2LbXAJ6p0oNg3MP7dbFSkeeDF2CwFJvvi5xVrGyF0RnTzjwKZdTcvg4bx9ifQpKyPayQgsjCjd" +
-                "3pucJfBq1kuw/IyiPdSREnzWAEXOQi9o9II4jNvOJik+VI3QkwWdBBekzEKCACn8uvjlLKSiR8" +
-                "tCs9vbycs5N0FrODxMQ5FDvhV+rZLHtPkishP5cm/QEL01IUqqC4RA==";
+        final String userPCAesBase64 = "qk7spFqO1zoNLgq3qArE7bc8+J+Zvm1jz8lDSUmRiRlDQQx7jxG4+" +
+                "QImiRpR7zO0d9oHH+7C3VeN9OvGMdjxtpbInMsLcGz4Q0u3M1fmyErn5Mr61chmNzQ8cLegpIKE3M+xMY" +
+                "5JB1PRw7aEJdRxtHh80kiXZ5jeALvDP3hmFM7OF2CDKLIIa83XuBQvyrKGI9GhsxGTLkmNFknbfRsmN7v" +
+                "NIDorceeaMkAetYf6GxDOw1ZK7yEbsydIHnqVWNHLen6DHC8pLkqMNOoGwXLeBroD6mRpoFf76J0VKBcd" +
+                "C54Mg73S2R7wx9ZzSNJJrCi1KAilmThzm3Rm97EidUnYlWI0TM+zvMzNsLynIK4PoIG6HYQQfEI35qVRI" +
+                "bCdbTlTnjfM/fPf7RWO8s4Z7KzszSQMJE9LgBudcyzrld5ZrWb11cianskNZMI8kzOITezjjqvWn5U4jg" +
+                "Mb9a6qcpaNJcgaxV6NZRmof8cnet54wwE=";
 
         Cookie[] cookies = new Cookie[]{
-                new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCBlowfishBase64)
+                new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
         };
 
         expect(mockRequest.getCookies()).andReturn(cookies);
@@ -110,21 +111,22 @@ public class WebRememberMeManagerTest {
     }
 
     // SHIRO-69
+
     @Test
     public void getRememberedPrincipalsDecryptionError() {
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
 
-        Map<String,Object> context = new HashMap<String,Object>();
+        Map<String, Object> context = new HashMap<String, Object>();
         context.put(SubjectFactory.SERVLET_REQUEST, mockRequest);
         context.put(SubjectFactory.SERVLET_RESPONSE, mockResponse);
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
         // Simulate a bad return value here (for example if this was encrypted with a different key
-        final String userPCBlowfishBase64 = "DlJgEjFZVuRRN5lCpInkOsawSaKK4hLwegZK/QgR1Thk380v5wL9pA1NZo7QHr7erlnry1vt2AqIyM8Fj2HBCsl1lierxE9EJ1typI2GpgMeG+HmceNdrlN6KGh4AmjLG3zCUPo8E+QzGVs/EO3PIAGyYYtuYbW++oJDr5xfY9DwK4Omq5GijZSSmdpOHiYelPMa1XLwT0D/kNCUm6EVfG6TKwxViNtGdyzknY7abNU7ucw2UWfjFe24hH0SL0hZMXjPQYtMnPl5J5qfjU4EXX1a/Ijn0IKUEk5BmY+ipc6irMI/Rrmumr46XAIU3uwWMxlbPxDtzyABsmGLbmG1vvqCQ6+cX2PQJ37oNcKqr4mV7ObN2EvWZ1uVbJlUdXeEQgghL3/ayatTs3hWwFGdNhgef8c8iX9wM5bEvxqqY9TMXEyLYLZeA8H6gNvJc6hRd0TQFkzUhjs=";
+        final String userPCAesBase64 = "garbage";
         Cookie[] cookies = new Cookie[]{
-                new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCBlowfishBase64)
+                new Cookie(WebRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
         };
 
         expect(mockRequest.getCookies()).andReturn(cookies).anyTimes();
@@ -133,13 +135,13 @@ public class WebRememberMeManagerTest {
         WebRememberMeManager mgr = new WebRememberMeManager();
         PrincipalCollection collection = null;
 
-        SerializationException se = null;
+        CryptoException ce = null;
         try {
             collection = mgr.getRememberedPrincipals(context);
-        } catch (SerializationException expected) {
-            se = expected;
+        } catch (CryptoException expected) {
+            ce = expected;
         }
-        assertNotNull(se);
+        assertNotNull(ce);
 
         verify(mockRequest);
 
