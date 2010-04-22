@@ -19,6 +19,7 @@
 package org.apache.shiro.mgt;
 
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 
 import java.util.Map;
 
@@ -30,55 +31,16 @@ import java.util.Map;
  */
 public interface SubjectFactory {
 
-    public static final String SECURITY_MANAGER = SubjectFactory.class.getName() + ".SECURITY_MANAGER";
-
-    public static final String SESSION_ID = SubjectFactory.class.getName() + ".SESSION_ID";
-
-    public static final String AUTHENTICATION_TOKEN = SubjectFactory.class.getName() + ".AUTHENTICATION_TOKEN";
-
-    public static final String AUTHENTICATION_INFO = SubjectFactory.class.getName() + ".AUTHENTICATION_INFO";
-
-    public static final String SUBJECT = SubjectFactory.class.getName() + ".SUBJECT";
-
-    public static final String PRINCIPALS = SubjectFactory.class.getName() + ".PRINCIPALS";
-
-    public static final String SESSION = SubjectFactory.class.getName() + ".SESSION";
-
-    public static final String AUTHENTICATED = SubjectFactory.class.getName() + ".AUTHENTICATED";
-
-    public static final String HOST = SubjectFactory.class.getName() + ".HOST";
-    
-    /**
-     * The session key that is used to store subject principals.
-     */
-    public static final String PRINCIPALS_SESSION_KEY = SubjectFactory.class.getName() + "_PRINCIPALS_SESSION_KEY";
-
-    /**
-     * The session key that is used to store whether or not the user is authenticated.
-     */
-    public static final String AUTHENTICATED_SESSION_KEY = SubjectFactory.class.getName() + "_AUTHENTICATED_SESSION_KEY";
-    
-
-    /**
-     * @deprecated use the {@link #HOST HOST} key instead.  This will be removed prior to 1.0.
-     */
-    @Deprecated
-    public static final String INET_ADDRESS = HOST;
-
-    public static final String SERVLET_REQUEST = SubjectFactory.class.getName() + ".SERVLET_REQUEST";
-
-    public static final String SERVLET_RESPONSE = SubjectFactory.class.getName() + ".SERVLET_RESPONSE";
-
     /**
      * Creates a new Subject instance reflecting the state of the specified contextual data.  The data would be
      * anything required to required to construct a {@code Subject} instance and its contents can vary based on
-     * environment.  Any data supported by Shiro core will be keyed by one of the static String constants
-     * in this class.
+     * environment.  Any data supported by Shiro core will be accessible by one of the accessor methods.  All other
+     * data is available as map {@link Map#get attribute}s.
      *
      * @param context the contextual data to be used by the implementation to construct an appropriate {@code Subject}
      *                instance.
      * @return a {@code Subject} instance created based on the specified context.
      */
-    Subject createSubject(Map context);
+    Subject createSubject(SubjectContext context);
 
 }

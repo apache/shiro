@@ -19,7 +19,6 @@
 package org.apache.shiro.subject.support;
 
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.DelegatingSubject;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;

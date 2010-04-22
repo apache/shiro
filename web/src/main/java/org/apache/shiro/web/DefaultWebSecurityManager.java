@@ -19,10 +19,10 @@
 package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.attr.CookieAttribute;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
@@ -31,6 +31,8 @@ import org.apache.shiro.web.session.DefaultWebSessionManager;
 import org.apache.shiro.web.session.ServletContainerSessionManager;
 import org.apache.shiro.web.session.WebSessionManager;
 import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.subject.WebSubjectContext;
+import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 
 
 /**
@@ -76,7 +77,23 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         setRealms(realms);
     }
 
+
+    @Override
+    protected SubjectContext createSubjectContext() {
+        return new DefaultWebSubjectContext();
+    }
+
+    @Override
+    protected SubjectContext copy(SubjectContext subjectContext) {
+        if (subjectContext instanceof WebSubjectContext) {
+            return new DefaultWebSubjectContext((WebSubjectContext) subjectContext);
+        } else {
+            return super.copy(subjectContext);
+        }
+    }
+
     //TODO - yuck - create an interface
+
     protected WebRememberMeManager getRememberMeManagerForCookieAttributes() {
         if (!(getRememberMeManager() instanceof WebRememberMeManager)) {
             String msg = "Currently the " + getClass().getName() + " implementation only allows setting " +
@@ -230,11 +247,12 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @Override
-    protected Serializable getSessionId(Map subjectContext) {
+    protected Serializable getSessionId(SubjectContext subjectContext) {
         Serializable sessionId = super.getSessionId(subjectContext);
-        if (sessionId == null) {
-            ServletRequest request = (ServletRequest) subjectContext.get(SubjectFactory.SERVLET_REQUEST);
-            ServletResponse response = (ServletResponse) subjectContext.get(SubjectFactory.SERVLET_RESPONSE);
+        if (sessionId == null && subjectContext instanceof WebSubjectContext) {
+            WebSubjectContext wsc = (WebSubjectContext) subjectContext;
+            ServletRequest request = wsc.resolveServletRequest();
+            ServletResponse response = wsc.resolveServletResponse();
             if (request != null && response != null) {
                 sessionId = ((WebSessionManager) getSessionManager()).getSessionId(request, response);
             }
@@ -249,10 +267,12 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     protected void removeRequestIdentity(Subject subject) {
-        WebSubject webSubject = (WebSubject) subject;
-        ServletRequest request = webSubject.getServletRequest();
-        if (request != null) {
-            request.setAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY, Boolean.TRUE);
+        if (subject instanceof WebSubject) {
+            WebSubject webSubject = (WebSubject) subject;
+            ServletRequest request = webSubject.getServletRequest();
+            if (request != null) {
+                request.setAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY, Boolean.TRUE);
+            }
         }
     }
 }

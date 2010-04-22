@@ -30,11 +30,10 @@ import org.apache.shiro.io.DefaultSerializer;
 import org.apache.shiro.io.Serializer;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Abstract implementation of the {@code RememberMeManager} interface that handles
@@ -44,8 +43,8 @@ import java.util.Map;
  * The remembered identity storage location and details are left to subclasses.
  * <h2>Default encryption key</h2>
  * This implementation uses an {@link AesCipherService AesCipherService} for strong encryption by default.  It also
- * uses a default generated symmetric key to both encrypt and decrypt data.Shiro's default symmetric block Cipher using the Blowfish algorithm.  As it is a symmetric Cipher, it uses the
- * same <tt>Key</tt> to both encrypt and decrypt data, BUT NOTE:
+ * uses a default generated symmetric key to both encrypt and decrypt data.  As AES is a symmetric cipher, the same
+ * {@code key} is used to both encrypt and decrypt data, BUT NOTE:
  * <p/>
  * Because Shiro is an open-source project, if anyone knew that you were using Shiro's default
  * {@code key}, they could download/view the source, and with enough effort, reconstruct the {@code key}
@@ -362,13 +361,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     /**
      * Forgets (removes) any remembered identity data for the subject being built by the specified {@code context}
-     * argument.  The context map is usually populated by a {@link Subject.Builder} implementation.  See the
-     * {@link SubjectFactory} class constants for Shiro's known map keys.
+     * argument.  The context map is usually populated by a {@link Subject.Builder} implementation.
      *
      * @param subjectContext the contextual data, usually provided by a {@link Subject.Builder} implementation, that
      *                       is being used to construct a {@link Subject} instance.
      */
-    protected abstract void forgetIdentity(Map subjectContext);
+    protected abstract void forgetIdentity(SubjectContext subjectContext);
 
     /**
      * Forgets (removes) any remembered identity data for the specified {@link Subject} instance.
@@ -485,7 +483,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     /**
      * Persists the identity bytes to a persistent store for retrieval later via the
-     * {@link #getRememberedSerializedIdentity(java.util.Map)} method.
+     * {@link #getRememberedSerializedIdentity(SubjectContext)} method.
      *
      * @param subject    the Subject for which the identity is being serialized.
      * @param serialized the serialized bytes to be persisted.
@@ -493,12 +491,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     protected abstract void rememberSerializedIdentity(Subject subject, byte[] serialized);
 
     /**
-     * Implements the interface method by first {@link #getRememberedSerializedIdentity(java.util.Map) acquiring}
-     * the remembered serialized byte array.  Then it {@link #convertBytesToPrincipals(byte[], java.util.Map) converts}
+     * Implements the interface method by first {@link #getRememberedSerializedIdentity(SubjectContext) acquiring}
+     * the remembered serialized byte array.  Then it {@link #convertBytesToPrincipals(byte[], SubjectContext) converts}
      * them and returns the re-constituted {@link PrincipalCollection}.  If no remembered principals could be
      * obtained, {@code null} is returned.
      * <p/>
-     * If any exceptions are thrown, the {@link #onRememberedPrincipalFailure(RuntimeException, java.util.Map)} method
+     * If any exceptions are thrown, the {@link #onRememberedPrincipalFailure(RuntimeException, SubjectContext)} method
      * is called to allow any necessary post-processing (such as immediately removing any previously remembered
      * values for safety).
      *
@@ -506,7 +504,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                       is being used to construct a {@link Subject} instance.
      * @return the remembered principals or {@code null} if none could be acquired.
      */
-    public PrincipalCollection getRememberedPrincipals(Map subjectContext) {
+    public PrincipalCollection getRememberedPrincipals(SubjectContext subjectContext) {
         PrincipalCollection principals = null;
         try {
             byte[] bytes = getRememberedSerializedIdentity(subjectContext);
@@ -532,7 +530,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the previously persisted serialized identity, or {@code null} if there is no available data for the
      *         Subject.
      */
-    protected abstract byte[] getRememberedSerializedIdentity(Map subjectContext);
+    protected abstract byte[] getRememberedSerializedIdentity(SubjectContext subjectContext);
 
     /**
      * If a {@link #getCipherService() cipherService} is available, it will be used to first decrypt the byte array.
@@ -543,7 +541,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                       is being used to construct a {@link Subject} instance.
      * @return the de-serialized and possibly decrypted principals
      */
-    protected PrincipalCollection convertBytesToPrincipals(byte[] bytes, Map subjectContext) {
+    protected PrincipalCollection convertBytesToPrincipals(byte[] bytes, SubjectContext subjectContext) {
         if (getCipherService() != null) {
             bytes = decrypt(bytes);
         }
@@ -553,7 +551,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * Called when an exception is thrown while trying to retrieve principals.  The default implementation logs a
      * debug message and forgets ('unremembers') the problem identity by calling
-     * {@link #forgetIdentity(java.util.Map) forgetIdentity(context)} and then immediately re-throws the
+     * {@link #forgetIdentity(SubjectContext) forgetIdentity(context)} and then immediately re-throws the
      * exception to allow the calling component to react accordingly.
      * <p/>
      * This method implementation never returns an
@@ -567,7 +565,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                is being used to construct a {@link Subject} instance.
      * @return nothing - the original {@code RuntimeException} is propagated in all cases.
      */
-    protected PrincipalCollection onRememberedPrincipalFailure(RuntimeException e, Map context) {
+    protected PrincipalCollection onRememberedPrincipalFailure(RuntimeException e, SubjectContext context) {
         if (log.isDebugEnabled()) {
             log.debug("There was a failure while trying to retrieve remembered principals.  This could be due to a " +
                     "configuration problem or corrupted principals.  This could also be due to a recently " +

@@ -24,8 +24,7 @@ import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
-
-import java.util.Map;
+import org.apache.shiro.subject.SubjectContext;
 
 
 /**
@@ -47,13 +46,8 @@ import java.util.Map;
  * <p/>
  * <b>Usage Note</b>: In actuality the large majority of application programmers won't interact with a SecurityManager
  * very often, if at all.  <em>Most</em> application programmers only care about security operations for the currently
- * executing user.
- * <p/>
- * In that case, the application programmer can call the
- * {@link #getSubject() getSubject()} method and then use that returned instance for continued interaction with
- * Shiro.  If your application code does not have a direct handle to the application's
- * {@code SecurityManager}, you can use {@link org.apache.shiro.SecurityUtils SecurityUtils} anywhere in your code
- * to achieve the same result.
+ * executing user, usually attained by calling
+ * {@link org.apache.shiro.SecurityUtils#getSubject() SecurityUtils.getSubject()}.
  * <p/>
  * Framework developers on the other hand might find working with an actual SecurityManager useful.
  *
@@ -62,6 +56,7 @@ import java.util.Map;
  * @since 0.2
  */
 public interface SecurityManager extends Authenticator, Authorizer, SessionManager {
+
     /**
      * Logs in the specified Subject using the given {@code authenticationToken}, returning an updated Subject
      * instance reflecting the authenticated state if successful or throwing {@code AuthenticationException} if it is
@@ -93,7 +88,6 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * Framework developers on the other hand might find calling this method directly useful in certain cases.
      *
      * @param subject the subject to log out.
-     * @see #getSubject()
      * @since 1.0
      */
     void logout(Subject subject);
@@ -103,20 +97,19 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      * <p/>
      * The context can be anything needed by this {@code SecurityManager} to construct a {@code Subject} instance.
      * Most Shiro end-users will never call this method - it exists primarily for
-     * framework development and to support any underlying {@link SubjectFactory SubjectFactory} implementations that
-     * may be configured to be used by the {@code SecurityManager}.
+     * framework development and to support any underlying custom {@link SubjectFactory SubjectFactory} implementations
+     * that may be used by the {@code SecurityManager}.
      * <h4>Usage</h4>
-     * The difference between calling this method and {@link #getSubject() getSubject()} is that the {@code Subject}
-     * instance returned from this method is not automatically 'bound' to the application
-     * for further use.  That is, after calling this method, a call to {@code getSubject()} will not necessarily return
-     * the same instance.  Callers are expected to know that {@code Subject} instances have local scope only and any
-     * other further use beyond the calling method must be managed manually.
+     * After calling this method, the returned instance is <em>not</em> bound to the application for further use.
+     * Callers are expected to know that {@code Subject} instances have local scope only and any
+     * other further use beyond the calling method must be managed explicitly.
      *
      * @param context any data needed to direct how the Subject should be constructed.
      * @return the {@code Subject} instance reflecting the specified initialization data.
-     * @see SubjectFactory#createSubject(java.util.Map)
+     * @see SubjectFactory#createSubject(SubjectContext)
+     * @see Subject.Builder
      * @since 1.0
      */
-    Subject createSubject(Map context);
+    Subject createSubject(SubjectContext context);
 
 }

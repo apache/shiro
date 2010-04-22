@@ -20,19 +20,19 @@ package org.apache.shiro.web;
 
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
-import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.attr.CookieAttribute;
 import org.apache.shiro.web.attr.WebAttribute;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.subject.WebSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.util.Map;
 
 
 /**
@@ -108,7 +108,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     }
 
     /**
-     * Passthrough JavaBeans property that will get the underyling rememberMe cookie's name.
+     * Passthrough JavaBeans property that will get the underlying rememberMe cookie's name.
      * <p/>
      * The default value is {@link #DEFAULT_REMEMBER_ME_COOKIE_NAME}
      * <p/>
@@ -121,7 +121,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
     }
 
     /**
-     * Passthrough JavaBeans property that will set the underyling rememberMe cookie's name.
+     * Passthrough JavaBeans property that will set the underlying rememberMe cookie's name.
      * <p/>
      * The default value is {@link #DEFAULT_REMEMBER_ME_COOKIE_NAME}
      * <p/>
@@ -232,15 +232,23 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         getIdentityAttribute().storeValue(base64, request, response);
     }
 
-    private ServletRequest getServletRequest(Map subjectContext) {
-        return (ServletRequest) subjectContext.get(SubjectFactory.SERVLET_REQUEST);
+    private ServletRequest getServletRequest(SubjectContext subjectContext) {
+        ServletRequest request = null;
+        if (subjectContext != null && subjectContext instanceof WebSubjectContext) {
+            request = ((WebSubjectContext) subjectContext).getServletRequest();
+        }
+        return request;
     }
 
-    private ServletResponse getServletResponse(Map subjectContext) {
-        return (ServletResponse) subjectContext.get(SubjectFactory.SERVLET_RESPONSE);
+    private ServletResponse getServletResponse(SubjectContext subjectContext) {
+        ServletResponse response = null;
+        if (subjectContext != null && subjectContext instanceof WebSubjectContext) {
+            response = ((WebSubjectContext) subjectContext).getServletResponse();
+        }
+        return response;
     }
 
-    protected boolean isIdentityRemoved(Map subjectContext) {
+    protected boolean isIdentityRemoved(SubjectContext subjectContext) {
         ServletRequest request = getServletRequest(subjectContext);
         if (request != null) {
             Boolean removed = (Boolean) request.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY);
@@ -249,7 +257,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         return false;
     }
 
-    protected byte[] getRememberedSerializedIdentity(Map subjectContext) {
+    protected byte[] getRememberedSerializedIdentity(SubjectContext subjectContext) {
         if (CollectionUtils.isEmpty(subjectContext)) {
             if (log.isTraceEnabled()) {
                 log.trace("Null or empty subject context map - unable to retrieve request/response pair to obtain " +
@@ -302,7 +310,6 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         return base64;
     }
 
-
     protected void forgetIdentity(Subject subject) {
         WebSubject webSubject = (WebSubject) subject;
         ServletRequest request = webSubject.getServletRequest();
@@ -310,7 +317,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         forgetIdentity(request, response);
     }
 
-    protected void forgetIdentity(Map subjectContext) {
+    protected void forgetIdentity(SubjectContext subjectContext) {
         ServletRequest request = getServletRequest(subjectContext);
         ServletResponse response = getServletResponse(subjectContext);
         forgetIdentity(request, response);

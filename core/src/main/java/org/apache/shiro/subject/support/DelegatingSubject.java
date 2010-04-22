@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.subject;
+package org.apache.shiro.subject.support;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -29,8 +29,9 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DelegatingSession;
-import org.apache.shiro.subject.support.SubjectCallable;
-import org.apache.shiro.subject.support.SubjectRunnable;
+import org.apache.shiro.subject.ExecutionException;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;

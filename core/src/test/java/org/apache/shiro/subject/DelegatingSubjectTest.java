@@ -22,15 +22,17 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.ThreadContext;
-import static org.easymock.EasyMock.*;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;
+
+import static org.easymock.EasyMock.createNiceMock;
+import static org.junit.Assert.*;
 
 
 /**

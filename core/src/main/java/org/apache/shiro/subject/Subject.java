@@ -26,13 +26,13 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -549,7 +549,7 @@ public interface Subject {
          * Hold all contextual data via the Builder instance's method invocations to be sent to the
          * {@code SecurityManager} during the {@link #buildSubject} call.
          */
-        private final Map<String, Object> subjectContext;
+        private final SubjectContext subjectContext;
 
         /**
          * The SecurityManager to invoke during the {@link #buildSubject} call.
@@ -576,7 +576,22 @@ public interface Subject {
                 throw new NullPointerException("SecurityManager method argument cannot be null.");
             }
             this.securityManager = securityManager;
-            this.subjectContext = new HashMap<String, Object>();
+            this.subjectContext = newSubjectContextInstance();
+            if (this.subjectContext == null) {
+                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' " +
+                        "cannot be null.");
+            }
+            this.subjectContext.setSecurityManager(securityManager);
+        }
+
+        /**
+         * Creates a new {@code SubjectContext} instance to be used to populate with subject contextual data that
+         * will then be sent to the {@code SecurityManager} to create a new {@code Subject} instance.
+         *
+         * @return a new {@code SubjectContext} instance
+         */
+        protected SubjectContext newSubjectContextInstance() {
+            return new DefaultSubjectContext();
         }
 
         /**
@@ -585,7 +600,7 @@ public interface Subject {
          *
          * @return the backing context used to build the {@code Subject} instance, available to subclasses.
          */
-        protected Map<String, Object> getSubjectContext() {
+        protected SubjectContext getSubjectContext() {
             return this.subjectContext;
         }
 
@@ -618,7 +633,7 @@ public interface Subject {
          */
         public Builder sessionId(Serializable sessionId) {
             if (sessionId != null) {
-                this.subjectContext.put(SubjectFactory.SESSION_ID, sessionId);
+                this.subjectContext.setSessionId(sessionId);
             }
             return this;
         }
@@ -632,20 +647,22 @@ public interface Subject {
          */
         public Builder host(String host) {
             if (StringUtils.hasText(host)) {
-                this.subjectContext.put(SubjectFactory.HOST, host);
+                this.subjectContext.setHost(host);
             }
             return this;
         }
 
         /**
-         * Ensures the {@code Subject} being built will use the specified {@link Session} instance.
+         * Ensures the {@code Subject} being built will use the specified {@link Session} instance.  Note that it is
+         * more common to use the {@link #sessionId sessionId} builder method rather than having to construct a
+         * {@code Session} instance for this method.
          *
          * @param session the session to use as the {@code Subject}'s {@link Session}
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder session(Session session) {
             if (session != null) {
-                this.subjectContext.put(SubjectFactory.SESSION, session);
+                this.subjectContext.setSession(session);
             }
             return this;
         }
@@ -675,8 +692,8 @@ public interface Subject {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder principals(PrincipalCollection principals) {
-            if (principals != null && !principals.isEmpty()) {
-                this.subjectContext.put(SubjectFactory.PRINCIPALS, principals);
+            if (!CollectionUtils.isEmpty(principals)) {
+                this.subjectContext.setPrincipals(principals);
             }
             return this;
         }
@@ -693,7 +710,7 @@ public interface Subject {
          * @see org.apache.shiro.subject.Subject#isAuthenticated()
          */
         public Builder authenticated(boolean authenticated) {
-            this.subjectContext.put(SubjectFactory.AUTHENTICATED, authenticated);
+            this.subjectContext.setAuthenticated(authenticated);
             return this;
         }
 
@@ -709,19 +726,18 @@ public interface Subject {
          * {@code SubjectFactory} implementation can use when building custom Subject instances. As such, this method
          * is only useful when a custom {@code SubjectFactory} implementation has been configured.
          *
-         * @see SubjectFactory#createSubject(java.util.Map)
-         *
-         * @param attributeKey the key under which the corresponding value will be stored in the context {@code Map}.
+         * @param attributeKey   the key under which the corresponding value will be stored in the context {@code Map}.
          * @param attributeValue the value to store in the context map under the specified {@code attributeKey}.
          * @return this {@code Builder} instance for method chaining.
          * @throws IllegalArgumentException if the {@code attributeKey} is {@code null}.
+         * @see SubjectFactory#createSubject(SubjectContext)
          */
         public Builder contextAttribute(String attributeKey, Object attributeValue) {
             if (attributeKey == null) {
                 String msg = "Subject context map key cannot be null.";
                 throw new IllegalArgumentException(msg);
             }
-            if (attributeValue == null ) {
+            if (attributeValue == null) {
                 this.subjectContext.remove(attributeKey);
             } else {
                 this.subjectContext.put(attributeKey, attributeValue);

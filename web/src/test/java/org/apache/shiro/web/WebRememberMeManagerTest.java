@@ -22,18 +22,17 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.CryptoException;
-import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.subject.WebSubjectContext;
+import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.junit.Test;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertNotNull;
@@ -77,9 +76,9 @@ public class WebRememberMeManagerTest {
     public void getRememberedPrincipals() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put(SubjectFactory.SERVLET_REQUEST, mockRequest);
-        context.put(SubjectFactory.SERVLET_RESPONSE, mockResponse);
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
@@ -117,9 +116,9 @@ public class WebRememberMeManagerTest {
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
 
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put(SubjectFactory.SERVLET_REQUEST, mockRequest);
-        context.put(SubjectFactory.SERVLET_RESPONSE, mockResponse);
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 

@@ -20,9 +20,10 @@ package org.apache.shiro.web.subject;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -77,16 +78,21 @@ public interface WebSubject extends Subject {
             setResponse(response);
         }
 
+        @Override
+        protected SubjectContext newSubjectContextInstance() {
+            return new DefaultWebSubjectContext();
+        }
+
         protected Builder setRequest(ServletRequest request) {
             if (request != null) {
-                getSubjectContext().put(SubjectFactory.SERVLET_REQUEST, request);
+                ((WebSubjectContext) getSubjectContext()).setServletRequest(request);
             }
             return this;
         }
 
         protected Builder setResponse(ServletResponse response) {
             if (response != null) {
-                getSubjectContext().put(SubjectFactory.SERVLET_RESPONSE, response);
+                ((WebSubjectContext) getSubjectContext()).setServletResponse(response);
             }
             return this;
         }
