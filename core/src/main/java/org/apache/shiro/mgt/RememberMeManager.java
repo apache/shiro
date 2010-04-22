@@ -23,8 +23,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-
-import java.util.Map;
+import org.apache.shiro.subject.SubjectContext;
 
 /**
  * A RememberMeManager is responsible for remembering a Subject's identity across that Subject's sessions with
@@ -47,7 +46,7 @@ public interface RememberMeManager {
      * @return he remembered principals or {@code null} if none could be acquired.
      * @since 1.0
      */
-    PrincipalCollection getRememberedPrincipals(Map subjectContext);
+    PrincipalCollection getRememberedPrincipals(SubjectContext subjectContext);
 
     /**
      * Reacts to a successful authentication attempt, typically saving the principals to be retrieved ('remembered')

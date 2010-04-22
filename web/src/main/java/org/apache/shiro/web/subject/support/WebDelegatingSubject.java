@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.subject;
+package org.apache.shiro.web.subject.support;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.DelegatingSubject;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.web.subject.support.WebSubjectCallable;
-import org.apache.shiro.web.subject.support.WebSubjectRunnable;
+import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.web.subject.WebSubject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

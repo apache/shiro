@@ -28,13 +28,21 @@ import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.lang.Exception;
+import java.lang.IllegalArgumentException;
+import java.lang.IllegalStateException;
+import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.shiro.mgt.SecurityManager;
 
 /**
  * The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
@@ -177,6 +185,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return new DelegatingSession(this, id);
     }
 
+    protected SubjectContext createSubjectContext() {
+        return new DefaultSubjectContext();
+    }
+
     /**
      * Creates a {@code Subject} instance for the user represented by the given method arguments.
      *
@@ -187,12 +199,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      *         authenticated subject.
      */
     protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info, Subject existing) {
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put(SubjectFactory.AUTHENTICATED, Boolean.TRUE);
-        context.put(SubjectFactory.AUTHENTICATION_TOKEN, token);
-        context.put(SubjectFactory.AUTHENTICATION_INFO, info);
+        SubjectContext context = createSubjectContext();
+        context.setAuthenticated(true);
+        context.setAuthenticationToken(token);
+        context.setAuthenticationInfo(info);
         if (existing != null) {
-            context.put(SubjectFactory.SUBJECT, existing);
+            context.setSubject(existing);
         }
         return createSubject(context);
     }
@@ -212,21 +224,21 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         PrincipalCollection principals = subject.getPrincipals();
         if (principals != null && !principals.isEmpty()) {
             Session session = subject.getSession();
-            session.setAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY, principals);
+            session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, principals);
         } else {
             Session session = subject.getSession(false);
             if (session != null) {
-                session.removeAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY);
+                session.removeAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
             }
         }
 
         if (subject.isAuthenticated()) {
             Session session = subject.getSession();
-            session.setAttribute(SubjectFactory.AUTHENTICATED_SESSION_KEY, subject.isAuthenticated());
+            session.setAttribute(DefaultSubjectContext.AUTHENTICATED_SESSION_KEY, subject.isAuthenticated());
         } else {
             Session session = subject.getSession(false);
             if (session != null) {
-                session.removeAttribute(SubjectFactory.AUTHENTICATED_SESSION_KEY);
+                session.removeAttribute(DefaultSubjectContext.AUTHENTICATED_SESSION_KEY);
             }
         }
     }
@@ -305,7 +317,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 onFailedLogin(token, ae, subject);
             } catch (Exception e) {
                 if (log.isInfoEnabled()) {
-                    log.info("onFailedLogin(AuthenticationToken,AuthenticationException) method threw an " +
+                    log.info("onFailedLogin method threw an " +
                             "exception.  Logging and propagating original AuthenticationException.", e);
                 }
             }
@@ -332,56 +344,59 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         rememberMeLogout(subject);
     }
 
+    protected SubjectContext copy(SubjectContext subjectContext) {
+        return new DefaultSubjectContext(subjectContext);
+    }
+
     /**
-     * This implementation attempts to resolve any session ID that may exist in the context argument by
-     * passing it to the {@link #resolveSession(Map)} method.  The
+     * This implementation attempts to resolve any session ID that may exist in the context by
+     * passing it to the {@link #resolveSession(SubjectContext)} method.  The
      * return value from that call is then used to attempt to resolve the subject identity via the
-     * {@link #resolvePrincipals(java.util.Map)} method.  The return value from that call is then used to create
+     * {@link #resolvePrincipals(SubjectContext)} method.  The return value from that call is then used to create
      * the {@code Subject} instance by calling
-     * <code>{@link #getSubjectFactory() getSubjectFactory()}.{@link SubjectFactory#createSubject(java.util.Map) createSubject}(resolvedContext);</code>
+     * <code>{@link #getSubjectFactory() getSubjectFactory()}.{@link SubjectFactory#createSubject createSubject}(resolvedContext);</code>
      *
-     * @param context any data needed to direct how the Subject should be constructed.
+     * @param subjectContext any data needed to direct how the Subject should be constructed.
      * @return the {@code Subject} instance reflecting the specified initialization data.
-     * @see SubjectFactory#createSubject(java.util.Map)
+     * @see SubjectFactory#createSubject
      * @since 1.0
      */
-    public Subject createSubject(Map context) {
-        if (context == null) {
-            context = new HashMap();
-        }
+    public Subject createSubject(SubjectContext subjectContext) {
+        //create a copy so we don't modify the argument's backing map:
+        SubjectContext context = copy(subjectContext);
 
-        //ensure that the context map has a SecurityManager instance, and if not, add one:
-        Map resolved = ensureSecurityManager(context);
+        //ensure that the context has a SecurityManager instance, and if not, add one:
+        context = ensureSecurityManager(context);
 
         //Translate a session id if it exists into a Session object before sending to the SubjectFactory
         //The SubjectFactory should not need to know how to acquire sessions as it is often environment
         //specific - better to shield the SF from these details:
-        resolved = resolveSession(resolved);
+        context = resolveSession(context);
 
         //Similarly, the SubjectFactory should not have any concept of RememberMe - translate that here first
         //if possible before handing off to the SubjectFactory:
-        resolved = resolvePrincipals(resolved);
+        context = resolvePrincipals(context);
 
-        return getSubjectFactory().createSubject(resolved);
+        return getSubjectFactory().createSubject(context);
     }
 
     /**
-     * Determines if there is a {@code SecurityManager} instance in the context map under the
-     * {@link SubjectFactory#SECURITY_MANAGER} key, and if not, adds 'this' to the map under that key.  This ensures
-     * the SubjectFactory instance will have access to a SecurityManager during Subject construction if necessary.
+     * Determines if there is a {@code SecurityManager} instance in the context, and if not, adds 'this' to the
+     * context.  This ensures the SubjectFactory instance will have access to a SecurityManager during Subject
+     * construction if necessary.
      *
      * @param context the subject context data that may contain a SecurityManager instance.
-     * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
+     * @return The SubjectContext to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
     @SuppressWarnings({"unchecked"})
-    protected Map ensureSecurityManager(Map context) {
-        if (context.containsKey(SubjectFactory.SECURITY_MANAGER)) {
-            log.debug("Context already contains a SecurityManager instance.  Returning.");
+    protected SubjectContext ensureSecurityManager(SubjectContext context) {
+        if (context.getSecurityManager() != null) {
+            log.trace("Context already contains a SecurityManager instance.  Returning.");
             return context;
         }
         log.trace("No SecurityManager found in context.  Adding self reference.");
-        context.put(SubjectFactory.SECURITY_MANAGER, this);
+        context.setSecurityManager(this);
         return context;
     }
 
@@ -390,22 +405,17 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * context that represents this resolved {@code Session} to ensure it may be referenced if necessary by the
      * invoked {@link SubjectFactory} that performs actual {@link Subject} construction.
      * <p/>
-     * The session id, if it exists in the context map, should be available as a value under the
-     * <code>{@link SubjectFactory SubjectFactory}.{@link SubjectFactory#SESSION_ID SESSION_ID}</code> key constant.
-     * If a session is resolved, a copy of the original context Map is made to ensure the method argument is not
-     * changed, the resolved session is placed into the copy and the copy is returned.
-     * <p/>
      * If there is a {@code Session} already in the context because that is what the caller wants to be used for
      * {@code Subject} construction, or if no session is resolved, this method effectively does nothing and immediately
      * returns the Map method argument unaltered.
      *
      * @param context the subject context data that may contain a session id that should be converted to a Session instance.
-     * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
+     * @return The context to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
     @SuppressWarnings({"unchecked"})
-    protected Map resolveSession(Map context) {
-        if (context.containsKey(SubjectFactory.SESSION)) {
+    protected SubjectContext resolveSession(SubjectContext context) {
+        if (context.resolveSession() != null) {
             log.debug("Context already contains a session.  Returning.");
             return context;
         }
@@ -415,7 +425,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         if (sessionId != null) {
             try {
                 Session session = getSession(sessionId);
-                context.put(SubjectFactory.SESSION, session);
+                context.setSession(session);
             } catch (InvalidSessionException e) {
                 onInvalidSessionId(sessionId, e);
                 log.debug("Referenced sessionId {} is invalid.  Ignoring and creating an anonymous " +
@@ -429,65 +439,30 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * Heuristically determines if the specified subject map can resolve a Subject identity ({@link PrincipalCollection})
-     * either directly or indirectly by value association.  This implementation returns {@code true} in the following
-     * two cases, {@code false} otherwise:
-     * <ol>
-     * <li>If the context {@link Map#containsKey contains} a key {@link SubjectFactory#PRINCIPALS}, it is assumed
-     * the identity has been explicitly provided already.</li>
-     * <li>If the context has a {@link Session} under the {@link SubjectFactory#SESSION} key, it attempts to resolve
-     * any identity associated with that {@code Session} instance.  If one can be found in the {@code Session}, it is
-     * assumed that {@code Session} identity should be used/retained.</li>
-     * </ol>
-     *
-     * @param context the subject context data that may provide (directly or indirectly through one of its values) a
-     *                {@link PrincipalCollection} identity.
-     * @return {@code true} if an identity can be resolved, {@code false} otherwise.
-     * @since 1.0
-     */
-    protected boolean containsIdentity(Map context) {
-        if (context.containsKey(SubjectFactory.PRINCIPALS)) {
-            log.trace("Context already contains an explicit identity.");
-            return true;
-        }
-        if (context.containsKey(SubjectFactory.SESSION)) {
-            Session session = (Session) context.get(SubjectFactory.SESSION);
-            if (session != null) {
-                Object principals = session.getAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY);
-                if (principals != null) {
-                    log.trace("Context already contains an implicit (session-based) identity.");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Attempts to resolve an identity (a {@link PrincipalCollection}) for the context using heuristics.  The
      * implementation strategy:
      * <ol>
-     * <li>Check the context to see if it already {@link #containsIdentity(java.util.Map) contains an identity}.  If
+     * <li>Check the context to see if it can already {@link SubjectContext#resolvePrincipals resolve an identity}.  If
      * so, this method does nothing and returns the method argument unaltered.</li>
      * <li>Check for a RememberMe identity by calling {@link #getRememberedIdentity}.  If that method returns a
-     * non-null value, create a <em>copy</em> of the method argument, and place the remembered {@link PrincipalCollection}
-     * in the copied context map under the {@link SubjectFactory#PRINCIPALS} key and return that copied context.</li>
+     * non-null value, place the remembered {@link PrincipalCollection} in the context and return the context.</li>
      * </ol>
      *
      * @param context the subject context data that may provide (directly or indirectly through one of its values) a
      *                {@link PrincipalCollection} identity.
-     * @return The context Map to use to pass to a {@link SubjectFactory} for subject creation.
+     * @return The Subject context to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
     @SuppressWarnings({"unchecked"})
-    protected Map resolvePrincipals(Map context) {
-        if (!containsIdentity(context)) {
+    protected SubjectContext resolvePrincipals(SubjectContext context) {
+        PrincipalCollection principals = context.resolvePrincipals();
+        if (CollectionUtils.isEmpty(principals)) {
             log.trace("No identity (PrincipalCollection) found in the context.  Looking for a remembered identity.");
-            PrincipalCollection principals = getRememberedIdentity(context);
-            if (principals != null) {
+            principals = getRememberedIdentity(context);
+            if (!CollectionUtils.isEmpty(principals)) {
                 log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
                         "for subject construction by the SubjectFactory.");
-                context.put(SubjectFactory.PRINCIPALS, principals);
+                context.setPrincipals(principals);
             } else {
                 log.trace("No remembered identity found.  Returning original context.");
             }
@@ -508,19 +483,17 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * Utility method to retrieve the session id from the given subject context Map which will be used to resolve
-     * to a {@link Session} or {@code null} if there is no session id in the map.  If the session id exists, it is
-     * expected to be available in the map under the
-     * <code>{@link SubjectFactory SubjectFactory}.{@link SubjectFactory#SESSION_ID SESSION_ID}</code> constant.
+     * Utility method to retrieve the session id from the given subject context which will be used to resolve
+     * to a {@link Session}, or {@code null} if there is no session id available.
      *
      * @param subjectContext the context map with data that will be used to construct a {@link Subject} instance via
      *                       a {@link SubjectFactory}
      * @return a session id to resolve to a {@link Session} instance or {@code null} if a session id could not be found.
-     * @see #createSubject(java.util.Map)
-     * @see SubjectFactory#createSubject(java.util.Map)
+     * @see SecurityManager#createSubject(SubjectContext)
+     * @see SubjectFactory#createSubject(SubjectContext)
      */
-    protected Serializable getSessionId(Map subjectContext) {
-        return (Serializable) subjectContext.get(SubjectFactory.SESSION_ID);
+    protected Serializable getSessionId(SubjectContext subjectContext) {
+        return subjectContext.getSessionId();
     }
 
     public void logout(Subject subject) {
@@ -598,12 +571,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     protected void unbind(Subject subject) {
         Session session = subject.getSession(false);
         if (session != null) {
-            session.removeAttribute(SubjectFactory.PRINCIPALS_SESSION_KEY);
-            session.removeAttribute(SubjectFactory.AUTHENTICATED_SESSION_KEY);
+            session.removeAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+            session.removeAttribute(DefaultSubjectContext.AUTHENTICATED_SESSION_KEY);
         }
     }
 
-    protected PrincipalCollection getRememberedIdentity(Map subjectContext) {
+    protected PrincipalCollection getRememberedIdentity(SubjectContext subjectContext) {
         RememberMeManager rmm = getRememberMeManager();
         if (rmm != null) {
             try {

@@ -20,10 +20,9 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertNull;
 
@@ -33,9 +32,9 @@ import static org.junit.Assert.assertNull;
 public class AbstractRememberMeManagerTest {
 
     /**
-     * Tests the {@link AbstractRememberMeManager#getRememberedPrincipals(java.util.Map)} method
+     * Tests the {@link AbstractRememberMeManager#getRememberedPrincipals(SubjectContext)} method
      * implementation when the internal
-     * {@link AbstractRememberMeManager#getRememberedSerializedIdentity(java.util.Map)} method
+     * {@link AbstractRememberMeManager#getRememberedSerializedIdentity(SubjectContext)} method
      * returns null or empty bytes.
      */
     @Test
@@ -43,23 +42,23 @@ public class AbstractRememberMeManagerTest {
         AbstractRememberMeManager rmm = new DummyRememberMeManager();
         //Since the dummy's getRememberedSerializedIdentity implementation returns an empty byte
         //array, we should be ok:
-        PrincipalCollection principals = rmm.getRememberedPrincipals(new HashMap());
+        PrincipalCollection principals = rmm.getRememberedPrincipals(new DefaultSubjectContext());
         assertNull(principals);
 
         //try with a null return value too:
         rmm = new DummyRememberMeManager() {
             @Override
-            protected byte[] getRememberedSerializedIdentity(Map subjectContext) {
+            protected byte[] getRememberedSerializedIdentity(SubjectContext subjectContext) {
                 return null;
             }
         };
-        principals = rmm.getRememberedPrincipals(new HashMap());
+        principals = rmm.getRememberedPrincipals(new DefaultSubjectContext());
         assertNull(principals);
     }
 
     private static class DummyRememberMeManager extends AbstractRememberMeManager {
         @Override
-        protected void forgetIdentity(Map subjectContext) {
+        protected void forgetIdentity(SubjectContext subjectContext) {
             //do nothing
         }
 
@@ -72,7 +71,7 @@ public class AbstractRememberMeManagerTest {
         }
 
         @Override
-        protected byte[] getRememberedSerializedIdentity(Map subjectContext) {
+        protected byte[] getRememberedSerializedIdentity(SubjectContext subjectContext) {
             return new byte[0];
         }
     }

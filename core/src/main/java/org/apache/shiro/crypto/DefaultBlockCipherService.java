@@ -25,7 +25,7 @@ import org.apache.shiro.util.StringUtils;
  *
  * <h2>Usage</h2>
  * Note that this class exists mostly to simplify algorithm-specific subclasses.  Unless you understand the concepts of
- * cipher modes of operations, block sizes, and padding schemes, and you want direct control of these things, you should
+ * cipher modes of operation, block sizes, and padding schemes, and you want direct control of these things, you should
  * typically not uses instances of this class directly.  Instead, algorithm-specific subclasses, such as
  * {@link AesCipherService}, {@link BlowfishCipherService}, and others are usually better suited for regular use.
  * <p/>
@@ -319,18 +319,18 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
 
     /**
      * Returns the block cipher's block size to be used when constructing
-     * {@link javax.crypto.Cipher Cipher} transformation string or {@code -1} if the JCA Provider default block size
-     * the specified {@link #getAlgorithmName() algorithm} should be used.
+     * {@link javax.crypto.Cipher Cipher} transformation string or {@code 0} if the JCA Provider default block size
+     * for the specified {@link #getAlgorithmName() algorithm} should be used.
      * <p/>
      * This attribute is used <em>only</em> when constructing the transformation string for block (byte array)
      * operations ({@link #encrypt(byte[], byte[])} and {@link #decrypt(byte[], byte[])}).  The
      * {@link #getStreamingBlockSize() streamingBlockSize} attribute is used when the block cipher is used for
      * streaming operations.
      * <p/>
-     * The default value is {@code -1} to retain the JCA Provider default.
+     * The default value is {@code 0} which retains the JCA Provider default.
      *
      * @return the block cipher block size to be used when constructing the
-     *         {@link javax.crypto.Cipher Cipher} transformation string, or {@code -1} if the JCA Provider default
+     *         {@link javax.crypto.Cipher Cipher} transformation string, or {@code 0} if the JCA Provider default
      *         block size for the specified {@link #getAlgorithmName() algorithm} should be used.
      */
     public int getBlockSize() {
@@ -339,7 +339,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
 
     /**
      * Sets the block cipher's block size to be used when constructing
-     * {@link javax.crypto.Cipher Cipher} transformation string.  {@code -1} indicates that the JCA Provider default
+     * {@link javax.crypto.Cipher Cipher} transformation string.  {@code 0} indicates that the JCA Provider default
      * block size for the specified {@link #getAlgorithmName() algorithm} should be used.
      * <p/>
      * This attribute is used <em>only</em> when constructing the transformation string for block (byte array)
@@ -347,13 +347,13 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * {@link #getStreamingBlockSize() streamingBlockSize} attribute is used when the block cipher is used for
      * streaming operations.
      * <p/>
-     * The default value is {@code -1} to retain the JCA Provider default.
+     * The default value is {@code 0} which retains the JCA Provider default.
      * <p/>
      * <b>NOTE:</b> block cipher block sizes are very algorithm-specific.  If you change this value, ensure that it
      * will work with the specified {@link #getAlgorithmName() algorithm}.
      *
      * @param blockSize the block cipher block size to be used when constructing the
-     *                  {@link javax.crypto.Cipher Cipher} transformation string, or {@code -1} if the JCA Provider
+     *                  {@link javax.crypto.Cipher Cipher} transformation string, or {@code 0} if the JCA Provider
      *                  default block size for the specified {@link #getAlgorithmName() algorithm} should be used.
      */
     public void setBlockSize(int blockSize) {
