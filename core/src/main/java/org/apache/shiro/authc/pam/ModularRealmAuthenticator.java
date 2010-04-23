@@ -88,6 +88,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
     /**
      * Default no-argument constructor which
      * {@link #setAuthenticationStrategy(AuthenticationStrategy) enables}  an
@@ -125,6 +126,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
     /**
      * Convenience setter for single-realm environments (fairly common).  This method just wraps the realm in a
      * collection and then calls {@link #setRealms}.
@@ -184,6 +186,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+
     /**
      * Used by the internal {@link #doAuthenticate} implementation to ensure that the {@code realms} property
      * has been set.  The default implementation ensures the property is not null and not empty.
@@ -238,15 +241,15 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Iterating through {} realms for PAM authentication", realms.size());
+        if (log.isTraceEnabled()) {
+            log.trace("Iterating through {} realms for PAM authentication", realms.size());
         }
 
         for (Realm realm : realms) {
 
             if (realm.supports(token)) {
 
-                log.debug("Attempting to authenticate token [{}] using realm [{}]", token, realm);
+                log.trace("Attempting to authenticate token [{}] using realm [{}]", token, realm);
 
                 AuthenticationInfo info = null;
                 Throwable t = null;
@@ -254,9 +257,9 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     info = realm.getAuthenticationInfo(token);
                 } catch (Throwable throwable) {
                     t = throwable;
-                    if (log.isTraceEnabled()) {
+                    if (log.isDebugEnabled()) {
                         String msg = "Realm [" + realm + "] threw an exception during a multi-realm authentication attempt:";
-                        log.trace(msg, t);
+                        log.debug(msg, t);
                     }
                 }
 
