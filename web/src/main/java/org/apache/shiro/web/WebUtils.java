@@ -21,9 +21,12 @@ package org.apache.shiro.web;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.subject.WebSubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +70,7 @@ public class WebUtils {
 
     /**
      * {@link org.apache.shiro.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
-     * requested page after login, equal to <code>shiroSavedRequest</code>.
+     * requested page after login, equal to {@code shiroSavedRequest}.
      */
     public static final String SAVED_REQUEST_KEY = "shiroSavedRequest";
 
@@ -229,6 +232,166 @@ public class WebUtils {
             enc = DEFAULT_CHARACTER_ENCODING;
         }
         return enc;
+    }
+
+    /**
+     * Returns {@code true} IFF the specified {@code SubjectContext}:
+     * <ol>
+     * <li>A {@link WebSubjectContext} instance</li>
+     * <li>The {@code WebSubjectContext}'s request/response pair are not null</li>
+     * <li>The request is an {@link HttpServletRequest} instance</li>
+     * <li>The response is an {@link HttpServletResponse} instance</li>
+     * </ol>
+     *
+     * @param context the SubjectContext to check to see if it is HTTP compatible.
+     * @return {@code true} IFF the specified context has HTTP request/response objects, {@code false} otherwise.
+     * @since 1.0
+     */
+    public static boolean isHttp(SubjectContext context) {
+        if (context instanceof WebSubjectContext) {
+            WebSubjectContext wsc = (WebSubjectContext) context;
+            ServletRequest request = wsc.getServletRequest();
+            ServletResponse response = wsc.getServletResponse();
+            return request != null && request instanceof HttpServletRequest &&
+                    response != null && response instanceof HttpServletResponse;
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} IFF the specified {@code Subject}:
+     * <ol>
+     * <li>A {@link WebSubject} instance</li>
+     * <li>The {@code WebSubject}'s request/response pair are not null</li>
+     * <li>The request is an {@link HttpServletRequest} instance</li>
+     * <li>The response is an {@link HttpServletResponse} instance</li>
+     * </ol>
+     *
+     * @param subject the {@code Subject} instance to check to see if it is HTTP compatible
+     * @return {@code true} IFF the specified subject has HTTP request/response objects, {@code false} otherwise.
+     * @since 1.0
+     */
+    public static boolean isHttp(Subject subject) {
+        if (subject instanceof WebSubject) {
+            WebSubject ws = (WebSubject) subject;
+            ServletRequest request = ws.getServletRequest();
+            ServletResponse response = ws.getServletResponse();
+            return request != null && request instanceof HttpServletRequest &&
+                    response != null && response instanceof HttpServletResponse;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the {@code Subject}'s associated {@link HttpServletRequest} instance.  This method will
+     * throw an {@link IllegalArgumentException} if the Subject is not a {@link WebSubject} instance or that
+     * {@code WebSubject} does not have an HTTP-compatible request object.  Callers will usually want to call
+     * the {@link #isHttp(Subject) isHttp(subject)} method first to ensure this method can be called successfully.
+     *
+     * @param subject the subject instance from which to retrieve the {@code Subject}'s associated
+     *                {@link HttpServletRequest} instance
+     * @return the subject's associated {@link HttpServletRequest} object.
+     * @throws IllegalArgumentException if the {@code Subject} is not a {@link WebSubject} or that {@code WebSubject}'s
+     *                                  request is not an {@link HttpServletRequest}.
+     * @since 1.0
+     */
+    public static HttpServletRequest getHttpRequest(Subject subject) throws IllegalArgumentException {
+        if (!(subject instanceof WebSubject)) {
+            String msg = "Subject instance is not a " + WebSubject.class.getName() + " instance.  This is required " +
+                    "to obtain a ServletRequest and ServletResponse";
+            throw new IllegalArgumentException(msg);
+        }
+        WebSubject ws = (WebSubject) subject;
+        ServletRequest request = ws.getServletRequest();
+        if (request == null || !(request instanceof HttpServletRequest)) {
+            String msg = "WebSubject's ServletRequest is null or not an instance of HttpServletRequest.";
+            throw new IllegalArgumentException(msg);
+        }
+        return (HttpServletRequest) request;
+    }
+
+    /**
+     * Returns the {@code Subject}'s associated {@link HttpServletResponse} instance.  This method will
+     * throw an {@link IllegalArgumentException} if the Subject is not a {@link WebSubject} instance or that
+     * {@code WebSubject} does not have an HTTP-compatible response object.  Callers will usually want to call
+     * the {@link #isHttp(Subject) isHttp(subject)} method first to ensure this method can be called successfully.
+     *
+     * @param subject the subject instance from which to retrieve the {@code Subject}'s associated
+     *                {@link HttpServletResponse} instance
+     * @return the subject's associated {@link HttpServletResponse} object.
+     * @throws IllegalArgumentException if the {@code Subject} is not a {@link WebSubject} or that {@code WebSubject}'s
+     *                                  response is not an {@link HttpServletResponse}.
+     * @since 1.0
+     */
+    public static HttpServletResponse getHttpResponse(Subject subject) {
+        if (!(subject instanceof WebSubject)) {
+            String msg = "Subject instance is not a " + WebSubject.class.getName() + " instance.  This is required " +
+                    "to obtain a ServletRequest and ServletResponse";
+            throw new IllegalArgumentException(msg);
+        }
+        WebSubject ws = (WebSubject) subject;
+        ServletResponse response = ws.getServletResponse();
+        if (response == null || !(response instanceof HttpServletResponse)) {
+            String msg = "WebSubject's ServletResponse is null or not an instance of HttpServletResponse.";
+            throw new IllegalArgumentException(msg);
+        }
+        return (HttpServletResponse) response;
+    }
+
+    /**
+     * Returns the {@code SubjectContext}'s {@link HttpServletRequest} instance.  This method will
+     * throw an {@link IllegalArgumentException} if the context is not a {@link WebSubjectContext} instance or that
+     * {@code WebSubjectContext} does not have an HTTP-compatible request object.  Callers will usually want to call
+     * the {@link #isHttp(SubjectContext) isHttp(subjectContext)} method first to ensure this method can be called
+     * successfully.
+     *
+     * @param context the subjectContext instance from which to retrieve the associated {@link HttpServletRequest}
+     * @return the context's {@link HttpServletRequest} object.
+     * @throws IllegalArgumentException if the {@code SubjectContext} is not a {@link WebSubjectContext} or that
+     *                                  {@code WebSubjectContext}'s request is not an {@link HttpServletRequest}.
+     * @since 1.0
+     */
+    public static HttpServletRequest getHttpRequest(SubjectContext context) {
+        if (!(context instanceof WebSubjectContext)) {
+            String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
+                    "This is required to obtain a ServletRequest and ServletResponse";
+            throw new IllegalArgumentException(msg);
+        }
+        WebSubjectContext wsc = (WebSubjectContext) context;
+        ServletRequest request = wsc.getServletRequest();
+        if (request == null || !(request instanceof HttpServletRequest)) {
+            String msg = "WebSubjectContext's ServletRequest is null or not an instance of HttpServletRequest.";
+            throw new IllegalArgumentException(msg);
+        }
+        return (HttpServletRequest) request;
+    }
+
+    /**
+     * Returns the {@code SubjectContext}'s {@link HttpServletResponse} instance.  This method will
+     * throw an {@link IllegalArgumentException} if the context is not a {@link WebSubjectContext} instance or that
+     * {@code WebSubjectContext} does not have an HTTP-compatible response object.  Callers will usually want to call
+     * the {@link #isHttp(SubjectContext) isHttp(subjectContext)} method first to ensure this method can be called
+     * successfully.
+     *
+     * @param context the subjectContext instance from which to retrieve the associated {@link HttpServletResponse}
+     * @return the context's {@link HttpServletResponse} object.
+     * @throws IllegalArgumentException if the {@code SubjectContext} is not a {@link WebSubjectContext} or that
+     *                                  {@code WebSubjectContext}'s response is not an {@link HttpServletResponse}.
+     * @since 1.0
+     */
+    public static HttpServletResponse getHttpResponse(SubjectContext context) {
+        if (!(context instanceof WebSubjectContext)) {
+            String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
+                    "This is required to obtain a ServletRequest and ServletResponse";
+            throw new IllegalArgumentException(msg);
+        }
+        WebSubjectContext wsc = (WebSubjectContext) context;
+        ServletResponse response = wsc.getServletResponse();
+        if (response == null || !(response instanceof HttpServletResponse)) {
+            String msg = "WebSubjectContext's ServletResponse is null or not an instance of HttpServletResponse.";
+            throw new IllegalArgumentException(msg);
+        }
+        return (HttpServletResponse) response;
     }
 
     /**

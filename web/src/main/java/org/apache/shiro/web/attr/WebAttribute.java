@@ -29,7 +29,10 @@ import javax.servlet.ServletResponse;
  *
  * @author Les Hazlewood
  * @since 0.2
+ * @deprecated in favor of {@link org.apache.shiro.web.servlet.Cookie} and {@link org.apache.shiro.web.servlet.SimpleCookie}
+ *             usages.  THIS CLASS WILL BE DELETED PRIOR TO THE 1.0 RELEASE
  */
+@Deprecated
 public interface WebAttribute<T> {
 
     //TODO - complete JavaDoc

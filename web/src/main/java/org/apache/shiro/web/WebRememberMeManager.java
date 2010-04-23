@@ -60,7 +60,10 @@ import javax.servlet.ServletResponse;
  * @author Les Hazlewood
  * @author Luis Arias
  * @since 0.9
+ * @deprecated in favor of the {@link org.apache.shiro.web.mgt.CookieRememberMeManager}.
+ *             THIS CLASS WILL BE DELETED PRIOR TO THE 1.0 RELEASE
  */
+@Deprecated
 public class WebRememberMeManager extends AbstractRememberMeManager {
 
     //TODO - complete JavaDoc

@@ -532,7 +532,8 @@ public class ShiroFilter extends OncePerRequestFilter {
     protected ThreadState bind(ServletRequest request, ServletResponse response) {
         SecurityManager securityManager = getSecurityManager();
         ThreadContext.bind(securityManager);
-        //currently the WebRememberMeManager needs the request/response bound in order to create the subject instance:
+        //TODO - remove:
+        //currently the CookieRememberMeManager needs the request/response bound in order to create the subject instance:
         WebUtils.bind(request);
         WebUtils.bind(response);
 

@@ -22,16 +22,17 @@ import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.web.WebTest;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import java.util.Map;
+
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for the {@link IniFilterChainResolverFactory}.
@@ -90,7 +91,7 @@ public class IniFilterChainResolverFactoryTest extends WebTest {
         Ini ini = new Ini();
         String config =
                 "[filters]\n" +
-                        "test = org.apache.shiro.web.attr.CookieAttribute\n" + //any non-Filter will do
+                        "test = org.apache.shiro.web.servlet.SimpleCookie\n" + //any non-Filter will do
                         "[urls]\n" +
                         "/index.html = anon";
         ini.load(config);
