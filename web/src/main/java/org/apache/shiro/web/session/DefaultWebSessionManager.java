@@ -21,11 +21,10 @@ package org.apache.shiro.web.session;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.web.WebUtils;
-import org.apache.shiro.web.attr.CookieAttribute;
-import org.apache.shiro.web.attr.RequestParamAttribute;
-import org.apache.shiro.web.attr.WebAttribute;
+import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ import java.io.Serializable;
 
 
 /**
- * Web-application capable <tt>SessionManager</tt> implementation.
+ * Web-application capable {@link org.apache.shiro.session.mgt.SessionManager SessionManager} implementation.
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -46,58 +45,19 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWebSessionManager.class);
 
-    private CookieAttribute<Serializable> sessionIdCookieAttribute = null;
-    private RequestParamAttribute<Serializable> sessionIdRequestParamAttribute = null;
+    private Cookie sessionIdCookie;
 
     public DefaultWebSessionManager() {
-        this.sessionIdCookieAttribute = new CookieAttribute<Serializable>(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
-        this.sessionIdCookieAttribute.setCheckRequestParams(false);
-        this.sessionIdRequestParamAttribute =
-                new RequestParamAttribute<Serializable>(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+        this.sessionIdCookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+        this.sessionIdCookie.setPath(Cookie.ROOT_PATH);
     }
 
-    public CookieAttribute<Serializable> getSessionIdCookieAttribute() {
-        return sessionIdCookieAttribute;
+    public Cookie getSessionIdCookie() {
+        return sessionIdCookie;
     }
 
-    public void setSessionIdCookieAttribute(CookieAttribute<Serializable> sessionIdCookieAttribute) {
-        this.sessionIdCookieAttribute = sessionIdCookieAttribute;
-    }
-
-    public RequestParamAttribute<Serializable> getSessionIdRequestParamAttribute() {
-        return sessionIdRequestParamAttribute;
-    }
-
-    public void setSessionIdRequestParamAttribute(RequestParamAttribute<Serializable> sessionIdRequestParamAttribute) {
-        this.sessionIdRequestParamAttribute = sessionIdRequestParamAttribute;
-    }
-
-    public void setSessionIdCookieName(String name) {
-        getSessionIdCookieAttribute().setName(name);
-    }
-
-    public void setSessionIdCookieDomain(String domain) {
-        getSessionIdCookieAttribute().setDomain(domain);
-    }
-
-    public void setSessionIdCookiePath(String path) {
-        getSessionIdCookieAttribute().setPath(path);
-    }
-
-    public void setSessionIdCookieMaxAge(int maxAge) {
-        getSessionIdCookieAttribute().setMaxAge(maxAge);
-    }
-
-    public void setSessionIdCookieVersion(int version) {
-        getSessionIdCookieAttribute().setVersion(version);
-    }
-
-    public void setSessionIdCookieSecure(boolean secure) {
-        getSessionIdCookieAttribute().setSecure(secure);
-    }
-
-    public void setSessionIdCookieComment(String comment) {
-        getSessionIdCookieAttribute().setComment(comment);
+    public void setSessionIdCookie(Cookie sessionIdCookie) {
+        this.sessionIdCookie = sessionIdCookie;
     }
 
     protected void storeSessionId(Serializable currentId, ServletRequest request, ServletResponse response) {
@@ -105,7 +65,10 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             String msg = "sessionId cannot be null when persisting for subsequent requests.";
             throw new IllegalArgumentException(msg);
         }
-        getSessionIdCookieAttribute().storeValue(currentId, request, response);
+        Cookie template = getSessionIdCookie();
+        Cookie cookie = new SimpleCookie(template);
+        cookie.setValue(currentId.toString());
+        cookie.saveTo(WebUtils.toHttp(request), WebUtils.toHttp(response));
     }
 
     private void markSessionIdValid(Serializable sessionId, ServletRequest request) {
@@ -117,17 +80,16 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     }
 
     private void removeSessionIdCookie(ServletRequest request, ServletResponse response) {
-        getSessionIdCookieAttribute().removeValue(request, response);
+        getSessionIdCookie().removeFrom(WebUtils.toHttp(request), WebUtils.toHttp(response));
     }
 
     protected Serializable getReferencedSessionId(ServletRequest request, ServletResponse response) {
-        WebAttribute<Serializable> cookieSessionIdAttribute = getSessionIdCookieAttribute();
-        Serializable id = cookieSessionIdAttribute.retrieveValue(request, response);
+        String id = getSessionIdCookie().readValue(WebUtils.toHttp(request), WebUtils.toHttp(response));
         if (id != null) {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                     ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         } else {
-            id = getSessionIdRequestParamAttribute().retrieveValue(request, response);
+            id = request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
             if (id != null) {
                 request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                         ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
