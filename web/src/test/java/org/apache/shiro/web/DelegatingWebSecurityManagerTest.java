@@ -24,10 +24,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.*;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +35,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Unit test for the {@link org.apache.shiro.web.DelegatingWebSecurityManager} implementation.
@@ -73,7 +74,6 @@ public class DelegatingWebSecurityManagerTest extends AbstractWebSecurityManager
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
 
         expect(mockRequest.getCookies()).andReturn(null);
-        expect(mockRequest.getContextPath()).andReturn("/");
 
         String host = "192.168.1.1";
 
