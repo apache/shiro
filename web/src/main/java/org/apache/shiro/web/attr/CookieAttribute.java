@@ -19,7 +19,6 @@
 package org.apache.shiro.web.attr;
 
 import org.apache.shiro.util.StringUtils;
-import static org.apache.shiro.web.WebUtils.toHttp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditor;
 
+import static org.apache.shiro.web.WebUtils.toHttp;
+
 /**
  * A {@code CookieAttribute} stores an object as a {@link Cookie} for access on later requests.
  *
  * @author Les Hazlewood
  * @author Peter Ledbrook
  * @since 0.2
+ * @deprecated in favor of {@link org.apache.shiro.web.servlet.Cookie} and {@link org.apache.shiro.web.servlet.SimpleCookie}
+ *             usages.  THIS CLASS WILL BE DELETED PRIOR TO THE 1.0 RELEASE
  */
+@Deprecated
 public class CookieAttribute<T> extends AbstractWebAttribute<T> {
 
     //TODO - complete JavaDoc

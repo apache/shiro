@@ -39,11 +39,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO - class javadoc
- *
  * @author Les Hazlewood
  * @since Apr 23, 2008 9:16:47 AM
+ * @deprecated in favor of {@link org.apache.shiro.web.mgt.CookieRememberMeManagerTest}.
+ *             THIS CLASS WILL BE DELETED PRIOR TO THE 1.0 RELEASE
  */
+@Deprecated
 public class WebRememberMeManagerTest {
 
     @Test

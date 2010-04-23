@@ -18,15 +18,14 @@
  */
 package org.apache.shiro.web.attr;
 
-import java.beans.PropertyEditor;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
+import org.apache.shiro.ShiroException;
+import org.apache.shiro.util.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.ShiroException;
-import org.apache.shiro.util.ClassUtils;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.beans.PropertyEditor;
 
 /**
  * Convenient superclass for implementations of the {@link WebAttribute} interface.  This class encapsulates
@@ -39,7 +38,10 @@ import org.apache.shiro.util.ClassUtils;
  *
  * @author Les Hazlewood
  * @since 0.2
+ * @deprecated in favor of {@link org.apache.shiro.web.servlet.Cookie} and {@link org.apache.shiro.web.servlet.SimpleCookie}
+ *             usages.  THIS CLASS WILL BE DELETED PRIOR TO THE 1.0 RELEASE
  */
+@Deprecated
 public abstract class AbstractWebAttribute<T> implements WebAttribute<T> {
 
     //TODO - complete JavaDoc

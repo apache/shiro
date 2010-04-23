@@ -153,7 +153,7 @@ public class SimpleCookie implements Cookie {
             path = StringUtils.clean(request.getContextPath());
         }
 
-        //fix for http://issues.apache.org/jira/browse/JSEC-34:
+        //fix for http://issues.apache.org/jira/browse/SHIRO-9:
         if (path == null) {
             path = ROOT_PATH;
         }

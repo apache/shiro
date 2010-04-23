@@ -18,16 +18,19 @@
  */
 package org.apache.shiro.web.attr;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * @author Les Hazlewood
  * @since 0.2
+ * @deprecated in favor of {@link org.apache.shiro.web.servlet.Cookie} and {@link org.apache.shiro.web.servlet.SimpleCookie}
+ *             usages.  THIS CLASS WILL BE DELETED PRIOR TO THE 1.0 RELEASE
  */
+@Deprecated
 public class RequestParamAttribute<T> extends AbstractWebAttribute<T> {
 
     //TODO - complete JavaDoc
