@@ -18,15 +18,18 @@
  */
 package org.apache.shiro.config;
 
+import java.util.List;
+
 /**
  * @author Les Hazlewood
  * @since Aug 5, 2008 10:18:01 AM
  */
-public class SimpleBean
-{
+public class SimpleBean {
 
     private String stringProp = null;
     private int intProp;
+
+    private List<SimpleBean> simpleBeans;
 
     public SimpleBean() {
     }
@@ -45,5 +48,13 @@ public class SimpleBean
 
     public void setIntProp(int intProp) {
         this.intProp = intProp;
+    }
+
+    public List<SimpleBean> getSimpleBeans() {
+        return simpleBeans;
+    }
+
+    public void setSimpleBeans(List<SimpleBean> simpleBeans) {
+        this.simpleBeans = simpleBeans;
     }
 }

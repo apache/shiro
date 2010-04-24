@@ -18,16 +18,24 @@
  */
 package org.apache.shiro.config;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author Les Hazlewood
  * @since Aug 5, 2008 10:17:37 AM
  */
-public class CompositeBean
-{
+public class CompositeBean {
+
     private String stringProp;
     private boolean booleanProp;
     private int intProp;
     private SimpleBean simpleBean;
+
+    private Set<SimpleBean> simpleBeanSet;
+    private List<SimpleBean> simpleBeanList;
+    private Map<String, SimpleBean> simpleBeanMap;
 
     public CompositeBean() {
     }
@@ -62,5 +70,29 @@ public class CompositeBean
 
     public void setSimpleBean(SimpleBean simpleBean) {
         this.simpleBean = simpleBean;
+    }
+
+    public Set<SimpleBean> getSimpleBeanSet() {
+        return simpleBeanSet;
+    }
+
+    public void setSimpleBeanSet(Set<SimpleBean> simpleBeanSet) {
+        this.simpleBeanSet = simpleBeanSet;
+    }
+
+    public List<SimpleBean> getSimpleBeanList() {
+        return simpleBeanList;
+    }
+
+    public void setSimpleBeanList(List<SimpleBean> simpleBeanList) {
+        this.simpleBeanList = simpleBeanList;
+    }
+
+    public Map<String, SimpleBean> getSimpleBeanMap() {
+        return simpleBeanMap;
+    }
+
+    public void setSimpleBeanMap(Map<String, SimpleBean> simpleBeanMap) {
+        this.simpleBeanMap = simpleBeanMap;
     }
 }
