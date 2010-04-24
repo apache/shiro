@@ -18,14 +18,15 @@
  */
 package org.apache.shiro.config;
 
+import org.apache.shiro.util.CollectionUtils;
+import org.junit.Test;
+
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
-import org.junit.Test;
-import org.apache.shiro.config.ConfigurationException;
-import org.apache.shiro.config.ReflectionBuilder;
-import org.apache.shiro.config.UnresolveableReferenceException;
 
 /**
  * @author Les Hazlewood
@@ -105,4 +106,81 @@ public class ReflectionBuilderTest {
         ReflectionBuilder builder = new ReflectionBuilder();
         builder.buildObjects(defs);
     }
+
+    @Test
+    public void testSetProperty() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBeanSet", "$simpleBean1, $simpleBean2, $simpleBean2");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(cBean);
+        Set<SimpleBean> simpleBeans = cBean.getSimpleBeanSet();
+        assertNotNull(simpleBeans);
+        assertEquals(2, simpleBeans.size());
+    }
+
+    @Test
+    public void testListProperty() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBeanList", "$simpleBean1, $simpleBean2, $simpleBean2");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(cBean);
+        List<SimpleBean> simpleBeans = cBean.getSimpleBeanList();
+        assertNotNull(simpleBeans);
+        assertEquals(3, simpleBeans.size());
+    }
+
+    @Test
+    public void testMapProperty() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBeanMap", "simpleBean1:$simpleBean1, simpleBean2:$simpleBean2");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(cBean);
+        Map map = cBean.getSimpleBeanMap();
+        assertNotNull(map);
+        assertEquals(2, map.size());
+        Object value = map.get("simpleBean1");
+        assertTrue(value instanceof SimpleBean);
+        value = map.get("simpleBean2");
+        assertTrue(value instanceof SimpleBean);
+    }
+
+    @Test
+    public void testNestedListProperty() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean3", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", "$simpleBean1");
+        defs.put("compositeBean.simpleBean.simpleBeans", "$simpleBean2, $simpleBean3");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(cBean);
+        SimpleBean nested = cBean.getSimpleBean();
+        assertNotNull(nested);
+        List<SimpleBean> children = nested.getSimpleBeans();
+        assertNotNull(children);
+        assertEquals(2, children.size());
+    }
+
 }

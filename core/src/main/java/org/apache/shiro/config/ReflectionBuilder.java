@@ -22,12 +22,12 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.Nameable;
+import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -49,6 +49,7 @@ public class ReflectionBuilder {
     private static final String OBJECT_REFERENCE_BEGIN_TOKEN = "$";
     private static final String ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN = "\\$";
     private static final String GLOBAL_PROPERTY_PREFIX = "shiro";
+    private static final char MAP_KEY_VALUE_DELIMITER = ':';
 
 
     protected Map objects;
@@ -170,7 +171,7 @@ public class ReflectionBuilder {
         } else if (instance == null) {
             String msg = "Configuration error.  Specified object [" + name + "] with property [" +
                     property + "] without first defining that object's class.  Please first " +
-                    "specify the class property first, e.g. myObject.class = fully_qualified_class_name " +
+                    "specify the class property first, e.g. myObject = fully_qualified_class_name " +
                     "and then define additional properties.";
             throw new IllegalArgumentException(msg);
 
@@ -205,16 +206,128 @@ public class ReflectionBuilder {
         return value;
     }
 
+    protected Object resolveReference(String reference) {
+        String id = getId(reference);
+        log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
+        return getReferencedObject(id);
+    }
+
+    protected boolean isSetProperty(Object object, String propertyName) {
+        try {
+            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
+            Class clazz = descriptor.getPropertyType();
+            return Set.class.isAssignableFrom(clazz);
+        } catch (Exception e) {
+            String msg = "Unable to determine if property [" + propertyName + "] represents a java.util.Set";
+            throw new ConfigurationException(msg, e);
+        }
+    }
+
+    protected Set<?> toSet(String sValue) {
+        String[] tokens = StringUtils.split(sValue);
+        if (tokens == null || tokens.length <= 0) {
+            return null;
+        }
+        Set<String> setTokens = new LinkedHashSet<String>(Arrays.asList(tokens));
+
+        //now convert into correct values and/or references:
+        Set<Object> values = new LinkedHashSet<Object>(setTokens.size());
+        for (String token : setTokens) {
+            Object value = resolveValue(token);
+            values.add(value);
+        }
+        return values;
+    }
+
+    protected boolean isListProperty(Object object, String propertyName) {
+        try {
+            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
+            Class clazz = descriptor.getPropertyType();
+            return List.class.isAssignableFrom(clazz);
+        } catch (Exception e) {
+            String msg = "Unable to determine if property [" + propertyName + "] represents a java.util.List";
+            throw new ConfigurationException(msg, e);
+        }
+    }
+
+    protected List<?> toList(String sValue) {
+        String[] tokens = StringUtils.split(sValue);
+        if (tokens == null || tokens.length <= 0) {
+            return null;
+        }
+
+        //now convert into correct values and/or references:
+        List<Object> values = new ArrayList<Object>(tokens.length);
+        for (String token : tokens) {
+            Object value = resolveValue(token);
+            values.add(value);
+        }
+        return values;
+    }
+
+    protected boolean isMapProperty(Object object, String propertyName) {
+        try {
+            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
+            Class clazz = descriptor.getPropertyType();
+            return Map.class.isAssignableFrom(clazz);
+        } catch (Exception e) {
+            String msg = "Unable to determine if property [" + propertyName + "] represents a java.util.Map";
+            throw new ConfigurationException(msg, e);
+        }
+    }
+
+    protected Map<?, ?> toMap(String sValue) {
+        String[] tokens = StringUtils.split(sValue, StringUtils.DEFAULT_DELIMITER_CHAR,
+                StringUtils.DEFAULT_QUOTE_CHAR, StringUtils.DEFAULT_QUOTE_CHAR, true, true);
+        if (tokens == null || tokens.length <= 0) {
+            return null;
+        }
+
+        Map<String, String> mapTokens = new LinkedHashMap<String, String>(tokens.length);
+        for (String token : tokens) {
+            String[] kvPair = StringUtils.split(token, ':');
+            if (kvPair == null || kvPair.length != 2) {
+                String msg = "Map property value [" + sValue + "] contained key-value pair token [" +
+                        token + "] that does not properly split to a single key and pair.  This must be the " +
+                        "case for all map entries.";
+                throw new ConfigurationException(msg);
+            }
+            mapTokens.put(kvPair[0], kvPair[1]);
+        }
+
+        //now convert into correct values and/or references:
+        Map<Object, Object> map = new LinkedHashMap<Object, Object>(mapTokens.size());
+        for (Map.Entry<String, String> entry : mapTokens.entrySet()) {
+            Object key = resolveValue(entry.getKey());
+            Object value = resolveValue(entry.getValue());
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    protected Object resolveValue(String stringValue) {
+        Object value;
+        if (isReference(stringValue)) {
+            value = resolveReference(stringValue);
+        } else {
+            value = unescapeIfNecessary(stringValue);
+        }
+        return value;
+    }
+
+
     protected void applyProperty(Object object, String propertyName, String stringValue) {
 
         Object value;
 
-        if (isReference(stringValue)) {
-            String id = getId(stringValue);
-            log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", stringValue, id);
-            value = getReferencedObject(id);
+        if (isSetProperty(object, propertyName)) {
+            value = toSet(stringValue);
+        } else if (isListProperty(object, propertyName)) {
+            value = toList(stringValue);
+        } else if (isMapProperty(object, propertyName)) {
+            value = toMap(stringValue);
         } else {
-            value = unescapeIfNecessary(stringValue);
+            value = resolveValue(stringValue);
         }
 
         try {
