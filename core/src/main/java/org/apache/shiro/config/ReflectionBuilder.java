@@ -69,12 +69,12 @@ public class ReflectionBuilder {
         this.objects = CollectionUtils.isEmpty(objects) ? new LinkedHashMap<String, Object>() : objects;
     }
 
-    private Object getBean(String id) {
+    public Object getBean(String id) {
         return objects.get(id);
     }
 
     @SuppressWarnings({"unchecked"})
-    private <T> T getBean(String id, Class<T> requiredType) {
+    public <T> T getBean(String id, Class<T> requiredType) {
         if (requiredType == null) {
             throw new NullPointerException("requiredType argument cannot be null.");
         }
