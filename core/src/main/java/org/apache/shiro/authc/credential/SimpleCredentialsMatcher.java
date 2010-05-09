@@ -24,8 +24,6 @@ import org.apache.shiro.codec.CodecSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
 
 
@@ -101,12 +99,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
                     tokenCredentials.getClass().getName() + " and accountCredentials of type [" +
                     accountCredentials.getClass().getName() + "]");
         }
-        if ((tokenCredentials instanceof byte[] || tokenCredentials instanceof char[] ||
-                tokenCredentials instanceof String || tokenCredentials instanceof File ||
-                tokenCredentials instanceof InputStream) &&
-                (accountCredentials instanceof byte[] || accountCredentials instanceof char[] ||
-                        accountCredentials instanceof String || accountCredentials instanceof File ||
-                        accountCredentials instanceof InputStream)) {
+        if (isByteSource(tokenCredentials) && isByteSource(accountCredentials)) {
             if (log.isDebugEnabled()) {
                 log.debug("Both credentials arguments can be easily converted to byte arrays.  Performing " +
                         "array equals comparison");

@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.codec;
 
+import org.apache.shiro.util.ByteSource;
+
 import java.io.*;
 
 /**
@@ -162,24 +164,26 @@ public abstract class CodecSupport {
      * <ul>
      * <li>{@code byte[]}</li>
      * <li>{@code char[]}</li>
+     * <li>{@link ByteSource}</li>
      * <li>{@link String}</li>
      * <li>{@link File}</li>
      * </li>{@link InputStream}</li>
      * </ul>
      *
+     * @param o the object to test to see if it can be easily converted to a byte array
      * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,
      *         {@code false} otherwise.
      * @since 1.0
      */
     protected boolean isByteSource(Object o) {
         return o instanceof byte[] || o instanceof char[] || o instanceof String ||
-                o instanceof File || o instanceof InputStream;
+                o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
     /**
      * Converts the specified Object into a byte array.
      * <p/>
-     * If the argument is a {@code byte[]}, {@code char[]}, {@link String}, {@link File}, or
+     * If the argument is a {@code byte[]}, {@code char[]}, {@link ByteSource}, {@link String}, {@link File}, or
      * {@link InputStream}, it will be converted automatically and returned.}
      * <p/>
      * If the argument is anything other than these types, it is passed to the
@@ -195,6 +199,8 @@ public abstract class CodecSupport {
         }
         if (o instanceof byte[]) {
             return (byte[]) o;
+        } else if (o instanceof ByteSource) {
+            return ((ByteSource) o).getBytes();
         } else if (o instanceof char[]) {
             return toBytes((char[]) o);
         } else if (o instanceof String) {
@@ -294,8 +300,8 @@ public abstract class CodecSupport {
      */
     protected byte[] objectToBytes(Object o) {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
-                "byte[] if the source is of type byte[], char[], String, File or InputStream.  The instance " +
-                "provided as a method " +
+                "byte[] if the source is of type byte[], char[], String, " + ByteSource.class.getName() +
+                " File or InputStream.  The instance provided as a method " +
                 "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
                 "this argument type to a byte[], you can 1) convert the argument to one of the supported types " +
                 "yourself and then use that as the method argument or 2) subclass " + getClass().getName() +
