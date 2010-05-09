@@ -32,8 +32,8 @@ import java.util.Map;
 public class SecureBankService implements BankService {
 
     private Logger _logger;
-    private boolean _isRunning;
-    private List<Account> _accounts;
+    private volatile boolean _isRunning;
+    private final List<Account> _accounts;
     private Map<Long, Account> _accountsById;
 
     /**

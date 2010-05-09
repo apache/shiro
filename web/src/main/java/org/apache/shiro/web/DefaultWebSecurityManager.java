@@ -20,6 +20,7 @@ package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.LifecycleUtils;
@@ -90,6 +91,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         }
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public String getSessionMode() {
         return sessionMode;
     }
@@ -147,6 +149,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         }
 
         return sessionId;
+    }
+
+    @Override
+    protected void onInvalidSessionId(SubjectContext subjectContext, Serializable sessionId, InvalidSessionException e) {
+        getRememberMeManager().forgetIdentity(subjectContext);
     }
 
     @Override

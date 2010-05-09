@@ -35,7 +35,7 @@ public interface RolePermissionResolverAware {
     /**
      * Sets the specified <tt>RolePermissionResolver</tt> on this instance.
      *
-     * @param pr the <tt>RolePermissionResolver</tt> being set.
+     * @param rpr the <tt>RolePermissionResolver</tt> being set.
      */
     public void setRolePermissionResolver(RolePermissionResolver rpr);
 }

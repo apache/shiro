@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.config;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import java.util.Set;
  * @author Les Hazlewood
  * @since Aug 5, 2008 10:17:37 AM
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class CompositeBean {
 
     private String stringProp;
@@ -35,6 +37,7 @@ public class CompositeBean {
 
     private Set<SimpleBean> simpleBeanSet;
     private List<SimpleBean> simpleBeanList;
+    private Collection<SimpleBean> simpleBeanCollection;
     private Map<String, SimpleBean> simpleBeanMap;
 
     public CompositeBean() {
@@ -86,6 +89,14 @@ public class CompositeBean {
 
     public void setSimpleBeanList(List<SimpleBean> simpleBeanList) {
         this.simpleBeanList = simpleBeanList;
+    }
+
+    public Collection<SimpleBean> getSimpleBeanCollection() {
+        return simpleBeanCollection;
+    }
+
+    public void setSimpleBeanCollection(Collection<SimpleBean> simpleBeanCollection) {
+        this.simpleBeanCollection = simpleBeanCollection;
     }
 
     public Map<String, SimpleBean> getSimpleBeanMap() {

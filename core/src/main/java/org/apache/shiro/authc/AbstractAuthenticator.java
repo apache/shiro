@@ -18,51 +18,55 @@
  */
 package org.apache.shiro.authc;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.subject.PrincipalCollection;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
  * Superclass for almost all {@link Authenticator} implementations that performs the common work around authentication
  * attempts.
  * <p/>
- * <p>This class delegates the actual authentication attempt to subclasses but supports notification for
+ * This class delegates the actual authentication attempt to subclasses but supports notification for
  * successful and failed logins as well as logouts. Notification is sent to one or more registered
  * {@link AuthenticationListener AuthenticationListener}s to allow for custom processing logic
  * when these conditions occur.
  * <p/>
- * <p>In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
- * is perform the actual principal/credential verification process for the submitted <tt>AuthenticationToken</tt>.
+ * In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
+ * is perform the actual principal/credential verification process for the submitted {@code AuthenticationToken}.
  *
  * @author Jeremy Haile
  * @author Les Hazlewood
  * @since 0.1
  */
-public abstract class AbstractAuthenticator implements Authenticator, LogoutAware, AuthenticationListenerRegistrar {
+public abstract class AbstractAuthenticator implements Authenticator, LogoutAware {
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    /** Private class log instance. */
+    /**
+     * Private class log instance.
+     */
     private static final Logger log = LoggerFactory.getLogger(AbstractAuthenticator.class);
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    /** Any registered listeners that wish to know about things during the authentication process. */
+    /**
+     * Any registered listeners that wish to know about things during the authentication process.
+     */
     private Collection<AuthenticationListener> listeners;
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
     /**
      * Default no-argument constructor. Ensures the internal
-     * {@link AuthenticationListener AuthenticationListener} collection is a non-null <code>ArrayList</code>.
+     * {@link AuthenticationListener AuthenticationListener} collection is a non-null {@code ArrayList}.
      */
     public AbstractAuthenticator() {
         listeners = new ArrayList<AuthenticationListener>();
@@ -71,6 +75,15 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
+    /**
+     * Sets the {@link AuthenticationListener AuthenticationListener}s that should be notified during authentication
+     * attempts.
+     *
+     * @param listeners one or more {@code AuthenticationListener}s that should be notified due to an
+     *                  authentication attempt.
+     */
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setAuthenticationListeners(Collection<AuthenticationListener> listeners) {
         if (listeners == null) {
             this.listeners = new ArrayList<AuthenticationListener>();
@@ -79,26 +92,31 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
         }
     }
 
-    public void add(AuthenticationListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public boolean remove(AuthenticationListener listener) {
-        return this.listeners.remove(listener);
+    /**
+     * Returns the {@link AuthenticationListener AuthenticationListener}s that should be notified during authentication
+     * attempts.
+     *
+     * @return the {@link AuthenticationListener AuthenticationListener}s that should be notified during authentication
+     *         attempts.
+     */
+    @SuppressWarnings({"UnusedDeclaration"})
+    public Collection<AuthenticationListener> getAuthenticationListeners() {
+        return this.listeners;
     }
 
     /*-------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+
     /**
      * Notifies any registered {@link AuthenticationListener AuthenticationListener}s that
-     * authentication was successful for the specified <code>token</code> which resulted in the specified
-     * <code>info</code>.  This implementation merely iterates over the internal <code>listeners</code> collection and
+     * authentication was successful for the specified {@code token} which resulted in the specified
+     * {@code info}.  This implementation merely iterates over the internal {@code listeners} collection and
      * calls {@link AuthenticationListener#onSuccess(AuthenticationToken, AuthenticationInfo) onSuccess}
      * for each.
      *
-     * @param token the submitted <code>AuthenticationToken</code> that resulted in a successful authentication.
-     * @param info  the returned <code>AuthenticationInfo</code> resulting from the successful authentication.
+     * @param token the submitted {@code AuthenticationToken} that resulted in a successful authentication.
+     * @param info  the returned {@code AuthenticationInfo} resulting from the successful authentication.
      */
     protected void notifySuccess(AuthenticationToken token, AuthenticationInfo info) {
         for (AuthenticationListener listener : this.listeners) {
@@ -109,13 +127,13 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /**
      * Notifies any registered {@link AuthenticationListener AuthenticationListener}s that
      * authentication failed for the
-     * specified <code>token</code> which resulted in the specified <code>ae</code> exception.  This implementation merely
-     * iterates over the internal <code>listeners</code> collection and calls
+     * specified {@code token} which resulted in the specified {@code ae} exception.  This implementation merely
+     * iterates over the internal {@code listeners} collection and calls
      * {@link AuthenticationListener#onFailure(AuthenticationToken, AuthenticationException) onFailure}
      * for each.
      *
-     * @param token the submitted <code>AuthenticationToken</code> that resulted in a failed authentication.
-     * @param ae    the resulting <code>AuthenticationException<code> that caused the authentication to fail.
+     * @param token the submitted {@code AuthenticationToken} that resulted in a failed authentication.
+     * @param ae    the resulting {@code AuthenticationException} that caused the authentication to fail.
      */
     protected void notifyFailure(AuthenticationToken token, AuthenticationException ae) {
         for (AuthenticationListener listener : this.listeners) {
@@ -125,12 +143,12 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
 
     /**
      * Notifies any registered {@link AuthenticationListener AuthenticationListener}s that a
-     * <code>Subject</code> has logged-out.  This implementation merely
-     * iterates over the internal <code>listeners</code> collection and calls
+     * {@code Subject} has logged-out.  This implementation merely
+     * iterates over the internal {@code listeners} collection and calls
      * {@link AuthenticationListener#onLogout(org.apache.shiro.subject.PrincipalCollection) onLogout}
      * for each.
      *
-     * @param principals the identifying principals of the <code>Subject</code>/account logging out.
+     * @param principals the identifying principals of the {@code Subject}/account logging out.
      */
     protected void notifyLogout(PrincipalCollection principals) {
         for (AuthenticationListener listener : this.listeners) {
@@ -143,7 +161,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * {@link #notifyLogout(org.apache.shiro.subject.PrincipalCollection) notifyLogout} to allow any registered listeners
      * to react to the logout.
      *
-     * @param principals the identifying principals of the <code>Subject</code>/account logging out.
+     * @param principals the identifying principals of the {@code Subject}/account logging out.
      */
     public void onLogout(PrincipalCollection principals) {
         notifyLogout(principals);
@@ -151,18 +169,17 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
 
     /**
      * Implementation of the {@link Authenticator} interface that functions in the following manner:
-     * <p/>
      * <ol>
      * <li>Calls template {@link #doAuthenticate doAuthenticate} method for subclass execution of the actual
      * authentication behavior.</li>
-     * <li>If an <tt>AuthenticationException</tt> is thrown during <tt>doAuthenticate</tt>,
+     * <li>If an {@code AuthenticationException} is thrown during {@code doAuthenticate},
      * {@link #notifyFailure(AuthenticationToken, AuthenticationException) notify} any registered
      * {@link AuthenticationListener AuthenticationListener}s of the exception and then propogate the exception
      * for the caller to handle.</li>
      * <li>If no exception is thrown (indicating a successful login),
      * {@link #notifySuccess(AuthenticationToken, AuthenticationInfo) notify} any registered
      * {@link AuthenticationListener AuthenticationListener}s of the successful attempt.</li>
-     * <li>Return the <tt>AuthenticationInfo</tt></li>
+     * <li>Return the {@code AuthenticationInfo}</li>
      * </ol>
      *
      * @param token the submitted token representing the subject's (user's) login principals and credentials.
@@ -170,8 +187,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * @throws AuthenticationException if there is any problem during the authentication process - see the
      *                                 interface's JavaDoc for a more detailed explanation.
      */
-    public final AuthenticationInfo authenticate(AuthenticationToken token)
-            throws AuthenticationException {
+    public final AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
 
         if (token == null) {
             throw new IllegalArgumentException("Method argumet (authentication token) cannot be null.");
@@ -213,8 +229,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
 
             throw ae;
         }
-        
-        log.debug("Authentication successful for token [{}].  Returned account [{}]", token, info );
+
+        log.debug("Authentication successful for token [{}].  Returned account [{}]", token, info);
 
         notifySuccess(token, info);
 
@@ -224,17 +240,17 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     /**
      * Template design pattern hook for subclasses to implement specific authentication behavior.
      * <p/>
-     * <p>Common behavior for most authentication attempts is encapsulated in the
+     * Common behavior for most authentication attempts is encapsulated in the
      * {@link #authenticate} method and that method invokes this one for custom behavior.
      * <p/>
-     * <p><b>N.B.</b> Subclasses <em>should</em> throw some kind of
-     * <tt>AuthenticationException</tt> if there is a problem during
-     * authentication instead of returning <tt>null</tt>.  A <tt>null</tt> return value indicates
-     * a configuration or programming error, since <tt>AuthenticationException</tt>s should
+     * <b>N.B.</b> Subclasses <em>should</em> throw some kind of
+     * {@code AuthenticationException} if there is a problem during
+     * authentication instead of returning {@code null}.  A {@code null} return value indicates
+     * a configuration or programming error, since {@code AuthenticationException}s should
      * indicate any expected problem (such as an unknown account or username, or invalid password, etc).
      *
      * @param token the authentication token encapsulating the user's login information.
-     * @return an <tt>AuthenticationInfo</tt> object encapsulating the user's account information
+     * @return an {@code AuthenticationInfo} object encapsulating the user's account information
      *         important to Shiro.
      * @throws AuthenticationException if there is a problem logging in the user.
      */

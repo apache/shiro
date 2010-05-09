@@ -16,20 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.authc.support;
+package org.apache.shiro.authc;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.shiro.authc.AbstractAuthenticator;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationListener;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 
 /**
@@ -109,7 +102,7 @@ public class AbstractAuthenticatorTest {
     @Test
     public void notifySuccessAfterDoAuthenticate() {
         AuthenticationListener mockListener = createMock(AuthenticationListener.class);
-        abstractAuthenticator.add(mockListener);
+        abstractAuthenticator.getAuthenticationListeners().add(mockListener);
         AuthenticationToken token = newToken();
         mockListener.onSuccess(token, info);
 
@@ -130,7 +123,7 @@ public class AbstractAuthenticatorTest {
                 throw ae;
             }
         };
-        abstractAuthenticator.add(mockListener);
+        abstractAuthenticator.getAuthenticationListeners().add(mockListener);
 
         mockListener.onFailure(token, ae);
         replay(mockListener);

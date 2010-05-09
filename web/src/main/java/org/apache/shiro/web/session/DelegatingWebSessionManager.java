@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.Map;
 
 /**
+ * WARNING: THIS IS A WORK IN PROGRESS AND IS NOT RECOMMENDED FOR USE!
+ *
  * A {@code DelegatingWebSessionManager} performs all normal operations of the superclass {@link DefaultWebSessionManager}
  * except it does not perform {@code Session} creation or lookup duties itself and instead delegates those duties
  * to a target/wrapped {@link SessionManager SessionManager} instance.  It is primarily used to support

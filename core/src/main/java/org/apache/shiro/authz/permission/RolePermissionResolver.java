@@ -18,29 +18,26 @@
  */
 package org.apache.shiro.authz.permission;
 
-import java.util.Collection;
-
 import org.apache.shiro.authz.Permission;
 
+import java.util.Collection;
+
 /**
- * <p>A RolePermissionResolver resolves a String value and converts it into a Collection of
+ * A RolePermissionResolver resolves a String value and converts it into a Collection of
  * {@link org.apache.shiro.authz.Permission} instances.
- * <BR/>
- * 
- * In some cases a {@link org.apache.shiro.realm.Realm} my only be able to return a list of roles.  This 
+ * <p/>
+ * In some cases a {@link org.apache.shiro.realm.Realm} my only be able to return a list of roles.  This
  * component allows an application to resolve the roles into permissions.
- * <BR/>
- * 
- * @author Brian Demers
  *
+ * @author Brian Demers
  */
-public interface RolePermissionResolver
-{
+public interface RolePermissionResolver {
+
     /**
      * Resolves a Collection of Permissions based on the given String representation.
-     * 
+     *
      * @param roleString the String representation of a role name to resolve.
-     * @return
+     * @return a Collection of Permissions based on the given String representation.
      */
     Collection<Permission> resolvePermissionsInRole(String roleString);
 

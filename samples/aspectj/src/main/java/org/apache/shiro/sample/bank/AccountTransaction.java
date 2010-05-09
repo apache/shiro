@@ -30,7 +30,7 @@ public class AccountTransaction {
 
     public enum TransactionType {
         DEPOSIT,
-        WITHDRAWAL;
+        WITHDRAWAL
     }
 
     private long _id;
@@ -45,13 +45,11 @@ public class AccountTransaction {
     private Date _creationDate;
 
     public static AccountTransaction createDepositTx(long anAccountId, double anAmount) {
-        AccountTransaction tx = new AccountTransaction(TransactionType.DEPOSIT, anAccountId, anAmount);
-        return tx;
+        return new AccountTransaction(TransactionType.DEPOSIT, anAccountId, anAmount);
     }
 
     public static AccountTransaction createWithdrawalTx(long anAccountId, double anAmount) {
-        AccountTransaction tx = new AccountTransaction(TransactionType.WITHDRAWAL, anAccountId, anAmount);
-        return tx;
+        return new AccountTransaction(TransactionType.WITHDRAWAL, anAccountId, anAmount);
     }
 
     private AccountTransaction(TransactionType aType, long anAccountId, double anAmount) {

@@ -22,11 +22,8 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.SessionListener;
-import org.apache.shiro.session.SessionListenerRegistrar;
-import org.apache.shiro.session.mgt.*;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
-import org.apache.shiro.session.mgt.eis.SessionDAOAware;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.LifecycleUtils;
 
 import java.io.Serializable;
@@ -51,8 +48,7 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
-        implements SessionListenerRegistrar, SessionFactoryAware, SessionDAOAware {
+public abstract class SessionsSecurityManager extends AuthorizingSecurityManager {
 
     /**
      * The internal delegate <code>SessionManager</code> used by this security manager that manages all the
@@ -113,36 +109,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     /**
-     * @since 1.0
-     */
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        SessionManager sm = getSessionManager();
-        if (sm instanceof SessionFactoryAware) {
-            ((SessionFactoryAware) sm).setSessionFactory(sessionFactory);
-        } else {
-            String msg = "The underlying session manager is null or does not implement the " +
-                    SessionFactory.class.getName() + " interface, which is required if the underlying " +
-                    "instance is to receive the sessionFactory argument.";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
-     * @since 1.0
-     */
-    public void setSessionDAO(SessionDAO sessionDAO) {
-        SessionManager sm = getSessionManager();
-        if (sm instanceof SessionDAOAware) {
-            ((SessionDAOAware) sm).setSessionDAO(sessionDAO);
-        } else {
-            String msg = "The underlying SessionManager is null or does not implement the " +
-                    SessionDAOAware.class.getName() + " interface, which is required if it is " +
-                    "to receive the sessionDAO argument.";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
      * Ensures the internal delegate <code>SessionManager</code> is injected with the newly set
      * {@link #setCacheManager CacheManager} so it may use it for its internal caching needs.
      * <p/>
@@ -153,120 +119,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         if (this.sessionManager instanceof CacheManagerAware) {
             ((CacheManagerAware) this.sessionManager).setCacheManager(getCacheManager());
         }
-    }
-
-    /**
-     * This is a convenience method that allows registration of SessionListeners with the underlying delegate
-     * SessionManager at startup.
-     * <p/>
-     * This is more convenient than having to configure your own SessionManager instance, inject the listeners on
-     * it, and then set that SessionManager instance as an attribute of this class.  Instead, you can just rely
-     * on the <tt>SecurityManager</tt> to apply these <tt>SessionListener</tt>s on your behalf.
-     * <p/>
-     * One notice however: The underlying SessionManager delegate must implement the
-     * {@link SessionListenerRegistrar SessionListenerRegistrar} interface in order for these listeners to
-     * be applied.  If it does not implement this interface, it is considered a configuration error and an exception
-     * will be thrown.
-     *
-     * @param sessionListeners the <tt>SessionListener</tt>s to register with the underlying delegate
-     *                         <tt>SessionManager</tt> at startup.
-     */
-    public void setSessionListeners(Collection<SessionListener> sessionListeners) {
-        assertSessionListenerSupport();
-        ((SessionListenerRegistrar) this.sessionManager).setSessionListeners(sessionListeners);
-    }
-
-    private void assertSessionManager(Class<? extends SessionManager> requiredType) {
-        if (this.sessionManager == null) {
-            throw new IllegalStateException("SessionManager is null - cannot configure property!");
-        }
-        if (!(requiredType.isInstance(this.sessionManager))) {
-            String msg = "Property configuration failed.  The target property is only configurable when the " +
-                    "underlying SessionManager instance is a part of the " +
-                    "[" + requiredType.getName() + "] class hierarchy.  " +
-                    "The current SessionManager is of type [" + this.sessionManager.getClass().getName() + "].  " +
-                    "This might occur for example if you're trying to set the validation interval or auto session " +
-                    "creation in a servlet container-backed session environment ('http' session mode).  If that is " +
-                    "the case however, that property is only useful when using 'native' session mode and using " +
-                    "Shiro enterprise sessions which do not rely on a servlet container.";
-            throw new IllegalStateException(msg);
-        }
-    }
-
-    /**
-     * Passthrough configuration property to the underlying {@link AbstractSessionManager AbstractSessionManager}
-     * instance.  Please read the
-     * {@link org.apache.shiro.session.mgt.AbstractSessionManager#getGlobalSessionTimeout() AbstractSessionManager.getGlobalSessionTimeout()}
-     * for more.
-     *
-     * @return the time in milliseconds that any {@link Session Session} may remain idle before expiring.
-     * @throws IllegalStateException if the underlying {@code SessionManager} instance is not a subclass of
-     *                               {@link AbstractSessionManager AbstractSessionManager}.
-     * @see org.apache.shiro.session.mgt.AbstractSessionManager#getGlobalSessionTimeout()
-     */
-    public long getGlobalSessionTimeout() {
-        assertSessionManager(AbstractSessionManager.class);
-        return ((AbstractSessionManager) this.sessionManager).getGlobalSessionTimeout();
-    }
-
-    /**
-     * Passthrough configuration property to the underlying {@link AbstractSessionManager AbstractSessionManager}
-     * instance.  Please read the
-     * {@link org.apache.shiro.session.mgt.AbstractSessionManager#setGlobalSessionTimeout(long) AbstractSessionManager.setGlobalSessionTimeout(long)}
-     * for more.
-     *
-     * @param globalSessionTimeout the time in milliseconds that any {@link Session Session} may remain idle before expiring.
-     * @throws IllegalStateException if the underlying {@code SessionManager} instance is not a subclass of
-     *                               {@link org.apache.shiro.session.mgt.AbstractSessionManager AbstractSessionManager}.
-     * @see org.apache.shiro.session.mgt.AbstractSessionManager#setGlobalSessionTimeout(long)
-     */
-    public void setGlobalSessionTimeout(long globalSessionTimeout) {
-        assertSessionManager(AbstractSessionManager.class);
-        ((AbstractSessionManager) this.sessionManager).setGlobalSessionTimeout(globalSessionTimeout);
-    }
-
-    /**
-     * Ensures the internal SessionManager instance is an <code>instanceof</code>
-     * {@link org.apache.shiro.session.SessionListenerRegistrar SessionListenerRegistrar} to ensure that any
-     * listeners attempting to be registered can actually do so with the internal delegate instance.
-     *
-     * @throws IllegalStateException if the internal delegate SessionManager instance does not implement the
-     *                               <code>SessionListenerRegistrar</code> interface.
-     */
-    private void assertSessionListenerSupport() throws IllegalStateException {
-        if (!(this.sessionManager instanceof SessionListenerRegistrar)) {
-            String msg = "SessionListener registration failed:  The underlying SessionManager instance of " +
-                    "type [" + sessionManager.getClass().getName() + "] does not implement the " +
-                    SessionListenerRegistrar.class.getName() + " interface and therefore cannot support " +
-                    "session notifications.";
-            throw new IllegalStateException(msg);
-        }
-    }
-
-    /**
-     * Asserts the internal delegate <code>SessionManager</code> instance
-     * {@link #assertSessionListenerSupport() supports session listener registration} and then
-     * {@link SessionListenerRegistrar#add adds} the listener to the
-     * delegate instance.
-     *
-     * @param listener the <code>SessionListener</code> to register for session events.
-     */
-    public void add(SessionListener listener) {
-        assertSessionListenerSupport();
-        ((SessionListenerRegistrar) this.sessionManager).add(listener);
-    }
-
-    /**
-     * Removes the specified listener from receiving session events from the internal delegate
-     * {@link org.apache.shiro.session.mgt.SessionManager} instance.
-     *
-     * @param listener the listener to remove that no longer wishes to be notified of session events.
-     * @return <code>true</code> if the listener was removed from the internal delegate <code>SessionManager</code>
-     *         instance, <code>false</code> otherwise.
-     */
-    public boolean remove(SessionListener listener) {
-        return (this.sessionManager instanceof SessionListenerRegistrar) &&
-                ((SessionListenerRegistrar) this.sessionManager).remove(listener);
     }
 
     public Serializable start(String host) throws AuthorizationException {

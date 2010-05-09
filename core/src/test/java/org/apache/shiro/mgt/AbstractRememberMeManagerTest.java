@@ -57,8 +57,7 @@ public class AbstractRememberMeManagerTest {
     }
 
     private static class DummyRememberMeManager extends AbstractRememberMeManager {
-        @Override
-        protected void forgetIdentity(SubjectContext subjectContext) {
+        public void forgetIdentity(SubjectContext subjectContext) {
             //do nothing
         }
 

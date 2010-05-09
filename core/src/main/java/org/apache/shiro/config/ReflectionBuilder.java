@@ -20,6 +20,8 @@ package org.apache.shiro.config;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.shiro.codec.Base64;
+import org.apache.shiro.codec.Hex;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
@@ -50,6 +52,7 @@ public class ReflectionBuilder {
     private static final String ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN = "\\$";
     private static final String GLOBAL_PROPERTY_PREFIX = "shiro";
     private static final char MAP_KEY_VALUE_DELIMITER = ':';
+    private static final String HEX_BEGIN_TOKEN = "0x";
 
     private Map<String, ?> objects;
 
@@ -231,13 +234,16 @@ public class ReflectionBuilder {
         return getReferencedObject(id);
     }
 
-    protected boolean isSetProperty(Object object, String propertyName) {
+    protected boolean isTypedProperty(Object object, String propertyName, Class clazz) {
+        if (clazz == null) {
+            throw new NullPointerException("type (class) argument cannot be null.");
+        }
         try {
             PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
-            Class clazz = descriptor.getPropertyType();
-            return Set.class.isAssignableFrom(clazz);
+            Class propertyClazz = descriptor.getPropertyType();
+            return clazz.isAssignableFrom(propertyClazz);
         } catch (Exception e) {
-            String msg = "Unable to determine if property [" + propertyName + "] represents a java.util.Set";
+            String msg = "Unable to determine if property [" + propertyName + "] represents a " + clazz.getName();
             throw new ConfigurationException(msg, e);
         }
     }
@@ -256,43 +262,6 @@ public class ReflectionBuilder {
             values.add(value);
         }
         return values;
-    }
-
-    protected boolean isListProperty(Object object, String propertyName) {
-        try {
-            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
-            Class clazz = descriptor.getPropertyType();
-            return List.class.isAssignableFrom(clazz);
-        } catch (Exception e) {
-            String msg = "Unable to determine if property [" + propertyName + "] represents a java.util.List";
-            throw new ConfigurationException(msg, e);
-        }
-    }
-
-    protected List<?> toList(String sValue) {
-        String[] tokens = StringUtils.split(sValue);
-        if (tokens == null || tokens.length <= 0) {
-            return null;
-        }
-
-        //now convert into correct values and/or references:
-        List<Object> values = new ArrayList<Object>(tokens.length);
-        for (String token : tokens) {
-            Object value = resolveValue(token);
-            values.add(value);
-        }
-        return values;
-    }
-
-    protected boolean isMapProperty(Object object, String propertyName) {
-        try {
-            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
-            Class clazz = descriptor.getPropertyType();
-            return Map.class.isAssignableFrom(clazz);
-        } catch (Exception e) {
-            String msg = "Unable to determine if property [" + propertyName + "] represents a java.util.Map";
-            throw new ConfigurationException(msg, e);
-        }
     }
 
     protected Map<?, ?> toMap(String sValue) {
@@ -324,6 +293,37 @@ public class ReflectionBuilder {
         return map;
     }
 
+
+    protected List<?> toList(String sValue) {
+        String[] tokens = StringUtils.split(sValue);
+        if (tokens == null || tokens.length <= 0) {
+            return null;
+        }
+
+        //now convert into correct values and/or references:
+        List<Object> values = new ArrayList<Object>(tokens.length);
+        for (String token : tokens) {
+            Object value = resolveValue(token);
+            values.add(value);
+        }
+        return values;
+    }
+
+    protected byte[] toBytes(String sValue) {
+        if (sValue == null) {
+            return null;
+        }
+        byte[] bytes;
+        if (sValue.startsWith(HEX_BEGIN_TOKEN)) {
+            String hex = sValue.substring(HEX_BEGIN_TOKEN.length());
+            bytes = Hex.decode(hex);
+        } else {
+            //assume base64 encoded:
+            bytes = Base64.decode(sValue);
+        }
+        return bytes;
+    }
+
     protected Object resolveValue(String stringValue) {
         Object value;
         if (isReference(stringValue)) {
@@ -339,12 +339,15 @@ public class ReflectionBuilder {
 
         Object value;
 
-        if (isSetProperty(object, propertyName)) {
+        if (isTypedProperty(object, propertyName, Set.class)) {
             value = toSet(stringValue);
-        } else if (isListProperty(object, propertyName)) {
-            value = toList(stringValue);
-        } else if (isMapProperty(object, propertyName)) {
+        } else if (isTypedProperty(object, propertyName, Map.class)) {
             value = toMap(stringValue);
+        } else if (isTypedProperty(object, propertyName, List.class) ||
+                isTypedProperty(object, propertyName, Collection.class)) {
+            value = toList(stringValue);
+        } else if (isTypedProperty(object, propertyName, byte[].class)) {
+            value = toBytes(stringValue);
         } else {
             value = resolveValue(stringValue);
         }

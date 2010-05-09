@@ -320,7 +320,7 @@ public class WebRememberMeManager extends AbstractRememberMeManager {
         forgetIdentity(request, response);
     }
 
-    protected void forgetIdentity(SubjectContext subjectContext) {
+    public void forgetIdentity(SubjectContext subjectContext) {
         ServletRequest request = getServletRequest(subjectContext);
         ServletResponse response = getServletResponse(subjectContext);
         forgetIdentity(request, response);

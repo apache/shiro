@@ -20,7 +20,10 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.HostUnauthorizedException;
-import org.apache.shiro.session.*;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +38,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 0.1
  */
-public abstract class AbstractSessionManager implements SessionManager, SessionListenerRegistrar {
+public abstract class AbstractSessionManager implements SessionManager {
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
@@ -94,12 +97,9 @@ public abstract class AbstractSessionManager implements SessionManager, SessionL
         this.listeners = listeners != null ? listeners : new ArrayList<SessionListener>();
     }
 
-    public void add(SessionListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public boolean remove(SessionListener listener) {
-        return this.listeners.remove(listener);
+    @SuppressWarnings({"UnusedDeclaration"})
+    public Collection<SessionListener> getSessionListeners() {
+        return this.listeners;
     }
 
     public Serializable start(String host) throws AuthorizationException {

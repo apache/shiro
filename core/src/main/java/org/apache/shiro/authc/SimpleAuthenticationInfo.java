@@ -18,23 +18,23 @@
  */
 package org.apache.shiro.authc;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.shiro.subject.MutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
  * Simple implementation of the {@link org.apache.shiro.authc.MergableAuthenticationInfo} interface that holds the principals and
  * credentials.
  *
- * @see org.apache.shiro.realm.AuthenticatingRealm
- * @since 0.9
  * @author Jeremy Haile
  * @author Les Hazlewood
+ * @see org.apache.shiro.realm.AuthenticatingRealm
+ * @since 0.9
  */
 public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
@@ -60,9 +60,9 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
      * This is a convenience constructor and will construct a {@link PrincipalCollection PrincipalCollection} based
      * on the <code>principal</code> and <code>realmName</code> argument.
      *
-     * @param principal the 'primary' principal associated with the specified realm.
+     * @param principal   the 'primary' principal associated with the specified realm.
      * @param credentials the credentials that verify the given principal.
-     * @param realmName the realm from where the principal and credentials were acquired.
+     * @param realmName   the realm from where the principal and credentials were acquired.
      */
     public SimpleAuthenticationInfo(Object principal, Object credentials, String realmName) {
         this.principals = new SimplePrincipalCollection(principal, realmName);
@@ -72,7 +72,8 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
     /**
      * Constructor that takes in an account's identifying principal(s) and its corresponding credentials that verify
      * the principals.
-     * @param principals a Realm's account's identifying principal(s)
+     *
+     * @param principals  a Realm's account's identifying principal(s)
      * @param credentials the accounts corresponding principals that verify the principals.
      */
     public SimpleAuthenticationInfo(PrincipalCollection principals, Object credentials) {
@@ -100,6 +101,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
     /**
      * Sets the credentials that verify the principals/identity of the associated Realm account.
+     *
      * @param credentials attribute(s) that verify the account's identity/principals, such as a password or private key.
      */
     public void setCredentials(Object credentials) {
@@ -108,6 +110,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
     /**
      * Takes the specified <code>info</code> argument and adds its principals and credentials into this instance.
+     *
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
      */
     @SuppressWarnings("unchecked")
@@ -156,9 +159,10 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
     /**
      * Returns <code>true</code> if the Object argument is an <code>instanceof SimpleAuthenticationInfo</code> and
      * its {@link #getPrincipals() principals} are equal to this instance's principals, <code>false</code> otherwise.
+     *
      * @param o the object to compare for equality.
      * @return <code>true</code> if the Object argument is an <code>instanceof SimpleAuthenticationInfo</code> and
-     * its {@link #getPrincipals() principals} are equal to this instance's principals, <code>false</code> otherwise.
+     *         its {@link #getPrincipals() principals} are equal to this instance's principals, <code>false</code> otherwise.
      */
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -166,6 +170,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
         SimpleAuthenticationInfo that = (SimpleAuthenticationInfo) o;
 
+        //noinspection RedundantIfStatement
         if (principals != null ? !principals.equals(that.principals) : that.principals != null) return false;
 
         return true;
@@ -173,6 +178,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
     /**
      * Returns the hashcode of the internal {@link #getPrincipals() principals} instance.
+     *
      * @return the hashcode of the internal {@link #getPrincipals() principals} instance.
      */
     public int hashCode() {
@@ -181,6 +187,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
 
     /**
      * Simple implementation that merely returns <code>{@link #getPrincipals() principals}.toString()</code>
+     *
      * @return <code>{@link #getPrincipals() principals}.toString()</code>
      */
     public String toString() {

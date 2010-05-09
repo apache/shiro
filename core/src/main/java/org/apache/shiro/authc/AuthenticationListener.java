@@ -50,5 +50,4 @@ public interface AuthenticationListener {
      * @param principals the identifying principals of the Subject logging out.
      */
     void onLogout(PrincipalCollection principals);
-    //TODO - should this method receive the PrincipalCollection?  Or the original AuthenticationInfo?
 }

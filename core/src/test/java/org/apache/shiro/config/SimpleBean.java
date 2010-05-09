@@ -22,12 +22,13 @@ import java.util.List;
 
 /**
  * @author Les Hazlewood
- * @since Aug 5, 2008 10:18:01 AM
+ * @since 1.0
  */
 public class SimpleBean {
 
     private String stringProp = null;
     private int intProp;
+    private byte[] byteArrayProp = null;
 
     private List<SimpleBean> simpleBeans;
 
@@ -48,6 +49,14 @@ public class SimpleBean {
 
     public void setIntProp(int intProp) {
         this.intProp = intProp;
+    }
+
+    public byte[] getByteArrayProp() {
+        return byteArrayProp;
+    }
+
+    public void setByteArrayProp(byte[] byteArrayProp) {
+        this.byteArrayProp = byteArrayProp;
     }
 
     public List<SimpleBean> getSimpleBeans() {
