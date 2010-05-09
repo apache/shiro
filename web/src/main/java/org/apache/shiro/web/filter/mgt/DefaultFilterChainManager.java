@@ -19,20 +19,10 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.config.ConfigurationException;
-import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
-import static org.apache.shiro.util.StringUtils.split;
 import org.apache.shiro.web.filter.PathConfigProcessor;
-import org.apache.shiro.web.filter.authc.AnonymousFilter;
-import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.apache.shiro.web.filter.authc.UserFilter;
-import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
-import org.apache.shiro.web.filter.authz.PortFilter;
-import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
-import org.apache.shiro.web.filter.authz.SslFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +34,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static org.apache.shiro.util.StringUtils.split;
 
 /**
  * @since 1.0
@@ -267,31 +259,6 @@ public class DefaultFilterChainManager implements FilterChainManager {
     protected void addDefaultFilters(boolean init) {
         for (DefaultFilter defaultFilter : DefaultFilter.values()) {
             addFilter(defaultFilter.name(), defaultFilter.newInstance(), init, false);
-        }
-    }
-
-    protected static enum DefaultFilter {
-        anon(AnonymousFilter.class),
-        user(UserFilter.class),
-        authc(FormAuthenticationFilter.class),
-        authcBasic(BasicHttpAuthenticationFilter.class),
-        roles(RolesAuthorizationFilter.class),
-        perms(PermissionsAuthorizationFilter.class),
-        port(PortFilter.class),
-        ssl(SslFilter.class);
-
-        private final Class<? extends Filter> filterClass;
-
-        private DefaultFilter(Class<? extends Filter> filterClass) {
-            this.filterClass = filterClass;
-        }
-
-        public Filter newInstance() {
-            return (Filter) ClassUtils.newInstance(this.filterClass);
-        }
-
-        public Class<? extends Filter> getFilterClass() {
-            return this.filterClass;
         }
     }
 }

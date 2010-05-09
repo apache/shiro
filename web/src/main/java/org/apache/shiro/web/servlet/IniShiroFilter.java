@@ -22,13 +22,15 @@ import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniFactorySupport;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.util.Factory;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Main Servlet Filter that configures and enables all Shiro functions within a web application by using the
@@ -304,20 +306,20 @@ public class IniShiroFilter extends AbstractShiroFilter {
     protected void configure() throws Exception {
         Ini ini = loadIniFromConfig();
 
-        if (ini == null || ini.isEmpty()) {
+        if (CollectionUtils.isEmpty(ini)) {
             log.info("Null or empty configuration specified via 'config' init-param.  " +
                     "Checking path-based configuration.");
             ini = loadIniFromPath();
         }
-        if (ini == null || ini.isEmpty()) {
+        if (CollectionUtils.isEmpty(ini)) {
             log.info("Null or empty configuration specified via '" + CONFIG_INIT_PARAM_NAME + "' or '" +
                     CONFIG_PATH_INIT_PARAM_NAME + "' filter parameters.  Trying the default " +
                     IniFactorySupport.DEFAULT_INI_RESOURCE_PATH + " file.");
             ini = IniFactorySupport.loadDefaultClassPathIni();
         }
 
-        applySecurityManager(ini);
-        applyFilterChainResolver(ini);
+        Map<String, ?> objects = applySecurityManager(ini);
+        applyFilterChainResolver(ini, objects);
     }
 
     protected Ini loadIniFromConfig() {
@@ -338,14 +340,14 @@ public class IniShiroFilter extends AbstractShiroFilter {
         return ini;
     }
 
-    protected void applySecurityManager(Ini ini) {
-        Factory<SecurityManager> factory;
-        if (ini == null || ini.isEmpty()) {
+    protected Map<String, ?> applySecurityManager(Ini ini) {
+        WebIniSecurityManagerFactory factory;
+        if (CollectionUtils.isEmpty(ini)) {
             factory = new WebIniSecurityManagerFactory();
         } else {
             factory = new WebIniSecurityManagerFactory(ini);
         }
-        
+
         // Create the security manager and check that it implements WebSecurityManager.
         // Otherwise, it can't be used with the filter.
         SecurityManager securityManager = factory.getInstance();
@@ -354,11 +356,13 @@ public class IniShiroFilter extends AbstractShiroFilter {
                     "it can not be used with the Shiro servlet filter.";
             throw new ConfigurationException(msg);
         }
-        
+
         setSecurityManager((WebSecurityManager) securityManager);
+
+        return factory.getBeans();
     }
 
-    protected void applyFilterChainResolver(Ini ini) {
+    protected void applyFilterChainResolver(Ini ini, Map<String, ?> defaults) {
         if (ini == null || ini.isEmpty()) {
             //nothing to use to create the resolver, just return
             //(the AbstractShiroFilter allows a null resolver, in which case the original FilterChain is
@@ -372,7 +376,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
         if ((urls != null && !urls.isEmpty()) || (filters != null && !filters.isEmpty())) {
             //either the urls section or the filters section was defined.  Go ahead and create the resolver
             //and set it:
-            IniFilterChainResolverFactory filterChainResolverFactory = new IniFilterChainResolverFactory(ini);
+            IniFilterChainResolverFactory filterChainResolverFactory = new IniFilterChainResolverFactory(ini, defaults);
             filterChainResolverFactory.setFilterConfig(getFilterConfig());
             FilterChainResolver resolver = filterChainResolverFactory.getInstance();
             setFilterChainResolver(resolver);

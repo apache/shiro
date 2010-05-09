@@ -19,6 +19,7 @@
 package org.apache.shiro.config;
 
 import org.apache.shiro.io.ResourceUtils;
+import org.apache.shiro.util.AbstractFactory;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
-public abstract class IniFactorySupport<T> implements Factory<T> {
+public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:shiro.ini";
 
@@ -104,26 +105,26 @@ public abstract class IniFactorySupport<T> implements Factory<T> {
      *
      * @return a new {@code SecurityManager} instance by using a configured INI source.
      */
-    public T getInstance() {
+    public T createInstance() {
         Ini ini = resolveIni();
 
         T instance;
 
-        if (!CollectionUtils.isEmpty(ini)) {
-            log.debug("Creating instance from Ini [" + ini + "]");
-            instance = createInstance(ini);
-            if (instance == null) {
-                String msg = getClass().getName() + " implementation did not return a constructed instance from " +
-                        "the createInstance(Ini) method implementation.";
-                throw new IllegalStateException(msg);
-            }
-        } else {
+        if (CollectionUtils.isEmpty(ini)) {
             log.debug("No populated Ini available.  Creating a default instance.");
             instance = createDefaultInstance();
             if (instance == null) {
                 String msg = getClass().getName() + " implementation did not return a default instance in " +
                         "the event of a null/empty Ini configuration.  This is required to support the " +
                         "Factory interface.  Please check your implementation.";
+                throw new IllegalStateException(msg);
+            }
+        } else {
+            log.debug("Creating instance from Ini [" + ini + "]");
+            instance = createInstance(ini);
+            if (instance == null) {
+                String msg = getClass().getName() + " implementation did not return a constructed instance from " +
+                        "the createInstance(Ini) method implementation.";
                 throw new IllegalStateException(msg);
             }
         }

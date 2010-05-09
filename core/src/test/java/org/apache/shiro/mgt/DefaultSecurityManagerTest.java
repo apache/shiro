@@ -27,11 +27,12 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -93,7 +94,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         assertEquals(value1, session.getAttribute(key));
 
         //now test auto creation:
-        session.setTimeout(100);
+        session.setTimeout(50);
         try {
             Thread.sleep(150);
         } catch (InterruptedException e) {

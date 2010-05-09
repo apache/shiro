@@ -25,7 +25,6 @@ import org.apache.shiro.ShiroException;
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @see org.apache.shiro.spring.LifecycleBeanPostProcessor
  * @since 0.2
  */
 public interface Initializable {
@@ -33,7 +32,8 @@ public interface Initializable {
     /**
      * Initializes this object.
      *
-     * @throws org.apache.shiro.ShiroException if an exception occurs during initialization.
+     * @throws org.apache.shiro.ShiroException
+     *          if an exception occurs during initialization.
      */
     void init() throws ShiroException;
 

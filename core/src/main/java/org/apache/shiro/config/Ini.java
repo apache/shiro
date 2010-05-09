@@ -84,8 +84,8 @@ public class Ini implements Map<String, Ini.Section> {
         return true;
     }
 
-    public Iterator<String> getSectionNames() {
-        return Collections.unmodifiableSet(sections.keySet()).iterator();
+    public Set<String> getSectionNames() {
+        return Collections.unmodifiableSet(sections.keySet());
     }
 
     public Collection<Section> getSections() {

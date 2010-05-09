@@ -194,7 +194,7 @@ public class IniConfiguration extends TextConfiguration {
         defaults.put("securityManager", securityManager);
 
         ReflectionBuilder builder = new ReflectionBuilder(defaults);
-        Map<String, Object> objects = builder.buildObjects(mainSection);
+        Map<String, ?> objects = builder.buildObjects(mainSection);
 
         //realms and realm factory might have been created - pull them out first so we can
         //initialize the securityManager:
@@ -203,7 +203,7 @@ public class IniConfiguration extends TextConfiguration {
 
         //iterate over the map entries to pull out the realm factory(s):
 
-        for (Map.Entry<String, Object> entry : objects.entrySet()) {
+        for (Map.Entry<String, ?> entry : objects.entrySet()) {
             String name = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof RealmSecurityManager) {

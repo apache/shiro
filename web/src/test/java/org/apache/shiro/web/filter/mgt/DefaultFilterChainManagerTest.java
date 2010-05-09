@@ -21,14 +21,15 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.web.filter.authz.SslFilter;
 import org.apache.shiro.web.servlet.IniShiroFilter;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.*;
 import java.util.Map;
 import java.util.Set;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 /**
  * Test case for the {@link DefaultFilterChainManager} implementation.
@@ -46,7 +47,7 @@ public class DefaultFilterChainManagerTest {
 
     @Test
     public void testNewInstanceDefaultFilters() {
-        for (DefaultFilterChainManager.DefaultFilter defaultFilter : DefaultFilterChainManager.DefaultFilter.values()) {
+        for (DefaultFilter defaultFilter : DefaultFilter.values()) {
             assertNotNull(manager.getFilter(defaultFilter.name()));
         }
         assertFalse(manager.hasChains());
@@ -64,7 +65,7 @@ public class DefaultFilterChainManagerTest {
         FilterConfig mock = createNiceMockFilterConfig();
         replay(mock);
         this.manager = new DefaultFilterChainManager(mock);
-        for (DefaultFilterChainManager.DefaultFilter defaultFilter : DefaultFilterChainManager.DefaultFilter.values()) {
+        for (DefaultFilter defaultFilter : DefaultFilter.values()) {
             assertNotNull(manager.getFilter(defaultFilter.name()));
         }
         assertFalse(manager.hasChains());
@@ -101,21 +102,21 @@ public class DefaultFilterChainManagerTest {
 
         Filter filter = chain.get(0);
         assertNotNull(filter);
-        assertEquals(DefaultFilterChainManager.DefaultFilter.authc.getFilterClass(), filter.getClass());
+        assertEquals(DefaultFilter.authc.getFilterClass(), filter.getClass());
 
         filter = chain.get(1);
         assertNotNull(filter);
-        assertEquals(DefaultFilterChainManager.DefaultFilter.roles.getFilterClass(), filter.getClass());
+        assertEquals(DefaultFilter.roles.getFilterClass(), filter.getClass());
 
         filter = chain.get(2);
         assertNotNull(filter);
-        assertEquals(DefaultFilterChainManager.DefaultFilter.perms.getFilterClass(), filter.getClass());
+        assertEquals(DefaultFilter.perms.getFilterClass(), filter.getClass());
     }
 
     @Test
     public void testBeanMethods() {
         Map<String, Filter> filters = manager.getFilters();
-        assertEquals(filters.size(), DefaultFilterChainManager.DefaultFilter.values().length);
+        assertEquals(filters.size(), DefaultFilter.values().length);
         manager.setFilters(filters);
     }
 

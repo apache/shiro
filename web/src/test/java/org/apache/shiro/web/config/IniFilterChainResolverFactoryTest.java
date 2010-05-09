@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.web.config;
 
-import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.web.WebTest;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -86,7 +85,7 @@ public class IniFilterChainResolverFactoryTest extends WebTest {
         factory.createChains(null, null);
     }
 
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void testNewInstanceWithNonFilter() {
         Ini ini = new Ini();
         String config =

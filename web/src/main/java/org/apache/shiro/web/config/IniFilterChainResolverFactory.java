@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.web.config;
 
-import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniFactorySupport;
+import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.config.ReflectionBuilder;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -49,12 +50,19 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private FilterConfig filterConfig;
 
+    private Map<String, ?> defaultBeans;
+
     public IniFilterChainResolverFactory() {
         super();
     }
 
     public IniFilterChainResolverFactory(Ini ini) {
         super(ini);
+    }
+
+    public IniFilterChainResolverFactory(Ini ini, Map<String, ?> defaultBeans) {
+        this(ini);
+        this.defaultBeans = defaultBeans;
     }
 
     public FilterConfig getFilterConfig() {
@@ -87,7 +95,30 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
     protected void buildChains(FilterChainManager manager, Ini ini) {
         //filters section:
         Ini.Section section = ini.getSection(FILTERS);
-        Map<String, Filter> filters = getFilters(section, manager.getFilters());
+
+        if (!CollectionUtils.isEmpty(section)) {
+            String msg = "The [{}] section is being removed in the upcoming releae!  Please immediately " +
+                    "move all object configuration (filters and all other objects) to the [{}] section immediately.";
+            log.warn(msg, FILTERS, IniSecurityManagerFactory.MAIN_SECTION_NAME);
+        }
+
+        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
+
+        Map<String, Filter> defaultFilters = manager.getFilters();
+
+        //now let's see if there are any object defaults in addition to the filters
+        //these can be used to configure the filters:
+        //create a Map of objects to use as the defaults:
+        if (!CollectionUtils.isEmpty(defaultFilters)) {
+            defaults.putAll(defaultFilters);
+        }
+        //User-provided objects must come _after_ the default filters - to allow the user-provided
+        //ones to override the default filters if necessary.
+        if (!CollectionUtils.isEmpty(this.defaultBeans)) {
+            defaults.putAll(this.defaultBeans);
+        }
+
+        Map<String, Filter> filters = getFilters(section, defaults);
 
         //add the filters to the manager:
         registerFilters(filters, manager);
@@ -108,38 +139,34 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         }
     }
 
-    @SuppressWarnings({"unchecked"})
-    protected Map<String, Filter> getFilters(Map<String, String> section, Map<String, Filter> defaultFilters) {
+    protected Map<String, Filter> getFilters(Map<String, String> section, Map<String, ?> defaults) {
 
-        Map<String, Filter> filters = defaultFilters;
+        Map<String, Filter> filters;
 
         if (!CollectionUtils.isEmpty(section)) {
-            ReflectionBuilder builder = new ReflectionBuilder(defaultFilters);
+            ReflectionBuilder builder = new ReflectionBuilder(defaults);
             Map<String, ?> built = builder.buildObjects(section);
-            assertFilters(built);
-            filters = (Map<String, Filter>) built;
+            filters = extractFilters(built);
+        } else {
+            filters = extractFilters(defaults);
         }
 
         return filters;
     }
 
-    protected void assertFilters(Map<String, ?> map) {
-        if (!CollectionUtils.isEmpty(map)) {
-            for (Map.Entry<String, ?> entry : map.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                assertFilter(key, value);
+    private Map<String, Filter> extractFilters(Map<String, ?> objects) {
+        if (CollectionUtils.isEmpty(objects)) {
+            return null;
+        }
+        Map<String, Filter> filterMap = new LinkedHashMap<String, Filter>();
+        for (Map.Entry<String, ?> entry : objects.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof Filter) {
+                filterMap.put(key, (Filter) value);
             }
         }
-    }
-
-    protected void assertFilter(String name, Object o) throws ConfigurationException {
-        if (!(o instanceof Filter)) {
-            String msg = "[" + FILTERS + "] section specified a filter named '" + name + "', which does not " +
-                    "implement the " + Filter.class.getName() + " interface.  Only Filter implementations may be " +
-                    "defined.";
-            throw new ConfigurationException(msg);
-        }
+        return filterMap;
     }
 
     protected void createChains(Map<String, String> urls, FilterChainManager manager) {
