@@ -22,6 +22,10 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.web.DefaultWebSecurityManager;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
+
+import javax.servlet.Filter;
+import java.util.Map;
 
 /**
  * Differs from the parent class only in the {@link #createDefaultInstance()} method, to
@@ -60,5 +64,15 @@ public class WebIniSecurityManagerFactory extends IniSecurityManagerFactory {
     @Override
     protected SecurityManager createDefaultInstance() {
         return new DefaultWebSecurityManager();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    @Override
+    protected Map<String, ?> createDefaults(Ini ini, Ini.Section mainSection) {
+        Map defaults = super.createDefaults(ini, mainSection);
+        //add the default filters:
+        Map<String, Filter> defaultFilters = DefaultFilter.createInstanceMap(null);
+        defaults.putAll(defaultFilters);
+        return defaults;
     }
 }

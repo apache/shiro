@@ -48,20 +48,33 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
 
     private static transient final Logger log = LoggerFactory.getLogger(IniSecurityManagerFactory.class);
 
+    private ReflectionBuilder builder;
+
     /**
-     * Creates a new instance.  See the {@link #getInstance()} JavaDoc for detailed explaination of how an INI
+     * Creates a new instance.  See the {@link #getInstance()} JavaDoc for detailed explanation of how an INI
      * source will be resolved to use to build the instance.
      */
     public IniSecurityManagerFactory() {
-        super();
     }
 
     public IniSecurityManagerFactory(Ini config) {
-        super(config);
+        setIni(config);
     }
 
     public IniSecurityManagerFactory(String iniResourcePath) {
-        super(Ini.fromResourcePath(iniResourcePath));
+        this(Ini.fromResourcePath(iniResourcePath));
+    }
+
+    public Map<String, ?> getBeans() {
+        return this.builder != null ? Collections.unmodifiableMap(builder.getObjects()) : null;
+    }
+
+    private SecurityManager getSecurityManagerBean() {
+        return builder.getBean(SECURITY_MANAGER_NAME, SecurityManager.class);
+    }
+
+    protected SecurityManager createDefaultInstance() {
+        return new DefaultSecurityManager();
     }
 
     protected SecurityManager createInstance(Ini ini) {
@@ -76,56 +89,104 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         return securityManager;
     }
 
-    protected SecurityManager createDefaultInstance() {
-        return new DefaultSecurityManager();
-    }
-
-    protected SecurityManager createSecurityManager(Ini ini) {
+    private SecurityManager createSecurityManager(Ini ini) {
         Ini.Section mainSection = ini.getSection(MAIN_SECTION_NAME);
         if (CollectionUtils.isEmpty(mainSection)) {
             //try the default:
             mainSection = ini.getSection(Ini.DEFAULT_SECTION_NAME);
         }
-        return doCreateSecurityManager(ini, mainSection);
+        return createSecurityManager(ini, mainSection);
     }
 
-    private Map<String, Object> buildMainInstances(Ini.Section main, Realm iniRealm) {
-        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
-        SecurityManager securityManager = createDefaultInstance();
-        defaults.put(SECURITY_MANAGER_NAME, securityManager);
-        if (iniRealm != null) {
-            defaults.put(INI_REALM_NAME, iniRealm);
+    protected boolean isAutoApplyRealms(SecurityManager securityManager) {
+        boolean autoApply = true;
+        if (securityManager instanceof RealmSecurityManager) {
+            //only apply realms if they haven't been explicitly set by the user:
+            RealmSecurityManager realmSecurityManager = (RealmSecurityManager) securityManager;
+            Collection<Realm> realms = realmSecurityManager.getRealms();
+            if (!CollectionUtils.isEmpty(realms)) {
+                log.info("Realms have been explicitly set on the SecurityManager instance - auto-setting of " +
+                        "realms will not occur.");
+                autoApply = false;
+            }
         }
-        return buildInstances(main, defaults);
+        return autoApply;
     }
 
     @SuppressWarnings({"unchecked"})
-    protected Map<String, Object> buildInstances(Ini.Section section, Map<String, Object> defaults) {
-        ReflectionBuilder builder;
-        if (CollectionUtils.isEmpty(defaults)) {
-            builder = new ReflectionBuilder();
-        } else {
-            builder = new ReflectionBuilder(defaults);
+    private SecurityManager createSecurityManager(Ini ini, Ini.Section mainSection) {
+
+        Map<String, ?> defaults = createDefaults(ini, mainSection);
+        Map<String, ?> objects = buildInstances(mainSection, defaults);
+
+        SecurityManager securityManager = getSecurityManagerBean();
+
+        boolean autoApplyRealms = isAutoApplyRealms(securityManager);
+
+        if (autoApplyRealms) {
+            //realms and realm factory might have been created - pull them out first so we can
+            //initialize the securityManager:
+            Collection<Realm> realms = getRealms(objects);
+            //set them on the SecurityManager
+            if (!CollectionUtils.isEmpty(realms)) {
+                applyRealmsToSecurityManager(realms, securityManager);
+            }
         }
-        return builder.buildObjects(section);
+
+        initRealms(securityManager);
+
+        return securityManager;
+    }
+
+    private void initRealms(SecurityManager securityManager) {
+        Collection<Realm> realms = getRealms(securityManager);
+        if (!CollectionUtils.isEmpty(realms)) {
+            LifecycleUtils.init(realms);
+        }
+    }
+
+    private Collection<Realm> getRealms(SecurityManager securityManager) {
+        assertRealmSecurityManager(securityManager);
+        return ((RealmSecurityManager) securityManager).getRealms();
+    }
+
+    protected Map<String, ?> createDefaults(Ini ini, Ini.Section mainSection) {
+        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
+
+        SecurityManager securityManager = createDefaultInstance();
+        defaults.put(SECURITY_MANAGER_NAME, securityManager);
+
+        if (shouldImplicitlyCreateRealm(ini)) {
+            Realm realm = createRealm(ini);
+            if (realm != null) {
+                defaults.put(INI_REALM_NAME, realm);
+            }
+        }
+
+        return defaults;
+    }
+
+    private Map<String, ?> buildInstances(Ini.Section section, Map<String, ?> defaults) {
+        this.builder = new ReflectionBuilder(defaults);
+        return this.builder.buildObjects(section);
     }
 
     private void addToRealms(Collection<Realm> realms, RealmFactory factory) {
         LifecycleUtils.init(factory);
         Collection<Realm> factoryRealms = factory.getRealms();
-        if (factoryRealms != null && !factoryRealms.isEmpty()) {
+        if (!CollectionUtils.isEmpty(realms)) {
             realms.addAll(factoryRealms);
         }
     }
 
-    private Collection<Realm> getRealms(Map<String, Object> instances) {
+    private Collection<Realm> getRealms(Map<String, ?> instances) {
 
         //realms and realm factory might have been created - pull them out first so we can
         //initialize the securityManager:
         List<Realm> realms = new ArrayList<Realm>();
 
         //iterate over the map entries to pull out the realm factory(s):
-        for (Map.Entry<String, Object> entry : instances.entrySet()) {
+        for (Map.Entry<String, ?> entry : instances.entrySet()) {
 
             String name = entry.getKey();
             Object value = entry.getValue();
@@ -152,16 +213,20 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         return realms;
     }
 
-    protected void applyRealmsToSecurityManager(Collection<Realm> realms, SecurityManager securityManager) {
+    private void assertRealmSecurityManager(SecurityManager securityManager) {
+        if (securityManager == null) {
+            throw new NullPointerException("securityManager instance cannot be null");
+        }
         if (!(securityManager instanceof RealmSecurityManager)) {
-            String msg = realms.size() + " Realms were configured, but the underlying SecurityManager " +
-                    "instance is not a " + RealmSecurityManager.class.getName() + " instance.  This is required " +
-                    "to apply any configured Realms.";
+            String msg = "securityManager instance is not a " + RealmSecurityManager.class.getName() +
+                    " instance.  This is required to access or configure realms on the instance.";
             throw new ConfigurationException(msg);
         }
+    }
+
+    protected void applyRealmsToSecurityManager(Collection<Realm> realms, SecurityManager securityManager) {
+        assertRealmSecurityManager(securityManager);
         ((RealmSecurityManager) securityManager).setRealms(realms);
-        //initialize the realms now that they have been configured on the security manager
-        LifecycleUtils.init(realms);
     }
 
     /**
@@ -175,8 +240,9 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
      *         implicitly created.
      */
     protected boolean shouldImplicitlyCreateRealm(Ini ini) {
-        return !CollectionUtils.isEmpty(ini.getSection(IniRealm.ROLES_SECTION_NAME)) ||
-                !CollectionUtils.isEmpty(ini.getSection(IniRealm.USERS_SECTION_NAME));
+        return !CollectionUtils.isEmpty(ini) &&
+                (!CollectionUtils.isEmpty(ini.getSection(IniRealm.ROLES_SECTION_NAME)) ||
+                        !CollectionUtils.isEmpty(ini.getSection(IniRealm.USERS_SECTION_NAME)));
     }
 
     /**
@@ -189,30 +255,5 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         IniRealm realm = new IniRealm(ini);
         realm.setName(INI_REALM_NAME);
         return realm;
-    }
-
-    @SuppressWarnings({"unchecked"})
-    protected SecurityManager doCreateSecurityManager(Ini ini, Ini.Section mainSection) {
-
-        Realm iniRealm = null;
-
-        if ( shouldImplicitlyCreateRealm(ini) ) {
-            iniRealm = createRealm(ini);
-        }
-
-        Map<String, Object> objects = buildMainInstances(mainSection, iniRealm);
-
-        SecurityManager securityManager = (SecurityManager) objects.get(SECURITY_MANAGER_NAME);
-
-        //realms and realm factory might have been created - pull them out first so we can
-        //initialize the securityManager:
-        Collection<Realm> realms = getRealms(objects);
-
-        //set them on the SecurityManager
-        if (!CollectionUtils.isEmpty(realms)) {
-            applyRealmsToSecurityManager(realms, securityManager);
-        }
-
-        return securityManager;
     }
 }

@@ -21,6 +21,7 @@ package org.apache.shiro.config;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
@@ -39,7 +40,6 @@ import java.util.*;
  * @author Jeremy Haile
  * @since 0.9
  */
-@SuppressWarnings("unchecked")
 public class ReflectionBuilder {
 
     //TODO - complete JavaDoc
@@ -51,27 +51,46 @@ public class ReflectionBuilder {
     private static final String GLOBAL_PROPERTY_PREFIX = "shiro";
     private static final char MAP_KEY_VALUE_DELIMITER = ':';
 
-
-    protected Map objects;
+    private Map<String, ?> objects;
 
     public ReflectionBuilder() {
-        setObjects(new LinkedHashMap<String, Object>());
+        this.objects = new LinkedHashMap<String, Object>();
     }
 
-    public ReflectionBuilder(Map defaults) {
-        setObjects(defaults);
+    public ReflectionBuilder(Map<String, ?> defaults) {
+        this.objects = CollectionUtils.isEmpty(defaults) ? new LinkedHashMap<String, Object>() : defaults;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    public Map getObjects() {
+    public Map<String, ?> getObjects() {
         return objects;
     }
 
-    public void setObjects(Map objects) {
-        this.objects = objects;
+    public void setObjects(Map<String, ?> objects) {
+        this.objects = CollectionUtils.isEmpty(objects) ? new LinkedHashMap<String, Object>() : objects;
     }
 
-    public Map buildObjects(Map<String, String> kvPairs) {
+    private Object getBean(String id) {
+        return objects.get(id);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private <T> T getBean(String id, Class<T> requiredType) {
+        if (requiredType == null) {
+            throw new NullPointerException("requiredType argument cannot be null.");
+        }
+        Object bean = getBean(id);
+        if (bean == null) {
+            return null;
+        }
+        if (!requiredType.isAssignableFrom(bean.getClass())) {
+            throw new IllegalStateException("Bean with id [" + id + "] is not of the required type [" +
+                    requiredType.getName() + "].");
+        }
+        return (T) bean;
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public Map<String, ?> buildObjects(Map<String, String> kvPairs) {
         if (kvPairs != null && !kvPairs.isEmpty()) {
 
             // Separate key value pairs into object declarations and property assignment
@@ -91,7 +110,7 @@ public class ReflectionBuilder {
 
             // Create all instances
             for (Map.Entry<String, String> entry : instanceMap.entrySet()) {
-                createNewInstance(objects, entry.getKey(), entry.getValue());
+                createNewInstance((Map<String, Object>) objects, entry.getKey(), entry.getValue());
             }
 
             // Set all properties
@@ -103,7 +122,7 @@ public class ReflectionBuilder {
         return objects;
     }
 
-    protected void createNewInstance(Map objects, String name, String value) {
+    protected void createNewInstance(Map<String, Object> objects, String name, String value) {
 
         Object currentInstance = objects.get(name);
         if (currentInstance != null) {
@@ -285,7 +304,7 @@ public class ReflectionBuilder {
 
         Map<String, String> mapTokens = new LinkedHashMap<String, String>(tokens.length);
         for (String token : tokens) {
-            String[] kvPair = StringUtils.split(token, ':');
+            String[] kvPair = StringUtils.split(token, MAP_KEY_VALUE_DELIMITER);
             if (kvPair == null || kvPair.length != 2) {
                 String msg = "Map property value [" + sValue + "] contained key-value pair token [" +
                         token + "] that does not properly split to a single key and pair.  This must be the " +

@@ -20,7 +20,7 @@ package org.apache.shiro.web.filter.authz;
 
 /**
  * Filter which requires a request to be over SSL.
- * <p/> This filter has the same effect as of using the
+ * <p/>
  * The {@link #getPort() port} property defaults to {@code 443} and also additionally guarantees that the
  * request scheme is always 'https' (except for port 80, which retains the 'http' scheme).
  * <p/>
