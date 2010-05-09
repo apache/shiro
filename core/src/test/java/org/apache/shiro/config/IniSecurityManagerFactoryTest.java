@@ -26,6 +26,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 
@@ -40,8 +41,6 @@ import static junit.framework.Assert.*;
  * @since 1.0
  */
 public class IniSecurityManagerFactoryTest {
-
-    IniSecurityManagerFactory factory;
 
     @Test
     public void testGetInstanceWithoutIni() {
@@ -72,12 +71,13 @@ public class IniSecurityManagerFactoryTest {
     @Test
     public void testGetInstanceWithSimpleIni() {
         Ini ini = new Ini();
-        ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME, "securityManager.globalSessionTimeout", "5000");
+        ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME,
+                "securityManager.sessionManager.globalSessionTimeout", "5000");
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
         SecurityManager sm = factory.getInstance();
         assertNotNull(sm);
         assertTrue(sm instanceof DefaultSecurityManager);
-        assertEquals(5000, ((DefaultSecurityManager) sm).getGlobalSessionTimeout());
+        assertEquals(5000, ((AbstractSessionManager) ((DefaultSecurityManager) sm).getSessionManager()).getGlobalSessionTimeout());
     }
 
     @Test

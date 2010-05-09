@@ -53,15 +53,18 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      */
     public static final long DEFAULT_SESSION_VALIDATION_INTERVAL = MILLIS_PER_HOUR;
 
-    protected boolean sessionValidationSchedulerEnabled = true; //default
+    protected boolean sessionValidationSchedulerEnabled;
+
     /**
      * Scheduler used to validate sessions on a regular basis.
      */
-    protected SessionValidationScheduler sessionValidationScheduler = null;
+    protected SessionValidationScheduler sessionValidationScheduler;
 
-    protected long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
+    protected long sessionValidationInterval;
 
     public AbstractValidatingSessionManager() {
+        this.sessionValidationSchedulerEnabled = true;
+        this.sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
     }
 
     public boolean isSessionValidationSchedulerEnabled() {

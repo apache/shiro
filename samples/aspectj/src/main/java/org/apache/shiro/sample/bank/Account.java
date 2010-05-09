@@ -36,11 +36,11 @@ public class Account {
 
     private String _ownerName;
 
-    private boolean _isActive;
+    private volatile boolean _isActive;
 
     private double _balance;
 
-    private List<AccountTransaction> _transactions;
+    private final List<AccountTransaction> _transactions;
 
     private String _createdBy;
 

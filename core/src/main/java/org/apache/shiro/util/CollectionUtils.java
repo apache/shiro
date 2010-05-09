@@ -33,18 +33,6 @@ public class CollectionUtils {
 
     //TODO - complete JavaDoc
 
-    /**
-     * Simple method that just returns {@link Collections#EMPTY_SET}.
-     * This exists to enable type-safe empty collections so other locations in Shiro code
-     * do not need to worry about suppressing warnings.
-     *
-     * @param clazz the class of the collection type to return
-     * @return an empty collection
-     */
-    public static <E> Collection<E> emptyCollection(Class<E> clazz) {
-        return Collections.emptySet();
-    }
-
     public static <E> Set<E> asSet(E... elements) {
         if (elements == null || elements.length == 0) {
             return Collections.emptySet();

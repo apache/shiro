@@ -24,24 +24,22 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A {@code ModularRealmAuthenticator} delgates account lookups to a pluggable (modular) collection of
  * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in Shiro.
  * In addition to authorization duties, a Shiro Realm can also be thought of a PAM 'module'.
  * <p/>
- * <p>Using this Authenticator allows you to &quot;plug-in&quot; your own
+ * Using this Authenticator allows you to &quot;plug-in&quot; your own
  * {@code Realm}s as you see fit.  Common realms are those based on accessing
  * LDAP, relational databases, file systems, etc.
  * <p/>
- * <p>If only one realm is configured (this is often the case for most applications), authentication success is naturally
+ * If only one realm is configured (this is often the case for most applications), authentication success is naturally
  * only dependent upon invoking this one Realm's
  * {@link Realm#getAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken)} method.
  * <p/>
- * <p>But if two or more realms are configured, PAM behavior is implemented by iterating over the collection of realms
+ * But if two or more realms are configured, PAM behavior is implemented by iterating over the collection of realms
  * and interacting with each over the course of the authentication attempt.  As this is more complicated, this
  * authenticator allows customized behavior for interpreting what happens when interacting with multiple realms - for
  * example, you might require all realms to be successful during the attempt, or perhaps only at least one must be
@@ -49,11 +47,11 @@ import java.util.List;
  * {@link #setAuthenticationStrategy(AuthenticationStrategy) AuthenticationStrategy}, which
  * you can inject as a property of this class.
  * <p/>
- * <p>The strategy object provides callback methods that allow you to
+ * The strategy object provides callback methods that allow you to
  * determine what constitutes a success or failure in a multi-realm (PAM) scenario.  And because this only makes sense
  * in a mult-realm scenario, the strategy object is only utilized when more than one Realm is configured.
  * <p/>
- * <p>As most multi-realm applications require at least one Realm authenticates successfully, the default
+ * As most multi-realm applications require at least one Realm authenticates successfully, the default
  * implementation is the {@link AtLeastOneSuccessfulStrategy}.
  *
  * @author Jeremy Haile
@@ -92,52 +90,15 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     /**
      * Default no-argument constructor which
      * {@link #setAuthenticationStrategy(AuthenticationStrategy) enables}  an
-     * {@link org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy}
-     * by default.
+     * {@link org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy} by default.
      */
     public ModularRealmAuthenticator() {
         this.authenticationStrategy = new AtLeastOneSuccessfulStrategy();
     }
 
-    /**
-     * Constructor which initializes this {@code Authenticator} with a single realm to use during
-     * an authentiation attempt.  Because
-     * this would set a single realm, no {@link #setAuthenticationStrategy(AuthenticationStrategy)
-     * AuthenticationStrategy} would be used during authentication attempts.
-     *
-     * @param realm the realm to consult during an authentication attempt.
-     */
-    public ModularRealmAuthenticator(Realm realm) {
-        setRealm(realm);
-    }
-
-    /**
-     * Constructor which initializes this {@code Authenticator} with multiple realms that will be
-     * consulted during an authentication attempt, effectively enabling PAM (Pluggable Authentication Module)
-     * behavior according to the configured
-     * {@link #setAuthenticationStrategy(AuthenticationStrategy) AuthenticationStrategy}.
-     *
-     * @param realms the realms to consult during an authentication attempt.
-     */
-    public ModularRealmAuthenticator(List<Realm> realms) {
-        setRealms(realms);
-    }
-
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-
-    /**
-     * Convenience setter for single-realm environments (fairly common).  This method just wraps the realm in a
-     * collection and then calls {@link #setRealms}.
-     *
-     * @param realm the realm to consult during authentication attempts.
-     */
-    public void setRealm(Realm realm) {
-        List<Realm> realms = new ArrayList<Realm>(1);
-        realms.add(realm);
-        setRealms(realms);
-    }
 
     /**
      * Sets all realms used by this Authenticator, providing PAM (Pluggable Authentication Module) configuration.
@@ -161,7 +122,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * Returns the {@code AuthenticationStrategy} utilized by this modular authenticator during a multi-realm
      * log-in attempt.  This object is only used when two or more Realms are configured.
      * <p/>
-     * <p>Unless overridden by
+     * Unless overridden by
      * the {@link #setAuthenticationStrategy(AuthenticationStrategy)} method, the default implementation
      * is the {@link org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy}.
      *
@@ -185,7 +146,6 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /*--------------------------------------------
     |               M E T H O D S               |
-    ============================================*/
 
     /**
      * Used by the internal {@link #doAuthenticate} implementation to ensure that the {@code realms} property
@@ -193,6 +153,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      *
      * @throws IllegalStateException if the {@code realms} property is configured incorrectly.
      */
+
     protected void assertRealmsConfigured() throws IllegalStateException {
         Collection<Realm> realms = getRealms();
         if (realms == null || realms.isEmpty()) {
@@ -277,7 +238,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
 
     /**
-     * <p>Attempts to authenticate the given token by iterating over the internal collection of
+     * Attempts to authenticate the given token by iterating over the internal collection of
      * {@link Realm}s.  For each realm, first the {@link Realm#supports(org.apache.shiro.authc.AuthenticationToken)}
      * method will be called to determine if the realm supports the {@code authenticationToken} method argument.
      * <p/>
@@ -288,7 +249,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * the next realm will be consulted.  If no realms support the token or all supporting realms return null,
      * an {@link AuthenticationException} will be thrown to indicate that the user could not be authenticated.
      * <p/>
-     * <p>After all realms have been consulted, the information from each realm is aggregated into a single
+     * After all realms have been consulted, the information from each realm is aggregated into a single
      * {@link AuthenticationInfo} object and returned.
      *
      * @param authenticationToken the token containing the authentication principal and credentials for the
@@ -314,7 +275,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * <code>((LogoutAware)realm).onLogout(principals)</code> to allow each realm the opportunity to perform
      * logout/cleanup operations during an user-logout.
      * <p/>
-     * <p>Shiro's Realm implementations all implement the {@code LogoutAware} interface by default and can be
+     * Shiro's Realm implementations all implement the {@code LogoutAware} interface by default and can be
      * overridden for realm-specific logout logic.
      *
      * @param principals the application-specific Subject/user identifier.

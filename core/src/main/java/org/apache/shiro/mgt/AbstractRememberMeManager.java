@@ -23,7 +23,6 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 import org.apache.shiro.codec.Base64;
-import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.io.DefaultSerializer;
@@ -157,26 +156,11 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * inspection of Subject identity data.
      * <p/>
      * If the CipherService is a symmetric CipherService (using the same key for both encryption and decryption), you
-     * should set your key via one of the three following methods:
-     * <ul>
-     * <li>{@link #setCipherKey(byte[])}</li>
-     * <li>{@link #setCipherKeyBase64(String)}, or</li>
-     * <li>{@link #setCipherKeyHex(String)}</li>
-     * </ul>
+     * should set your key via the {@link #setCipherKey(byte[])} method.
      * <p/>
      * If the CipherService is an asymmetric CipherService (different keys for encryption and decryption, such as
-     * public/private key pairs), you should set your encryption key via one of these methods:
-     * <ul>
-     * <li>{@link #setEncryptionCipherKey(byte[])}</li>
-     * <li>{@link #setEncryptionCipherKeyHex(String)}, or</li>
-     * <li>{@link #setEncryptionCipherKeyBase64(String)}</li>
-     * </ul>
-     * Similarly, you can set the decryption key via one of these methods:
-     * <ul>
-     * <li>{@link #setDecryptionCipherKey(byte[])}</li>
-     * <li>{@link #setDecryptionCipherKeyHex(String)}, or</li>
-     * <li>{@link #setDecryptionCipherKeyBase64(String)}</li>
-     * </ul>
+     * public/private key pairs), you should set your encryption and decryption key via the respective
+     * {@link #setEncryptionCipherKey(byte[])} and {@link #setDecryptionCipherKey(byte[])} methods.
      * <p/>
      * <b>N.B.</b> Unless overridden by this method, the default CipherService instance is an
      * {@link AesCipherService}.  This {@code RememberMeManager} implementation already has a configured symmetric key
@@ -201,39 +185,13 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     /**
-     * Sets the encryption key to use for encryption operations.  If setting the key via text configuration mechanisms,
-     * the {@link #setEncryptionCipherKeyHex(String) encryptionCipherKeyHex} or
-     * {@link #setEncryptionCipherKeyBase64(String) encryptionCipherKeyBase64} methods are probably more convenient.
+     * Sets the encryption key to use for encryption operations.
      *
      * @param encryptionCipherKey the encryption key to use for encryption operations.
      * @see #setCipherService for a description of the various {@code get/set*Key} methods.
      */
     public void setEncryptionCipherKey(byte[] encryptionCipherKey) {
         this.encryptionCipherKey = encryptionCipherKey;
-    }
-
-    /**
-     * Convenience method that allows configuration of the encryption cipher key by specifying a
-     * {@code hex}-encoded string.  The string is {@code hex}-decoded and the resulting byte array is used
-     * as the {@link #setEncryptionCipherKey(byte[]) encryptionCipherKey}.
-     *
-     * @param hex hex-encoded encryption cipher key to decode into the raw encryption cipher key bytes.
-     * @see #setCipherService for a description of the various {@code get/set*Key} methods.
-     */
-    public void setEncryptionCipherKeyHex(String hex) {
-        setEncryptionCipherKey(Hex.decode(hex));
-    }
-
-    /**
-     * Convenience method that allows configuration of the encryption cipher key by specifying a
-     * {@code BASE 64}-encoded string.  The string is {@code BASE 64}-decoded and the resulting byte array is used
-     * as the {@link #setEncryptionCipherKey(byte[]) encryptionCipherKey}.
-     *
-     * @param base64 base64-encoded encryption cipher key to decode into the raw encryption cipher key bytes
-     * @see #setCipherService for a description of the various {@code get/set*Key} methods.
-     */
-    public void setEncryptionCipherKeyBase64(String base64) {
-        setEncryptionCipherKey(Base64.decode(base64));
     }
 
     /**
@@ -247,39 +205,13 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     /**
-     * Sets the decryption key to use for decryption operations.  If setting the key via text configuration mechanisms,
-     * the {@link #setDecryptionCipherKeyHex(String) decryptionCipherKeyHex} or
-     * {@link #setDecryptionCipherKeyBase64(String) decryptionCipherKeyBase64} methods are probably more convenient.
+     * Sets the decryption key to use for decryption operations.
      *
      * @param decryptionCipherKey the decryption key to use for decryption operations.
      * @see #setCipherService for a description of the various {@code get/set*Key} methods.
      */
     public void setDecryptionCipherKey(byte[] decryptionCipherKey) {
         this.decryptionCipherKey = decryptionCipherKey;
-    }
-
-    /**
-     * Convenience method that allows configuration of the decryption cipher key by specifying a
-     * {@code hex}-encoded string.  The string is {@code hex}-decoded and the resulting byte array is used
-     * as the {@link #setDecryptionCipherKey(byte[]) decryptionCipherKey}.
-     *
-     * @param hex hex-encoded decryption cipher key to decode into the raw decryption cipher key bytes.
-     * @see #setCipherService for a description of the various {@code get/set*Key} methods.
-     */
-    public void setDecryptionCipherKeyHex(String hex) {
-        setDecryptionCipherKey(Hex.decode(hex));
-    }
-
-    /**
-     * Convenience method that allows configuration of the decryption cipher key by specifying a
-     * {@code BASE 64}-encoded string.  The string is {@code BASE 64}-decoded and the resulting byte array is used
-     * as the {@link #setDecryptionCipherKey(byte[]) decryptionCipherKey}.
-     *
-     * @param base64 base64-encoded decryption cipher key to decode into the raw decryption cipher key bytes
-     * @see #setCipherService for a description of the various {@code get/set*Key} methods.
-     */
-    public void setDecryptionCipherKeyBase64(String base64) {
-        setDecryptionCipherKey(Base64.decode(base64));
     }
 
     /**
@@ -320,53 +252,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         setEncryptionCipherKey(cipherKey);
         setDecryptionCipherKey(cipherKey);
     }
-
-    /**
-     * Convenience method that allows configuration of the (symmetric) cipher key by specifying a
-     * {@code hex}-encoded string.  The string is {@code hex}-decoded and the resulting byte array is used
-     * as the {@link #setCipherKey(byte[]) cipherKey}.
-     * <p/>
-     * <b>N.B.</b> This is a convenience method to set <em>both</em> the {@link CipherService} encryption key and the
-     * decryption key and should only be called if using a symmetric CipherService.  If using an asymmetric CipherService
-     * (such as a public/private key pair) you cannot call this method and instead should use the
-     * {@link #setEncryptionCipherKeyHex(String)} and {@link #setDecryptionCipherKeyHex(String)} methods instead.
-     * <p/>
-     * The default {@link AesCipherService} instance is a symmetric CipherService, so this method can be used if you are
-     * using the default.
-     *
-     * @param hex hex-encoded symmetric cipher key to decode into the raw cipher key bytes.
-     */
-    public void setCipherKeyHex(String hex) {
-        setCipherKey(Hex.decode(hex));
-    }
-
-    /**
-     * Convenience method that allows configuration of the (symmetric) cipher key
-     * by specifying a {@code BASE 64}-encoded string.  The string is {@code BASE 64}-decoded and the resulting byte
-     * array is used as the {@link #setCipherKey(byte[]) cipherKey}.
-     * <p/>
-     * <b>N.B.</b> This is a convenience method to set <em>both</em> the {@link CipherService} encryption key and the
-     * decryption key and should only be called if using a symmetric CipherService.  If using an asymmetric
-     * CipherService, you cannot call this method and instead should use the {@link #setEncryptionCipherKeyBase64(String)}
-     * and {@link #setDecryptionCipherKeyBase64(String)} methods instead.
-     * <p/>
-     * The default {@link AesCipherService} instance is a symmetric CipherService, so this method can be used if you are
-     * using the default.
-     *
-     * @param base64 base64-encoded symmetric cipher key to decode into the raw cipher key bytes.
-     */
-    public void setCipherKeyBase64(String base64) {
-        setCipherKey(Base64.decode(base64));
-    }
-
-    /**
-     * Forgets (removes) any remembered identity data for the subject being built by the specified {@code context}
-     * argument.  The context map is usually populated by a {@link Subject.Builder} implementation.
-     *
-     * @param subjectContext the contextual data, usually provided by a {@link Subject.Builder} implementation, that
-     *                       is being used to construct a {@link Subject} instance.
-     */
-    protected abstract void forgetIdentity(SubjectContext subjectContext);
 
     /**
      * Forgets (removes) any remembered identity data for the specified {@link Subject} instance.

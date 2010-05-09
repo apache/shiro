@@ -22,16 +22,17 @@ import org.apache.shiro.session.*;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.*;
 import org.easymock.IArgumentMatcher;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
@@ -94,7 +95,7 @@ public class DefaultSessionManagerTest {
                 started[0] = true;
             }
         };
-        sm.add(listener);
+        sm.getSessionListeners().add(listener);
         sm.start((Map) null);
         assertTrue(started[0]);
     }
@@ -107,7 +108,7 @@ public class DefaultSessionManagerTest {
                 stopped[0] = true;
             }
         };
-        sm.add(listener);
+        sm.getSessionListeners().add(listener);
         Serializable id = sm.start((Map) null);
         sm.stop(id);
         assertTrue(stopped[0]);
@@ -121,7 +122,7 @@ public class DefaultSessionManagerTest {
                 expired[0] = true;
             }
         };
-        sm.add(listener);
+        sm.getSessionListeners().add(listener);
         sm.setGlobalSessionTimeout(100);
         Serializable id = sm.start((Map) null);
         sleep(150);

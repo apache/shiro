@@ -19,14 +19,14 @@
 package org.apache.shiro;
 
 import junit.framework.TestCase;
-import org.junit.Test;
-
 import org.apache.shiro.util.ClassUtils;
+import org.junit.Test;
 
 
 /**
  * @author Les Hazlewood
  */
+@SuppressWarnings({"ThrowableInstanceNeverThrown"})
 public abstract class ExceptionTest extends TestCase {
 
     protected abstract Class getExceptionClass();

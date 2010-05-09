@@ -18,17 +18,15 @@
  */
 package org.apache.shiro.mgt;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.Permission;
-import org.apache.shiro.authz.permission.PermissionResolver;
-import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.LifecycleUtils;
+
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -47,7 +45,7 @@ import org.apache.shiro.util.LifecycleUtils;
  * @author Les Hazlewood
  * @since 0.9
  */
-public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityManager implements PermissionResolverAware {
+public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityManager {
 
     /**
      * The wrapped instance to which all of this <tt>SecurityManager</tt> authorization calls are delegated.
@@ -86,32 +84,6 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
             throw new IllegalArgumentException(msg);
         }
         this.authorizer = authorizer;
-    }
-
-    /**
-     * Sets the <tt>PermissionResolver</tt> instance that will be passed on to the underlying default wrapped
-     * {@link Authorizer Authorizer}.
-     *
-     * <p>This is a convenience method:  it allows you to configure an application-wide
-     * <tt>PermissionResolver</tt> on the <tt>SecurityManager</tt> instance, and it will trickle its way down to the
-     * 'real' authorizer and/or underlying Realms.  This is easier to configure at the <tt>SecurityManager</tt> level
-     * than constructing your own object graph just to configure a <tt>PermissionResolver</tt> instance on objects
-     * deep in the graph.
-     *
-     * @param permissionResolver the <tt>PermissionResolver</tt> instance to set on the wrapped <tt>Authorizer</tt>
-     * @throws IllegalStateException if the underlying <code>Authorizer</code> does not implement the
-     *                               {@link PermissionResolverAware PermissionResolverAware} interface, which ensures that the resolver can be registered.
-     */
-    public void setPermissionResolver(PermissionResolver permissionResolver) {
-        Authorizer authz = getAuthorizer();
-        if (authz instanceof PermissionResolverAware) {
-            ((PermissionResolverAware) authz).setPermissionResolver(permissionResolver);
-        } else {
-            String msg = "Underlying Authorizer instance does not implement the " +
-                    PermissionResolverAware.class.getName() + " interface.  This is required to support " +
-                    "passthrough configuration of a PermissionResolver.";
-            throw new IllegalStateException(msg);
-        }
     }
 
     /**

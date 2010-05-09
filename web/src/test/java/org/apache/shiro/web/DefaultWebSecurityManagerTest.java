@@ -22,11 +22,10 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.text.PropertiesRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
-import static org.easymock.EasyMock.*;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,6 +35,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Les Hazlewood
@@ -100,7 +102,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     public void testSessionTimeout() {
         shiroSessionModeInit();
         long globalTimeout = 100;
-        sm.setGlobalSessionTimeout(globalTimeout);
+        ((AbstractSessionManager) sm.getSessionManager()).setGlobalSessionTimeout(globalTimeout);
 
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
@@ -113,7 +115,6 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Subject subject = newSubject(mockRequest, mockResponse);
 
         Session session = subject.getSession();
-        Serializable origId = session.getId();
         assertEquals(session.getTimeout(), globalTimeout);
         session.setTimeout(125);
         assertEquals(session.getTimeout(), 125);

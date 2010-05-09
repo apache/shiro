@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.config;
 
+import org.apache.shiro.codec.Base64;
+import org.apache.shiro.codec.CodecSupport;
+import org.apache.shiro.codec.Hex;
 import org.apache.shiro.util.CollectionUtils;
 import org.junit.Test;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -139,6 +139,64 @@ public class ReflectionBuilderTest {
         List<SimpleBean> simpleBeans = cBean.getSimpleBeanList();
         assertNotNull(simpleBeans);
         assertEquals(3, simpleBeans.size());
+    }
+
+    @Test
+    public void testCollectionProperty() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBeanCollection", "$simpleBean1, $simpleBean2, $simpleBean2");
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(cBean);
+        Collection<SimpleBean> simpleBeans = cBean.getSimpleBeanCollection();
+        assertNotNull(simpleBeans);
+        assertTrue(simpleBeans instanceof List);
+        assertEquals(3, simpleBeans.size());
+    }
+
+    @Test
+    public void testByteArrayHexProperty() {
+        String source = "Hello, world.";
+        byte[] bytes = CodecSupport.toBytes(source);
+        String hex = Hex.encodeToString(bytes);
+        String hexValue = "0x" + hex;
+
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean.byteArrayProp", hexValue);
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        SimpleBean bean = (SimpleBean) objects.get("simpleBean");
+        assertNotNull(bean);
+        byte[] beanBytes = bean.getByteArrayProp();
+        assertNotNull(beanBytes);
+        String reconstituted = CodecSupport.toString(beanBytes);
+        assertEquals(source, reconstituted);
+    }
+
+    @Test
+    public void testByteArrayBase64Property() {
+        String source = "Hello, world.";
+        byte[] bytes = CodecSupport.toBytes(source);
+        String base64 = Base64.encodeToString(bytes);
+
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean.byteArrayProp", base64);
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        SimpleBean bean = (SimpleBean) objects.get("simpleBean");
+        byte[] beanBytes = bean.getByteArrayProp();
+        assertNotNull(beanBytes);
+        assertTrue(Arrays.equals(beanBytes, bytes));
+        String reconstituted = CodecSupport.toString(beanBytes);
+        assertEquals(reconstituted, source);
     }
 
     @Test

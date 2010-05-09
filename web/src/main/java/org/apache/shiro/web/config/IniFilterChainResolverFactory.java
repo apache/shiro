@@ -97,7 +97,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         Ini.Section section = ini.getSection(FILTERS);
 
         if (!CollectionUtils.isEmpty(section)) {
-            String msg = "The [{}] section is being removed in the upcoming releae!  Please immediately " +
+            String msg = "The [{}] section is being removed in the upcoming release!  Please immediately " +
                     "move all object configuration (filters and all other objects) to the [{}] section immediately.";
             log.warn(msg, FILTERS, IniSecurityManagerFactory.MAIN_SECTION_NAME);
         }

@@ -42,16 +42,13 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private String name = getClass().getName() + "_" + INSTANCE_COUNT.getAndIncrement();
-
-    private boolean cachingEnabled = true;
+    private String name;
+    private boolean cachingEnabled;
     private CacheManager cacheManager;
 
     public CachingRealm() {
-    }
-
-    public CachingRealm(CacheManager cacheManager) {
-        setCacheManager(cacheManager);
+        this.cachingEnabled = true;
+        this.name = getClass().getName() + "_" + INSTANCE_COUNT.getAndIncrement();
     }
 
     /**
@@ -102,14 +99,14 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
         this.cachingEnabled = cachingEnabled;
     }
 
-    protected void afterCacheManagerSet() {
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    protected void afterCacheManagerSet() {
     }
 }

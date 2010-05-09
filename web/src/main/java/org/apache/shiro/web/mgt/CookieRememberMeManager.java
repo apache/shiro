@@ -118,6 +118,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * @param cookie the cookie 'template' that will be used to set all attributes of outgoing rememberMe cookies created
      *               by this {@code RememberMeManager}.
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setCookie(Cookie cookie) {
         this.cookie = cookie;
     }
@@ -267,7 +268,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      *
      * @param subjectContext the contextual data, usually provided by a {@link Subject.Builder} implementation
      */
-    protected void forgetIdentity(SubjectContext subjectContext) {
+    public void forgetIdentity(SubjectContext subjectContext) {
         if (WebUtils.isHttp(subjectContext)) {
             HttpServletRequest request = WebUtils.getHttpRequest(subjectContext);
             HttpServletResponse response = WebUtils.getHttpResponse(subjectContext);

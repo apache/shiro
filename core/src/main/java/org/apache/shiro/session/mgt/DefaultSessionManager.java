@@ -24,13 +24,12 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
-import org.apache.shiro.session.mgt.eis.SessionDAOAware;
-import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -41,8 +40,7 @@ import java.util.Map;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class DefaultSessionManager extends AbstractValidatingSessionManager
-        implements CacheManagerAware, SessionFactoryAware, SessionDAOAware {
+public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
 
     //TODO - complete JavaDoc
 
@@ -52,9 +50,10 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
 
     protected SessionDAO sessionDAO;  //todo - move SessionDAO up to AbstractValidatingSessionManager?
 
-    private boolean deleteInvalidSessions = true;
+    private boolean deleteInvalidSessions;
 
     public DefaultSessionManager() {
+        this.deleteInvalidSessions = true;
         this.sessionFactory = new SimpleSessionFactory();
         this.sessionDAO = new MemorySessionDAO();
     }
@@ -63,6 +62,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
         this.sessionDAO = sessionDAO;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public SessionDAO getSessionDAO() {
         return this.sessionDAO;
     }
@@ -123,6 +123,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
      *                              to be invalid.
      * @since 1.0
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setDeleteInvalidSessions(boolean deleteInvalidSessions) {
         this.deleteInvalidSessions = deleteInvalidSessions;
     }
@@ -208,7 +209,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager
 
     protected Collection<Session> getActiveSessions() {
         Collection<Session> active = sessionDAO.getActiveSessions();
-        return active != null ? active : CollectionUtils.emptyCollection(Session.class);
+        return active != null ? active : Collections.<Session>emptySet();
     }
 
 }

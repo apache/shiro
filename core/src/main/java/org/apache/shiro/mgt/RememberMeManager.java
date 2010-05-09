@@ -49,6 +49,18 @@ public interface RememberMeManager {
     PrincipalCollection getRememberedPrincipals(SubjectContext subjectContext);
 
     /**
+     * Forgets any remembered identity corresponding to the subject context map being used to build a subject instance.
+     * <p/>
+     * The context map is usually populated by a {@link Subject.Builder} implementation.
+     * See the {@link SubjectFactory} class constants for Shiro's known map keys.
+     *
+     * @param subjectContext the contextual data, usually provided by a {@link Subject.Builder} implementation, that
+     *                       is being used to construct a {@link Subject} instance.
+     * @since 1.0
+     */
+    void forgetIdentity(SubjectContext subjectContext);
+
+    /**
      * Reacts to a successful authentication attempt, typically saving the principals to be retrieved ('remembered')
      * for future system access.
      *

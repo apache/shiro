@@ -20,7 +20,6 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.Authorizer;
-import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
@@ -35,14 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.lang.Exception;
-import java.lang.IllegalArgumentException;
-import java.lang.IllegalStateException;
-import java.lang.String;
-import java.lang.SuppressWarnings;
 import java.util.Collection;
-
-import org.apache.shiro.mgt.SecurityManager;
 
 /**
  * The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
@@ -128,56 +120,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void setRememberMeManager(RememberMeManager rememberMeManager) {
         this.rememberMeManager = rememberMeManager;
-    }
-
-    private AbstractRememberMeManager getRememberMeManagerForCipherAttributes() {
-        if (!(this.rememberMeManager instanceof AbstractRememberMeManager)) {
-            String msg = "The convenience passthrough methods for setting remember me cipher attributes " +
-                    "are only available when the underlying RememberMeManager implementation is a subclass of " +
-                    AbstractRememberMeManager.class.getName() + ".";
-            throw new IllegalStateException(msg);
-        }
-        return (AbstractRememberMeManager) this.rememberMeManager;
-    }
-
-    public void setRememberMeCipherService(CipherService cipherService) {
-        getRememberMeManagerForCipherAttributes().setCipherService(cipherService);
-    }
-
-    public void setRememberMeCipherKey(byte[] bytes) {
-        getRememberMeManagerForCipherAttributes().setCipherKey(bytes);
-    }
-
-    public void setRememberMeCipherKeyHex(String hex) {
-        getRememberMeManagerForCipherAttributes().setCipherKeyHex(hex);
-    }
-
-    public void setRememberMeCipherKeyBase64(String base64) {
-        getRememberMeManagerForCipherAttributes().setCipherKeyBase64(base64);
-    }
-
-    public void setRememberMeEncryptionCipherKey(byte[] bytes) {
-        getRememberMeManagerForCipherAttributes().setEncryptionCipherKey(bytes);
-    }
-
-    public void setRememberMeEncryptionCipherKeyHex(String hex) {
-        getRememberMeManagerForCipherAttributes().setEncryptionCipherKeyHex(hex);
-    }
-
-    public void setRememberMeEncryptionCipherKeyBase64(String base64) {
-        getRememberMeManagerForCipherAttributes().setEncryptionCipherKeyBase64(base64);
-    }
-
-    public void setRememberMeDecryptionCipherKey(byte[] bytes) {
-        getRememberMeManagerForCipherAttributes().setDecryptionCipherKey(bytes);
-    }
-
-    public void setRememberMeDecryptionCipherKeyHex(String hex) {
-        getRememberMeManagerForCipherAttributes().setDecryptionCipherKeyHex(hex);
-    }
-
-    public void setRememberMeDecryptionCipherKeyBase64(String base64) {
-        getRememberMeManagerForCipherAttributes().setDecryptionCipherKeyBase64(base64);
     }
 
     protected Session getSession(Serializable id) {
@@ -427,7 +369,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 Session session = getSession(sessionId);
                 context.setSession(session);
             } catch (InvalidSessionException e) {
-                onInvalidSessionId(sessionId, e);
+                onInvalidSessionId(context, sessionId, e);
                 log.debug("Referenced sessionId {} is invalid.  Ignoring and creating an anonymous " +
                         "(session-less) Subject instance.", sessionId);
                 if (log.isTraceEnabled()) {
@@ -475,11 +417,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * Allows subclasses to react to the fact that a specified/referenced session id was invalid.  Default
      * implementation does nothing (no-op).
      *
-     * @param sessionId the session id that was discovered to be invalid (no session, expired, etc).
-     * @param e         the exception thrown upon encountering the invalid session id
+     * @param subjectContext the subjectContext from where the sessionId was discovered
+     * @param sessionId      the session id that was discovered to be invalid (no session, expired, etc).
+     * @param e              the exception thrown upon encountering the invalid session id
      * @since 1.0
      */
-    protected void onInvalidSessionId(Serializable sessionId, InvalidSessionException e) {
+    protected void onInvalidSessionId(SubjectContext subjectContext, Serializable sessionId, InvalidSessionException e) {
     }
 
     /**
