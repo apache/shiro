@@ -58,10 +58,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     public static final String HTTP_SESSION_MODE = "http";
     public static final String NATIVE_SESSION_MODE = "native";
 
-    private String sessionMode = HTTP_SESSION_MODE; //default
+    private String sessionMode;
 
     public DefaultWebSecurityManager() {
         super();
+        this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());
         setSessionManager(new ServletContainerSessionManager());
