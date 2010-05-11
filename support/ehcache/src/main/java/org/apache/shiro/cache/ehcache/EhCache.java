@@ -51,7 +51,7 @@ public class EhCache<K, V> implements Cache<K, V> {
      *
      * @param cache - delegate EhCache instance this Shiro cache instance will wrap.
      */
-    public EhCache(net.sf.ehcache.Cache cache) {
+    public EhCache(net.sf.ehcache.Ehcache cache) {
         if (cache == null) {
             throw new IllegalArgumentException("Cache argument cannot be null.");
         }

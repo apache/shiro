@@ -67,7 +67,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     /**
      * The default suffix appended to the realm name for caching AuthorizationInfo instances.
      */
-    private static final String DEFAULT_AUTHORIZATION_CACHE_SUFFIX = "-authorization";
+    private static final String DEFAULT_AUTHORIZATION_CACHE_SUFFIX = ".authorizationCache";
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
@@ -91,9 +91,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
     public AuthorizingRealm() {
         this.authorizationCachingEnabled = true;
-        this.authorizationCacheName = getClass().getName() + "-" +
-                INSTANCE_COUNT.getAndIncrement() + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
         this.permissionResolver = new WildcardPermissionResolver();
+
+        int instanceNumber = INSTANCE_COUNT.getAndIncrement();
+        this.authorizationCacheName = getClass().getName() + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
+        if (instanceNumber > 0) {
+            this.authorizationCacheName = this.authorizationCacheName + "." + instanceNumber;
+        }
     }
 
     public AuthorizingRealm(CacheManager cacheManager) {
@@ -111,6 +115,16 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
+    public void setName(String name) {
+        super.setName(name);
+        String authzCacheName = this.authorizationCacheName;
+        if (authzCacheName != null && authzCacheName.startsWith(getClass().getName())) {
+            //get rid of the default class-name based cache name.  Create a more meaningful one
+            //based on the application-unique Realm name:
+            this.authorizationCacheName = name + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
+        }
+    }
 
     public void setAuthorizationCache(Cache<Object, AuthorizationInfo> authorizationCache) {
         this.authorizationCache = authorizationCache;
