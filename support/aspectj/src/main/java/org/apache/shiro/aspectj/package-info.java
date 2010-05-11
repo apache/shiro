@@ -1,4 +1,3 @@
-package org.apache.shiro.aspectj;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,3 +20,7 @@ package org.apache.shiro.aspectj;
  * <a href="http://www.eclipse.org/aspectj/">AspectJ</a> support for enabling
  * dynamic authorization using Shiro's annotations.
  */
+package org.apache.shiro.aspectj;
+
+
+
