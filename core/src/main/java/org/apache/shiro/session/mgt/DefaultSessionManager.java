@@ -50,6 +50,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     protected SessionDAO sessionDAO;  //todo - move SessionDAO up to AbstractValidatingSessionManager?
 
+    private CacheManager cacheManager;
+
     private boolean deleteInvalidSessions;
 
     public DefaultSessionManager() {
@@ -60,6 +62,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     public void setSessionDAO(SessionDAO sessionDAO) {
         this.sessionDAO = sessionDAO;
+        applyCacheManagerToSessionDAO();
     }
 
     public SessionDAO getSessionDAO() {
@@ -128,8 +131,24 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     }
 
     public void setCacheManager(CacheManager cacheManager) {
-        if (this.sessionDAO instanceof CacheManagerAware) {
-            ((CacheManagerAware) this.sessionDAO).setCacheManager(cacheManager);
+        this.cacheManager = cacheManager;
+        applyCacheManagerToSessionDAO();
+    }
+
+    /**
+     * Sets the internal {@code CacheManager} on the {@code SessionDAO} if it implements the
+     * {@link org.apache.shiro.cache.CacheManagerAware CacheManagerAware} interface.
+     * <p/>
+     * This method is called after setting a cacheManager via the
+     * {@link #setCacheManager(org.apache.shiro.cache.CacheManager) setCacheManager} method <em>em</em> when
+     * setting a {@code SessionDAO} via the {@link #setSessionDAO} method to allow it to be propagated
+     * in either case.
+     *
+     * @since 1.0
+     */
+    private void applyCacheManagerToSessionDAO() {
+        if (this.cacheManager != null && this.sessionDAO != null && this.sessionDAO instanceof CacheManagerAware) {
+            ((CacheManagerAware) this.sessionDAO).setCacheManager(this.cacheManager);
         }
     }
 

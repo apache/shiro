@@ -21,8 +21,8 @@ package org.apache.shiro.cache.ehcache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
@@ -32,12 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Shiro <code>CacheManager</code> implementation utilizing the Ehcache framework for all cache functionality.
+ * Shiro {@code CacheManager} implementation utilizing the Ehcache framework for all cache functionality.
  * <p/>
  * This class can {@link #setCacheManager(net.sf.ehcache.CacheManager) accept} a manually configured
  * {@link net.sf.ehcache.CacheManager net.sf.ehcache.CacheManager} instance,
- * or an <code>ehcache.xml</code> path location can be specified instead and one will be constructed. If neither are
- * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
+ * or an {@code ehcache.xml} path location can be specified instead and one will be constructed. If neither are
+ * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a>} file will be used by default.
  * <p/>
  * This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.
@@ -50,22 +50,6 @@ import java.io.InputStream;
  * @since 0.2
  */
 public class EhCacheManager implements CacheManager, Initializable, Destroyable {
-
-    /**
-     * The default name for the active sessions cache, equal to
-     * {@link org.apache.shiro.session.mgt.eis.CachingSessionDAO#ACTIVE_SESSION_CACHE_NAME CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME}.
-     */
-    public static final String DEFAULT_ACTIVE_SESSIONS_CACHE_NAME = CachingSessionDAO.ACTIVE_SESSION_CACHE_NAME;
-
-    /**
-     * The default maximum number of active sessions in cache <em>memory</em>, equal to <code>20,000</code>.
-     */
-    public static final int DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM = 20000;
-
-    /**
-     * The default time the active sessions disk expiration thread will run, equal to <code>600</code> (10 minutes).
-     */
-    public static final int DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS = 600;
 
     /**
      * This class's private log instance.
@@ -154,7 +138,8 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         try {
             return ResourceUtils.getInputStreamForPath(configFile);
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to obtain input stream for cacheManagerConfigFile.", e);
+            throw new ConfigurationException("Unable to obtain input stream for cacheManagerConfigFile [" +
+                    configFile + "]", e);
         }
     }
 
@@ -166,34 +151,25 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     public final <K, V> Cache<K, V> getCache(String name) throws CacheException {
 
         if (log.isTraceEnabled()) {
-            log.trace("Loading a new EhCache cache named [" + name + "]");
+            log.trace("Acquiring EhCache instance named [" + name + "]");
         }
 
         try {
-            net.sf.ehcache.Cache cache = getCacheManager().getCache(name);
+            net.sf.ehcache.Ehcache cache = ensureCacheManager().getEhcache(name);
             if (cache == null) {
                 if (log.isInfoEnabled()) {
-                    log.info("Could not find a specific ehcache configuration for cache named [" + name + "]; using defaults.");
+                    log.info("Cache with name '{}' does not yet exist.  Creating now.", name);
                 }
-                if (name.equals(DEFAULT_ACTIVE_SESSIONS_CACHE_NAME)) {
-                    if (log.isInfoEnabled()) {
-                        log.info("Creating " + DEFAULT_ACTIVE_SESSIONS_CACHE_NAME + " cache with default Shiro " +
-                                "session cache settings.");
-                    }
-                    cache = buildDefaultActiveSessionsCache();
-                    manager.addCache(cache);
-                } else {
-                    manager.addCache(name);
-                }
+                this.manager.addCache(name);
 
                 cache = manager.getCache(name);
 
                 if (log.isInfoEnabled()) {
-                    log.info("Started EHCache named [" + name + "]");
+                    log.info("Added EhCache named [" + name + "]");
                 }
             } else {
                 if (log.isInfoEnabled()) {
-                    log.info("Using preconfigured EHCache named [" + cache.getName() + "]");
+                    log.info("Using existing EHCache named [" + cache.getName() + "]");
                 }
             }
             return new EhCache<K, V>(cache);
@@ -203,37 +179,18 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     }
 
     /**
-     * Builds the default cache instance to use for Shiro's Session Cache when enterprise Sessions are
-     * enabled.
-     *
-     * @return the default cache instance to use for Shiro's Session Cache when enterprise Sessions are
-     *         enabled.
-     * @throws CacheException if there is a problem constructing the Cache instance.
-     */
-    private net.sf.ehcache.Cache buildDefaultActiveSessionsCache() throws CacheException {
-        return new net.sf.ehcache.Cache(DEFAULT_ACTIVE_SESSIONS_CACHE_NAME,
-                DEFAULT_ACTIVE_SESSIONS_CACHE_MAX_ELEM_IN_MEM,
-                true,
-                true,
-                0,
-                0,
-                true,
-                DEFAULT_ACTIVE_SESSIONS_DISK_EXPIRY_THREAD_INTERVAL_SECONDS);
-    }
-
-    /**
      * Initializes this instance.
      * <p/>
      * If a {@link #setCacheManager CacheManager} has been
      * explicitly set (e.g. via Dependency Injection or programatically) prior to calling this
      * method, this method does nothing.
      * <p/>
-     * However, if no <tt>CacheManager</tt> has been set, the default Ehcache singleton will be initialized, where
-     * Ehcache will look for an <tt>ehcache.xml</tt> file at the root of the classpath.  If one is not found,
+     * However, if no {@code CacheManager} has been set, the default Ehcache singleton will be initialized, where
+     * Ehcache will look for an {@code ehcache.xml} file at the root of the classpath.  If one is not found,
      * Ehcache will use its own failsafe configuration file.
      * <p/>
-     * Because Shiro cannot use the failsafe defaults (failsafe expunges cached objects after 2 minutes,
-     * something not desireable for Shiro sessions), this class manages an internal default configuration for
+     * Because Shiro cannot use the failsafe defaults (fail-safe expunges cached objects after 2 minutes,
+     * something not desirable for Shiro sessions), this class manages an internal default configuration for
      * this case.
      *
      * @throws org.apache.shiro.cache.CacheException
@@ -241,9 +198,12 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * @see net.sf.ehcache.CacheManager#create
      */
     public final void init() throws CacheException {
+        ensureCacheManager();
+    }
+
+    private net.sf.ehcache.CacheManager ensureCacheManager() {
         try {
-            net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
-            if (cacheMgr == null) {
+            if (this.manager == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("cacheManager property not set.  Constructing CacheManager instance... ");
                 }
@@ -252,16 +212,16 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
                 //because we need to know if we need to destroy the CacheManager instance - using the static call,
                 //we don't know which component is responsible for shutting it down.  By using a single EhCacheManager,
                 //it will always know to shut down the instance if it was responsible for creating it.
-                cacheMgr = new net.sf.ehcache.CacheManager(getCacheManagerConfigFileInputStream());
+                this.manager = new net.sf.ehcache.CacheManager(getCacheManagerConfigFileInputStream());
                 if (log.isTraceEnabled()) {
                     log.trace("instantiated Ehcache CacheManager instance.");
                 }
                 cacheManagerImplicitlyCreated = true;
-                setCacheManager(cacheMgr);
                 if (log.isDebugEnabled()) {
                     log.debug("implicit cacheManager created successfully.");
                 }
             }
+            return this.manager;
         } catch (Exception e) {
             throw new CacheException(e);
         }

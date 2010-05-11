@@ -20,7 +20,6 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
-import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
 
@@ -28,10 +27,10 @@ import org.apache.shiro.util.LifecycleUtils;
 /**
  * A very basic starting point for the SecurityManager interface that merely provides logging and caching
  * support.  All actual {@code SecurityManager} method implementations are left to subclasses.
- *
- * <p>Upon instantiation, a sensible default {@link CacheManager CacheManager} will be created automatically.  This
- * {@code CacheManager} can then be used by subclass implementations and children components for use to achieve better
- * application performance if so desired.
+ * <p/>
+ * <b>Change in 1.0</b> - a default {@code CacheManager} instance is <em>not</em> created by default during
+ * instantiation.  As caching strategies can vary greatly depending on an application's needs, a {@code CacheManager}
+ * instance must be explicitly configured if caching across the framework is to be enabled.
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
@@ -48,7 +47,6 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * Default no-arg constructor that will automatically attempt to initialize a default cacheManager
      */
     public CachingSecurityManager() {
-        this.cacheManager = new MemoryConstrainedCacheManager();
     }
 
     /**
@@ -61,14 +59,14 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     }
 
     /**
-     * Sets the CacheManager used by this <code>SecurityManager</code> and potentially any of its
+     * Sets the CacheManager used by this {@code SecurityManager} and potentially any of its
      * children components.
      * <p/>
      * After the cacheManager attribute has been set, the template method
      * {@link #afterCacheManagerSet afterCacheManagerSet()} is executed to allow subclasses to adjust when a
      * cacheManager is available.
      *
-     * @param cacheManager the CacheManager used by this <code>SecurityManager</code> and potentially any of its
+     * @param cacheManager the CacheManager used by this {@code SecurityManager} and potentially any of its
      *                     children components.
      */
     public void setCacheManager(CacheManager cacheManager) {
