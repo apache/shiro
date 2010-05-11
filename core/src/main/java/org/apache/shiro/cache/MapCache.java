@@ -18,7 +18,12 @@
  */
 package org.apache.shiro.cache;
 
-import java.util.*;
+import org.apache.shiro.util.CollectionUtils;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A <code>MapCache</code> is a {@link Cache Cache} implementation that uses a backing {@link Map} instance to store
@@ -27,19 +32,19 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class MapCache implements Cache {
+public class MapCache<K, V> implements Cache<K, V> {
 
     /**
      * Backing instance.
      */
-    private final Map map;
+    private final Map<K, V> map;
 
     /**
      * The name of this cache.
      */
     private final String name;
 
-    public MapCache(String name, Map backingMap) {
+    public MapCache(String name, Map<K, V> backingMap) {
         if (name == null) {
             throw new IllegalArgumentException("Cache name cannot be null.");
         }
@@ -50,17 +55,16 @@ public class MapCache implements Cache {
         this.map = backingMap;
     }
 
-    public Object get(Object key) throws CacheException {
+    public V get(K key) throws CacheException {
         return map.get(key);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public void put(Object key, Object value) throws CacheException {
-        map.put(key, value);
+    public V put(K key, V value) throws CacheException {
+        return map.put(key, value);
     }
 
-    public void remove(Object key) throws CacheException {
-        map.remove(key);
+    public V remove(K key) throws CacheException {
+        return map.remove(key);
     }
 
     public void clear() throws CacheException {
@@ -71,27 +75,20 @@ public class MapCache implements Cache {
         return map.size();
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Set keys() {
-        Set keys = map.keySet();
+    public Set<K> keys() {
+        Set<K> keys = map.keySet();
         if (!keys.isEmpty()) {
             return Collections.unmodifiableSet(keys);
         }
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
-    @SuppressWarnings({"unchecked"})
-    public Set values() {
-        if (!map.isEmpty()) {
-            Collection values = map.values();
-            if (values instanceof Set) {
-                return Collections.unmodifiableSet((Set) values);
-            } else {
-                return Collections.unmodifiableSet(new LinkedHashSet(values));
-            }
-        } else {
-            return Collections.EMPTY_SET;
+    public Collection<V> values() {
+        Collection<V> values = map.values();
+        if (!CollectionUtils.isEmpty(values)) {
+            return Collections.unmodifiableCollection(values);
         }
+        return Collections.emptySet();
     }
 
     public String toString() {

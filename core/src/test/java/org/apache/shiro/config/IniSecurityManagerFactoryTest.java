@@ -20,13 +20,20 @@ package org.apache.shiro.config;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.MapCache;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 
@@ -151,4 +158,50 @@ public class IniSecurityManagerFactoryTest {
         });
         assertTrue(subject.getPrincipal().equals("admin"));
     }
+
+    /**
+     * Test case for issue <a href="https://issues.apache.org/jira/browse/SHIRO-95">SHIRO-95</a>.
+     */
+    @Test
+    public void testCacheManagerConfigOrderOfOperations() {
+
+        Ini ini = new Ini();
+        Ini.Section main = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
+        //create a non-default CacheManager:
+        main.put("cacheManager", "org.apache.shiro.config.HashMapCacheManager");
+
+        //now add a session DAO after the cache manager has been set - this is what tests the user-reported issue
+        main.put("sessionDAO", "org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO");
+        main.put("securityManager.sessionManager.sessionDAO", "$sessionDAO");
+
+        //add the cache manager after the sessionDAO has been set:
+        main.put("securityManager.cacheManager", "$cacheManager");
+
+        //add a test user:
+        ini.setSectionProperty(IniRealm.USERS_SECTION_NAME, "admin", "admin");
+
+        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
+        SecurityManager sm = factory.getInstance();
+
+        //try to log-in:
+        Subject subject = new Subject.Builder(sm).buildSubject();
+        subject.login(new UsernamePasswordToken("admin", "admin"));
+        Session session = subject.getSession();
+        session.setAttribute("hello", "world");
+        //session should have been started, and a cache is in use.  Assert that the SessionDAO is still using
+        //the cache instances provided by our custom CacheManager and not the Default MemoryConstrainedCacheManager
+
+        SessionDAO sessionDAO = ((DefaultSessionManager) ((DefaultSecurityManager) sm).getSessionManager()).getSessionDAO();
+        assertTrue(sessionDAO instanceof EnterpriseCacheSessionDAO);
+        CachingSessionDAO cachingSessionDAO = (CachingSessionDAO) sessionDAO;
+        Cache activeSessionsCache = cachingSessionDAO.getActiveSessionsCache();
+        assertTrue(activeSessionsCache instanceof MapCache);
+        MapCache mapCache = (MapCache) activeSessionsCache;
+
+        //this is the line that verifies Caches created by our specific CacheManager are not overwritten by the
+        //default cache manager's caches:
+        assertTrue(mapCache instanceof HashMapCacheManager.HashMapCache);
+    }
+
+
 }

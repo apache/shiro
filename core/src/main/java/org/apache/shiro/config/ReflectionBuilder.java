@@ -161,7 +161,6 @@ public class ReflectionBuilder {
                 applySingleProperty(objects, name, property, value);
             }
 
-
         } else {
             throw new IllegalArgumentException("All property keys must contain a '.' character. " +
                     "(e.g. myBean.property = value)  These should already be separated out by buildObjects().");
@@ -240,8 +239,16 @@ public class ReflectionBuilder {
         }
         try {
             PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
+            if (descriptor == null) {
+                String msg = "Property '" + propertyName + "' does not exist for object of " +
+                        "type " + object.getClass().getName() + ".";
+                throw new ConfigurationException(msg);
+            }
             Class propertyClazz = descriptor.getPropertyType();
             return clazz.isAssignableFrom(propertyClazz);
+        } catch (ConfigurationException ce) {
+            //let it propagate:
+            throw ce;
         } catch (Exception e) {
             String msg = "Unable to determine if property [" + propertyName + "] represents a " + clazz.getName();
             throw new ConfigurationException(msg, e);
@@ -359,8 +366,9 @@ public class ReflectionBuilder {
             }
             BeanUtils.setProperty(object, propertyName, value);
         } catch (Exception e) {
-            String msg = "Unable to set property [" + propertyName + "] with value [" + stringValue + "].  If " +
-                    "'" + stringValue + "' is a reference to another (previously defined) object, please prefix it with " +
+            String msg = "Unable to set property '" + propertyName + "' with value [" + stringValue + "] on object " +
+                    "of type " + (object != null ? object.getClass().getName() : null) + ".  If " +
+                    "'" + stringValue + "' is a reference to another (previously defined) object, prefix it with " +
                     "'" + OBJECT_REFERENCE_BEGIN_TOKEN + "' to indicate that the referenced " +
                     "object should be used as the actual value.  " +
                     "For example, " + OBJECT_REFERENCE_BEGIN_TOKEN + stringValue;
