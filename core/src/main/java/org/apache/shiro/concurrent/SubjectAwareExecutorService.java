@@ -27,8 +27,7 @@ import java.util.concurrent.*;
 
 /**
  * {@code ExecutorService} implementation that will automatically first associate any argument
- * {@link Runnable} or {@link Callable} instances with the currently available
- * {@link org.apache.shiro.subject.Subject Subject} and then
+ * {@link Runnable} or {@link Callable} instances with the {@link #getSubject currently available subject} and then
  * dispatch the Subject-enabled runnable or callable to an underlying delegate
  * {@link java.util.concurrent.ExecutorService ExecutorService} instance.  The principle is the same as the
  * parent {@link SubjectAwareExecutor} class, but enables the richer {@link ExecutorService} API.

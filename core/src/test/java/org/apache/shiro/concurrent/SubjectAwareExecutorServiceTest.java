@@ -18,19 +18,24 @@
  */
 package org.apache.shiro.concurrent;
 
+import org.apache.shiro.subject.support.SubjectRunnable;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
+
+import java.util.concurrent.*;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * Test cases for the {@link SubjectAwareExecutorService} implementation.
  */
 public class SubjectAwareExecutorServiceTest extends SecurityManagerTestSupport {
 
+    @SuppressWarnings({"unchecked"})
     @Test
     public void testSubmitRunnable() {
-        //commenting out for now - the expect call is failing and I don't know why yet - Les
-        /*ExecutorService mockExecutorService = createNiceMock(ExecutorService.class);
-        expect(mockExecutorService.submit(isA(SubjectRunnable.class))).andReturn(isA(Future.class));
+        ExecutorService mockExecutorService = createNiceMock(ExecutorService.class);
+        expect(mockExecutorService.submit(isA(SubjectRunnable.class))).andReturn(new DummyFuture());
         replay(mockExecutorService);
 
         final SubjectAwareExecutorService executor = new SubjectAwareExecutorService(mockExecutorService);
@@ -42,6 +47,29 @@ public class SubjectAwareExecutorServiceTest extends SecurityManagerTestSupport 
         };
 
         executor.submit(testRunnable);
-        verify(mockExecutorService);*/
+        verify(mockExecutorService);
+    }
+
+    private class DummyFuture<V> implements Future<V> {
+
+        public boolean cancel(boolean b) {
+            return false;
+        }
+
+        public boolean isCancelled() {
+            return false;
+        }
+
+        public boolean isDone() {
+            return true;
+        }
+
+        public V get() throws InterruptedException, ExecutionException {
+            return null;
+        }
+
+        public V get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
+            return null;
+        }
     }
 }
