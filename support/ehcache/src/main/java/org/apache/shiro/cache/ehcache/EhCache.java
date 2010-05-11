@@ -18,18 +18,14 @@
  */
 package org.apache.shiro.cache.ehcache;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import net.sf.ehcache.Element;
-
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheException;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.cache.Cache;
-import org.apache.shiro.cache.CacheException;
+import java.util.*;
 
 /**
  * Shiro {@link org.apache.shiro.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.
@@ -38,10 +34,11 @@ import org.apache.shiro.cache.CacheException;
  * @author Les Hazlewood
  * @since 0.2
  */
-@SuppressWarnings("unchecked")
-public class EhCache implements Cache {
+public class EhCache<K, V> implements Cache<K, V> {
 
-    /** Private internal log instance. */
+    /**
+     * Private internal log instance.
+     */
     private static final Logger log = LoggerFactory.getLogger(EhCache.class);
 
     /**
@@ -67,7 +64,7 @@ public class EhCache implements Cache {
      * @param key the key of the element to return.
      * @return The value placed into the cache with an earlier put, or null if not found or expired
      */
-    public Object get(Object key) throws CacheException {
+    public V get(K key) throws CacheException {
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Getting object from cache [" + cache.getName() + "] for key [" + key + "]");
@@ -82,11 +79,11 @@ public class EhCache implements Cache {
                     }
                     return null;
                 } else {
-                    return element.getObjectValue();
+                    //noinspection unchecked
+                    return (V) element.getObjectValue();
                 }
             }
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throw new CacheException(t);
         }
     }
@@ -97,15 +94,16 @@ public class EhCache implements Cache {
      * @param key   the key.
      * @param value the value.
      */
-    public void put(Object key, Object value) throws CacheException {
+    public V put(K key, V value) throws CacheException {
         if (log.isTraceEnabled()) {
             log.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
+            V previous = get(key);
             Element element = new Element(key, value);
             cache.put(element);
-        }
-        catch (Throwable t) {
+            return previous;
+        } catch (Throwable t) {
             throw new CacheException(t);
         }
     }
@@ -117,12 +115,14 @@ public class EhCache implements Cache {
      *
      * @param key the key of the element to remove
      */
-    public void remove(Object key) throws CacheException {
+    public V remove(K key) throws CacheException {
         if (log.isTraceEnabled()) {
             log.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
+            V previous = get(key);
             cache.remove(key);
+            return previous;
         } catch (Throwable t) {
             throw new CacheException(t);
         }
@@ -150,30 +150,35 @@ public class EhCache implements Cache {
         }
     }
 
-    public Set keys() {
+    public Set<K> keys() {
         try {
-            List keys = cache.getKeys();
-            if (keys != null && !keys.isEmpty()) {
-                return Collections.unmodifiableSet(new LinkedHashSet(keys));
+            @SuppressWarnings({"unchecked"})
+            List<K> keys = cache.getKeys();
+            if (!CollectionUtils.isEmpty(keys)) {
+                return Collections.unmodifiableSet(new LinkedHashSet<K>(keys));
             } else {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
         } catch (Throwable t) {
             throw new CacheException(t);
         }
     }
 
-    public Set values() {
+    public Collection<V> values() {
         try {
-            List keys = cache.getKeys();
-            if (keys != null && !keys.isEmpty()) {
-                Set values = new LinkedHashSet(keys.size());
-                for (Object key : keys) {
-                    values.add(cache.get(key));
+            @SuppressWarnings({"unchecked"})
+            List<K> keys = cache.getKeys();
+            if (!CollectionUtils.isEmpty(keys)) {
+                List<V> values = new ArrayList<V>(keys.size());
+                for (K key : keys) {
+                    V value = get(key);
+                    if (value != null) {
+                        values.add(value);
+                    }
                 }
-                return Collections.unmodifiableSet(values);
+                return Collections.unmodifiableList(values);
             } else {
-                return Collections.EMPTY_SET;
+                return Collections.emptyList();
             }
         } catch (Throwable t) {
             throw new CacheException(t);

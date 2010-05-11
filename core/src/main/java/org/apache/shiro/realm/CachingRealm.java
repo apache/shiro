@@ -26,9 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
- * <p>A very basic abstract extension point for the {@link Realm} interface that provides logging and caching support.
+ * A very basic abstract extension point for the {@link Realm} interface that provides caching support.
  * <p/>
- * <p>All actual Realm method implementations are left to subclasses.
+ * All actual Realm method implementations are left to subclasses.
  *
  * @author Les Hazlewood
  * @since 0.9
@@ -67,10 +67,10 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      * <p/>
      * <p>This property is <tt>null</tt> by default, indicating that caching is turned off.
      *
-     * @param authzInfoCacheManager the <tt>CacheManager</tt> to use for data caching, or <tt>null</tt> to disable caching.
+     * @param cacheManager the <tt>CacheManager</tt> to use for data caching, or <tt>null</tt> to disable caching.
      */
-    public void setCacheManager(CacheManager authzInfoCacheManager) {
-        this.cacheManager = authzInfoCacheManager;
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
         afterCacheManagerSet();
     }
 

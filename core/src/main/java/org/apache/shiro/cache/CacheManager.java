@@ -39,5 +39,5 @@ public interface CacheManager {
      * @return the Cache with the given name
      * @throws CacheException if there is an error acquiring the Cache instance.
      */
-    public Cache getCache(String name) throws CacheException;
+    public <K, V> Cache<K, V> getCache(String name) throws CacheException;
 }

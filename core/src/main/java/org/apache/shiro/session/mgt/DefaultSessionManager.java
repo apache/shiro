@@ -62,7 +62,6 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         this.sessionDAO = sessionDAO;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public SessionDAO getSessionDAO() {
         return this.sessionDAO;
     }

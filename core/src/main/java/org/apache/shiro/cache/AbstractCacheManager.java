@@ -56,7 +56,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
      * @throws IllegalArgumentException if the {@code name} argument is {@code null} or does not contain text.
      * @throws CacheException           if there is a problem lazily creating a {@code Cache} instance.
      */
-    public Cache getCache(String name) throws IllegalArgumentException, CacheException {
+    public <K, V> Cache<K, V> getCache(String name) throws IllegalArgumentException, CacheException {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Cache name cannot be null or empty.");
         }
@@ -72,6 +72,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
             }
         }
 
+        //noinspection unchecked
         return cache;
     }
 

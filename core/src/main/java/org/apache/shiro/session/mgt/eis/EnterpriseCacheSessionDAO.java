@@ -27,7 +27,6 @@ import org.apache.shiro.session.Session;
 import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 /**
  * SessionDAO implementation that relies on an enterprise caching product as the EIS system of record for all sessions.
  * It is expected that an injected {@link org.apache.shiro.cache.Cache Cache} or
@@ -55,8 +54,8 @@ public class EnterpriseCacheSessionDAO extends CachingSessionDAO {
     public EnterpriseCacheSessionDAO() {
         setCacheManager(new AbstractCacheManager() {
             @Override
-            protected Cache createCache(String name) throws CacheException {
-                return new MapCache(name, new ConcurrentHashMap());
+            protected Cache<Serializable, Session> createCache(String name) throws CacheException {
+                return new MapCache<Serializable, Session>(name, new ConcurrentHashMap<Serializable, Session>());
             }
         });
     }

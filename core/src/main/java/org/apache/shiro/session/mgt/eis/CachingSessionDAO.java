@@ -61,7 +61,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
     /**
      * The Cache instance responsible for caching Sessions.
      */
-    private Cache activeSessions;
+    private Cache<Serializable, Session> activeSessions;
 
     /**
      * The name of the session cache, defaults to {@link #ACTIVE_SESSION_CACHE_NAME}.
@@ -82,10 +82,6 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      */
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
-        if (cacheManager != null) {
-            //force cache reload:
-            this.activeSessions = null;
-        }
     }
 
     /**
@@ -127,7 +123,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @return the cache instance to use for storing active sessions or {@code null} if the {@code Cache} instance
      *         should be retrieved from the
      */
-    public Cache getActiveSessionsCache() {
+    public Cache<Serializable, Session> getActiveSessionsCache() {
         return this.activeSessions;
     }
 
@@ -139,7 +135,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @param cache the cache instance to use for storing active sessions or {@code null} if the cache is to be
      *              acquired from the {@link #setCacheManager configured} {@code CacheManager}.
      */
-    public void setActiveSessionsCache(Cache cache) {
+    public void setActiveSessionsCache(Cache<Serializable, Session> cache) {
         this.activeSessions = cache;
     }
 
@@ -152,11 +148,9 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @return the active sessions cache instance.
      */
-    protected Cache getActiveSessionsCacheLazy() {
-        Cache activeSessions = getActiveSessionsCache();
-        if (activeSessions == null) {
-            activeSessions = createActiveSessionsCache();
-            setActiveSessionsCache(activeSessions);
+    private Cache<Serializable, Session> getActiveSessionsCacheLazy() {
+        if (this.activeSessions == null) {
+            this.activeSessions = createActiveSessionsCache();
         }
         return activeSessions;
     }
@@ -171,8 +165,8 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @return a cache instance used to store active sessions, or {@code null} if the {@code CacheManager} has
      *         not been set.
      */
-    protected Cache createActiveSessionsCache() {
-        Cache cache = null;
+    protected Cache<Serializable, Session> createActiveSessionsCache() {
+        Cache<Serializable, Session> cache = null;
         CacheManager mgr = getCacheManager();
         if (mgr != null) {
             String name = getActiveSessionsCacheName();
@@ -204,7 +198,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
     protected Session getCachedSession(Serializable sessionId) {
         Session cached = null;
         if (sessionId != null) {
-            Cache cache = getActiveSessionsCacheLazy();
+            Cache<Serializable, Session> cache = getActiveSessionsCacheLazy();
             if (cache != null) {
                 cached = getCachedSession(sessionId, cache);
             }
@@ -220,8 +214,8 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @param cache     the cache to acquire the session from
      * @return the cached session, or {@code null} if the session wasn't in the cache.
      */
-    protected Session getCachedSession(Serializable sessionId, Cache cache) {
-        return (Session) cache.get(sessionId);
+    protected Session getCachedSession(Serializable sessionId, Cache<Serializable, Session> cache) {
+        return cache.get(sessionId);
     }
 
     /**
@@ -235,7 +229,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
         if (session == null || sessionId == null) {
             return;
         }
-        Cache cache = getActiveSessionsCacheLazy();
+        Cache<Serializable, Session> cache = getActiveSessionsCacheLazy();
         if (cache == null) {
             return;
         }
@@ -250,7 +244,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @param sessionId the id of the session, expected to be the cache key.
      * @param cache     the cache to store the session
      */
-    protected void cache(Session session, Serializable sessionId, Cache cache) {
+    protected void cache(Session session, Serializable sessionId, Cache<Serializable, Session> cache) {
         cache.put(sessionId, session);
     }
 
@@ -331,7 +325,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
         if (id == null) {
             return;
         }
-        Cache cache = getActiveSessionsCacheLazy();
+        Cache<Serializable, Session> cache = getActiveSessionsCacheLazy();
         if (cache != null) {
             cache.remove(id);
         }
@@ -346,9 +340,8 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @return the sessions found in the activeSessions cache.
      */
-    @SuppressWarnings({"unchecked"})
     public Collection<Session> getActiveSessions() {
-        Cache cache = getActiveSessionsCacheLazy();
+        Cache<Serializable, Session> cache = getActiveSessionsCacheLazy();
         if (cache != null) {
             return cache.values();
         } else {

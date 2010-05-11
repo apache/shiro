@@ -43,6 +43,6 @@ public class MemoryConstrainedCacheManager extends AbstractCacheManager {
      */
     @Override
     protected Cache createCache(String name) {
-        return new MapCache(name, new SoftHashMap());
+        return new MapCache<Object, Object>(name, new SoftHashMap<Object, Object>());
     }
 }

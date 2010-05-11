@@ -78,7 +78,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * The cache used by this realm to store AuthorizationInfo instances associated with individual Subject principals.
      */
     private boolean authorizationCachingEnabled;
-    private Cache authorizationCache;
+    private Cache<Object, AuthorizationInfo> authorizationCache;
     private String authorizationCacheName;
 
     private PermissionResolver permissionResolver;
@@ -91,6 +91,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
     public AuthorizingRealm() {
         this.authorizationCachingEnabled = true;
+        this.authorizationCacheName = getClass().getName() + "-" +
+                INSTANCE_COUNT.getAndIncrement() + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
         this.permissionResolver = new WildcardPermissionResolver();
     }
 
@@ -110,14 +112,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
-    public void setAuthorizationCache(Cache authorizationCache) {
+    public void setAuthorizationCache(Cache<Object, AuthorizationInfo> authorizationCache) {
         this.authorizationCache = authorizationCache;
-        if (this.authorizationCache != null) {
-            afterAuthorizationCacheSet();
-        }
     }
 
-    public Cache getAuthorizationCache() {
+    public Cache<Object, AuthorizationInfo> getAuthorizationCache() {
         return this.authorizationCache;
     }
 
@@ -198,9 +197,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * </ol>
      */
     public final void init() {
-        if (isAuthorizationCachingEnabled()) {
-            initAuthorizationCache();
-        }
+        //trigger obtaining the authorization cache if possible
+        getAvailableAuthorizationCache();
         onInit();
     }
 
@@ -208,62 +206,45 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     }
 
     protected void afterCacheManagerSet() {
-        this.authorizationCache = null;
-        if (isAuthorizationCachingEnabled()) {
-            initAuthorizationCache();
-        }
+        //trigger obtaining the authorization cache if possible
+        getAvailableAuthorizationCache();
     }
 
-    protected void afterAuthorizationCacheSet() {
-    }
+    private Cache<Object, AuthorizationInfo> getAuthorizationCacheLazy() {
 
-    protected final String generateAuthorizationCacheName() {
-        //Simple default in case they didn't provide one:
-        return getClass().getName() + "-" + INSTANCE_COUNT.getAndIncrement() + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
-    }
-
-    public void initAuthorizationCache() {
-        if (!isAuthorizationCachingEnabled()) {
-            log.debug("Authorization caching is disabled.  Returning immediately.");
-            return;
-        }
-
-        if (log.isTraceEnabled()) {
-            log.trace("Initializing authorization cache.");
-        }
-
-        Cache cache = getAuthorizationCache();
-
-        if (cache == null) {
+        if (this.authorizationCache == null) {
 
             if (log.isDebugEnabled()) {
-                log.debug("No cache implementation set.  Checking cacheManager...");
+                log.debug("No authorizationCache instance set.  Checking for a cacheManager...");
             }
 
             CacheManager cacheManager = getCacheManager();
 
             if (cacheManager != null) {
                 String cacheName = getAuthorizationCacheName();
-                if (cacheName == null) {
-                    //Simple default in case they didn't provide one:
-                    cacheName = generateAuthorizationCacheName();
-                    setAuthorizationCacheName(cacheName);
-                }
                 if (log.isDebugEnabled()) {
                     log.debug("CacheManager [" + cacheManager + "] has been configured.  Building " +
                             "authorization cache named [" + cacheName + "]");
                 }
-                cache = cacheManager.getCache(cacheName);
-                setAuthorizationCache(cache);
+                this.authorizationCache = cacheManager.getCache(cacheName);
             } else {
                 if (log.isInfoEnabled()) {
-                    log.info("No cache or cacheManager properties have been set.  Authorization caching is " +
-                            "disabled.");
+                    log.info("No cache or cacheManager properties have been set.  Authorization cache cannot " +
+                            "be obtained.");
                 }
             }
         }
+
+        return this.authorizationCache;
     }
 
+    private Cache<Object, AuthorizationInfo> getAvailableAuthorizationCache() {
+        Cache<Object, AuthorizationInfo> cache = getAuthorizationCache();
+        if (cache == null && isAuthorizationCachingEnabled()) {
+            cache = getAuthorizationCacheLazy();
+        }
+        return cache;
+    }
 
     /**
      * Returns an account's authorization-specific information for the specified {@code principals},
@@ -287,9 +268,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * loosely coupled and not depend on each other.
      * <h3>Caching</h3>
      * The {@code AuthorizationInfo} values returned from this method are cached for efficient reuse
-     * if caching is enabled.  Caching is enabled automatically when a {@code CacheManager} has been
-     * {@link #setCacheManager injected} and then the realm is {@link #init initialized}.  It can also be enabled by
-     * explicitly calling {@link #initAuthorizationCache() initAuthorizationCache()}.
+     * if caching is enabled.  Caching is enabled automatically when an {@link #setAuthorizationCache authorizationCache}
+     * instance has been explicitly configured, or if a {@link #setCacheManager cacheManager} has been configured, which
+     * will be used to lazily create the {@code authorizationCache} as needed.
      * <p/>
      * If caching is enabled, the authorization cache will be checked first and if found, will return the cached
      * {@code AuthorizationInfo} immediately.  If caching is disabled, or there is a cache miss, the authorization
@@ -322,13 +303,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
             log.trace("Retrieving AuthorizationInfo for principals [" + principals + "]");
         }
 
-        Cache cache = getAuthorizationCache();
+        Cache<Object, AuthorizationInfo> cache = getAvailableAuthorizationCache();
         if (cache != null) {
             if (log.isTraceEnabled()) {
                 log.trace("Attempting to retrieve the AuthorizationInfo from cache.");
             }
             Object key = getAuthorizationCacheKey(principals);
-            info = (AuthorizationInfo) cache.get(key);
+            info = cache.get(key);
             if (log.isTraceEnabled()) {
                 if (info == null) {
                     log.trace("No AuthorizationInfo found in cache for principals [" + principals + "]");
@@ -378,7 +359,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
             return;
         }
 
-        Cache cache = getAuthorizationCache();
+        Cache<Object, AuthorizationInfo> cache = getAvailableAuthorizationCache();
         //cache instance will be non-null if caching is enabled:
         if (cache != null) {
             Object key = getAuthorizationCacheKey(principals);
@@ -397,7 +378,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      */
     protected abstract AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals);
 
-    @SuppressWarnings({"unchecked"})
     private Collection<Permission> getPermissions(AuthorizationInfo info) {
         Set<Permission> permissions = new HashSet<Permission>();
 
@@ -418,7 +398,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         }
 
         if (permissions.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(permissions);
         }
@@ -462,7 +442,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return isPermitted(permission, info);
     }
 
-    @SuppressWarnings("deprecation")
     private boolean isPermitted(Permission permission, AuthorizationInfo info) {
         //TODO Remove this once AuthorizingAccount class is deleted
         if (info instanceof AuthorizingAccount) {

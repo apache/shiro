@@ -77,8 +77,6 @@ public class IniRealm extends TextConfigurationRealm {
 
     @Override
     protected void onInit() {
-        // We override init() instead of onInit() because we _don't_ want any caches to be created
-        // (see the superclass init() code).
         // This is an in-memory realm only - no need for an additional cache when we're already
         // as memory-efficient as we can be.
         String resourcePath = getResourcePath();

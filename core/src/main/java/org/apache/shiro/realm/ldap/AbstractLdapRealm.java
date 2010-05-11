@@ -163,11 +163,15 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     |               M E T H O D S                |
     ============================================*/
 
-    protected void afterAuthorizationCacheSet() {
-        if (ldapContextFactory == null) {
+    protected void onInit() {
+        ensureContextFactory();
+    }
+
+    private LdapContextFactory ensureContextFactory() {
+        if (this.ldapContextFactory == null) {
 
             if (log.isDebugEnabled()) {
-                log.debug("No LdapContextFactory is specified, so a default instance is being created.");
+                log.debug("No LdapContextFactory specified - creating a default instance.");
             }
 
             DefaultLdapContextFactory defaultFactory = new DefaultLdapContextFactory();
@@ -177,17 +181,18 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
             defaultFactory.setSystemUsername(this.systemUsername);
             defaultFactory.setSystemPassword(this.systemPassword);
 
-            ldapContextFactory = defaultFactory;
+            this.ldapContextFactory = defaultFactory;
         }
+        return this.ldapContextFactory;
     }
 
 
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         AuthenticationInfo info;
         try {
-            info = queryForAuthenticationInfo(token, this.ldapContextFactory);
+            info = queryForAuthenticationInfo(token, ensureContextFactory());
         } catch (javax.naming.AuthenticationException e) {
-            throw new AuthenticationException( "LDAP authentication failed.", e );
+            throw new AuthenticationException("LDAP authentication failed.", e);
         } catch (NamingException e) {
             String msg = "LDAP naming error while attempting to authenticate user.";
             throw new AuthenticationException(msg, e);
@@ -200,7 +205,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         AuthorizationInfo info;
         try {
-            info = queryForAuthorizationInfo(principals, this.ldapContextFactory);
+            info = queryForAuthorizationInfo(principals, ensureContextFactory());
         } catch (NamingException e) {
             String msg = "LDAP naming error while attempting to retrieve authorization for user [" + principals + "].";
             throw new AuthorizationException(msg, e);
