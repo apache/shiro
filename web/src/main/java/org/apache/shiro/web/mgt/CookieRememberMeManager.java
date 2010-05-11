@@ -159,7 +159,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     }
 
     private boolean isIdentityRemoved(WebSubjectContext subjectContext) {
-        ServletRequest request = subjectContext.getServletRequest();
+        ServletRequest request = subjectContext.resolveServletRequest();
         if (request != null) {
             Boolean removed = (Boolean) request.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY);
             return removed != null && removed;
