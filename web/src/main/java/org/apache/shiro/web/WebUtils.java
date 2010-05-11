@@ -250,8 +250,8 @@ public class WebUtils {
     public static boolean isHttp(SubjectContext context) {
         if (context instanceof WebSubjectContext) {
             WebSubjectContext wsc = (WebSubjectContext) context;
-            ServletRequest request = wsc.getServletRequest();
-            ServletResponse response = wsc.getServletResponse();
+            ServletRequest request = wsc.resolveServletRequest();
+            ServletResponse response = wsc.resolveServletResponse();
             return request != null && request instanceof HttpServletRequest &&
                     response != null && response instanceof HttpServletResponse;
         }
@@ -358,7 +358,7 @@ public class WebUtils {
             throw new IllegalArgumentException(msg);
         }
         WebSubjectContext wsc = (WebSubjectContext) context;
-        ServletRequest request = wsc.getServletRequest();
+        ServletRequest request = wsc.resolveServletRequest();
         if (request == null || !(request instanceof HttpServletRequest)) {
             String msg = "WebSubjectContext's ServletRequest is null or not an instance of HttpServletRequest.";
             throw new IllegalArgumentException(msg);
@@ -386,7 +386,7 @@ public class WebUtils {
             throw new IllegalArgumentException(msg);
         }
         WebSubjectContext wsc = (WebSubjectContext) context;
-        ServletResponse response = wsc.getServletResponse();
+        ServletResponse response = wsc.resolveServletResponse();
         if (response == null || !(response instanceof HttpServletResponse)) {
             String msg = "WebSubjectContext's ServletResponse is null or not an instance of HttpServletResponse.";
             throw new IllegalArgumentException(msg);
