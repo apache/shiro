@@ -60,7 +60,7 @@
         <site>
             <id>incubator.website</id>
             <name>Apache Incubator Site</name>
-            <url>scp://people.apache.org/www/incubator.apache.org/shiro/site</url>
+            <url>scp://people.apache.org/www/incubator.apache.org/shiro/site/latest</url>
         </site>
     </distributionManagement>
 
@@ -464,6 +464,16 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+          <id>release-profile</id>
+          <distributionManagement>
+              <site>
+                  <id>incubator.website</id>
+                  <name>Apache Incubator Site</name>
+                  <url>scp://people.apache.org/www/incubator.apache.org/shiro/site/${project.version}</url>
+              </site>
+          </distributionManagement>
         </profile>
     </profiles>
 </project>
