@@ -64,7 +64,8 @@
 
     <p>
         Click <a href="<c:url value="/s/shiro.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
-        application.
+        application. (Need to be running <span style="font-weight:bold">mvn jetty:run-exploded</span> to have webstart app 
+        resources available through the webapp context) 
     </p>
 
 

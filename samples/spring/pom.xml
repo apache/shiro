@@ -31,6 +31,12 @@
     <artifactId>samples-spring</artifactId>
     <name>Apache Shiro :: Samples :: Spring</name>
     <packaging>war</packaging>
+    <description>
+    	Spring-based web application sample demonstrating Shiro's capabilities. Uses samples-spring module
+    	as the web start application. To launch the webstart application successfully, you need to run 
+    	"mvn jetty:run-exploded", or otherwise make sure the webstart application is available through
+    	web application root context (see the dependency:unpack configure below)
+    </description>
 
     <build>
         <plugins>
