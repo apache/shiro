@@ -171,7 +171,7 @@ public abstract class AbstractSessionManager implements SessionManager {
     }
 
     public Date getLastAccessTime(Serializable sessionId) {
-        return getSession(sessionId).getStartTimestamp();
+        return getSession(sessionId).getLastAccessTime();
     }
 
     public long getTimeout(Serializable sessionId) throws InvalidSessionException {
