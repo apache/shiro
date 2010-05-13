@@ -47,9 +47,9 @@ public abstract class SecurityUtils {
      *
      * @return the currently accessible {@code Subject} accessible to the calling code.
      * @throws IllegalStateException if no {@link Subject Subject} instance or
-     *                               {@link SecurityManager SecurityManager} instance is available with which to obtain a {@code Subject}, which
-     *                               which is considered an invalid application configuration - a Subject should _always_ be available
-     *                               to the caller.
+     *                               {@link SecurityManager SecurityManager} instance is available with which to obtain
+     *                               a {@code Subject}, which which is considered an invalid application configuration
+     *                               - a Subject should <em>always</em> be available to the caller.
      */
     public static Subject getSubject() {
         Subject subject = ThreadContext.getSubject();
@@ -88,7 +88,7 @@ public abstract class SecurityUtils {
      * <p/>
      * And then anywhere in the application code, the following call will return the application's Subject:
      * <pre>
-     * Subject currentUser = SecurityUtils.getSubject()</pre>
+     * Subject currentUser = SecurityUtils.getSubject();</pre>
      *
      * @param securityManager the securityManager instance to set as a VM static singleton.
      */
@@ -98,6 +98,14 @@ public abstract class SecurityUtils {
 
     /**
      * Returns the SecurityManager accessible to the calling code.
+     * <p/>
+     * This implementation favors acquiring a thread-bound {@code SecurityManager} if it can find one.  If one is
+     * not available to the executing thread, it will attempt to use the static singleton if available (see the
+     * {@link #setSecurityManager setSecurityManager} method for more on the static singleton).
+     * <p/>
+     * If neither the thread-local or static singleton instances are available, this method throws an
+     * {@code UnavailableSecurityManagerException} to indicate an error - a SecurityManager should always be accessible
+     * to calling code in an application. If it is not, it is likely due to a Shiro configuration problem.
      *
      * @return the SecurityManager accessible to the calling code.
      * @throws UnavailableSecurityManagerException
