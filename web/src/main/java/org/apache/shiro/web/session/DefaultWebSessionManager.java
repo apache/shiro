@@ -51,7 +51,6 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     public DefaultWebSessionManager() {
         this.sessionIdCookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
-        this.sessionIdCookie.setPath(Cookie.ROOT_PATH);
         this.sessionIdCookieEnabled = true;
     }
 
