@@ -127,7 +127,6 @@
             <value>
                 /s/index = authc
                 /s/shiro.jnlp = authc, user
-                /remoting/** = authc, perms[remote:invoke]
             </value>
         </property>
     </bean>
