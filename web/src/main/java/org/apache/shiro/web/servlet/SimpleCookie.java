@@ -198,35 +198,24 @@ public class SimpleCookie implements Cookie {
 
     public void saveTo(HttpServletRequest request, HttpServletResponse response) {
 
-        /*String name = getName();
+        String name = getName();
         String value = getValue();
         String comment = getComment();
         String domain = getDomain();
-        int version = getVersion();
-        int maxAge = getMaxAge();
         String path = calculatePath(request);
+        int maxAge = getMaxAge();
+        int version = getVersion();
+        boolean secure = isSecure();
+        boolean httpOnly = isHttpOnly();
 
-        javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(name, value);
-        cookie.setMaxAge(maxAge);
-        cookie.setPath(path);
+        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+    }
 
-        if (comment != null) {
-            cookie.setComment(comment);
-        }
-        if (domain != null) {
-            cookie.setDomain(domain);
-        }
-        if (version > DEFAULT_VERSION) {
-            cookie.setVersion(version);
-        }
+    private void addCookieHeader(HttpServletResponse response, String name, String value, String comment,
+                                 String domain, String path, int maxAge, int version,
+                                 boolean secure, boolean httpOnly) {
 
-        if (isSecure()) {
-            cookie.setSecure(true);
-        }
-
-        response.addCookie(cookie);*/
-
-        String headerValue = buildHeaderValue(request);
+        String headerValue = buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly);
         response.addHeader(COOKIE_HEADER_NAME, headerValue);
 
         if (log.isDebugEnabled()) {
@@ -234,55 +223,61 @@ public class SimpleCookie implements Cookie {
         }
     }
 
-    /**
+    /*
      * This implementation followed the grammar defined here for convenience:
      * <a href="http://github.com/abarth/http-state/blob/master/notes/2009-11-07-Yui-Naruse.txt">Cookie grammar</a>.
      *
-     * @param request the incoming request
      * @return the 'Set-Cookie' header value for this cookie instance.
      */
-    private String buildHeaderValue(HttpServletRequest request) {
-        String name = getName();
+
+    protected String buildHeaderValue(String name, String value, String comment,
+                                      String domain, String path, int maxAge, int version,
+                                      boolean secure, boolean httpOnly) {
+
         if (!StringUtils.hasText(name)) {
             throw new IllegalStateException("Cookie name cannot be null/empty.");
         }
 
         StringBuffer sb = new StringBuffer(name).append(NAME_VALUE_DELIMITER);
 
-        String value = getValue();
         if (StringUtils.hasText(value)) {
             sb.append(value);
         }
 
-        appendPath(sb, request);
-        appendDomain(sb);
-        appendExpires(sb);
-        appendVersion(sb);
-        appendComment(sb);
-        appendSecure(sb);
-        appendHttpOnly(sb);
+        appendComment(sb, comment);
+        appendDomain(sb, domain);
+        appendPath(sb, path);
+        appendExpires(sb, maxAge);
+        appendVersion(sb, version);
+        appendSecure(sb, secure);
+        appendHttpOnly(sb, httpOnly);
 
         return sb.toString();
+
     }
 
-    private void appendPath(StringBuffer sb, HttpServletRequest request) {
-        String path = calculatePath(request);
-        if (StringUtils.hasText(path)) {
+    private void appendComment(StringBuffer sb, String comment) {
+        if (StringUtils.hasText(comment)) {
             sb.append(ATTRIBUTE_DELIMITER);
-            sb.append(PATH_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(path);
+            sb.append(COMMENT_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(comment);
         }
     }
 
-    private void appendDomain(StringBuffer sb) {
-        String domain = getDomain();
+    private void appendDomain(StringBuffer sb, String domain) {
         if (StringUtils.hasText(domain)) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(DOMAIN_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(domain);
         }
     }
 
-    private void appendExpires(StringBuffer sb) {
-        int maxAge = getMaxAge();
+    private void appendPath(StringBuffer sb, String path) {
+        if (StringUtils.hasText(path)) {
+            sb.append(ATTRIBUTE_DELIMITER);
+            sb.append(PATH_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(path);
+        }
+    }
+
+    private void appendExpires(StringBuffer sb, int maxAge) {
         if (maxAge > DEFAULT_MAX_AGE) {
             sb.append(ATTRIBUTE_DELIMITER);
             Date expires;
@@ -300,31 +295,22 @@ public class SimpleCookie implements Cookie {
         }
     }
 
-    private void appendVersion(StringBuffer sb) {
-        int version = getVersion();
+    private void appendVersion(StringBuffer sb, int version) {
         if (version > DEFAULT_VERSION) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(VERSION_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(version);
         }
     }
 
-    private void appendComment(StringBuffer sb) {
-        String comment = getComment();
-        if (StringUtils.hasText(comment)) {
-            sb.append(ATTRIBUTE_DELIMITER);
-            sb.append(COMMENT_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(comment);
-        }
-    }
-
-    private void appendSecure(StringBuffer sb) {
-        if (isSecure()) {
+    private void appendSecure(StringBuffer sb, boolean secure) {
+        if (secure) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(SECURE_ATTRIBUTE_NAME); //No value for this attribute
         }
     }
 
-    private void appendHttpOnly(StringBuffer sb) {
-        if (isHttpOnly()) {
+    private void appendHttpOnly(StringBuffer sb, boolean httpOnly) {
+        if (httpOnly) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(HTTP_ONLY_ATTRIBUTE_NAME); //No value for this attribute
         }
@@ -341,6 +327,36 @@ public class SimpleCookie implements Cookie {
         DateFormat fmt = new SimpleDateFormat(COOKIE_DATE_FORMAT_STRING);
         fmt.setTimeZone(tz);
         return fmt.format(date);
+    }
+
+    public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
+        String name = getName();
+        String value = "deleteMe";
+        String comment = null; //don't need to add extra size to the response - comments are irrelevant for deletions
+        String domain = getDomain();
+        String path = calculatePath(request);
+        int maxAge = 0; //always zero for deletion
+        int version = getVersion();
+        boolean secure = isSecure();
+        boolean httpOnly = false; //no need to add the extra text, plus the value 'deleteMe' is not sensitive at all
+
+        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+
+        log.trace("Removed '{}' cookie by setting maxAge=0", name);
+    }
+
+    public String readValue(HttpServletRequest request, HttpServletResponse ignored) {
+        String name = getName();
+        String value = null;
+        javax.servlet.http.Cookie cookie = getCookie(request, name);
+        if (cookie != null) {
+            value = cookie.getValue();
+            log.debug("Found string value [{}] from Cookie [{}]", value, name);
+        } else {
+            log.trace("No value found in request Cookies under cookie name [{}]", name);
+        }
+
+        return value;
     }
 
     /**
@@ -362,43 +378,5 @@ public class SimpleCookie implements Cookie {
             }
         }
         return null;
-    }
-
-    public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
-        javax.servlet.http.Cookie cookie = getCookie(request, getName());
-
-        if (cookie != null) {
-            cookie.setMaxAge(0);
-            cookie.setValue("deleteMe");
-
-            // JSEC-94: Must set the path on the outgoing cookie (some browsers don't retain it from the
-            // retrieved cookie?)
-            // Testing shows none of these browsers will remove cookie if setPath() is not invoked:
-            // FF3, Chrome, IE7, Safari windows
-            String path = calculatePath(request);
-            cookie.setPath(path);
-
-            String domain = getDomain();
-            if (StringUtils.hasText(domain)) {
-                cookie.setDomain(domain);
-            }
-
-            response.addCookie(cookie);
-            log.trace("Removed cookie[" + getName() + "] with path [" + path + "] from HttpServletResponse.");
-        }
-    }
-
-    public String readValue(HttpServletRequest request, HttpServletResponse ignored) {
-        String name = getName();
-        String value = null;
-        javax.servlet.http.Cookie cookie = getCookie(request, name);
-        if (cookie != null) {
-            value = cookie.getValue();
-            log.debug("Found string value [{}] from Cookie [{}]", value, name);
-        } else {
-            log.trace("No value found in request Cookies under cookie name [{}]", name);
-        }
-
-        return value;
     }
 }

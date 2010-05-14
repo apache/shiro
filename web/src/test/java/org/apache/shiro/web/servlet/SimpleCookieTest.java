@@ -52,14 +52,26 @@ public class SimpleCookieTest extends TestCase {
     //Verifies fix for JSEC-94
     public void testRemoveValue() throws Exception {
 
-        javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("test", "blah");
-        cookie.setMaxAge(2351234); //doesn't matter what the time is
-        javax.servlet.http.Cookie[] cookies = new javax.servlet.http.Cookie[]{cookie};
+        //verify that the cookie header starts with what we want
+        //we can't verify the exact date format string that is appended, so we resort to just
+        //simple 'startsWith' matching, which is good enough:
+        String name = "test";
+        String value = "deleteMe";
+        String path = "/somepath";
 
-        expect(mockRequest.getCookies()).andReturn(cookies);
-        //no path set on the cookie, so we expect to retrieve it from the context path
-        expect(mockRequest.getContextPath()).andReturn("/somepath").times(1);
-        mockResponse.addCookie(cookie);
+        String headerValue = this.cookie.buildHeaderValue(name, value, null, null, path,
+                0, SimpleCookie.DEFAULT_VERSION, false, false);
+
+        String expectedStart = new StringBuffer()
+                .append(name).append(SimpleCookie.NAME_VALUE_DELIMITER).append(value)
+                .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+                .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(path)
+                .toString();
+
+        assertTrue(headerValue.startsWith(expectedStart));
+
+        expect(mockRequest.getContextPath()).andReturn(path).times(1);
+        mockResponse.addHeader(eq(SimpleCookie.COOKIE_HEADER_NAME), isA(String.class)); //can't calculate the date format in the test
         replay(mockRequest);
         replay(mockResponse);
 
@@ -67,9 +79,6 @@ public class SimpleCookieTest extends TestCase {
 
         verify(mockRequest);
         verify(mockResponse);
-
-        assertTrue(cookie.getMaxAge() == 0);
-        assertTrue(cookie.getPath().equals("/somepath"));
     }
 
     private void testRootContextPath(String contextPath) {
@@ -128,30 +137,6 @@ public class SimpleCookieTest extends TestCase {
             }
         });
         return null;
-    }
-
-    @Test
-    //Verifies fix for JSEC-64
-    public void testRemoveValueWithNullContext() throws Exception {
-
-        javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("test", "blah");
-        cookie.setMaxAge(2351234); //doesn't matter what the time is
-        javax.servlet.http.Cookie[] cookies = new javax.servlet.http.Cookie[]{cookie};
-
-        expect(mockRequest.getCookies()).andReturn(cookies);
-        //no path set on the cookie, so we expect to retrieve it from the context path
-        expect(mockRequest.getContextPath()).andReturn(null).times(1);
-        mockResponse.addCookie(cookie);
-        replay(mockRequest);
-        replay(mockResponse);
-
-        this.cookie.removeFrom(mockRequest, mockResponse);
-
-        verify(mockRequest);
-        verify(mockResponse);
-
-        assertTrue(cookie.getMaxAge() == 0);
-        assertTrue(cookie.getPath().equals("/"));
     }
 
 }

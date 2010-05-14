@@ -24,6 +24,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
@@ -55,17 +56,36 @@ public class CookieRememberMeManagerTest {
         expect(mockSubject.getServletResponse()).andReturn(mockResponse).anyTimes();
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
+        org.apache.shiro.web.servlet.Cookie cookie = createMock(org.apache.shiro.web.servlet.Cookie.class);
+        mgr.setCookie(cookie);
+
+        //first remove any previous cookie
+        cookie.removeFrom(isA(HttpServletRequest.class), isA(HttpServletResponse.class));
+
+        //then ensure a new cookie is created by reading the template's attributes:
+        expect(cookie.getName()).andReturn("rememberMe");
+        expect(cookie.getValue()).andReturn(null);
+        expect(cookie.getComment()).andReturn(null);
+        expect(cookie.getDomain()).andReturn(null);
+        expect(cookie.getPath()).andReturn(null);
+        expect(cookie.getMaxAge()).andReturn(SimpleCookie.DEFAULT_MAX_AGE);
+        expect(cookie.getVersion()).andReturn(SimpleCookie.DEFAULT_VERSION);
+        expect(cookie.isSecure()).andReturn(false);
+        expect(cookie.isHttpOnly()).andReturn(true);
+
         UsernamePasswordToken token = new UsernamePasswordToken("user", "secret");
         token.setRememberMe(true);
         AuthenticationInfo account = new SimpleAuthenticationInfo("user", "secret", "test");
 
-        expect(mockRequest.getCookies()).andReturn(null);
-
         replay(mockSubject);
         replay(mockRequest);
+        replay(cookie);
+
         mgr.onSuccessfulLogin(mockSubject, token, account);
+
         verify(mockRequest);
         verify(mockSubject);
+        verify(cookie);
     }
 
     // SHIRO-69
@@ -148,29 +168,29 @@ public class CookieRememberMeManagerTest {
 
     @Test
     public void onLogout() {
+        CookieRememberMeManager mgr = new CookieRememberMeManager();
+        org.apache.shiro.web.servlet.Cookie cookie = createMock(org.apache.shiro.web.servlet.Cookie.class);
+        mgr.setCookie(cookie);
+
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
         WebSubject mockSubject = createNiceMock(WebSubject.class);
         expect(mockSubject.getServletRequest()).andReturn(mockRequest).anyTimes();
         expect(mockSubject.getServletResponse()).andReturn(mockResponse).anyTimes();
-
-        Cookie cookie = new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, "");
-        cookie.setMaxAge(0);
-        Cookie[] cookies = new Cookie[]{cookie};
-
-        expect(mockRequest.getCookies()).andReturn(cookies);
         expect(mockRequest.getContextPath()).andReturn(null).anyTimes();
-        mockResponse.addCookie(eq(cookie));
+
+        cookie.removeFrom(isA(HttpServletRequest.class), isA(HttpServletResponse.class));
 
         replay(mockRequest);
         replay(mockResponse);
         replay(mockSubject);
+        replay(cookie);
 
-        CookieRememberMeManager mgr = new CookieRememberMeManager();
         mgr.onLogout(mockSubject);
 
         verify(mockSubject);
         verify(mockRequest);
         verify(mockResponse);
+        verify(cookie);
     }
 }
