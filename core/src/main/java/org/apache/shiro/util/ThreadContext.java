@@ -127,6 +127,14 @@ public abstract class ThreadContext {
         return resources != null ? new HashMap<Object,Object>(resources.get()) : null;
     }
 
+    /**
+     * Allows a caller to explicitly set the entire resource map.  This operation overwrites everything that existed
+     * previously in the ThreadContext - if you need to retain what was on the thread prior to calling this method,
+     * call the {@link #getResources()} method, which will give you the existing state.
+     *
+     * @param resources the resources to replace the existing {@link #getResources() resources}.
+     * @since 1.0
+     */
     public static void setResources(Map<Object,Object> resources) {
         if (CollectionUtils.isEmpty(resources) ) {
             return;
