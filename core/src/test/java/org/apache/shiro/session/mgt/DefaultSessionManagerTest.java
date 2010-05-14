@@ -43,14 +43,14 @@ public class DefaultSessionManagerTest {
 
     @Before
     public void setup() {
-        ThreadContext.clear();
+        ThreadContext.remove();
         sm = new DefaultSessionManager();
     }
 
     @After
     public void tearDown() {
         sm.destroy();
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     public void sleep(long millis) {

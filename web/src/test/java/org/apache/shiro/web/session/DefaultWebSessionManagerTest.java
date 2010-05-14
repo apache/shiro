@@ -45,7 +45,7 @@ public class DefaultWebSessionManagerTest {
 
     @After
     public void clearThread() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     @Test

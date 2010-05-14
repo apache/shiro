@@ -21,12 +21,13 @@ package org.apache.shiro.session.mgt;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Unit test for the {@link DelegatingSession} class.
@@ -38,7 +39,7 @@ public class DelegatingSessionTest {
 
     @Before
     public void setup() {
-        ThreadContext.clear();
+        ThreadContext.remove();
         sm = new DefaultSessionManager();
         Serializable sessionId = sm.start((String) null);
         this.session = new DelegatingSession(sm, sessionId);
@@ -47,7 +48,7 @@ public class DelegatingSessionTest {
     @After
     public void tearDown() {
         sm.destroy();
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     public void sleep(long millis) {

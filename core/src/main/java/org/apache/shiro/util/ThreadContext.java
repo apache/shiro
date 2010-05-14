@@ -41,7 +41,7 @@ import java.util.Map;
  * execution, respectively (i.e. individually explicitly or all via the <tt>clear</tt> method).</p>
  *
  * @author Les Hazlewood
- * @see #clear()
+ * @see #remove()
  * @since 0.1
  */
 @SuppressWarnings(value = {"unchecked", "unsafe"})
@@ -66,27 +66,7 @@ public abstract class ThreadContext {
     @Deprecated
     public static final String HOST_KEY = ThreadContext.class.getName() + "_INET_ADDRESS_KEY";
 
-    protected static ThreadLocal<Map<Object, Object>> resources =
-            new InheritableThreadLocal<Map<Object, Object>>() {
-                protected Map<Object, Object> initialValue() {
-                    return new HashMap<Object, Object>();
-                }
-
-                /**
-                 * This implementation was added to address a
-                 * <a href="http://jsecurity.markmail.org/search/?q=#query:+page:1+mid:xqi2yxurwmrpqrvj+state:results">
-                 * user-reported issue</a>.
-                 * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
-                 * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
-                 */
-                protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
-                    if (parentValue != null) {
-                        return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
-                    } else {
-                        return null;
-                    }
-                }
-            };
+    protected static ThreadLocal<Map<Object, Object>> resources;
 
     /**
      * Default no-argument constructor.
@@ -95,13 +75,81 @@ public abstract class ThreadContext {
     }
 
     /**
+     * Returns the {@link ThreadLocal} resource {@code Map}.  If it does not yet exist, one is created,
+     * bound to the thread, and then returned.
+     *
+     * @return the ThreadLocal resource {@code Map}, possibly lazily-created.
+     * @since 1.0
+     */
+    protected static Map<Object, Object> getResourcesLazy() {
+        if (resources == null) {
+            resources = createThreadLocal();
+        }
+        return resources.get();
+    }
+
+    /**
+     * Creates a new {@link ThreadLocal} instance containing a {@link Map} to hold arbitrary key-value pairs.
+     *
+     * @return a new {@link ThreadLocal} instance containing a {@link Map} to hold arbitrary key-value pairs.
+     * @since 1.0
+     */
+    private static ThreadLocal<Map<Object, Object>> createThreadLocal() {
+        return new InheritableThreadLocal<Map<Object, Object>>() {
+            protected Map<Object, Object> initialValue() {
+                return new HashMap<Object, Object>();
+            }
+
+            /**
+             * This implementation was added to address a
+             * <a href="http://jsecurity.markmail.org/search/?q=#query:+page:1+mid:xqi2yxurwmrpqrvj+state:results">
+             * user-reported issue</a>.
+             * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
+             * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
+             */
+            protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
+                if (parentValue != null) {
+                    return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
+                } else {
+                    return null;
+                }
+            }
+        };
+    }
+
+    /**
      * Returns the ThreadLocal Map. This Map is used internally to bind objects
      * to the current thread by storing each object under a unique key.
      *
      * @return the map of bound resources
      */
-    protected static Map<Object, Object> getResources() {
-        return resources.get();
+    public static Map<Object, Object> getResources() {
+        return resources != null ? new HashMap<Object,Object>(resources.get()) : null;
+    }
+
+    public static void setResources(Map<Object,Object> resources) {
+        if (CollectionUtils.isEmpty(resources) ) {
+            return;
+        }
+        Map<Object,Object> existing = getResourcesLazy();
+        existing.clear();
+        existing.putAll(resources);
+    }
+
+    /**
+     * Returns the value bound in the {@code ThreadContext} under the specified {@code key}, or {@code null} if there
+     * is no value for that {@code key}.
+     *
+     * @param key the map key to use to lookup the value
+     * @return the value bound in the {@code ThreadContext} under the specified {@code key}, or {@code null} if there
+     *         is no value for that {@code key}.
+     * @since 1.0
+     */
+    private static Object getValue(Object key) {
+        if (resources == null) {
+            return null;
+        }
+        return resources.get().get(key);
     }
 
     /**
@@ -117,7 +165,8 @@ public abstract class ThreadContext {
             String msg = "get() - in thread [" + Thread.currentThread().getName() + "]";
             log.trace(msg);
         }
-        Object value = getResources().get(key);
+
+        Object value = getValue(key);
         if ((value != null) && log.isTraceEnabled()) {
             String msg = "Retrieved value of type [" + value.getClass().getName() + "] for key [" +
                     key + "] " + "bound to thread [" + Thread.currentThread().getName() + "]";
@@ -151,7 +200,7 @@ public abstract class ThreadContext {
             return;
         }
 
-        getResources().put(key, value);
+        getResourcesLazy().put(key, value);
 
         if (log.isTraceEnabled()) {
             String msg = "Bound value of type [" + value.getClass().getName() + "] for key [" +
@@ -169,7 +218,10 @@ public abstract class ThreadContext {
      *         under the specified <tt>key</tt> name.
      */
     public static Object remove(Object key) {
-        Object value = getResources().remove(key);
+        if (resources == null) {
+            return null;
+        }
+        Object value = resources.get().remove(key);
 
         if ((value != null) && log.isTraceEnabled()) {
             String msg = "Removed value of type [" + value.getClass().getName() + "] for key [" +
@@ -188,21 +240,40 @@ public abstract class ThreadContext {
      *         otherwise.
      */
     public static boolean containsKey(Object key) {
-        return getResources().containsKey(key);
+        return resources != null && resources.get().containsKey(key);
     }
 
     /**
-     * Removes <em>all</em> values bound to this ThreadContext, which includes any Subject, Session, or InetAddress
-     * that may be bound by these respective objects' conveninece methods, as well as all values bound by your
+     * Clears <em>all</em> values bound to this ThreadContext, which includes any Subject, Session, or InetAddress
+     * that may be bound by these respective objects' convenience methods, as well as all values bound by your
      * application code.
      * <p/>
      * <p>This operation is meant as a clean-up operation that may be called at the end of
      * thread execution to prevent data corruption in a pooled thread environment.
      */
     public static void clear() {
-        getResources().clear();
+        if (resources != null) {
+            resources.get().clear();
+        }
         if (log.isTraceEnabled()) {
             log.trace("Removed all ThreadContext values from thread [" + Thread.currentThread().getName() + "]");
+        }
+    }
+
+    /**
+     * First {@link #clear clears} the {@code ThreadContext} values and then
+     * {@link ThreadLocal#remove removes} the underlying {@link ThreadLocal ThreadLocal} from the thread.
+     * <p/>
+     * This method is meant to be the final 'clean up' operation that is called at the end of thread execution to
+     * prevent thread corruption in pooled thread environments.
+     *
+     * @since 1.0
+     */
+    public static void remove() {
+        if (resources != null) {
+            clear();
+            resources.remove();
+            resources = null;
         }
     }
 

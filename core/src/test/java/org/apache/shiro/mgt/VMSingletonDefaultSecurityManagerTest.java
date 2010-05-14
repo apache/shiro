@@ -18,17 +18,17 @@
  */
 package org.apache.shiro.mgt;
 
-import org.junit.After;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.text.PropertiesRealm;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -39,12 +39,12 @@ public class VMSingletonDefaultSecurityManagerTest {
 
     @Before
     public void setUp() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     @After
     public void tearDown() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     @Test

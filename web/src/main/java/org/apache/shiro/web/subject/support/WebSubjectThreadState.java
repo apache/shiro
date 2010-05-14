@@ -30,9 +30,6 @@ import javax.servlet.ServletResponse;
  */
 public class WebSubjectThreadState extends SubjectThreadState {
 
-    private ServletRequest originalRequest;
-    private ServletResponse originalResponse;
-
     private final ServletRequest request;
     private final ServletResponse response;
 
@@ -55,33 +52,11 @@ public class WebSubjectThreadState extends SubjectThreadState {
     @Override
     public void bind() {
         super.bind();
-        this.originalRequest = WebUtils.getServletRequest();
-        this.originalResponse = WebUtils.getServletResponse();
-
-        if (request == null) {
-            WebUtils.unbindServletRequest();
-        } else {
+        if (request != null) {
             WebUtils.bind(request);
         }
-        if (response == null) {
-            WebUtils.unbindServletResponse();
-        } else {
+        if (response != null) {
             WebUtils.bind(response);
         }
-    }
-
-    @Override
-    public void restore() {
-        if (originalRequest == null) {
-            WebUtils.unbindServletRequest();
-        } else {
-            WebUtils.bind(originalRequest);
-        }
-        if (originalResponse == null) {
-            WebUtils.unbindServletResponse();
-        } else {
-            WebUtils.bind(originalResponse);
-        }
-        super.restore();
     }
 }

@@ -33,7 +33,7 @@ public abstract class AbstractSecurityManagerTest {
 
     @After
     public void tearDown() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     protected Subject newSubject(SecurityManager securityManager) {
