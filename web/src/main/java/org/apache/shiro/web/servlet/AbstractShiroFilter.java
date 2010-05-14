@@ -231,7 +231,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      */
     @SuppressWarnings({"UnusedDeclaration"})
     protected void unbind(ThreadState threadState) {
-        threadState.clear();
+        if ( threadState != null ) {
+            threadState.clear();
+        }
+        //just for good measure (SHIRO-159):
+        ThreadContext.clear();
     }
 
     /**
