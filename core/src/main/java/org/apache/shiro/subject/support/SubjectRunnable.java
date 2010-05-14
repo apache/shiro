@@ -47,13 +47,13 @@ public class SubjectRunnable implements Runnable {
     public void run() {
         try {
             threadState.bind();
-            doRun();
+            doRun(this.runnable);
         } finally {
             threadState.restore();
         }
     }
 
-    protected void doRun() {
-        this.runnable.run();
+    protected void doRun(Runnable runnable) {
+        runnable.run();
     }
 }
