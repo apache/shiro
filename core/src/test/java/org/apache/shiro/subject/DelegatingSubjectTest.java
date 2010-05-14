@@ -19,10 +19,15 @@
 package org.apache.shiro.subject;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.config.Ini;
+import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
@@ -133,5 +138,43 @@ public class DelegatingSubjectTest {
 
         assertNull(ThreadContext.getSubject());
         assertNull(ThreadContext.getSecurityManager());
+    }
+
+    @Test
+    public void testRunAs() {
+
+        Ini ini = new Ini();
+        Ini.Section users = ini.addSection("users");
+        users.put("user1", "user1,role1");
+        users.put("user2", "user2,role2");
+        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
+        SecurityManager sm = factory.getInstance();
+
+        Subject subject = new Subject.Builder(sm).buildSubject();
+        subject.login(new UsernamePasswordToken("user1", "user1"));
+
+        assertTrue(subject.getPrincipal().equals("user1"));
+        assertTrue(subject.hasRole("role1"));
+        assertFalse(subject.isRunAs());
+        assertNull(subject.getPreviousPrincipals());
+
+        subject.runAs(new SimplePrincipalCollection("user2", IniSecurityManagerFactory.INI_REALM_NAME));
+
+        assertFalse(subject.getPrincipal().equals("user1"));
+        assertFalse(subject.hasRole("role1"));
+        assertTrue(subject.getPrincipal().equals("user2"));
+        assertTrue(subject.hasRole("role2"));
+        assertTrue(subject.isRunAs());
+        assertFalse(CollectionUtils.isEmpty(subject.getPreviousPrincipals()));
+        assertTrue(subject.getPreviousPrincipals().getPrimaryPrincipal().equals("user1"));
+
+        subject.releaseRunAs();
+        assertTrue(subject.getPrincipal().equals("user1"));
+        assertTrue(subject.hasRole("role1"));
+        assertFalse(subject.isRunAs());
+        assertNull(subject.getPreviousPrincipals());
+
+        subject.logout();
+        LifecycleUtils.destroy(sm);
     }
 }

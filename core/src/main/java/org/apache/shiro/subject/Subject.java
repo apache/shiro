@@ -496,15 +496,66 @@ public interface Subject {
      */
     Runnable associateWith(Runnable runnable);
 
-    /*void assumeIdentity(PrincipalCollection identity);
+    /**
+     * Allows this subject to 'run as' or 'assume' another identity indefinitely.  This can only be
+     * called when the {@code Subject} instance already has an identity (i.e. they are remembered from a previous
+     * log-in or they have authenticated during their current session).
+     * <p/>
+     * Some notes about {@code runAs}:
+     * <ul>
+     * <li>You can tell if a {@code Subject} is 'running as' another identity by calling the
+     * {@link #isRunAs() isRunAs()} method.</li>
+     * <li>If running as another identity, you can determine what the previous 'pre run as' identity
+     * was by calling the {@link #getPreviousPrincipals() getPreviousPrincipals()} method.</li>
+     * <li>When you want a {@code Subject} to stop running as another identity, you can return to its previous
+     * 'pre run as' identity by calling the {@link #releaseRunAs() releaseRunAs()} method.</li>
+     * </ul>
+     *
+     * @param principals the identity to 'run as', aka the identity to <em>assume</em> indefinitely.
+     * @throws NullPointerException  if the specified principals collection is {@code null} or empty.
+     * @throws IllegalStateException if this {@code Subject} does not yet have an identity of its own.
+     * @since 1.0
+     */
+    void runAs(PrincipalCollection principals) throws NullPointerException, IllegalStateException;
 
-    <V> V runAs(PrincipalCollection identity, Callable<V> work);
+    /**
+     * Returns {@code true} if this {@code Subject} is 'running as' another identity other than its original one or
+     * {@code false} otherwise (normal {@code Subject} state).  See the {@link #runAs runAs} method for more
+     * information.
+     *
+     * @return {@code true} if this {@code Subject} is 'running as' another identity other than its original one or
+     *         {@code false} otherwise (normal {@code Subject} state).
+     * @see #runAs
+     * @since 1.0
+     */
+    boolean isRunAs();
 
-    PrincipalCollection getOriginalIdentity();
+    /**
+     * Returns the previous 'pre run as' identity of this {@code Subject} before assuming the current
+     * {@link #runAs runAs} identity, or {@code null} if this {@code Subject} is not operating under an assumed
+     * identity (normal state). See the {@link #runAs runAs} method for more information.
+     *
+     * @return the previous 'pre run as' identity of this {@code Subject} before assuming the current
+     *         {@link #runAs runAs} identity, or {@code null} if this {@code Subject} is not operating under an assumed
+     *         identity (normal state).
+     * @see #runAs
+     * @since 1.0
+     */
+    PrincipalCollection getPreviousPrincipals();
 
-    PrincipalCollection releaseAssumedIdentity();
-
-    */
+    /**
+     * Releases the current 'run as' (assumed) identity and reverts back to the previous 'pre run as'
+     * identity that existed before {@code #runAs runAs} was called.
+     * <p/>
+     * This method returne 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not
+     * operating under an assumed identity.
+     *
+     * @return the 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not operating
+     *         under an assumed identity.
+     * @see #runAs
+     * @since 1.0
+     */
+    PrincipalCollection releaseRunAs();
 
     /**
      * Builder design pattern implementation for creating {@link Subject} instances in a simplified way without
@@ -732,6 +783,7 @@ public interface Subject {
          * @throws IllegalArgumentException if the {@code attributeKey} is {@code null}.
          * @see SubjectFactory#createSubject(SubjectContext)
          */
+        @SuppressWarnings({"UnusedDeclaration"})
         public Builder contextAttribute(String attributeKey, Object attributeValue) {
             if (attributeKey == null) {
                 String msg = "Subject context map key cannot be null.";
