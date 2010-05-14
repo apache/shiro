@@ -45,7 +45,10 @@ public interface AuthenticationListener {
     void onFailure(AuthenticationToken token, AuthenticationException ae);
 
     /**
-     * Callback triggered when a {@code Subject} logs out of the system.
+     * Callback triggered when a {@code Subject} logs-out of the system.
+     * <p/>
+     * This method will only be triggered when a Subject explicitly logs-out of the session.  It will not
+     * be triggered if their Session times out.
      *
      * @param principals the identifying principals of the Subject logging out.
      */
