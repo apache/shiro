@@ -33,13 +33,14 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.naming.NamingException;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -64,7 +65,7 @@ public class ActiveDirectoryRealmTest {
 
     @Before
     public void setup() {
-        ThreadContext.clear();
+        ThreadContext.remove();
         realm = new TestActiveDirectoryRealm();
         securityManager = new DefaultSecurityManager(realm);
         SecurityUtils.setSecurityManager(securityManager);
@@ -74,7 +75,7 @@ public class ActiveDirectoryRealmTest {
     public void tearDown() {
         SecurityUtils.setSecurityManager(null);
         securityManager.destroy();
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     @Test

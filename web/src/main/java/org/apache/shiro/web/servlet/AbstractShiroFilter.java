@@ -234,8 +234,6 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         if ( threadState != null ) {
             threadState.clear();
         }
-        //just for good measure (SHIRO-159):
-        ThreadContext.clear();
     }
 
     /**

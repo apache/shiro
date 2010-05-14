@@ -43,7 +43,7 @@ public class SecureRemoteInvocationFactoryTest {
 
     @Before
     public void setup() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     protected void bind(Subject subject) {
@@ -52,7 +52,7 @@ public class SecureRemoteInvocationFactoryTest {
 
     @After
     public void tearDown() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 
     protected Method getMethod(String name, Class clazz) {

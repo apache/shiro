@@ -20,16 +20,18 @@ package org.apache.shiro.subject.support;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
+
+import java.util.Map;
 
 /**
  * @since 1.0
  */
 public class SubjectThreadState implements ThreadState {
 
-    private Subject originalSubject;
-    private transient SecurityManager originalSecurityManager;
+    private Map<Object,Object> originalResources;
 
     private final Subject subject;
     private final transient SecurityManager securityManager;
@@ -38,16 +40,15 @@ public class SubjectThreadState implements ThreadState {
         if (subject == null) {
             throw new IllegalArgumentException("Subject argument cannot be null.");
         }
-        this.originalSubject = ThreadContext.getSubject();
         this.subject = subject;
 
-        this.originalSecurityManager = ThreadContext.getSecurityManager();
+        SecurityManager originalSecurityManager = ThreadContext.getSecurityManager();
 
         //TODO - not an interface call (yuck)
         if (this.subject instanceof DelegatingSubject) {
             this.securityManager = ((DelegatingSubject) this.subject).getSecurityManager();
         } else {
-            this.securityManager = this.originalSecurityManager;
+            this.securityManager = originalSecurityManager;
         }
     }
 
@@ -56,31 +57,23 @@ public class SubjectThreadState implements ThreadState {
     }
 
     public void bind() {
-        this.originalSubject = ThreadContext.getSubject();
-        this.originalSecurityManager = ThreadContext.getSecurityManager();
+        this.originalResources = ThreadContext.getResources();
+        ThreadContext.remove();
 
         ThreadContext.bind(subject);
-        if (securityManager == null) {
-            ThreadContext.unbindSecurityManager();
-        } else {
+        if ( securityManager != null ) {
             ThreadContext.bind(securityManager);
         }
     }
 
     public void restore() {
-        if (originalSubject == null) {
-            ThreadContext.unbindSubject();
-        } else {
-            ThreadContext.bind(originalSubject);
-        }
-        if (originalSecurityManager == null) {
-            ThreadContext.unbindSecurityManager();
-        } else {
-            ThreadContext.bind(originalSecurityManager);
+        ThreadContext.remove();
+        if ( !CollectionUtils.isEmpty(this.originalResources) ) {
+            ThreadContext.setResources(this.originalResources);
         }
     }
 
     public void clear() {
-        ThreadContext.clear();
+        ThreadContext.remove();
     }
 }
