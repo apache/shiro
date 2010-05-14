@@ -185,7 +185,15 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
     }
 
-    private void bindPrincipalsToSession(PrincipalCollection principals, Session session) {
+    /**
+     * Saves the specified identity to the given session, making the session no longer anonymous.
+     *
+     * @param principals the Subject identity to save to the session
+     * @param session    the Session to retain the Subject identity.
+     * @throws IllegalArgumentException if the principals are null or empty or the session is null
+     * @since 1.0
+     */
+    private void bindPrincipalsToSession(PrincipalCollection principals, Session session) throws IllegalArgumentException {
         if (session == null) {
             throw new IllegalArgumentException("Session argument cannot be null.");
         }
