@@ -71,17 +71,18 @@ import java.util.concurrent.Callable;
  */
 public class DelegatingSubject implements Subject, Serializable {
 
-    //TODO - complete JavaDoc
+    private static final long serialVersionUID = -5094259915319399138L;
 
     private static final Logger log = LoggerFactory.getLogger(DelegatingSubject.class);
 
-    private static final String IDENTITIES_SESSION_KEY = DelegatingSubject.class.getName() + ".IDENTITIES_SESSION_KEY";
+    private static final String RUN_AS_PRINCIPALS_SESSION_KEY =
+            DelegatingSubject.class.getName() + ".RUN_AS_PRINCIPALS_SESSION_KEY";
 
     protected PrincipalCollection principals;
     protected boolean authenticated;
     protected String host;
     protected Session session;
-    private List<PrincipalCollection> assumedIdentities; //supports assumed identities (aka 'run as')
+    private List<PrincipalCollection> runAsPrincipals; //supports assumed identities (aka 'run as')
 
     protected transient SecurityManager securityManager;
 
@@ -100,7 +101,7 @@ public class DelegatingSubject implements Subject, Serializable {
         this.host = host;
         if (session != null) {
             this.session = decorate(session);
-            this.assumedIdentities = getAssumedIdentities(this.session);
+            this.runAsPrincipals = getRunAsPrincipals(this.session);
         }
     }
 
@@ -136,7 +137,7 @@ public class DelegatingSubject implements Subject, Serializable {
         return this.host;
     }
 
-    protected Object getPrimaryPrincipal(PrincipalCollection principals) {
+    private Object getPrimaryPrincipal(PrincipalCollection principals) {
         if (!CollectionUtils.isEmpty(principals)) {
             return principals.getPrimaryPrincipal();
         }
@@ -151,7 +152,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     public PrincipalCollection getPrincipals() {
-        return CollectionUtils.isEmpty(this.assumedIdentities) ? this.principals : this.assumedIdentities.get(0);
+        return CollectionUtils.isEmpty(this.runAsPrincipals) ? this.principals : this.runAsPrincipals.get(0);
     }
 
     public boolean isPermitted(String permission) {
@@ -247,6 +248,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {
+        clearRunAsIdentities();
         Subject subject = securityManager.login(this, token);
 
         PrincipalCollection principals;
@@ -278,7 +280,7 @@ public class DelegatingSubject implements Subject, Serializable {
         Session session = subject.getSession(false);
         if (session != null) {
             this.session = decorate(session);
-            this.assumedIdentities = getAssumedIdentities(this.session);
+            this.runAsPrincipals = getRunAsPrincipals(this.session);
         } else {
             this.session = null;
         }
@@ -314,12 +316,13 @@ public class DelegatingSubject implements Subject, Serializable {
 
     public void logout() {
         try {
+            clearRunAsIdentities();
             this.securityManager.logout(this);
         } finally {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
-            this.assumedIdentities = null;
+            this.runAsPrincipals = null;
             //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is
             //necessary if the subject would log in again or acquire a new session.  This is in response to
@@ -380,80 +383,73 @@ public class DelegatingSubject implements Subject, Serializable {
     // ======================================
     // 'Run As' support implementations
     // ======================================
-    //TODO - WORK IN PROGRESS - DO NOT USE
 
-    public void assumeIdentity(Subject subject) {
-        if (subject == null) {
-            throw new NullPointerException("Subject argument cannot be null.");
-        }
-        PrincipalCollection principals = subject.getPrincipals();
-        if (principals == null || principals.isEmpty()) {
-            throw new IllegalArgumentException("Subject argument does not have any principals.");
+    public void runAs(PrincipalCollection principals) {
+        if (!hasPrincipals()) {
+            String msg = "This subject does not yet have an identity.  Assuming the identity of another " +
+                    "Subject is only allowed for Subjects with an existing identity.  Try logging this subject in " +
+                    "first, or using the " + Subject.Builder.class.getName() + " to build ad hoc Subject instances " +
+                    "with identities as necessary.";
+            throw new IllegalStateException(msg);
         }
         pushIdentity(principals);
     }
 
-    //TODO - WORK IN PROGRESS - DO NOT USE
-
-    public boolean isAssumedIdentity() {
-        return !CollectionUtils.isEmpty(this.assumedIdentities);
+    public boolean isRunAs() {
+        return !CollectionUtils.isEmpty(this.runAsPrincipals);
     }
 
-    //TODO - WORK IN PROGRESS - DO NOT USE
-
-    public Object getOriginalPrincipal() {
-        return getPrimaryPrincipal(this.principals);
+    public PrincipalCollection getPreviousPrincipals() {
+        return isRunAs() ? this.principals : null;
     }
 
-    //TODO - WORK IN PROGRESS - DO NOT USE
-
-    public PrincipalCollection getOriginalPrincipals() {
-        return this.principals;
+    public PrincipalCollection releaseRunAs() {
+        return popIdentity();
     }
 
-    //TODO - WORK IN PROGRESS - DO NOT USE
-
-    public void releaseAssumedIdentity() {
-        popIdentity();
-    }
-
-    //TODO - WORK IN PROGRESS - DO NOT USE
-
-    protected List<PrincipalCollection> getAssumedIdentities(Session session) {
+    @SuppressWarnings({"unchecked"})
+    private List<PrincipalCollection> getRunAsPrincipals(Session session) {
         if (session != null) {
-            //noinspection unchecked
-            return (List<PrincipalCollection>) session.getAttribute(IDENTITIES_SESSION_KEY);
+            return (List<PrincipalCollection>) session.getAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
         }
         return null;
     }
 
-    //TODO - WORK IN PROGRESS - DO NOT USE
-
-    protected void pushIdentity(PrincipalCollection principals) {
-        if (this.assumedIdentities == null) {
-            this.assumedIdentities = new ArrayList<PrincipalCollection>();
+    private void clearRunAsIdentities() {
+        Session session = getSession(false);
+        if (session != null) {
+            session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
         }
-        this.assumedIdentities.add(0, principals);
-        Session session = getSession();
-        session.setAttribute(IDENTITIES_SESSION_KEY, this.assumedIdentities);
+        this.runAsPrincipals = null;
     }
 
-    //TODO - WORK IN PROGRESS - DO NOT USE
+    private void pushIdentity(PrincipalCollection principals) throws NullPointerException {
+        if (CollectionUtils.isEmpty(principals)) {
+            String msg = "Specified Subject principals cannot be null or empty for 'run as' functionality.";
+            throw new NullPointerException(msg);
+        }
+        if (this.runAsPrincipals == null) {
+            this.runAsPrincipals = new ArrayList<PrincipalCollection>();
+        }
+        this.runAsPrincipals.add(0, principals);
+        Session session = getSession();
+        session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, this.runAsPrincipals);
+    }
 
-    protected PrincipalCollection popIdentity() {
+    private PrincipalCollection popIdentity() {
         PrincipalCollection popped = null;
-        if (!CollectionUtils.isEmpty(this.assumedIdentities)) {
-            popped = this.assumedIdentities.remove(0);
+        if (!CollectionUtils.isEmpty(this.runAsPrincipals)) {
+            popped = this.runAsPrincipals.remove(0);
             Session session;
-            if (!CollectionUtils.isEmpty(this.assumedIdentities)) {
+            if (!CollectionUtils.isEmpty(this.runAsPrincipals)) {
                 //persist the changed deque to the session
                 session = getSession();
-                session.setAttribute(IDENTITIES_SESSION_KEY, this.assumedIdentities);
+                session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, this.runAsPrincipals);
             } else {
                 //deque is empty, remove it from the session:
                 session = getSession(false);
                 if (session != null) {
-                    session.removeAttribute(IDENTITIES_SESSION_KEY);
+                    session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
                 }
             }
         }
