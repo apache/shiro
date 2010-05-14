@@ -71,6 +71,10 @@ public interface Cookie {
 
     void setVersion(int version);
 
+    void setHttpOnly(boolean httpOnly);
+
+    boolean isHttpOnly();
+
     void saveTo(HttpServletRequest request, HttpServletResponse response);
 
     void removeFrom(HttpServletRequest request, HttpServletResponse response);

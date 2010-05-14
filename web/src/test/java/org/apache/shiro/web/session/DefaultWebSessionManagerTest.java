@@ -69,6 +69,7 @@ public class DefaultWebSessionManagerTest {
         expect(cookie.getPath()).andReturn("/");
         expect(cookie.getVersion()).andReturn(SimpleCookie.DEFAULT_VERSION);
         expect(cookie.isSecure()).andReturn(true);
+        expect(cookie.isHttpOnly()).andReturn(true);
 
         replay(cookie);
 

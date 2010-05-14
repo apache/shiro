@@ -87,6 +87,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      */
     public CookieRememberMeManager() {
         Cookie cookie = new SimpleCookie(DEFAULT_REMEMBER_ME_COOKIE_NAME);
+        cookie.setHttpOnly(true);
         //One year should be long enough - most sites won't object to requiring a user to log in if they haven't visited
         //in a year:
         cookie.setMaxAge(Cookie.ONE_YEAR);
