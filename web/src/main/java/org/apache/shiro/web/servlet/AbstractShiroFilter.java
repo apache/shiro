@@ -299,9 +299,10 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
         ServletResponse response = prepareServletResponse(request, servletResponse, chain);
 
-        ThreadState threadState = bind(request, response);
+        ThreadState threadState = null;
 
         try {
+            threadState = bind(request, response);
             updateSessionLastAccessTime(request, response);
             executeChain(request, response, chain);
         } finally {
