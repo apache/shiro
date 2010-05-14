@@ -166,7 +166,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         PrincipalCollection principals = subject.getPrincipals();
         if (principals != null && !principals.isEmpty()) {
             Session session = subject.getSession();
-            session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, principals);
+            bindPrincipalsToSession(principals, session);
         } else {
             Session session = subject.getSession(false);
             if (session != null) {
@@ -183,6 +183,16 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 session.removeAttribute(DefaultSubjectContext.AUTHENTICATED_SESSION_KEY);
             }
         }
+    }
+
+    private void bindPrincipalsToSession(PrincipalCollection principals, Session session) {
+        if (session == null) {
+            throw new IllegalArgumentException("Session argument cannot be null.");
+        }
+        if (CollectionUtils.isEmpty(principals)) {
+            throw new IllegalArgumentException("Principals cannot be null or empty.");
+        }
+        session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, principals);
     }
 
     protected void rememberMeSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info, Subject subject) {
@@ -387,7 +397,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * <li>Check the context to see if it can already {@link SubjectContext#resolvePrincipals resolve an identity}.  If
      * so, this method does nothing and returns the method argument unaltered.</li>
      * <li>Check for a RememberMe identity by calling {@link #getRememberedIdentity}.  If that method returns a
-     * non-null value, place the remembered {@link PrincipalCollection} in the context and return the context.</li>
+     * non-null value, place the remembered {@link PrincipalCollection} in the context.</li>
+     * <li>If the remembered identity is discovered, associate it with the session so eliminate unnecessary
+     * rememberMe accesses for the remainder of the session</li>
      * </ol>
      *
      * @param context the subject context data that may provide (directly or indirectly through one of its values) a
@@ -405,12 +417,48 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
                         "for subject construction by the SubjectFactory.");
                 context.setPrincipals(principals);
+                bindPrincipalsToSession(principals, context);
             } else {
                 log.trace("No remembered identity found.  Returning original context.");
             }
         }
 
         return context;
+    }
+
+    /**
+     * Satisfies SHIRO-157: associate a known identity with the current session to ensure that we don't need to
+     * continually perform rememberMe operations for sessions that already have an identity.  Doing this prevents the
+     * need to continually reference, decrypt and deserialize the rememberMe cookie every time - something that can
+     * be computationally expensive if many requests are intercepted.
+     * <p/>
+     * Note that if the SubjectContext cannot {@link SubjectContext#resolveSession resolve} a session, a new session
+     * will be created receive the principals and then appended to the SubjectContext so it can be used later when
+     * constructing the Subject.
+     *
+     * @param principals the non-null, non-empty principals to bind to the SubjectContext's session
+     * @param context    the context to use to locate or create a session to which the principals will be saved
+     * @since 1.0
+     */
+    private void bindPrincipalsToSession(PrincipalCollection principals, SubjectContext context) {
+        SecurityManager securityManager = context.resolveSecurityManager();
+        if (securityManager == null) {
+            throw new IllegalStateException("SecurityManager instance should already be present in the " +
+                    "SubjectContext argument.");
+        }
+        Session session = context.resolveSession();
+        if (session == null) {
+            log.trace("No session in the current subject context.  One will be created to persist principals [{}] " +
+                    "Doing this prevents unnecessary repeated RememberMe operations since an identity has been " +
+                    "discovered.", principals);
+            //no session - start one:
+            String host = context.resolveHost();
+            Serializable sessionId = start(host);
+            session = new DelegatingSession(securityManager, sessionId, host);
+            context.setSession(session);
+            log.debug("Created session with id {} to retain discovered principals {}", sessionId, principals);
+        }
+        bindPrincipalsToSession(principals, session);
     }
 
     /**
