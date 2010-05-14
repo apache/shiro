@@ -72,16 +72,19 @@ public class SimpleCookieTest extends TestCase {
         assertTrue(cookie.getPath().equals("/somepath"));
     }
 
-    private void testContextPath(String contextPath) {
+    private void testRootContextPath(String contextPath) {
         this.cookie.setValue("blah");
 
-        javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("test", "blah");
-        cookie.setMaxAge(-1);
-        cookie.setPath("/");
+        String expectedCookieValue = new StringBuffer()
+                .append("test").append(SimpleCookie.NAME_VALUE_DELIMITER).append("blah")
+                .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+                .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(Cookie.ROOT_PATH)
+                .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+                .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
+                .toString();
 
         expect(mockRequest.getContextPath()).andReturn(contextPath);
-
-        mockResponse.addCookie(eqCookie(cookie));
+        mockResponse.addHeader(SimpleCookie.COOKIE_HEADER_NAME, expectedCookieValue);
 
         replay(mockRequest);
         replay(mockResponse);
@@ -95,14 +98,14 @@ public class SimpleCookieTest extends TestCase {
     @Test
     /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (1 of 2)*/
     public void testEmptyContextPath() throws Exception {
-        testContextPath("");
+        testRootContextPath("");
     }
 
 
     @Test
     /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (2 of 2)*/
     public void testNullContextPath() throws Exception {
-        testContextPath(null);
+        testRootContextPath(null);
     }
 
     private static <T extends javax.servlet.http.Cookie> T eqCookie(final T in) {

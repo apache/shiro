@@ -50,7 +50,9 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     private boolean sessionIdCookieEnabled;
 
     public DefaultWebSessionManager() {
-        this.sessionIdCookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+        Cookie cookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+        cookie.setHttpOnly(true); //more secure, protects against XSS attacks
+        this.sessionIdCookie = cookie;
         this.sessionIdCookieEnabled = true;
     }
 
