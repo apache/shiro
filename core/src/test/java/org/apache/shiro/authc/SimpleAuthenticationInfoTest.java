@@ -18,11 +18,22 @@
  */
 package org.apache.shiro.authc;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.shiro.subject.PrincipalCollection;
 import org.junit.Test;
 
 
 /**
  * @author Les Hazlewood
+ * @author Kalle Korhonen
  * @since 0.9
  */
 public class SimpleAuthenticationInfoTest {
@@ -43,4 +54,40 @@ public class SimpleAuthenticationInfoTest {
         SimpleAuthenticationInfo local = new SimpleAuthenticationInfo("username", "password", "testRealm");
         aggregate.merge(local);
     }
+    
+    @SuppressWarnings("serial")
+    @Test
+    public void testMergeWithImmutablePrincipalCollection() {
+        SimpleAuthenticationInfo aggregate = new SimpleAuthenticationInfo();
+        // Make a quick test fixture that does *not* implement MutablePrincipalCollection 
+        PrincipalCollection principalCollection = new PrincipalCollection() {
+	    @SuppressWarnings("unchecked")
+	    public List asList() { return null;}
+	    @SuppressWarnings("unchecked")
+	    public Set asSet() {return null;}
+	    public <T> Collection<T> byType(Class<T> type) {return null;}
+	    @SuppressWarnings("unchecked")
+	    public Collection fromRealm(String realmName) {
+		Collection<Object> principals = new HashSet<Object>();
+		principals.add("testprincipal");
+		return principals;
+	    }
+	    public Object getPrimaryPrincipal() {return null;}
+	    public Set<String> getRealmNames() {
+		Set<String> realms = new HashSet<String>();
+		realms.add("testrealm");
+		return realms;
+	    }
+	    public boolean isEmpty() {return false;}
+	    public <T> T oneByType(Class<T> type) {return null;}
+	    @SuppressWarnings("unchecked")
+	    public Iterator iterator() {return null;}
+            
+        };
+        aggregate.setPrincipals(principalCollection);
+        SimpleAuthenticationInfo local = new SimpleAuthenticationInfo("username", "password", "testRealm");
+        aggregate.merge(local);
+        assertEquals(2, aggregate.getPrincipals().asList().size());
+    }
+    
 }
