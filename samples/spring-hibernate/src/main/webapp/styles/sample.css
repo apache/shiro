@@ -28,7 +28,7 @@ body, td, th { font-family:"Lucida Grande","Lucida Sans Unicode",Arial,Verdana,s
 .form-label { float: left; width: 100px;}
 
 .content { padding: 10px;}
-.content div { padding: 5px; 0 5px 0 }
+.content div { padding: 5px 0 5px 0 }
 
 #manageUsers { width: 800px }
 #manageUsers th { text-align: left }

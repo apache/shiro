@@ -18,24 +18,21 @@
  */
 package org.apache.shiro.web.servlet;
 
-import java.security.Principal;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpSession;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
+
 
 /**
- * TODO class JavaDoc
- *
  * @author Les Hazlewood
  * @since 0.2
  */
-@SuppressWarnings({"deprecated", "deprecation"})
 public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
 
     //TODO - complete JavaDoc
@@ -47,13 +44,6 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
     public static final String REFERENCED_SESSION_ID_IS_VALID = ShiroHttpServletRequest.class.getName() + "_REQUESTED_SESSION_ID_VALID";
     public static final String REFERENCED_SESSION_IS_NEW = ShiroHttpServletRequest.class.getName() + "_REFERENCED_SESSION_IS_NEW";
     public static final String REFERENCED_SESSION_ID_SOURCE = ShiroHttpServletRequest.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
-    public static final String SESSION_ID_NAME = ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
-    /**
-     * Key that may be used to alert that the request's  referenced Shiro Session has expired prior to
-     * request processing.
-     */
-    public static final String EXPIRED_SESSION_KEY = ShiroHttpServletRequest.class.getName() + "_EXPIRED_SESSION_KEY";
-
     public static final String IDENTITY_REMOVED_KEY = ShiroHttpServletRequest.class.getName() + "_IDENTITY_REMOVED_KEY";
 
     protected ServletContext servletContext = null;
@@ -61,8 +51,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
     protected HttpSession session = null;
     protected boolean httpSessions = true;
 
-    public ShiroHttpServletRequest(HttpServletRequest wrapped, ServletContext servletContext,
-                                       boolean httpSessions) {
+    public ShiroHttpServletRequest(HttpServletRequest wrapped, ServletContext servletContext, boolean httpSessions) {
         super(wrapped);
         this.servletContext = servletContext;
         this.httpSessions = httpSessions;
@@ -70,11 +59,6 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
 
     public boolean isHttpSessions() {
         return httpSessions;
-    }
-
-    protected boolean isLoggedOut() {
-        Boolean loggedOut = (Boolean)getAttribute(IDENTITY_REMOVED_KEY);
-        return loggedOut != null && loggedOut;
     }
 
     public String getRemoteUser() {

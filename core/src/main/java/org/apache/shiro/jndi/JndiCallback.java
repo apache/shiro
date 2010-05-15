@@ -38,7 +38,6 @@ import javax.naming.NamingException;
  *
  * @author Rod Johnson
  * @see JndiTemplate
- * @see org.springframework.jdbc.core.JdbcTemplate
  */
 public interface JndiCallback {
 

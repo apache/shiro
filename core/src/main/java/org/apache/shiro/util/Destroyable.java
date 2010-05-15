@@ -23,7 +23,6 @@ package org.apache.shiro.util;
  *
  * @author Les Hazlewood
  * @author Jeremy Haile
- * @see org.apache.shiro.spring.LifecycleBeanPostProcessor
  * @since 0.2
  */
 public interface Destroyable {

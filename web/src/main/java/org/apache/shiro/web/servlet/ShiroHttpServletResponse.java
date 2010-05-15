@@ -36,14 +36,13 @@ import java.net.URLEncoder;
  * already performs url encoding of its own session ids, instances of this class are only needed when using Shiro
  * native sessions.
  * <p/>
- * <p>Note that this implementation relies in part on source code from the Tomcat 6.x distribution for
+ * Note that this implementation relies in part on source code from the Tomcat 6.x distribution for
  * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since Shiro is also
  * Apache 2.0 license, all regular licenses and conditions have remained in tact.
  *
  * @author Les Hazlewood
  * @since 0.2
  */
-@SuppressWarnings({"deprecated", "deprecation"})
 public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
     //TODO - complete JavaDoc
@@ -60,10 +59,12 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         this.request = request;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public ServletContext getContext() {
         return context;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setContext(ServletContext context) {
         this.context = context;
     }
@@ -72,6 +73,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         return request;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setRequest(ShiroHttpServletRequest request) {
         this.request = request;
     }
@@ -311,7 +313,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
             path = path.substring(0, pound);
         }
         StringBuffer sb = new StringBuffer(path);
-        if (sb.length() > 0) { // jsessionid can't be first.
+        if (sb.length() > 0) { // session id param can't be first.
             sb.append(";");
             sb.append(DEFAULT_SESSION_ID_PARAMETER_NAME);
             sb.append("=");

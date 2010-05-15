@@ -18,15 +18,15 @@
  */
 package org.apache.shiro.authz;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolverAware;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
+
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -48,7 +48,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
      * to configure different resolvers for different realms.
      */
     protected PermissionResolver permissionResolver;
-    
+
     /**
      * A RolePermissionResolver to be used by <em>all</em> configured realms.  Leave <code>null</code> if you wish
      * to configure different resolvers for different realms.
@@ -67,6 +67,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
      *
      * @param realms the realms to consult during an authorization check.
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     public ModularRealmAuthorizer(Collection<Realm> realms) {
         setRealms(realms);
     }
@@ -117,7 +118,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         this.permissionResolver = permissionResolver;
         applyPermissionResolverToRealms();
     }
-    
+
     /**
      * Sets the internal {@link #getPermissionResolver} on any internal configured
      * {@link #getRealms Realms} that implement the {@link org.apache.shiro.authz.permission.PermissionResolverAware PermissionResolverAware} interface.
@@ -141,7 +142,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
             }
         }
     }
-    
+
     /**
      * Returns the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
      * if all realm instances will each configure their own permission resolver.
@@ -153,7 +154,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     public RolePermissionResolver getRolePermissionResolver() {
         return this.rolePermissionResolver;
     }
-    
+
     /**
      * Sets the specified {@link RolePermissionResolver RolePermissionResolver} on <em>all</em> of the wrapped realms that
      * implement the {@link org.apache.shiro.authz.permission.RolePermissionResolverAware PermissionResolverAware} interface.
@@ -163,14 +164,14 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
      * configure themselves individually (or be configured individually).
      *
      * @param rolePermissionResolver the rolePermissionResolver to set on all of the wrapped realms that implement the
-     *                           {@link org.apache.shiro.authz.permission.RolePermissionResolverAware RolePermissionResolverAware} interface.
+     *                               {@link org.apache.shiro.authz.permission.RolePermissionResolverAware RolePermissionResolverAware} interface.
      */
-    public void setRolePermissionResolver( RolePermissionResolver rolePermissionResolver ) {
+    public void setRolePermissionResolver(RolePermissionResolver rolePermissionResolver) {
         this.rolePermissionResolver = rolePermissionResolver;
         applyRolePermissionResolverToRealms();
     }
 
-    
+
     /**
      * Sets the internal {@link #getRolePermissionResolver} on any internal configured
      * {@link #getRealms Realms} that implement the {@link org.apache.shiro.authz.permission.RolePermissionResolverAware RolePermissionResolverAware} interface.
@@ -243,8 +244,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
 
     /**
      * Returns <code>true</code> if any of the configured realms'
-     * {@link Realm#isPermitted(org.apache.shiro.subject.PrincipalCollection , String[])} call returns <code>true</code>,
-     * <code>false</code> otherwise.
+     * {@link Realm#isPermittedAll(org.apache.shiro.subject.PrincipalCollection, String...)} call returns
+     * <code>true</code>, <code>false</code> otherwise.
      */
     public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
         assertRealmsConfigured();
@@ -334,8 +335,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     /**
-     * If !{@link #isPermitted(org.apache.shiro.subject.PrincipalCollection , String[]) isPermitted(permission)}, throws
-     * an <code>UnauthorizedException</code> otherwise returns quietly.
+     * If !{@link #isPermitted(org.apache.shiro.subject.PrincipalCollection , String...) isPermitted(permission)},
+     * throws an <code>UnauthorizedException</code> otherwise returns quietly.
      */
     public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
         assertRealmsConfigured();

@@ -23,7 +23,6 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +43,6 @@ import java.util.Map;
  * @see #remove()
  * @since 0.1
  */
-@SuppressWarnings(value = {"unchecked", "unsafe"})
 public abstract class ThreadContext {
 
     /**
@@ -54,17 +52,6 @@ public abstract class ThreadContext {
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
-    /**
-     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
-     */
-    @Deprecated
-    public static final String SESSION_ID_KEY = ThreadContext.class.getName() + "_SESSION_ID_KEY";
-
-    /**
-     * @deprecated will be removed before 1.0
-     */
-    @Deprecated
-    public static final String HOST_KEY = ThreadContext.class.getName() + "_INET_ADDRESS_KEY";
 
     protected static ThreadLocal<Map<Object, Object>> resources;
 
@@ -107,6 +94,7 @@ public abstract class ThreadContext {
              * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
              * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
              */
+            @SuppressWarnings({"unchecked"})
             protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
                 if (parentValue != null) {
                     return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
@@ -124,7 +112,7 @@ public abstract class ThreadContext {
      * @return the map of bound resources
      */
     public static Map<Object, Object> getResources() {
-        return resources != null ? new HashMap<Object,Object>(resources.get()) : null;
+        return resources != null ? new HashMap<Object, Object>(resources.get()) : null;
     }
 
     /**
@@ -135,11 +123,11 @@ public abstract class ThreadContext {
      * @param resources the resources to replace the existing {@link #getResources() resources}.
      * @since 1.0
      */
-    public static void setResources(Map<Object,Object> resources) {
-        if (CollectionUtils.isEmpty(resources) ) {
+    public static void setResources(Map<Object, Object> resources) {
+        if (CollectionUtils.isEmpty(resources)) {
             return;
         }
-        Map<Object,Object> existing = getResourcesLazy();
+        Map<Object, Object> existing = getResourcesLazy();
         existing.clear();
         existing.putAll(resources);
     }
@@ -238,17 +226,6 @@ public abstract class ThreadContext {
         }
 
         return value;
-    }
-
-    /**
-     * Returns true if a value for the <code>key</code> is bound to the current thread, false otherwise.
-     *
-     * @param key the key that may identify a value bound to the current thread.
-     * @return true if a value for the key is bound to the current thread, false
-     *         otherwise.
-     */
-    public static boolean containsKey(Object key) {
-        return resources != null && resources.get().containsKey(key);
     }
 
     /**
@@ -401,35 +378,6 @@ public abstract class ThreadContext {
      */
     public static Subject unbindSubject() {
         return (Subject) remove(SUBJECT_KEY);
-    }
-
-    //TODO - complete JavaDoc
-
-    /**
-     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
-     */
-    @Deprecated
-    public static Serializable getSessionId() {
-        return (Serializable) get(SESSION_ID_KEY);
-    }
-
-    /**
-     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
-     */
-    @Deprecated
-    public static void bindSessionId(Serializable sessionId) {
-        if (sessionId != null) {
-            put(SESSION_ID_KEY, sessionId);
-        }
-    }
-
-    /**
-     * @deprecated - no longer used by Shiro - will be removed prior to 1.0 final
-     */
-    @Deprecated
-    public static Serializable unbindSessionId() {
-        return (Serializable) remove(SESSION_ID_KEY);
-
     }
 }
 

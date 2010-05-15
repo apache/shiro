@@ -413,7 +413,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * </ol>
      *
      * @return a new Shiro Filter reflecting any configured filters and filter chain definitions.
-     * @throws Exception if there is a problem creating the ShiroFilter instance.
+     * @throws Exception if there is a problem creating the AbstractShiroFilter instance.
      */
     protected AbstractShiroFilter createInstance() throws Exception {
 
@@ -433,14 +433,14 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         FilterChainManager manager = createFilterChainManager();
 
         //Expose the constructed FilterChainManager by first wrapping it in a
-        // FilterChainResolver implementation. The ShiroFilter implementations
+        // FilterChainResolver implementation. The AbstractShiroFilter implementations
         // do not know about FilterChainManagers - only resolvers:
         PathMatchingFilterChainResolver chainResolver = new PathMatchingFilterChainResolver();
         chainResolver.setFilterChainManager(manager);
 
-        //Now create a ShiroFilter and apply the acquired SecurityManager and built
-        //FilterChainResolver.  It doesn't matter that the ShiroFilter instance is an INI filter
-        //here - we're just using it because it is a concrete ShiroFilter instance that accepts
+        //Now create an IniShiroFilter and apply the acquired SecurityManager and built
+        //FilterChainResolver.  It doesn't matter that the Filter instance is an INI filter
+        //here - we're just using it because it is a concrete AbstractShiroFilter instance that accepts
         //injection of the SecurityManager and FilterChainResolver:
         IniShiroFilter shiroFilter = new IniShiroFilter();
         shiroFilter.setSecurityManager((WebSecurityManager) securityManager);
