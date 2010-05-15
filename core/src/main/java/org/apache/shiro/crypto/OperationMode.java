@@ -27,7 +27,7 @@ package org.apache.shiro.crypto;
  * <p/>
  * This {@code enum} exists to provide Shiro end-users type-safety when declaring an operation mode.  This helps reduce
  * error by providing a compile-time mechanism to specify a mode and guarantees a valid name that will be
- * recognized by an underling JCA Provider.
+ * recognized by an underlying JCA Provider.
  * <h2>Standard or Non-Standard?</h2>
  * All modes listed specify whether they are a JDK standard mode or a non-standard mode.  Standard modes are included
  * in all JDK distributions.  Non-standard modes can

@@ -27,6 +27,6 @@
         <!-- Weave types that are within the org.apache.shiro.sample package
              and all sub-packages. This limits the scope of the weaver and
              reduces the overhead -->
-        <include within="org.apache.shiro.sample..*"/>
+        <include within="org.apache.shiro.samples.aspectj.bank..*"/>
     </weaver>
 </aspectj>

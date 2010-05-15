@@ -47,7 +47,7 @@ import java.util.Map;
  * The general idea is that the normal getters can be called to see if the value was explicitly set.  The
  * {@code resolve*} methods should be used when actually constructing the {@code Subject} instance to ensure the most
  * specific/accurate data can be used.
- *
+ * <p/>
  * <b>USAGE</b>: Most Shiro end-users will never use a {@code SubjectContext} instance directly and instead will use a
  * {@link Subject.Builder} (which internally uses a {@code SubjectContext}) and build {@code Subject} instances that
  * way.

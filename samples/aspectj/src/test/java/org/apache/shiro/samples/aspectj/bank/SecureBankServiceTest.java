@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.bank;
+package org.apache.shiro.samples.aspectj.bank;
 
 import junit.framework.Assert;
 import org.apache.log4j.BasicConfigurator;

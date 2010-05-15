@@ -16,12 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.bank;
+package org.apache.shiro.samples.aspectj.bank;
 
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.shiro.sample.bank.AccountTransaction.TransactionType;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -125,11 +124,11 @@ public class Account {
         }
 
         synchronized (_transactions) {
-            if (TransactionType.DEPOSIT == aTransaction.getType()) {
+            if (AccountTransaction.TransactionType.DEPOSIT == aTransaction.getType()) {
                 _transactions.add(aTransaction);
                 _balance += aTransaction.getAmount();
 
-            } else if (TransactionType.WITHDRAWAL == aTransaction.getType()) {
+            } else if (AccountTransaction.TransactionType.WITHDRAWAL == aTransaction.getType()) {
                 if (_balance < aTransaction.getAmount()) {
                     throw new NotEnoughFundsException("Unable to withdraw " + aTransaction.getAmount() + "$ from account " + _id + " - current balance is " + _balance);
                 }

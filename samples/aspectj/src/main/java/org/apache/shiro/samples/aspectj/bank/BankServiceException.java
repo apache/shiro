@@ -16,12 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.bank;
+package org.apache.shiro.samples.aspectj.bank;
 
-public class InactiveAccountException extends BankServiceException {
+public class BankServiceException extends Exception {
 
-    public InactiveAccountException(String aMessage) {
+    public BankServiceException(String aMessage) {
         super(aMessage);
+    }
+
+    public BankServiceException(String aMessage, Throwable aCause) {
+        super(aMessage, aCause);
     }
 
 }
