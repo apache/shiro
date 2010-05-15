@@ -18,11 +18,12 @@
  */
 package org.apache.shiro.sample.bank;
 
-import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.sample.bank.AccountTransaction.TransactionType;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 public class SecureBankService implements BankService {
 
-    private Logger _logger;
+    private static final Logger log = LoggerFactory.getLogger(SecureBankService.class);
     private volatile boolean _isRunning;
     private final List<Account> _accounts;
     private Map<Long, Account> _accountsById;
@@ -40,7 +41,6 @@ public class SecureBankService implements BankService {
      * Creates a new {@link SecureBankService} instance.
      */
     public SecureBankService() {
-        _logger = Logger.getLogger(SecureBankService.class);
         _accounts = new ArrayList<Account>();
         _accountsById = new HashMap<Long, Account>();
     }
@@ -50,14 +50,14 @@ public class SecureBankService implements BankService {
      */
     public void start() throws Exception {
         _isRunning = true;
-        _logger.info("Bank service started");
+        log.info("Bank service started");
     }
 
     /**
      * Stop this service
      */
     public void dispose() {
-        _logger.info("Stopping bank service...");
+        log.info("Stopping bank service...");
         _isRunning = false;
 
         synchronized (_accounts) {
@@ -65,7 +65,7 @@ public class SecureBankService implements BankService {
             _accounts.clear();
         }
 
-        _logger.info("Bank service stopped");
+        log.info("Bank service stopped");
     }
 
     /**
@@ -88,7 +88,7 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:createAccount")
     public long createNewAccount(String anOwnerName) {
         assertServiceState();
-        _logger.info("Creating new account for " + anOwnerName);
+        log.info("Creating new account for " + anOwnerName);
 
         synchronized (_accounts) {
             Account account = new Account(anOwnerName);
@@ -96,7 +96,7 @@ public class SecureBankService implements BankService {
             _accounts.add(account);
             _accountsById.put(account.getId(), account);
 
-            _logger.debug("Created new account: " + account);
+            log.debug("Created new account: " + account);
             return account.getId();
         }
     }
@@ -107,7 +107,7 @@ public class SecureBankService implements BankService {
 
     public long[] searchAccountIdsByOwner(String anOwnerName) {
         assertServiceState();
-        _logger.info("Searching existing accounts for " + anOwnerName);
+        log.info("Searching existing accounts for " + anOwnerName);
 
         ArrayList<Account> matchAccounts = new ArrayList<Account>();
         synchronized (_accounts) {
@@ -124,7 +124,7 @@ public class SecureBankService implements BankService {
             accountIds[index++] = a.getId();
         }
 
-        _logger.debug("Found " + accountIds.length + " account(s) matching the name " + anOwnerName);
+        log.debug("Found " + accountIds.length + " account(s) matching the name " + anOwnerName);
         return accountIds;
     }
 
@@ -135,7 +135,7 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:readAccount")
     public String getOwnerOf(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
-        _logger.info("Getting owner of account " + anAccountId);
+        log.info("Getting owner of account " + anAccountId);
 
         Account a = safellyRetrieveAccountForId(anAccountId);
         return a.getOwnerName();
@@ -148,7 +148,7 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:readAccount")
     public double getBalanceOf(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
-        _logger.info("Getting balance of account " + anAccountId);
+        log.info("Getting balance of account " + anAccountId);
 
         Account a = safellyRetrieveAccountForId(anAccountId);
         return a.getBalance();
@@ -161,16 +161,16 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:operateAccount")
     public double depositInto(long anAccountId, double anAmount) throws AccountNotFoundException, InactiveAccountException {
         assertServiceState();
-        _logger.info("Making deposit of " + anAmount + " into account " + anAccountId);
+        log.info("Making deposit of " + anAmount + " into account " + anAccountId);
 
         try {
             Account a = safellyRetrieveAccountForId(anAccountId);
             AccountTransaction tx = AccountTransaction.createDepositTx(anAccountId, anAmount);
             tx.setCreatedBy(getCurrentUsername());
-            _logger.debug("Created a new transaction " + tx);
+            log.debug("Created a new transaction " + tx);
 
             a.applyTransaction(tx);
-            _logger.debug("New balance of account " + a.getId() + " after deposit is " + a.getBalance());
+            log.debug("New balance of account " + a.getId() + " after deposit is " + a.getBalance());
 
             return a.getBalance();
 
@@ -186,15 +186,15 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:operateAccount")
     public double withdrawFrom(long anAccountId, double anAmount) throws AccountNotFoundException, NotEnoughFundsException, InactiveAccountException {
         assertServiceState();
-        _logger.info("Making withdrawal of " + anAmount + " from account " + anAccountId);
+        log.info("Making withdrawal of " + anAmount + " from account " + anAccountId);
 
         Account a = safellyRetrieveAccountForId(anAccountId);
         AccountTransaction tx = AccountTransaction.createWithdrawalTx(anAccountId, anAmount);
         tx.setCreatedBy(getCurrentUsername());
-        _logger.debug("Created a new transaction " + tx);
+        log.debug("Created a new transaction " + tx);
 
         a.applyTransaction(tx);
-        _logger.debug("New balance of account " + a.getId() + " after withdrawal is " + a.getBalance());
+        log.debug("New balance of account " + a.getId() + " after withdrawal is " + a.getBalance());
 
         return a.getBalance();
     }
@@ -206,14 +206,14 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:readAccount")
     public TxLog[] getTxHistoryFor(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
-        _logger.info("Getting transactions of account " + anAccountId);
+        log.info("Getting transactions of account " + anAccountId);
 
         Account a = safellyRetrieveAccountForId(anAccountId);
 
         TxLog[] txs = new TxLog[a.getTransactions().size()];
         int index = 0;
         for (AccountTransaction tx : a.getTransactions()) {
-            _logger.debug("Retrieved transaction " + tx);
+            log.debug("Retrieved transaction " + tx);
 
             if (TransactionType.DEPOSIT == tx.getType()) {
                 txs[index++] = new TxLog(tx.getCreationDate(), tx.getAmount(), tx.getCreatedBy());
@@ -232,7 +232,7 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:closeAccount")
     public double closeAccount(long anAccountId) throws AccountNotFoundException, InactiveAccountException {
         assertServiceState();
-        _logger.info("Closing account " + anAccountId);
+        log.info("Closing account " + anAccountId);
 
         Account a = safellyRetrieveAccountForId(anAccountId);
         if (!a.isActive()) {
@@ -242,11 +242,11 @@ public class SecureBankService implements BankService {
         try {
             AccountTransaction tx = AccountTransaction.createWithdrawalTx(a.getId(), a.getBalance());
             tx.setCreatedBy(getCurrentUsername());
-            _logger.debug("Created a new transaction " + tx);
+            log.debug("Created a new transaction " + tx);
             a.applyTransaction(tx);
             a.setActive(false);
 
-            _logger.debug("Account " + a.getId() + " is now closed and an amount of " + tx.getAmount() + " is given to the owner");
+            log.debug("Account " + a.getId() + " is now closed and an amount of " + tx.getAmount() + " is given to the owner");
             return tx.getAmount();
 
         } catch (NotEnoughFundsException nefe) {
@@ -261,7 +261,7 @@ public class SecureBankService implements BankService {
     @RequiresPermissions("bank:readAccount")
     public boolean isAccountActive(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
-        _logger.info("Getting active status of account " + anAccountId);
+        log.info("Getting active status of account " + anAccountId);
 
         Account a = safellyRetrieveAccountForId(anAccountId);
         return a.isActive();
@@ -285,7 +285,7 @@ public class SecureBankService implements BankService {
             throw new AccountNotFoundException("No account found for the id " + anAccountId);
         }
 
-        _logger.info("Retrieved account " + account);
+        log.info("Retrieved account " + account);
         return account;
     }
 
