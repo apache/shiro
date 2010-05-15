@@ -122,12 +122,11 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
         if (this.principals == null) {
             this.principals = info.getPrincipals();
         } else {
-            if (this.principals instanceof MutablePrincipalCollection) {
-                ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
-            } else {
+            if (!(this.principals instanceof MutablePrincipalCollection)) {
                 this.principals = new SimplePrincipalCollection(this.principals);
             }
-        }
+            ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
+        }         
 
         Object thisCredentials = getCredentials();
         Object otherCredentials = info.getCredentials();
