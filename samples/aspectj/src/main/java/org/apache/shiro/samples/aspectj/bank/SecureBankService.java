@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.bank;
+package org.apache.shiro.samples.aspectj.bank;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.sample.bank.AccountTransaction.TransactionType;
+import org.apache.shiro.samples.aspectj.bank.AccountTransaction.TransactionType;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#createNewAccount(java.lang.String)
     */
 
-    @RequiresPermissions("bank:createAccount")
+    @RequiresPermissions("bankAccount:create")
     public long createNewAccount(String anOwnerName) {
         assertServiceState();
         log.info("Creating new account for " + anOwnerName);
@@ -132,7 +132,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#getOwnerOf(long)
     */
 
-    @RequiresPermissions("bank:readAccount")
+    @RequiresPermissions("bankAccount:read")
     public String getOwnerOf(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
         log.info("Getting owner of account " + anAccountId);
@@ -145,7 +145,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#getBalanceOf(long)
     */
 
-    @RequiresPermissions("bank:readAccount")
+    @RequiresPermissions("bankAccount:read")
     public double getBalanceOf(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
         log.info("Getting balance of account " + anAccountId);
@@ -158,7 +158,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#depositInto(long, double)
     */
 
-    @RequiresPermissions("bank:operateAccount")
+    @RequiresPermissions("bankAccount:operate")
     public double depositInto(long anAccountId, double anAmount) throws AccountNotFoundException, InactiveAccountException {
         assertServiceState();
         log.info("Making deposit of " + anAmount + " into account " + anAccountId);
@@ -183,7 +183,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#withdrawFrom(long, double)
     */
 
-    @RequiresPermissions("bank:operateAccount")
+    @RequiresPermissions("bankAccount:operate")
     public double withdrawFrom(long anAccountId, double anAmount) throws AccountNotFoundException, NotEnoughFundsException, InactiveAccountException {
         assertServiceState();
         log.info("Making withdrawal of " + anAmount + " from account " + anAccountId);
@@ -203,7 +203,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#getTxHistoryFor(long)
     */
 
-    @RequiresPermissions("bank:readAccount")
+    @RequiresPermissions("bankAccount:read")
     public TxLog[] getTxHistoryFor(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
         log.info("Getting transactions of account " + anAccountId);
@@ -229,7 +229,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#closeAccount(long)
     */
 
-    @RequiresPermissions("bank:closeAccount")
+    @RequiresPermissions("bankAccount:close")
     public double closeAccount(long anAccountId) throws AccountNotFoundException, InactiveAccountException {
         assertServiceState();
         log.info("Closing account " + anAccountId);
@@ -258,7 +258,7 @@ public class SecureBankService implements BankService {
     * @see com.connectif.trilogy.root.security.BankService#isAccountActive(long)
     */
 
-    @RequiresPermissions("bank:readAccount")
+    @RequiresPermissions("bankAccount:read")
     public boolean isAccountActive(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
         log.info("Getting active status of account " + anAccountId);

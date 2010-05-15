@@ -412,8 +412,11 @@
                         <link>http://www.slf4j.org/api/</link>
                         <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
                         <link>http://junit.org/junit/javadoc/4.4/</link>
-                        <link>http://easymock.org/api/easymock/2.4/</link>
+                        <link>http://easymock.org/api/easymock/2.4</link>
+                        <link>http://www.quartz-scheduler.org/docs/api/1.8.0/</link>
                     </links>
+                    <!-- Don't include the sample apps - they're not part of Shiro's API: -->
+                    <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
                     <reportSets>
                         <reportSet>
                             <id>aggregate</id>

@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.bank;
+package org.apache.shiro.samples.aspectj.bank;
 
-public class AccountNotFoundException extends BankServiceException {
+public class InactiveAccountException extends BankServiceException {
 
-    public AccountNotFoundException(String aMessage) {
+    public InactiveAccountException(String aMessage) {
         super(aMessage);
     }
 
