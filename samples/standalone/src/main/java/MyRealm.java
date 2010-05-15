@@ -17,14 +17,12 @@
  * under the License.
  */
 
-import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 /**
  * @author Les Hazlewood
- * @since Aug 28, 2008 5:13:06 PM
  */
 public class MyRealm extends AuthorizingRealm {
 

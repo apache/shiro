@@ -19,7 +19,6 @@
 package org.apache.shiro.realm.text;
 
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.Destroyable;
 import org.slf4j.Logger;
@@ -120,18 +119,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     public PropertiesRealm() {
         super();
         onInit();
-    }
-
-    /**
-     * Method argument is always ignored.  This method will be removed prior to 1.0 final.
-     *
-     * @param cacheManager ignored
-     * @deprecated PropertiesRealm is an all-in-memory realm - Caching is not necessary or desired since you
-     *             never want entries to be expunged.  This constructor will be removed prior to 1.0 final.
-     */
-    @Deprecated
-    public PropertiesRealm(CacheManager cacheManager) {
-        this();
     }
 
     /*--------------------------------------------

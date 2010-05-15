@@ -19,7 +19,10 @@
 package org.apache.shiro.realm;
 
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.authz.*;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.*;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
@@ -138,6 +141,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return authorizationCacheName;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setAuthorizationCacheName(String authorizationCacheName) {
         this.authorizationCacheName = authorizationCacheName;
     }
@@ -457,11 +461,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     }
 
     private boolean isPermitted(Permission permission, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            return ((AuthorizingAccount) info).isPermitted(permission);
-        }
-
         Collection<Permission> perms = getPermissions(info);
         if (perms != null && !perms.isEmpty()) {
             for (Permission perm : perms) {
@@ -486,13 +485,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return isPermitted(permissions, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected boolean[] isPermitted(List<Permission> permissions, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            return ((AuthorizingAccount) info).isPermitted(permissions);
-        }
-
         boolean[] result;
         if (permissions != null && !permissions.isEmpty()) {
             int size = permissions.size();
@@ -523,13 +516,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return info != null && isPermittedAll(permissions, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected boolean isPermittedAll(Collection<Permission> permissions, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            return ((AuthorizingAccount) info).isPermittedAll(permissions);
-        }
-
         if (permissions != null && !permissions.isEmpty()) {
             for (Permission p : permissions) {
                 if (!isPermitted(p, info)) {
@@ -550,16 +537,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         checkPermission(permission, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected void checkPermission(Permission permission, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            ((AuthorizingAccount) info).checkPermission(permission);
-        } else {
-            if (!isPermitted(permission, info)) {
-                String msg = "User is not permitted [" + permission + "]";
-                throw new UnauthorizedException(msg);
-            }
+        if (!isPermitted(permission, info)) {
+            String msg = "User is not permitted [" + permission + "]";
+            throw new UnauthorizedException(msg);
         }
     }
 
@@ -576,16 +557,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         checkPermissions(permissions, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected void checkPermissions(Collection<Permission> permissions, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            ((AuthorizingAccount) info).checkPermissions(permissions);
-        } else {
-            if (permissions != null && !permissions.isEmpty()) {
-                for (Permission p : permissions) {
-                    checkPermission(p, info);
-                }
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Permission p : permissions) {
+                checkPermission(p, info);
             }
         }
     }
@@ -595,12 +570,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return hasRole(roleIdentifier, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected boolean hasRole(String roleIdentifier, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            return ((AuthorizingAccount) info).hasRole(roleIdentifier);
-        }
         return info != null && info.getRoles() != null && info.getRoles().contains(roleIdentifier);
     }
 
@@ -613,13 +583,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return result;
     }
 
-    @SuppressWarnings("deprecation")
     protected boolean[] hasRoles(List<String> roleIdentifiers, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            return ((AuthorizingAccount) info).hasRoles(roleIdentifiers);
-        }
-
         boolean[] result;
         if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
             int size = roleIdentifiers.size();
@@ -639,13 +603,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return info != null && hasAllRoles(roleIdentifiers, info);
     }
 
-    @SuppressWarnings("deprecation")
     private boolean hasAllRoles(Collection<String> roleIdentifiers, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            return ((AuthorizingAccount) info).hasAllRoles(roleIdentifiers);
-        }
-
         if (roleIdentifiers != null && !roleIdentifiers.isEmpty()) {
             for (String roleName : roleIdentifiers) {
                 if (!hasRole(roleName, info)) {
@@ -661,16 +619,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         checkRole(role, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected void checkRole(String role, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            ((AuthorizingAccount) info).checkRole(role);
-        } else {
-            if (!hasRole(role, info)) {
-                String msg = "User does not have role [" + role + "]";
-                throw new UnauthorizedException(msg);
-            }
+        if (!hasRole(role, info)) {
+            String msg = "User does not have role [" + role + "]";
+            throw new UnauthorizedException(msg);
         }
     }
 
@@ -679,16 +631,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         checkRoles(roles, info);
     }
 
-    @SuppressWarnings("deprecation")
     protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {
-        //TODO Remove this once AuthorizingAccount class is deleted
-        if (info instanceof AuthorizingAccount) {
-            ((AuthorizingAccount) info).checkRoles(roles);
-        } else {
-            if (roles != null && !roles.isEmpty()) {
-                for (String roleName : roles) {
-                    checkRole(roleName, info);
-                }
+        if (roles != null && !roles.isEmpty()) {
+            for (String roleName : roles) {
+                checkRole(roleName, info);
             }
         }
     }
