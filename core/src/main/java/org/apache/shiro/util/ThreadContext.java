@@ -76,7 +76,7 @@ public abstract class ThreadContext {
      * previously in the ThreadContext - if you need to retain what was on the thread prior to calling this method,
      * call the {@link #getResources()} method, which will give you the existing state.
      *
-     * @param resources the resources to replace the existing {@link #getResources() resources}.
+     * @param newResources the resources to replace the existing {@link #getResources() resources}.
      * @since 1.0
      */
     public static void setResources(Map<Object, Object> newResources) {
@@ -178,8 +178,7 @@ public abstract class ThreadContext {
     }
 
     /**
-     * First {@link #clear clears} the {@code ThreadContext} values and then
-     * {@link ThreadLocal#remove removes} the underlying {@link ThreadLocal ThreadLocal} from the thread.
+     * {@link ThreadLocal#remove Remove}s the underlying {@link ThreadLocal ThreadLocal} from the thread.
      * <p/>
      * This method is meant to be the final 'clean up' operation that is called at the end of thread execution to
      * prevent thread corruption in pooled thread environments.
