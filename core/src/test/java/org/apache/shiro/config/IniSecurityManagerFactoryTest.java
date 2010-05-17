@@ -92,6 +92,8 @@ public class IniSecurityManagerFactoryTest {
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
         section.put("propsRealm", PropertiesRealm.class.getName());
+        section.put("propsRealm.resourcePath",
+                "classpath:org/apache/shiro/config/IniSecurityManagerFactoryTest.propsRealm.properties");
 
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
         SecurityManager sm = factory.getInstance();

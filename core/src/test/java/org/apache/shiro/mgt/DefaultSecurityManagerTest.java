@@ -21,7 +21,8 @@ package org.apache.shiro.mgt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.config.Ini;
+import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
@@ -46,7 +47,11 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     @Before
     public void setup() {
         sm = new DefaultSecurityManager();
-        sm.setRealm(new PropertiesRealm());
+        Ini ini = new Ini();
+        Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
+        section.put("guest", "guest, guest");
+        section.put("lonestarr", "vespa, goodguy");
+        sm.setRealm(new IniRealm(ini));
         SecurityUtils.setSecurityManager(sm);
     }
 
