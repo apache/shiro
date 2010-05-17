@@ -21,7 +21,8 @@ package org.apache.shiro.mgt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.config.Ini;
+import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
@@ -50,7 +51,10 @@ public class VMSingletonDefaultSecurityManagerTest {
     @Test
     public void testVMSingleton() {
         DefaultSecurityManager sm = new DefaultSecurityManager();
-        sm.setRealm(new PropertiesRealm());
+        Ini ini = new Ini();
+        Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
+        section.put("guest", "guest");
+        sm.setRealm(new IniRealm(ini));
         SecurityUtils.setSecurityManager(sm);
 
         Subject subject = SecurityUtils.getSubject();

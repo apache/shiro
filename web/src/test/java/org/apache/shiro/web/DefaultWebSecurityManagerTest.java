@@ -19,7 +19,8 @@
 package org.apache.shiro.web;
 
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.realm.text.PropertiesRealm;
+import org.apache.shiro.config.Ini;
+import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
@@ -51,7 +52,10 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     public void setup() {
         sm = new DefaultWebSecurityManager();
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
-        sm.setRealm(new PropertiesRealm());
+        Ini ini = new Ini();
+        Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
+        section.put("lonestarr", "vespa");
+        sm.setRealm(new IniRealm(ini));
     }
 
     @After

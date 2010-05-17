@@ -42,17 +42,9 @@ import java.util.concurrent.TimeUnit;
  * This class allows processing of a single .properties file for user, role, and
  * permission configuration.
  * <p/>
- * For convenience, if the {@link #setResourcePath resourcePath} attribute is not set, this class defaults to lookup
- * the properties file definition from {@code classpath:shiro-users.properties} (root of the classpath).
- * This allows you to use this implementation by simply defining this file at the classpath root, instantiating this
- * class, and then calling {@link #init init()}.
- * <p/>
- * Or, you may of course specify any other file path using the {@code url:}, {@code file:}, or {@code classpath:}
- * prefixes.
- * <p/>
- * If none of these are specified, and the shiro-users.properties is not included at the root of the classpath,
- * a default failsafe configuration will be used.  This is not recommended as it only contains a few simple users and
- * roles which are probably of little value to production applications.
+ * The {@link #setResourcePath resourcePath} <em>MUST</em> be set before this realm can be initialized.  You
+ * can specify any resource path supported by
+ * {@link ResourceUtils#getInputStreamForPath(String) ResourceUtils.getInputStreamForPath} method.
  * <p/>
  * The Properties format understood by this implementation must be written as follows:
  * <p/>
@@ -103,7 +95,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     private static final String USERNAME_PREFIX = "user.";
     private static final String ROLENAME_PREFIX = "role.";
     private static final String DEFAULT_RESOURCE_PATH = "classpath:shiro-users.properties";
-    private static final String FAILSAFE_RESOURCE_PATH = "classpath:org/apache/shiro/realm/text/default-shiro-users.properties";
 
     /*-------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -118,7 +109,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
 
     public PropertiesRealm() {
         super();
-        onInit();
     }
 
     /*--------------------------------------------
@@ -149,8 +139,6 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     }
 
     /**
-     * TODO: RELOADING IS CURRENTLY DISABLED
-     * <p/>
      * Sets the interval in seconds at which the property file will be checked for changes and reloaded.  If this is
      * set to zero or less, property file reloading will be disabled.  If it is set to 1 or greater, then a
      * separate thread will be created to monitor the propery file for changes and reload the file if it is updated.
@@ -173,16 +161,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     }
 
     protected void afterRoleCacheSet() {
-        try {
-            loadProperties();
-        } catch (Exception e) {
-            if (log.isInfoEnabled()) {
-                log.info("Unable to find a shiro-users.properties file at location [" + this.resourcePath + "].  " +
-                        "Defaulting to Shiro's failsafe properties file (demo use only).");
-            }
-            this.resourcePath = FAILSAFE_RESOURCE_PATH;
-            loadProperties();
-        }
+        loadProperties();
         //we can only determine if files have been modified at runtime (not classpath entries or urls), so only
         //start the thread in this case:
         if (this.resourcePath.startsWith(ResourceUtils.FILE_PREFIX) && scheduler != null) {
