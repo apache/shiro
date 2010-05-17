@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.authz;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -75,13 +77,22 @@ public class ModularRealmAuthorizerTest
             Assert.assertTrue( ((AuthorizingRealm)realm).getRolePermissionResolver() == rolePermissionResolver );
         }
         
+        // add a new realm and make sure the RolePermissionResolver is set
+        MockAuthorizingRealm mockRealm = new MockAuthorizingRealm();
+        realms.add( mockRealm );
+        modRealmAuthz.setRealms( realms );
+        assertTrue( ((AuthorizingRealm) mockRealm).getRolePermissionResolver() == rolePermissionResolver );
+        
+        
         // TODO: no way to unset them, not sure if that is a valid use case, but this is conistent with the PermissionResolver logic
 //        // now just to be sure, unset them
 //        modRealmAuthz.setRolePermissionResolver( null );
 //        for ( Realm realm : realms )
 //        {
 //            Assert.assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
-//        }    
+//        }
+        
+        
     }
     
     class MockAuthorizingRealm extends AuthorizingRealm
