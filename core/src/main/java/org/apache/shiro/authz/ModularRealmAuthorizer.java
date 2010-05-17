@@ -89,6 +89,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     public void setRealms(Collection<Realm> realms) {
         this.realms = realms;
         applyPermissionResolverToRealms();
+        applyRolePermissionResolverToRealms();
     }
 
     /**
