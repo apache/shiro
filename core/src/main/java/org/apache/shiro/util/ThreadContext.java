@@ -53,56 +53,12 @@ public abstract class ThreadContext {
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
 
-    protected static ThreadLocal<Map<Object, Object>> resources;
+    private static final ThreadLocal<Map<Object, Object>> resources = new InheritableThreadLocalMap<Map<Object, Object>>();
 
     /**
      * Default no-argument constructor.
      */
     protected ThreadContext() {
-    }
-
-    /**
-     * Returns the {@link ThreadLocal} resource {@code Map}.  If it does not yet exist, one is created,
-     * bound to the thread, and then returned.
-     *
-     * @return the ThreadLocal resource {@code Map}, possibly lazily-created.
-     * @since 1.0
-     */
-    protected static Map<Object, Object> getResourcesLazy() {
-        if (resources == null) {
-            resources = createThreadLocal();
-        }
-        return resources.get();
-    }
-
-    /**
-     * Creates a new {@link ThreadLocal} instance containing a {@link Map} to hold arbitrary key-value pairs.
-     *
-     * @return a new {@link ThreadLocal} instance containing a {@link Map} to hold arbitrary key-value pairs.
-     * @since 1.0
-     */
-    private static ThreadLocal<Map<Object, Object>> createThreadLocal() {
-        return new InheritableThreadLocal<Map<Object, Object>>() {
-            protected Map<Object, Object> initialValue() {
-                return new HashMap<Object, Object>();
-            }
-
-            /**
-             * This implementation was added to address a
-             * <a href="http://jsecurity.markmail.org/search/?q=#query:+page:1+mid:xqi2yxurwmrpqrvj+state:results">
-             * user-reported issue</a>.
-             * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
-             * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
-             */
-            @SuppressWarnings({"unchecked"})
-            protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
-                if (parentValue != null) {
-                    return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
-                } else {
-                    return null;
-                }
-            }
-        };
     }
 
     /**
@@ -123,13 +79,12 @@ public abstract class ThreadContext {
      * @param resources the resources to replace the existing {@link #getResources() resources}.
      * @since 1.0
      */
-    public static void setResources(Map<Object, Object> resources) {
-        if (CollectionUtils.isEmpty(resources)) {
+    public static void setResources(Map<Object, Object> newResources) {
+        if (CollectionUtils.isEmpty(newResources)) {
             return;
         }
-        Map<Object, Object> existing = getResourcesLazy();
-        existing.clear();
-        existing.putAll(resources);
+        resources.get().clear();
+        resources.get().putAll(newResources);
     }
 
     /**
@@ -142,9 +97,6 @@ public abstract class ThreadContext {
      * @since 1.0
      */
     private static Object getValue(Object key) {
-        if (resources == null) {
-            return null;
-        }
         return resources.get().get(key);
     }
 
@@ -196,7 +148,7 @@ public abstract class ThreadContext {
             return;
         }
 
-        getResourcesLazy().put(key, value);
+        resources.get().put(key, value);
 
         if (log.isTraceEnabled()) {
             String msg = "Bound value of type [" + value.getClass().getName() + "] for key [" +
@@ -214,9 +166,6 @@ public abstract class ThreadContext {
      *         under the specified <tt>key</tt> name.
      */
     public static Object remove(Object key) {
-        if (resources == null) {
-            return null;
-        }
         Object value = resources.get().remove(key);
 
         if ((value != null) && log.isTraceEnabled()) {
@@ -229,23 +178,6 @@ public abstract class ThreadContext {
     }
 
     /**
-     * Clears <em>all</em> values bound to this ThreadContext, which includes any Subject, Session, or InetAddress
-     * that may be bound by these respective objects' convenience methods, as well as all values bound by your
-     * application code.
-     * <p/>
-     * <p>This operation is meant as a clean-up operation that may be called at the end of
-     * thread execution to prevent data corruption in a pooled thread environment.
-     */
-    public static void clear() {
-        if (resources != null) {
-            resources.get().clear();
-        }
-        if (log.isTraceEnabled()) {
-            log.trace("Removed all ThreadContext values from thread [" + Thread.currentThread().getName() + "]");
-        }
-    }
-
-    /**
      * First {@link #clear clears} the {@code ThreadContext} values and then
      * {@link ThreadLocal#remove removes} the underlying {@link ThreadLocal ThreadLocal} from the thread.
      * <p/>
@@ -255,11 +187,7 @@ public abstract class ThreadContext {
      * @since 1.0
      */
     public static void remove() {
-        if (resources != null) {
-            clear();
-            resources.remove();
-            resources = null;
-        }
+        resources.remove();
     }
 
     /**
@@ -378,6 +306,28 @@ public abstract class ThreadContext {
      */
     public static Subject unbindSubject() {
         return (Subject) remove(SUBJECT_KEY);
+    }
+    
+    private static final class InheritableThreadLocalMap<T extends Map<Object, Object>> extends InheritableThreadLocal<Map<Object, Object>> {
+        protected Map<Object, Object> initialValue() {
+            return new HashMap<Object, Object>();
+        }
+
+        /**
+         * This implementation was added to address a
+         * <a href="http://jsecurity.markmail.org/search/?q=#query:+page:1+mid:xqi2yxurwmrpqrvj+state:results">
+         * user-reported issue</a>.
+         * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
+         * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
+         */
+        @SuppressWarnings({"unchecked"})
+        protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
+            if (parentValue != null) {
+                return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
+            } else {
+                return null;
+            }
+        }
     }
 }
 
