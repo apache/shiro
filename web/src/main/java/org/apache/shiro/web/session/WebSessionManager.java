@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.web.session;
 
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.SessionManager;
 
 import javax.servlet.ServletRequest;
@@ -45,4 +47,17 @@ public interface WebSessionManager extends SessionManager {
      * @since 1.0
      */
     Serializable getSessionId(ServletRequest request, ServletResponse response);
+
+    /**
+     * Returns the session associated with the specified request pair or {@code null} if there is no session
+     * associated with the request.
+     *
+     * @param request  the incoming {@code ServletRequest}
+     * @param response the outgoing {@code ServletResponse}
+     * @return the current session associated with the specified request pair, or {@code null} if there is no
+     *         session associated with the request.
+     * @throws SessionException if there is a problem acquiring the Session associated with the request/response pair
+     * @since 1.0
+     */
+    Session getSession(ServletRequest request, ServletResponse response) throws SessionException;
 }

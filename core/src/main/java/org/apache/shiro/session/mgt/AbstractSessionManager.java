@@ -24,12 +24,13 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 
 /**
@@ -102,21 +103,12 @@ public abstract class AbstractSessionManager implements SessionManager {
         return this.listeners;
     }
 
-    public Serializable start(String host) throws AuthorizationException {
-        Map<String, String> initData = null;
-        if (StringUtils.hasText(host)) {
-            initData = new HashMap<String, String>();
-            initData.put(SessionFactory.HOST_KEY, host);
-        }
-        return start(initData);
-    }
-
-    public Serializable start(Map initData) throws AuthorizationException {
+    public Session start(SessionContext initData) throws AuthorizationException {
         Session session = createSession(initData);
         applyGlobalSessionTimeout(session);
         onStart(session);
         notifyStart(session);
-        return session.getId();
+        return new DelegatingSession(this, session.getId());
     }
 
     protected void applyGlobalSessionTimeout(Session session) {
@@ -297,5 +289,5 @@ public abstract class AbstractSessionManager implements SessionManager {
      * @throws AuthorizationException    if the system access control policy does not allow the currently executing
      *                                   caller to start sessions.
      */
-    protected abstract Session createSession(Map initData) throws AuthorizationException;
+    protected abstract Session createSession(SessionContext initData) throws AuthorizationException;
 }

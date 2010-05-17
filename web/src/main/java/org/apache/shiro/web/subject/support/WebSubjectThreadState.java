@@ -26,6 +26,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
+ * Web-specific {@code SubjectThreadState} implementation that, in addition to the parent class's bind/unbind
+ * behavior, also ensures that a {@link ServletRequest ServletRequest} and {@link ServletResponse ServletResponse}
+ * pair are also bound/unbound as necessary.
+ *
+ * @author Les Hazlewood
  * @since 1.0
  */
 public class WebSubjectThreadState extends SubjectThreadState {
@@ -33,6 +38,15 @@ public class WebSubjectThreadState extends SubjectThreadState {
     private final ServletRequest request;
     private final ServletResponse response;
 
+    /**
+     * Creates a new {@code WebSubjectThreadState} instance, retaining the {@link WebSubject} argument's
+     * {@link org.apache.shiro.web.subject.WebSubject#getServletRequest() servletRequest} and
+     * {@link org.apache.shiro.web.subject.WebSubject#getServletResponse() servletResponse} in addition to any
+     * state retained by the parent class's constructor.
+     *
+     * @param subject the {@link WebSubject} to bind as well as from which to acquire the
+     *                {@code ServletRequest} and {@code ServletResponse} pair.
+     */
     public WebSubjectThreadState(WebSubject subject) {
         super(subject);
 
@@ -49,6 +63,12 @@ public class WebSubjectThreadState extends SubjectThreadState {
         this.response = response;
     }
 
+    /**
+     * Calls {@code super.bind()} and then additionally binds the internal {@code ServletRequest} and
+     * {@code ServletResponse} pair via
+     * {@code WebUtils.}{@link WebUtils#bind(javax.servlet.ServletRequest) bind(ServletRequest)} and
+     * {@code WebUtils.}{@link WebUtils#bind(javax.servlet.ServletResponse) bind(ServletResponse)}, respectively.
+     */
     @Override
     public void bind() {
         super.bind();

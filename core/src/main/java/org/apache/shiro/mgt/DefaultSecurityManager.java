@@ -24,7 +24,9 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
+import org.apache.shiro.session.mgt.DefaultSessionContext;
 import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
@@ -328,12 +330,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         //ensure that the context has a SecurityManager instance, and if not, add one:
         context = ensureSecurityManager(context);
 
-        //Translate a session id if it exists into a Session object before sending to the SubjectFactory
-        //The SubjectFactory should not need to know how to acquire sessions as it is often environment
-        //specific - better to shield the SF from these details:
+        //Resolve an associated Session (usually based on a referenced session ID), and place it in the context before
+        //sending to the SubjectFactory.  The SubjectFactory should not need to know how to acquire sessions as the
+        //process is often environment specific - better to shield the SF from these details:
         context = resolveSession(context);
 
-        //Similarly, the SubjectFactory should not have any concept of RememberMe - translate that here first
+        //Similarly, the SubjectFactory should not require any concept of RememberMe - translate that here first
         //if possible before handing off to the SubjectFactory:
         context = resolvePrincipals(context);
 
@@ -351,7 +353,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      */
     @SuppressWarnings({"unchecked"})
     protected SubjectContext ensureSecurityManager(SubjectContext context) {
-        if (context.getSecurityManager() != null) {
+        if (context.resolveSecurityManager() != null) {
             log.trace("Context already contains a SecurityManager instance.  Returning.");
             return context;
         }
@@ -361,15 +363,15 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     /**
-     * Attempts to resolve any session id in the context to its corresponding {@link Session} and returns a
+     * Attempts to resolve any associated session based on the context and returns a
      * context that represents this resolved {@code Session} to ensure it may be referenced if necessary by the
      * invoked {@link SubjectFactory} that performs actual {@link Subject} construction.
      * <p/>
      * If there is a {@code Session} already in the context because that is what the caller wants to be used for
-     * {@code Subject} construction, or if no session is resolved, this method effectively does nothing and immediately
+     * {@code Subject} construction, or if no session is resolved, this method effectively does nothing
      * returns the Map method argument unaltered.
      *
-     * @param context the subject context data that may contain a session id that should be converted to a Session instance.
+     * @param context the subject context data that may resolve a Session instance.
      * @return The context to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
@@ -379,23 +381,33 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             log.debug("Context already contains a session.  Returning.");
             return context;
         }
+        try {
+            Session session = resolveContextSession(context);
+            if (session != null) {
+                context.setSession(session);
+            }
+        } catch (InvalidSessionException e) {
+            onInvalidSession(context, e);
+            log.debug("Resolved SubjectContext context session is invalid.  Ignoring and creating an anonymous " +
+                    "(session-less) Subject instance.", e);
+        }
+        return context;
+    }
+
+    protected Session resolveContextSession(SubjectContext context) throws InvalidSessionException {
+        return resolveContextSessionById(context);
+    }
+
+    protected Session resolveContextSessionById(SubjectContext context) throws InvalidSessionException {
         log.trace("No session found in context.  Looking for a session id to resolve in to a session.");
         //otherwise try to resolve a session if a session id exists:
         Serializable sessionId = getSessionId(context);
         if (sessionId != null) {
-            try {
-                Session session = getSession(sessionId);
-                context.setSession(session);
-            } catch (InvalidSessionException e) {
-                onInvalidSessionId(context, sessionId, e);
-                log.debug("Referenced sessionId {} is invalid.  Ignoring and creating an anonymous " +
-                        "(session-less) Subject instance.", sessionId);
-                if (log.isTraceEnabled()) {
-                    log.trace("Exception resulting from invalid referenced sessionId " + sessionId, e);
-                }
-            }
+            log.debug("Discovered context session id [{}].  Attempting to acquire the associated Session instance.");
+            return getSession(sessionId);
         }
-        return context;
+        log.trace("No session id found in the context.  A context session cannot be resolved.");
+        return null;
     }
 
     /**
@@ -406,7 +418,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * so, this method does nothing and returns the method argument unaltered.</li>
      * <li>Check for a RememberMe identity by calling {@link #getRememberedIdentity}.  If that method returns a
      * non-null value, place the remembered {@link PrincipalCollection} in the context.</li>
-     * <li>If the remembered identity is discovered, associate it with the session so eliminate unnecessary
+     * <li>If the remembered identity is discovered, associate it with the session to eliminate unnecessary
      * rememberMe accesses for the remainder of the session</li>
      * </ol>
      *
@@ -417,13 +429,18 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      */
     @SuppressWarnings({"unchecked"})
     protected SubjectContext resolvePrincipals(SubjectContext context) {
+
         PrincipalCollection principals = context.resolvePrincipals();
+
         if (CollectionUtils.isEmpty(principals)) {
             log.trace("No identity (PrincipalCollection) found in the context.  Looking for a remembered identity.");
+
             principals = getRememberedIdentity(context);
+
             if (!CollectionUtils.isEmpty(principals)) {
                 log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
                         "for subject construction by the SubjectFactory.");
+
                 context.setPrincipals(principals);
                 bindPrincipalsToSession(principals, context);
             } else {
@@ -460,25 +477,35 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                     "Doing this prevents unnecessary repeated RememberMe operations since an identity has been " +
                     "discovered.", principals);
             //no session - start one:
-            String host = context.resolveHost();
-            Serializable sessionId = start(host);
-            session = new DelegatingSession(securityManager, sessionId, host);
+            SessionContext sessionContext = createSessionContext(context);
+            session = start(sessionContext);
             context.setSession(session);
-            log.debug("Created session with id {} to retain discovered principals {}", sessionId, principals);
+            log.debug("Created session with id {} to retain discovered principals {}", session.getId(), principals);
         }
         bindPrincipalsToSession(principals, session);
     }
 
+    protected SessionContext createSessionContext(SubjectContext subjectContext) {
+        DefaultSessionContext sessionContext = new DefaultSessionContext();
+        if (!CollectionUtils.isEmpty(subjectContext)) {
+            sessionContext.putAll(subjectContext);
+        }
+        String host = subjectContext.resolveHost();
+        if (host != null) {
+            sessionContext.setHost(host);
+        }
+        return sessionContext;
+    }
+
     /**
-     * Allows subclasses to react to the fact that a specified/referenced session id was invalid.  Default
-     * implementation does nothing (no-op).
+     * Allows subclasses to react to the fact that attempting to resolve a session based on the given SubjectContext
+     * failed.  Default implementation does nothing (no-op).
      *
      * @param subjectContext the subjectContext from where the sessionId was discovered
-     * @param sessionId      the session id that was discovered to be invalid (no session, expired, etc).
-     * @param e              the exception thrown upon encountering the invalid session id
+     * @param e              the exception thrown while attempting to resolve the context's session
      * @since 1.0
      */
-    protected void onInvalidSessionId(SubjectContext subjectContext, Serializable sessionId, InvalidSessionException e) {
+    protected void onInvalidSession(SubjectContext subjectContext, SessionException e) {
     }
 
     /**

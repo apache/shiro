@@ -23,6 +23,7 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * WARNING: THIS IS A WORK IN PROGRESS AND IS NOT RECOMMENDED FOR USE!
@@ -94,10 +94,10 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
     }
 
     @Override
-    protected Session doCreateSession(Map initData) {
+    protected Session doCreateSession(SessionContext initData) {
         assertDelegateExists();
-        Serializable sessionId = this.delegateSessionManager.start(initData);
-        return new DelegatingSession(this, sessionId);
+        Session session = this.delegateSessionManager.start(initData);
+        return new DelegatingSession(this, session.getId());
     }
 
     @Override
@@ -167,16 +167,8 @@ public class DelegatingWebSessionManager extends DefaultWebSessionManager {
             }
         }
 
-        public Serializable start(final String host) throws AuthorizationException {
-            return (Serializable) execute(new SessionManagerCallback() {
-                public Object doWithSessionManager(SessionManager sm) throws SessionException {
-                    return sm.start(host);
-                }
-            });
-        }
-
-        public Serializable start(final Map initData) throws AuthorizationException {
-            return (Serializable) execute(new SessionManagerCallback() {
+        public Session start(final SessionContext initData) throws AuthorizationException {
+            return (Session) execute(new SessionManagerCallback() {
                 public Object doWithSessionManager(SessionManager sm) throws SessionException {
                     return sm.start(initData);
                 }

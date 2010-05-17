@@ -29,12 +29,12 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.MapContext;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
 
 /**
  * Default implementation of the {@link SubjectContext} interface.  Note that the getters and setters are not
@@ -46,7 +46,7 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class DefaultSubjectContext implements SubjectContext {
+public class DefaultSubjectContext extends MapContext implements SubjectContext {
 
     private static final String SECURITY_MANAGER = DefaultSubjectContext.class.getName() + ".SECURITY_MANAGER";
 
@@ -78,33 +78,12 @@ public class DefaultSubjectContext implements SubjectContext {
 
     private static final transient Logger log = LoggerFactory.getLogger(DefaultSubjectContext.class);
 
-    private final Map<String, Object> backingMap;
-
     public DefaultSubjectContext() {
-        this.backingMap = new HashMap<String, Object>();
+        super();
     }
 
     public DefaultSubjectContext(SubjectContext ctx) {
-        this();
-        if (!CollectionUtils.isEmpty(ctx)) {
-            this.backingMap.putAll(ctx);
-        }
-    }
-
-    @SuppressWarnings({"unchecked"})
-    protected <E> E getTypedValue(String key, Class<E> type) {
-        E found = null;
-        Object o = backingMap.get(key);
-        if (o != null) {
-            if (!type.isAssignableFrom(o.getClass())) {
-                String msg = "Invalid object found in SubjectContext Map under key [" + key + "].  Expected type " +
-                        "was [" + type.getName() + "], but the object under that key is of type " +
-                        "[" + o.getClass().getName() + "].";
-                throw new IllegalArgumentException(msg);
-            }
-            found = (E) o;
-        }
-        return found;
+        super(ctx);
     }
 
     public SecurityManager getSecurityManager() {
@@ -295,53 +274,5 @@ public class DefaultSubjectContext implements SubjectContext {
         }
 
         return host;
-    }
-
-    public int size() {
-        return backingMap.size();
-    }
-
-    public boolean isEmpty() {
-        return backingMap.isEmpty();
-    }
-
-    public boolean containsKey(Object o) {
-        return backingMap.containsKey(o);
-    }
-
-    public boolean containsValue(Object o) {
-        return backingMap.containsValue(o);
-    }
-
-    public Object get(Object o) {
-        return backingMap.get(o);
-    }
-
-    public Object put(String s, Object o) {
-        return backingMap.put(s, o);
-    }
-
-    public Object remove(Object o) {
-        return backingMap.remove(o);
-    }
-
-    public void putAll(Map<? extends String, ?> map) {
-        backingMap.putAll(map);
-    }
-
-    public void clear() {
-        backingMap.clear();
-    }
-
-    public Set<String> keySet() {
-        return Collections.unmodifiableSet(backingMap.keySet());
-    }
-
-    public Collection<Object> values() {
-        return Collections.unmodifiableCollection(backingMap.values());
-    }
-
-    public Set<Entry<String, Object>> entrySet() {
-        return Collections.unmodifiableSet(backingMap.entrySet());
     }
 }

@@ -21,15 +21,16 @@ package org.apache.shiro.web;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import org.apache.shiro.web.session.DefaultWebSessionManager;
-import org.apache.shiro.web.session.ServletContainerSessionManager;
-import org.apache.shiro.web.session.WebSessionManager;
+import org.apache.shiro.web.session.*;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
@@ -68,11 +69,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         setSessionManager(new ServletContainerSessionManager());
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public DefaultWebSecurityManager(Realm singleRealm) {
         this();
         setRealm(singleRealm);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public DefaultWebSecurityManager(Collection<Realm> realms) {
         this();
         setRealms(realms);
@@ -87,9 +90,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     protected SubjectContext copy(SubjectContext subjectContext) {
         if (subjectContext instanceof WebSubjectContext) {
             return new DefaultWebSubjectContext((WebSubjectContext) subjectContext);
-        } else {
-            return super.copy(subjectContext);
         }
+        return super.copy(subjectContext);
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -119,6 +121,9 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         }
     }
 
+    /**
+     * @since 1.0
+     */
     public boolean isHttpSessionMode() {
         return this.sessionMode == null || this.sessionMode.equals(HTTP_SESSION_MODE);
     }
@@ -138,6 +143,28 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @Override
+    protected Session resolveContextSession(SubjectContext context) throws InvalidSessionException {
+        Session session = null;
+        if (context instanceof WebSubjectContext) {
+            WebSubjectContext wsc = (WebSubjectContext) context;
+            ServletRequest request = wsc.resolveServletRequest();
+            ServletResponse response = wsc.resolveServletResponse();
+            if (request != null && response != null) {
+                session = ((WebSessionManager) getSessionManager()).getSession(request, response);
+            }
+        } else {
+            session = super.resolveContextSession(context);
+        }
+
+        if (session != null && !isHttpSessionMode()) {
+            //don't expose the EIS-tier session instance to the SubjectFactory
+            session = new DelegatingSession(this, session.getId());
+        }
+
+        return session;
+    }
+
+    @Override
     protected Serializable getSessionId(SubjectContext subjectContext) {
         Serializable sessionId = super.getSessionId(subjectContext);
         if (sessionId == null && subjectContext instanceof WebSubjectContext) {
@@ -153,8 +180,22 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @Override
-    protected void onInvalidSessionId(SubjectContext subjectContext, Serializable sessionId, InvalidSessionException e) {
-        getRememberMeManager().forgetIdentity(subjectContext);
+    protected SessionContext createSessionContext(SubjectContext subjectContext) {
+        SessionContext sessionContext = super.createSessionContext(subjectContext);
+        if (subjectContext instanceof WebSubjectContext) {
+            WebSubjectContext wsc = (WebSubjectContext) subjectContext;
+            ServletRequest request = wsc.resolveServletRequest();
+            ServletResponse response = wsc.resolveServletResponse();
+            WebSessionContext webSessionContext = new DefaultWebSessionContext(sessionContext);
+            if (request != null) {
+                webSessionContext.setServletRequest(request);
+            }
+            if (response != null) {
+                webSessionContext.setServletResponse(response);
+            }
+            sessionContext = webSessionContext;
+        }
+        return sessionContext;
     }
 
     @Override

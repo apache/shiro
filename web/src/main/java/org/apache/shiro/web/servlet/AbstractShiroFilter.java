@@ -20,15 +20,12 @@ package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.util.ThreadState;
 import org.apache.shiro.web.DefaultWebSecurityManager;
 import org.apache.shiro.web.WebSecurityManager;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.subject.WebSubject;
-import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +36,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 /**
  * Abstract base class that provides all standard Shiro request filtering behavior and expects
@@ -192,48 +190,16 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Binds the current request/response pair and additional information to a thread-local to be made available to Shiro
-     * during the course of the request/response process.  This implementation binds the request/response pair and
-     * any associated Subject (and its relevant thread-based data) via a {@link org.apache.shiro.web.subject.support.WebSubjectThreadState}.  That
-     * threadState is returned so it can be used during thread cleanup at the end of the request.
-     * <p/>
-     * To guarantee properly cleaned threads in a thread-pooled Servlet Container environment, the corresponding
-     * {@link #unbind} method must be called in a {@code finally} block to ensure that the thread remains clean even
-     * in the event of an exception thrown while processing the request.  This class's
-     * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
-     * method implementation does indeed function this way.
+     * Creates a {@link WebSubject} instance to associate with the incoming request/response pair which will be used
+     * throughout the request/response execution.
      *
-     * @param request  the incoming ServletRequest
-     * @param response the outgoing ServletResponse
-     * @return ThreadStateManager the thread state used to bind necessary state for the request execution.
+     * @param request  the incoming {@code ServletRequest}
+     * @param response the outgoing {@code ServletResponse}
+     * @return the {@code WebSubject} instance to associate with the request/response execution
      * @since 1.0
      */
-    protected ThreadState bind(ServletRequest request, ServletResponse response) {
-        ThreadContext.bind(getSecurityManager());
-        WebUtils.bind(request);
-        WebUtils.bind(response);
-        WebSubject subject = new WebSubject.Builder(getSecurityManager(), request, response).buildWebSubject();
-        ThreadState threadState = new WebSubjectThreadState(subject);
-        threadState.bind();
-        return threadState;
-    }
-
-    /**
-     * Unbinds (removes out of scope) the current {@code ServletRequest} and {@link ServletResponse}.
-     * <p/>
-     * This method implementation merely clears <em>all</em> thread state by calling
-     * {@link org.apache.shiro.subject.support.SubjectThreadState#clear()} to guarantee
-     * that <em>everything</em> that might have been bound to the thread by Shiro has been removed to ensure the
-     * underlying Thread may be safely re-used in a thread-pooled Servlet Container environment.
-     *
-     * @param threadState the web thread state created when the request and response first were initiated.
-     * @since 1.0
-     */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void unbind(ThreadState threadState) {
-        if ( threadState != null ) {
-            threadState.clear();
-        }
+    protected WebSubject createSubject(ServletRequest request, ServletResponse response) {
+        return new WebSubject.Builder(getSecurityManager(), request, response).buildWebSubject();
     }
 
     /**
@@ -274,41 +240,58 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * the incoming {@code ServletRequest} for use during Shiro's processing</li>
      * <li>{@link #prepareServletResponse(ServletRequest, ServletResponse, FilterChain) Prepares}
      * the outgoing {@code ServletResponse} for use during Shiro's processing</li>
-     * <li>{@link #bind(ServletRequest,ServletResponse) Binds} the request/response pair
-     * and associated data to the currently executing thread for use during processing</li>
-     * <li>{@link #updateSessionLastAccessTime(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Updates}
-     * any associated session's {@link org.apache.shiro.session.Session#getLastAccessTime() lastAccessTime} to ensure
-     * session timeouts are honored</li>
-     * <li>{@link #executeChain(ServletRequest,ServletResponse,FilterChain) Executes}
-     * the appropriate {@code FilterChain}</li>
-     * <li>{@link #unbind(org.apache.shiro.util.ThreadState) Unbinds} the request/response
-     * pair and any other associated data from the thread.
-     * </ul>
+     * <li> {@link #createSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Creates} a
+     * {@link Subject} instance based on the specified request/response pair.</li>
+     * <li>Finally {@link Subject#execute(Runnable) executes} the
+     * {@link #updateSessionLastAccessTime(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} and
+     * {@link #executeChain(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
+     * methods</li>
+     * </ol>
      * <p/>
-     * The {@link #unbind(org.apache.shiro.util.ThreadState) unbind} method is called in a
-     * {@code finally} block to guarantee the thread may be cleanly re-used in a thread-pooled Servlet Container
-     * environment.
+     * The {@code Subject.}{@link Subject#execute(Runnable) execute(Runnable)} call in step #4 is used as an
+     * implementation technique to guarantee proper thread binding and restoration is completed successfully.
      *
      * @param servletRequest  the incoming {@code ServletRequest}
      * @param servletResponse the outgoing {@code ServletResponse}
      * @param chain           the container-provided {@code FilterChain} to execute
-     * @throws javax.servlet.ServletException if an error occurs
      * @throws IOException                    if an IO error occurs
+     * @throws javax.servlet.ServletException if an Throwable other than an IOException
      */
-    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
+    protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse, final FilterChain chain)
             throws ServletException, IOException {
 
-        ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
-        ServletResponse response = prepareServletResponse(request, servletResponse, chain);
-
-        ThreadState threadState = null;
-
+        Throwable t = null;
+        
         try {
-            threadState = bind(request, response);
-            updateSessionLastAccessTime(request, response);
-            executeChain(request, response, chain);
-        } finally {
-            unbind(threadState);
+            final ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
+            final ServletResponse response = prepareServletResponse(request, servletResponse, chain);
+
+            final Subject subject = createSubject(request, response);
+
+            //noinspection unchecked
+            subject.execute(new Callable() {
+                public Object call() throws Exception {
+                    updateSessionLastAccessTime(request, response);
+                    executeChain(request, response, chain);
+                    return null;
+                }
+            });
+        } catch (ExecutionException ex) {
+            t = ex.getCause();
+        } catch (Throwable throwable) {
+            t = throwable;
+        }
+
+        if (t != null) {
+            if (t instanceof ServletException) {
+                throw (ServletException) t;
+            }
+            if (t instanceof IOException) {
+                throw (IOException) t;
+            }
+            //otherwise it's not one of the two exceptions expected by the filter method signature - wrap it in one:
+            String msg = "Filtered request failed.";
+            throw new ServletException(msg, t);
         }
     }
 

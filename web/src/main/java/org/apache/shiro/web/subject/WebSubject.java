@@ -22,7 +22,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 
 import javax.servlet.ServletRequest;
@@ -51,16 +50,6 @@ public interface WebSubject extends Subject {
     ServletResponse getServletResponse();
 
     public static class Builder extends Subject.Builder {
-
-        public Builder() {
-            this(SecurityUtils.getSecurityManager(),
-                    WebUtils.getRequiredServletRequest(),
-                    WebUtils.getRequiredServletResponse());
-        }
-
-        public Builder(SecurityManager securityManager) {
-            this(securityManager, WebUtils.getRequiredServletRequest(), WebUtils.getRequiredServletResponse());
-        }
 
         public Builder(ServletRequest request, ServletResponse response) {
             this(SecurityUtils.getSecurityManager(), request, response);

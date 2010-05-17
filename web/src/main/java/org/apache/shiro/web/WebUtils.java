@@ -432,13 +432,7 @@ public class WebUtils {
      * It is the case in certain enterprise environments where a web-enabled SecurityManager (and its internal mechanisms)
      * is the primary SecurityManager but also serves as a 'central' coordinator for security operations in a cluster.
      * In these environments, it is possible for a web-enabled SecurityManager to receive remote method invocations that
-     * are not HTTP based.
-     * <p/>
-     * In these environments, we need to acquire a thread-bound ServletRequest if it exists, but
-     * not throw an exception if one is not found (with the assumption that the incoming call is not a web request but
-     * instead a remote method invocation).  This method exists to support these environments, whereas the
-     * {@link #getRequiredServletRequest() getRequiredServletRequest()} method always assumes a
-     * servlet-only environment.
+     * are not HTTP based.  In such an environment this method would return {@code null}.
      * <p/>
      * <b>THIS IS NOT PART OF APACHE SHIRO'S PUBLIC API.</b>  It exists for Shiro implementation requirements only.
      *
@@ -446,30 +440,13 @@ public class WebUtils {
      * @since 1.0
      */
     public static ServletRequest getServletRequest() {
-        return (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
-    }
-
-    /**
-     * Convenience method that simplifies retrieval of a required thread-bound ServletRequest.  If there is no
-     * ServletRequest bound to the thread when this method is called, an <code>IllegalStateException</code> is
-     * thrown.
-     * <p/>
-     * This method is basically a convenient wrapper for the following:
-     * <p/>
-     * <code>(ServletRequest){@link ThreadContext#get ThreadContext.get}( SERVLET_REQUEST_KEY );</code>
-     * <p/>
-     * But throws an <code>IllegalStateException</code> if the value is not bound to the <code>ThreadContext</code>.
-     * <p/>
-     * This method only returns the bound value if it exists - it does not remove it
-     * from the thread.  To remove it, one must call {@link #unbindServletRequest() unbindServletRequest} instead.
-     *
-     * @return the ServletRequest bound to the thread.  Never returns null.
-     * @throws IllegalStateException if no servlet request is bound in the {@link org.apache.shiro.util.ThreadContext ThreadContext}.
-     */
-    public static ServletRequest getRequiredServletRequest() throws IllegalStateException {
-        ServletRequest request = getServletRequest();
+        ServletRequest request = (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
         if (request == null) {
-            throw new IllegalStateException("No ServletRequest found in ThreadContext. " + NOT_BOUND_ERROR_MESSAGE);
+            Subject subject = ThreadContext.getSubject();
+            if (subject instanceof WebSubject) {
+                WebSubject webSubject = (WebSubject) subject;
+                request = webSubject.getServletRequest();
+            }
         }
         return request;
     }
@@ -495,36 +472,12 @@ public class WebUtils {
     }
 
     /**
-     * Convenience method that simplifies removal of a thread-local ServletRequest from the thread.
-     * <p/>
-     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
-     * <p/>
-     * <code>return (ServletRequest)ThreadContext.remove( SERVLET_REQUEST_KEY );</code>
-     * <p/>
-     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
-     * thread execution), you should use the {@link #getRequiredServletRequest() getRequiredServletRequest()} method
-     * for that purpose.
-     *
-     * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     */
-    public static ServletRequest unbindServletRequest() {
-        return (ServletRequest) ThreadContext.remove(SERVLET_REQUEST_KEY);
-    }
-
-    /**
      * Returns the current thread-bound {@code ServletResponse} or {@code null} if there is not one bound.
      * <p/>
      * It is the case in certain enterprise environments where a web-enabled SecurityManager (and its internal mechanisms)
      * is the primary SecurityManager but also serves as a 'central' coordinator for security operations in a cluster.
      * In these environments, it is possible for a web-enabled SecurityManager to receive remote method invocations that
-     * are not HTTP based.
-     * <p/>
-     * In these environments, we need to acquire a thread-bound ServletResponse if it exists, but
-     * not throw an exception if one is not found (with the assumption that the incoming call is not a web request but
-     * instead a remote method invocation).  This method exists to support these environments, whereas the
-     * {@link #getRequiredServletResponse() getRequiredServletResponse()} method always assumes a
-     * servlet-only environment.
+     * are not HTTP based.  In such an environment this method would return {@code null}.
      * <p/>
      * <b>THIS IS NOT PART OF APACHE SHIRO'S PUBLIC API.</b>  It exists for Shiro implementation requirements only.
      *
@@ -532,30 +485,13 @@ public class WebUtils {
      * @since 1.0
      */
     public static ServletResponse getServletResponse() {
-        return (ServletResponse) ThreadContext.get(SERVLET_RESPONSE_KEY);
-    }
-
-    /**
-     * Convenience method that simplifies retrieval of a required thread-bound ServletResponse.  If there is no
-     * ServletResponse bound to the thread when this method is called, an <code>IllegalStateException</code> is
-     * thrown.
-     * <p/>
-     * This method is basically a convenient wrapper for the following:
-     * <p/>
-     * <code>return (ServletResponse){@link ThreadContext#get ThreadContext.get}( SERVLET_RESPONSE_KEY );</code>
-     * <p/>
-     * But throws an <code>IllegalStateException</code> if the value is not bound to the <code>ThreadContext</code>.
-     * <p/>
-     * This method only returns the bound value if it exists - it does not remove it
-     * from the thread.  To remove it, one must call {@link #unbindServletResponse() unbindServletResponse} instead.
-     *
-     * @return the ServletResponse bound to the thread.  Never returns null.
-     * @throws IllegalStateException if no <code>ServletResponse> is bound in the {@link ThreadContext ThreadContext}
-     */
-    public static ServletResponse getRequiredServletResponse() throws IllegalStateException {
         ServletResponse response = (ServletResponse) ThreadContext.get(SERVLET_RESPONSE_KEY);
         if (response == null) {
-            throw new IllegalStateException("No ServletResponse found in ThreadContext. " + NOT_BOUND_ERROR_MESSAGE);
+            Subject subject = ThreadContext.getSubject();
+            if (subject instanceof WebSubject) {
+                WebSubject webSubject = (WebSubject) subject;
+                response = webSubject.getServletResponse();
+            }
         }
         return response;
     }
@@ -578,24 +514,6 @@ public class WebUtils {
         if (servletResponse != null) {
             ThreadContext.put(SERVLET_RESPONSE_KEY, servletResponse);
         }
-    }
-
-    /**
-     * Convenience method that simplifies removal of a thread-local ServletResponse from the thread.
-     * <p/>
-     * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
-     * <p/>
-     * <code>return (ServletResponse)ThreadContext.remove( SERVLET_RESPONSE_KEY );</code>
-     * <p/>
-     * If you wish to just retrieve the object from the thread without removing it (so it can be retrieved later during
-     * thread execution), you should use the {@link #getRequiredServletResponse() getRequiredServletResponse()} method
-     * for that purpose.
-     *
-     * @return the Session object previously bound to the thread, or <tt>null</tt> if there was none bound.
-     */
-    public static ServletResponse unbindServletResponse() {
-        return (ServletResponse) ThreadContext.remove(SERVLET_RESPONSE_KEY);
     }
 
     /**
