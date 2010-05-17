@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Map;
 
 
 /**
@@ -142,12 +141,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      */
     protected abstract Session retrieveSession(Serializable sessionId) throws UnknownSessionException;
 
-    protected Session createSession(Map initData) throws AuthorizationException {
+    protected Session createSession(SessionContext initData) throws AuthorizationException {
         enableSessionValidationIfNecessary();
         return doCreateSession(initData);
     }
 
-    protected abstract Session doCreateSession(Map initData) throws AuthorizationException;
+    protected abstract Session doCreateSession(SessionContext initData) throws AuthorizationException;
 
     protected void validate(Session session) throws InvalidSessionException {
         try {

@@ -20,8 +20,6 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.session.Session;
 
-import java.util.Map;
-
 /**
  * A simple factory class that instantiates concrete {@link Session Session} instances.  This is mainly a
  * mechanism to allow instances to be created at runtime if they need to be different the
@@ -35,21 +33,11 @@ import java.util.Map;
 public interface SessionFactory {
 
     /**
-     * The key under which an originating host's host name or IP (as a String) may be found in the
-     * {@code initData} {@code Map} argument passed to the {@link #createSession(java.util.Map) createSession} method.
+     * Creates a new {@code Session} instance based on the specified contextual initialization data.
      *
-     * @since 1.0
-     */
-    public static final String HOST_KEY = SessionFactory.class.getName() + ".HOST_KEY";
-
-    /**
-     * Creates a new {@code Session} instance based on the specified initialization data.  The originating host's
-     * host name or IP (String), if available, should be accessible in the {@code Map} under the
-     * {@link #HOST_KEY} key.  If not available, no value will be returned for that key ({@code null}).
-     *
-     * @param initData the initialization data to be used during {@link Session} instantiation.
+     * @param initData the initialization data to be used during {@link Session} creation.
      * @return a new {@code Session} instance.
      * @since 1.0
      */
-    Session createSession(Map initData);
+    Session createSession(SessionContext initData);
 }

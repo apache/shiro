@@ -41,8 +41,7 @@ public class DelegatingSessionTest {
     public void setup() {
         ThreadContext.remove();
         sm = new DefaultSessionManager();
-        Serializable sessionId = sm.start((String) null);
-        this.session = new DelegatingSession(sm, sessionId);
+        this.session = new DelegatingSession(sm, sm.start(null).getId());
     }
 
     @After

@@ -30,23 +30,23 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 
-
 /**
- * TODO class JavaDoc
+ * {@link Session Session} implementation that is backed entirely by a standard servlet container
+ * {@link HttpSession HttpSession} instance.  It does not interact with any of Shiro's session-related components
+ * {@code SessionManager}, {@code SecurityManager}, etc, and instead satisfies all method implementations by interacting
+ * with a servlet container provided {@link HttpSession HttpSession} instance.
  *
  * @author Les Hazlewood
- * @since 0.9
+ * @since 1.0
  */
-public class WebSession implements Session {
+public class HttpServletSession implements Session {
 
-    //TODO - complete JavaDoc
-
-    private static final String HOST_SESSION_KEY = WebSession.class.getName() + ".HOST_SESSION_KEY";
-    private static final String TOUCH_OBJECT_SESSION_KEY = WebSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
+    private static final String HOST_SESSION_KEY = HttpServletSession.class.getName() + ".HOST_SESSION_KEY";
+    private static final String TOUCH_OBJECT_SESSION_KEY = HttpServletSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
 
     private HttpSession httpSession = null;
 
-    public WebSession(HttpSession httpSession, String host) {
+    public HttpServletSession(HttpSession httpSession, String host) {
         if (httpSession == null) {
             String msg = "HttpSession constructor argument cannot be null.";
             throw new IllegalArgumentException(msg);

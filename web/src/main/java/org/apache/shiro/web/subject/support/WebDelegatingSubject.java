@@ -20,8 +20,12 @@ package org.apache.shiro.web.subject.support;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.web.session.DefaultWebSessionContext;
+import org.apache.shiro.web.session.WebSessionContext;
 import org.apache.shiro.web.subject.WebSubject;
 
 import javax.servlet.ServletRequest;
@@ -32,6 +36,8 @@ import java.util.concurrent.Callable;
  * @since 1.0
  */
 public class WebDelegatingSubject extends DelegatingSubject implements WebSubject {
+
+    private static final long serialVersionUID = -1655724323350159250L;
 
     private final ServletRequest servletRequest;
     private final ServletResponse servletResponse;
@@ -51,6 +57,18 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
 
     public ServletResponse getServletResponse() {
         return servletResponse;
+    }
+
+    @Override
+    protected SessionContext createSessionContext() {
+        WebSessionContext wsc = new DefaultWebSessionContext();
+        String host = getHost();
+        if (StringUtils.hasText(host)) {
+            wsc.setHost(host);
+        }
+        wsc.setServletRequest(this.servletRequest);
+        wsc.setServletResponse(this.servletResponse);
+        return wsc;
     }
 
     @Override

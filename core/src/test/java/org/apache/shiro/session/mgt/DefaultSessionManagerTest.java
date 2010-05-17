@@ -27,8 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Serializable;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
@@ -63,28 +61,12 @@ public class DefaultSessionManagerTest {
 
     @Test
     public void testGlobalTimeout() {
-
-        long timeout = 200;
-
-        //use the dao to simulate returned Sessions that are timed out:
-        SessionDAO mockDAO = createMock(SessionDAO.class);
-        Session mockSession = createNiceMock(Session.class);
-
-        Serializable mockSessionId = UUID.randomUUID().toString();
-        expect(mockSession.getId()).andReturn(mockSessionId).anyTimes();
-        expect(mockDAO.create(isA(Session.class))).andReturn(mockSessionId);
-
-        //this line verifies this test case - ensuring the DAO is called when an updated timeout:
-        mockDAO.update(eqSessionTimeout(timeout));
-
-        replay(mockDAO);
-
-        sm.setSessionDAO(mockDAO);
-
+        long timeout = 1000;
         sm.setGlobalSessionTimeout(timeout);
-        sm.start((String) null);
-
-        verify(mockDAO);
+        Session session = sm.start(null);
+        assertNotNull(session);
+        assertNotNull(session.getId());
+        assertEquals(session.getTimeout(), timeout);
     }
 
     @Test
@@ -96,7 +78,7 @@ public class DefaultSessionManagerTest {
             }
         };
         sm.getSessionListeners().add(listener);
-        sm.start((Map) null);
+        sm.start(null);
         assertTrue(started[0]);
     }
 
@@ -109,8 +91,8 @@ public class DefaultSessionManagerTest {
             }
         };
         sm.getSessionListeners().add(listener);
-        Serializable id = sm.start((Map) null);
-        sm.stop(id);
+        Session session = sm.start(null);
+        sm.stop(session.getId());
         assertTrue(stopped[0]);
     }
 
@@ -124,10 +106,10 @@ public class DefaultSessionManagerTest {
         };
         sm.getSessionListeners().add(listener);
         sm.setGlobalSessionTimeout(100);
-        Serializable id = sm.start((Map) null);
+        Session session = sm.start(null);
         sleep(150);
         try {
-            sm.checkValid(id);
+            sm.checkValid(session.getId());
             fail("check should have thrown an exception.");
         } catch (InvalidSessionException expected) {
             //do nothing - expected.
@@ -148,7 +130,7 @@ public class DefaultSessionManagerTest {
 
         final Session[] activeSession = new SimpleSession[]{session1};
         sm.setSessionFactory(new SessionFactory() {
-            public Session createSession(Map initData) {
+            public Session createSession(SessionContext initData) {
                 return activeSession[0];
             }
         });
@@ -157,8 +139,8 @@ public class DefaultSessionManagerTest {
         sessionDAO.update(eq(session1));
         expectLastCall().anyTimes();
         replay(sessionDAO);
-        Serializable id = sm.start((String) null);
-        assertNotNull(id);
+        Session session = sm.start(null);
+        assertNotNull(session);
         verify(sessionDAO);
         reset(sessionDAO);
 

@@ -28,11 +28,14 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.DefaultSessionContext;
 import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,12 +309,20 @@ public class DelegatingSubject implements Subject, Serializable {
         }
 
         if (this.session == null && create) {
-            String host = getHost();
-            log.trace("Starting session for host {}", host);
-            Serializable sessionId = this.securityManager.start(host);
-            this.session = decorateSession(sessionId);
+            log.trace("Starting session for host {}", getHost());
+            SessionContext sessionContext = createSessionContext();
+            Session session = this.securityManager.start(sessionContext);
+            this.session = decorate(session);
         }
         return this.session;
+    }
+
+    protected SessionContext createSessionContext() {
+        SessionContext sessionContext = new DefaultSessionContext();
+        if (StringUtils.hasText(host)) {
+            sessionContext.setHost(host);
+        }
+        return sessionContext;
     }
 
     public void logout() {

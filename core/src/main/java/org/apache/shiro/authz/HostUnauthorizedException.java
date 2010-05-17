@@ -20,11 +20,10 @@ package org.apache.shiro.authz;
 
 /**
  * Thrown when a particular client (that is, host address) has not been enabled to access the system
- * or if the client has been enabled access but is not permitted to perform a particluar operation
+ * or if the client has been enabled access but is not permitted to perform a particular operation
  * or access a particular resource.
  *
  * @author Les Hazlewood
- * @see org.apache.shiro.session.mgt.SessionManager#start(String)
  * @since 0.1
  */
 public class HostUnauthorizedException extends UnauthorizedException {

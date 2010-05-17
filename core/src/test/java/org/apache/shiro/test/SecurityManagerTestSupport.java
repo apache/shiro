@@ -56,23 +56,12 @@ public class SecurityManagerTestSupport {
         return sm;
     }
 
-    protected void unbindAndDestroyTestSecurityManager() {
-        SecurityManager sm = ThreadContext.unbindSecurityManager();
-        if (sm != null) {
-            destroy(sm);
-        }
-    }
-
     protected Subject createAndBindTestSubject() {
         SecurityManager sm = ThreadContext.getSecurityManager();
         if (sm == null) {
             createAndBindTestSecurityManager();
         }
         return SecurityUtils.getSubject();
-    }
-
-    protected void unbindTestSubject() {
-        ThreadContext.unbindSubject();
     }
 
     @Before
@@ -82,7 +71,6 @@ public class SecurityManagerTestSupport {
 
     @After
     public void teardown() {
-        unbindTestSubject();
-        unbindAndDestroyTestSecurityManager();
+        ThreadContext.remove();
     }
 }

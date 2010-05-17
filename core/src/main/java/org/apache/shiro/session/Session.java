@@ -106,7 +106,6 @@ public interface Session {
      *
      * @return the host name or IP string of the host that originated this session, or {@code null}
      *         if the host address is unknown.
-     * @see org.apache.shiro.session.mgt.SessionManager#start(String)
      */
     String getHost();
 

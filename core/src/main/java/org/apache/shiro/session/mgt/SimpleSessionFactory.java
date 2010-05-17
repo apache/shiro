@@ -20,8 +20,6 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.session.Session;
 
-import java.util.Map;
-
 /**
  * {@code SessionFactory} implementation that generates {@link SimpleSession} instances.
  *
@@ -31,22 +29,18 @@ import java.util.Map;
 public class SimpleSessionFactory implements SessionFactory {
 
     /**
-     * This default implementation merely returns
-     * <pre>new {@link SimpleSession#SimpleSession(String) SimpleSession(host)};</pre>
+     * Creates a new {@link SimpleSession SimpleSession} instance retaining the context's
+     * {@link SessionContext#getHost() host} if one can be found.
      *
-     * @param host the originating host name or IP string of the external party
-     *             (user, 3rd party product, etc) that is attempting to initiate the session, or
-     *             {@code null} if not known.
-     * @return a new session instance.
+     * @param initData the initialization data to be used during {@link Session} creation.
+     * @return a new {@link SimpleSession SimpleSession} instance
      */
-    public Session createSession(String host) {
-        return new SimpleSession(host);
-    }
-
-    public Session createSession(Map initData) {
-        if (initData != null && initData.containsKey(SessionFactory.HOST_KEY)) {
-            String host = (String) initData.get(SessionFactory.HOST_KEY);
-            return new SimpleSession(host);
+    public Session createSession(SessionContext initData) {
+        if (initData != null) {
+            String host = initData.getHost();
+            if (host != null) {
+                return new SimpleSession(host);
+            }
         }
         return new SimpleSession();
     }

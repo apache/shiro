@@ -31,7 +31,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Default business-tier implementation of a {@link ValidatingSessionManager}.  All session CRUD operations are
@@ -152,7 +151,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         }
     }
 
-    protected Session doCreateSession(Map initData) {
+    protected Session doCreateSession(SessionContext initData) {
         Session s = newSessionInstance(initData);
         if (log.isTraceEnabled()) {
             log.trace("Creating session for host {}", s.getHost());
@@ -161,7 +160,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         return s;
     }
 
-    protected Session newSessionInstance(Map initData) {
+    protected Session newSessionInstance(SessionContext initData) {
         return getSessionFactory().createSession(initData);
     }
 

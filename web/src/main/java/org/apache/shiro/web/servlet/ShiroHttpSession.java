@@ -20,7 +20,7 @@ package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.web.session.WebSession;
+import org.apache.shiro.web.session.HttpServletSession;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -71,8 +71,8 @@ public class ShiroHttpSession implements HttpSession {
     protected Session session = null; //'real' Shiro Session
 
     public ShiroHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
-        if (session instanceof WebSession) {
-            String msg = "Session constructor argument cannot be an instance of WebSession.  This is enforced to " +
+        if (session instanceof HttpServletSession) {
+            String msg = "Session constructor argument cannot be an instance of HttpServletSession.  This is enforced to " +
                     "prevent circular dependencies and infinite loops.";
             throw new IllegalArgumentException(msg);
         }

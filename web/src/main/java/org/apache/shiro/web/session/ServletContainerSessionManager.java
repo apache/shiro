@@ -22,15 +22,13 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
-import org.apache.shiro.session.mgt.SessionFactory;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.session.mgt.SessionContext;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.util.Map;
 
 
 /**
@@ -62,15 +60,43 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
     public ServletContainerSessionManager() {
     }
 
+    @Override
+    public Session start(SessionContext initData) throws AuthorizationException {
+        return createSession(initData);
+    }
+
+    /**
+     * This method exists only to satisfy the parent's abstract method signature.  It should never be called since
+     * there is no way to obtain a Session instance from a Servlet Container by id (in a system independent
+     * manner).
+     * <p/>
+     * This method will always throw an exception if called since the
+     * {@link #getSession(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method should be used in all
+     * cases instead.
+     *
+     * @param sessionId
+     * @return
+     * @throws InvalidSessionException
+     */
     protected Session doGetSession(Serializable sessionId) throws InvalidSessionException {
         //Ignore session id since there is no way to acquire a session based on an id in a servlet container
         //(that is implementation agnostic)
-        ServletRequest request = WebUtils.getRequiredServletRequest();
-        ServletResponse response = WebUtils.getRequiredServletResponse();
-        return getSession(request, response);
+        String msg = "Cannot retrieve sessions by ID when Sessions are managed by the Servlet Container.  This " +
+                "feature is available for Shiro 'native' session SessionManager implementations only.";
+        throw new IllegalStateException(msg);
+        /*ServletRequest request = WebUtils.getServletRequest();
+        ServletResponse response = WebUtils.getServletResponse();
+        if (request == null) {
+            String msg = "Thread-bound ServletRequest cannot be null in ServletContainer-managed Session environments.";
+            throw new IllegalStateException(msg);
+        }
+        return getSession(request, response);*/
     }
 
-    protected Session getSession(ServletRequest request, ServletResponse response) throws AuthorizationException {
+    /**
+     * @since 1.0
+     */
+    public Session getSession(ServletRequest request, ServletResponse response) {
         Session session = null;
         HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
         if (httpSession != null) {
@@ -79,32 +105,51 @@ public class ServletContainerSessionManager extends AbstractSessionManager imple
         return session;
     }
 
+    /**
+     * @since 1.0
+     */
     public Serializable getSessionId(ServletRequest request, ServletResponse response) {
         HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
         return httpSession != null ? httpSession.getId() : null;
     }
 
-    protected Session createSession(Map initData) throws AuthorizationException {
+    /**
+     * @since 1.0
+     */
+    protected Session createSession(SessionContext sessionContext) throws AuthorizationException {
+        if (!(sessionContext instanceof WebSessionContext)) {
+            String msg = "SessionContext must be a " + WebSessionContext.class.getName() + " instance.";
+            throw new IllegalArgumentException(msg);
+        }
 
-        ServletRequest request = WebUtils.getRequiredServletRequest();
+        WebSessionContext wsc = (WebSessionContext) sessionContext;
+
+        ServletRequest request = wsc.getServletRequest();
+        if (request == null) {
+            String msg = "WebSessionContext must contain a ServletRequest.";
+            throw new IllegalStateException(msg);
+        }
+        ServletResponse response = wsc.getServletResponse();
+        if (response == null) {
+            String msg = "WebSessionContext must contain a ServletResponse.";
+            throw new IllegalStateException(msg);
+        }
+
         HttpSession httpSession = ((HttpServletRequest) request).getSession();
 
         //ensure that the httpSession timeout reflects what is configured:
         long timeoutMillis = getGlobalSessionTimeout();
         httpSession.setMaxInactiveInterval((int) (timeoutMillis / MILLIS_PER_SECOND));
 
-        String originatingHost;
-        if (initData != null && initData.containsKey(SessionFactory.HOST_KEY)) {
-            originatingHost = (String) initData.get(SessionFactory.HOST_KEY);
-        } else {
+        String originatingHost = wsc.getHost();
+        if (originatingHost == null) {
             originatingHost = request.getRemoteHost();
         }
-
         return createSession(httpSession, originatingHost);
     }
 
     protected Session createSession(HttpSession httpSession, String host) {
-        return new WebSession(httpSession, host);
+        return new HttpServletSession(httpSession, host);
     }
 
 }

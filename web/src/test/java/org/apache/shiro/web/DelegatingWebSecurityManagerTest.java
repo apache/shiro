@@ -22,6 +22,8 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
+import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.Subject;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -33,7 +35,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
@@ -78,7 +79,7 @@ public class DelegatingWebSecurityManagerTest extends AbstractWebSecurityManager
         String host = "192.168.1.1";
 
         Serializable sessionId = UUID.randomUUID().toString();
-        expect(delegate.start(EasyMock.<Map>anyObject())).andReturn(sessionId);
+        expect(delegate.start(EasyMock.<SessionContext>anyObject())).andReturn(new DelegatingSession(sm, sessionId));
         expect(delegate.getHost(sessionId)).andReturn(host);
         expect(delegate.getTimeout(sessionId)).andReturn(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
         delegate.setTimeout(sessionId, 125L);

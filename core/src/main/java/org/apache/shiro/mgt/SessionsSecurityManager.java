@@ -23,13 +23,13 @@ import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.LifecycleUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 
 /**
@@ -121,11 +121,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         }
     }
 
-    public Serializable start(String host) throws AuthorizationException {
-        return this.sessionManager.start(host);
-    }
-
-    public Serializable start(Map initData) throws AuthorizationException {
+    public Session start(SessionContext initData) throws AuthorizationException {
         return this.sessionManager.start(initData);
     }
 

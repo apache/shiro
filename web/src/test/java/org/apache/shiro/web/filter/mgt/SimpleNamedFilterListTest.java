@@ -24,16 +24,14 @@ import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.PortFilter;
 import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.SslFilter;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
+
+import static org.easymock.EasyMock.createNiceMock;
+import static org.junit.Assert.*;
 
 /**
  * Test case for the {@link SimpleNamedFilterList} implementation.
@@ -57,8 +55,7 @@ public class SimpleNamedFilterListTest {
 
     @Test
     public void testNewInstanceBackingList() {
-        //noinspection unchecked
-        new SimpleNamedFilterList("test", new ArrayList());
+        new SimpleNamedFilterList("test", new ArrayList<Filter>());
     }
 
     @Test(expected = NullPointerException.class)
@@ -87,7 +84,7 @@ public class SimpleNamedFilterListTest {
         list.add(0, singleFilter);
         assertEquals(2, list.size());
         assertTrue(list.get(0) instanceof SslFilter);
-        assertEquals(list.toArray(), new Object[]{singleFilter, filter});
+        assertTrue(Arrays.equals(list.toArray(), new Object[]{singleFilter, filter}));
 
         list.addAll(multipleFilters);
         assertEquals(4, list.size());

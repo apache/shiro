@@ -19,6 +19,7 @@
 package org.apache.shiro.web.session;
 
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.servlet.Cookie;
@@ -168,6 +169,15 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
         request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
+    }
+
+    public Session getSession(ServletRequest request, ServletResponse response) throws SessionException {
+        Serializable id = getReferencedSessionId(request, response);
+        Session session = null;
+        if ( id != null ) {
+            session = getSession(id);
+        }
+        return session;
     }
 
     public Serializable getSessionId(ServletRequest request, ServletResponse response) {
