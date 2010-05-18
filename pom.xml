@@ -398,11 +398,9 @@
     <reporting>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.6.1</version>
+                <version>2.7</version>
                 <configuration>
-                    <aggregate>true</aggregate>
                     <source>${jdk.version}</source>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <linksource>true</linksource>
@@ -417,18 +415,97 @@
                     </links>
                     <!-- Don't include the sample apps - they're not part of Shiro's API: -->
                     <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
-                    <reportSets>
-                        <reportSet>
-                            <id>aggregate</id>
-                            <configuration>
-                            </configuration>
-                            <reports>
-                                <report>aggregate</report>
-                            </reports>
-                        </reportSet>
-                    </reportSets>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>javadoc-aggregate</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+              <formats>
+                <format>xml</format>
+                <format>html</format>
+              </formats>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>2.1</version>
+            <configuration>
+              <aggregate>true</aggregate>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>2.5</version>
+            <configuration>
+              <linkXref>true</linkXref>
+              <sourceEncoding>utf-8</sourceEncoding>
+              <targetJdk>1.5</targetJdk>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <!-- Disable, just to make it go faster --> 
+            <configuration>
+              <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>2.5</version>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>taglist-maven-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+              <tagListOptions>
+                <tagClasses>
+                  <tagClass>
+                    <displayName>Todo Work</displayName>
+                    <tags>
+                      <tag>
+                        <matchString>todo</matchString>
+                        <matchType>ignoreCase</matchType>
+                      </tag>
+                      <tag>
+                        <matchString>FIXME</matchString>
+                        <matchType>exact</matchType>
+                      </tag>
+                    </tags>
+                  </tagClass>
+                  <tagClass>
+                    <displayName>Deprecated</displayName>
+                    <tags>
+                      <tag>
+                        <matchString>@Deprecated</matchString>
+                        <matchType>exact</matchType>
+                      </tag>
+                    </tags>
+                  </tagClass>
+                </tagClasses>
+              </tagListOptions>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jdepend-maven-plugin</artifactId>
+            <version>2.0-beta-2</version>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>dashboard-maven-plugin</artifactId>
+            <version>1.0.0-beta-1</version>
+          </plugin>
         </plugins>
     </reporting>
 
