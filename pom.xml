@@ -577,7 +577,7 @@
             </build>
         </profile>
         <profile>
-          <id>release-profile</id>
+          <id>apache-release</id>
           <distributionManagement>
               <site>
                   <id>incubator.website</id>
