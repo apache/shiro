@@ -73,6 +73,37 @@
         <groovy.version>1.6.2</groovy.version>
     </properties>
 
+    <mailingLists>
+        <mailingList>
+            <name>Apache Shiro Users Mailing List</name>
+            <subscribe>shiro-user-subscribe@incubator.apache.org</subscribe>
+            <unsubscribe>shiro-user-unsubscribe@incubator.apache.org</unsubscribe>
+            <post>shiro-user@incubator.apache.org</post>
+            <!--archive/-->
+            <!--otherArchives-->
+        </mailingList>
+        <mailingList>
+            <name>Apache Shiro Developers Mailing List</name>
+            <subscribe>shiro-dev-subscribe@incubator.apache.org</subscribe>
+            <unsubscribe>shiro-dev-unsubscribe@incubator.apache.org</unsubscribe>
+            <post>shiro-dev@incubator.apache.org</post>
+            <!--archive/-->
+            <!--otherArchives-->
+        </mailingList>
+    </mailingLists>
+
+    
+    <developers>
+        <developer>
+            <id>kaosko</id>
+            <name>Kalle Korhonen</name>
+            <email>kaosko@apache.org</email>
+            <url>http://tynamo.org</url>
+            <organization>Apache Software Foundation</organization>
+            <timezone>-8</timezone>
+        </developer>
+    </developers>
+
     <modules>
         <module>core</module>
         <module>web</module>
