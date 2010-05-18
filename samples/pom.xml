@@ -36,10 +36,20 @@
         <module>aspectj</module>
         <module>quickstart</module>
         <module>web</module>
-        <module>spring-client</module>        
-        <module>spring</module>        
+        <module>spring-client</module>
+        <module>spring</module>
         <module>spring-hibernate</module>
     </modules>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
 

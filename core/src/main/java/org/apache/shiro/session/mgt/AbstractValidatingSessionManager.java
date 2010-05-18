@@ -39,7 +39,7 @@ import java.util.Collection;
  * @author Jeremy Haile
  * @since 0.1
  */
-public abstract class AbstractValidatingSessionManager extends AbstractSessionManager
+public abstract class AbstractValidatingSessionManager extends AbstractNativeSessionManager
         implements ValidatingSessionManager, Destroyable {
 
     //TODO - complete JavaDoc
@@ -117,16 +117,10 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         if (log.isTraceEnabled()) {
             log.trace("Attempting to retrieve session with id [" + sessionId + "]");
         }
-        Session s;
-        try {
-            s = retrieveSession(sessionId);
-            if (s == null) {
-                throw new UnknownSessionException("The session data store did not return a session for " +
-                        "sessionId [" + sessionId + "]", sessionId);
-            }
-        } catch (UnknownSessionException e) {
-            onUnknownSession(sessionId);
-            throw e;
+        Session s = retrieveSession(sessionId);
+        if (s == null) {
+            throw new UnknownSessionException("The session data store did not return a session for " +
+                    "sessionId [" + sessionId + "]", sessionId);
         }
         validate(s);
         return s;
@@ -141,9 +135,9 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
      */
     protected abstract Session retrieveSession(Serializable sessionId) throws UnknownSessionException;
 
-    protected Session createSession(SessionContext initData) throws AuthorizationException {
+    protected Session createSession(SessionContext context) throws AuthorizationException {
         enableSessionValidationIfNecessary();
-        return doCreateSession(initData);
+        return doCreateSession(context);
     }
 
     protected abstract Session doCreateSession(SessionContext initData) throws AuthorizationException;
@@ -180,20 +174,6 @@ public abstract class AbstractValidatingSessionManager extends AbstractSessionMa
         onStop(s);
         notifyStop(s);
         afterStopped(s);
-    }
-
-    /**
-     * Notification callback for subclasses that occurs when a client attempts to reference the session with the
-     * specified ID, but there does not exist any session with that id.
-     * <p/>
-     * A common case of this occurring is if the client's referenced session times out and is deleted before the next
-     * time they interact with the system (such as often occurs with stale session id cookies in an web environment).
-     * The next time they send a request with the stale session id, this method would be called.
-     *
-     * @param sessionId the session id used to try and reference the non-existent session.
-     * @since 1.0
-     */
-    public void onUnknownSession(Serializable sessionId) {
     }
 
     protected void onExpiration(Session session) {

@@ -21,6 +21,7 @@ package org.apache.shiro.session.mgt;
 import org.apache.shiro.util.MapContext;
 import org.apache.shiro.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -35,6 +36,7 @@ public class DefaultSessionContext extends MapContext implements SessionContext 
     private static final long serialVersionUID = -1424160751361252966L;
 
     private static final String HOST = DefaultSessionContext.class.getName() + ".HOST";
+    private static final String SESSION_ID = DefaultSessionContext.class.getName() + ".SESSION_ID";
 
     public DefaultSessionContext() {
         super();
@@ -44,13 +46,21 @@ public class DefaultSessionContext extends MapContext implements SessionContext 
         super(map);
     }
 
+    public String getHost() {
+        return getTypedValue(HOST, String.class);
+    }
+
     public void setHost(String host) {
         if (StringUtils.hasText(host)) {
             put(HOST, host);
         }
     }
 
-    public String getHost() {
-        return getTypedValue(HOST, String.class);
+    public Serializable getSessionId() {
+        return getTypedValue(SESSION_ID, Serializable.class);
+    }
+
+    public void setSessionId(Serializable sessionId) {
+        nullSafePut(SESSION_ID, sessionId);
     }
 }

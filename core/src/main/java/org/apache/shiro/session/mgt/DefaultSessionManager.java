@@ -151,8 +151,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         }
     }
 
-    protected Session doCreateSession(SessionContext initData) {
-        Session s = newSessionInstance(initData);
+    protected Session doCreateSession(SessionContext context) {
+        Session s = newSessionInstance(context);
         if (log.isTraceEnabled()) {
             log.trace("Creating session for host {}", s.getHost());
         }
@@ -160,8 +160,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         return s;
     }
 
-    protected Session newSessionInstance(SessionContext initData) {
-        return getSessionFactory().createSession(initData);
+    protected Session newSessionInstance(SessionContext context) {
+        return getSessionFactory().createSession(context);
     }
 
     /**

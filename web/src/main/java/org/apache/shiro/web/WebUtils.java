@@ -20,6 +20,7 @@ package org.apache.shiro.web;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.StringUtils;
@@ -27,6 +28,7 @@ import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
+import org.apache.shiro.web.util.RequestPairSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,14 +59,6 @@ public class WebUtils {
 
     private static final Logger log = LoggerFactory.getLogger(WebUtils.class);
 
-
-    /**
-     * Message displayed when a servlet request or response is not bound to the current thread context when expected.
-     */
-    private static final String NOT_BOUND_ERROR_MESSAGE =
-            "Make sure WebUtils.bind() is being called. (typically called by AbstractShiroFilter)  " +
-                    "This could also happen when running integration tests that don't properly call WebUtils.bind().";
-
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
 
@@ -73,7 +67,6 @@ public class WebUtils {
      * requested page after login, equal to {@code shiroSavedRequest}.
      */
     public static final String SAVED_REQUEST_KEY = "shiroSavedRequest";
-
 
     /**
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
@@ -248,15 +241,160 @@ public class WebUtils {
      * @since 1.0
      */
     public static boolean isHttp(SubjectContext context) {
-        if (context instanceof WebSubjectContext) {
-            WebSubjectContext wsc = (WebSubjectContext) context;
-            ServletRequest request = wsc.resolveServletRequest();
-            ServletResponse response = wsc.resolveServletResponse();
-            return request != null && request instanceof HttpServletRequest &&
-                    response != null && response instanceof HttpServletResponse;
-        }
-        return false;
+        return context instanceof RequestPairSource && isHttp((RequestPairSource) context);
     }
+
+    public static boolean isHttp(Subject subject) {
+        return subject instanceof RequestPairSource && isHttp((RequestPairSource) subject);
+    }
+
+    public static boolean isHttp(SessionContext context) {
+        return context instanceof RequestPairSource && isHttp((RequestPairSource) context);
+    }
+
+    public static boolean isWeb(Subject subject) {
+        return subject instanceof RequestPairSource && isWeb((RequestPairSource) subject);
+    }
+
+    public static boolean isWeb(SubjectContext context) {
+        return context instanceof RequestPairSource && isWeb((RequestPairSource) context);
+    }
+
+    public static boolean isWeb(SessionContext context) {
+        return context instanceof RequestPairSource && isWeb((RequestPairSource) context);
+    }
+
+    private static boolean isWeb(RequestPairSource source) {
+        ServletRequest request = source.getServletRequest();
+        ServletResponse response = source.getServletResponse();
+        return request != null && response != null;
+    }
+
+    private static boolean isHttp(RequestPairSource source) {
+        ServletRequest request = source.getServletRequest();
+        ServletResponse response = source.getServletResponse();
+        return request instanceof HttpServletRequest && response instanceof HttpServletResponse;
+    }
+
+    public static ServletRequest getRequest(Subject subject) {
+        if (subject instanceof RequestPairSource) {
+            return ((RequestPairSource) subject).getServletRequest();
+        }
+        return null;
+    }
+
+    public static ServletResponse getResponse(Subject subject) {
+        if (subject instanceof RequestPairSource) {
+            return ((RequestPairSource) subject).getServletResponse();
+        }
+        return null;
+    }
+
+    public static HttpServletRequest getHttpRequest(Subject subject) {
+        ServletRequest request = getRequest(subject);
+        if (request instanceof HttpServletRequest) {
+            return toHttp(request);
+        }
+        return null;
+    }
+
+    public static HttpServletResponse getHttpResponse(Subject subject) {
+        ServletResponse response = getResponse(subject);
+        if (response instanceof HttpServletResponse) {
+            return toHttp(response);
+        }
+        return null;
+    }
+
+    public static ServletRequest getRequest(SubjectContext context) {
+        if (context instanceof RequestPairSource) {
+            return ((RequestPairSource) context).getServletRequest();
+        }
+        return null;
+    }
+
+    public static ServletResponse getResponse(SubjectContext context) {
+        if (context instanceof RequestPairSource) {
+            return ((RequestPairSource) context).getServletResponse();
+        }
+        return null;
+    }
+
+    public static HttpServletRequest getHttpRequest(SubjectContext context) {
+        ServletRequest request = getRequest(context);
+        if (request instanceof HttpServletRequest) {
+            return toHttp(request);
+        }
+        return null;
+    }
+
+    public static HttpServletResponse getHttpResponse(SubjectContext context) {
+        ServletResponse response = getResponse(context);
+        if (response instanceof HttpServletResponse) {
+            return toHttp(response);
+        }
+        return null;
+    }
+
+    public static ServletRequest getRequest(SessionContext context) {
+        if (context instanceof RequestPairSource) {
+            return ((RequestPairSource) context).getServletRequest();
+        }
+        return null;
+    }
+
+    public static ServletResponse getResponse(SessionContext context) {
+        if (context instanceof RequestPairSource) {
+            return ((RequestPairSource) context).getServletResponse();
+        }
+        return null;
+    }
+
+    public static HttpServletRequest getHttpRequest(SessionContext context) {
+        ServletRequest request = getRequest(context);
+        if (request instanceof HttpServletRequest) {
+            return toHttp(request);
+        }
+        return null;
+    }
+
+    public static HttpServletResponse getHttpResponse(SessionContext context) {
+        ServletResponse response = getResponse(context);
+        if (response instanceof HttpServletResponse) {
+            return toHttp(response);
+        }
+        return null;
+    }
+
+    /*public static ServletRequest getRequest(SubjectContext context) {
+        if (!(context instanceof RequestPairSource)) {
+            String msg = "Subject instance is not web-based instance.  " +
+                    "This is required to obtain a ServletRequest and ServletResponse";
+            throw new IllegalArgumentException(msg);
+        }
+        WebSubjectContext wsc = (WebSubjectContext) context;
+        ServletRequest request = wsc.getServletRequest();
+        if (request == null) {
+            String msg = "WebSubjectContext's ServletRequest is null.";
+            throw new IllegalArgumentException(msg);
+        }
+        return request;
+    }
+
+    public static ServletResponse getResponse(SubjectContext context) {
+        if (!(context instanceof WebSubjectContext)) {
+            String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
+                    "This is required to obtain a ServletRequest and ServletResponse";
+            throw new IllegalArgumentException(msg);
+        }
+        WebSubjectContext wsc = (WebSubjectContext) context;
+        ServletResponse response = wsc.getServletResponse();
+        if (response == null) {
+            String msg = "WebSubjectContext's ServletResponse is null.";
+            throw new IllegalArgumentException(msg);
+        }
+        return response;
+    }*/
 
     /**
      * Returns {@code true} IFF the specified {@code Subject}:
@@ -271,7 +409,7 @@ public class WebUtils {
      * @return {@code true} IFF the specified subject has HTTP request/response objects, {@code false} otherwise.
      * @since 1.0
      */
-    public static boolean isHttp(Subject subject) {
+    /*public static boolean isHttp(Subject subject) {
         if (subject instanceof WebSubject) {
             WebSubject ws = (WebSubject) subject;
             ServletRequest request = ws.getServletRequest();
@@ -280,7 +418,7 @@ public class WebUtils {
                     response != null && response instanceof HttpServletResponse;
         }
         return false;
-    }
+    }*/
 
     /**
      * Returns the {@code Subject}'s associated {@link HttpServletRequest} instance.  This method will
@@ -295,7 +433,7 @@ public class WebUtils {
      *                                  request is not an {@link HttpServletRequest}.
      * @since 1.0
      */
-    public static HttpServletRequest getHttpRequest(Subject subject) throws IllegalArgumentException {
+    /*public static HttpServletRequest getHttpRequest(Subject subject) throws IllegalArgumentException {
         if (!(subject instanceof WebSubject)) {
             String msg = "Subject instance is not a " + WebSubject.class.getName() + " instance.  This is required " +
                     "to obtain a ServletRequest and ServletResponse";
@@ -308,7 +446,7 @@ public class WebUtils {
             throw new IllegalArgumentException(msg);
         }
         return (HttpServletRequest) request;
-    }
+    }*/
 
     /**
      * Returns the {@code Subject}'s associated {@link HttpServletResponse} instance.  This method will
@@ -323,7 +461,7 @@ public class WebUtils {
      *                                  response is not an {@link HttpServletResponse}.
      * @since 1.0
      */
-    public static HttpServletResponse getHttpResponse(Subject subject) {
+    /*public static HttpServletResponse getHttpResponse(Subject subject) {
         if (!(subject instanceof WebSubject)) {
             String msg = "Subject instance is not a " + WebSubject.class.getName() + " instance.  This is required " +
                     "to obtain a ServletRequest and ServletResponse";
@@ -336,7 +474,7 @@ public class WebUtils {
             throw new IllegalArgumentException(msg);
         }
         return (HttpServletResponse) response;
-    }
+    }*/
 
     /**
      * Returns the {@code SubjectContext}'s {@link HttpServletRequest} instance.  This method will
@@ -351,7 +489,7 @@ public class WebUtils {
      *                                  {@code WebSubjectContext}'s request is not an {@link HttpServletRequest}.
      * @since 1.0
      */
-    public static HttpServletRequest getHttpRequest(SubjectContext context) {
+    /*public static HttpServletRequest getHttpRequest(SubjectContext context) {
         if (!(context instanceof WebSubjectContext)) {
             String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
                     "This is required to obtain a ServletRequest and ServletResponse";
@@ -364,7 +502,7 @@ public class WebUtils {
             throw new IllegalArgumentException(msg);
         }
         return (HttpServletRequest) request;
-    }
+    }*/
 
     /**
      * Returns the {@code SubjectContext}'s {@link HttpServletResponse} instance.  This method will
@@ -379,7 +517,7 @@ public class WebUtils {
      *                                  {@code WebSubjectContext}'s response is not an {@link HttpServletResponse}.
      * @since 1.0
      */
-    public static HttpServletResponse getHttpResponse(SubjectContext context) {
+    /*public static HttpServletResponse getHttpResponse(SubjectContext context) {
         if (!(context instanceof WebSubjectContext)) {
             String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
                     "This is required to obtain a ServletRequest and ServletResponse";
@@ -392,7 +530,7 @@ public class WebUtils {
             throw new IllegalArgumentException(msg);
         }
         return (HttpServletResponse) response;
-    }
+    }*/
 
     /**
      * A convenience method that merely casts the incoming <code>ServletRequest</code> to an

@@ -20,17 +20,17 @@ package org.apache.shiro.web;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import org.apache.shiro.web.session.*;
+import org.apache.shiro.web.session.DefaultWebSessionContext;
+import org.apache.shiro.web.session.DefaultWebSessionManager;
+import org.apache.shiro.web.session.ServletContainerSessionManager;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.io.Serializable;
 import java.util.Collection;
 
 
@@ -116,7 +115,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         this.sessionMode = mode;
         if (recreate) {
             LifecycleUtils.destroy(getSessionManager());
-            WebSessionManager sessionManager = createSessionManager(mode);
+            SessionManager sessionManager = createSessionManager(mode);
             setSessionManager(sessionManager);
         }
     }
@@ -128,7 +127,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         return this.sessionMode == null || this.sessionMode.equals(HTTP_SESSION_MODE);
     }
 
-    protected WebSessionManager createSessionManager(String sessionMode) {
+    protected SessionManager createSessionManager(String sessionMode) {
         if (sessionMode == null || sessionMode.equalsIgnoreCase(HTTP_SESSION_MODE)) {
             if (log.isInfoEnabled()) {
                 log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (HTTP-only Sessions)");
@@ -143,50 +142,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @Override
-    protected Session resolveContextSession(SubjectContext context) throws InvalidSessionException {
-        Session session = null;
-        if (context instanceof WebSubjectContext) {
-            WebSubjectContext wsc = (WebSubjectContext) context;
-            ServletRequest request = wsc.resolveServletRequest();
-            ServletResponse response = wsc.resolveServletResponse();
-            if (request != null && response != null) {
-                session = ((WebSessionManager) getSessionManager()).getSession(request, response);
-            }
-        } else {
-            session = super.resolveContextSession(context);
-        }
-
-        if (session != null && !isHttpSessionMode()) {
-            //don't expose the EIS-tier session instance to the SubjectFactory
-            session = new DelegatingSession(this, session.getId());
-        }
-
-        return session;
-    }
-
-    @Override
-    protected Serializable getSessionId(SubjectContext subjectContext) {
-        Serializable sessionId = super.getSessionId(subjectContext);
-        if (sessionId == null && subjectContext instanceof WebSubjectContext) {
-            WebSubjectContext wsc = (WebSubjectContext) subjectContext;
-            ServletRequest request = wsc.resolveServletRequest();
-            ServletResponse response = wsc.resolveServletResponse();
-            if (request != null && response != null) {
-                sessionId = ((WebSessionManager) getSessionManager()).getSessionId(request, response);
-            }
-        }
-
-        return sessionId;
-    }
-
-    @Override
     protected SessionContext createSessionContext(SubjectContext subjectContext) {
         SessionContext sessionContext = super.createSessionContext(subjectContext);
         if (subjectContext instanceof WebSubjectContext) {
             WebSubjectContext wsc = (WebSubjectContext) subjectContext;
             ServletRequest request = wsc.resolveServletRequest();
             ServletResponse response = wsc.resolveServletResponse();
-            WebSessionContext webSessionContext = new DefaultWebSessionContext(sessionContext);
+            DefaultWebSessionContext webSessionContext = new DefaultWebSessionContext(sessionContext);
             if (request != null) {
                 webSessionContext.setServletRequest(request);
             }

@@ -19,6 +19,7 @@
 package org.apache.shiro.web.subject;
 
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.web.util.RequestPairSource;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -30,7 +31,7 @@ import javax.servlet.ServletResponse;
  * @author Les Hazlewood
  * @since 1.0
  */
-public interface WebSubjectContext extends SubjectContext {
+public interface WebSubjectContext extends SubjectContext, RequestPairSource {
 
     /**
      * Returns the {@code ServletRequest} received by the servlet container triggering the creation of the

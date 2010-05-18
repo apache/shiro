@@ -23,9 +23,7 @@ import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionContext;
-import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
@@ -35,7 +33,6 @@ import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -122,11 +119,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
     public void setRememberMeManager(RememberMeManager rememberMeManager) {
         this.rememberMeManager = rememberMeManager;
-    }
-
-    protected Session getSession(Serializable id) {
-        checkValid(id);
-        return new DelegatingSession(this, id);
     }
 
     protected SubjectContext createSubjectContext() {
@@ -287,7 +279,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         }
 
         Subject loggedIn = createSubject(token, info, subject);
-        //TODO - is binding necessary anymore?  Shouldn't the Builders or Builder callers do this now?
+
         bind(loggedIn);
 
         onSuccessfulLogin(token, info, loggedIn);
@@ -387,7 +379,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 context.setSession(session);
             }
         } catch (InvalidSessionException e) {
-            onInvalidSession(context, e);
             log.debug("Resolved SubjectContext context session is invalid.  Ignoring and creating an anonymous " +
                     "(session-less) Subject instance.", e);
         }
@@ -395,19 +386,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected Session resolveContextSession(SubjectContext context) throws InvalidSessionException {
-        return resolveContextSessionById(context);
-    }
-
-    protected Session resolveContextSessionById(SubjectContext context) throws InvalidSessionException {
-        log.trace("No session found in context.  Looking for a session id to resolve in to a session.");
-        //otherwise try to resolve a session if a session id exists:
-        Serializable sessionId = getSessionId(context);
-        if (sessionId != null) {
-            log.debug("Discovered context session id [{}].  Attempting to acquire the associated Session instance.");
-            return getSession(sessionId);
-        }
-        log.trace("No session id found in the context.  A context session cannot be resolved.");
-        return null;
+        SessionContext sessionContext = createSessionContext(context);
+        return getSession(sessionContext);
     }
 
     /**
@@ -497,31 +477,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return sessionContext;
     }
 
-    /**
-     * Allows subclasses to react to the fact that attempting to resolve a session based on the given SubjectContext
-     * failed.  Default implementation does nothing (no-op).
-     *
-     * @param subjectContext the subjectContext from where the sessionId was discovered
-     * @param e              the exception thrown while attempting to resolve the context's session
-     * @since 1.0
-     */
-    protected void onInvalidSession(SubjectContext subjectContext, SessionException e) {
-    }
-
-    /**
-     * Utility method to retrieve the session id from the given subject context which will be used to resolve
-     * to a {@link Session}, or {@code null} if there is no session id available.
-     *
-     * @param subjectContext the context map with data that will be used to construct a {@link Subject} instance via
-     *                       a {@link SubjectFactory}
-     * @return a session id to resolve to a {@link Session} instance or {@code null} if a session id could not be found.
-     * @see SecurityManager#createSubject(SubjectContext)
-     * @see SubjectFactory#createSubject(SubjectContext)
-     */
-    protected Serializable getSessionId(SubjectContext subjectContext) {
-        return subjectContext.getSessionId();
-    }
-
     public void logout(Subject subject) {
 
         if (subject == null) {
@@ -564,24 +519,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     protected void stopSession(Subject subject) {
         Session s = subject.getSession(false);
         if (s != null) {
-            //react to the id and not the session itself - the Session instance could be a proxy/delegate Session
-            //in which case the ID might be the only thing accessible.  Better to pass off the ID to the underlying
-            //SessionManager since this will successfully handle all cases.
-            Serializable sessionId = s.getId();
-            if (sessionId != null) {
-                try {
-                    stop(sessionId);
-                } catch (SessionException e) {
-                    //ignored - we're invalidating, and have no further need of the session anyway
-                    //log just in case someone wants to know:
-                    if (log.isDebugEnabled()) {
-                        String msg = "Session for Subject [" + (subject != null ? subject.getPrincipal() : null) +
-                                "] has already been invalidated.  Logging exception since session exceptions are " +
-                                "irrelevant when the owning Subject has logged out.";
-                        log.debug(msg, e);
-                    }
-                }
-            }
+            s.stop();
         }
     }
 

@@ -18,15 +18,8 @@
  */
 package org.apache.shiro.web;
 
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.web.subject.WebSubject;
-import org.apache.shiro.web.subject.support.WebSubjectThreadState;
 import org.junit.After;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 /**
  * @since 1.0
@@ -37,13 +30,4 @@ public abstract class AbstractWebSecurityManagerTest {
     public void tearDown() {
         ThreadContext.remove();
     }
-
-    protected Subject newSubject(SecurityManager sm, ServletRequest request, ServletResponse response) {
-        ThreadContext.bind(sm);
-        WebSubject subject = new WebSubject.Builder(sm, request, response).buildWebSubject();
-        WebSubjectThreadState threadState = new WebSubjectThreadState(subject);
-        threadState.bind();
-        return subject;
-    }
-
 }

@@ -29,7 +29,6 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionContext;
-import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -113,14 +112,6 @@ public class DelegatingSubject implements Subject, Serializable {
             throw new IllegalArgumentException("session cannot be null");
         }
         return new StoppingAwareProxiedSession(session, this);
-    }
-
-    protected Session decorateSession(Serializable sessionId) {
-        if (sessionId == null) {
-            throw new IllegalArgumentException("sessionId cannot be null");
-        }
-        DelegatingSession target = new DelegatingSession(getSecurityManager(), sessionId);
-        return decorate(target);
     }
 
     public SecurityManager getSecurityManager() {

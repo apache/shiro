@@ -21,6 +21,7 @@ package org.apache.shiro.spring.remoting;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -53,13 +54,14 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
     private static final String SESSION_ID_SYSTEM_PROPERTY_NAME = "shiro.session.id";
 
     private String sessionId;
-    
+
+    public SecureRemoteInvocationFactory() {
+    }
+
     public SecureRemoteInvocationFactory(String sessionId) {
         this();
         this.sessionId = sessionId;
     }
-    
-    public SecureRemoteInvocationFactory() {}
 
     /**
      * Creates a {@link RemoteInvocation} with the current session ID as an
@@ -81,19 +83,20 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
             //for SessionManager calls, all method calls except the 'start' methods require the session id
             // as the first argument, so just get it from there:
             if (!mi.getMethod().getName().equals("start")) {
-                sessionId = (Serializable) mi.getArguments()[0];
+                SessionContext context = (SessionContext) mi.getArguments()[0];
+                sessionId = context.getSessionId();
             }
         }
 
         //tried the delegate. Use the injected session id if given
         if (sessionId == null) sessionId = this.sessionId;
-        
+
         // If sessionId is null, only then try the Subject:
         if (sessionId == null) {
             try {
                 // HACK Check if can get the securityManager - this'll cause an exception if it's not set 
                 SecurityUtils.getSecurityManager();
-                if (sessionId == null && !sessionManagerMethodInvocation) {
+                if (!sessionManagerMethodInvocation) {
                     Subject subject = SecurityUtils.getSubject();
                     Session session = subject.getSession(false);
                     if (session != null) {

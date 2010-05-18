@@ -19,8 +19,9 @@
 package org.apache.shiro.spring.remoting;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.shiro.session.mgt.DefaultSessionContext;
+import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
@@ -44,10 +45,6 @@ public class SecureRemoteInvocationFactoryTest {
     @Before
     public void setup() {
         ThreadContext.remove();
-    }
-
-    protected void bind(Subject subject) {
-        ThreadContext.bind(subject);
     }
 
     @After
@@ -92,11 +89,13 @@ public class SecureRemoteInvocationFactoryTest {
         SecureRemoteInvocationFactory factory = new SecureRemoteInvocationFactory();
 
         MethodInvocation mi = createMock(MethodInvocation.class);
-        Method method = getMethod("isValid", SessionManager.class);
+        Method method = getMethod("getSession", SessionManager.class);
         expect(mi.getMethod()).andReturn(method).anyTimes();
 
         String dummySessionId = UUID.randomUUID().toString();
-        Object[] args = {dummySessionId};
+        SessionContext sessionContext = new DefaultSessionContext();
+        sessionContext.setSessionId(dummySessionId);
+        Object[] args = {sessionContext};
         expect(mi.getArguments()).andReturn(args).anyTimes();
 
         replay(mi);

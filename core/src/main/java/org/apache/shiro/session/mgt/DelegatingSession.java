@@ -28,13 +28,13 @@ import java.util.Date;
 /**
  * A DelegatingSession is a client-tier representation of a server side
  * {@link org.apache.shiro.session.Session Session}.
- * This implementation is basically a proxy to a server-side {@link SessionManager SessionManager},
+ * This implementation is basically a proxy to a server-side {@link NativeSessionManager NativeSessionManager},
  * which will return the proper results for each method call.
  * <p/>
  * <p>A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
  * only communicating with the server when necessary.
  * <p/>
- * <p>Of course, if used in-process with a SessionManager business POJO, as might be the case in a
+ * <p>Of course, if used in-process with a NativeSessionManager business POJO, as might be the case in a
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
  *
@@ -55,13 +55,13 @@ public class DelegatingSession implements Session, Serializable {
     /**
      * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
      */
-    private transient SessionManager sessionManager = null;
+    private transient NativeSessionManager sessionManager = null;
 
 
     public DelegatingSession() {
     }
 
-    public DelegatingSession(SessionManager sessionManager, Serializable id) {
+    public DelegatingSession(NativeSessionManager sessionManager, Serializable id) {
         if (sessionManager == null) {
             throw new IllegalArgumentException("sessionManager argument cannot be null.");
         }
@@ -72,7 +72,7 @@ public class DelegatingSession implements Session, Serializable {
         this.id = id;
     }
 
-    public DelegatingSession(SessionManager sessionManager, Serializable id, String host) {
+    public DelegatingSession(NativeSessionManager sessionManager, Serializable id, String host) {
         this(sessionManager, id);
         this.host = host;
     }
@@ -84,12 +84,12 @@ public class DelegatingSession implements Session, Serializable {
      * @return the {@link SessionManager SessionManager} used by this handle to invoke
      *         all session-related methods.
      */
-    public SessionManager getSessionManager() {
+    public NativeSessionManager getSessionManager() {
         return sessionManager;
     }
 
     /**
-     * Sets the {@link SessionManager SessionManager} to which this <tt>DelegatingSession</tt> will
+     * Sets the {@link NativeSessionManager NativeSessionManager} to which this <tt>DelegatingSession</tt> will
      * delegate its method calls.  In a rich client environment, this <tt>SessionManager</tt> will
      * probably be a remoting proxy which executes remote method invocations.  In a single-process
      * environment (e.g. a web  application deployed in the same JVM of the application server),
@@ -104,16 +104,16 @@ public class DelegatingSession implements Session, Serializable {
      * @param sessionManager the <tt>SessionManager</tt> this handle will use when delegating
      *                       method calls.
      */
-    public void setSessionManager(SessionManager sessionManager) {
+    public void setSessionManager(NativeSessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 
     /**
-     * Sets the sessionId used by this handle for all future {@link SessionManager SessionManager}
+     * Sets the sessionId used by this handle for all future {@link NativeSessionManager NativeSessionManager}
      * method invocations.
      *
-     * @param id the <tt>sessionId</tt> to use for all <tt>SessionManager</tt> invocations.
-     * @see #setSessionManager(SessionManager sessionManager)
+     * @param id the <tt>sessionId</tt> to use for all <tt>NativeSessionManager</tt> invocations.
+     * @see #setSessionManager(NativeSessionManager nativeSessionManager)
      */
     public void setId(Serializable id) {
         this.id = id;
