@@ -19,6 +19,7 @@
 package org.apache.shiro.web.session;
 
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.web.util.RequestPairSource;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,7 +32,7 @@ import javax.servlet.ServletResponse;
  * @author Les Hazlewood
  * @since 1.0
  */
-public interface WebSessionContext extends SessionContext {
+public interface WebSessionContext extends SessionContext, RequestPairSource {
 
     /**
      * Returns the {@code ServletRequest} received by the servlet container triggering the creation of the

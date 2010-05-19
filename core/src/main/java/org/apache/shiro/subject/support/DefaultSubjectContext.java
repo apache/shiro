@@ -91,9 +91,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
     public void setSecurityManager(SecurityManager securityManager) {
-        if (securityManager != null) {
-            put(SECURITY_MANAGER, securityManager);
-        }
+        nullSafePut(SECURITY_MANAGER, securityManager);
     }
 
     public SecurityManager resolveSecurityManager() {
@@ -119,9 +117,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
     public void setSessionId(Serializable sessionId) {
-        if (sessionId != null) {
-            put(SESSION_ID, sessionId);
-        }
+        nullSafePut(SESSION_ID, sessionId);
     }
 
     public Subject getSubject() {
@@ -129,9 +125,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
     public void setSubject(Subject subject) {
-        if (subject != null) {
-            put(SUBJECT, subject);
-        }
+        nullSafePut(SUBJECT, subject);
     }
 
     public PrincipalCollection getPrincipals() {
@@ -179,9 +173,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
     public void setSession(Session session) {
-        if (session != null) {
-            put(SESSION, session);
-        }
+        nullSafePut(SESSION, session);
     }
 
     public Session resolveSession() {
@@ -230,9 +222,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
     public void setAuthenticationInfo(AuthenticationInfo info) {
-        if (info != null) {
-            put(AUTHENTICATION_INFO, info);
-        }
+        nullSafePut(AUTHENTICATION_INFO, info);
     }
 
     public AuthenticationToken getAuthenticationToken() {
@@ -240,9 +230,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
     public void setAuthenticationToken(AuthenticationToken token) {
-        if (token != null) {
-            put(AUTHENTICATION_TOKEN, token);
-        }
+        nullSafePut(AUTHENTICATION_TOKEN, token);
     }
 
     public String getHost() {

@@ -23,6 +23,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
+import org.apache.shiro.web.util.RequestPairSource;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -33,7 +34,7 @@ import javax.servlet.ServletResponse;
  *
  * @since 1.0
  */
-public interface WebSubject extends Subject {
+public interface WebSubject extends Subject, RequestPairSource {
 
     /**
      * Returns the {@code ServletRequest} accessible when the Subject instance was created.

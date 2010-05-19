@@ -20,7 +20,6 @@ package org.apache.shiro.web.subject.support;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
@@ -81,10 +80,6 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
                 request = ((WebSubject) existing).getServletRequest();
             }
         }
-        //last resort - try the thread-local (TODO - remove this if possible):
-        if (request == null) {
-            request = WebUtils.getServletRequest();
-        }
 
         return request;
     }
@@ -109,11 +104,6 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
             if (existing instanceof WebSubject) {
                 response = ((WebSubject) existing).getServletResponse();
             }
-        }
-
-        //last resort - try the thread-local (TODO - remove this if possible):
-        if (response == null) {
-            response = WebUtils.getServletResponse();
         }
 
         return response;

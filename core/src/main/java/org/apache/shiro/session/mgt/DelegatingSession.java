@@ -28,13 +28,13 @@ import java.util.Date;
 /**
  * A DelegatingSession is a client-tier representation of a server side
  * {@link org.apache.shiro.session.Session Session}.
- * This implementation is basically a proxy to a server-side {@link SessionManager SessionManager},
+ * This implementation is basically a proxy to a server-side {@link NativeSessionManager NativeSessionManager},
  * which will return the proper results for each method call.
  * <p/>
  * <p>A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
  * only communicating with the server when necessary.
  * <p/>
- * <p>Of course, if used in-process with a SessionManager business POJO, as might be the case in a
+ * <p>Of course, if used in-process with a NativeSessionManager business POJO, as might be the case in a
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
  *
@@ -46,84 +46,40 @@ public class DelegatingSession implements Session, Serializable {
 
     //TODO - complete JavaDoc
 
-    private Serializable id = null;
+    private final SessionKey key;
 
     //cached fields to avoid a server-side method call if out-of-process:
     private Date startTimestamp = null;
     private String host = null;
 
     /**
-     * Handle to a server-side SessionManager.  See {@link #setSessionManager} for details.
+     * Handle to the target NativeSessionManager that will support the delegate calls.
      */
-    private transient SessionManager sessionManager = null;
+    private final transient NativeSessionManager sessionManager;
 
 
-    public DelegatingSession() {
-    }
-
-    public DelegatingSession(SessionManager sessionManager, Serializable id) {
+    public DelegatingSession(NativeSessionManager sessionManager, SessionKey key) {
         if (sessionManager == null) {
             throw new IllegalArgumentException("sessionManager argument cannot be null.");
         }
-        if (id == null) {
-            throw new IllegalArgumentException("session id argument cannot be null.");
+        if (key == null) {
+            throw new IllegalArgumentException("sessionKey argument cannot be null.");
+        }
+        if (key.getSessionId() == null) {
+            String msg = "The " + DelegatingSession.class.getName() + " implementation requires that the " +
+                    "SessionKey argument returns a non-null sessionId to support the " +
+                    "Session.getId() invocations.";
+            throw new IllegalArgumentException(msg);
         }
         this.sessionManager = sessionManager;
-        this.id = id;
-    }
-
-    public DelegatingSession(SessionManager sessionManager, Serializable id, String host) {
-        this(sessionManager, id);
-        this.host = host;
-    }
-
-    /**
-     * Returns the {@link SessionManager SessionManager} used by this handle to invoke
-     * all session-related methods.
-     *
-     * @return the {@link SessionManager SessionManager} used by this handle to invoke
-     *         all session-related methods.
-     */
-    public SessionManager getSessionManager() {
-        return sessionManager;
-    }
-
-    /**
-     * Sets the {@link SessionManager SessionManager} to which this <tt>DelegatingSession</tt> will
-     * delegate its method calls.  In a rich client environment, this <tt>SessionManager</tt> will
-     * probably be a remoting proxy which executes remote method invocations.  In a single-process
-     * environment (e.g. a web  application deployed in the same JVM of the application server),
-     * the <tt>SessionManager</tt> can be the actual business POJO implementation.
-     * <p/>
-     * <p>You'll notice the {@link Session Session} interface and the {@link SessionManager}
-     * interface are nearly identical.  This is to ensure the SessionManager can support
-     * most method calls in the Session interface, via this handle/proxy technique.  The session
-     * manager is implementated as a stateless business POJO, with the handle passing the
-     * session id as necessary.
-     *
-     * @param sessionManager the <tt>SessionManager</tt> this handle will use when delegating
-     *                       method calls.
-     */
-    public void setSessionManager(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
-    }
-
-    /**
-     * Sets the sessionId used by this handle for all future {@link SessionManager SessionManager}
-     * method invocations.
-     *
-     * @param id the <tt>sessionId</tt> to use for all <tt>SessionManager</tt> invocations.
-     * @see #setSessionManager(SessionManager sessionManager)
-     */
-    public void setId(Serializable id) {
-        this.id = id;
+        this.key = key;
     }
 
     /**
      * @see org.apache.shiro.session.Session#getId()
      */
     public Serializable getId() {
-        return id;
+        return key.getSessionId();
     }
 
     /**
@@ -131,7 +87,7 @@ public class DelegatingSession implements Session, Serializable {
      */
     public Date getStartTimestamp() {
         if (startTimestamp == null) {
-            startTimestamp = sessionManager.getStartTimestamp(id);
+            startTimestamp = sessionManager.getStartTimestamp(key);
         }
         return startTimestamp;
     }
@@ -141,20 +97,20 @@ public class DelegatingSession implements Session, Serializable {
      */
     public Date getLastAccessTime() {
         //can't cache - only business pojo knows the accurate time:
-        return sessionManager.getLastAccessTime(id);
+        return sessionManager.getLastAccessTime(key);
     }
 
     public long getTimeout() throws InvalidSessionException {
-        return sessionManager.getTimeout(id);
+        return sessionManager.getTimeout(key);
     }
 
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
-        sessionManager.setTimeout(id, maxIdleTimeInMillis);
+        sessionManager.setTimeout(key, maxIdleTimeInMillis);
     }
 
     public String getHost() {
         if (host == null) {
-            host = sessionManager.getHost(id);
+            host = sessionManager.getHost(key);
         }
         return host;
     }
@@ -163,46 +119,45 @@ public class DelegatingSession implements Session, Serializable {
      * @see org.apache.shiro.session.Session#touch()
      */
     public void touch() throws InvalidSessionException {
-        sessionManager.touch(id);
+        sessionManager.touch(key);
     }
 
     /**
      * @see org.apache.shiro.session.Session#stop()
      */
     public void stop() throws InvalidSessionException {
-        sessionManager.stop(id);
+        sessionManager.stop(key);
     }
 
     /**
      * @see org.apache.shiro.session.Session#getAttributeKeys
      */
-    @SuppressWarnings({"unchecked"})
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
-        return sessionManager.getAttributeKeys(id);
+        return sessionManager.getAttributeKeys(key);
     }
 
     /**
      * @see org.apache.shiro.session.Session#getAttribute(Object key)
      */
-    public Object getAttribute(Object key) throws InvalidSessionException {
-        return sessionManager.getAttribute(id, key);
+    public Object getAttribute(Object attributeKey) throws InvalidSessionException {
+        return sessionManager.getAttribute(this.key, attributeKey);
     }
 
     /**
      * @see Session#setAttribute(Object key, Object value)
      */
-    public void setAttribute(Object key, Object value) throws InvalidSessionException {
+    public void setAttribute(Object attributeKey, Object value) throws InvalidSessionException {
         if (value == null) {
-            removeAttribute(key);
+            removeAttribute(attributeKey);
         } else {
-            sessionManager.setAttribute(id, key, value);
+            sessionManager.setAttribute(this.key, attributeKey, value);
         }
     }
 
     /**
      * @see Session#removeAttribute(Object key)
      */
-    public Object removeAttribute(Object key) throws InvalidSessionException {
-        return sessionManager.removeAttribute(id, key);
+    public Object removeAttribute(Object attributeKey) throws InvalidSessionException {
+        return sessionManager.removeAttribute(this.key, attributeKey);
     }
 }

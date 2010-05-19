@@ -20,24 +20,21 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.cache.CacheManagerAware;
-import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.LifecycleUtils;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
 
 
 /**
  * Shiro support of a {@link SecurityManager} class hierarchy that delegates all
- * {@link org.apache.shiro.session.Session session} operations to a wrapped {@link org.apache.shiro.session.mgt.SessionManager SessionManager}
- * instance.  That is, this class implements the methods in the
- * {@link SessionManager SessionManager} interface, but in reality, those methods are merely passthrough calls to
- * the underlying 'real' {@code SessionManager} instance.
+ * {@link org.apache.shiro.session.Session session} operations to a wrapped
+ * {@link org.apache.shiro.session.mgt.SessionManager SessionManager} instance.  That is, this class implements the
+ * methods in the {@link SessionManager SessionManager} interface, but in reality, those methods are merely
+ * passthrough calls to the underlying 'real' {@code SessionManager} instance.
  * <p/>
  * The remaining {@code SecurityManager} methods not implemented by this class or its parents are left to be
  * implemented by subclasses.
@@ -121,60 +118,12 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         }
     }
 
-    public Session start(SessionContext initData) throws AuthorizationException {
-        return this.sessionManager.start(initData);
+    public Session start(SessionContext context) throws AuthorizationException {
+        return this.sessionManager.start(context);
     }
 
-    public Date getStartTimestamp(Serializable sessionId) {
-        return this.sessionManager.getStartTimestamp(sessionId);
-    }
-
-    public Date getLastAccessTime(Serializable sessionId) {
-        return this.sessionManager.getLastAccessTime(sessionId);
-    }
-
-    public boolean isValid(Serializable sessionId) {
-        return this.sessionManager.isValid(sessionId);
-    }
-
-    public void checkValid(Serializable sessionId) throws InvalidSessionException {
-        this.sessionManager.checkValid(sessionId);
-    }
-
-    public long getTimeout(Serializable sessionId) throws InvalidSessionException {
-        return this.sessionManager.getTimeout(sessionId);
-    }
-
-    public void setTimeout(Serializable sessionId, long maxIdleTimeInMillis) throws InvalidSessionException {
-        this.sessionManager.setTimeout(sessionId, maxIdleTimeInMillis);
-    }
-
-    public void touch(Serializable sessionId) throws InvalidSessionException {
-        this.sessionManager.touch(sessionId);
-    }
-
-    public String getHost(Serializable sessionId) {
-        return this.sessionManager.getHost(sessionId);
-    }
-
-    public void stop(Serializable sessionId) throws InvalidSessionException {
-        this.sessionManager.stop(sessionId);
-    }
-
-    public Collection<Object> getAttributeKeys(Serializable sessionId) {
-        return this.sessionManager.getAttributeKeys(sessionId);
-    }
-
-    public Object getAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
-        return this.sessionManager.getAttribute(sessionId, key);
-    }
-
-    public void setAttribute(Serializable sessionId, Object key, Object value) throws InvalidSessionException {
-        this.sessionManager.setAttribute(sessionId, key, value);
-    }
-
-    public Object removeAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
-        return this.sessionManager.removeAttribute(sessionId, key);
+    public Session getSession(SessionKey key) throws SessionException {
+        return this.sessionManager.getSession(key);
     }
 
     public void destroy() {

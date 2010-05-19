@@ -92,7 +92,7 @@ public class DefaultSessionManagerTest {
         };
         sm.getSessionListeners().add(listener);
         Session session = sm.start(null);
-        sm.stop(session.getId());
+        sm.stop(new DefaultSessionKey(session.getId()));
         assertTrue(stopped[0]);
     }
 
@@ -109,7 +109,7 @@ public class DefaultSessionManagerTest {
         Session session = sm.start(null);
         sleep(150);
         try {
-            sm.checkValid(session.getId());
+            sm.checkValid(new DefaultSessionKey(session.getId()));
             fail("check should have thrown an exception.");
         } catch (InvalidSessionException expected) {
             //do nothing - expected.
@@ -147,7 +147,7 @@ public class DefaultSessionManagerTest {
         expect(sessionDAO.readSession(sessionId1)).andReturn(session1).anyTimes();
         sessionDAO.update(eq(session1));
         replay(sessionDAO);
-        sm.setTimeout(sessionId1, 1);
+        sm.setTimeout(new DefaultSessionKey(sessionId1), 1);
         verify(sessionDAO);
         reset(sessionDAO);
 
@@ -160,7 +160,7 @@ public class DefaultSessionManagerTest {
 
         //Try to access the same session, but it should throw an UnknownSessionException due to timeout:
         try {
-            sm.getTimeout(sessionId1);
+            sm.getTimeout(new DefaultSessionKey(sessionId1));
             fail("Session with id [" + sessionId1 + "] should have expired due to timeout.");
         } catch (ExpiredSessionException expected) {
             //expected

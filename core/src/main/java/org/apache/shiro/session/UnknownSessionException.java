@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.session;
 
-import java.io.Serializable;
-
 /**
  * Exception thrown when attempting to interact with the system under the pretense of a
  * particular session (e.g. under a specific session id), and that session does not exist in
@@ -63,37 +61,5 @@ public class UnknownSessionException extends InvalidSessionException {
      */
     public UnknownSessionException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Constructs a new UnknownSessionException.
-     *
-     * @param sessionId the session id given that is unknown to the system.
-     */
-    public UnknownSessionException(Serializable sessionId) {
-        super("Unable to locate session with id [" + sessionId + "] either because it is an invalid id " +
-                "or the session has been deleted due to invalidation (stopped, logged out, or expired).",
-                sessionId);
-    }
-
-    /**
-     * Constructs a new UnknownSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param sessionId the session id given that is unknown to the system.
-     */
-    public UnknownSessionException(String message, Serializable sessionId) {
-        super(message, sessionId);
-    }
-
-    /**
-     * Constructs a new UnknownSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param cause     the underlying Throwable that caused this exception to be thrown.
-     * @param sessionId the session id given that is unknown to the system.
-     */
-    public UnknownSessionException(String message, Throwable cause, Serializable sessionId) {
-        super(message, cause, sessionId);
     }
 }

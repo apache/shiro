@@ -21,12 +21,9 @@ package org.apache.shiro.web;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.filter.AccessControlFilter;
-import org.apache.shiro.web.subject.WebSubject;
-import org.apache.shiro.web.subject.WebSubjectContext;
+import org.apache.shiro.web.util.RequestPairSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,14 +54,6 @@ public class WebUtils {
 
     private static final Logger log = LoggerFactory.getLogger(WebUtils.class);
 
-
-    /**
-     * Message displayed when a servlet request or response is not bound to the current thread context when expected.
-     */
-    private static final String NOT_BOUND_ERROR_MESSAGE =
-            "Make sure WebUtils.bind() is being called. (typically called by AbstractShiroFilter)  " +
-                    "This could also happen when running integration tests that don't properly call WebUtils.bind().";
-
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
 
@@ -73,7 +62,6 @@ public class WebUtils {
      * requested page after login, equal to {@code shiroSavedRequest}.
      */
     public static final String SAVED_REQUEST_KEY = "shiroSavedRequest";
-
 
     /**
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
@@ -234,7 +222,7 @@ public class WebUtils {
         return enc;
     }
 
-    /**
+    /*
      * Returns {@code true} IFF the specified {@code SubjectContext}:
      * <ol>
      * <li>A {@link WebSubjectContext} instance</li>
@@ -247,151 +235,55 @@ public class WebUtils {
      * @return {@code true} IFF the specified context has HTTP request/response objects, {@code false} otherwise.
      * @since 1.0
      */
-    public static boolean isHttp(SubjectContext context) {
-        if (context instanceof WebSubjectContext) {
-            WebSubjectContext wsc = (WebSubjectContext) context;
-            ServletRequest request = wsc.resolveServletRequest();
-            ServletResponse response = wsc.resolveServletResponse();
-            return request != null && request instanceof HttpServletRequest &&
-                    response != null && response instanceof HttpServletResponse;
-        }
-        return false;
+
+    public static boolean isWeb(Object requestPairSource) {
+        return requestPairSource instanceof RequestPairSource && isWeb((RequestPairSource) requestPairSource);
     }
 
-    /**
-     * Returns {@code true} IFF the specified {@code Subject}:
-     * <ol>
-     * <li>A {@link WebSubject} instance</li>
-     * <li>The {@code WebSubject}'s request/response pair are not null</li>
-     * <li>The request is an {@link HttpServletRequest} instance</li>
-     * <li>The response is an {@link HttpServletResponse} instance</li>
-     * </ol>
-     *
-     * @param subject the {@code Subject} instance to check to see if it is HTTP compatible
-     * @return {@code true} IFF the specified subject has HTTP request/response objects, {@code false} otherwise.
-     * @since 1.0
-     */
-    public static boolean isHttp(Subject subject) {
-        if (subject instanceof WebSubject) {
-            WebSubject ws = (WebSubject) subject;
-            ServletRequest request = ws.getServletRequest();
-            ServletResponse response = ws.getServletResponse();
-            return request != null && request instanceof HttpServletRequest &&
-                    response != null && response instanceof HttpServletResponse;
-        }
-        return false;
+    public static boolean isHttp(Object requestPairSource) {
+        return requestPairSource instanceof RequestPairSource && isHttp((RequestPairSource) requestPairSource);
     }
 
-    /**
-     * Returns the {@code Subject}'s associated {@link HttpServletRequest} instance.  This method will
-     * throw an {@link IllegalArgumentException} if the Subject is not a {@link WebSubject} instance or that
-     * {@code WebSubject} does not have an HTTP-compatible request object.  Callers will usually want to call
-     * the {@link #isHttp(Subject) isHttp(subject)} method first to ensure this method can be called successfully.
-     *
-     * @param subject the subject instance from which to retrieve the {@code Subject}'s associated
-     *                {@link HttpServletRequest} instance
-     * @return the subject's associated {@link HttpServletRequest} object.
-     * @throws IllegalArgumentException if the {@code Subject} is not a {@link WebSubject} or that {@code WebSubject}'s
-     *                                  request is not an {@link HttpServletRequest}.
-     * @since 1.0
-     */
-    public static HttpServletRequest getHttpRequest(Subject subject) throws IllegalArgumentException {
-        if (!(subject instanceof WebSubject)) {
-            String msg = "Subject instance is not a " + WebSubject.class.getName() + " instance.  This is required " +
-                    "to obtain a ServletRequest and ServletResponse";
-            throw new IllegalArgumentException(msg);
+    public static ServletRequest getRequest(Object requestPairSource) {
+        if (requestPairSource instanceof RequestPairSource) {
+            return ((RequestPairSource) requestPairSource).getServletRequest();
         }
-        WebSubject ws = (WebSubject) subject;
-        ServletRequest request = ws.getServletRequest();
-        if (request == null || !(request instanceof HttpServletRequest)) {
-            String msg = "WebSubject's ServletRequest is null or not an instance of HttpServletRequest.";
-            throw new IllegalArgumentException(msg);
-        }
-        return (HttpServletRequest) request;
+        return null;
     }
 
-    /**
-     * Returns the {@code Subject}'s associated {@link HttpServletResponse} instance.  This method will
-     * throw an {@link IllegalArgumentException} if the Subject is not a {@link WebSubject} instance or that
-     * {@code WebSubject} does not have an HTTP-compatible response object.  Callers will usually want to call
-     * the {@link #isHttp(Subject) isHttp(subject)} method first to ensure this method can be called successfully.
-     *
-     * @param subject the subject instance from which to retrieve the {@code Subject}'s associated
-     *                {@link HttpServletResponse} instance
-     * @return the subject's associated {@link HttpServletResponse} object.
-     * @throws IllegalArgumentException if the {@code Subject} is not a {@link WebSubject} or that {@code WebSubject}'s
-     *                                  response is not an {@link HttpServletResponse}.
-     * @since 1.0
-     */
-    public static HttpServletResponse getHttpResponse(Subject subject) {
-        if (!(subject instanceof WebSubject)) {
-            String msg = "Subject instance is not a " + WebSubject.class.getName() + " instance.  This is required " +
-                    "to obtain a ServletRequest and ServletResponse";
-            throw new IllegalArgumentException(msg);
+    public static ServletResponse getResponse(Object requestPairSource) {
+        if (requestPairSource instanceof RequestPairSource) {
+            return ((RequestPairSource) requestPairSource).getServletResponse();
         }
-        WebSubject ws = (WebSubject) subject;
-        ServletResponse response = ws.getServletResponse();
-        if (response == null || !(response instanceof HttpServletResponse)) {
-            String msg = "WebSubject's ServletResponse is null or not an instance of HttpServletResponse.";
-            throw new IllegalArgumentException(msg);
-        }
-        return (HttpServletResponse) response;
+        return null;
     }
 
-    /**
-     * Returns the {@code SubjectContext}'s {@link HttpServletRequest} instance.  This method will
-     * throw an {@link IllegalArgumentException} if the context is not a {@link WebSubjectContext} instance or that
-     * {@code WebSubjectContext} does not have an HTTP-compatible request object.  Callers will usually want to call
-     * the {@link #isHttp(SubjectContext) isHttp(subjectContext)} method first to ensure this method can be called
-     * successfully.
-     *
-     * @param context the subjectContext instance from which to retrieve the associated {@link HttpServletRequest}
-     * @return the context's {@link HttpServletRequest} object.
-     * @throws IllegalArgumentException if the {@code SubjectContext} is not a {@link WebSubjectContext} or that
-     *                                  {@code WebSubjectContext}'s request is not an {@link HttpServletRequest}.
-     * @since 1.0
-     */
-    public static HttpServletRequest getHttpRequest(SubjectContext context) {
-        if (!(context instanceof WebSubjectContext)) {
-            String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
-                    "This is required to obtain a ServletRequest and ServletResponse";
-            throw new IllegalArgumentException(msg);
+    public static HttpServletRequest getHttpRequest(Object requestPairSource) {
+        ServletRequest request = getRequest(requestPairSource);
+        if (request instanceof HttpServletRequest) {
+            return (HttpServletRequest) request;
         }
-        WebSubjectContext wsc = (WebSubjectContext) context;
-        ServletRequest request = wsc.resolveServletRequest();
-        if (request == null || !(request instanceof HttpServletRequest)) {
-            String msg = "WebSubjectContext's ServletRequest is null or not an instance of HttpServletRequest.";
-            throw new IllegalArgumentException(msg);
-        }
-        return (HttpServletRequest) request;
+        return null;
     }
 
-    /**
-     * Returns the {@code SubjectContext}'s {@link HttpServletResponse} instance.  This method will
-     * throw an {@link IllegalArgumentException} if the context is not a {@link WebSubjectContext} instance or that
-     * {@code WebSubjectContext} does not have an HTTP-compatible response object.  Callers will usually want to call
-     * the {@link #isHttp(SubjectContext) isHttp(subjectContext)} method first to ensure this method can be called
-     * successfully.
-     *
-     * @param context the subjectContext instance from which to retrieve the associated {@link HttpServletResponse}
-     * @return the context's {@link HttpServletResponse} object.
-     * @throws IllegalArgumentException if the {@code SubjectContext} is not a {@link WebSubjectContext} or that
-     *                                  {@code WebSubjectContext}'s response is not an {@link HttpServletResponse}.
-     * @since 1.0
-     */
-    public static HttpServletResponse getHttpResponse(SubjectContext context) {
-        if (!(context instanceof WebSubjectContext)) {
-            String msg = "SubjectContext instance is not a " + WebSubjectContext.class.getName() + " instance.  " +
-                    "This is required to obtain a ServletRequest and ServletResponse";
-            throw new IllegalArgumentException(msg);
+    public static HttpServletResponse getHttpResponse(Object requestPairSource) {
+        ServletResponse response = getResponse(requestPairSource);
+        if (response instanceof HttpServletResponse) {
+            return (HttpServletResponse) response;
         }
-        WebSubjectContext wsc = (WebSubjectContext) context;
-        ServletResponse response = wsc.resolveServletResponse();
-        if (response == null || !(response instanceof HttpServletResponse)) {
-            String msg = "WebSubjectContext's ServletResponse is null or not an instance of HttpServletResponse.";
-            throw new IllegalArgumentException(msg);
-        }
-        return (HttpServletResponse) response;
+        return null;
+    }
+
+    private static boolean isWeb(RequestPairSource source) {
+        ServletRequest request = source.getServletRequest();
+        ServletResponse response = source.getServletResponse();
+        return request != null && response != null;
+    }
+
+    private static boolean isHttp(RequestPairSource source) {
+        ServletRequest request = source.getServletRequest();
+        ServletResponse response = source.getServletResponse();
+        return request instanceof HttpServletRequest && response instanceof HttpServletResponse;
     }
 
     /**
@@ -424,96 +316,6 @@ public class WebUtils {
      */
     public static HttpServletResponse toHttp(ServletResponse response) {
         return (HttpServletResponse) response;
-    }
-
-    /**
-     * Returns the current thread-bound {@code ServletRequest} or {@code null} if there is not one bound.
-     * <p/>
-     * It is the case in certain enterprise environments where a web-enabled SecurityManager (and its internal mechanisms)
-     * is the primary SecurityManager but also serves as a 'central' coordinator for security operations in a cluster.
-     * In these environments, it is possible for a web-enabled SecurityManager to receive remote method invocations that
-     * are not HTTP based.  In such an environment this method would return {@code null}.
-     * <p/>
-     * <b>THIS IS NOT PART OF APACHE SHIRO'S PUBLIC API.</b>  It exists for Shiro implementation requirements only.
-     *
-     * @return the current thread-bound {@code ServletRequest} or {@code null} if there is not one bound.
-     * @since 1.0
-     */
-    public static ServletRequest getServletRequest() {
-        ServletRequest request = (ServletRequest) ThreadContext.get(SERVLET_REQUEST_KEY);
-        if (request == null) {
-            Subject subject = ThreadContext.getSubject();
-            if (subject instanceof WebSubject) {
-                WebSubject webSubject = (WebSubject) subject;
-                request = webSubject.getServletRequest();
-            }
-        }
-        return request;
-    }
-
-    /**
-     * Convenience method that simplifies binding a ServletRequest to the current thread (via the ThreadContext).
-     * <p/>
-     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
-     * ThreadContext key names.  The implementation is simple in that, if the servletRequest is not <tt>null</tt>,
-     * it binds it to the thread, i.e.:
-     * <p/>
-     * <pre>
-     * if (servletRequest != null) {
-     *     ThreadContext.put( SERVLET_REQUEST_KEY, servletRequest );
-     * }</pre>
-     *
-     * @param servletRequest the ServletRequest object to bind to the thread.  If the argument is null, nothing will be done.
-     */
-    public static void bind(ServletRequest servletRequest) {
-        if (servletRequest != null) {
-            ThreadContext.put(SERVLET_REQUEST_KEY, servletRequest);
-        }
-    }
-
-    /**
-     * Returns the current thread-bound {@code ServletResponse} or {@code null} if there is not one bound.
-     * <p/>
-     * It is the case in certain enterprise environments where a web-enabled SecurityManager (and its internal mechanisms)
-     * is the primary SecurityManager but also serves as a 'central' coordinator for security operations in a cluster.
-     * In these environments, it is possible for a web-enabled SecurityManager to receive remote method invocations that
-     * are not HTTP based.  In such an environment this method would return {@code null}.
-     * <p/>
-     * <b>THIS IS NOT PART OF APACHE SHIRO'S PUBLIC API.</b>  It exists for Shiro implementation requirements only.
-     *
-     * @return the current thread-bound {@code ServletResponse} or {@code null} if there is not one bound.
-     * @since 1.0
-     */
-    public static ServletResponse getServletResponse() {
-        ServletResponse response = (ServletResponse) ThreadContext.get(SERVLET_RESPONSE_KEY);
-        if (response == null) {
-            Subject subject = ThreadContext.getSubject();
-            if (subject instanceof WebSubject) {
-                WebSubject webSubject = (WebSubject) subject;
-                response = webSubject.getServletResponse();
-            }
-        }
-        return response;
-    }
-
-    /**
-     * Convenience method that simplifies binding a ServletResponse to the thread via the ThreadContext.
-     * <p/>
-     * <p>The method's existence is to help reduce casting in your own code and to simplify remembering of
-     * ThreadContext key names.  The implementation is simple in that, if the servletResponse is not <tt>null</tt>,
-     * it binds it to the thread, i.e.:
-     * <p/>
-     * <pre>
-     * if (servletResponse != null) {
-     *     ThreadContext.put( SERVLET_RESPONSE_KEY, servletResponse );
-     * }</pre>
-     *
-     * @param servletResponse the ServletResponse object to bind to the thread.  If the argument is null, nothing will be done.
-     */
-    public static void bind(ServletResponse servletResponse) {
-        if (servletResponse != null) {
-            ThreadContext.put(SERVLET_RESPONSE_KEY, servletResponse);
-        }
     }
 
     /**
