@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.session;
 
-import java.io.Serializable;
-
 /**
  * A special case of a StoppedSessionException.  An expired session is a session that has
  * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
@@ -63,35 +61,5 @@ public class ExpiredSessionException extends StoppedSessionException {
      */
     public ExpiredSessionException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Constructs a new ExpiredSessionException.
-     *
-     * @param sessionId the session id of the session that expired.
-     */
-    public ExpiredSessionException(Serializable sessionId) {
-        this("Session with id [" + sessionId + "] has expired", sessionId);
-    }
-
-    /**
-     * Constructs a new ExpiredSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param sessionId the session id of the session that expired.
-     */
-    public ExpiredSessionException(String message, Serializable sessionId) {
-        super(message, sessionId);
-    }
-
-    /**
-     * Constructs a new ExpiredSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param cause     the underlying Throwable that caused this exception to be thrown.
-     * @param sessionId the session id of the session that expired.
-     */
-    public ExpiredSessionException(String message, Throwable cause, Serializable sessionId) {
-        super(message, cause, sessionId);
     }
 }

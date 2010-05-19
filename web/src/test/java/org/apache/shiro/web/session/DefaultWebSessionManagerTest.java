@@ -20,7 +20,6 @@ package org.apache.shiro.web.session;
 
 import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
@@ -57,8 +56,9 @@ public class DefaultWebSessionManagerTest {
         SimpleSession session = new SimpleSession();
         session.setId("12345");
 
-        WebUtils.bind(createMock(HttpServletRequest.class));
-        WebUtils.bind(createMock(HttpServletResponse.class));
+        WebSessionContext wsc = new DefaultWebSessionContext();
+        wsc.setServletRequest(createMock(HttpServletRequest.class));
+        wsc.setServletResponse(createMock(HttpServletResponse.class));
 
         //test that the cookie template is being used:
         expect(cookie.getValue()).andReturn("blah");
@@ -73,7 +73,7 @@ public class DefaultWebSessionManagerTest {
 
         replay(cookie);
 
-        mgr.onStart(session);
+        mgr.onStart(session, wsc);
 
         verify(cookie);
     }
@@ -91,12 +91,13 @@ public class DefaultWebSessionManagerTest {
         SimpleSession session = new SimpleSession();
         session.setId("12345");
 
-        WebUtils.bind(createMock(HttpServletRequest.class));
-        WebUtils.bind(createMock(HttpServletResponse.class));
+        WebSessionContext wsc = new DefaultWebSessionContext();
+        wsc.setServletRequest(createMock(HttpServletRequest.class));
+        wsc.setServletResponse(createMock(HttpServletResponse.class));
 
         replay(cookie);
 
-        mgr.onStart(session);
+        mgr.onStart(session, wsc);
 
         verify(cookie);
     }

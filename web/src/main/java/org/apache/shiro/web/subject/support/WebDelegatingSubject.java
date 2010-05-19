@@ -30,7 +30,6 @@ import org.apache.shiro.web.subject.WebSubject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.util.concurrent.Callable;
 
 /**
  * @since 1.0
@@ -69,15 +68,5 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
         wsc.setServletRequest(this.servletRequest);
         wsc.setServletResponse(this.servletResponse);
         return wsc;
-    }
-
-    @Override
-    public <V> Callable<V> associateWith(Callable<V> callable) {
-        return new WebSubjectCallable<V>(this, callable);
-    }
-
-    @Override
-    public Runnable associateWith(Runnable runnable) {
-        return new WebSubjectRunnable(this, runnable);
     }
 }

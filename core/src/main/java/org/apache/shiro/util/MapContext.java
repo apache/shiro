@@ -27,17 +27,17 @@ import java.util.*;
  * @author Les Hazlewood
  * @since 1.0
  */
-public class MapContext implements Map<String,Object>, Serializable {
+public class MapContext implements Map<String, Object>, Serializable {
 
     private static final long serialVersionUID = 5373399119017820322L;
-    
-    private final Map<String,Object> backingMap;
+
+    private final Map<String, Object> backingMap;
 
     public MapContext() {
         this.backingMap = new HashMap<String, Object>();
     }
 
-    public MapContext(Map<String,Object> map) {
+    public MapContext(Map<String, Object> map) {
         this();
         if (!CollectionUtils.isEmpty(map)) {
             this.backingMap.putAll(map);
@@ -58,6 +58,12 @@ public class MapContext implements Map<String,Object>, Serializable {
             found = (E) o;
         }
         return found;
+    }
+
+    protected void nullSafePut(String key, Object value) {
+        if (value != null) {
+            put(key, value);
+        }
     }
 
     public int size() {

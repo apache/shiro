@@ -252,7 +252,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
             String msg = "Session with id [" + getId() + "] has been " +
                     "explicitly stopped.  No further interaction under this session is " +
                     "allowed.";
-            throw new StoppedSessionException(msg, getId());
+            throw new StoppedSessionException(msg);
         }
 
         //check for expiration
@@ -274,7 +274,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
             if (log.isTraceEnabled()) {
                 log.trace(msg);
             }
-            throw new ExpiredSessionException(msg, sessionId);
+            throw new ExpiredSessionException(msg);
         }
     }
 

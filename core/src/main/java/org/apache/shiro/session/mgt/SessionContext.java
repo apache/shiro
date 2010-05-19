@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.session.mgt;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -83,4 +84,9 @@ public interface SessionContext extends Map<String, Object> {
      * @see #setHost(String) setHost(String)
      */
     String getHost();
+
+    Serializable getSessionId();
+
+    void setSessionId(Serializable sessionId);
+
 }

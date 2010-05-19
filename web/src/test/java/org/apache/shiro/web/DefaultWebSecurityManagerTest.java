@@ -26,6 +26,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
+import org.apache.shiro.web.subject.WebSubject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     protected Subject newSubject(ServletRequest request, ServletResponse response) {
-        return newSubject(sm, request, response);
+        return new WebSubject.Builder(sm, request, response).buildSubject();
     }
 
     @Test

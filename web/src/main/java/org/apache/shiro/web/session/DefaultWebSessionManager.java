@@ -18,9 +18,13 @@
  */
 package org.apache.shiro.web.session;
 
+import org.apache.shiro.session.ExpiredSessionException;
+import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.DelegatingSession;
+import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
@@ -32,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 
@@ -41,9 +46,7 @@ import java.io.Serializable;
  * @author Les Hazlewood
  * @since 0.9
  */
-public class DefaultWebSessionManager extends DefaultSessionManager implements WebSessionManager {
-
-    //TODO - complete JavaDoc
+public class DefaultWebSessionManager extends DefaultSessionManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWebSessionManager.class);
 
@@ -75,33 +78,21 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         this.sessionIdCookieEnabled = sessionIdCookieEnabled;
     }
 
-    private void storeSessionId(Serializable currentId, ServletRequest request, ServletResponse response) {
+    private void storeSessionId(Serializable currentId, HttpServletRequest request, HttpServletResponse response) {
         if (currentId == null) {
             String msg = "sessionId cannot be null when persisting for subsequent requests.";
             throw new IllegalArgumentException(msg);
-        }
-        if (!(request instanceof HttpServletRequest)) {
-            log.debug("Current request is not an HttpServletRequest - cannot save session id cookie. Returning.");
-            return;
         }
         Cookie template = getSessionIdCookie();
         Cookie cookie = new SimpleCookie(template);
         String idString = currentId.toString();
         cookie.setValue(idString);
-        cookie.saveTo(WebUtils.toHttp(request), WebUtils.toHttp(response));
+        cookie.saveTo(request, response);
         log.trace("Set session ID cookie for session with id {}", idString);
     }
 
-    private void markSessionIdValid(ServletRequest request) {
-        request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
-    }
-
-    private void markSessionIdInvalid(ServletRequest request) {
-        request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID);
-    }
-
-    private void removeSessionIdCookie(ServletRequest request, ServletResponse response) {
-        getSessionIdCookie().removeFrom(WebUtils.toHttp(request), WebUtils.toHttp(response));
+    private void removeSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
+        getSessionIdCookie().removeFrom(request, response);
     }
 
     private String getSessionIdCookieValue(ServletRequest request, ServletResponse response) {
@@ -139,9 +130,30 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
             //automatically mark it valid here.  If it is invalid, the
             //onUnknownSession method below will be invoked and we'll remove the attribute at that time.
-            markSessionIdValid(request);
+            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
         }
         return id;
+    }
+
+    protected Session createExposedSession(Session session, SessionContext context) {
+        if (!WebUtils.isWeb(context)) {
+            return super.createExposedSession(session, context);
+        }
+        ServletRequest request = WebUtils.getRequest(context);
+        ServletResponse response = WebUtils.getResponse(context);
+        SessionKey key = new WebSessionKey(session.getId(), request, response);
+        return new DelegatingSession(this, key);
+    }
+
+    protected Session createExposedSession(Session session, SessionKey key) {
+        if (!WebUtils.isWeb(key)) {
+            return super.createExposedSession(session, key);
+        }
+
+        ServletRequest request = WebUtils.getRequest(key);
+        ServletResponse response = WebUtils.getResponse(key);
+        SessionKey sessionKey = new WebSessionKey(session.getId(), request, response);
+        return new DelegatingSession(this, sessionKey);
     }
 
     /**
@@ -150,67 +162,81 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
      * @param session the session that was just {@link #createSession created}.
      */
     @Override
-    protected void onStart(Session session) {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
-        if (request == null || response == null) {
-            log.debug("Request or response object is not bound to the thread.  Assuming this session start " +
-                    "activity is due to a non web request (possible in a web application that also services " +
-                    "non web clients.");
+    protected void onStart(Session session, SessionContext context) {
+        super.onStart(session, context);
+
+        if (!WebUtils.isHttp(context)) {
+            log.debug("SessionContext argument is not HTTP compatible or does not have an HTTP request/response " +
+                    "pair. No session ID cookie will be set.");
             return;
+
         }
+        HttpServletRequest request = WebUtils.getHttpRequest(context);
+        HttpServletResponse response = WebUtils.getHttpResponse(context);
+
         if (isSessionIdCookieEnabled()) {
             Serializable sessionId = session.getId();
             storeSessionId(sessionId, request, response);
         } else {
-            log.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}",
-                    session.getId());
+            log.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}", session.getId());
         }
 
         request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
     }
 
-    public Session getSession(ServletRequest request, ServletResponse response) throws SessionException {
-        Serializable id = getReferencedSessionId(request, response);
-        Session session = null;
-        if ( id != null ) {
-            session = getSession(id);
+    @Override
+    public Serializable getSessionId(SessionKey key) {
+        Serializable id = super.getSessionId(key);
+        if (id == null && WebUtils.isWeb(key)) {
+            ServletRequest request = WebUtils.getRequest(key);
+            ServletResponse response = WebUtils.getResponse(key);
+            id = getSessionId(request, response);
         }
-        return session;
+        return id;
     }
 
-    public Serializable getSessionId(ServletRequest request, ServletResponse response) {
+    protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
         return getReferencedSessionId(request, response);
     }
 
     @Override
-    public void onUnknownSession(Serializable sessionId) {
-        ServletRequest request = WebUtils.getServletRequest();
+    protected void onExpiration(Session s, ExpiredSessionException ese, SessionKey key) {
+        super.onExpiration(s, ese, key);
+        onInvalidation(key);
+    }
+
+    @Override
+    protected void onInvalidation(Session session, InvalidSessionException ise, SessionKey key) {
+        super.onInvalidation(session, ise, key);
+        onInvalidation(key);
+    }
+
+    private void onInvalidation(SessionKey key) {
+        ServletRequest request = WebUtils.getRequest(key);
         if (request != null) {
-            markSessionIdInvalid(request);
+            request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID);
         }
-        removeSessionIdCookie();
-    }
-
-    protected void onStop(Session session) {
-        super.onStop(session);
-        removeSessionIdCookie();
-    }
-
-    protected void onExpiration(Session session) {
-        super.onExpiration(session);
-        removeSessionIdCookie();
-    }
-
-    private void removeSessionIdCookie() {
-        ServletRequest request = WebUtils.getServletRequest();
-        ServletResponse response = WebUtils.getServletResponse();
-        if (request == null || response == null) {
-            log.debug("No request or response bound to the thread.  Session ID cookie cannot be removed.  This could " +
-                    "occur in a web application that also services non web clients (e.g. RMI remoting).");
-            return;
+        if (WebUtils.isHttp(key)) {
+            log.debug("Referenced session was invalid.  Removing session ID cookie.");
+            removeSessionIdCookie(WebUtils.getHttpRequest(key), WebUtils.getHttpResponse(key));
+        } else {
+            log.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response " +
+                    "pair. Session ID cookie will not be removed due to invalidated session.");
         }
-        removeSessionIdCookie(request, response);
+    }
+
+    @Override
+    protected void onStop(Session session, SessionKey key) {
+        super.onStop(session, key);
+        if (WebUtils.isHttp(key)) {
+            HttpServletRequest request = WebUtils.getHttpRequest(key);
+            HttpServletResponse response = WebUtils.getHttpResponse(key);
+            log.debug("Session has been stopped (subject logout or explicit stop).  Removing session ID cookie.");
+            removeSessionIdCookie(request, response);
+        } else {
+            log.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response " +
+                    "pair. Session ID cookie will not be removed due to stopped session.");
+        }
     }
 }
