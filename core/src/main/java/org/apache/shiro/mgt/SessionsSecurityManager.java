@@ -24,6 +24,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.LifecycleUtils;
 
@@ -121,8 +122,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         return this.sessionManager.start(context);
     }
 
-    public Session getSession(SessionContext context) throws SessionException {
-        return this.sessionManager.getSession(context);
+    public Session getSession(SessionKey key) throws SessionException {
+        return this.sessionManager.getSession(key);
     }
 
     public void destroy() {

@@ -28,7 +28,6 @@ import org.apache.shiro.util.LifecycleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 
@@ -70,6 +69,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         return sessionValidationSchedulerEnabled;
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public void setSessionValidationSchedulerEnabled(boolean sessionValidationSchedulerEnabled) {
         this.sessionValidationSchedulerEnabled = sessionValidationSchedulerEnabled;
     }
@@ -111,29 +111,27 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         return sessionValidationInterval;
     }
 
-    protected final Session doGetSession(final Serializable sessionId) throws InvalidSessionException {
+    @Override
+    protected final Session doGetSession(final SessionKey key) throws InvalidSessionException {
         enableSessionValidationIfNecessary();
 
-        if (log.isTraceEnabled()) {
-            log.trace("Attempting to retrieve session with id [" + sessionId + "]");
+        log.trace("Attempting to retrieve session with key {}", key);
+
+        Session s = retrieveSession(key);
+        if (s != null) {
+            validate(s, key);
         }
-        Session s = retrieveSession(sessionId);
-        if (s == null) {
-            throw new UnknownSessionException("The session data store did not return a session for " +
-                    "sessionId [" + sessionId + "]", sessionId);
-        }
-        validate(s);
         return s;
     }
 
     /**
-     * Looks up a session from the underlying data store based on the specified {@code sessionId}.
+     * Looks up a session from the underlying data store based on the specified session key.
      *
-     * @param sessionId the id of the session to retrieve from the data store
+     * @param key the session key to use to look up the target session.
      * @return the session identified by {@code sessionId}.
      * @throws UnknownSessionException if there is no session identified by {@code sessionId}.
      */
-    protected abstract Session retrieveSession(Serializable sessionId) throws UnknownSessionException;
+    protected abstract Session retrieveSession(SessionKey key) throws UnknownSessionException;
 
     protected Session createSession(SessionContext context) throws AuthorizationException {
         enableSessionValidationIfNecessary();
@@ -142,38 +140,23 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
 
     protected abstract Session doCreateSession(SessionContext initData) throws AuthorizationException;
 
-    protected void validate(Session session) throws InvalidSessionException {
+    protected void validate(Session session, SessionKey key) throws InvalidSessionException {
         try {
             doValidate(session);
         } catch (ExpiredSessionException ese) {
-            onExpiration(session, ese);
+            onExpiration(session, ese, key);
             throw ese;
         } catch (InvalidSessionException ise) {
-            onInvalidation(session, ise);
+            onInvalidation(session, ise, key);
             throw ise;
         }
     }
 
-    protected void onExpiration(Session s, ExpiredSessionException ese) {
-        if (log.isTraceEnabled()) {
-            log.trace("Session with id [{}] has expired.", ese.getSessionId());
-        }
+    protected void onExpiration(Session s, ExpiredSessionException ese, SessionKey key) {
+        log.trace("Session with id [{}] has expired.", s.getId());
         onExpiration(s);
         notifyExpiration(s);
         afterExpired(s);
-    }
-
-    protected void onInvalidation(Session s, InvalidSessionException ise) {
-        if (ise instanceof ExpiredSessionException) {
-            onExpiration(s, (ExpiredSessionException) ise);
-            return;
-        }
-        if (log.isTraceEnabled()) {
-            log.trace("Session with id [{}] is invalid.", ise.getSessionId());
-        }
-        onStop(s);
-        notifyStop(s);
-        afterStopped(s);
     }
 
     protected void onExpiration(Session session) {
@@ -181,6 +164,17 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     }
 
     protected void afterExpired(Session session) {
+    }
+
+    protected void onInvalidation(Session s, InvalidSessionException ise, SessionKey key) {
+        if (ise instanceof ExpiredSessionException) {
+            onExpiration(s, (ExpiredSessionException) ise, key);
+            return;
+        }
+        log.trace("Session with id [{}] is invalid.", s.getId());
+        onStop(s);
+        notifyStop(s);
+        afterStopped(s);
     }
 
     protected void doValidate(Session session) throws InvalidSessionException {
@@ -280,7 +274,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         if (activeSessions != null && !activeSessions.isEmpty()) {
             for (Session s : activeSessions) {
                 try {
-                    validate(s);
+                    doValidate(s);
                 } catch (InvalidSessionException e) {
                     if (log.isDebugEnabled()) {
                         boolean expired = (e instanceof ExpiredSessionException);
@@ -305,10 +299,4 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     }
 
     protected abstract Collection<Session> getActiveSessions();
-
-    public void validateSession(Serializable sessionId) {
-        //standard getSession call will validate, so just call the method:
-        getSession(sessionId);
-    }
-
 }

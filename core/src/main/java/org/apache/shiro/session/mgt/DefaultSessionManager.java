@@ -178,6 +178,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         sessionDAO.create(session);
     }
 
+    @Override
     protected void onStop(Session session) {
         if (session instanceof SimpleSession) {
             SimpleSession ss = (SimpleSession) session;
@@ -212,8 +213,24 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         sessionDAO.update(session);
     }
 
-    protected Session retrieveSession(Serializable sessionId) throws UnknownSessionException {
-        return retrieveSessionFromDataSource(sessionId);
+    protected Session retrieveSession(SessionKey sessionKey) throws UnknownSessionException {
+        Serializable sessionId = getSessionId(sessionKey);
+        if (sessionId == null) {
+            log.debug("Unable to resolve session ID from SessionKey [{}].  Returning null to indicate a " +
+                    "session could not be found.", sessionKey);
+            return null;
+        }
+        Session s = retrieveSessionFromDataSource(sessionId);
+        if (s == null) {
+            //session ID was provided, meaning one is expected to be found, but we couldn't find one:
+            String msg = "Could not find session with ID [" + sessionId + "]";
+            throw new UnknownSessionException(msg);
+        }
+        return s;
+    }
+
+    protected Serializable getSessionId(SessionKey sessionKey) {
+        return sessionKey.getSessionId();
     }
 
     protected Session retrieveSessionFromDataSource(Serializable sessionId) throws UnknownSessionException {

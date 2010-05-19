@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.session;
 
-import java.io.Serializable;
-
 /**
  * Exception thrown when attempting to interact with the system under an established session
  * when that session is considered invalid.  The meaning of the term 'invalid' is based on
@@ -69,36 +67,6 @@ public class InvalidSessionException extends SessionException {
      */
     public InvalidSessionException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Constructs a new InvalidSessionException.
-     *
-     * @param sessionId the session id of the session that has been invalidated.
-     */
-    public InvalidSessionException(Serializable sessionId) {
-        this("Session with id [" + sessionId + "] has been invalidated (stopped)", sessionId);
-    }
-
-    /**
-     * Constructs a new InvalidSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param sessionId the session id of the session that has been invalidated.
-     */
-    public InvalidSessionException(String message, Serializable sessionId) {
-        super(message, sessionId);
-    }
-
-    /**
-     * Constructs a new InvalidSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param cause     the underlying Throwable that caused this exception to be thrown.
-     * @param sessionId the session id of the session that has been invalidated.
-     */
-    public InvalidSessionException(String message, Throwable cause, Serializable sessionId) {
-        super(message, cause, sessionId);
     }
 
 }

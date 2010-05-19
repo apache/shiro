@@ -17,12 +17,13 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.*;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -57,41 +58,67 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         return createExposedSession(session, context);
     }
 
+    /**
+     * Creates a new {@code Session Session} instance based on the specified (possibly {@code null})
+     * initialization data.  Implementing classes must manage the persistent state of the returned session such that it
+     * could later be acquired via the {@link #getSession(SessionKey)} method.
+     *
+     * @param context the initialization data that can be used by the implementation or underlying
+     *                {@link SessionFactory} when instantiating the internal {@code Session} instance.
+     * @return the new {@code Session} instance.
+     * @throws org.apache.shiro.authz.HostUnauthorizedException
+     *                                if the system access control policy restricts access based
+     *                                on client location/IP and the specified hostAddress hasn't been enabled.
+     * @throws AuthorizationException if the system access control policy does not allow the currently executing
+     *                                caller to start sessions.
+     */
+    protected abstract Session createSession(SessionContext context) throws AuthorizationException;
+
     protected void applyGlobalSessionTimeout(Session session) {
         session.setTimeout(getGlobalSessionTimeout());
         onChange(session);
     }
 
-    public Session getSession(SessionContext context) throws SessionException {
-        if (context == null) {
-            throw new NullPointerException("SessionContext argument cannot be null.");
+    /**
+     * Template method that allows subclasses to react to a new session being created.
+     * <p/>
+     * This method is invoked <em>before</em> any session listeners are notified.
+     *
+     * @param session the session that was just {@link #createSession created}.
+     * @param context the {@link SessionContext SessionContext} that was used to start the session.
+     */
+    protected void onStart(Session session, SessionContext context) {
+    }
+
+    public Session getSession(SessionKey key) throws SessionException {
+        Session session = lookupSession(key);
+        return session != null ? createExposedSession(session, key) : null;
+    }
+
+    private Session lookupSession(SessionKey key) throws SessionException {
+        if (key == null) {
+            throw new NullPointerException("SessionKey argument cannot be null.");
         }
-        Serializable sessionId = getSessionId(context);
-        if (sessionId == null) {
-            String msg = "Unable to resolve a session id from SessionContext [" + context + "].  This is " +
-                    "required to retrieve the corresponding session.";
+        return doGetSession(key);
+    }
+
+    private Session lookupRequiredSession(SessionKey key) throws SessionException {
+        Session session = lookupSession(key);
+        if (session == null) {
+            String msg = "Unable to locate required Session instance based on SessionKey [" + key + "].";
             throw new UnknownSessionException(msg);
         }
-        Session s;
-        try {
-            s = doGetSession(sessionId);
-        } catch (InvalidSessionException e) {
-            onInvalidSession(context, sessionId, e);
-            //propagate:
-            throw e;
-        }
-        return createExposedSession(s, context);
+        return session;
     }
 
-    protected void onInvalidSession(SessionContext context, Serializable sessionId, InvalidSessionException ise) {
-    }
-
-    public Serializable getSessionId(SessionContext context) {
-        return context.getSessionId();
-    }
+    protected abstract Session doGetSession(SessionKey key) throws InvalidSessionException;
 
     protected Session createExposedSession(Session session, SessionContext context) {
-        return new DelegatingSession(this, session.getId());
+        return new DelegatingSession(this, new DefaultSessionKey(session.getId()));
+    }
+
+    protected Session createExposedSession(Session session, SessionKey key) {
+        return new DelegatingSession(this, new DefaultSessionKey(session.getId()));
     }
 
     /**
@@ -136,139 +163,101 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         }
     }
 
-    public Date getStartTimestamp(Serializable sessionId) {
-        return getSession(sessionId).getStartTimestamp();
+    public Date getStartTimestamp(SessionKey key) {
+        return lookupRequiredSession(key).getStartTimestamp();
     }
 
-    public Date getLastAccessTime(Serializable sessionId) {
-        return getSession(sessionId).getLastAccessTime();
+    public Date getLastAccessTime(SessionKey key) {
+        return lookupRequiredSession(key).getLastAccessTime();
     }
 
-    public long getTimeout(Serializable sessionId) throws InvalidSessionException {
-        return getSession(sessionId).getTimeout();
+    public long getTimeout(SessionKey key) throws InvalidSessionException {
+        return lookupRequiredSession(key).getTimeout();
     }
 
-    public void setTimeout(Serializable sessionId, long maxIdleTimeInMillis) throws InvalidSessionException {
-        Session s = getSession(sessionId);
+    public void setTimeout(SessionKey key, long maxIdleTimeInMillis) throws InvalidSessionException {
+        Session s = lookupRequiredSession(key);
         s.setTimeout(maxIdleTimeInMillis);
         onChange(s);
     }
 
-    public void touch(Serializable sessionId) throws InvalidSessionException {
-        Session s = getSession(sessionId);
+    public void touch(SessionKey key) throws InvalidSessionException {
+        Session s = lookupRequiredSession(key);
         s.touch();
         onChange(s);
     }
 
-    public String getHost(Serializable sessionId) {
-        return getSession(sessionId).getHost();
+    public String getHost(SessionKey key) {
+        return lookupRequiredSession(key).getHost();
     }
 
-    public void stop(Serializable sessionId) throws InvalidSessionException {
-        Session session = getSession(sessionId);
-        stop(session);
-    }
-
-    protected void stop(Session session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping session with id [" + session.getId() + "]");
+    public Collection<Object> getAttributeKeys(SessionKey key) {
+        Collection<Object> c = lookupRequiredSession(key).getAttributeKeys();
+        if (!CollectionUtils.isEmpty(c)) {
+            return Collections.unmodifiableCollection(c);
         }
-        session.stop();
-        onStop(session);
-        notifyStop(session);
-        afterStopped(session);
+        return Collections.emptySet();
     }
 
-    protected void afterStopped(Session session) {
+    public Object getAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException {
+        return lookupRequiredSession(sessionKey).getAttribute(attributeKey);
     }
 
-    public Collection<Object> getAttributeKeys(Serializable sessionId) {
-        return getSession(sessionId).getAttributeKeys();
-    }
-
-    public Object getAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
-        return getSession(sessionId).getAttribute(key);
-    }
-
-    public void setAttribute(Serializable sessionId, Object key, Object value) throws InvalidSessionException {
+    public void setAttribute(SessionKey sessionKey, Object attributeKey, Object value) throws InvalidSessionException {
         if (value == null) {
-            removeAttribute(sessionId, key);
+            removeAttribute(sessionKey, attributeKey);
         } else {
-            Session s = getSession(sessionId);
-            s.setAttribute(key, value);
+            Session s = lookupRequiredSession(sessionKey);
+            s.setAttribute(attributeKey, value);
             onChange(s);
         }
     }
 
-    public Object removeAttribute(Serializable sessionId, Object key) throws InvalidSessionException {
-        Session s = getSession(sessionId);
-        Object removed = s.removeAttribute(key);
+    public Object removeAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException {
+        Session s = lookupRequiredSession(sessionKey);
+        Object removed = s.removeAttribute(attributeKey);
         if (removed != null) {
             onChange(s);
         }
         return removed;
     }
 
-    protected Session getSession(Serializable sessionId) throws InvalidSessionException {
-        if (sessionId == null) {
-            throw new IllegalArgumentException("sessionId parameter cannot be null.");
-        }
-        Session session = doGetSession(sessionId);
-        if (session == null) {
-            String msg = "There is no session with id [" + sessionId + "]";
-            throw new UnknownSessionException(msg);
-        }
-        return session;
-    }
-
-    public boolean isValid(Serializable sessionId) {
+    public boolean isValid(SessionKey key) {
         try {
-            checkValid(sessionId);
+            checkValid(key);
             return true;
         } catch (InvalidSessionException e) {
             return false;
         }
     }
 
-    public void checkValid(Serializable sessionId) throws InvalidSessionException {
-        //just try to acquire it.  If there is a problem, an exception will be thrown:
-        getSession(sessionId);
+    public void stop(SessionKey key) throws InvalidSessionException {
+        Session session = lookupRequiredSession(key);
+        if (log.isDebugEnabled()) {
+            log.debug("Stopping session with id [" + session.getId() + "]");
+        }
+        session.stop();
+        onStop(session, key);
+        notifyStop(session);
+        afterStopped(session);
     }
 
-    /**
-     * Template method that allows subclasses to react to a new session being created.
-     * <p/>
-     * This method is invoked <em>before</em> any session listeners are notified.
-     *
-     * @param session the session that was just {@link #createSession created}.
-     * @param context the {@link SessionContext SessionContext} that was used to start the session.
-     */
-    protected void onStart(Session session, SessionContext context) {
+    protected void onStop(Session session, SessionKey key) {
+        onStop(session);
     }
 
     protected void onStop(Session session) {
         onChange(session);
     }
 
-    protected void onChange(Session s) {
+    protected void afterStopped(Session session) {
     }
 
-    protected abstract Session doGetSession(Serializable sessionId) throws InvalidSessionException;
+    public void checkValid(SessionKey key) throws InvalidSessionException {
+        //just try to acquire it.  If there is a problem, an exception will be thrown:
+        lookupRequiredSession(key);
+    }
 
-    /**
-     * Creates a new {@code Session Session} instance based on the specified (possibly {@code null})
-     * initialization data.  Implementing classes must manage the persistent state of the returned session such that it
-     * could later be acquired via the {@link #getSession(java.io.Serializable)} method.
-     *
-     * @param context the initialization data that can be used by the implementation or underlying
-     *                {@link SessionFactory} when instantiating the internal {@code Session} instance.
-     * @return the new {@code Session} instance.
-     * @throws org.apache.shiro.authz.HostUnauthorizedException
-     *                                if the system access control policy restricts access based
-     *                                on client location/IP and the specified hostAddress hasn't been enabled.
-     * @throws AuthorizationException if the system access control policy does not allow the currently executing
-     *                                caller to start sessions.
-     */
-    protected abstract Session createSession(SessionContext context) throws AuthorizationException;
-
+    protected void onChange(Session s) {
+    }
 }

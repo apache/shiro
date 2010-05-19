@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.session;
 
-import java.io.Serializable;
-
 import org.apache.shiro.ShiroException;
 
 
@@ -30,10 +28,7 @@ import org.apache.shiro.ShiroException;
  * @author Les Hazlewood
  * @since 0.1
  */
-public class SessionException extends ShiroException
-{
-
-    private Serializable sessionId;
+public class SessionException extends ShiroException {
 
     /**
      * Creates a new SessionException.
@@ -68,56 +63,6 @@ public class SessionException extends ShiroException
      */
     public SessionException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Constructs a new SessionException.
-     *
-     * @param sessionId the session id of associated {@link Session Session}.
-     */
-    public SessionException(Serializable sessionId) {
-        setSessionId(sessionId);
-    }
-
-    /**
-     * Constructs a new SessionException.
-     *
-     * @param message   the reason for the exception
-     * @param sessionId the session id of associated {@link Session Session}.
-     */
-    public SessionException(String message, Serializable sessionId) {
-        this(message);
-        setSessionId(sessionId);
-    }
-
-    /**
-     * Constructs a new InvalidSessionException.
-     *
-     * @param message   the reason for the exception
-     * @param cause     the underlying Throwable that caused this exception to be thrown.
-     * @param sessionId the session id of associated {@link Session Session}.
-     */
-    public SessionException(String message, Throwable cause, Serializable sessionId) {
-        this(message, cause);
-        setSessionId(sessionId);
-    }
-
-    /**
-     * Returns the session id of the associated <tt>Session</tt>.
-     *
-     * @return the session id of the associated <tt>Session</tt>.
-     */
-    public Serializable getSessionId() {
-        return sessionId;
-    }
-
-    /**
-     * Sets the session id of the <tt>Session</tt> associated with this exception.
-     *
-     * @param sessionId the session id of the <tt>Session</tt> associated with this exception.
-     */
-    public void setSessionId(Serializable sessionId) {
-        this.sessionId = sessionId;
     }
 
 }

@@ -23,6 +23,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.WebUtils;
 
 import javax.servlet.ServletRequest;
@@ -63,20 +64,19 @@ public class ServletContainerSessionManager extends AbstractSessionManager {
         return createSession(context);
     }
 
-    public Session getSession(SessionContext sessionContext) throws SessionException {
-        if (!WebUtils.isHttp(sessionContext)) {
-            String msg = "SessionContext must be an HTTP compatible implementation.";
+    public Session getSession(SessionKey key) throws SessionException {
+        if (!WebUtils.isHttp(key)) {
+            String msg = "SessionKey must be an HTTP compatible implementation.";
             throw new IllegalArgumentException(msg);
         }
 
-        HttpServletRequest request = WebUtils.getHttpRequest(sessionContext);
+        HttpServletRequest request = WebUtils.getHttpRequest(key);
 
         Session session = null;
 
         HttpSession httpSession = request.getSession(false);
         if (httpSession != null) {
-            String host = getHost(sessionContext);
-            session = createSession(httpSession, host);
+            session = createSession(httpSession, request.getRemoteHost());
         }
 
         return session;

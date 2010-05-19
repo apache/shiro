@@ -21,6 +21,7 @@ package org.apache.shiro.web;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
@@ -31,6 +32,7 @@ import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.DefaultWebSessionContext;
 import org.apache.shiro.web.session.DefaultWebSessionManager;
 import org.apache.shiro.web.session.ServletContainerSessionManager;
+import org.apache.shiro.web.session.WebSessionKey;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.Serializable;
 import java.util.Collection;
 
 
@@ -155,9 +158,23 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
             if (response != null) {
                 webSessionContext.setServletResponse(response);
             }
+
             sessionContext = webSessionContext;
         }
         return sessionContext;
+    }
+
+    @Override
+    protected SessionKey getSessionKey(SubjectContext context) {
+        if (WebUtils.isWeb(context)) {
+            Serializable sessionId = context.getSessionId();
+            ServletRequest request = WebUtils.getRequest(context);
+            ServletResponse response = WebUtils.getResponse(context);
+            return new WebSessionKey(sessionId, request, response);
+        } else {
+            return super.getSessionKey(context);
+
+        }
     }
 
     @Override

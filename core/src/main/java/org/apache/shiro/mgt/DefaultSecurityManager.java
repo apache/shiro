@@ -24,7 +24,9 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionContext;
+import org.apache.shiro.session.mgt.DefaultSessionKey;
 import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
@@ -33,6 +35,7 @@ import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -374,6 +377,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             return context;
         }
         try {
+            //Context couldn't resolve it directly, let's see if we can since we have direct access to 
+            //the session manager:
             Session session = resolveContextSession(context);
             if (session != null) {
                 context.setSession(session);
@@ -386,8 +391,19 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected Session resolveContextSession(SubjectContext context) throws InvalidSessionException {
-        SessionContext sessionContext = createSessionContext(context);
-        return getSession(sessionContext);
+        SessionKey key = getSessionKey(context);
+        if (key != null) {
+            return getSession(key);
+        }
+        return null;
+    }
+
+    protected SessionKey getSessionKey(SubjectContext context) {
+        Serializable sessionId = context.getSessionId();
+        if (sessionId != null) {
+            return new DefaultSessionKey(sessionId);
+        }
+        return null;
     }
 
     /**
@@ -469,6 +485,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         DefaultSessionContext sessionContext = new DefaultSessionContext();
         if (!CollectionUtils.isEmpty(subjectContext)) {
             sessionContext.putAll(subjectContext);
+        }
+        Serializable sessionId = subjectContext.getSessionId();
+        if (sessionId != null) {
+            sessionContext.setSessionId(sessionId);
         }
         String host = subjectContext.resolveHost();
         if (host != null) {

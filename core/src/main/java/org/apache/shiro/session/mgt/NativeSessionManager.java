@@ -17,7 +17,6 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.session.InvalidSessionException;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
@@ -32,164 +31,152 @@ import java.util.Date;
 public interface NativeSessionManager extends SessionManager {
 
     /**
-     * Returns the time the Session identified by the specified {@code sessionId} was started
-     * in the system.
+     * Returns the time the associated {@code Session} started (was created).
      *
-     * @param sessionId the system identifier for the session of interest.
-     * @return the system time the specified session was started (i.e. created).
+     * @param key the session key to use to look up the target session.
+     * @return the time the specified {@code Session} started (was created).
      * @see org.apache.shiro.session.Session#getStartTimestamp()
      */
-    Date getStartTimestamp(Serializable sessionId);
+    Date getStartTimestamp(SessionKey key);
 
     /**
-     * Returns the time the {@code Session} identified by the specified {@code sessionId} last
-     * interacted with the system.
+     * Returns the time the associated {@code Session} last interacted with the system.
      *
-     * @param sessionId the system identifier for the session of interest
+     * @param key the session key to use to look up the target session.
      * @return time the session last accessed the system
      * @see org.apache.shiro.session.Session#getLastAccessTime()
      * @see org.apache.shiro.session.Session#touch()
      */
-    Date getLastAccessTime(Serializable sessionId);
+    Date getLastAccessTime(SessionKey key);
 
     /**
-     * Returns {@code true} if the session is valid (it exists and is not stopped nor expired), {@code false} otherwise.
+     * Returns {@code true} if the associated session is valid (it exists and is not stopped nor expired),
+     * {@code false} otherwise.
      *
-     * @param sessionId the id of the session to check
+     * @param key the session key to use to look up the target session.
      * @return {@code true} if the session is valid (exists and is not stopped or expired), {@code false} otherwise.
      */
-    boolean isValid(Serializable sessionId);
+    boolean isValid(SessionKey key);
 
     /**
      * Returns quietly if the associated session is valid (it exists and is not stopped or expired) or throws
-     * an {@link org.apache.shiro.session.InvalidSessionException} indicating that the session id is invalid.  This might be preferred to be
-     * used instead of {@link #isValid} since any exception thrown will definitively explain the reason for
-     * invalidation.
+     * an {@link org.apache.shiro.session.InvalidSessionException} indicating that the session id is invalid.  This
+     * might be preferred to be used instead of {@link #isValid} since any exception thrown will definitively explain
+     * the reason for invalidation.
      *
-     * @param sessionId the session id to check for validity.
+     * @param key the session key to use to look up the target session.
      * @throws org.apache.shiro.session.InvalidSessionException
      *          if the session id is invalid (it does not exist or it is stopped or expired).
-     * @since 1.0
      */
-    void checkValid(Serializable sessionId) throws InvalidSessionException;
+    void checkValid(SessionKey key) throws InvalidSessionException;
 
     /**
-     * Returns the time in milliseconds that the specified session may remain idle before expiring.
+     * Returns the time in milliseconds that the associated session may remain idle before expiring.
      * <ul>
      * <li>A negative return value means the session will never expire.</li>
      * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
      *
-     * @param sessionId the system identifier of the session of interest.
-     * @return the time in milliseconds that the specified session may remain idle before expiring.
+     * @param key the session key to use to look up the target session.
+     * @return the time in milliseconds that the associated session may remain idle before expiring.
      * @throws org.apache.shiro.session.InvalidSessionException
      *          if the session has been stopped or expired prior to calling this method.
-     * @since 0.2
      */
-    long getTimeout(Serializable sessionId) throws InvalidSessionException;
+    long getTimeout(SessionKey key) throws InvalidSessionException;
 
     /**
-     * Sets the time in milliseconds that the specified session may remain idle before expiring.
+     * Sets the time in milliseconds that the associated session may remain idle before expiring.
      * <ul>
      * <li>A negative return value means the session will never expire.</li>
      * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that
      * length of time.</li>
      * </ul>
      *
-     * @param sessionId           the system identifier of the session of interest.
-     * @param maxIdleTimeInMillis the time in milliseconds that the specified session may remain idle before expiring.
+     * @param key                 the session key to use to look up the target session.
+     * @param maxIdleTimeInMillis the time in milliseconds that the associated session may remain idle before expiring.
      * @throws org.apache.shiro.session.InvalidSessionException
      *          if the session has been stopped or expired prior to calling this method.
-     * @since 0.2
      */
-    void setTimeout(Serializable sessionId, long maxIdleTimeInMillis) throws InvalidSessionException;
+    void setTimeout(SessionKey key, long maxIdleTimeInMillis) throws InvalidSessionException;
 
     /**
      * Updates the last accessed time of the session identified by <code>sessionId</code>.  This
      * can be used to explicitly ensure that a session does not time out.
      *
-     * @param sessionId the id of the session to update.
+     * @param key the session key to use to look up the target session.
      * @throws org.apache.shiro.session.InvalidSessionException
      *          if the session has been stopped or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#touch
      */
-    void touch(Serializable sessionId) throws InvalidSessionException;
+    void touch(SessionKey key) throws InvalidSessionException;
 
     /**
      * Returns the host name or IP string of the host where the session was started, if known.  If
      * no host name or IP was specified when starting the session, this method returns {@code null}
      *
-     * @param sessionId the id of the session to query.
+     * @param key the session key to use to look up the target session.
      * @return the host name or ip address of the host where the session originated, if known.  If unknown,
      *         this method returns {@code null}.
-     * @since 1.0
      */
-    String getHost(Serializable sessionId);
+    String getHost(SessionKey key);
 
     /**
-     * Explicitly stops the session identified by {@code sessionId}, thereby releasing all
-     * associated resources.
+     * Explicitly stops the associated session, thereby releasing all of its resources.
      *
-     * @param sessionId the system identfier of the system to destroy.
-     * @throws InvalidSessionException if the session has stopped or expired prior to calling
-     *                                 this method.
+     * @param key the session key to use to look up the target session.
+     * @throws InvalidSessionException if the session has stopped or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#stop
      */
-    void stop(Serializable sessionId) throws InvalidSessionException;
+    void stop(SessionKey key) throws InvalidSessionException;
 
     /**
-     * Returns the keys of all the attributes stored under the session identified by {@code sessionId}.
-     * If there are no attributes, this returns an empty collection.
+     * Returns all attribute keys maintained by the target session or an empty collection if there are no attributes.
      *
-     * @param sessionId the system identifier of the system to access.
-     * @return the keys of all attributes stored under the specified session, or an empty collection if
-     *         there are no session attributes.
-     * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
+     * @param sessionKey the session key to use to look up the target session.
+     * @return all attribute keys maintained by the target session or an empty collection if there are no attributes.
+     * @throws InvalidSessionException if the associated session has stopped or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#getAttributeKeys()
-     * @since 0.2
      */
-    Collection<Object> getAttributeKeys(Serializable sessionId);
+    Collection<Object> getAttributeKeys(SessionKey sessionKey);
 
     /**
-     * Returns the object bound to the specified session identified by the specified key.  If there
-     * is noobject bound under the key for the given session, {@code null} is returned.
+     * Returns the object bound to the associated session identified by the specified attribute key.  If there
+     * is no object bound under the attribute key for the given session, {@code null} is returned.
      *
-     * @param sessionId the system identifier of the session of interest
-     * @param key       the unique name of the object bound to the specified session
-     * @return the object bound under the specified {@code key} name or {@code null} if there is
-     *         no object bound under that name.
+     * @param sessionKey   session key to use to look up the target session.
+     * @param attributeKey the unique name of the object bound to the associated session
+     * @return the object bound under the {@code attributeKey} or {@code null} if there is no object bound.
      * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#getAttribute(Object key)
      */
-    Object getAttribute(Serializable sessionId, Object key) throws InvalidSessionException;
+    Object getAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException;
 
     /**
-     * Binds the specified {@code value} to the specified session uniquely identified by the
-     * specifed {@code key} name.  If there is already an object bound under the {@code key}
-     * name, that existing object will be replaced by the new {@code value}.
+     * Binds the specified {@code value} to the associated session uniquely identified by the {@code attributeKey}.
+     * If there is already a session attribute bound under the {@code attributeKey}, that existing object will be
+     * replaced by the new {@code value}.
      * <p/>
      * If the {@code value} parameter is null, it has the same effect as if the
-     * {@link #removeAttribute(Serializable sessionId, Object key)} method was called.
+     * {@link #removeAttribute(SessionKey sessionKey, Object attributeKey)} method was called.
      *
-     * @param sessionId the system identifier of the session of interest
-     * @param key       the name under which the {@code value} object will be bound in this session
-     * @param value     the object to bind in this session.
+     * @param sessionKey   the session key to use to look up the target session.
+     * @param attributeKey the key under which the {@code value} object will be bound in this session
+     * @param value        the object to bind in this session.
      * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#setAttribute(Object key, Object value)
      */
-    void setAttribute(Serializable sessionId, Object key, Object value) throws InvalidSessionException;
+    void setAttribute(SessionKey sessionKey, Object attributeKey, Object value) throws InvalidSessionException;
 
     /**
-     * Removes (unbinds) the object bound to this session under the specified {@code key} name.
+     * Removes (unbinds) the object bound to associated {@code Session} under the given {@code attributeKey}.
      *
-     * @param sessionId the system identifier of the session of interest
-     * @param key       the name uniquely identifying the object to remove
-     * @return the object removed or {@code null} if there was no object bound under the specified
-     *         {@code key} name.
+     * @param sessionKey   session key to use to look up the target session.
+     * @param attributeKey the key uniquely identifying the object to remove
+     * @return the object removed or {@code null} if there was no object bound under the specified {@code attributeKey}.
      * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#removeAttribute(Object key)
      */
-    Object removeAttribute(Serializable sessionId, Object key) throws InvalidSessionException;
+    Object removeAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException;
 
 }

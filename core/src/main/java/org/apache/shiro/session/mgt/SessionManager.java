@@ -52,11 +52,11 @@ public interface SessionManager {
      * {@code null} if no Session could be found.  If a session is found but invalid (stopped or expired), a
      * {@link SessionException} will be thrown.
      *
-     * @param context the context data that can be used for lookup data to acquire the Session
-     * @return the {@code Session} instance corresponding to the given context lookup data or {@code null} if no session
+     * @param key the Session key to use to look-up the Session
+     * @return the {@code Session} instance corresponding to the given lookup key or {@code null} if no session
      *         could be acquired.
      * @throws SessionException if a session was found but it was invalid (stopped/expired).
      * @since 1.0
      */
-    Session getSession(SessionContext context) throws SessionException;
+    Session getSession(SessionKey key) throws SessionException;
 }

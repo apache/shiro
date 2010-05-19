@@ -21,7 +21,8 @@ package org.apache.shiro.spring.remoting;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.SessionContext;
+import org.apache.shiro.session.mgt.NativeSessionManager;
+import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -78,13 +79,14 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
 
         //If the calling MI is for a remoting SessionManager delegate, we need to acquire the session ID from the method
         //argument and NOT interact with SecurityUtils/subject.getSession to avoid a stack overflow
-        if (SessionManager.class.equals(mi.getMethod().getDeclaringClass())) {
+        Class miDeclaringClass = mi.getMethod().getDeclaringClass();
+        if (SessionManager.class.equals(miDeclaringClass) || NativeSessionManager.class.equals(miDeclaringClass)) {
             sessionManagerMethodInvocation = true;
-            //for SessionManager calls, all method calls except the 'start' methods require the session id
+            //for SessionManager calls, all method calls except the 'start' methods require a SessionKey
             // as the first argument, so just get it from there:
             if (!mi.getMethod().getName().equals("start")) {
-                SessionContext context = (SessionContext) mi.getArguments()[0];
-                sessionId = context.getSessionId();
+                SessionKey key = (SessionKey) mi.getArguments()[0];
+                sessionId = key.getSessionId();
             }
         }
 
