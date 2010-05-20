@@ -31,7 +31,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-incubating-SNAPSHOT</version>
+    <version>1.0-incubating-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>http://incubator.apache.org/shiro/</url>
