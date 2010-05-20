@@ -18,8 +18,7 @@
   ~ under the License.
   -->
 <!--suppress osmorcNonOsgiMavenDependency -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc): -->
@@ -43,9 +42,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/trunk</developerConnection>
-        <url>http://svn.apache.org/repos/asf/incubator/shiro/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/branches/0.0.x</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/branches/0.0.x</developerConnection>
+        <url>http://svn.apache.org/repos/asf/incubator/shiro/branches/0.0.x</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
