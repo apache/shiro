@@ -20,7 +20,7 @@ package org.apache.shiro.web.filter.authc;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.codec.Base64;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -292,7 +292,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
         String authorizationHeader = getAuthzHeader(request);
         if (authorizationHeader == null || authorizationHeader.length() == 0) {
             // Create an empty authentication token since there is no
-        	// Authorization header.
+            // Authorization header.
             return createToken("", "", request, response);
         }
 
@@ -303,7 +303,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
         String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
         if (prinCred == null || prinCred.length < 2) {
             // Create an authentication token with an empty password,
-        	// since one hasn't been provided in the request.
+            // since one hasn't been provided in the request.
             String username = prinCred == null || prinCred.length == 0 ? "" : prinCred[0];
             return createToken(username, "", request, response);
         }

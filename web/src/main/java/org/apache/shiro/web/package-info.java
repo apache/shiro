@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Framework support for any web-enabled application.
+ * Shiro's web support module to support security in any web-enabled application.
  */
 package org.apache.shiro.web;

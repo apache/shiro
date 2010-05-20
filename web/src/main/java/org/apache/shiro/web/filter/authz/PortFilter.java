@@ -20,7 +20,7 @@ package org.apache.shiro.web.filter.authz;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

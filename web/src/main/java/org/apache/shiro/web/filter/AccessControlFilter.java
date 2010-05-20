@@ -20,7 +20,7 @@ package org.apache.shiro.web.filter;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -123,8 +123,8 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * This method immediately delegates to {@link #onAccessDenied(ServletRequest,ServletResponse)} as a
      * convenience in that most post-denial behavior does not need the mapped config again.
      *
-     * @param request  the incoming <code>ServletRequest</code>
-     * @param response the outgoing <code>ServletResponse</code>
+     * @param request     the incoming <code>ServletRequest</code>
+     * @param response    the outgoing <code>ServletResponse</code>
      * @param mappedValue the config specified for the filter in the matching request's filter chain.
      * @return <code>true</code> if the request should continue to be processed; false if the subclass will
      *         handle/render the response directly.

@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web;
+package org.apache.shiro.web.util;
 
-import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * Maintains request data for a request that was redirected, so that after authentication
@@ -38,9 +38,10 @@ public class SavedRequest implements Serializable {
 
     /**
      * Constructs a new instance from the given HTTP request.
+     *
      * @param request the current request to save.
      */
-    public SavedRequest( HttpServletRequest request ) {
+    public SavedRequest(HttpServletRequest request) {
         this.method = request.getMethod();
         this.queryString = request.getQueryString();
         this.requestURI = request.getRequestURI();
@@ -59,9 +60,9 @@ public class SavedRequest implements Serializable {
     }
 
     public String getRequestUrl() {
-        StringBuilder requestUrl = new StringBuilder( getRequestURI() );
-        if( getQueryString() != null ) {
-            requestUrl.append( "?" ).append( getQueryString() );
+        StringBuilder requestUrl = new StringBuilder(getRequestURI());
+        if (getQueryString() != null) {
+            requestUrl.append("?").append(getQueryString());
         }
         return requestUrl.toString();
     }

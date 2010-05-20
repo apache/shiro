@@ -23,7 +23,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.filter.authc.AuthenticationFilter;
@@ -31,6 +30,7 @@ import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
+import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.apache.shiro.web.servlet.IniShiroFilter;
 import org.slf4j.Logger;
@@ -424,7 +424,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
             String msg = "SecurityManager property must be set.";
             throw new BeanInitializationException(msg);
         }
-        
+
         if (!(securityManager instanceof WebSecurityManager)) {
             String msg = "The security manager does not implement the WebSecurityManager interface.";
             throw new BeanInitializationException(msg);

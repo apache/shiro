@@ -24,8 +24,8 @@ import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.web.session.DefaultWebSessionContext;
-import org.apache.shiro.web.session.WebSessionContext;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
+import org.apache.shiro.web.session.mgt.WebSessionContext;
 import org.apache.shiro.web.subject.WebSubject;
 
 import javax.servlet.ServletRequest;

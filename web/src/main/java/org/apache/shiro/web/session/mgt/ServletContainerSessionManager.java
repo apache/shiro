@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.session;
+package org.apache.shiro.web.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.Session;
@@ -24,7 +24,8 @@ import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.session.HttpServletSession;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;

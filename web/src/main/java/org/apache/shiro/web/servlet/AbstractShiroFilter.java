@@ -22,9 +22,9 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.DefaultWebSecurityManager;
-import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.subject.WebSubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import java.util.concurrent.Callable;
  * Subclasses should perform configuration and construction logic in an overridden
  * {@link #init()} method implementation.  That implementation should make available any constructed
  * {@code SecurityManager} and {@code FilterChainResolver} by calling
- * {@link #setSecurityManager(org.apache.shiro.web.WebSecurityManager)} and
+ * {@link #setSecurityManager(org.apache.shiro.web.mgt.WebSecurityManager)} and
  * {@link #setFilterChainResolver(org.apache.shiro.web.filter.mgt.FilterChainResolver)} methods respectively.
  *
  * @since 1.0
@@ -261,7 +261,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         Throwable t = null;
-        
+
         try {
             final ServletRequest request = prepareServletRequest(servletRequest, servletResponse, chain);
             final ServletResponse response = prepareServletResponse(request, servletResponse, chain);
