@@ -26,16 +26,18 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.servlet.Filter;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lhazlewood
- * Date: Jan 19, 2010
- * Time: 4:11:53 PM
- * To change this template use File | Settings | File Templates.
+ * Unit tests for the {@link ShiroFilterFactoryBean} implementation.
+ *
+ * @since 1.0
  */
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"/org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml"})
@@ -47,10 +49,10 @@ public class ShiroFilterFactoryBeanTest {
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml");
 
-        AbstractShiroFilter shiroFilter = (AbstractShiroFilter)context.getBean("shiroFilter");
+        AbstractShiroFilter shiroFilter = (AbstractShiroFilter) context.getBean("shiroFilter");
 
-        PathMatchingFilterChainResolver resolver = (PathMatchingFilterChainResolver)shiroFilter.getFilterChainResolver();
-        DefaultFilterChainManager fcManager = (DefaultFilterChainManager)resolver.getFilterChainManager();
+        PathMatchingFilterChainResolver resolver = (PathMatchingFilterChainResolver) shiroFilter.getFilterChainResolver();
+        DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
         assertNotNull(chain);
         assertEquals(chain.size(), 2);
@@ -58,5 +60,50 @@ public class ShiroFilterFactoryBeanTest {
         filters = chain.toArray(filters);
         assertTrue(filters[0] instanceof DummyFilter);
         assertTrue(filters[1] instanceof FormAuthenticationFilter);
+    }
+
+    /**
+     * Verifies fix for <a href="https://issues.apache.org/jira/browse/SHIRO-167">SHIRO-167</a>
+     *
+     * @throws Exception if there is any unexpected error
+     */
+    @Test
+    public void testFilterDefinitionWithInit() throws Exception {
+
+        ClassPathXmlApplicationContext context =
+                new ClassPathXmlApplicationContext("org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml");
+
+        AbstractShiroFilter shiroFilter = (AbstractShiroFilter) context.getBean("shiroFilter");
+
+        FilterConfig mockFilterConfig = createNiceMock(FilterConfig.class);
+        ServletContext mockServletContext = createNiceMock(ServletContext.class);
+        expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
+        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
+        expect(mockRequest.getContextPath()).andReturn("/").anyTimes();
+        expect(mockRequest.getRequestURI()).andReturn("/").anyTimes();
+        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+
+        replay(mockFilterConfig);
+        replay(mockServletContext);
+        shiroFilter.init(mockFilterConfig);
+        verify(mockServletContext);
+        verify(mockFilterConfig);
+
+        FilterChain filterChain = new FilterChain() {
+            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
+                HttpServletRequest request = (HttpServletRequest) servletRequest;
+                assertNotNull(request.getSession());
+                //this line asserts the fix for the user-reported issue:
+                assertNotNull(request.getSession().getServletContext());
+            }
+        };
+
+        replay(mockRequest);
+        replay(mockResponse);
+
+        shiroFilter.doFilter(mockRequest, mockResponse, filterChain);
+
+        verify(mockResponse);
+        verify(mockRequest);
     }
 }
