@@ -31,7 +31,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-incubating-SNAPSHOT</version>
+    <version>1.0.0-incubating</version>
 
     <name>Apache Shiro</name>
     <url>http://incubator.apache.org/shiro/</url>
@@ -42,9 +42,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/branches/shiro-root-1.0.x</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/branches/shiro-root-1.0.x</developerConnection>
-        <url>http://svn.apache.org/repos/asf/incubator/shiro/branches/shiro-root-1.0.x</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/tags/shiro-root-1.0.0-incubating</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/tags/shiro-root-1.0.0-incubating</developerConnection>
+        <url>http://svn.apache.org/repos/asf/incubator/shiro/tags/shiro-root-1.0.0-incubating</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
