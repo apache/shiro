@@ -516,6 +516,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
                 <!-- Disable, just to make it go faster -->
                 <configuration>
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
