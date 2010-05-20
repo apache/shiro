@@ -29,10 +29,10 @@ import org.apache.shiro.web.filter.authc.AuthenticationFilter;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
-import org.apache.shiro.web.servlet.IniShiroFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -53,6 +53,10 @@ import java.util.Map;
  * &lt;filter&gt;
  *   &lt;filter-name&gt;<b>shiroFilter</b>&lt;/filter-name&gt;
  *   &lt;filter-class&gt;org.springframework.web.filter.DelegatingFilterProxy&lt;filter-class&gt;
+ *   &lt;init-param&gt;
+ *    &lt;param-name&gt;targetFilterLifecycle&lt;/param-name&gt;
+ *     &lt;param-value&gt;true&lt;/param-value&gt;
+ *   &lt;/init-param&gt;
  * &lt;/filter&gt;
  * </pre>
  * Then, in your spring XML file that defines your web ApplicationContext:
@@ -107,6 +111,7 @@ import java.util.Map;
  * earlier.
  *
  * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
+ * @see org.springframework.web.filter.DelegatingFilterProxy DelegatingFilterProxy
  * @since 1.0
  */
 public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
@@ -347,7 +352,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * @return <code>{@link org.apache.shiro.web.servlet.AbstractShiroFilter}.class</code>
      */
     public Class getObjectType() {
-        return AbstractShiroFilter.class;
+        return SpringShiroFilter.class;
     }
 
     /**
@@ -438,15 +443,11 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         PathMatchingFilterChainResolver chainResolver = new PathMatchingFilterChainResolver();
         chainResolver.setFilterChainManager(manager);
 
-        //Now create an IniShiroFilter and apply the acquired SecurityManager and built
-        //FilterChainResolver.  It doesn't matter that the Filter instance is an INI filter
+        //Now create a concrete ShiroFilter instance and apply the acquired SecurityManager and built
+        //FilterChainResolver.  It doesn't matter that the instance is an anonymous inner class
         //here - we're just using it because it is a concrete AbstractShiroFilter instance that accepts
         //injection of the SecurityManager and FilterChainResolver:
-        IniShiroFilter shiroFilter = new IniShiroFilter();
-        shiroFilter.setSecurityManager((WebSecurityManager) securityManager);
-        shiroFilter.setFilterChainResolver(chainResolver);
-
-        return shiroFilter;
+        return new SpringShiroFilter((WebSecurityManager) securityManager, chainResolver);
     }
 
     private void applyLoginUrlIfNecessary(Filter filter) {
@@ -514,5 +515,28 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      */
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
+    }
+
+    /**
+     * Ordinarily the {@code AbstractShiroFilter} must be subclassed to additionally perform configuration
+     * and initialization behavior.  Because this {@code FactoryBean} implementation manually builds the
+     * {@link AbstractShiroFilter}'s
+     * {@link AbstractShiroFilter#setSecurityManager(org.apache.shiro.web.mgt.WebSecurityManager) securityManager} and
+     * {@link AbstractShiroFilter#setFilterChainResolver(org.apache.shiro.web.filter.mgt.FilterChainResolver) filterChainResolver}
+     * properties, the only thing left to do is set those properties explicitly.  We do that in a simple
+     * concrete subclass in the constructor.
+     */
+    private static final class SpringShiroFilter extends AbstractShiroFilter {
+
+        protected SpringShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver resolver) {
+            super();
+            if (webSecurityManager == null) {
+                throw new IllegalArgumentException("WebSecurityManager property cannot be null.");
+            }
+            setSecurityManager(webSecurityManager);
+            if (resolver != null) {
+                setFilterChainResolver(resolver);
+            }
+        }
     }
 }
