@@ -18,17 +18,18 @@
  */
 package org.apache.shiro.util;
 
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.permission.PermissionResolver;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.shiro.authz.Permission;
-import org.apache.shiro.authz.permission.PermissionResolver;
-
 
 /**
- * TODO - comlete JavaDoc
+ * Utility class to help with String-to-Permission object resolution.
+ *
  * @author Les Hazlewood
  * @author Jeremy Haile
  * @since 0.1

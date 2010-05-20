@@ -24,10 +24,12 @@ import org.apache.shiro.codec.Hex;
 import java.util.Arrays;
 
 /**
- * TODO - Class JavaDoc
+ * Very simple {@link ByteSource ByteSource} implementation that maintains an internal {@code byte[]} array and uses the
+ * {@link Hex Hex} and {@link Base64 Base64} codec classes to support the
+ * {@link #toHex() toHex()} and {@link #toBase64() toBase64()} implementations.
  *
  * @author Les Hazlewood
- * @since Apr 12, 2010 2:35:19 PM
+ * @since 1.0
  */
 public class SimpleByteSource implements ByteSource {
 

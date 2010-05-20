@@ -35,8 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Enum representing all of the default Shiro Filter instances available to web applications.  Each filter is
- * typically accessible by the {@link #name() name} of the enum constant.
+ * Enum representing all of the default Shiro Filter instances available to web applications.  Each filter instance is
+ * typically accessible in configuration the {@link #name() name} of the enum constant.
  *
  * @author Les Hazlewood
  * @since 1.0

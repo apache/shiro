@@ -75,7 +75,9 @@ public interface ThreadState {
     void restore();
 
     /**
-     * Clears a thread's state modifications entirely.
+     * Completely clears/removes the {@code ThreadContext} state.  Typically this method should
+     * only be called in special cases - it is more 'correct' to {@link #restore restore} a thread to its previous
+     * state than to clear it entirely.
      */
     void clear();
 

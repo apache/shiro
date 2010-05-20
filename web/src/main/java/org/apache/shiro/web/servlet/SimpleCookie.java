@@ -31,7 +31,10 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * TODO - Class JavaDoc
+ * Default {@link Cookie Cookie} implementation.  'HttpOnly' is supported out of the box, even on
+ * Servlet {@code 2.4} and {@code 2.5} container implementations, using raw header writing logic and not
+ * {@link javax.servlet.http.Cookie javax.servlet.http.Cookie} objects (which only has 'HttpOnly' support in Servlet
+ * {@code 2.6} specifications and above).
  *
  * @author Les Hazlewood
  * @since 1.0

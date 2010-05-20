@@ -26,10 +26,10 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.lang.reflect.Method;
 
 /**
- * Helper class that adapts and aspectj {@link JoinPoint}.
+ * Helper class that adapts an AspectJ {@link JoinPoint JoinPoint}.
  *
  * @author J-C Desrochers
- * @since 1.0.0
+ * @since 1.0
  */
 public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
 

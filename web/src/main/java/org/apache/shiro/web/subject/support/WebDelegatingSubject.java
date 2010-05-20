@@ -32,6 +32,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
+ * Default {@link WebSubject WebSubject} implementation that additional ensures the ability to retain a
+ * servlet request/response pair to be used by internal shiro components as necessary during the request execution.
+ *
  * @since 1.0
  */
 public class WebDelegatingSubject extends DelegatingSubject implements WebSubject {

@@ -26,6 +26,11 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * A proxied filter chain is a {@link FilterChain} instance that proxies an original {@link FilterChain} as well
+ * as a {@link List List} of other {@link Filter Filter}s that might need to execute prior to the final wrapped
+ * original chain.  It allows a list of filters to execute before continuing the original (proxied)
+ * {@code FilterChain} instance.
+ *
  * @author Les Hazlewood
  * @since 0.9
  */
