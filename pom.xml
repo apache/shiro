@@ -60,7 +60,7 @@
         <site>
             <id>incubator.website</id>
             <name>Apache Incubator Site</name>
-            <url>scp://people.apache.org/www/incubator.apache.org/shiro/site/latest</url>
+            <url>scp://people.apache.org/www/incubator.apache.org/shiro/static/latest</url>
         </site>
     </distributionManagement>
 
@@ -122,6 +122,15 @@
     </modules>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.0</version>
+                </plugin>
+            </plugins>    
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -433,7 +442,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+    
     <!-- Note that reporting may fail with lower settings than something like: MAVEN_OPTS="-X512m -XX:MaxPermSize=128m" -->
     <reporting>
         <plugins>
@@ -591,7 +600,7 @@
                 <site>
                     <id>incubator.website</id>
                     <name>Apache Incubator Site</name>
-                    <url>scp://people.apache.org/www/incubator.apache.org/shiro/site/${project.version}</url>
+                    <url>scp://people.apache.org/www/incubator.apache.org/shiro/static/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>
