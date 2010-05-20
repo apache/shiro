@@ -43,7 +43,7 @@
          ========================================================= -->
     <!-- Shiro's main business-tier object for web-enabled applications
          (use DefaultSecurityManager instead when there is no web environment)-->
-    <bean id="securityManager" class="org.apache.shiro.web.DefaultWebSecurityManager">
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <property name="cacheManager" ref="cacheManager"/>
         <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
         <property name="sessionMode" value="native"/>

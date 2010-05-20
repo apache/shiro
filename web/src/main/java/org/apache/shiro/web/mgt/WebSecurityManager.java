@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web;
+package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.mgt.SecurityManager;
+
 /**
  * This interface represents a {@link SecurityManager} implementation that can
  * be used in a servlet container.
@@ -32,8 +33,9 @@ public interface WebSecurityManager extends SecurityManager {
      * session for this. Typically, a security manager will use the servlet container's HTTP session
      * but custom session implementations, for example based on EhCache, may also be used. This
      * method indicates whether the security manager is using the HTTP session or not.
+     *
      * @return <code>true</code> if the security manager is using the HTTP session; otherwise,
-     * <code>false</code>.
+     *         <code>false</code>.
      */
     boolean isHttpSessionMode();
 }

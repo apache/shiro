@@ -20,8 +20,8 @@ package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.web.DefaultWebSecurityManager;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.junit.Test;
 
 import javax.servlet.Filter;

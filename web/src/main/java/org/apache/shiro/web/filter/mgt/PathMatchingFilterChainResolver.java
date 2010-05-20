@@ -20,7 +20,7 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,7 +137,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
     /**
      * Merely returns
-     * <code>WebUtils.{@link org.apache.shiro.web.WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest) getPathWithinApplication(request)}</code>
+     * <code>WebUtils.{@link org.apache.shiro.web.util.WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest) getPathWithinApplication(request)}</code>
      * and can be overridden by subclasses for custom request-to-application-path resolution behavior.
      *
      * @param request the incoming {@code ServletRequest}

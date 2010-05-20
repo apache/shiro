@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web;
+package org.apache.shiro.web.util;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.AccessControlFilter;
-import org.apache.shiro.web.util.RequestPairSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

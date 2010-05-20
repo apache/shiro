@@ -18,20 +18,20 @@
  */
 package org.apache.shiro.web.filter;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import javax.servlet.Filter;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
+import org.apache.shiro.util.AntPathMatcher;
+import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.servlet.AdviceFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.util.AntPathMatcher;
-import org.apache.shiro.util.PatternMatcher;
+import javax.servlet.Filter;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static org.apache.shiro.util.StringUtils.split;
-import org.apache.shiro.web.WebUtils;
-import org.apache.shiro.web.servlet.AdviceFilter;
 
 /**
  * <p>Base class for Filters that will process only specified paths and allow all others to pass through.</p>

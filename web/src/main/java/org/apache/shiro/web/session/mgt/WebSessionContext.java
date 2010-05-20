@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.session;
+package org.apache.shiro.web.session.mgt;
 
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.web.util.RequestPairSource;

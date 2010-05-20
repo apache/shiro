@@ -20,8 +20,8 @@ package org.apache.shiro.web.filter.authz;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.web.WebUtils;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -33,10 +33,9 @@ import java.io.IOException;
  * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied} method, which
  * provides reasonable handling for most applications.
  *
- * @see #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
- * 
  * @author Les Hazlewood
  * @author Jeremy Haile
+ * @see #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
  * @since 0.9
  */
 public abstract class AuthorizationFilter extends AccessControlFilter {
@@ -117,7 +116,7 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
             // If no unauthorized URL is specified, just return an unauthorized HTTP status code
             String unauthorizedUrl = getUnauthorizedUrl();
             //SHIRO-142 - ensure that redirect _or_ error code occurs - both cannot happen due to response commit:
-            if ( StringUtils.hasText(unauthorizedUrl) ) {
+            if (StringUtils.hasText(unauthorizedUrl)) {
                 WebUtils.issueRedirect(request, response, unauthorizedUrl);
             } else {
                 WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);

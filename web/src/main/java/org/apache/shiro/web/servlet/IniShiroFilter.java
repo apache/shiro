@@ -23,10 +23,10 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniFactorySupport;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.web.WebSecurityManager;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
+import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ import java.util.Map;
  * # --- SessionManager properties ---
  * #
  * # Except for Realms and RealmFactories, all other objects should be defined and set on the SecurityManager directly.
- * # The default 'securityManager' bean is an instance of {@link org.apache.shiro.web.DefaultWebSecurityManager}, so you
+ * # The default 'securityManager' bean is an instance of {@link org.apache.shiro.web.mgt.DefaultWebSecurityManager}, so you
  * # can set any of its corresponding properties as necessary:
  * #
  * # someObject = some.fully.qualified.ClassName
@@ -107,7 +107,7 @@ import java.util.Map;
  * # (and client-agnostic) session management.  You can enable this by uncommenting the following line
  * # and changing 'http' to 'native'
  * #
- * #securityManager.{@link org.apache.shiro.web.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
+ * #securityManager.{@link org.apache.shiro.web.mgt.DefaultWebSecurityManager#setSessionMode(String) sessionMode} = http
  * #
  * [filters]
  * # This section defines the 'pool' of all Filters available to the url path definitions in the [urls] section below.

@@ -20,9 +20,7 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.WebTest;
-import org.apache.shiro.web.WebUtils;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import org.apache.shiro.web.util.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +30,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests for {@link org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver}.

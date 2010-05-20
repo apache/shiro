@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.WebUtils;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +130,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
      * by calling this method, the default is <code>rememberMe</code>.
      * <p/>
      * RememberMe will be <code>true</code> if the parameter value equals any of those supported by
-     * {@link WebUtils#isTrue(javax.servlet.ServletRequest, String) WebUtils.isTrue(request,value)}, <code>false</code>
+     * {@link org.apache.shiro.web.util.WebUtils#isTrue(javax.servlet.ServletRequest, String) WebUtils.isTrue(request,value)}, <code>false</code>
      * otherwise.
      *
      * @param rememberMeParam the name of the request param to check for acquiring the rememberMe boolean value.
