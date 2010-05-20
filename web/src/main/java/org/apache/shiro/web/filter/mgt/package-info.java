@@ -17,8 +17,10 @@
  * under the License.
  */
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
+ * The filter 'mgt' (management) package contains components used in managing Filters that are available for
+ * filter chain construction, the filter chains themselves, as well as resolving filter chains based by name.
  *
- * @see IniShiroFilter
+ * @see FilterChainManager
+ * @see FilterChainResolver
  */
-package org.apache.shiro.web.servlet;
+package org.apache.shiro.web.filter.mgt;

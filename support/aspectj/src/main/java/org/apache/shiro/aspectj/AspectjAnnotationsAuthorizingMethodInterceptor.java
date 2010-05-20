@@ -34,7 +34,7 @@ import java.util.Arrays;
  *
  * @author J-C Desrochers
  * @author Kalle Korhonen
- * @since 1.0.0
+ * @since 1.0
  */
 public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsAuthorizingMethodInterceptor {
     /**

@@ -27,6 +27,10 @@ import java.util.Collections;
 import java.util.Date;
 
 /**
+ * Abstract implementation supporting the {@link NativeSessionManager NativeSessionManager} interface, supporting
+ * {@link SessionListener SessionListener}s and application of the
+ * {@link #getGlobalSessionTimeout() globalSessionTimeout}.
+ *
  * @author Les Hazlewood
  * @since 1.0
  */

@@ -17,8 +17,8 @@
  * under the License.
  */
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
+ * Supporting implementations of {@code org.apache.shiro.web.subject} package interfaces.
  *
- * @see IniShiroFilter
+ * @see WebDelegatingSubject
  */
-package org.apache.shiro.web.servlet;
+package org.apache.shiro.web.subject.support;

@@ -18,16 +18,17 @@
  */
 package org.apache.shiro.util;
 
-import java.util.Collection;
-
+import org.apache.shiro.ShiroException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.ShiroException;
+import java.util.Collection;
 
 
 /**
- * TODO - complete JavaDoc
+ * Utility class to help call {@link org.apache.shiro.util.Initializable#init() Initializable.init()} and
+ * {@link org.apache.shiro.util.Destroyable#destroy() Destroyable.destroy()} methods cleanly on any object.
+ *
  * @author Les Hazlewood
  * @since 0.2
  */
@@ -35,25 +36,25 @@ public abstract class LifecycleUtils {
 
     private static final Logger log = LoggerFactory.getLogger(LifecycleUtils.class);
 
-    public static void init(Object o) throws ShiroException
-    {
+    public static void init(Object o) throws ShiroException {
         if (o instanceof Initializable) {
             init((Initializable) o);
         }
     }
 
-    public static void init(Initializable initializable) throws ShiroException
-    {
+    public static void init(Initializable initializable) throws ShiroException {
         initializable.init();
     }
 
     /**
-     * @param c
-     * @throws org.apache.shiro.ShiroException
+     * Calls {@link #init(Object) init} for each object in the collection.  If the collection is {@code null} or empty,
+     * this method returns quietly.
+     *
+     * @param c the collection containing objects to {@link #init init}.
+     * @throws ShiroException if unable to initialize one or more instances.
      * @since 0.9
      */
-    public static void init(Collection c) throws ShiroException
-    {
+    public static void init(Collection c) throws ShiroException {
         if (c == null || c.isEmpty()) {
             return;
         }
@@ -82,8 +83,8 @@ public abstract class LifecycleUtils {
     }
 
     /**
-     * Calls {@link #destroy(Object) destroy} for each object in the collection.  If the collection is <code>null</code> or
-     * empty, this method returns quietly.
+     * Calls {@link #destroy(Object) destroy} for each object in the collection.
+     * If the collection is {@code null} or empty, this method returns quietly.
      *
      * @param c the collection of objects to destroy.
      * @since 0.9

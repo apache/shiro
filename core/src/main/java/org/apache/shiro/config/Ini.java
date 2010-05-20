@@ -31,7 +31,8 @@ import java.util.*;
  * A class representing the <a href="http://en.wikipedia.org/wiki/INI_file">INI</a> text configuration format.
  * <p/>
  * An Ini instance is a map of {@link Ini.Section Section}s, keyed by section name.  Each
- * {@code Section} is itself a map of {@code String} name/value pairs.
+ * {@code Section} is itself a map of {@code String} name/value pairs.  Name/value pairs are guaranteed to be unique
+ * within each {@code Section} only - not across the entire {@code Ini} instance.
  *
  * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
@@ -50,10 +51,18 @@ public class Ini implements Map<String, Ini.Section> {
 
     private final Map<String, Section> sections;
 
+    /**
+     * Creates a new empty {@code Ini} instance.
+     */
     public Ini() {
         this.sections = new LinkedHashMap<String, Section>();
     }
 
+    /**
+     * Creates a new {@code Ini} instance with the specified defaults.
+     *
+     * @param defaults the default sections and/or key-value pairs to copy into the new instance.
+     */
     public Ini(Ini defaults) {
         this();
         if (defaults == null) {
@@ -84,19 +93,45 @@ public class Ini implements Map<String, Ini.Section> {
         return true;
     }
 
+    /**
+     * Returns the names of all sections managed by this {@code Ini} instance or an empty collection if there are
+     * no sections.
+     *
+     * @return the names of all sections managed by this {@code Ini} instance or an empty collection if there are
+     *         no sections.
+     */
     public Set<String> getSectionNames() {
         return Collections.unmodifiableSet(sections.keySet());
     }
 
+    /**
+     * Returns the sections managed by this {@code Ini} instance or an empty collection if there are
+     * no sections.
+     *
+     * @return the sections managed by this {@code Ini} instance or an empty collection if there are
+     *         no sections.
+     */
     public Collection<Section> getSections() {
         return Collections.unmodifiableCollection(sections.values());
     }
 
+    /**
+     * Returns the {@link Section} with the given name or {@code null} if no section with that name exists.
+     *
+     * @param sectionName the name of the section to retrieve.
+     * @return the {@link Section} with the given name or {@code null} if no section with that name exists.
+     */
     public Section getSection(String sectionName) {
         String name = cleanName(sectionName);
         return sections.get(name);
     }
 
+    /**
+     * Ensures a section with the specified name exists, adding a new one if it does not yet exist.
+     *
+     * @param sectionName the name of the section to ensure existence
+     * @return the section created if it did not yet exist, or the existing Section that already existed.
+     */
     public Section addSection(String sectionName) {
         String name = cleanName(sectionName);
         Section section = getSection(name);
@@ -107,6 +142,12 @@ public class Ini implements Map<String, Ini.Section> {
         return section;
     }
 
+    /**
+     * Removes the section with the specified name and returns it, or {@code null} if the section did not exist.
+     *
+     * @param sectionName the name of the section to remove.
+     * @return the section with the specified name or {@code null} if the section did not exist.
+     */
     public Section removeSection(String sectionName) {
         String name = cleanName(sectionName);
         return this.sections.remove(name);
@@ -121,6 +162,15 @@ public class Ini implements Map<String, Ini.Section> {
         return name;
     }
 
+    /**
+     * Sets a name/value pair for the section with the given {@code sectionName}.  If the section does not yet exist,
+     * it will be created.  If the {@code sectionName} is null or empty, the name/value pair will be placed in the
+     * default (unnamed, empty string) section.
+     *
+     * @param sectionName   the name of the section to add the name/value pair
+     * @param propertyName  the name of the property to add
+     * @param propertyValue the property value
+     */
     public void setSectionProperty(String sectionName, String propertyName, String propertyValue) {
         String name = cleanName(sectionName);
         Section section = getSection(name);
@@ -130,16 +180,42 @@ public class Ini implements Map<String, Ini.Section> {
         section.put(propertyName, propertyValue);
     }
 
+    /**
+     * Returns the value of the specified section property, or {@code null} if the section or property do not exist.
+     *
+     * @param sectionName  the name of the section to retrieve to acquire the property value
+     * @param propertyName the name of the section property for which to return the value
+     * @return the value of the specified section property, or {@code null} if the section or property do not exist.
+     */
     public String getSectionProperty(String sectionName, String propertyName) {
         Section section = getSection(sectionName);
         return section != null ? section.get(propertyName) : null;
     }
 
+    /**
+     * Returns the value of the specified section property, or the {@code defaultValue} if the section or
+     * property do not exist.
+     *
+     * @param sectionName  the name of the section to add the name/value pair
+     * @param propertyName the name of the property to add
+     * @param defaultValue the default value to return if the section or property do not exist.
+     * @return the value of the specified section property, or the {@code defaultValue} if the section or
+     *         property do not exist.
+     */
     public String getSectionProperty(String sectionName, String propertyName, String defaultValue) {
         String value = getSectionProperty(sectionName, propertyName);
         return value != null ? value : defaultValue;
     }
 
+    /**
+     * Creates a new {@code Ini} instance loaded with the INI-formatted data in the resource at the given path.  The
+     * resource path may be any value interpretable by the
+     * {@link ResourceUtils#getInputStreamForPath(String) ResourceUtils.getInputStreamForPath} method.
+     *
+     * @param resourcePath the resource location of the INI data to load when creating the {@code Ini} instance.
+     * @return a new {@code Ini} instance loaded with the INI-formatted data in the resource at the given path.
+     * @throws ConfigurationException if the path cannot be loaded into an {@code Ini} instance.
+     */
     public static Ini fromResourcePath(String resourcePath) throws ConfigurationException {
         if (!StringUtils.hasLength(resourcePath)) {
             throw new IllegalArgumentException("Resource Path argument cannot be null or empty.");
@@ -149,6 +225,14 @@ public class Ini implements Map<String, Ini.Section> {
         return ini;
     }
 
+    /**
+     * Loads data from the specified resource path into this current {@code Ini} instance.  The
+     * resource path may be any value interpretable by the
+     * {@link ResourceUtils#getInputStreamForPath(String) ResourceUtils.getInputStreamForPath} method.
+     *
+     * @param resourcePath the resource location of the INI data to load into this instance.
+     * @throws ConfigurationException if the path cannot be loaded
+     */
     public void loadFromPath(String resourcePath) throws ConfigurationException {
         InputStream is;
         try {
@@ -159,10 +243,23 @@ public class Ini implements Map<String, Ini.Section> {
         load(is);
     }
 
+    /**
+     * Loads the specified raw INI-formatted text into this instance.
+     *
+     * @param iniConfig the raw INI-formatted text to load into this instance.
+     * @throws ConfigurationException if the text cannot be loaded
+     */
     public void load(String iniConfig) throws ConfigurationException {
         load(new Scanner(iniConfig));
     }
 
+    /**
+     * Loads the INI-formatted text backed by the given InputStream into this instance.  This implementation will
+     * close the input stream after it has finished loading.
+     *
+     * @param is the {@code InputStream} from which to read the INI-formatted text
+     * @throws ConfigurationException if unable
+     */
     public void load(InputStream is) throws ConfigurationException {
         if (is == null) {
             throw new NullPointerException("InputStream argument cannot be null.");
@@ -176,6 +273,12 @@ public class Ini implements Map<String, Ini.Section> {
         load(isr);
     }
 
+    /**
+     * Loads the INI-formatted text backed by the given Reader into this instance.  This implementation will close the
+     * reader after it has finished loading.
+     *
+     * @param reader the {@code Reader} from which to read the INI-formatted text
+     */
     public void load(Reader reader) {
         Scanner scanner = new Scanner(reader);
         try {
@@ -223,6 +326,12 @@ public class Ini implements Map<String, Ini.Section> {
         }
     }
 
+    /**
+     * Loads the INI-formatted text backed by the given Scanner.  This implementation will close the
+     * scanner after it has finished loading.
+     *
+     * @param scanner the {@code Scanner} from which to read the INI-formatted text
+     */
     public void load(Scanner scanner) {
 
         String sectionName = DEFAULT_SECTION_NAME;
@@ -348,6 +457,10 @@ public class Ini implements Map<String, Ini.Section> {
         return Collections.unmodifiableSet(this.sections.entrySet());
     }
 
+    /**
+     * An {@code Ini.Section} is String-key-to-String-value Map, identifiable by a
+     * {@link #getName() name} unique within an {@link Ini} instance.
+     */
     public class Section implements Map<String, String> {
         private final String name;
         private final Map<String, String> props;

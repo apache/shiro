@@ -18,42 +18,42 @@
  */
 package org.apache.shiro.io;
 
+import org.apache.shiro.util.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.shiro.util.ClassUtils;
-
 /**
- * Static helper methods for loading resources.
+ * Static helper methods for loading {@code Stream}-backed resources.
  *
  * @author Jeremy Haile
+ * @author Les Hazlewood
+ * @see #getInputStreamForPath(String)
  * @since 0.2
  */
 public class ResourceUtils {
 
-    //TODO complete JavaDoc
-
     /**
-     * Resource path prefix that specifies to load from a classpath location, value is <b><code>classpath:</code></b>
+     * Resource path prefix that specifies to load from a classpath location, value is <b>{@code classpath:}</b>
      */
     public static final String CLASSPATH_PREFIX = "classpath:";
     /**
-     * Resource path prefix that specifies to load from a url location, value is <b><code>url:</code></b>
+     * Resource path prefix that specifies to load from a url location, value is <b>{@code url:}</b>
      */
     public static final String URL_PREFIX = "url:";
     /**
-     * Resource path prefix that specifies to load from a file location, value is <b><code>file:</code></b>
+     * Resource path prefix that specifies to load from a file location, value is <b>{@code file:}</b>
      */
     public static final String FILE_PREFIX = "file:";
 
-    /** Private internal log instance. */
+    /**
+     * Private internal log instance.
+     */
     private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
-
 
     /**
      * Prevent instantiation.
@@ -62,15 +62,16 @@ public class ResourceUtils {
     }
 
     /**
-     * Returns <code>true</code> if the resource path is not null and starts with one of the recognized
-     * resource prefixes ({@link #CLASSPATH_PREFIX CLASSPATH_PREFIX}, 
-     * {@link #URL_PREFIX URL_PREFIX}, or {@link #FILE_PREFIX FILE_PREFIX}), <code>false</code> otherwise.
+     * Returns {@code true} if the resource path is not null and starts with one of the recognized
+     * resource prefixes ({@link #CLASSPATH_PREFIX CLASSPATH_PREFIX},
+     * {@link #URL_PREFIX URL_PREFIX}, or {@link #FILE_PREFIX FILE_PREFIX}), {@code false} otherwise.
      *
      * @param resourcePath the resource path to check
-     * @return <code>true</code> if the resource path is not null and starts with one of the recognized
-     * resource prefixes, <code>false</code> otherwise.
+     * @return {@code true} if the resource path is not null and starts with one of the recognized
+     *         resource prefixes, {@code false} otherwise.
      * @since 0.9
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     public static boolean hasResourcePrefix(String resourcePath) {
         return resourcePath != null &&
                 (resourcePath.startsWith(CLASSPATH_PREFIX) ||
@@ -79,9 +80,11 @@ public class ResourceUtils {
     }
 
     /**
-     * Returns <code>true</code> if the resource at the specified path exists, <code>false</code> otherwise.
+     * Returns {@code true} if the resource at the specified path exists, {@code false} otherwise.  This
+     * method supports scheme prefixes on the path as defined in {@link #getInputStreamForPath(String)}.
+     *
      * @param resourcePath the path of the resource to check.
-     * @return <code>true</code> if the resource at the specified path exists, <code>false</code> otherwise.
+     * @return {@code true} if the resource at the specified path exists, {@code false} otherwise.
      * @since 0.9
      */
     public static boolean resourceExists(String resourcePath) {
@@ -107,9 +110,12 @@ public class ResourceUtils {
 
 
     /**
-     * Returns the InputStream for the resource represented by the specified path.
-     *
-     * <p>The supporting prefixes are defined as as *_PREFIX constants in this class.</p>
+     * Returns the InputStream for the resource represented by the specified path, supporting scheme
+     * prefixes that direct how to acquire the input stream
+     * ({@link #CLASSPATH_PREFIX CLASSPATH_PREFIX},
+     * {@link #URL_PREFIX URL_PREFIX}, or {@link #FILE_PREFIX FILE_PREFIX}).  If the path is not prefixed by one
+     * of these schemes, the path is assumed to be a file-based path that can be loaded with a
+     * {@link FileInputStream FileInputStream}.
      *
      * @param resourcePath the String path representing the resource to obtain.
      * @return the InputStraem for the specified resource.
@@ -139,11 +145,9 @@ public class ResourceUtils {
     }
 
     private static InputStream loadFromFile(String path) throws IOException {
-
         if (log.isDebugEnabled()) {
             log.debug("Opening file [" + path + "]...");
         }
-
         return new FileInputStream(path);
     }
 
@@ -162,6 +166,13 @@ public class ResourceUtils {
         return resourcePath.substring(resourcePath.indexOf(":") + 1);
     }
 
+    /**
+     * Convenience method that closes the specified {@link InputStream InputStream}, logging any
+     * {@link IOException IOException} that might occur. If the {@code InputStream}
+     * argument is {@code null}, this method does nothing.  It returns quietly in all cases.
+     *
+     * @param is the {@code InputStream} to close, logging any {@code IOException} that might occur.
+     */
     public static void close(InputStream is) {
         if (is != null) {
             try {

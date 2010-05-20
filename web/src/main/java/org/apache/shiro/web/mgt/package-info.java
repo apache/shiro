@@ -17,8 +17,7 @@
  * under the License.
  */
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
- *
- * @see IniShiroFilter
+ * Components supporting web-specific
+ * {@link org.apache.shiro.mgt.SecurityManager SecurityManager} implementations.
  */
-package org.apache.shiro.web.servlet;
+package org.apache.shiro.web.mgt;

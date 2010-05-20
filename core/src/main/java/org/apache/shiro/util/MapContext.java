@@ -22,9 +22,12 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * TODO - Class JavaDoc
+ * A {@code MapContext} provides a common base for context-based data storage in a {@link Map}.  Type-safe attribute
+ * retrieval is provided for subclasses with the {@link #getTypedValue(String, Class)} method.
  *
  * @author Les Hazlewood
+ * @see org.apache.shiro.subject.SubjectContext SubjectContext
+ * @see org.apache.shiro.session.mgt.SessionContext SessionContext
  * @since 1.0
  */
 public class MapContext implements Map<String, Object>, Serializable {
@@ -44,6 +47,15 @@ public class MapContext implements Map<String, Object>, Serializable {
         }
     }
 
+    /**
+     * Performs a {@link #get get} operation but additionally ensures that the value returned is of the specified
+     * {@code type}.  If there is no value, {@code null} is returned.
+     *
+     * @param key  the attribute key to look up a value
+     * @param type the expected type of the value
+     * @param <E>  the expected type of the value
+     * @return the typed value or {@code null} if the attribute does not exist.
+     */
     @SuppressWarnings({"unchecked"})
     protected <E> E getTypedValue(String key, Class<E> type) {
         E found = null;
@@ -60,6 +72,12 @@ public class MapContext implements Map<String, Object>, Serializable {
         return found;
     }
 
+    /**
+     * Places a value in this context map under the given key only if the given {@code value} argument is not null.
+     *
+     * @param key   the attribute key under which the non-null value will be stored
+     * @param value the non-null value to store.  If {@code null}, this method does nothing and returns immediately.
+     */
     protected void nullSafePut(String key, Object value) {
         if (value != null) {
             put(key, value);

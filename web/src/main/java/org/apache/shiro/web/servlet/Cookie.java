@@ -22,7 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * TODO - Class JavaDoc
+ * Interface representing HTTP cookie operations, supporting pojo-style getters and setters for all
+ * attributes which includes <a href="http://www.owasp.org/index.php/HttpOnly">HttpOnly</a> support.
+ * This allows Shiro to set <a href="http://www.owasp.org/index.php/HttpOnly">HttpOnly</a> cookies even on
+ * Servlet containers based on the {@code 2.4} and {@code 2.5} API (Servlet API 'native' support was only introduced in
+ * the {@code 2.6} specification).
  *
  * @author Les Hazlewood
  * @since 1.0

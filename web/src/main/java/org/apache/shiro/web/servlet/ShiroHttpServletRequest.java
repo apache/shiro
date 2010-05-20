@@ -30,6 +30,11 @@ import java.security.Principal;
 
 
 /**
+ * A {@code ShiroHttpServletRequest} wraps the Servlet container's original {@code ServletRequest} instance, but ensures
+ * that all {@link HttpServletRequest} invocations that require Shiro's support ({@link #getRemoteUser getRemoteUser},
+ * {@link #getSession getSession}, etc) can be executed first by Shiro as necessary before allowing the underlying
+ * Servlet container instance's method to be invoked.
+ *
  * @author Les Hazlewood
  * @since 0.2
  */

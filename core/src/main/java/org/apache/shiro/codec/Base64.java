@@ -19,22 +19,22 @@
 package org.apache.shiro.codec;
 
 /**
- * Provides Base64 encoding and decoding as defined by RFC 2045.
+ * Provides <a href="http://en.wikipedia.org/wiki/Base64">Base 64</a> encoding and decoding as defined by
+ * <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>.
  * <p/>
- * <p>
  * This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite> from RFC 2045 <cite>Multipurpose
  * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
- * </p>
  * <p/>
- * <p>This class was borrowed from Apache Commons Codec SVN repository (rev. 618419) with modifications
+ * This class was borrowed from Apache Commons Codec SVN repository (rev. 618419) with modifications
  * to enable Base64 conversion without a full dependecny on Commons Codec.  We didn't want to reinvent the wheel of
- * great work they've done, but also didn't want to force every Shiro user to depend on the commons-codec.jar</p>
+ * great work they've done, but also didn't want to force every Shiro user to depend on the commons-codec.jar
  * <p/>
- * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
- * remained in tact.</p>
+ * As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
+ * remained in tact.
  *
  * @author Apache Software Foundation
  * @author Les Hazlewood
+ * @see <a href="http://en.wikipedia.org/wiki/Base64">Wikipedia: Base 64</a>
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 0.9
  */
@@ -43,8 +43,8 @@ public class Base64 {
     /**
      * Chunk size per RFC 2045 section 6.8.
      * <p/>
-     * <p>The character limit does not count the trailing CRLF, but counts all other characters, including any
-     * equal signs.</p>
+     * The character limit does not count the trailing CRLF, but counts all other characters, including any
+     * equal signs.
      *
      * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045 section 6.8</a>
      */
@@ -119,6 +119,7 @@ public class Base64 {
     private static final byte[] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
 
     // Populating the lookup and character arrays
+
     static {
         for (int i = 0; i < BASELENGTH; i++) {
             base64Alphabet[i] = (byte) -1;

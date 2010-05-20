@@ -38,6 +38,13 @@ import java.util.Set;
 import static org.apache.shiro.util.StringUtils.split;
 
 /**
+ * Default {@link FilterChainManager} implementation maintaining a map of {@link Filter Filter} instances
+ * (key: filter name, value: Filter) as well as a map of {@link NamedFilterList NamedFilterList}s created from these
+ * {@code Filter}s (key: filter chain name, value: NamedFilterList).  The {@code NamedFilterList} is essentially a
+ * {@link FilterChain} that also has a name property by which it can be looked up.
+ *
+ * @author Les Hazlewood
+ * @see NamedFilterList
  * @since 1.0
  */
 public class DefaultFilterChainManager implements FilterChainManager {

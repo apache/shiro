@@ -27,6 +27,7 @@ import java.util.List;
  * {@link #getName() name}.  It has the ability to generate new {@link FilterChain} instances reflecting this list's
  * filter order via the {@link #proxy proxy} method.
  *
+ * @author Les Hazlewood
  * @since 1.0
  */
 public interface NamedFilterList extends List<Filter> {
