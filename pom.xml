@@ -94,12 +94,17 @@
 
     <developers>
         <developer>
-            <id>kaosko</id>
-            <name>Kalle Korhonen</name>
-            <email>kaosko@apache.org</email>
-            <url>http://tynamo.org</url>
+            <id>aditzel</id>
+            <name>Allan Ditzel</name>
+            <email>aditzel@apache.org</email>
+            <url>http://www.allanditzel.com</url>
             <organization>Apache Software Foundation</organization>
-            <timezone>-8</timezone>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>jhaile</id>
+            <name>Jeremy Haile</name>
+            <email>jhaile@apache.org</email>
         </developer>
         <developer>
             <id>lhazlewood</id>
@@ -109,6 +114,24 @@
             <organization>Katasoft</organization>
             <organizationUrl>http://www.katasoft.com</organizationUrl>
             <timezone>-8</timezone>
+        </developer>
+        <developer>
+            <id>kaosko</id>
+            <name>Kalle Korhonen</name>
+            <email>kaosko@apache.org</email>
+            <url>http://tynamo.org</url>
+            <organization>Apache Software Foundation</organization>
+            <timezone>-8</timezone>
+        </developer>
+        <developer>
+            <id>pledbrook</id>
+            <name>Peter Ledbrook</name>
+            <email>pledbrook@apache.org</email>
+        </developer>
+        <developer>
+            <id>tveil</id>
+            <name>Tim Veil</name>
+            <email>tveil@apache.org</email>
         </developer>
     </developers>
 
