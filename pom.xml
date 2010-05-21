@@ -110,6 +110,14 @@
             <organizationUrl>http://www.katasoft.com</organizationUrl>
             <timezone>-8</timezone>
         </developer>
+        <developer>
+            <id>aditzel</id>
+            <name>Allan Ditzel</name>
+            <email>aditzel@apache.org</email>
+            <url>http://www.allanditzel.com</url>
+            <organization>Apache Software Foundation</organization>
+            <timezone>-5</timezone>
+        </developer>
     </developers>
 
     <modules>
