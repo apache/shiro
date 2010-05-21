@@ -105,6 +105,10 @@
             <id>jhaile</id>
             <name>Jeremy Haile</name>
             <email>jhaile@apache.org</email>
+            <url>http://www.jeremyhaile.com</url>
+            <organization>Mobilization Labs</organization>
+            <organizationUrl>http://www.mobilizationlabs.com</organizationUrl>            
+            <timezone>-5</timezone>
         </developer>
         <developer>
             <id>lhazlewood</id>
@@ -126,7 +130,11 @@
         <developer>
             <id>pledbrook</id>
             <name>Peter Ledbrook</name>
-            <email>pledbrook@apache.org</email>
+            <email>p.ledbrook@cacoethes.co.uk</email>
+            <url>http://www.cacoethes.co.uk/blog/</url>
+            <organization>SpringSource</organization>
+            <organizationUrl>http://www.springsource.com/</organizationUrl>
+            <timezone>0</timezone>
         </developer>
         <developer>
             <id>tveil</id>
