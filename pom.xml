@@ -126,7 +126,11 @@
         <developer>
             <id>pledbrook</id>
             <name>Peter Ledbrook</name>
-            <email>pledbrook@apache.org</email>
+            <email>p.ledbrook@cacoethes.co.uk</email>
+            <url>http://www.cacoethes.co.uk/blog/</url>
+            <organization>SpringSource</organization>
+            <organization>http://www.springsource.com/</organization>
+            <timezone>0</timezone>
         </developer>
         <developer>
             <id>tveil</id>
