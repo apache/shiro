@@ -94,12 +94,21 @@
 
     <developers>
         <developer>
-            <id>kaosko</id>
-            <name>Kalle Korhonen</name>
-            <email>kaosko@apache.org</email>
-            <url>http://tynamo.org</url>
+            <id>aditzel</id>
+            <name>Allan Ditzel</name>
+            <email>aditzel@apache.org</email>
+            <url>http://www.allanditzel.com</url>
             <organization>Apache Software Foundation</organization>
-            <timezone>-8</timezone>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>jhaile</id>
+            <name>Jeremy Haile</name>
+            <email>jhaile@apache.org</email>
+            <url>http://www.jeremyhaile.com</url>
+            <organization>Mobilization Labs</organization>
+            <organizationUrl>http://www.mobilizationlabs.com</organizationUrl>            
+            <timezone>-5</timezone>
         </developer>
         <developer>
             <id>lhazlewood</id>
@@ -109,6 +118,28 @@
             <organization>Katasoft</organization>
             <organizationUrl>http://www.katasoft.com</organizationUrl>
             <timezone>-8</timezone>
+        </developer>
+        <developer>
+            <id>kaosko</id>
+            <name>Kalle Korhonen</name>
+            <email>kaosko@apache.org</email>
+            <url>http://tynamo.org</url>
+            <organization>Apache Software Foundation</organization>
+            <timezone>-8</timezone>
+        </developer>
+        <developer>
+            <id>pledbrook</id>
+            <name>Peter Ledbrook</name>
+            <email>p.ledbrook@cacoethes.co.uk</email>
+            <url>http://www.cacoethes.co.uk/blog/</url>
+            <organization>SpringSource</organization>
+            <organizationUrl>http://www.springsource.com/</organizationUrl>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>tveil</id>
+            <name>Tim Veil</name>
+            <email>tveil@apache.org</email>
         </developer>
     </developers>
 
