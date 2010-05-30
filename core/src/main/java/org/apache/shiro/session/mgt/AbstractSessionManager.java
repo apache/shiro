@@ -25,7 +25,6 @@ import org.apache.shiro.session.Session;
  * application-wide {@link #getGlobalSessionTimeout() globalSessionTimeout}.  Default global session timeout is
  * {@code 30} minutes.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class AbstractSessionManager implements SessionManager {

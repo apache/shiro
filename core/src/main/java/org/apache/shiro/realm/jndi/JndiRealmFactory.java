@@ -36,7 +36,6 @@ import org.apache.shiro.util.StringUtils;
  * work in any environment where {@link Realm Realm} instances are bound in JNDI instead of using
  * programmatic or text-based configuration.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class JndiRealmFactory extends JndiLocator implements RealmFactory {

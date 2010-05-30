@@ -24,7 +24,6 @@ import org.junit.Test;
 
 
 /**
- * @author Jeremy Haile
  * @since 0.9
  */
 public class WildcardPermissionTest {

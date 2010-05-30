@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p/>
  * All actual Realm method implementations are left to subclasses.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware {

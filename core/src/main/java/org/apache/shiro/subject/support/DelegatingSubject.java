@@ -67,8 +67,6 @@ import java.util.concurrent.Callable;
  * stateless architectures.  This implementation plays a part in the stateless programming
  * paradigm and should be used whenever possible.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.1
  */
 public class DelegatingSubject implements Subject, Serializable {

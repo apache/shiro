@@ -25,7 +25,6 @@ import java.util.*;
  * A {@code MapContext} provides a common base for context-based data storage in a {@link Map}.  Type-safe attribute
  * retrieval is provided for subclasses with the {@link #getTypedValue(String, Class)} method.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.subject.SubjectContext SubjectContext
  * @see org.apache.shiro.session.mgt.SessionContext SessionContext
  * @since 1.0

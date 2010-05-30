@@ -30,7 +30,6 @@ import org.apache.shiro.util.ClassUtils;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 4:47:09 PM
  */
 public abstract class HashedCredentialsMatcherTest extends TestCase {

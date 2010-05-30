@@ -51,8 +51,6 @@ import java.io.Serializable;
  * out for any reason.  If you're using Shiro's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see org.apache.shiro.authz.AuthorizationInfo AuthorizationInfo
  * @see Account
  * @since 0.9

@@ -29,7 +29,6 @@ import java.util.HashMap;
  * Returns HashMap-backed cache instances for testing only.  NEVER use this in production, as it would cause
  * memory leaks since HashMaps retain strong references.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class HashMapCacheManager<K, V> extends AbstractCacheManager {

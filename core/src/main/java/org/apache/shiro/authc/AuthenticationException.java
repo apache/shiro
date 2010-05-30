@@ -24,7 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * General exception thrown due to an error during the Authentication process.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class AuthenticationException extends ShiroException

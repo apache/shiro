@@ -36,7 +36,6 @@ import org.apache.shiro.util.CollectionUtils;
  * consulted realm and want to ignore all subsequent realms, use the
  * {@link FirstSuccessfulStrategy FirstSuccessfulAuthenticationStrategy} instead.
  *
- * @author Les Hazlewood
  * @see FirstSuccessfulStrategy FirstSuccessfulAuthenticationStrategy
  * @since 0.2
  */

@@ -32,8 +32,6 @@ import java.util.Arrays;
  * an aspectj {@link JoinPoint} into a {@link MethodInvocation} amd to perform the
  * authorization of method invocations.
  *
- * @author J-C Desrochers
- * @author Kalle Korhonen
  * @since 1.0
  */
 public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsAuthorizingMethodInterceptor {

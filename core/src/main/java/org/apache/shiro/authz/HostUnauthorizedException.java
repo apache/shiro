@@ -23,7 +23,6 @@ package org.apache.shiro.authz;
  * or if the client has been enabled access but is not permitted to perform a particular operation
  * or access a particular resource.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class HostUnauthorizedException extends UnauthorizedException {

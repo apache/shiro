@@ -29,7 +29,6 @@ import java.lang.reflect.Constructor;
  * Utility method library used to conveniently interact with <code>Class</code>es, such as acquiring them from the
  * application <code>ClassLoader</code>s and instantiating Objects from them.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class ClassUtils {

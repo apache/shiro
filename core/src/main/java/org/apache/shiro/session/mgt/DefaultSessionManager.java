@@ -36,7 +36,6 @@ import java.util.Date;
  * Default business-tier implementation of a {@link ValidatingSessionManager}.  All session CRUD operations are
  * delegated to an internal {@link SessionDAO}.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {

@@ -25,7 +25,6 @@ import java.io.*;
 /**
  * Base abstract class that provides useful encoding and decoding operations, especially for character data.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class CodecSupport {

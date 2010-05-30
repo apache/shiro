@@ -26,7 +26,6 @@ import static org.junit.Assert.*;
 
 
 /**
- * @author Les Hazlewood
  * @since 0.1
  */
 public class AbstractAuthenticatorTest {

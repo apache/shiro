@@ -23,7 +23,6 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 5:02:58 PM
  */
 public class Sha512CredentialsMatcherTest extends HashedCredentialsMatcherTest {

@@ -25,7 +25,6 @@ import org.apache.shiro.authz.Permission;
  * <tt>PermissionResolver</tt> implementation that returns a new {@link WildcardPermission WildcardPermission}
  * based on the input string.
  *
- * @author Jeremy Haile
  * @since 0.9
  */
 public class WildcardPermissionResolver implements PermissionResolver {

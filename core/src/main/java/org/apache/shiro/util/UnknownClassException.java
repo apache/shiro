@@ -25,7 +25,6 @@ import org.apache.shiro.ShiroException;
  * The Shiro framework's <code>RuntimeException</code> equivalent of the JDK's
  * <code>ClassNotFoundException</code>, to maintain a RuntimeException paradigm.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class UnknownClassException extends ShiroException

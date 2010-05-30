@@ -22,7 +22,6 @@ package org.apache.shiro.crypto.hash;
  * A Cryptographic {@code Hash} represents a one-way conversion algorithm that transforms an input source to an
  * underlying byte array.
  *
- * @author Les Hazlewood
  * @see AbstractHash
  * @see Md2Hash
  * @see Md5Hash

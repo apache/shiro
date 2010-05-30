@@ -35,7 +35,6 @@ package org.apache.shiro.crypto;
  * <a href="http://java.sun.com/javase/downloads/index.jsp">Java Cryptography Extension (JCE) Unlimited Strength
  * Jurisdiction Policy files</a>.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class AesCipherService extends DefaultBlockCipherService {

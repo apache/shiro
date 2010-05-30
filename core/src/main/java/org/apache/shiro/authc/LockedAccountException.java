@@ -27,7 +27,6 @@ package org.apache.shiro.authc;
  * authentication attempts take place during a specific period of time (perhaps indicating a
  * hacking attempt).
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class LockedAccountException extends DisabledAccountException {

@@ -27,7 +27,6 @@ import org.apache.shiro.crypto.hash.Sha384Hash;
  * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
  * SHA-384 hashed.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class Sha384CredentialsMatcher extends HashedCredentialsMatcher {

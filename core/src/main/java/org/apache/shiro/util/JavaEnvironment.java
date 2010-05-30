@@ -30,10 +30,6 @@ package org.apache.shiro.util;
  * The original author names and copyright (Apache 2.0) has been left in place.  A special
  * thanks to Rod Johnson, Juergen Hoeller, and Rick Evans for making this available.</em>
  *
- * @author Rod Johnson
- * @author Juergen Hoeller
- * @author Rick Evans
- * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class JavaEnvironment {

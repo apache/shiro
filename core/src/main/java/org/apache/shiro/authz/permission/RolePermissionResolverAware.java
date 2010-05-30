@@ -27,7 +27,6 @@ package org.apache.shiro.authz.permission;
  * are the ones performing permission checks and need to know how to resolve Strings into
  * {@link org.apache.shiro.authz.Permission Permission} instances.
  *
- * @author Brian Demers
  * @since 1.0
  */
 public interface RolePermissionResolverAware {

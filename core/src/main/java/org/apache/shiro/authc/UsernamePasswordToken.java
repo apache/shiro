@@ -40,8 +40,6 @@ package org.apache.shiro.authc;
  * <p>To avoid this possibility of later memory access, the application developer should always call
  * {@link #clear() clear()} after using the token to perform a login attempt.</p>
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public class UsernamePasswordToken implements HostAuthenticationToken, RememberMeAuthenticationToken {

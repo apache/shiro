@@ -36,7 +36,6 @@ import java.util.*;
 /**
  * A {@link Factory} that creates {@link SecurityManager} instances based on {@link Ini} configuration.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager> {

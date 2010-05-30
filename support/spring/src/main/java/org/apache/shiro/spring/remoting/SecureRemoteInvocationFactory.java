@@ -41,8 +41,6 @@ import java.io.Serializable;
  * be used to export the server-side remote services to ensure that the appropriate
  * Subject and Session are bound to the remote thread during execution.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactory {

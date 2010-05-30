@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * <p>Connection pooling is enabled by default on this factory, but can be disabled using the
  * {@link #usePooling} property.</p>
  *
- * @author Jeremy Haile
  * @since 0.2
  */
 public class DefaultLdapContextFactory implements LdapContextFactory {

@@ -26,7 +26,6 @@ package org.apache.shiro.authz;
  * authentication because authorization data (roles, permissions, etc) must always be associated
  * with a known identity.  Such a known identity can only be obtained upon a successful log-in.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class UnauthenticatedException extends AuthorizationException {

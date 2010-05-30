@@ -26,7 +26,6 @@ package org.apache.shiro.cache;
  * cache framework's main Manager component (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
  * GigaSpaces, etc, etc), allowing a Shiro user to configure any cache mechanism they choose.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface CacheManager {

@@ -21,7 +21,6 @@ package org.apache.shiro.util;
 /**
  * A {@code ByteSource} wraps a byte array and provides additional encoding operations.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface ByteSource {

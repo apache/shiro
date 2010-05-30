@@ -42,7 +42,6 @@ import org.apache.shiro.util.LifecycleUtils;
  * In keeping with the other classes in this hierarchy and Shiro's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies will be created upon instantiation.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class SessionsSecurityManager extends AuthorizingSecurityManager {

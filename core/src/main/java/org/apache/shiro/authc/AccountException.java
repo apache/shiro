@@ -22,7 +22,6 @@ package org.apache.shiro.authc;
  * Exception thrown due to a problem with the account
  * under which an authentication attempt is being executed.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class AccountException extends AuthenticationException {

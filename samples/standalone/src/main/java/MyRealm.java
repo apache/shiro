@@ -22,7 +22,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 /**
- * @author Les Hazlewood
  */
 public class MyRealm extends AuthorizingRealm {
 

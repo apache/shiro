@@ -29,7 +29,6 @@ import org.apache.shiro.subject.SubjectContext;
  * A RememberMeManager is responsible for remembering a Subject's identity across that Subject's sessions with
  * the application.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface RememberMeManager {

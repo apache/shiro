@@ -26,7 +26,6 @@ package org.apache.shiro.session;
  * {@link Session#stop() stopped} programmatically.  A Session can also be
  * considered invalid if it has expired.
  *
- * @author Les Hazlewood
  * @see StoppedSessionException
  * @see ExpiredSessionException
  * @see UnknownSessionException

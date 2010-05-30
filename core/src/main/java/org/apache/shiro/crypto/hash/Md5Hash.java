@@ -28,7 +28,6 @@ import org.apache.shiro.codec.Hex;
  * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
  * techniques and how the overloaded constructors function.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class Md5Hash extends AbstractHash {

@@ -28,8 +28,6 @@ package org.apache.shiro.codec;
  * As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.
  *
- * @author Apache Software Foundation
- * @author Les Hazlewood
  * @see <a href="http://en.wikipedia.org/wiki/Hexadecimal">Wikipedia: Hexadecimal</a>
  * @since 0.9
  */

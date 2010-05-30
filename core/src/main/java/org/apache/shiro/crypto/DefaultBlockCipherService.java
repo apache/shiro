@@ -126,7 +126,6 @@ import org.apache.shiro.util.StringUtils;
  * described above, but they are applied during streaming method invocations only ({@link #encrypt(java.io.InputStream, java.io.OutputStream, byte[])}
  * and {@link #decrypt(java.io.InputStream, java.io.OutputStream, byte[])}).
  *
- * @author Les Hazlewood
  * @see BlowfishCipherService
  * @see AesCipherService
  * @see <a href="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">Wikipedia: Block Cipher Modes of Operation</a>

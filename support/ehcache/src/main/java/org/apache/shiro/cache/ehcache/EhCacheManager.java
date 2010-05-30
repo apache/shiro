@@ -44,8 +44,6 @@ import java.io.InputStream;
  * <p/>
  * Please see the <a href="http://ehcache.sf.net" target="_top">Ehcache website</a> for their documentation.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see <a href="http://ehcache.sf.net" target="_top">The Ehcache website</a>
  * @since 0.2
  */

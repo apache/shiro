@@ -52,8 +52,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * (and its default implementation {@link org.apache.shiro.authz.SimpleAuthorizationInfo SimpleAuthorizationInfo}) is sufficient in the large
  * majority of Realm cases.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @see org.apache.shiro.authz.SimpleAuthorizationInfo
  * @since 0.2
  */

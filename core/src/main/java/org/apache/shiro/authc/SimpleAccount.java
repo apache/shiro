@@ -33,8 +33,6 @@ import java.util.Set;
  * contains principal and credential and authorization information (roles and permissions) as instance variables and
  * exposes them via getters and setters using standard JavaBean notation.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public class SimpleAccount implements Account, MergableAuthenticationInfo, Serializable {

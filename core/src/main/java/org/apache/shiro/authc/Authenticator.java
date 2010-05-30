@@ -31,8 +31,6 @@ package org.apache.shiro.authc;
  * Shiro's default architecture is based on an overall {@code SecurityManager} which typically
  * wraps an {@code Authenticator} instance.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @see org.apache.shiro.mgt.SecurityManager
  * @see AbstractAuthenticator AbstractAuthenticator
  * @see org.apache.shiro.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator

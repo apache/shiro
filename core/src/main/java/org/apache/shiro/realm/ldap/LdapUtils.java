@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * Utility class providing static methods to make working with LDAP
  * easier.
  *
- * @author Jeremy Haile
  * @since 0.2
  */
 public class LdapUtils {

@@ -30,8 +30,6 @@ import java.util.*;
 /**
  * Shiro {@link org.apache.shiro.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.2
  */
 public class EhCache<K, V> implements Cache<K, V> {

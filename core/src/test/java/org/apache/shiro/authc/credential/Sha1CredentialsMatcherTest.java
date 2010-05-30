@@ -23,7 +23,6 @@ import org.apache.shiro.crypto.hash.Sha1Hash;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 5:00:30 PM
  */
 public class Sha1CredentialsMatcherTest extends HashedCredentialsMatcherTest {

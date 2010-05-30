@@ -29,7 +29,6 @@ package org.apache.shiro.authc;
  * the user know if they entered incorrect credentials is at the discretion of those
  * responsible for defining the view and what happens when this exception occurs.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class IncorrectCredentialsException extends CredentialsException {

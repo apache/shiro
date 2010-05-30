@@ -31,8 +31,6 @@ import java.util.Set;
  * Simple implementation of the {@link org.apache.shiro.authc.MergableAuthenticationInfo} interface that holds the principals and
  * credentials.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see org.apache.shiro.realm.AuthenticatingRealm
  * @since 0.9
  */

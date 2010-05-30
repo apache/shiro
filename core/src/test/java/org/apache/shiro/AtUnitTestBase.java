@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;*/
 /**
  * Super class that simply provides boiler plate annotations for subclass tests.
  *
- * @author Jeremy Haile
  * @since 0.9
  */
 /*@RunWith(AtUnit.class)

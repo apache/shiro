@@ -31,7 +31,6 @@ import org.apache.shiro.authz.Permission;
  * those respective entities will have the ability to do anything.  As such, an instance of this class
  * is typically only assigned only to "root" or "administrator" users or roles.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class AllPermission implements Permission, Serializable {

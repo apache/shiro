@@ -36,7 +36,6 @@ import javax.naming.NamingException;
  * Spring framework, nor does Spring make available only its JNDI classes in a small jar, or we would have used that.
  * Since Shiro is also Apache 2.0 licensed, all regular licenses and conditions and authors have remained in tact.
  *
- * @author Rod Johnson
  * @see JndiTemplate
  */
 public interface JndiCallback {

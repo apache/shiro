@@ -23,7 +23,6 @@ import org.apache.shiro.session.Session;
 /**
  * {@code SessionFactory} implementation that generates {@link SimpleSession} instances.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class SimpleSessionFactory implements SessionFactory {

@@ -27,7 +27,6 @@ import java.sql.Timestamp;
 /**
  * Secured implementation of te dummy service that requires some permissions to execute.
  *
- * @author J-C Desrochers
  */
 public class SecuredDummyService implements DummyService {
 

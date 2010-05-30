@@ -40,8 +40,6 @@ import java.lang.annotation.Target;
  * to the file <tt>aFile.txt</tt> in order for the <tt>someMethod()</tt> to execute, otherwise
  * an {@link org.apache.shiro.authz.AuthorizationException AuthorizationException} will be thrown.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see org.apache.shiro.subject.Subject#checkPermission
  * @since 0.1
  */

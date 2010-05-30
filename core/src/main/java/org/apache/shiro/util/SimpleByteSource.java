@@ -28,7 +28,6 @@ import java.util.Arrays;
  * {@link Hex Hex} and {@link Base64 Base64} codec classes to support the
  * {@link #toHex() toHex()} and {@link #toBase64() toBase64()} implementations.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class SimpleByteSource implements ByteSource {

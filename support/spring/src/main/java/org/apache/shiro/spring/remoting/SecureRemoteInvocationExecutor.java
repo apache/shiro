@@ -38,8 +38,6 @@ import java.util.concurrent.Callable;
  * implementation during the thread execution.  The {@code SecurityManager} implementation can use this sessionId
  * to reconstitute the {@code Subject} instance based on persistent state in the corresponding {@code Session}.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecutor {

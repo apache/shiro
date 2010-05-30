@@ -25,7 +25,6 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
  * Checks to see if a @{@link RequiresRoles RequiresRoles} annotation is declared, and if so, performs
  * a role check to see if the calling <code>Subject</code> is allowed to invoke the method.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {

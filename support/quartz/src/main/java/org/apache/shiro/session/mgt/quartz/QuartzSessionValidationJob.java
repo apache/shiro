@@ -33,7 +33,6 @@ import org.apache.shiro.session.mgt.ValidatingSessionManager;
  * method on a configured session manager.  The session manager will automatically be injected by the
  * superclass if it is in the job data map or the scheduler map.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class QuartzSessionValidationJob implements Job {

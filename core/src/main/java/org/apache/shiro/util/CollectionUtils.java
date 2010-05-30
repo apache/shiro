@@ -25,8 +25,6 @@ import java.util.*;
 /**
  * Static helper class for use dealing with Collections.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.9
  */
 public class CollectionUtils {

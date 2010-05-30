@@ -36,8 +36,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * @author J-C Desrochers
- * @author Kalle Korhonen
  */
 public class DummyServiceTest {
 

@@ -43,7 +43,6 @@ import java.util.Collections;
  * caching behavior and delegates the actual EIS operations to respective do* methods to be implemented by
  * subclasses (doCreate, doRead, etc).
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class CachingSessionDAO extends AbstractSessionDAO implements CacheManagerAware {

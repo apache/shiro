@@ -25,7 +25,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Spring application context.  Once the Spring application context is
  * loaded, the initialization of the {@link WebStartView} does the rest.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class WebStartDriver {

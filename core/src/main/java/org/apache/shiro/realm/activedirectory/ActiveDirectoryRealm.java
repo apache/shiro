@@ -48,8 +48,6 @@ import java.util.*;
  * queries for the user's groups and then maps the group names to roles using the
  * {@link #groupRolesMap}.
  *
- * @author Tim Veil
- * @author Jeremy Haile
  * @since 0.1
  */
 public class ActiveDirectoryRealm extends AbstractLdapRealm {
