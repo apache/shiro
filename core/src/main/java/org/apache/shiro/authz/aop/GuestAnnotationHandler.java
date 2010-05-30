@@ -32,7 +32,6 @@ import org.apache.shiro.authz.annotation.RequiresGuest;
  * <p>
  * This annotation essentially ensures that <code>subject.{@link org.apache.shiro.subject.Subject#getPrincipal() getPrincipal()} == null</code>.
  *
- * @author Les Hazlewood
  * @since 0.9.0
  */
 public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {

@@ -56,8 +56,6 @@ import java.util.concurrent.Callable;
  * These overloaded *Permission methods forgo type-saftey for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.1
  */
 public interface Subject {

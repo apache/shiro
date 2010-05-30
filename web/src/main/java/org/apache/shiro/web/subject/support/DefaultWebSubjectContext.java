@@ -30,7 +30,6 @@ import javax.servlet.ServletResponse;
  * Default {@code WebSubjectContext} implementation that provides for additional storage and retrieval of
  * a {@link ServletRequest} and {@link ServletResponse}.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class DefaultWebSubjectContext extends DefaultSubjectContext implements WebSubjectContext {

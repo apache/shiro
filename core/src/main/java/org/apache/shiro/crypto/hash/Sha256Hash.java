@@ -30,7 +30,6 @@ import org.apache.shiro.codec.Hex;
  * <p><b>JDK Version Note</b> - Attempting to instantiate this class on JREs prior to version 1.4.0 will throw
  * an {@link IllegalStateException IllegalStateException}
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class Sha256Hash extends AbstractHash {

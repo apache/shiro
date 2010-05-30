@@ -47,8 +47,6 @@ import java.lang.annotation.Target;
  * the application's functionality is programmed (that is, they reflect the application's functionality only, not
  * <em>who</em> is executing the the functionality).
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see org.apache.shiro.subject.Subject#hasRole(String)
  * @since 0.1
  */

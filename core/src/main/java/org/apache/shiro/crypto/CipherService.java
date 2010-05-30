@@ -80,7 +80,6 @@ import java.io.OutputStream;
  * if you want.</li>
  * </ul>
  *
- * @author Les Hazlewood
  * @see BlowfishCipherService
  * @see AesCipherService
  * @since 1.0

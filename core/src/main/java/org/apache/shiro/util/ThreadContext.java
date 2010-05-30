@@ -39,8 +39,6 @@ import java.util.Map;
  * bind and remove any necessary values at the beginning and end of stack
  * execution, respectively (i.e. individually explicitly or all via the <tt>clear</tt> method).</p>
  *
- * @author Les Hazlewood
- * @author Kalle Korhonen
  * @see #remove()
  * @since 0.1
  */

@@ -32,8 +32,6 @@ import org.junit.Test;
 
 
 /**
- * @author Les Hazlewood
- * @author Kalle Korhonen
  * @since 0.9
  */
 public class SimpleAuthenticationInfoTest {

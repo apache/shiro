@@ -28,7 +28,6 @@ import javax.servlet.ServletResponse;
  * A {@code WebSubjectContext} is a {@link SubjectContext} that additionally provides for type-safe
  * methods to set and retrieve a {@link ServletRequest} and {@link ServletResponse}.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface WebSubjectContext extends SubjectContext, RequestPairSource {

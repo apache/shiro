@@ -29,7 +29,6 @@ import java.io.Serializable;
  * {@code Subject}'s session via the {@link org.apache.shiro.subject.Subject#getSession} method.  This interface and
  * its usages are best suited for framework development.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface SessionKey {

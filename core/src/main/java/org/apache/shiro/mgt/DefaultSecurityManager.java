@@ -66,8 +66,6 @@ import java.util.Collection;
  * {@code org.apache.shiro.web.DefaultWebSecurityManager} implementation, which
  * <em>does</em> support {@code RememberMe} services by default at startup.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.2
  */
 public class DefaultSecurityManager extends SessionsSecurityManager {

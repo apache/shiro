@@ -55,9 +55,6 @@ package org.apache.shiro.util;
  * <p>As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
  * remained in tact.</p>
  *
- * @author Alef Arendsen
- * @author Juergen Hoeller
- * @author Rob Harrop
  * @since 16.07.2003
  */
 public class AntPathMatcher implements PatternMatcher {

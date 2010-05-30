@@ -26,7 +26,6 @@ package org.apache.shiro.io;
  * encryption.  These orthogonal concerns are handled elsewhere by Shiro, for example, via
  * {@link org.apache.shiro.codec.CodecSupport CodecSupport} and {@link org.apache.shiro.crypto.CipherService CipherService}s.
  *
- * @author Les Hazlewood
  * @param <T> The type of the object being serialized and deserialized.
  * @since 0.9
  */

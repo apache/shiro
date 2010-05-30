@@ -37,7 +37,6 @@ import java.util.*;
  * Simple {@link org.apache.shiro.session.Session} JavaBeans-compatible POJO implementation, intended to be used on the
  * business/server tier.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class SimpleSession implements ValidatingSession, Serializable {

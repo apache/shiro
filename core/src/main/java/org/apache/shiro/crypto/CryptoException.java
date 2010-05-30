@@ -23,7 +23,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Base Shiro exception for problems encountered during cryptographic operations.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class CryptoException extends ShiroException {

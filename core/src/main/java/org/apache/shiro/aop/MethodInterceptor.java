@@ -24,7 +24,6 @@ package org.apache.shiro.aop;
  * <p>Shiro's implementations of this interface mostly have to deal with ensuring a current Subject has the
  * ability to execute the method before allowing it to continue.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public interface MethodInterceptor {

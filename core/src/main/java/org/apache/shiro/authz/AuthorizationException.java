@@ -24,7 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Exception thrown if there is a problem during authorization (access control check).
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class AuthorizationException extends ShiroException

@@ -27,7 +27,6 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
  * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
  * SHA-512 hashed.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class Sha512CredentialsMatcher extends HashedCredentialsMatcher {

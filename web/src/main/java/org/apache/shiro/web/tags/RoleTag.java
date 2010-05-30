@@ -22,7 +22,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
- * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class RoleTag extends SecureTag {

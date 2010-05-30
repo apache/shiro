@@ -35,7 +35,6 @@ import org.apache.shiro.authz.AuthorizationException;
  * <p>It is essentially a convenience mechanism to allow multiple annotations to be processed in a single method
  * interceptor.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class AnnotationsAuthorizingMethodInterceptor extends AuthorizingMethodInterceptor {

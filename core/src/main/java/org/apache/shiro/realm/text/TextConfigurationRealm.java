@@ -41,7 +41,6 @@ import java.util.*;
  * User and user-to-role definitinos are specified via the {@link #setUserDefinitions} method and
  * Role-to-permission definitions are specified via the {@link #setRoleDefinitions} method.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class TextConfigurationRealm extends SimpleAccountRealm {

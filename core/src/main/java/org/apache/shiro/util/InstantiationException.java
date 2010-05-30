@@ -24,7 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Runtime exception thrown by the framework when unable to instantiate a Class via reflection.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class InstantiationException extends ShiroException

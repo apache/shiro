@@ -43,7 +43,6 @@ import java.io.Serializable;
 /**
  * Web-application capable {@link org.apache.shiro.session.mgt.SessionManager SessionManager} implementation.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class DefaultWebSessionManager extends DefaultSessionManager {

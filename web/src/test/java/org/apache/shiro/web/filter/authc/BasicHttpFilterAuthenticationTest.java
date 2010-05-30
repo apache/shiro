@@ -38,7 +38,6 @@ import org.junit.Test;
 
 /**
  * Test case for {@link BasicHttpAuthenticationFilter}.
- * @author Peter Ledbrook
  * @since 1.0
  */
 public class BasicHttpFilterAuthenticationTest {

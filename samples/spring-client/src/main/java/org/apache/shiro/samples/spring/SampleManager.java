@@ -25,7 +25,6 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 /**
  * Business manager interface used for sample application.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public interface SampleManager {

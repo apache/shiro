@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * <p>The logically opposite tag of this one is the {@link UserTag}.  Please read that class's JavaDoc as it explains
  * more about the differences between Authenticated/Unauthenticated and User/Guest semantic differences.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class GuestTag extends SecureTag {

@@ -37,7 +37,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test cases for the {@link DefaultWebSessionManager} implementation.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class DefaultWebSessionManagerTest {

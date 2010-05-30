@@ -54,8 +54,6 @@ import java.util.Collection;
  * As most multi-realm applications require at least one Realm authenticates successfully, the default
  * implementation is the {@link AtLeastOneSuccessfulStrategy}.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see #setRealms
  * @see AtLeastOneSuccessfulStrategy
  * @see AllSuccessfulStrategy

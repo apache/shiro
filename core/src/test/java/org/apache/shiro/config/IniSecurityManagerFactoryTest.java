@@ -44,7 +44,6 @@ import static junit.framework.Assert.*;
 /**
  * Unit tests for the {@link IniSecurityManagerFactory} implementation.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class IniSecurityManagerFactoryTest {

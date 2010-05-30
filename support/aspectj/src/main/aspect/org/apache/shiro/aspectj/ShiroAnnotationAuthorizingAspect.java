@@ -26,7 +26,6 @@ import org.aspectj.lang.annotation.Pointcut;
 /**
  * Aspect that adds a before advice for each invocation of an annotated method.
  *
- * @author J-C Desrochers
  */
 @Aspect()
 public class ShiroAnnotationAuthorizingAspect {

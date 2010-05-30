@@ -26,8 +26,6 @@ import org.apache.shiro.authc.AuthenticationToken;
  * are passed in.  This can be used for testing or when credentials are implicitly trusted for a particular
  * {@link org.apache.shiro.realm.Realm Realm}.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.2
  */
 public class AllowAllCredentialsMatcher implements CredentialsMatcher {

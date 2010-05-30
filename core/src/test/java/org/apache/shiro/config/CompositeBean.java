@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author Les Hazlewood
  * @since Aug 5, 2008 10:17:37 AM
  */
 @SuppressWarnings({"UnusedDeclaration"})

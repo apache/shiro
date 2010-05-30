@@ -38,7 +38,6 @@ import static org.junit.Assert.assertNull;
 /**
  * //TODO - Class JavaDoc!
  *
- * @author Les Hazlewood
  */
 public class SecureRemoteInvocationFactoryTest {
 

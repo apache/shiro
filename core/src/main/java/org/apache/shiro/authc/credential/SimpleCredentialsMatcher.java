@@ -35,7 +35,6 @@ import java.util.Arrays;
  * <p>Hashing comparisons (the most common technique used in secure applications) are not supported by this class, but
  * instead by {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher} implementations.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher
  * @see org.apache.shiro.authc.credential.Md5CredentialsMatcher
  * @see Sha1CredentialsMatcher

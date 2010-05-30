@@ -31,7 +31,6 @@ import java.util.Map;
  * Differs from the parent class only in the {@link #createDefaultInstance()} method, to
  * ensure a web-capable {@code SecurityManager} instance is created by default.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class WebIniSecurityManagerFactory extends IniSecurityManagerFactory {

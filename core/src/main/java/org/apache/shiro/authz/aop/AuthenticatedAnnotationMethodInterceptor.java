@@ -25,7 +25,6 @@ package org.apache.shiro.authz.aop;
  * the method.
  *
  * @since 0.9.0
- * @author Les Hazlewood
  */
 public class AuthenticatedAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
 

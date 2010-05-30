@@ -33,7 +33,6 @@ import static junit.framework.Assert.assertTrue;
 /**
  * TODO - Class JavaDoc
  *
- * @author Les Hazlewood
  * @since May 8, 2010 4:21:10 PM
  */
 public class WebIniSecurityManagerFactoryTest {

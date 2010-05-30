@@ -32,8 +32,6 @@ import java.io.IOException;
  * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
  * which is used by many subclasses as the behavior when a user is unauthenticated.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AccessControlFilter extends PathMatchingFilter {

@@ -38,8 +38,6 @@ import java.util.Set;
  * User accounts and roles are stored in two {@code Map}s in memory, so it is expected that the total number of either
  * is not sufficiently large.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public class SimpleAccountRealm extends AuthorizingRealm {

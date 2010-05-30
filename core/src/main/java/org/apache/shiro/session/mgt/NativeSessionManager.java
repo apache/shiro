@@ -25,7 +25,6 @@ import java.util.Date;
  * for the creation, persistence and removal of {@link org.apache.shiro.session.Session Session} instances and their
  * lifecycles.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface NativeSessionManager extends SessionManager {

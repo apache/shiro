@@ -29,7 +29,6 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 /**
- * @author Les Hazlewood
  * @since Aug 5, 2008 9:53:00 AM
  */
 public class ReflectionBuilderTest {

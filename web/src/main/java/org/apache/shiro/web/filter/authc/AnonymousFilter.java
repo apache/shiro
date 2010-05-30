@@ -47,8 +47,6 @@ import javax.servlet.ServletResponse;
  * Since the url pattern definitions follow a 'first match wins' paradigm, the <code>anon</code> filter will
  * match the <code>/user/signup/**</code> paths and the <code>/user/**</code> path chain will not be evaluated.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.9
  */
 public class AnonymousFilter extends PathMatchingFilter {

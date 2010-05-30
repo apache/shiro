@@ -25,7 +25,6 @@ import org.apache.shiro.authz.AuthorizationException;
 /**
  * Basic abstract class to support intercepting methods that perform authorization (access control) checks.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AuthorizingMethodInterceptor extends MethodInterceptorSupport {

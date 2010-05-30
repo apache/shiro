@@ -23,7 +23,6 @@ import org.junit.Test;
 
 
 /**
- * @author Les Hazlewood
  */
 public class AllPermissionTest {
 

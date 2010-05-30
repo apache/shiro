@@ -38,7 +38,6 @@ import org.apache.shiro.samples.spring.SampleManager;
  * is hosted by the Spring sample web application and remotely invoked
  * when the buttons in this view are clicked.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class WebStartView implements ActionListener, InitializingBean {

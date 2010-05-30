@@ -24,7 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Root exception indicating there was a problem parsing or processing the Shiro configuration.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class ConfigurationException extends ShiroException

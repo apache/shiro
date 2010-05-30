@@ -23,8 +23,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Shiro container-agnostic interface that indicates that this object requires initialization.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.2
  */
 public interface Initializable {

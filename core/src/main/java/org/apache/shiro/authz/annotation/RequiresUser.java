@@ -44,7 +44,6 @@ import java.lang.annotation.Target;
  * @see RequiresGuest
  *
  * @since 0.9.0
- * @author Les Hazlewood
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

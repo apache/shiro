@@ -66,7 +66,6 @@ import javax.servlet.http.HttpServletResponse;
  * Note that because this class subclasses the {@link AbstractRememberMeManager} which already provides serialization
  * and encryption logic, this class utilizes both for added security before setting the cookie value.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class CookieRememberMeManager extends AbstractRememberMeManager {

@@ -23,7 +23,6 @@ import org.junit.Test;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 4:35:27 PM
  */
 public class AllowAllCredentialsMatcherTest {

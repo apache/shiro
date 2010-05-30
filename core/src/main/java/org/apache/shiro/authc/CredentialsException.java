@@ -22,7 +22,6 @@ package org.apache.shiro.authc;
  * Exception thrown due to a problem with the credential(s) submitted for an
  * account during the authentication process.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class CredentialsException extends AuthenticationException {

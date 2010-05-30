@@ -23,7 +23,6 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 5:01:00 PM
  */
 public class Sha256CredentialsMatcherTest extends HashedCredentialsMatcherTest {

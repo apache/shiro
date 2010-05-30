@@ -51,8 +51,6 @@ import org.apache.shiro.subject.PrincipalCollection;
  * to subclasses, a top-level abstract class for most common authentication behavior is more useful as an extension
  * point for most applications.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.2
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements LogoutAware {

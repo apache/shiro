@@ -21,7 +21,6 @@ package org.apache.shiro.authz;
 /**
  * Thrown to indicate a requested operation or access to a requested resource is not allowed.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class UnauthorizedException extends AuthorizationException {

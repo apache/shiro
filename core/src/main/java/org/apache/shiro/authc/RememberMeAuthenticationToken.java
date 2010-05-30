@@ -26,7 +26,6 @@ package org.apache.shiro.authc;
  * {@link org.apache.shiro.subject.Subject#isRemembered()} JavaDoc for an in-depth explanation of the semantic
  * differences of what it means to be remembered vs. authenticated.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.subject.Subject#isRemembered()
  * @since 0.9
  */

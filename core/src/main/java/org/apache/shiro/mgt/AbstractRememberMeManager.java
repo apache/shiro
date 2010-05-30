@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
  * {@code CipherService}'s {@link org.apache.shiro.crypto.AesCipherService#generateNewKey() generateNewKey} method
  * and using that result as the {@link #setCipherKey cipherKey} configuration attribute.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.9
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager {

@@ -31,7 +31,6 @@ import java.util.*;
  * A simple implementation of the {@link MutablePrincipalCollection} interface that tracks principals internally
  * by storing them in a {@link LinkedHashMap}.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 @SuppressWarnings({"unchecked"})

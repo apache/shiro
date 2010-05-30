@@ -30,7 +30,6 @@ package org.apache.shiro.web.filter.authz;
  * /secure/path/** = ssl
  * </pre>
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class SslFilter extends PortFilter {

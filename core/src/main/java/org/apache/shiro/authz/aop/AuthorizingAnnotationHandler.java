@@ -28,7 +28,6 @@ import org.apache.shiro.authz.AuthorizationException;
  * JSR-175 Annotation.
  *
  * @since 0.9.0
- * @author Les Hazlewood
  */
 public abstract class AuthorizingAnnotationHandler extends AnnotationHandler {
 

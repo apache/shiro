@@ -56,8 +56,6 @@ import org.apache.shiro.authz.Authorizer;
  * {@link org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm} or {@link org.apache.shiro.realm.AuthorizingRealm}, greatly reducing the effort requird
  * to implement a <tt>Realm</tt> from scratch.</p>
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @see org.apache.shiro.realm.CachingRealm CachingRealm
  * @see org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm
  * @see org.apache.shiro.realm.AuthorizingRealm AuthorizingRealm

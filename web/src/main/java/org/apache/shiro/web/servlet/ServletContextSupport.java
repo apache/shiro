@@ -23,7 +23,6 @@ import javax.servlet.ServletContext;
 /**
  * Base implementation for any components that need to access the web application's {@link ServletContext ServletContext}.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class ServletContextSupport {

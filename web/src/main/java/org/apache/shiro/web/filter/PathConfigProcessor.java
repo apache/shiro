@@ -23,7 +23,6 @@ import javax.servlet.Filter;
 /**
  * A PathConfigProcessor processes configuration entries on a per path (url) basis.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface PathConfigProcessor {

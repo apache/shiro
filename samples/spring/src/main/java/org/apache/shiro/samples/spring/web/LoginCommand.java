@@ -22,7 +22,6 @@ package org.apache.shiro.samples.spring.web;
  * Command object that parameters are bound to when logging into the sample
  * application.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class LoginCommand {

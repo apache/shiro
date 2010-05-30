@@ -60,7 +60,6 @@ package org.apache.shiro.authz;
  * {@link org.apache.shiro.authz.permission.WildcardPermission WildcardPermission}.  We highly recommend that you
  * investigate this class before trying to implement your own <code>Permission</code>s.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.authz.permission.WildcardPermission WildcardPermission
  * @since 0.2
  */

@@ -29,7 +29,6 @@ import java.util.Collection;
  * In some cases a {@link org.apache.shiro.realm.Realm} my only be able to return a list of roles.  This
  * component allows an application to resolve the roles into permissions.
  *
- * @author Brian Demers
  */
 public interface RolePermissionResolver {
 

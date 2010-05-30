@@ -69,7 +69,6 @@ import org.apache.shiro.crypto.hash.Hash;
  * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
  * supporting {@code CredentialsMatcher} implementations.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.crypto.hash.Md5Hash
  * @see org.apache.shiro.crypto.hash.Sha1Hash
  * @see org.apache.shiro.crypto.hash.Sha256Hash

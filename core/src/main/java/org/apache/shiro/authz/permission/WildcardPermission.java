@@ -100,9 +100,6 @@ import java.util.Set;
  * this could be used in your application.  However, the Shiro team likes to standardize some common usages shown
  * above to help people get started and provide consistency in the Shiro community.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
- * @author Dain Sundstrom
  * @since 0.9
  */
 public class WildcardPermission implements Permission, Serializable {

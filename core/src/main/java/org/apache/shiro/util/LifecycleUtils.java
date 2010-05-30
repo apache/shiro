@@ -29,7 +29,6 @@ import java.util.Collection;
  * Utility class to help call {@link org.apache.shiro.util.Initializable#init() Initializable.init()} and
  * {@link org.apache.shiro.util.Destroyable#destroy() Destroyable.destroy()} methods cleanly on any object.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class LifecycleUtils {

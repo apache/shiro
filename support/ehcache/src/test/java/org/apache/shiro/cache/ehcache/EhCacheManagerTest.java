@@ -29,7 +29,6 @@ import static org.junit.Assert.*;
 /**
  * TODO - Class JavaDoc
  *
- * @author Les Hazlewood
  * @since May 11, 2010 12:41:38 PM
  */
 public class EhCacheManagerTest {

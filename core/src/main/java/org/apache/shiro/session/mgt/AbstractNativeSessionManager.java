@@ -31,7 +31,6 @@ import java.util.Date;
  * {@link SessionListener SessionListener}s and application of the
  * {@link #getGlobalSessionTimeout() globalSessionTimeout}.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public abstract class AbstractNativeSessionManager extends AbstractSessionManager implements NativeSessionManager {

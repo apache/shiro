@@ -24,7 +24,6 @@ package org.apache.shiro;
  * frameworks and products (such as J2EE containers) perform special operations when
  * encountering {@link java.lang.SecurityException}.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class ShiroException extends RuntimeException {

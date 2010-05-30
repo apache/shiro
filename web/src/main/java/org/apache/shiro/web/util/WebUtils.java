@@ -41,10 +41,6 @@ import java.util.Map;
  * Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
  * and in these cases, we have retained all license, copyright and author information.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
- * @author Rod Johnson
- * @author Juergen Hoeller
  * @since 0.9
  */
 public class WebUtils {

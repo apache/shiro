@@ -21,7 +21,6 @@ package org.apache.shiro.config;
 import java.util.List;
 
 /**
- * @author Les Hazlewood
  * @since 1.0
  */
 public class SimpleBean {

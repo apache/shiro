@@ -110,7 +110,6 @@ import java.util.Map;
  * filters benefit from this convenience, your filter implementation should subclass one of the 3 mentioned
  * earlier.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @see org.springframework.web.filter.DelegatingFilterProxy DelegatingFilterProxy
  * @since 1.0
  */

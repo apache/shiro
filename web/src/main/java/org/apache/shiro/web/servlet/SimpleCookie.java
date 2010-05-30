@@ -36,7 +36,6 @@ import java.util.TimeZone;
  * {@link javax.servlet.http.Cookie javax.servlet.http.Cookie} objects (which only has 'HttpOnly' support in Servlet
  * {@code 2.6} specifications and above).
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class SimpleCookie implements Cookie {

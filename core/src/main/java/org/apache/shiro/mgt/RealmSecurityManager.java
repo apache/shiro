@@ -32,7 +32,6 @@ import java.util.Collection;
  * {@link org.apache.shiro.realm.Realm}s.  All actual {@code SecurityManager} method implementations are left to
  * subclasses.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class RealmSecurityManager extends CachingSecurityManager {

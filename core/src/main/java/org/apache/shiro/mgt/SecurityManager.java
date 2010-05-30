@@ -51,7 +51,6 @@ import org.apache.shiro.subject.SubjectContext;
  * <p/>
  * Framework developers on the other hand might find working with an actual SecurityManager useful.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.mgt.DefaultSecurityManager
  * @since 0.2
  */

@@ -32,8 +32,6 @@ import org.apache.shiro.authc.AuthenticationToken;
  * {@link HashedCredentialsMatcher HashedCredentialsMatcher} implementations,
  * as they support this scenario.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see SimpleCredentialsMatcher
  * @see AllowAllCredentialsMatcher
  * @see Md5CredentialsMatcher

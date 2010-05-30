@@ -41,7 +41,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * TODO - Class JavaDoc
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class CookieRememberMeManagerTest {

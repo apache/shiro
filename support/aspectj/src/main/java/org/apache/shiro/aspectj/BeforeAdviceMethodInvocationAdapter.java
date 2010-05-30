@@ -28,7 +28,6 @@ import java.lang.reflect.Method;
 /**
  * Helper class that adapts an AspectJ {@link JoinPoint JoinPoint}.
  *
- * @author J-C Desrochers
  * @since 1.0
  */
 public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {

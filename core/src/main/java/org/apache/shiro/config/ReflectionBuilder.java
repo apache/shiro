@@ -38,8 +38,6 @@ import java.util.*;
  * map of "property values".  Typically these come from the Shiro INI configuration and are used
  * to construct or modify the SecurityManager, its dependencies, and web-based security filters.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.9
  */
 public class ReflectionBuilder {

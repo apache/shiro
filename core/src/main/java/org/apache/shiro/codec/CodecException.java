@@ -24,7 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Root exception related to issues during encoding or decoding.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class CodecException extends ShiroException

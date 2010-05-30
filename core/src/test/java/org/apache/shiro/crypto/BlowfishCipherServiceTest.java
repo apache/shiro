@@ -32,7 +32,6 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Test cases for the {@link BlowfishCipherService} class.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class BlowfishCipherServiceTest {

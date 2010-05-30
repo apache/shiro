@@ -33,7 +33,6 @@ import org.apache.shiro.crypto.hash.Md5Hash;
  * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
  * supporting <code>CredentialsMatcher</code> implementations.</p>
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class Md5CredentialsMatcher extends HashedCredentialsMatcher {

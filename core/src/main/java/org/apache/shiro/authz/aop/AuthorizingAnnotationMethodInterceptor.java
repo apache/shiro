@@ -27,7 +27,6 @@ import org.apache.shiro.authz.AuthorizationException;
  * An <tt>AnnotationMethodInterceptor</tt> that asserts the calling code is authorized to execute the method
  * before allowing the invocation to continue by inspecting code annotations to perform an access control check.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationMethodInterceptor

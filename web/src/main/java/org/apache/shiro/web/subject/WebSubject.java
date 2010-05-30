@@ -32,7 +32,6 @@ import javax.servlet.ServletResponse;
  * A {@code WebSubject} represents a Subject instance that was acquired as a result of an incoming
  * {@link ServletRequest}.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface WebSubject extends Subject, RequestPairSource {

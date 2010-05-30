@@ -46,8 +46,6 @@ import javax.naming.NamingException;
  * sufficient.  If more customized connections are needed, you should inject a custom {@link LdapContextFactory}, which
  * will cause these properties specified on the realm to be ignored.</p>
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken , LdapContextFactory)
  * @see #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection , LdapContextFactory)
  * @since 0.1

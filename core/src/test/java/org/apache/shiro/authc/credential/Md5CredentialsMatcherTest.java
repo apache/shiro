@@ -23,7 +23,6 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 4:59:36 PM
  */
 public class Md5CredentialsMatcherTest extends HashedCredentialsMatcherTest {

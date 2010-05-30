@@ -28,8 +28,6 @@ import java.util.Collection;
  * Abstract base implementation for Shiro's concrete <code>AuthenticationStrategy</code>
  * implementations.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AbstractAuthenticationStrategy implements AuthenticationStrategy {

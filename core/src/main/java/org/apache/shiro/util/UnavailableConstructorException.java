@@ -25,7 +25,6 @@ import org.apache.shiro.ShiroException;
  * Exception thrown when attempting to instantiate a Class via reflection, but a suitable constructor (depending
  * on the number of expected arguments) doesn't exist or cannot be obtained.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class UnavailableConstructorException extends ShiroException

@@ -37,7 +37,6 @@ import static org.junit.Assert.*;
 
 
 /**
- * @author Les Hazlewood
  * @since 0.2
  */
 public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {

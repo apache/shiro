@@ -38,7 +38,6 @@ import java.util.Map;
  * Enum representing all of the default Shiro Filter instances available to web applications.  Each filter instance is
  * typically accessible in configuration the {@link #name() name} of the enum constant.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public enum DefaultFilter {

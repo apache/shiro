@@ -19,7 +19,6 @@
 package org.apache.shiro.web.tags;
 
 /**
- * @author Les Hazlewood
  * @since 0.1
  */
 public class LacksRoleTag extends RoleTag {

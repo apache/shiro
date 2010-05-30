@@ -24,7 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Root exception for problems either serializing or de-serializing data.
  *
- * @author Les Hazlewood
  * @since Apr 23, 2008 8:58:22 AM
  */
 public class SerializationException extends ShiroException

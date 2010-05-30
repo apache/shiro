@@ -23,7 +23,6 @@ import java.io.*;
 /**
  * Serializer implementation that uses the default JVM serialization mechanism (Object Input/Output Streams).
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class DefaultSerializer<T> implements Serializer<T> {

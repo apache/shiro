@@ -30,8 +30,6 @@ import java.util.Set;
 /**
  * Utility class to help with String-to-Permission object resolution.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.1
  */
 public class PermissionUtils {

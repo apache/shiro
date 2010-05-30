@@ -33,7 +33,6 @@ package org.apache.shiro.authc;
  * <p>By disallowing concurrent access, such systems can ensure that each authenticated session
  * corresponds to one and only one user at any given time.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class ConcurrentAccessException extends AccountException {

@@ -21,7 +21,6 @@ package org.apache.shiro.util;
 /**
  * TODO - Class JavaDoc
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public abstract class AbstractFactory<T> implements Factory<T> {

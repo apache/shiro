@@ -29,7 +29,6 @@ import org.apache.shiro.session.Session;
  * Validation is usually an exercise of determining when the session was last accessed or modified and determining if
  * that time is longer than a specified allowed duration.
  * 
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface ValidatingSession extends Session {

@@ -22,7 +22,6 @@ package org.apache.shiro.config;
  * Exception thrown when a reference to an object is made, but that object cannot be found.  This is most likely
  * thrown due to a configuration line that references an object that hasn't been defined yet.
  *
- * @author Les Hazlewood
  * @since 0.9 RC2
  */
 public class UnresolveableReferenceException extends ConfigurationException {

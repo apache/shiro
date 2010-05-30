@@ -30,9 +30,6 @@ import javax.servlet.ServletResponse;
  * logic of checking whether a user is already authenticated in the system while subclasses are required to perform
  * specific logic for unauthenticated requests.
  *
- * @author Allan Ditzel
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AuthenticationFilter extends AccessControlFilter {

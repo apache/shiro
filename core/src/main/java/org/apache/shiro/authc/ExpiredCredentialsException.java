@@ -27,7 +27,6 @@ package org.apache.shiro.authc;
  * invoking the authentication might catch this exception and redirect the user to an appropriate
  * view to allow them to update their password or other credentials mechanism.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class ExpiredCredentialsException extends CredentialsException {

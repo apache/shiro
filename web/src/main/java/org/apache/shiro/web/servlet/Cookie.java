@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet containers based on the {@code 2.4} and {@code 2.5} API (Servlet API 'native' support was only introduced in
  * the {@code 2.6} specification).
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface Cookie {

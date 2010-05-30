@@ -53,8 +53,6 @@ import javax.servlet.http.HttpServletRequest;
  * {@link PassThruAuthenticationFilter} instead, which allows requests to the
  * {@link #loginUrl} to pass through to your application's code directly.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @see PassThruAuthenticationFilter
  * @since 0.9
  */

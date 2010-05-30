@@ -65,7 +65,6 @@ import java.security.spec.AlgorithmParameterSpec;
  * of {@code 8} to ensure that the IV can be correctly represented as a byte array (the
  * {@link #setInitializationVectorSize(int) setInitializationVectorSize} mutator method enforces this).
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public abstract class JcaCipherService implements CipherService {

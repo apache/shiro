@@ -33,7 +33,6 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * @author Les Hazlewood
  * @since May 8, 2008 12:26:23 AM
  */
 public class VMSingletonDefaultSecurityManagerTest {

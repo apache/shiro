@@ -31,7 +31,6 @@ package org.apache.shiro.crypto;
  * Padding schemes can be used in both asymmetric key ciphers as well as symmetric key ciphers (e.g. block ciphers).
  * Block-ciphers especially regularly use padding schemes as they are based on the notion of fixed-length block sizes.
  *
- * @author Les Hazlewood
  * @see <a href="http://en.wikipedia.org/wiki/Padding_(cryptography)">Wikipedia: Cryptographic Padding</a>
  * @since 1.0
  */

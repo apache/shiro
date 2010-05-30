@@ -34,8 +34,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
  * out for any reason.  If you're using Shiro's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see SimpleAccount
  * @since 0.9
  */

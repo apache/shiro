@@ -24,8 +24,6 @@ import java.util.Collection;
 /**
  * A {@link PrincipalCollection} that allows modification.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface MutablePrincipalCollection extends PrincipalCollection {

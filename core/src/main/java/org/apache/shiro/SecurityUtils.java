@@ -26,7 +26,6 @@ import org.apache.shiro.util.ThreadContext;
 /**
  * Accesses the currently accessible {@code Subject} for the calling code depending on runtime environment.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class SecurityUtils {

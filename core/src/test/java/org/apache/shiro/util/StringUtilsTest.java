@@ -23,7 +23,6 @@ import org.junit.Test;
 
 
 /**
- * @author Les Hazlewood
  * @since 0.9
  */
 public class StringUtilsTest {

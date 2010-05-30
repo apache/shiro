@@ -30,7 +30,6 @@ import org.apache.shiro.subject.Subject;
  * Default implementation of the {@link SampleManager} interface that stores
  * and retrieves a value from the user's session.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class DefaultSampleManager implements SampleManager {

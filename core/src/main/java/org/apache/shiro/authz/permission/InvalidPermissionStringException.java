@@ -25,7 +25,6 @@ import org.apache.shiro.ShiroException;
  * Thrown by {@link PermissionResolver#resolvePermission(String)} when the String being parsed is not
  * valid for that resolver.
  *
- * @author Jeremy Haile
  * @since 0.9
  */
 public class InvalidPermissionStringException extends ShiroException

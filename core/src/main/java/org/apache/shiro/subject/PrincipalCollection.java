@@ -32,7 +32,6 @@ import java.util.Set;
  * Subject was first created.  To obtain the principal(s) for a specific Realm, see the {@link #fromRealm} method.  You
  * can also see which realms contributed to this collection via the {@link #getRealmNames() getRealmNames()} method.
  *
- * @author Les Hazlewood
  * @see #getPrimaryPrincipal()
  * @see #fromRealm(String realmName)
  * @see #getRealmNames()

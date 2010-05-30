@@ -24,7 +24,6 @@ import org.apache.shiro.mgt.SecurityManager;
  * This interface represents a {@link SecurityManager} implementation that can
  * be used in a servlet container.
  *
- * @author Peter Ledbrook
  * @since 1.0
  */
 public interface WebSecurityManager extends SecurityManager {
